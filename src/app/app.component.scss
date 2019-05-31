@@ -1,0 +1,7 @@
+a {
+  text-decoration: none;
+  margin-right: .5em;
+  &.active{
+    font-weight: bold;
+  }
+}
