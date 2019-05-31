@@ -1,8 +1,9 @@
-import { SubmissionsComponent } from './submissions.component';
+import { ModuleWithProviders } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { SubmissionsComponent } from './submissions.component';
 
 const routes = [
   { path: '', component: SubmissionsComponent }
 ];
 
-export default RouterModule.forChild(routes);
+export const submissionsRoutes: ModuleWithProviders = RouterModule.forChild(routes);

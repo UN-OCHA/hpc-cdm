@@ -1,8 +1,9 @@
+import { ModuleWithProviders } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
 import { FormsComponent } from './forms.component';
-import { RouterModule } from '@angular/router';
 
-const routes = [
+const routes: Routes = [
   { path: '', component: FormsComponent }
 ];
 
-export default RouterModule.forChild(routes);
+export const formsRoutes: ModuleWithProviders = RouterModule.forChild(routes);
