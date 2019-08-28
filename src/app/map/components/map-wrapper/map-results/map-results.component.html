@@ -43,7 +43,12 @@
         EDIT
       </button>
       <div class="dropdown-menu">
-        <a *ngFor="let eP of operation.entityPrototypes" class="dropdown-item" href="#">{{ eP.value.name.en.plural }}</a>
+        <a class="dropdown-item" href="#">Operations</a>
+        <a class="dropdown-item" href="#">Operations details</a>
+        <span *ngFor="let eP of operation.entityPrototypes">
+          <a class="dropdown-item" href="#">{{ eP.value.name.en.plural }}</a>
+          <a class="dropdown-item" href="#">{{ eP.value.name.en.plural }} details</a>
+        </span>
       </div>
     </div>
     <div class="btn-group dropdown ml-2">

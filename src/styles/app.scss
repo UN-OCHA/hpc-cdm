@@ -1,5 +1,4 @@
-  @import "./variables";
-
+@import "./variables";
 @import "./theme-bootstrap-app";
 
 html,
@@ -332,7 +331,6 @@ textarea {
 
 @import "../../node_modules/bootstrap/scss/bootstrap";
 
-@import "./components/reports";
 @import "./components/create-project";
 @import "./components/admin";
 @import "./components/header";
