@@ -21,7 +21,7 @@
 
 </div>
 
-<div class="p-4" *ngIf="!cdmResults.length">
+<div class="p-4" *ngIf="!cdmResults.length && !working">
   <p>You currently have no operations. Click here to create a <a class="btn btn-outline-secondary" routerLink="/operation/create">{{ 'New Operation' | translate }}</a></p>
 </div>
   <div class="p-4 border-bottom" *ngFor="let operation of cdmResults" [ngClass]="{'bg-light': operation.selected}">
