@@ -1,0 +1,19 @@
+@media print {
+  .reports {
+    .tab-content > .tab-pane {
+      display: block;
+    }
+
+    .nav-tabs>li.nav-item {
+      display: none;
+    }
+
+    .statistic {
+    	max-width: none;
+    }
+  }
+
+  .sidebar {
+    display: none;
+  }
+}

@@ -1,0 +1,5 @@
+<small class="text-danger" *ngIf="parentForm && parentForm.form.controls && parentForm.form.controls[fieldName] && parentForm.form.controls[fieldName].errors">
+  <span *ngIf="parentForm.form.controls[fieldName].errors.required">This field is required.</span>
+  <span *ngIf="parentForm.form.controls[fieldName].errors.email">This field is not a valid e-mail.</span>
+  <span *ngIf="parentForm.form.controls[fieldName].errors.pattern">The value you entered isn't valid.</span>
+</small>

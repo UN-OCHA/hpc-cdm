@@ -1,8 +1,5 @@
-<div class="app">
-<nav>
-  <a routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>
-  <a routerLink="forms" routerLinkActive="active">Forms</a>
-  <a routerLink="submissions" routerLinkActive="active">Submissions</a>
-</nav>
-<router-outlet></router-outlet>
+<app-header></app-header>
+<div class="content">
+    <router-outlet></router-outlet>
 </div>
+

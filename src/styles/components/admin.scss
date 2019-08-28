@@ -1,0 +1,26 @@
+.admin {
+  [type="checkbox"] {
+    display: inline-block;
+    vertical-align: bottom;
+  }
+
+  .relation-toggle {
+    cursor: pointer;
+  }
+
+  textarea {
+    height: 100px;
+  }
+}
+.loaderMainPanel {position:absolute; background-color: rgba(128,128,128,0.6); top:0; right:0; bottom:0; left:0; z-index: 150;}
+.project-page-loader {
+    clear: both;
+    font-size: 5rem;
+    text-align: center;
+    margin-top: 5rem;
+    position: absolute;
+    width: 100%;
+    display: block;
+    z-index: 9999;
+    top:30%;
+  }

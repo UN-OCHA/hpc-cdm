@@ -1,0 +1,12 @@
+.center {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.link {
+  cursor: pointer;
+}
+
+li[role="menuitem"] a:hover {
+  background-color: lightgrey;
+}

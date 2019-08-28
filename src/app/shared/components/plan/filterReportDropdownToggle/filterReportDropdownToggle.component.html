@@ -1,0 +1,15 @@
+<span dropdown container="body">
+  <button dropdownToggle type="button" class="btn btn-outline-primary dropdown-toggle">
+    {{ dropdownTitle }} ({{filterSelectedArray.length}}) <span class="caret"></span>
+  </button>
+  <ul *dropdownMenu class="dropdown-menu" role="menu">
+    <li class="menuitem"
+      *ngFor="let filter of filterBy">
+      <a class="dropdown-item"
+        (click)="updateSelected(filter)">
+        <i class="fa" [ngClass]="{'fa-check-square-o': filter.selected, 'fa-square-o': !filter.selected}"></i>
+        {{ filter.name }}
+      </a>
+    </li>
+  </ul>
+</span>

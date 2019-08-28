@@ -1,0 +1,57 @@
+<table class="table table-sm scrollme">
+  <thead>
+    <tr>
+      <th>
+        By {{ groupBy | unCamelCase }}
+      </th>
+      <th class="number">
+        # of Projects
+      </th>
+      <th class="number">
+        Original Requirements
+      </th>
+      <th class="number">
+        Revised Requirements
+      </th>
+      <th class="number">
+        Running Requirements
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let group of results">
+      <td>
+        {{ group[nameKey] || 'Not specified' }}
+      </td>
+      <td class="number">
+        <!-- <a *ngIf="group[idKey]"
+          [routerLink]="['/plan', planId, 'report', groupBy, group[idKey]]"
+          [queryParams]="{filterByStatus: filterByStatus.join(',')}">
+          {{ group.projectCount }}
+        </a>
+        <span *ngIf="!group[idKey]">
+          <a *ngIf="nameKey==='workflowStatusName'"
+            [routerLink]="['/plan', planId, 'report', groupBy, group[nameKey]]">
+            {{ group.projectCount }}
+          </a> -->
+          <!-- <span *ngIf="nameKey !== 'workflowStatusName'"> -->
+            <!-- TODO: can we link this up? Need the endpoint to work with 'none' -->
+            {{ group.projectCount }}
+          <!-- </span> -->
+        <!-- </span> -->
+      </td>
+      <td class="number">
+        {{ group.sumOrigReqFunds | currency:'USD':'symbol':'1.0-0' }}
+      </td>
+      <td class="number">
+        {{ group.sumCurrReqFunds | currency:'USD':'symbol':'1.0-0' }}
+      </td>
+      <td class="number">
+        {{ group.sumLatestReqFunds | currency:'USD':'symbol':'1.0-0' }}
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div *ngIf="results && !results.length">
+  No results found
+</div>

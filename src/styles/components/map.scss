@@ -1,0 +1,455 @@
+@import "variables.scss";
+
+.map-container {
+  .results {
+    height: 100%;
+    overflow: scroll;
+
+   .custom-select {
+      width: auto;
+      height: 1.3rem;
+      line-height: 1.3rem;
+      margin: 0;
+      padding-top: 0;
+      padding-bottom: 0.2rem;
+    }
+    .search-stats {
+      li {
+        display: inline-block;
+        font-weight: bold;
+        font-size: 0.8rem;
+      }
+    }
+
+    .search-stats + span select {
+      width: 280px;
+    }
+  }
+
+.sidebar {
+  padding: 0;
+  background-color: darken($white, 2%);
+  height: 100%;
+  overflow: scroll;
+
+  h2 {
+    font-size: 1rem;
+  }
+  h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+  }
+  a {
+    color: $dark_grey;
+    cursor: pointer;
+  }
+
+  & div,
+  & label,
+  & input {
+    background-color: darken($white, 2%);
+  }
+
+  .search-toggle {
+    width: 100%;
+    text-align: center;
+    display: flex;
+  }
+
+  .toggle {
+    font-size: 2rem;
+    width: 100%;
+    display: block;
+    border-bottom: 2px $grey solid;
+
+    &.active {
+      border-bottom: 2px darken($grey, 20%) solid;
+    }
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    display: inline-block;
+    vertical-align: bottom;
+  }
+
+  .panel {
+    text-transform: uppercase;
+    font-weight: bold;
+    border: 0;
+
+    .panel-title {
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .org-select {
+      text-transform: none;
+      font-weight: lighter;
+    }
+  }
+
+  .filters {
+    color: $dark_grey;
+    font-size: 1rem;
+
+    li {
+      padding: 0;
+      white-space: nowrap;
+      @media (min-width: 1600px) {
+        white-space: normal;
+      }
+
+      li {
+        white-space: nowrap;
+        @media (min-width: 1800px) {
+          white-space: normal;
+        }
+      }
+    }
+
+    i {
+      margin-right: .5rem;
+    }
+
+    label {
+      max-width: 80%;
+      overflow: hidden;
+      display: inline-grid;
+    }
+  }
+
+  input[type="text"] {
+    border: 1px solid;
+  }
+
+  .form-group {
+    position: relative;
+
+    input {
+      border: 0;
+      border-bottom: 2px solid $grey;
+      transition: $transition border-bottom;
+      width: 70%;
+
+      & + div.input-group-append {
+        width: 30%;
+      }
+
+      &:focus {
+        border-bottom: 2px solid darken($grey, 20%) solid;
+      }
+
+      &.input-filled + label,
+      &:focus + label {
+        top: -1.0rem;
+        opacity: 1;
+      }
+    }
+
+    label {
+      font-weight: normal;
+      pointer-events: none;
+      transition: $transition top, $transition opacity;
+      position: absolute;
+      left: .5rem;
+      top: .5rem;
+      opacity: .8;
+      font-size: 1rem;
+    }
+  }
+
+  .btn-group {
+    display: flex;
+
+    .btn {
+      flex: 1;
+    }
+  }
+
+  ul {
+    padding-left: 0;
+    list-style: none;
+
+    ul {
+      padding: 0 0 0 1rem;
+      font-weight: normal;
+
+      label {
+        max-width: 86%;
+      }
+    }
+
+    i {
+      cursor: pointer;
+    }
+
+    label {
+      font-weight: normal;
+      text-transform: capitalize;
+      margin-bottom: 0;
+      cursor: pointer;
+      max-width: 87%;
+      vertical-align: top;
+    }
+  }
+  .map-toggle {
+    color: $orange;
+  }
+}
+}
+
+split-gutter {
+  height: 15% !important;
+}
+
+.map-view {
+  padding: 0;
+}
+
+app-map-wrapper,
+.map-view,
+.map-container,
+.map-container > .row,
+.map-container > .row .map-results {
+  height: 100%;
+  //display: block;
+}
+
+
+.map-results {
+  app-map-results {
+    height: 100%;
+    display: block;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cdk-virtual-scroll-viewport {
+    height: 100%;
+  }
+
+  .header-results {
+    padding: 1rem 2rem;
+  }
+
+  .sort,
+  .details-toggle,
+  .toggle-table-view {
+    display: inline-block;
+  }
+
+  .details {
+    color: $orange;
+  }
+
+  h2 {
+    font-weight: bold;
+    font-size: 18px;
+    display: inline-block;
+  }
+
+  h3 {
+    margin-top: 5px;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    font-weight: bold;
+    color: black;
+  }
+  h5 {
+    font-size: .8em;
+    text-transform: uppercase;
+  }
+  ul {
+   list-style: none;
+   padding-left: 0;
+  }
+  .nopadding {
+    padding-left:0px;
+    padding-right:0px;
+  }
+  .funding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    p {
+      color: black;
+      font-size: 0.8rem;
+    }
+  }
+  .target {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    p {
+      color: black;
+      font-size: 0.8em;
+    }
+  }
+  .governing-entities {
+    ul {
+      font-size: 0.8rem;
+    }
+  }
+  .organizations {
+    ul {
+      list-style: disc;
+      font-size: 0.8rem;
+    }
+  }
+  .fa-pulse {
+    position: relative;
+    left: 50%;
+    margin: 150px 0px 0px -50px;
+  }
+  .last-updated {
+    float: right;
+    color: lightgray;
+    font-size: smaller;
+  }
+
+  .cluster-img {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+  .table-header {
+    font-size:0.8rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    a {
+      text-transform: none;
+    }
+  }
+
+  .table-code {
+    font-size: 0.8rem;
+  }
+
+  .table-name {
+    color: $orange;
+    font-weight: bold;
+  }
+
+  .sort-title {
+    color: $light-grey;
+    font-size:0.7rem;
+    text-transform: uppercase;
+  }
+
+  .not-editable {
+    opacity: .5;
+  }
+  .table-view-status {
+    display: inline-block;
+  }
+  .scrollme {
+    overflow-y: scroll;
+  }
+}
+
+.admin-level-selector {
+  position: absolute;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 99999;
+  background-color: $white;
+
+  li {
+    display: inline-block;
+    padding: 1.5rem;
+    border-bottom: 2px;
+    cursor: pointer;
+
+    &.admin-0 {
+      border-bottom: $admin0 solid;
+    }
+
+    &.admin-1 {
+      border-bottom: $admin1 solid;
+    }
+
+    &.admin-2 {
+      border-bottom: $admin2 solid;
+    }
+
+    &.admin-3 {
+      border-bottom: $admin3 solid;
+    }
+
+    &.admin-4 {
+      border-bottom: $admin4 solid;
+    }
+
+    &.admin-5 {
+      border-bottom: $admin5 solid;
+    }
+  }
+}
+
+.table-responsive {
+  height: 100%;
+}
+
+.dropdown-wrapper {
+  position: relative;
+}
+
+.loading {
+  opacity: .5;
+  pointer-events: none;
+}
+
+.map-marker,
+.marker-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-left: -14px;
+  margin-top: -14px;
+  color: $white;
+  border-radius: 100%;
+  background-color: $admin0;
+  border: 1px solid $white;
+  box-shadow: $shadow;
+
+  &.admin-0 {
+    background-color: $admin0;
+  }
+
+  &.admin-1 {
+    background-color: $admin1;
+  }
+
+  &.admin-2 {
+    background-color: $admin2;
+    color: $cd-dark-text-color;
+  }
+
+  &.admin-3 {
+    background-color: $admin3;
+  }
+
+  &.admin-4 {
+    background-color: $admin4;
+  }
+
+  &.admin-5 {
+    background-color: $admin5;
+  }
+}
+
+
+i{ vertical-align: middle !important; }
+
+div.popover-body {
+  li.clickable {
+    padding-bottom: 1em;
+  }
+  li.clickable:hover{
+    background-color: lightgrey;
+  }
+}

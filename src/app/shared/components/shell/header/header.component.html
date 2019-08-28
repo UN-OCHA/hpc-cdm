@@ -1,0 +1,141 @@
+<div class="container-fluid global-header">
+  <nav class="navbar navbar-expand-lg">
+    <span class="logo" aria-hidden="true"></span>
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item dropdown ocha-menu">
+         <div class="dropdown-menu w-100 services" aria-labelledby="navbarDropdown">
+           <div class="container-fluid"><div class="row">
+            <div class="col">
+              <p class="border-bottom">Data Sharing Services</p>
+              <ul>
+                <li class="dropdown-item">
+                  <a href="https://data.humdata.org/" class="cd-sites-dropdown__link">
+                    <span class="cd-sites-dropdown__link-label">Humanitarian Data Exchange</span>
+                    <span class="cd-sites-dropdown__logo cd-sites-dropdown__logo--hdx"></span>
+                  </a>
+                </li>
+              </ul>
+
+              <p class="border-bottom">Financial Contribution &amp; Pooled Funds</p>
+              <ul>
+                <li class="dropdown-item">
+                  <a href="https://cerf.un.org/" class="cd-sites-dropdown__link">
+                    <span class="cd-sites-dropdown__link-label">Central Emergency Response Fund</span>
+                    <span class="cd-sites-dropdown__logo cd-sites-dropdown__logo--cerf"></span>
+                  </a>
+                </li>
+                <li class="dropdown-item">
+                  <a href="https://fts.unocha.org/" class="cd-sites-dropdown__link">
+                    <span class="cd-sites-dropdown__link-label">Financial Tracking Services</span>
+                    <span class="cd-sites-dropdown__logo cd-sites-dropdown__logo--fts"></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="col">
+              <p class="border-bottom">Response Coordination &amp; Crisis Information</p>
+              <ul>
+                <li class="dropdown-item">
+                  <a href="https://events.rwlabs.org/" class="cd-sites-dropdown__link">
+                    <span class="cd-sites-dropdown__link-label">Humanitarian Events</span>
+                    <span class="cd-sites-dropdown__logo cd-sites-dropdown__logo--events"></span>
+                  </a>
+                </li>
+                <li class="dropdown-item">
+                  <a href="https://humanitarian.id/" class="cd-sites-dropdown__link">
+                    <span class="cd-sites-dropdown__link-label">Humanitarian ID</span>
+                    <span class="cd-sites-dropdown__logo cd-sites-dropdown__logo--hid"></span>
+                  </a>
+                </li>
+                <li class="dropdown-item">
+                  <a href="https://humanitarianresponse.info/" class="cd-sites-dropdown__link">
+                    <span class="cd-sites-dropdown__link-label">Humanitarian Response</span>
+                    <span class="cd-sites-dropdown__logo cd-sites-dropdown__logo--hrinfo"></span>
+                  </a>
+                </li>
+                <li class="dropdown-item">
+                  <a href="https://vosocc.unocha.org/" class="cd-sites-dropdown__link">
+                    <span class="cd-sites-dropdown__link-label">Virtual OSOCC</span>
+                    <span class="cd-sites-dropdown__logo cd-sites-dropdown__logo--vosocc"></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="col">
+              <p class="border-bottom">Corporate Information, Activities &amp; More</p>
+              <ul>
+                <li class="dropdown-item">
+                  <a href="https://www.interagencystandingcommittee.org/" class="cd-sites-dropdown__link">
+                    <span class="cd-sites-dropdown__link-label">Inter Agency Standing Committee</span>
+                    <span class="cd-sites-dropdown__logo cd-sites-dropdown__logo--iasc"></span>
+                  </a>
+                </li>
+                <li class="dropdown-item">
+                  <a href="http://unocha.org/" class="cd-sites-dropdown__link">
+                    <span class="cd-sites-dropdown__link-label">United Nations OCHA</span>
+                    <span class="cd-sites-dropdown__logo cd-sites-dropdown__logo--ocha"></span>
+                  </a>
+                </li>
+              </ul>
+
+              <p class="border-bottom">Gateway to all OCHA services</p>
+              <ul>
+                <li class="dropdown-item">
+                  <a href="https://reliefweb.int/" class="cd-sites-dropdown__link">
+                    <span class="cd-sites-dropdown__link-label">ReliefWeb</span>
+                    <span class="cd-sites-dropdown__logo cd-sites-dropdown__logo--rw"></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          </div>
+         </div>
+      </li>
+    </ul>
+    <div class="language-selector my-2 my-lg-0">
+        <div class="dropdown">
+          <a  class="dropdown-toggle"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false">
+            {{ selectedLanguage }}
+          </a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+          	<a (click)="setLanguage('en')" class="link dropdown-item" id="profile"> EN </a>
+          </div>
+        </div>
+    </div>
+    <div class="my-2 my-lg-0">
+      <app-login class="login"></app-login>
+    </div>
+  </nav>
+</div>
+
+<div class="container-fluid header border-bottom">
+  <nav class="mt-2 mb-1 navbar navbar-expand-lg">
+    <div class="navbar-brand mr-auto mt-2 mt-lg-0">
+      <h1 class="border border-dark app-name"><a class="p-4 text-uppercase" routerLink="/map" routerLinkActive="active">{{title}} <span class="text-sm">{{ appVersion }}</span></a></h1>
+    </div>
+    <div>
+      <ul class="navbar-nav">
+      <li *ngIf="authService.verifiedUser" class="border-left nav-item px-3 d-flex align-items-center">
+        <a routerLink="/admin/blueprints">{{ 'Operation blueprints' | translate }}</a>
+      </li>
+      <li *ngIf="authService.verifiedUser" class="border-left nav-item px-3 d-flex align-items-center">
+        <a routerLink="/operation/create">{{ 'New operation' | translate }}</a>
+      </li>
+      <li *ngIf="authService.verifiedUser" class="border-left nav-item px-3 d-flex align-items-center">
+        <a routerLink="/admin/participants">{{ 'Participants' | translate }}</a>
+      </li>
+      <li class="border-left nav-item px-3 d-flex align-items-center">
+        <a target="_blank" href="https://www.humanitarianresponse.info/">{{ 'Help' | translate }}</a>
+      </li>
+      <li class="border-left nav-item"><app-api-state class="api-state"></app-api-state></li>
+    </ul>
+    </div>
+  </nav>
+</div>

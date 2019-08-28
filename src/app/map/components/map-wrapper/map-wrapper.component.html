@@ -1,0 +1,19 @@
+<div class="container-fluid map-container h-100">
+  <div *ngIf="loading"
+      class="project-page-loader">
+    <i class="fa fa-circle-o-notch fa-spin"></i>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 map-results" >
+      <app-map-results
+        [pagination]="pagination"
+        [cdmResults]="cdmResults"
+        [query]="query"
+        [searchOptions]="searchOptions"
+        [working]="working"
+        (onDoSearch)="doSearch()"
+        (onSelectProject)="setSelectedProject($event)">
+      </app-map-results>
+    </div>
+  </div>
+</div>
