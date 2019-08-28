@@ -5,15 +5,87 @@
   </div>
   <div class="row">
     <div class="col-lg-12 map-results" >
-      <app-map-results
-        [pagination]="pagination"
-        [cdmResults]="cdmResults"
-        [query]="query"
-        [searchOptions]="searchOptions"
-        [working]="working"
-        (onDoSearch)="doSearch()"
-        (onSelectProject)="setSelectedProject($event)">
-      </app-map-results>
+
+<div class="header-results border-bottom sticky-top bg-light" *ngIf="cdmResults">
+  <div class="row" *ngIf="cdmResults && cdmResults.length">
+    <div class="col-lg-10">
+      <ul class="search-stats d-inline-block mb-0 pt-1">
+        <li>
+          {{ cdmResults.length }} Operations
+        </li>
+      </ul>
+    </div>
+    <div class="col-lg-2">
+      <a class="btn btn-primary" routerLink="/operation/create">{{ 'New operation' | translate }}</a>
+    </div>
+  </div>
+
+
+</div>
+
+<div class="p-4" *ngIf="!cdmResults.length && !working">
+  <p>You currently have no operations. Click here to create a <a class="btn btn-outline-secondary" routerLink="/operation/create">{{ 'New Operation' | translate }}</a></p>
+</div>
+  <div class="p-4 border-bottom" *ngFor="let operation of page" [ngClass]="{'bg-light': operation.selected}">
+    <div class="row">
+      <div class="project col-lg-9">
+        <small class="meta">
+          {{ operation.code }}
+        </small>
+        <h3>{{ operation.planVersion.name }}</h3>
+        <small>
+          <i class="material-icons" aria-hidden="true">calendar_today</i> {{ operation.planVersion.startDate | date:'mediumDate':'UTC' }} - {{ operation.planVersion.endDate | date:'mediumDate':'UTC' }}
+        </small>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Example single danger button -->
+    <div class="btn-group dropdown ml-2">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        EDIT
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#">Operations</a>
+        <a class="dropdown-item" href="#">Operations details</a>
+        <span *ngFor="let eP of operation.entityPrototypes">
+          <a class="dropdown-item" href="#">{{ eP.value.name.en.plural }}</a>
+          <a class="dropdown-item" href="#">{{ eP.value.name.en.plural }} details</a>
+        </span>
+      </div>
+    </div>
+    <div class="btn-group dropdown ml-2">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        SUBMIT DATA
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="#">New reporting window</a>
+      </div>
+
+    </div>
+    <div class="btn-group dropdown ml-2">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        CONFIGURATION
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="#">Entities</a>
+        <a class="dropdown-item" href="#">Attachments</a>
+      </div>
+
+    </div>
+    <div class="btn-group dropdown ml-2">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        STATES
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="#">Publishing & Versions</a>
+      </div>
+    </div>
+    </div>
+    <span class="last-updated">
+      Last updated on {{ operation.updatedAt | date:'mediumDate' }}
+    </span>
+  </div>
+  <pagination *ngIf="cdmResults.length && ! working"  [itemsPerPage]="10" [totalItems]="cdmResults.length" [maxSize]="10" [(ngModel)]="currentPage"></pagination>
     </div>
   </div>
 </div>

@@ -1,13 +1,13 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 
 import { ApiService } from 'app/shared/services/api/api.service';
 
 @Component({
   selector: 'app-map-wrapper',
   templateUrl: './map-wrapper.component.html',
-  encapsulation: ViewEncapsulation.None
 })
 export class MapWrapperComponent implements OnInit {
 
@@ -33,10 +33,10 @@ export class MapWrapperComponent implements OnInit {
 
   public isClusterLead: boolean | any = false;
 
-  public pagination: any;
   public savedSearches = [];
 
-  public projectSearchSubscription;
+  public currentPage = 1;
+  public page = [];
 
   public options;
   public searchOptions;
@@ -54,10 +54,6 @@ export class MapWrapperComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.searchOperations();
-  }
-
-  public searchOperations (filter?: string) {
     delete this.query.date;
 
     this.query.date = {
@@ -65,17 +61,6 @@ export class MapWrapperComponent implements OnInit {
       end: moment().add(1, 'y').endOf('year').format('YYYY-MM-DD')
     }
 
-    this.doSearch();
-  }
-
-  public resetSearch () {
-    this.pagination = null;
-  }
-
-  public doSearch(passedObject?) {
-    if (this.projectSearchSubscription) {
-      this.projectSearchSubscription.unsubscribe();
-    }
     this.cdmResults = [];
     this.working = true;
 
@@ -86,25 +71,24 @@ export class MapWrapperComponent implements OnInit {
 
     this.loading = true;
 
-    this.projectSearchSubscription = this.apiService.getPlans(options)
+    this.apiService.getPlans(options)
       .subscribe(results => {
-        console.log(results);
         this.cdmResults = results;
         this.loading = false;
 
-        this.processSearchResults(this.cdmResults);
+        //this.processSearchResults(this.cdmResults);
 
-        this.pagination = results.pagination;
+        this.page = this.cdmResults.slice(0,10);
 
         this.working = false;
       });
   }
 
-  private processSearchResults (cdmResults) {
+  /*private processSearchResults (cdmResults) {
     cdmResults.forEach(cdm => {
       //console.log(cdm);
     });
-  }
+  }*/
 
   private getRelevantYear () {
     const thisMoment = moment();
@@ -113,6 +97,12 @@ export class MapWrapperComponent implements OnInit {
     } else {
       return thisMoment.year();
     }
+  }
+
+  pageChanged(event: PageChangedEvent): void {
+    const startItem = (event.page - 1) * event.itemsPerPage;
+    const endItem = event.page * event.itemsPerPage;
+    this.page = this.cdmResults.slice(startItem, endItem);
   }
 
 }
