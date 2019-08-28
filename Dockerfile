@@ -3,7 +3,7 @@ FROM unocha/nodejs-builder:8.11.3 AS builder
 WORKDIR /srv/src
 
 COPY . .
-ARG ENVIRONMENT=devServer
+ARG ENVIRONMENT=dev
 RUN npm install && \
   npm run build -- --output-path=/srv/src/dist --configuration=$ENVIRONMENT
 
