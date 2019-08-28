@@ -3,9 +3,9 @@ FROM unocha/nodejs-builder:8.11.3 AS builder
 WORKDIR /srv/src
 
 COPY . .
-
+ARG ENVIRONMENT=dev
 RUN npm install && \
-    ./node_modules/.bin/ng build --prod
+  npm run build -- --output-path=/srv/src/dist --configuration=$ENVIRONMENT
 
 FROM alpine:3.9
 
