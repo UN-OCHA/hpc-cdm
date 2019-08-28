@@ -1,0 +1,8 @@
+{{ location.name }}
+<ul *ngIf="location.children">
+  <li *ngFor="let child of location.children">
+    <app-location-and-children-list
+      [location]="child">
+    </app-location-and-children-list>
+  </li>
+</ul>

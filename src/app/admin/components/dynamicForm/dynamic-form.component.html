@@ -1,0 +1,24 @@
+<div>
+  <form (ngSubmit)="onSubmit()" [formGroup]="form" class="bg-light my-3 p-3">
+
+    <div *ngFor="let question of questions" class="mb-3">
+      <app-question
+        *ngIf="!question.notVisible"
+        [disabled]="question.key !== parentKey || question.notEditable"
+        [question]="question"
+        [form]="form"
+        ></app-question>
+    </div>
+
+    <div class="form-row">
+      <button type="submit"
+        [disabled]="!form.valid"
+        class="btn btn-primary">Save</button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="onDelete()"
+        *ngIf="objectId">Delete</button>
+    </div>
+  </form>
+</div>

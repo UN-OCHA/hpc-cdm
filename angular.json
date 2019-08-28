@@ -1,9 +1,9 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
-  "newProjectRoot": "projects",
+  "newProjectRoot": "cdm",
   "projects": {
-    "cdm": {
+    "ngShell": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/cdm",
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -27,19 +27,25 @@
               "src/assets"
             ],
             "styles": [
-              "src/sass/styles.scss"
+              "src/styles/c3.min.css",
+              "node_modules/ngx-toastr/toastr.css",
+              "src/styles/font-awesome.min.css",
+              "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
+              "src/styles/app.scss"
             ],
             "scripts": [],
             "es5BrowserSupport": true
           },
           "configurations": {
-            "production": {
+            "devServer": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "with": "src/environments/environment.devServer.ts"
                 }
-              ],
+              ]
+            },
+            "stage": {
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -49,8 +55,77 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-              "budgets": [
+              "serviceWorker": true,
+              "ngswConfigPath": "src/ngsw-config.json",
+              "fileReplacements": [
                 {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.stage.ts"
+                }
+              ]
+            },
+            "demo": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "serviceWorker": true,
+              "ngswConfigPath": "src/ngsw-config.json",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.demo.ts"
+                }
+              ]
+            },
+            "prod": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "serviceWorker": true,
+              "ngswConfigPath": "src/ngsw-config.json",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "test": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.test.ts"
+                }
+              ]
+            },
+            "travisTest": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "serviceWorker": true,
+              "ngswConfigPath": "src/ngsw-config.json",
+              "fileReplacements": [
+                {
+ 		  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.travisTest.ts",
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
@@ -62,18 +137,33 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "cdm:build"
+            "browserTarget": "ngShell:build"
           },
           "configurations": {
-            "production": {
-              "browserTarget": "cdm:build:production"
+            "devServer": {
+              "browserTarget": "ngShell:build:devServer"
+            },
+            "stage": {
+              "browserTarget": "ngShell:build:stage"
+            },
+            "demo": {
+              "browserTarget": "ngShell:build:demo"
+            },
+            "prod": {
+              "browserTarget": "ngShell:build:production"
+            },
+            "test": {
+              "browserTarget": "ngShell:build:test"
+            },
+            "travisTest": {
+              "browserTarget": "ngShell:build:travisTest"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "cdm:build"
+            "browserTarget": "ngShell:build"
           }
         },
         "test": {
@@ -84,7 +174,11 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
-              "src/sass/styles.scss"
+              "src/styles/c3.min.css",
+              "src/styles/ng2-toastr.min.css",
+              "src/styles/font-awesome.min.css",
+              "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
+              "src/styles/app.scss"
             ],
             "scripts": [],
             "assets": [
@@ -107,34 +201,44 @@
         }
       }
     },
-    "cdm-e2e": {
-      "root": "e2e/",
+    "ngShell-e2e": {
+      "root": "e2e",
+      "sourceRoot": "e2e",
       "projectType": "application",
       "prefix": "",
       "architect": {
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "cdm:serve"
+            "protractorConfig": "./protractor.conf.js",
+            "devServerTarget": "ngShell:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "cdm:serve:production"
+              "devServerTarget": "ngShell:serve"
             }
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "tsConfig": [
+              "e2e/tsconfig.e2e.json"
+            ],
+            "exclude": []
           }
         }
       }
     }
   },
-  "defaultProject": "cdm"
+  "defaultProject": "ngShell",
+  "schematics": {
+    "@schematics/angular:component": {
+      "prefix": "app",
+      "styleext": "scss"
+    },
+    "@schematics/angular:directive": {
+      "prefix": "app"
+    }
+  }
 }

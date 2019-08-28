@@ -1,0 +1,52 @@
+<div class="container admin">
+  <div class="row">
+    <div class="col-md-8">      
+    <input [(ngModel)]="selectedOrganizationName"
+    [typeahead]="dataSource"
+    [typeaheadItemTemplate]="myCustomItemTemplate"
+    (typeaheadOnSelect)="typeaheadOnSelectParticipant($event)"
+    (typeaheadNoResults)="changeTypeaheadParticipantNoResults($event)"
+    typeaheadMinLength="3"
+    placeholder="Enter Participant."
+    name="mainOrganization"
+    class="form-control inputStart"
+    autocomplete="off"
+    disabled="{{!dataLoaded}}"> 
+    <div *ngIf="typeaheadParticipantNoResults" class="" style="">
+        <i class="fa fa-remove"></i> {{ 'No Results Found' }}
+      </div>
+    <div class="container"> 
+      <table *ngIf="organizations?.length > 0" class="table table-striped table-hover">
+        <tr>
+          <th>Organization Name</th>
+          <th>Is Validated</th>
+          <th>Action</th>
+        </tr>
+        <tr *ngFor="let organization of organizations">
+          <td>{{organization.abbreviation}}</td>
+          <td>{{organization.participantOrganization.validated}}</td>
+          <td><input type="checkbox" [checked]="organization.participantOrganization.validated" (click)="updateOrgnizationStatus(organization)" title="Click to validate"></td>
+        </tr>
+      </table>
+    </div>  
+    <div class="container">
+      <table *ngIf="countries?.length > 0" class="table table-striped table-hover">
+          <tr>
+            <th>Country Name</th>
+            <th>Is Validated</th>
+            <th>Action</th>
+          </tr>
+          <tr *ngFor="let country of countries">
+            <td>{{country.name}}</td>
+            <td>{{country.participantCountry.validated}}</td>
+            <td><input type="checkbox" (click)="updateCountryStatus(country)" [checked]="country.participantCountry.validated" title="Click to validate"></td>
+          </tr>
+        </table>   
+      </div>  
+    </div>  
+    
+    </div>
+    </div>
+    <ng-template #myCustomItemTemplate let-model="item" let-index="index">
+        <span>  {{model.name_given }} {{model.name_family }}</span>
+    </ng-template>

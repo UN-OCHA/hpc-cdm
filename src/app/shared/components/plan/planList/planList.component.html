@@ -1,0 +1,73 @@
+<div class="container reports">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1>Response Plans</h1>
+      <select class="form-control">
+        <option value="2018">2018</option>
+      </select>
+      <table>
+        <thead>
+         <tr>
+           <th>Response plan name</th>
+           <th>Start Date</th>
+           <th>End Date</th>
+           <th class="number"># of projects</th>
+           <th class="number"># of published Projects</th>
+           <th class="number">Original requirements</th>
+           <th class="number">Revised requirements</th>
+           <th class="number">Running requirements</th>
+           <th class="number">Reports</th>
+         </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let plan of plans">
+            <td class="text">
+              <a class="dropdown-item" routerLink="/plan/{{plan.id}}/report" routerLinkActive="active">
+                {{plan.name}}
+              </a>
+            </td>
+            <td class="text">{{plan.startDate| date:'shortDate'}}</td>
+            <td class="text">{{plan.endDate| date:'shortDate'}}</td>
+            <td class="number">{{plan.projectCount}}</td>
+            <td class="number">{{plan.projectPublishedCount}}</td>
+            <td class="number">{{plan.sumOrigReqFunds| currency:'USD':'symbol':'1.0-0'}}</td>
+            <td class="number">{{plan.sumCurrReqFunds| currency:'USD':'symbol':'1.0-0'}}</td>
+            <td class="number">{{plan.sumLatestReqFunds| currency:'USD':'symbol':'1.0-0'}}</td>
+            <td>
+              <div class="btn-group" dropdown>
+                <button dropdownToggle type="button" class="btn btn-outline-primary dropdown-toggle">
+                  Report <span class="caret"></span>
+                </button>
+                <ul *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
+                  <i class="fa" [ngClass]="{'fa-spinner fa-pulse':  plan.loadingExport}"></i>
+                  <li role="menuitem">
+                    <a class="dropdown-item" routerLink="/plan/{{plan.id}}/report" routerLinkActive="active">Plan overview</a>
+                  </li>
+                  <li class="divider dropdown-divider" aria-hidden="true"></li>
+                  <li role="menuitem">
+                    <a (click)="exportSumIndicatorTarget(plan)" class="link dropdown-item"><i class="fa fa-download"></i> Sum of project indicator targets (Excel)</a>
+                  </li>
+                  <li role="menuitem">
+                    <a (click)="exportIndicatorTargetList(plan)" class="link dropdown-item"><i class="fa fa-download"></i> Project indicator targets list (Excel)</a>
+                  </li>
+                  <li role="menuitem">
+                    <a (click)="exportCaseloadsOverview(plan)" class="link dropdown-item"><i class="fa fa-download"></i> Sum of project caseloads targets list (Excel)</a>
+                  </li>
+                  <li role="menuitem">
+                    <a (click)="exportCaseloadsDetail(plan)" class="link dropdown-item"><i class="fa fa-download"></i> Project caseloads targets list (Excel)</a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="center">
+        <i *ngIf="processing"
+          class="fa fa-spinner fa-pulse fa-5x"
+          aria-hidden="true">
+        </i>
+      </div>
+    </div>
+  </div>
+</div>

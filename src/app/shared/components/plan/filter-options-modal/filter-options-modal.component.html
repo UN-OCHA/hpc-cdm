@@ -1,0 +1,59 @@
+<button type="button"
+  class="btn btn-primary"
+  (click)="openModal(template)">Filter Options</button>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body filter-modal">
+    <!-- Add this back in for https://humanitarian.atlassian.net/browse/HPC-4826 <div class="row">
+      <span class="filter-label col-sm-4">
+        What fields should be filtered?
+      </span>
+      <span class="col-sm-8">
+        <app-filter-report-dropdown-toggle
+          [dropdownTitle]="'Choose Fields to Filter By'"
+          [filterBy]="filtersByField"
+          [triggerUpdate]="dataUpdatedObservable$"
+          (update)="filterOnFields($event)">
+        </app-filter-report-dropdown-toggle>
+      </span>
+    </div> -->
+    <div class="row status">
+      <span class="filter-label col-sm-4">Filter on Status:</span>
+
+      <span class="col-sm-8">
+        <app-filter-report-dropdown-toggle
+          *ngIf="filterByStatus"
+          [dropdownTitle]="'Project Status'"
+          [filterBy]="filterByStatus"
+          (update)="onStatusesUpdate.emit($event)">
+        </app-filter-report-dropdown-toggle>
+      </span>
+    </div>
+
+    <div *ngFor="let field of filtersByField" class="row field">
+      <div *ngIf="field.selected">
+        <span class="filter-label col-sm-4">
+          Filter on {{ field.name }}:
+        </span>
+        <span class="col-sm-8 filter">
+          <app-filter-report-dropdown-toggle
+            *ngIf="field.filters"
+            [dropdownTitle]="field.name"
+            [filterBy]="field.filters"
+            (update)="filterOnFields(filtersByField)">
+          </app-filter-report-dropdown-toggle>
+          <i class="fa fa-times" (click)="removeFieldFromSelectedFields(field)"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+</ng-template>
