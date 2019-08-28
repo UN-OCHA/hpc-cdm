@@ -85,7 +85,7 @@
       Last updated on {{ operation.updatedAt | date:'mediumDate' }}
     </span>
   </div>
-  <pagination *ngIf="cdmResults.length && ! working"  [itemsPerPage]="10" [totalItems]="cdmResults.length" [maxSize]="10" [(ngModel)]="currentPage"></pagination>
+  <pagination *ngIf="cdmResults.length && ! working"  [itemsPerPage]="10" [totalItems]="cdmResults.length" [maxSize]="10" [(ngModel)]="currentPage" (pageChanged)="pageChanged($event)"></pagination>
     </div>
   </div>
 </div>
