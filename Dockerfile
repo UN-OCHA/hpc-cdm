@@ -1,23 +1,17 @@
 FROM unocha/nodejs-builder:8.11.3 AS builder
-
 WORKDIR /srv/src
-
 COPY . .
 ARG ENVIRONMENT=dev
+# fix npm --no-bin-links recursion errors.
+# see https://github.com/npm/npm/issues/10776
+# see https://github.com/npm/npm/issues/9953
+# fix npm recursion errors by not using it.
+# see https://yarnpkg.com/lang/en/docs/migrating-from-npm/
+# see the whole internet :-)
 RUN npm install && \
   npm run build -- --output-path=/srv/src/dist --configuration=$ENVIRONMENT
-
-FROM alpine:3.9
-
-RUN apk add --update-cache \
-        nginx && \
-    mkdir -p /run/nginx && \
-    rm -rf /var/www/* && \
-    rm -rf /var/cache/apk/*
-
-COPY  --from=builder /srv/src/config/etc/nginx/conf.d /etc/nginx/conf.d
-COPY  --from=builder /srv/src/dist/cdm /var/www/html
-
+FROM unocha/nginx:1.14
+COPY  --from=builder /srv/src/dist/ /var/www/
+COPY  --from=builder /srv/src/env/etc/nginx/conf.d/default.conf /etc/nginx/conf.d/
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
-
 EXPOSE 80
