@@ -1,0 +1,41 @@
+<span class="comments-wrapper">
+  <i class="material-icons clickable pl-4 pr-3"
+    [popover]="commentTemplate"
+    placement="bottom"
+    containerClass="comments"
+    [outsideClick]="true">chat_bubble_outline</i>
+  <span class="comments-number">{{ comments.length }}</span>
+</span>
+
+<ng-template #commentTemplate>
+  <form class="p-3"
+    *ngIf="submittingComment && submittingComment.participantId && canAdd">
+    <div class="form-group">
+      <label for="enterNewComment">New comment:</label>
+      <textarea class="form-control"
+        name="comment content"
+        required
+        id="enterNewComment"
+        rows="3"
+        [(ngModel)]="submittingComment.content"></textarea>
+    </div>
+    <button *ngIf="!submitting"
+      type="submit"
+      class="btn btn-outline-primary mb-2"
+      (click)="submitComment()"
+      >Submit Comment</button>
+  </form>
+  <div class="p-2" *ngIf="loading">
+    fetching comments...
+  </div>
+  <ul class="list-group list-group-flush">
+    <li *ngFor="let comment of comments" class="list-group-item">
+      <h6 *ngIf="comment.participant" class="m-0">
+        {{comment.participant.name_given}} {{comment.participant.name_family}}
+      </h6>
+      <small>{{comment.createdAt | date:'yyyy/MM/dd hh:mm'}}</small>
+      <div [innerHTML]="comment.content | nl2br" class="mt-2">
+      </div>
+    </li>
+  </ul>
+</ng-template>

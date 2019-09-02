@@ -1,0 +1,22 @@
+<button class="btn btn-primary closeOperation"
+  routerLink="/filter"
+  type="button"
+  aria-label="Close Operation">
+  Close
+  <i class="glyphicon glyphicon-remove-circle" aria-hidden="true"></i>
+</button>
+<button  *ngIf="operation.editableByUser"
+  class="btn btn-primary saveOperation"
+  type="submit"
+  [disabled]="!operationForm.valid"
+  (click)="saveOperationClick(operation)"
+  aria-label="Save Operation">
+  <i *ngIf="processing"
+    class="fa fa-spinner fa-pulse" aria-hidden="true"></i>
+  <span *ngIf="!operation.exists">
+    {{ 'Create Operation' | translate }}
+  </span>
+  <span *ngIf="operation.exists">
+    {{ 'Save Operation' | translate }}
+  </span>
+</button>

@@ -207,68 +207,68 @@ export class ApiService {
     }
   }
 
-  public getPublicProject (id: number, scopes?: Array<string>): Observable<any> {
+  public getPublicOperation (id: number, scopes?: Array<string>): Observable<any> {
     let params;
     if (scopes) {
       params = {scope: scopes.join(',')}
     }
-    return this.getUrlWrapper(`v2/public/project/${id}`, params)
+    return this.getUrlWrapper(`v2/public/operation/${id}`, params)
   }
 
-  public getGoverningEntitiesForProject (id, getPublic = false): Observable<any> {
-    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : '' }project/${id}/governingEntities`);
+  public getGoverningEntitiesForOperation (id, getPublic = false): Observable<any> {
+    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : '' }operation/${id}/governingEntities`);
   }
 
-  public getGlobalClustersforProject (id, getPublic = false): Observable<any> {
-    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : '' }project/${id}/globalClusters`);
+  public getGlobalClustersforOperation (id, getPublic = false): Observable<any> {
+    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : '' }operation/${id}/globalClusters`);
   }
 
-  public getFulfillmentsForProject (id, getPublic = false): Observable<any> {
-    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : ''}project/${id}/fulfillments`);
+  public getFulfillmentsForOperation (id, getPublic = false): Observable<any> {
+    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : ''}operation/${id}/fulfillments`);
   }
 
-  public getProjectPlans (id, getPublic = false): Observable<any> {
-    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : ''}project/${id}/plans`);
+  public getOperationPlans (id, getPublic = false): Observable<any> {
+    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : ''}operation/${id}/plans`);
   }
 
-  public getSegmentsForProject (id): Observable<any> {
-    return this.getUrlWrapper('v2/public/project/' + id + '/segments');
+  public getSegmentsForOperation (id): Observable<any> {
+    return this.getUrlWrapper('v2/public/operation/' + id + '/segments');
   }
 
-  public getProjectFieldsForProject (id): Observable<any> {
-    return this.getUrlWrapper('v2/public/project/' + id + '/fields');
+  public getOperationFieldsForOperation (id): Observable<any> {
+    return this.getUrlWrapper('v2/public/operation/' + id + '/fields');
   }
 
-  public getWorkflowStatusForProject (id): Observable<any> {
-    return this.getUrlWrapper('v2/project/' + id + '/statuses');
+  public getWorkflowStatusForOperation (id): Observable<any> {
+    return this.getUrlWrapper('v2/operation/' + id + '/statuses');
   }
 
-  public getCommentsForProject (id): Observable<any> {
-    return this.getUrlWrapper('v2/project/' + id + '/comments');
+  public getCommentsForOperation (id): Observable<any> {
+    return this.getUrlWrapper('v2/operation/' + id + '/comments');
   }
 
-  public getProject(id: number, projectVersionId = 'latest'): Observable<any> {
+  public getOperation(id: number, operationVersionId = 'latest'): Observable<any> {
     let params;
-    if (projectVersionId && projectVersionId !== 'latest') {
-      params = {projectVersionId}
+    if (operationVersionId && operationVersionId !== 'latest') {
+      params = {operationVersionId}
     }
-    return this.getUrlWrapper('v2/project/' + id, {params});
+    return this.getUrlWrapper('v2/plan/' + id, {params});
   }
 
-  public getProjectVersion(id: number): Observable<any> {
-    return this.getUrlWrapper('v2/projectVersion/' + id);
+  public getOperationVersion(id: number): Observable<any> {
+    return this.getUrlWrapper('v2/operationVersion/' + id);
   }
 
-  public getProcedureStepsForVersions (planId, projectVersionIds): Observable<any> {
-    return this.getUrlWrapper(`v2/planProcedure/${planId}/projectVersionSteps`, {
+  public getProcedureStepsForVersions (planId, operationVersionIds): Observable<any> {
+    return this.getUrlWrapper(`v2/planProcedure/${planId}/operationVersionSteps`, {
       params: {
-        projectVersionIds
+        operationVersionIds
       }
     })
   }
 
-  public getPossibleActionsForProjects (ids: Array<number>): Observable<boolean> {
-    return this.getUrlWrapper('v2/project/possibleActions', {
+  public getPossibleActionsForOperations (ids: Array<number>): Observable<boolean> {
+    return this.getUrlWrapper('v2/operation/possibleActions', {
       params: {
         ids: ids.join(',')
       }
@@ -276,119 +276,128 @@ export class ApiService {
   }
 
   public publishLastVersion(id: number): Observable<any> {
-    return this.putToEndpoint(`v2/project/${id}/publish`)
+    return this.putToEndpoint(`v2/operation/${id}/publish`)
   }
 
   public unPublishLastVersion(id: number): Observable<any> {
-    return this.putToEndpoint(`v2/project/${id}/unpublish`)
+    return this.putToEndpoint(`v2/operation/${id}/unpublish`)
   }
 
-  public createProject(project): Observable<any> {
-    return this.postToEndpoint('v2/project', {
-      data: { data: project }
+  public createOperation(operation): Observable<any> {
+    return this.postToEndpoint('v1/plan/create', {
+      data: { plan: operation }
     });
   }
 
-  public saveProject(project): Observable<any> {
-    return this.putToEndpoint('v2/project/' + project.projectId, {
+  public saveOperation(operation): Observable<any> {
+    return this.putToEndpoint('v2/operation/' + operation.operationId, {
       data: {
-        data: project
+        data: operation
       }
     });
   }
 
-  public duplicateProject(projectId): Observable<any> {
-    return this.putToEndpoint(`v2/project/${projectId}/duplicateVersion`, {});
+  public duplicateOperation(operationId): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operationId}/duplicateVersion`, {});
   }
 
-  public setProjectContacts (project, contacts): Observable<any> {
-    return this.putToEndpoint(`v2/project/${project.id}/contacts`, {
+  public setOperationContacts (operation, contacts): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operation.id}/contacts`, {
       data: {
         contacts,
-        updatedAt: project.updatedAt
+        updatedAt: operation.updatedAt
       }
     });
   }
 
-  public setProjectOrganizations (project, organizationIds): Observable<any> {
-    return this.putToEndpoint(`v2/project/${project.id}/organizations`, {
+  public setOperationOrganizations (operation, organizationIds): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operation.id}/organizations`, {
       data: {
         organizationIds,
-        updatedAt: project.updatedAt
+        updatedAt: operation.updatedAt
       }
     });
   }
 
-  public setProjectFields (project, fields): Observable<any> {
-    return this.putToEndpoint(`v2/project/${project.id}/fields`, {
+  public setOperationFields (operation, fields): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operation.id}/fields`, {
       data: {
         fields,
-        updatedAt: project.updatedAt
+        updatedAt: operation.updatedAt
       }
     });
   }
 
-  public setProjectPlans (project, planIds): Observable<any> {
-    return this.putToEndpoint(`v2/project/${project.id}/plans`, {
+  public setOperationPlans (operation, planIds): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operation.id}/plans`, {
       data: {
         planIds,
-        updatedAt: project.updatedAt
+        updatedAt: operation.updatedAt
       }
     });
   }
 
-  public setProjectGoverningEntities (project, governingEntityIds): Observable<any> {
-    return this.putToEndpoint(`v2/project/${project.id}/governingEntities`, {
+  public setOperationGoverningEntities (operation, governingEntityIds): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operation.id}/governingEntities`, {
       data: {
         governingEntityIds,
-        updatedAt: project.updatedAt
+        updatedAt: operation.updatedAt
       }
     });
   }
 
-  public setProjectPlanEntities (project, planEntityIds): Observable<any> {
-    return this.putToEndpoint(`v2/project/${project.id}/planEntities`, {
+  public setOperationPlanEntities (operation, planEntityIds): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operation.id}/planEntities`, {
       data: {
         planEntityIds,
-        updatedAt: project.updatedAt
+        updatedAt: operation.updatedAt
       }
     });
   }
 
-  public setProjectLocations (project, locationIds): Observable<any> {
-    return this.putToEndpoint(`v2/project/${project.id}/locations`, {
+  public setOperationLocations (operation, locationIds): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operation.id}/locations`, {
       data: {
         locationIds,
-        updatedAt: project.updatedAt
+        updatedAt: operation.updatedAt
       }
     });
   }
 
-  public setProjectAttachments (project, projectAttachments): Observable<any> {
-    return this.putToEndpoint(`v2/project/${project.id}/attachments`, {
+  public setOperationEmergencies (operation, emergencyIds): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operation.id}/emergencies`, {
       data: {
-        projectVersionId: project.projectVersion.id,
-        projectVersionAttachments: projectAttachments,
-        updatedAt: project.updatedAt
+        emergencyIds,
+        updatedAt: operation.updatedAt
+      }
+    });
+  }
+
+  public setOperationAttachments (operation, operationAttachments): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operation.id}/attachments`, {
+      data: {
+        operationVersionId: operation.operationVersion.id,
+        operationVersionAttachments: operationAttachments,
+        updatedAt: operation.updatedAt
       }
     })
   }
 
-  public setProjectSegments (project, segments: Array<any>): Observable<any> {
-    return this.putToEndpoint(`v2/project/${project.id}/segments`, {
+  public setOperationSegments (operation, segments: Array<any>): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operation.id}/segments`, {
       data: {
-        projectVersionId: project.projectVersion.id,
+        operationVersionId: operation.operationVersion.id,
         segments,
-        updatedAt: project.updatedAt
+        updatedAt: operation.updatedAt
       }
     });
   }
 
-  public setProjectComments (project, comments: Array<any>): Observable<any> {
-    return this.putToEndpoint(`v2/project/${project.id}/comments`, {
+  public setOperationComments (operation, comments: Array<any>): Observable<any> {
+    return this.putToEndpoint(`v2/operation/${operation.id}/comments`, {
       data: {
         comments,
-        updatedAt: project.updatedAt
+        updatedAt: operation.updatedAt
       }
     });
   }
@@ -610,7 +619,7 @@ export class ApiService {
     return this.getUrlWrapper(url, {cache: true});
   }
 
-  public getGroupedProjects(params: {
+  public getGroupedOperations(params: {
     planId?,
     groupBy?
     filterByStatus?
@@ -623,10 +632,10 @@ export class ApiService {
       options.params['filterByStatus'] = params.filterByStatus
     }
 
-    return this.getUrlWrapper(`v2/project/requirements`, options)
+    return this.getUrlWrapper(`v2/operation/requirements`, options)
   }
 
-  public getPlanProjectsByGroup(id, {
+  public getPlanOperationsByGroup(id, {
     groupBy,
     groupId,
     filterByStatus,
@@ -646,7 +655,7 @@ export class ApiService {
       }
     }
 
-    return this.getUrlWrapper(`v2/plan/${id}/projects`, options).shareReplay()
+    return this.getUrlWrapper(`v2/plan/${id}/operations`, options).shareReplay()
   }
 
   private reportWrapper (url, statusOptions = null) {
@@ -659,17 +668,17 @@ export class ApiService {
     return this.getUrlWrapper(url, options)
   }
 
-  public getProjectPDFs (ids: Array<number>, forceRegeneration = false): Observable<any> {
-    return this.getUrlWrapper(`v2/project/pdfDownload?forceRegeneration=${forceRegeneration}&ids=${ids.join(',')}`);
+  public getOperationPDFs (ids: Array<number>, forceRegeneration = false): Observable<any> {
+    return this.getUrlWrapper(`v2/operation/pdfDownload?forceRegeneration=${forceRegeneration}&ids=${ids.join(',')}`);
   }
 
-  public getProjectExports (planId): Observable<any> {
-    return this.getUrlWrapper(`v2/project/export?planId=${planId}`);
+  public getOperationExports (planId): Observable<any> {
+    return this.getUrlWrapper(`v2/operation/export?planId=${planId}`);
   }
 
-  public getProjectVersionLocationsByPlan (searchOptions): Observable<any> {
+  public getOperationVersionLocationsByPlan (searchOptions): Observable<any> {
     const planId = searchOptions.planIds[0];
-    return this.getUrlWrapper(`v2/project/locationsByPlan/${planId}?` +
+    return this.getUrlWrapper(`v2/operation/locationsByPlan/${planId}?` +
       `workflowStatusOptionIds=${searchOptions.workflowStatusOptionIds.join(',')}` +
       `&governingEntityIds=${searchOptions.governingEntityIds.join(',')}`
     );
@@ -699,22 +708,22 @@ export class ApiService {
     return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : '' }plan/${planId}/procedure`, {cache: true});
   }
 
-  public getProcedureSteps(planId, projectId): Observable<any> {
-    return this.getUrlWrapper('v2/planProcedure/' + planId + '/steps', {params: {projectId}});
+  public getProcedureSteps(planId, operationId): Observable<any> {
+    return this.getUrlWrapper('v2/planProcedure/' + planId + '/steps', {params: {operationId}});
   }
 
   public getWorkflowStatusOptionById(workflowStatusOptionId): Observable<any> {
     return this.getUrlWrapper(`v2/workflowStatusOption/${workflowStatusOptionId}?scopes=steps`);
   }
 
-  public updateWorkflowStatus(projectId, toStatusOptionId): Observable<any> {
+  public updateWorkflowStatus(operationId, toStatusOptionId): Observable<any> {
     const options = {
       data: {
         workflowStatusOptionId: toStatusOptionId
       }
     }
 
-    return this.postToEndpoint('v2/project/' + projectId + '/moveToStep', options);
+    return this.postToEndpoint('v2/operation/' + operationId + '/moveToStep', options);
   }
 
   public getPlans(options?: any): Observable<any> {
@@ -731,8 +740,8 @@ export class ApiService {
     return this.getUrlWrapper('v2/workflowStatusOption' + scopeParams);
   }
 
-  public getWorkflowStatusOptionsForProjectVersions (projectVersionIds): Observable<any> {
-    return this.getUrlWrapper(`v2/workflowStatusOption/currentForProjectVersion?projectVersionIds=${projectVersionIds.join(',')}`)
+  public getWorkflowStatusOptionsForOperationVersions (operationVersionIds): Observable<any> {
+    return this.getUrlWrapper(`v2/workflowStatusOption/currentForOperationVersion?operationVersionIds=${operationVersionIds.join(',')}`)
   }
 
   public autocompleteLocation(search: string, adminLevel?: number): Observable<any> {
@@ -762,6 +771,10 @@ export class ApiService {
 
   public autocompleteOrganization(search: string): Observable<any> {
     return this.autocomplete('organization', search);
+  }
+
+  public autocompleteEmergency(search: string): Observable<any> {
+    return this.autocomplete('emergency', search);
   }
 
   public autocompleteSector(search: string): Observable<any> {
