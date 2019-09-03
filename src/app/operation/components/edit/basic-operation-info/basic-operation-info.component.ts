@@ -116,7 +116,7 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
         operationId: this.createOperationService.operation.id,
         updatedAt: this.createOperationService.operation.updatedAt,
         operationVersion: operationVersionDataToSave
-      };
+        };
       return this.apiService.saveOperation(operationToSave).pipe(map(result => {
         this.createOperationService.operation.updatedAt = result.updatedAt;
         return {
@@ -125,27 +125,6 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
         };
       }));
     }
-  }
-
-  // TODO: operationVersion check creation
-  private saveOperationVersion (operation, isNew?): Observable<any> {
-    return this.apiService.setOperationLocations(
-        operation,
-        this.createOperationService.operation.locations
-      ).pipe(switchMap((locationResult) => {
-        operation.updatedAt = locationResult.updatedAt;
-        return this.apiService.setOperationEmergencies(
-          operation,
-          this.createOperationService.operation.emergencies
-      )}), switchMap(() =>  {
-      return this.apiService.getOperation(operation.id);
-    }), map((refreshedOperation) => {
-      this.createOperationService.operationDoneLoading(refreshedOperation);
-      return {
-        isNew: isNew,
-        stopSave: true
-      };
-    }));
   }
 
   public changeTypeaheadNoResults(e: boolean) {
