@@ -1,7 +1,7 @@
 
 import { Subscription ,  Observable } from 'rxjs';
 
-import {map, mergeMap, switchMap} from 'rxjs/operators';
+import {map, mergeMap} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 
 
