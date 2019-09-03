@@ -44,9 +44,14 @@ const operationRoutes: Routes = [
         canDeactivate: [PendingChangesGuard],
         component: BasicOperationInfoComponent,
       }, {
-        path: 'clusters',
+        path: 'gve/:type',
         canDeactivate: [PendingChangesGuard],
         component: GoverningEntitiesInfoComponent,
+        children: [{
+          path: 'attachments',
+          canDeactivate: [PendingChangesGuard],
+          component: GoverningEntitiesInfoComponent,
+        }],
       }, {
         path: 'review',
         component: ReviewComponent,

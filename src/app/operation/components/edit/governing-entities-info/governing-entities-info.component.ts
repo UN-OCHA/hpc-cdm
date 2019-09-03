@@ -14,12 +14,8 @@ export class GoverningEntitiesInfoComponent extends CreateOperationChildComponen
   objectKeys = Object.keys;
   openById = {};
 
-  public planEntitiesFoundOnInitialLoad = false;
-  public showedPlanEntities = [];
-
   public governingEntityBeingViewed = 0;
   public status = false;
-  public isFrameworkUploaded = false;
 
   constructor(
     public createOperationService: CreateOperationService,

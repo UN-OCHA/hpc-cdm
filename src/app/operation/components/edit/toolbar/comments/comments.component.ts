@@ -44,11 +44,12 @@ export class CommentsComponent implements OnInit {
   private load () {
     if (this.authService.participant && this.operationId) {
       this.blankComment.participantId = this.authService.participant.id;
-      this.api.getCommentsForOperation(this.operationId)
-        .subscribe(comments => {
-          this.loading = false;
-          this.comments = _.sortBy(comments, 'createdAt').reverse();
-        });
+      this.comments = [];
+      //this.api.getCommentsForOperation(this.operationId)
+        //.subscribe(comments => {
+          //this.loading = false;
+          //this.comments = _.sortBy(comments, 'createdAt').reverse();
+        //});
     }
 
     this.submittingComment = _.cloneDeep(this.blankComment);

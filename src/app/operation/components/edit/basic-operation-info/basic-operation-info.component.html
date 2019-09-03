@@ -1,7 +1,6 @@
 <form class="border p-5"
   #childForm="ngForm">
-  <fieldset *ngIf="createOperationService.operation"
-    [disabled]="!editable">
+  <fieldset *ngIf="createOperationService.operation">
     <div class="form-group">
       <label for="name" translate="operation-edit.basic-info.Operation Name"></label> <i class="text-danger">*</i>
       <input class="form-control"

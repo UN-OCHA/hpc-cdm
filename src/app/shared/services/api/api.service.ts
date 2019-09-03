@@ -248,10 +248,9 @@ export class ApiService {
   }
 
   public getOperation(id: number, operationVersionId = 'latest'): Observable<any> {
-    let params;
-    if (operationVersionId && operationVersionId !== 'latest') {
-      params = {operationVersionId}
-    }
+    let params={
+      scopes: 'entityPrototypes,attachmentPrototypes,locations,emergencies,planVersion'
+    };
     return this.getUrlWrapper('v2/plan/' + id, {params});
   }
 
@@ -791,7 +790,7 @@ export class ApiService {
   }
 
   public getBlueprints(): Observable<any> {
-    return this.getUrlWrapper('v2/plan-blueprint', {cache: true});
+    return this.getUrlWrapper('v2/blueprint', {cache: true});
   }
 
   public getCdmViaSearch(query: any): Observable<any> {

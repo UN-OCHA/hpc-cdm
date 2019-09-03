@@ -14,6 +14,8 @@ export class Operation extends ModelExtender {
   public planVersion: any;
   public emergencies: Array<any>;
   public locations: Array<any>;
+  public entityPrototypes: Array<any>;
+  public attachmentPrototypes: Array<any>;
   public attachments: Array<any>;
   public name: string;
   public latestVersionId: number;

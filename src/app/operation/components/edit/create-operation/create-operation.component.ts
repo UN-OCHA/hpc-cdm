@@ -27,42 +27,17 @@ import { ComponentCanDeactivate } from 'app/shared/services/auth/pendingChanges.
 export class CreateOperationComponent implements OnInit, ComponentCanDeactivate {
   public operation: Operation;
   public processing = true;
-  public editable = false;
+  public editable = true;
   public submittedModalRef: BsModalRef;
   public canSubmitOperation = false;
-  public canAddToReviewOperation = false;
 
   public currentChildComponent;
   public currentChildRoute = '';
 
   public currentStepIdx = 0;
   public displayRouteSteps = [];
-  private allRouteSteps: any = [{
-    route: 'basic',
-    accessible: true,
-    display: true,
-    rule: [],
-    name: 'Operation Details',
-    title: 'Edit the basic information of the operation'
-  }, {
-    route: 'plans',
-    accessible: false,
-    display: false,
-    rule: [],
-    name: 'Response Plan'
-  }, {
-    route: 'clusters',
-    accessible: false,
-    display: false,
-    rule: ['plan'],
-    name: 'Cluster / Sector'
-  }, {
-    route: 'review',
-    accessible: false,
-    display: false,
-    rule: [],
-    name: 'Review'
-  }];
+  private routeStepsGenerated = false;
+  private allRouteSteps: any = [];
 
   @ViewChild('submittedModal') submittedModal: TemplateRef<any>;
 
@@ -96,7 +71,6 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
         this.loadNewOperation();
       }
 
-      this.determineStepAccess();
       this.createOperationService.operationHasLoaded$
         .subscribe(() => {
           this.determineStepAccess();
@@ -149,7 +123,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
 
   private setEditableMode () {
     if (this.createOperationService.operation) {
-      this.editable = this.createOperationService.operation.editableByUser;
+      this.editable = true;//this.createOperationService.operation.editableByUser;
     }
   }
 
@@ -256,7 +230,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
   }
 
   public previousStep (operationId) {
-    this.router.navigate(['/operation', operationId, 'edit', this.displayRouteSteps[this.currentStepIdx - 1].route])
+    this.router.navigate(this.displayRouteSteps[this.currentStepIdx - 1].route)
   }
 
   public nextStep (operationId) {
@@ -264,7 +238,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
     if (route === 'locations') {
       this.createOperationService.processing = 1;
     }
-    this.router.navigate(['/operation', operationId, 'edit', route]);
+    this.router.navigate(route);
   }
 
   private afterLoadOperation () {
@@ -295,9 +269,86 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
 
   private determineStepAccess () {
     const operation = this.createOperationService.operation;
-    console.log(operation);
-    this.canSubmitOperation = false;
-    this.canAddToReviewOperation = false;
+    if (operation && operation.id) {
+      if (!this.routeStepsGenerated) {
+
+        this.allRouteSteps.push({
+          route: ['/operation', operation.id, 'edit','basic'],
+          accessible: true,
+          display: true,
+          name: 'Operation details',
+          title: 'Edit the basic information of the operation'
+        });
+
+        let attachmentFound = false;
+        operation.attachmentPrototypes.forEach(aP => {
+          if (!attachmentFound) {
+            if (aP.value.entities.indexOf('OP')) {
+              attachmentFound = true;
+              this.allRouteSteps.push({
+                route: ['/operation', operation.id, 'edit','attachments'],
+                accessible: true,
+                display: true,
+                name: 'Operation attachments'
+              });
+            }
+          }
+        });
+        if (operation && operation.entityPrototypes && operation.entityPrototypes.length) {
+          operation.entityPrototypes.forEach(eP => {
+            this.allRouteSteps.push({
+              route: ['/operation', operation.id, 'edit','gve', eP.refCode],
+              accessible: true,
+              display: true,
+              name: eP.value.name.en.plural
+            });
+            let attachmentFound = false;
+            operation.attachmentPrototypes.forEach(aP => {
+              if (!attachmentFound) {
+                if (aP.value.entities.indexOf(eP.refCode)) {
+                  attachmentFound = true;
+                  this.allRouteSteps.push({
+                    route: ['/operation', operation.id, 'edit','gve', eP.refCode,'attachments'],
+                    accessible: true,
+                    display: true,
+                    name: eP.value.name.en.plural + ' attachments'
+                  });
+                }
+              }
+            });
+          });
+        }
+
+        this.allRouteSteps.push({
+          route: ['/operation', operation.id, 'edit','review'],
+          accessible: false,
+          display: false,
+          rule: [],
+          name: 'Review'
+        });
+        this.routeStepsGenerated = true;
+      }
+    } else {
+      if (!this.routeStepsGenerated) {
+        this.allRouteSteps.push({
+          route: ['/operation','create','basic'],
+          accessible: true,
+          display: true,
+          name: 'Operation details',
+          title: 'Edit the basic information of the operation'
+        });
+
+        this.allRouteSteps.push({
+          route: ['/operation', operation.id, 'edit','review'],
+          accessible: false,
+          display: false,
+          rule: [],
+          name: 'Review'
+        });
+        this.routeStepsGenerated = true;
+      }
+    }
+    this.canSubmitOperation = true;
 
     this.setEditableMode();
 

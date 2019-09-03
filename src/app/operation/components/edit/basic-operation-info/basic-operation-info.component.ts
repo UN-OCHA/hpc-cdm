@@ -88,12 +88,9 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
       'name',
       'description',
       'startDate',
-      'endDate',
-      'blueprint',
+      'endDate'
     ]);
 
-
-    operationVersionDataToSave['planBlueprintId'] = operationVersionDataToSave['blueprint'] || 1;
 
     if (this.createOperationService.isNewOperation) {
       const createdOperation = {
@@ -103,12 +100,16 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
         restricted:false,
         emergencies: this.createOperationService.operation.emergencies.map(emergency=> emergency.id),
         locations: this.createOperationService.operation.locations,
+        blueprintId: this.createOperationService.operation.planVersion.planBlueprintId,
       };
       return this.apiService.createOperation(createdOperation).pipe(
-        mergeMap(newOperation => {
+        map(newOperation => {
           this.createOperationService.operation.id = newOperation.id;
           this.createOperationService.operation.updatedAt = newOperation.updatedAt;
-          return this.saveOperationVersion(newOperation, true);
+          return {
+            isNew: true,
+            stopSave: true
+          };
         }))
     } else {
       const operationToSave = {
@@ -116,9 +117,12 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
         updatedAt: this.createOperationService.operation.updatedAt,
         operationVersion: operationVersionDataToSave
       };
-      return this.apiService.saveOperation(operationToSave).pipe(mergeMap(result => {
+      return this.apiService.saveOperation(operationToSave).pipe(map(result => {
         this.createOperationService.operation.updatedAt = result.updatedAt;
-        return this.saveOperationVersion(this.createOperationService.operation);
+        return {
+          isNew: true,
+          stopSave: true
+        };
       }));
     }
   }
