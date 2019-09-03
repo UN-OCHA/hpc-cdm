@@ -33,10 +33,10 @@
       *ngIf="createOperationService.operation"
       [ngClass]="{'processing': processing || createOperationService.processing}">
       <h2 *ngIf="createOperationService.operation.code" class="text-secondary">
-        {{ createOperationService.operation.code }}
+        {{ createOperationService.operation.planVersion.code }}
       </h2>
-      <h1 *ngIf="createOperationService.operation.name && createOperationService.operation.name !== ''; else defaultOperationName">
-        {{ createOperationService.operation.name }}
+      <h1 *ngIf="createOperationService.operation.planVersion.name && createOperationService.operation.planVersion.name !== ''; else defaultOperationName">
+        {{ createOperationService.operation.planVersion.name }}
       </h1>
       <ng-template #defaultOperationName><h1 translate>New Operation</h1></ng-template>
 
