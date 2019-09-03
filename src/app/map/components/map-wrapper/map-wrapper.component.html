@@ -45,11 +45,11 @@
         EDIT
       </button>
       <div class="dropdown-menu">
-        <a class="dropdown-item" href="#">Operations</a>
-        <a class="dropdown-item" href="#">Operations details</a>
+        <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit']" href="/operation/">Operations</a>
+        <a class="dropdown-item" href="/operation/edit/details">Operations details</a>
         <span *ngFor="let eP of operation.entityPrototypes">
-          <a class="dropdown-item" href="#">{{ eP.value.name.en.plural }}</a>
-          <a class="dropdown-item" href="#">{{ eP.value.name.en.plural }} details</a>
+          <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit', 'gve',eP.refCode ]" href="/operation/">{{ eP.value.name.en.plural }}</a>
+          <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit', 'gve',eP.refCode, 'attachments' ]" href="/operation/">{{ eP.value.name.en.plural }} details</a>
         </span>
       </div>
     </div>

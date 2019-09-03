@@ -1,0 +1,109 @@
+<div class="container create-operation">
+  <div *ngIf="!createOperationService.operation || processing || createOperationService.processing"
+      class="operation-page-loader">
+    <i class="fa fa-circle-o-notch fa-spin"></i>
+  </div>
+  <div class="row">
+    <div class="col-3 sidebar"
+      *ngIf="createOperationService.editMode">
+      <ol *ngIf="createOperationService.operation"
+        class="steps nav nav-pills nav-stacked position-fixed">
+        <li class="w-100 pt-2 pb-2"  *ngFor="let step of displayRouteSteps; let idx = index;">
+          <a *ngIf="step.accessible"
+            [routerLink]="step.route"
+            href="/operation/"
+            [ngClass]="{'active': step.route === 'basic' && currentStepIdx === 0}"
+            routerLinkActive="active"
+            title="{{step.title}}">
+            <span class="step-indicator">{{ idx + 1 }}</span>
+            {{ step.name }}
+          </a>
+
+          <a *ngIf="!step.accessible"
+            [ngClass]="{'active': (step.route === 'basic' && currentStepIdx === 0) || currentChildRoute === step.route }"
+            title="{{step.title}}">
+            <span class="step-indicator">{{ idx + 1 }}</span>
+            {{ step.name }}
+          </a>
+        </li>
+      </ol>
+    </div>
+
+    <div class="pt-5 col-9"
+      *ngIf="createOperationService.operation"
+      [ngClass]="{'processing': processing || createOperationService.processing}">
+      <h2 *ngIf="createOperationService.operation.code" class="text-secondary">
+        {{ createOperationService.operation.code }}
+      </h2>
+      <h1 *ngIf="createOperationService.operation.name && createOperationService.operation.name !== ''; else defaultOperationName">
+        {{ createOperationService.operation.name }}
+      </h1>
+      <ng-template #defaultOperationName><h1 translate>New Operation</h1></ng-template>
+
+      <div>
+        <small class="text-secondary" *ngIf="createOperationService.operation.created">
+          Created by {{ createOperationService.operation.created.participant.name_given }}
+          {{ createOperationService.operation.created.participant.name_family }} on {{ createOperationService.operation.created.createdAt | date: 'yyyy-MM-d HH:mm:ss' }}.
+        </small>
+      </div>
+
+      <div>
+        <small class="text-secondary" *ngIf="createOperationService.operation.lastUpdated">
+          Last updated by {{ createOperationService.operation.lastUpdated.participant.name_given }}
+          {{ createOperationService.operation.lastUpdated.participant.name_family }} on {{ createOperationService.operation.lastUpdated.updatedAt | date: 'yyyy-MM-d HH:mm:ss' }}.
+        </small>
+      </div>
+
+      <app-toolbar
+        [editable]="editable && createOperationService.editMode"
+        (loadOperation)="onLoadOperation($event)">
+      </app-toolbar>
+      <router-outlet
+        (activate)='onActivate($event)'></router-outlet>
+
+      <nav class="navbar bg-light fixed-bottom"
+        *ngIf="createOperationService.editMode">
+        <div class="container d-flex justify-content-end">
+          <form class="form-inline">
+            <a type="button"
+              class="mr-2 btn btn-outline-secondary"
+              [routerLink]="['/map']"
+              [queryParams]="{source: 'operation'}"
+              translate>
+              {{ 'Close' | translate }}
+            </a>
+            <button *ngIf="currentStepIdx > 0"
+              type="button"
+              class="mr-2 btn btn-outline-primary"
+              (click)="goToPreviousStep(currentChildRoute && currentChildRoute !== 'review')"
+              translate>
+              {{ 'Previous' | translate }} <i class="material-icons">arrow_back</i>
+            </button>
+            <button
+              *ngIf="editable && currentChildRoute !== 'review'"
+              type="button"
+              class="mr-2 btn btn-outline-primary"
+              (click)="save()"
+              translate>
+              Save
+            </button>
+            <button
+              *ngIf="editable && currentChildRoute !== 'review'"
+              type="button"
+              class="btn btn-primary"
+              (click)="save('next')">
+              {{ 'Save & Next' | translate }} <i class="material-icons">arrow_forward</i>
+            </button>
+          </form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+<span [ngClass]="{'data-load-finished': createOperationService.operation && !processing && !createOperationService.processing}"></span>
+<ng-template #submittedModal>
+  <div class="modal-body p-5 text-center">
+    <p>Your operation has been submitted.</p>
+    <button type="button" class="btn btn-primary" (click)="submittedModalRef.hide()">OK</button>
+  </div>
+</ng-template>

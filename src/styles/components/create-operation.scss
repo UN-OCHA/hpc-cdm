@@ -1,0 +1,281 @@
+@import "./../variables";
+
+.operation-page-loader {
+  clear: both;
+  font-size: 5rem;
+  text-align: center;
+  margin-top: 5rem;
+  position: absolute;
+  width: 100%;
+  display: block;
+  z-index: 9999;
+}
+
+.create-operation {
+  position: relative;
+
+  .processing {
+    opacity: .2;
+  }
+
+  margin-bottom: 7rem;
+
+  .sidebar {
+    padding-top: 6rem;
+
+    a {
+      color: $dark-grey;
+    }
+    a.active:not([href]):hover {
+      color: $orange;
+    }
+    .active {
+      color: $orange;
+      text-decoration: none;
+      cursor: default;
+    }
+    li {
+      font-weight: bold;
+    }
+  }
+
+  .operation-nav {
+    color: $white;
+
+    .more-options {
+      button {
+        background-color: transparent;
+        border: none;
+        color: white;
+      }
+    }
+
+    .switch-mode {
+      color: $white;
+      text-decoration: none;
+    }
+
+    .toolbar-dropdown-toggle {
+      font-weight: normal;
+      border: 1px solid $white;
+    }
+
+    .navbar-nav {
+      &.cap {
+        text-transform: uppercase;
+      }
+
+      &.muted {
+        opacity: .5;
+      }
+
+      &.active {
+        background-color: $orange;
+      }
+
+      i {
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .step-indicator {
+    margin-right: 1rem;
+    border: 1px solid $dark-grey;
+    border-radius: 100%;
+    width: 1.5rem;
+    display: inline-block;
+    height: 1.5rem;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: .05rem;
+  }
+
+  .active .step-indicator {
+    border-color: $orange;
+  }
+
+  .plan-info {
+    .undo-mx-5 {
+      margin-right: -3rem !important;
+      margin-left: -3rem !important;
+
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+
+    label {
+      font-weight: bold;
+    }
+  }
+
+  table {
+    width: 100%;
+    border: 0;
+  }
+
+  .budget {
+
+    .clusterImg {
+      height: 3.3rem;
+      width: 3.3rem;
+    }
+
+    table .cost-or-percent {
+      width: 30%;
+    }
+
+    fieldset fieldset {
+      input {
+        border-radius: 0;
+        border: 0;
+
+        &.ng-invalid {
+          border-left: 4px solid $invalid;
+        }
+      }
+
+      .input-group-text {
+        border: 0;
+        border-radius: 0;
+        background-color: transparent;
+        color: $cd-dark-grey;
+      }
+    }
+
+    td {
+      td {
+        padding: 0;
+      }
+    }
+
+    .general-amount-value {
+      min-width: 200px;
+    }
+
+    .delete-col {
+      border: 0 !important;
+
+      .material-icons {
+        cursor: pointer;
+      }
+    }
+
+    fieldset[disabled],
+    input[disabled] {
+      opacity: .5;
+    }
+
+    .segmentation {
+
+      app-table-dollar-input {
+        display: block;
+        padding: .6rem 0;
+      }
+
+      table {
+        app-table-dollar-input {
+          padding: .62rem 0;
+        }
+      }
+    }
+  }
+
+  .governing-entities {
+    table td:first-child {
+      width: 5%;
+    }
+
+    table td:nth-child(4) {
+      width: 15%;
+    }
+
+    table td:last-child {
+      width: 17%;
+    }
+
+    input[type="checkbox"].form-control {
+      display: inline-block;
+      width: auto;
+    }
+  }
+
+  .map {
+    max-height: 360px;
+  }
+  .remove-org {
+    position: absolute;
+    top: 1rem;
+    right: 0.3rem;
+  }
+}
+
+.review {
+  h3 {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  h4 {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  .map {
+    height: 300px;
+    display: block;
+    width: 100%;
+  }
+
+  .locations {
+    li li li {
+      display: inline-block;
+      margin-right: .5rem;
+
+      &::after {
+        content: ','
+      }
+
+      app-location-and-children-list {
+        display: inline-block;
+      }
+    }
+  }
+}
+
+.cluster-label {
+  margin-top:1em;
+  margin-left:0.5em;
+}
+
+.renew-percent {
+  margin-top: .5rem;
+}
+
+.comments {
+  min-width: 500px;
+
+  .popover-body {
+    padding: 0;
+    max-height: 600px;
+    overflow: scroll;
+  }
+}
+
+.comments-wrapper {
+  position: relative;
+
+  i {
+    font-size: 2rem;
+  }
+
+  .comments-number {
+    font-size: small;
+    position: absolute;
+    top: -.15rem;
+    left: 1.7rem;
+    width: 26px;
+    text-align: center;
+    pointer-events: none;
+  }
+}

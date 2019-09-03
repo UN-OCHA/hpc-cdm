@@ -43,7 +43,6 @@ import { ApiService } from 'app/shared/services/api/api.service';
 import { UtilitiesService } from 'app/shared/services/utilities.service';
 import { AuthService } from 'app/shared/services/auth/auth.service';
 import { ExportService } from 'app/shared/services/export.service';
-import { ReportsService } from 'app/shared/services/reports.service';
 import { PromptUpdateService } from 'app/shared/services/prompt-update.service';
 import { LocalStorageService } from 'app/shared/services/localStorage.service';
 
@@ -51,6 +50,7 @@ import { LoginComponent } from './shared/components/shell/login/login.component'
 import { LogoutComponent } from './shared/components/shell/logout/logout.component';
 
 import { MapModule } from './map/map.module';
+import { OperationModule } from './operation/operation.module';
 import { AdminModule } from './admin/admin.module';
 
 import { SharedModule } from './shared/shared.module';
@@ -102,6 +102,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 
     MapModule,
     AdminModule,
+    OperationModule,
 
     SharedModule,
 
@@ -118,7 +119,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     PendingChangesGuard,
     LocalStorageService,
     appRoutingProviders,
-    ReportsService,
   ],
   bootstrap: [AppComponent]
 })
