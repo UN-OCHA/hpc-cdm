@@ -16,6 +16,7 @@ export class Operation extends ModelExtender {
   public locations: Array<any>;
   public entityPrototypes: Array<any>;
   public attachmentPrototypes: Array<any>;
+  public governingEntities: Array<any>
   public attachments: Array<any>;
   public name: string;
   public latestVersionId: number;
@@ -38,8 +39,9 @@ export class Operation extends ModelExtender {
 
     this.createdAt = moment(options.createdAt).toDate();
     this.updatedAt = moment(options.updatedAt).toDate();
-    this.endDate = options.endDate ? moment(options.endDate).toDate() : null;
+    this.endDate = options.planVersion.endDate ? moment(options.planVersion.endDate).toDate() : null;
     this.startDate = moment(options.startDate).toDate();
+    this.governingEntities = options.governingEntities;
 
   }
 
@@ -52,4 +54,22 @@ export class Operation extends ModelExtender {
   }
 
 
+}
+
+export class GoverningEntity extends ModelExtender {
+  public id: number;
+  public governingEntityVersion: any;
+  public clusterNumber: string;
+  public entityPrototypeId: number;
+  public entityType: string;
+  public name: string;
+  public planId: number;
+  public value: any;
+  public globalClusters: Array<any>;
+  public overriding: boolean;
+
+  constructor (governingEntity) {
+    super();
+    Object.assign(this, governingEntity);
+  }
 }

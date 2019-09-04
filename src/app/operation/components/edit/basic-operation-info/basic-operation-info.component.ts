@@ -120,7 +120,7 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
       return this.apiService.saveOperation(operationToSave).pipe(map(result => {
         this.createOperationService.operation.updatedAt = result.updatedAt;
         return {
-          isNew: true,
+          isNew: false,
           stopSave: true
         };
       }));

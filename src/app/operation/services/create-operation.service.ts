@@ -12,7 +12,6 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class CreateOperationService {
-  // observable operation
   public operation: Operation;
   public isNewOperation = true;
   public editable = false;

@@ -1,9 +1,13 @@
 
+import { Observable } from 'rxjs';
+import {map} from 'rxjs/operators';
+
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 
 import { CreateOperationChildComponent } from '../create-operation-child/create-operation-child.component';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
+import { GoverningEntity } from 'app/operation/models/view.operation.model';
 
 @Component({
   selector: 'app-governing-entities-info',
@@ -14,7 +18,6 @@ export class GoverningEntitiesInfoComponent extends CreateOperationChildComponen
   objectKeys = Object.keys;
   openById = {};
 
-  public governingEntityBeingViewed = 0;
   public status = false;
 
   constructor(
@@ -33,6 +36,18 @@ export class GoverningEntitiesInfoComponent extends CreateOperationChildComponen
   }
   ngAfterViewInit() {
     this.status = true;
+  }
+
+  public save (): Observable<any> {
+    return this.apiService.saveGoverningEntity().pipe(map(result => {
+      console.log(result);
+      return {
+        stopSave: true
+      };
+    }));
+  }
+  public addNewGoverningEntity() {
+    this.createOperationService.operation.governingEntities.push(new GoverningEntity({governingEntityVersion:{value:{}}}));
   }
 
 }

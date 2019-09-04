@@ -249,7 +249,7 @@ export class ApiService {
 
   public getOperation(id: number, operationVersionId = 'latest'): Observable<any> {
     let params={
-      scopes: 'entityPrototypes,attachmentPrototypes,locations,emergencies,planVersion'
+      scopes: 'entityPrototypes,attachmentPrototypes,locations,emergencies,planVersion,governingEntities'
     };
     return this.getUrlWrapper('v2/plan/' + id, {params});
   }
@@ -292,6 +292,20 @@ export class ApiService {
     return this.putToEndpoint('v2/operation/' + operation.operationId, {
       data: {
         data: operation
+      }
+    });
+  }
+
+  public createGoverningEntity(governingEntity): Observable<any> {
+    return this.postToEndpoint('v1/governingEntity/create', {
+      data: { governingEntity }
+    });
+  }
+
+  public saveGoverningEntity(governingEntity): Observable<any> {
+    return this.putToEndpoint('v2/governingEntity/' + governingEntity.id, {
+      data: {
+        data: governingEntity
       }
     });
   }
@@ -728,6 +742,11 @@ export class ApiService {
   public getPlans(options?: any): Observable<any> {
     const params = _.cloneDeep(options);
     return this.getUrlWrapper('v1/plan', {params, cache: true})
+  }
+
+  public getOperations(options?: any): Observable<any> {
+    const params = _.cloneDeep(options);
+    return this.getUrlWrapper('v2/operation', {params, cache: true})
   }
 
   public getLocations(): Observable<any> {

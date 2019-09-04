@@ -208,8 +208,6 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
     } else if (nextOrPrevious === 'previous') {
       this.previousStep(operationId)
     } else if (options.isNew && nextOrPrevious === undefined) {
-      // this is the case that the user presses "save" instead of "save & next" on basic-operation-info,
-      // when freshly creating a operation.
       this.router.navigate(['/operation', operationId, 'edit', 'basic'])
     }
   }
