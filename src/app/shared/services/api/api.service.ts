@@ -255,6 +255,24 @@ export class ApiService {
     return this.getUrlWrapper('v2/operation/' + id, {params});
   }
 
+  public getOperationAttachments(id: number): Observable<any> {
+    // TODO update with actual endpoint
+    return this.getUrlWrapper('v1/plan/830/attachment-prototype');
+  }
+
+  public saveOperationAttachment(id: number, attachment: any): Observable<any> {
+    // TODO update with actual endpoint
+    console.log('saving operation attachment');
+    console.log(id);
+    console.log(attachment);
+    return null;
+  }
+
+  public deleteOperationAttachment(id: number): Observable<any> {
+    // TODO update with actual endpoint
+    return null;
+  }
+
   public getAttachmentPrototypes(id: number, operationVersionId = 'latest'): Observable<any> {
     // TODO update with actual endpoint
     return this.getUrlWrapper(`v1/plan/${id}/attachment-prototype`);
