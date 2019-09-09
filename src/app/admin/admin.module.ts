@@ -24,6 +24,8 @@ import { AddparticipantComponent } from './components/addparticipant/addparticip
 import { EditparticipantComponent } from './components/editparticipant/editparticipant.component';
 import { ListparticipantComponent } from './components/listparticipant/listparticipant.component';
 import { ListblueprintComponent } from './components/listblueprint/listblueprint.component';
+import { BlueprintFormComponent } from './components/blueprintForm/blueprintForm.component';
+import { JsonEditorComponent } from './components/jsonEditor/jsonEditor.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,9 @@ import { ListblueprintComponent } from './components/listblueprint/listblueprint
     AddparticipantComponent,
     EditparticipantComponent,
     ListparticipantComponent,
-    ListblueprintComponent
+    ListblueprintComponent,
+    BlueprintFormComponent,
+    JsonEditorComponent
   ],
   imports: [
     BrowserModule,
