@@ -27,6 +27,8 @@ import { ToolbarComponent } from './components/edit/toolbar/toolbar.component';
 import { ReviewBasicComponent } from './components/edit/review/review-basic/review-basic.component';
 import { ReviewGoverningEntitiesComponent } from './components/edit/review/review-governing-entities/review-governing-entities.component';
 import { CommentsComponent } from './components/edit/toolbar/comments/comments.component';
+import { OperationAttachmentsComponent } from './components/operation-attachments/operation-attachments.component';
+import { AttachmentEntryComponent } from './components/attachment-entry/attachment-entry.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,10 @@ import { CommentsComponent } from './components/edit/toolbar/comments/comments.c
 
     ReviewBasicComponent,
     ReviewGoverningEntitiesComponent,
-    CommentsComponent
+    CommentsComponent,
+
+    OperationAttachmentsComponent,
+    AttachmentEntryComponent
   ],
   imports: [
     BrowserModule,

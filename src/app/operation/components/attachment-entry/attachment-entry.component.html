@@ -1,0 +1,72 @@
+<div class="form-panel">
+  <div class="form-title">
+    <i (click)="toggleExpand()" *ngIf="!expanded" class="material-icons">chevron_right</i>
+    <i (click)="toggleExpand()" *ngIf="expanded" class="material-icons">expand_more</i>
+    <span class="form-title">{{title}}</span>
+  </div>
+  <div *ngIf="expanded" class="form-body">
+    <div class="form-content">
+
+      <form [formGroup]="registerForm">
+        <fieldset>
+          <div class="row">
+            <div class="form-group col-lg-4">
+              <label for="id" translate>Form ID</label> <i class="text-danger">*</i>
+              <input class="form-control" type="text" id="id" name="id" required
+                formControlName="id"
+                (input)="clearErrors()"
+                [ngClass]="{ 'is-invalid': submitted && f.id.errors }"/>
+            </div>
+            <div class="form-group col-lg-8">
+              <label for="name" translate>Name</label> <i class="text-danger">*</i>
+              <input class="form-control" type="text" id="name" name="name" required
+                formControlName="name"
+                (input)="clearErrors()"
+                [ngClass]="{ 'is-invalid': submitted && f.name.errors }"/>
+            </div>
+            <div class="form-group col-lg-8">
+              <label for="filename" translate>Form Definition</label> <i class="text-danger">*</i>
+              <input class="form-control" type="text"
+                  formControlName="filename"
+                  placeholder="{{fileToUpload && fileToUpload.name || 'No file uploaded'}}"
+                  id="filename" name="filename" readonly
+                  (input)="clearErrors()"
+                  [ngClass]="{ 'is-invalid': submitted && f.filename.errors }"/>
+            </div>
+            <div class="form-group col-lg-12">
+              <input id="file" type="file" #file style="display: none"
+                (change)="handleFileInput($event.target.files)"/>
+              <div>
+                <button id="selectedFile" type="button" class="btn btn-default"
+                  onclick="document.getElementById('file').click();">
+                      {{ 'Upload File' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </fieldset>
+      </form>
+
+
+      <div class="top-right">
+        <button *ngIf="!submitted" type="button" class="btn btn-default top-right">
+          {{ 'Copy from...' | translate }}
+        </button>
+      </div>
+      <div class="bottom-right">
+        <button type="button" class="btn btn-default ">
+          {{ 'Duplicate in...' | translate }}
+        </button>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button [disabled]="registerForm.invalid" type="button" class="btn btn-save" (click)="save()">
+        {{ 'Save' | translate }}
+      </button>
+      <button *ngIf="submitted && !registerForm.dirty" type="button" class="btn btn-info" (click)="remove()">
+        {{ 'Remove Form' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

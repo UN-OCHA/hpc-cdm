@@ -10,6 +10,7 @@ import { CreateOperationComponent } from './components/edit/create-operation/cre
 import { BasicOperationInfoComponent } from './components/edit/basic-operation-info/basic-operation-info.component';
 import { ReviewComponent } from './components/edit/review/review.component';
 import { GoverningEntitiesInfoComponent } from './components/edit/governing-entities-info/governing-entities-info.component';
+import { OperationAttachmentsComponent } from './components/operation-attachments/operation-attachments.component';
 
 const operationRoutes: Routes = [
   { path: 'operation',
@@ -28,6 +29,11 @@ const operationRoutes: Routes = [
         path: 'basic',
         component: BasicOperationInfoComponent,
       } ],
+  },
+  { path: 'operation/:id/attachments',
+    component: OperationAttachmentsComponent,
+    canActivate: [AuthGuard],
+    canDeactivate: [PendingChangesGuard]
   },
   { path: 'operation/:id/edit',
     component: CreateOperationComponent,

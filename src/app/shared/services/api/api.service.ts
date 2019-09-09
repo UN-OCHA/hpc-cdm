@@ -254,6 +254,70 @@ export class ApiService {
     return this.getUrlWrapper('v2/plan/' + id, {params});
   }
 
+  public getOperationAttachments(id: number): Observable<any> {
+    // TODO update with actual endpoint
+    return this.getUrlWrapper('v1/plan/830/attachment-prototype');
+  }
+
+  public saveOperationAttachment(id: number, attachment: any): Observable<any> {
+    // TODO update with actual endpoint
+    console.log('saving operation attachment');
+    console.log(id);
+    console.log(attachment);
+    return null;
+  }
+
+  public deleteOperationAttachment(id: number): Observable<any> {
+    // TODO update with actual endpoint
+    return null;
+  }
+
+  public getAttachmentPrototypes(id: number, operationVersionId = 'latest'): Observable<any> {
+    // TODO update with actual endpoint
+    return this.getUrlWrapper(`v1/plan/${id}/attachment-prototype`);
+  }
+
+  public getAttachmentPrototype(id: number): Observable<any> {
+    // TODO update with actual endpoint
+    return this.getUrlWrapper(`v1/plan/attachment-prototype/${id}`);
+  }
+
+  public saveAttachmentPrototype(data: any, id: number): Observable<any> {
+    // TODO update with actual endpoint
+    console.log('saving attachment prototype');
+    console.log(id);
+    console.log(data);
+    if(id) {
+      // update
+    } else {
+      // create
+    }
+    return null;
+  }
+
+  public getEntityPrototypes(id: number, operationVersionId = 'latest'): Observable<any> {
+    // TODO update with actual endpoint
+    return this.getUrlWrapper(`v1/plan/${id}/entity-prototype`);
+  }
+
+  public getEntityPrototype(id: number): Observable<any> {
+    // TODO update with actual endpoint
+    return this.getUrlWrapper(`v1/plan/attachment-prototype/${id}`);
+  }
+
+  public saveEntityPrototype(data: any, id: number): Observable<any> {
+    // TODO update with actual endpoint
+    console.log('saving entity prototype');
+    console.log(id);
+    console.log(data);
+    if(id) {
+      // update
+    } else {
+      // create
+    }
+    return null;
+  }
+
   public getOperationVersion(id: number): Observable<any> {
     return this.getUrlWrapper('v2/operationVersion/' + id);
   }
