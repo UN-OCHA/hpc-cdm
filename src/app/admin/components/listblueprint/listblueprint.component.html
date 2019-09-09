@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row mt-4 mb-3 pb-3">
       <div class="col-sm-12 text-right">
-        <button type="button" class="btn btn-info" routerLink="/admin/addblueprint">Add
+        <button type="button" class="btn btn-info" routerLink="/admin/blueprint">Add
           Blueprint</button>
       </div>
     </div>
@@ -29,7 +29,7 @@
                 <td>{{blueprint.description}}</td>
                 <td>{{blueprint.status}}</td>
                 <td align="center"><a href="javascript:;" class="editIcon" title="Edit"
-                    [routerLink]="['/admin/editblueprint',blueprint.id]"><i class="material-icons">edit</i></a>
+                    [routerLink]="['/admin/blueprints',blueprint.id]"><i class="material-icons">edit</i></a>
                 </td>
               </tr>
             </tbody>

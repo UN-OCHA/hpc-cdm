@@ -790,7 +790,26 @@ export class ApiService {
   }
 
   public getBlueprints(): Observable<any> {
-    return this.getUrlWrapper('v2/blueprint', {cache: true});
+    // TODO Update with actual endpoints
+    return this.getUrlWrapper('v2/plan-blueprint', {cache: true});
+  }
+
+  public getBlueprint(id: any): Observable<any> {
+    // TODO Update with actual endpoints
+    return this.getUrlWrapper(`v2/plan-blueprint/${id}`, {cache: true});
+  }
+
+  public saveBlueprint(data: any, id: any): Observable<any> {
+    // TODO Update with actual endpoints
+    console.log('saving blueprint.............')
+    console.log(id)
+    console.log(data)
+    if(id) {
+      //update blueprint
+    } else {
+      //create new blueprint
+    }
+    return null;
   }
 
   public getCdmViaSearch(query: any): Observable<any> {

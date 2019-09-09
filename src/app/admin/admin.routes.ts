@@ -9,6 +9,7 @@ import { AdminObjectListComponent } from './components/adminObjectList/adminObje
 import { AdminObjectComponent } from './components/adminObject/adminObject.component';
 import {ListparticipantComponent} from './components/listparticipant/listparticipant.component';
 import {ListblueprintComponent} from './components/listblueprint/listblueprint.component';
+import {BlueprintFormComponent} from './components/blueprintForm/blueprintForm.component';
 import {AddparticipantComponent} from './components/addparticipant/addparticipant.component';
 import {EditparticipantComponent} from './components/editparticipant/editparticipant.component';
 const adminRoutes: Routes = [
@@ -22,6 +23,14 @@ const adminRoutes: Routes = [
     data: { title: 'Admin', 'roles': ['hpcadmin', 'prismadmin'] }},
     { path: 'admin/blueprints',
     component: ListblueprintComponent,
+    canActivate: [AuthGuard],
+    data: { title: 'Admin', 'roles': ['hpcadmin', 'prismadmin'] }},
+    { path: 'admin/blueprints/:id',
+    component: BlueprintFormComponent,
+    canActivate: [AuthGuard],
+    data: { title: 'Admin', 'roles': ['hpcadmin', 'prismadmin'] }},
+    { path: 'admin/blueprint',
+    component: BlueprintFormComponent,
     canActivate: [AuthGuard],
     data: { title: 'Admin', 'roles': ['hpcadmin', 'prismadmin'] }},
     { path: 'admin/addparticipant',
