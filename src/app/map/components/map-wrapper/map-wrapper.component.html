@@ -67,8 +67,8 @@
         CONFIGURATION
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item" href="#">Entities</a>
-        <a class="dropdown-item" href="#">Attachments</a>
+        <a class="dropdown-item" [routerLink]="['/admin/operations', operation.id, 'entityprotos']">Entities</a>
+        <a class="dropdown-item" [routerLink]="['/admin/operations', operation.id, 'attachmentprotos']">Attachments</a>
       </div>
 
     </div>

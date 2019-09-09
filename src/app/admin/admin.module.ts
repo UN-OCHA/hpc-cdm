@@ -24,6 +24,12 @@ import { AddparticipantComponent } from './components/addparticipant/addparticip
 import { EditparticipantComponent } from './components/editparticipant/editparticipant.component';
 import { ListparticipantComponent } from './components/listparticipant/listparticipant.component';
 import { ListblueprintComponent } from './components/listblueprint/listblueprint.component';
+import { ListAttachmentPrototypeComponent } from './components/listAttachmentPrototype/listAttachmentPrototype.component';
+import { ListEntityPrototypeComponent } from './components/listEntityPrototype/listEntityPrototype.component';
+import { BlueprintFormComponent } from './components/blueprintForm/blueprintForm.component';
+import { AttachmentPrototypeFormComponent } from './components/attachmentPrototypeForm/attachmentPrototypeForm.component';
+import { EntityPrototypeFormComponent } from './components/entityPrototypeForm/entityPrototypeForm.component';
+import { JsonEditorComponent } from './components/jsonEditor/jsonEditor.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +48,13 @@ import { ListblueprintComponent } from './components/listblueprint/listblueprint
     AddparticipantComponent,
     EditparticipantComponent,
     ListparticipantComponent,
-    ListblueprintComponent
+    ListblueprintComponent,
+    ListAttachmentPrototypeComponent,
+    ListEntityPrototypeComponent,
+    BlueprintFormComponent,
+    AttachmentPrototypeFormComponent,
+    EntityPrototypeFormComponent,
+    JsonEditorComponent
   ],
   imports: [
     BrowserModule,

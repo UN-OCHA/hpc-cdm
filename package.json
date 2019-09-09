@@ -32,6 +32,7 @@
     "core-js": "^2.5.4",
     "file-saver": "^2.0.0",
     "font-awesome": "4.7.0",
+    "jsoneditor": "^7.0.3",
     "lodash": "^4.17.11",
     "markdown-to-html-pipe": "^1.2.4",
     "moment": "^2.22.2",
