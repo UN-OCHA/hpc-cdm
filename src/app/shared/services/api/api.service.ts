@@ -37,7 +37,7 @@ export class ApiService {
   public processError(error: any): Observable<any> {
     let title = '';
     this.apiUp = true;
-    let errorJson;
+    let errorJson: any;
     if (error && error.json) {
       errorJson = error.json();
     } else {
@@ -75,7 +75,7 @@ export class ApiService {
     return observableThrowError(error);
   }
 
-  private displayMessage(errorJson) {
+  private displayMessage(errorJson: any) {
     if (errorJson && errorJson.error && errorJson.error.message) {
       let message = JSON.stringify(errorJson.error.message);
       let details = errorJson.error.details;
@@ -249,9 +249,10 @@ export class ApiService {
 
   public getOperation(id: number, operationVersionId = 'latest'): Observable<any> {
     let params={
-      scopes: 'entityPrototypes,attachmentPrototypes,locations,emergencies,planVersion,governingEntities'
+      //scopes: 'entityPrototypes,attachmentPrototypes,locations,emergencies,operationVersion,governingEntities'
+      scopes: 'locations,emergencies,operationVersion,attachments'
     };
-    return this.getUrlWrapper('v2/plan/' + id, {params});
+    return this.getUrlWrapper('v2/operation/' + id, {params});
   }
 
   public getOperationVersion(id: number): Observable<any> {
@@ -297,15 +298,20 @@ export class ApiService {
   }
 
   public createGoverningEntity(governingEntity): Observable<any> {
-    return this.postToEndpoint('v1/governingEntity/create', {
+    return this.postToEndpoint('v2/operation/governingEntity', {
       data: { governingEntity }
     });
   }
 
   public saveGoverningEntity(governingEntity): Observable<any> {
-    return this.putToEndpoint('v2/governingEntity/' + governingEntity.id, {
+    if (!governingEntity.id) {
+      return this.postToEndpoint('v2/operation/governingEntity', {
+        data: { governingEntity }
+      });
+    }
+    return this.putToEndpoint('v2/operation/governingEntity/' + governingEntity.id, {
       data: {
-        data: governingEntity
+        governingEntity
       }
     });
   }

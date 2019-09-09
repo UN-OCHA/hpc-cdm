@@ -1,5 +1,5 @@
 
-import { Observable } from 'rxjs';
+import { Observable,zip as observableZip } from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import { Component, OnInit, AfterViewInit } from '@angular/core';
@@ -39,12 +39,21 @@ export class GoverningEntitiesInfoComponent extends CreateOperationChildComponen
   }
 
   public save (): Observable<any> {
-    return this.apiService.saveGoverningEntity().pipe(map(result => {
-      console.log(result);
-      return {
-        stopSave: true
-      };
-    }));
+    const postSaveObservables = [];
+    this.createOperationService.operation.governingEntities.forEach(governingEntity => {
+
+      postSaveObservables.push(
+        this.apiService.saveGoverningEntity(governingEntity));
+    });
+
+    return observableZip(
+      ...postSaveObservables
+    ).pipe(map(results => {
+      console.log(results);
+        return {
+          stopSave: true
+        };
+      }));
   }
   public addNewGoverningEntity() {
     this.createOperationService.operation.governingEntities.push(new GoverningEntity({governingEntityVersion:{value:{}}}));

@@ -30,12 +30,9 @@
     <div class="row">
       <div class="project col-lg-9">
         <small class="meta">
-          {{ operation.code }}
+          {{ operation |json }}
         </small>
-        <h3>{{ operation.planVersion.name }}</h3>
-        <small>
-          <i class="material-icons" aria-hidden="true">calendar_today</i> {{ operation.planVersion.startDate | date:'mediumDate':'UTC' }} - {{ operation.planVersion.endDate | date:'mediumDate':'UTC' }}
-        </small>
+        <h3>{{ operation.operationVersion.name }}</h3>
       </div>
     </div>
     <div class="row">

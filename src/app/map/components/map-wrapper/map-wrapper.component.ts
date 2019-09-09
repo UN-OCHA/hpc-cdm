@@ -64,17 +64,18 @@ export class MapWrapperComponent implements OnInit {
     this.cdmResults = [];
     this.working = true;
 
-    //let options = { scopes: 'entityPrototypes,operationVersion'};
-    let options = { scopes: 'entityPrototypes,planVersion'};
+    let options = { scopes: 'entityPrototypes,operationVersion'};
+    //let options = { scopes: 'entityPrototypes,planVersion'};
 
     this.searchOptions = options;
 
     this.loading = true;
 
-    //this.apiService.getOperations(options)
-    this.apiService.getPlans(options)
+    this.apiService.getOperations(options)
+    //this.apiService.getPlans(options)
       .subscribe(results => {
         this.cdmResults = results;
+        console.log(this.cdmResults);
         this.loading = false;
         //this.processSearchResults(this.cdmResults);
 
