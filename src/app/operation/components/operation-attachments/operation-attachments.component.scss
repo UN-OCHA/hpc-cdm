@@ -1,0 +1,15 @@
+.panel {
+  margin: 1em;
+
+  .panel-body {
+    background-color: rgba(242, 242, 242, 1);
+    border: 1px solid #bbb;
+    border-radius: 2px;
+    max-width: 40em;
+    padding: 1em;
+
+    .panel-actions {
+      margin-top: 1em;
+    }
+  }
+}
