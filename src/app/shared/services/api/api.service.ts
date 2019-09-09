@@ -255,6 +255,52 @@ export class ApiService {
     return this.getUrlWrapper('v2/operation/' + id, {params});
   }
 
+  public getAttachmentPrototypes(id: number, operationVersionId = 'latest'): Observable<any> {
+    // TODO update with actual endpoint
+    return this.getUrlWrapper(`v1/plan/${id}/attachment-prototype`);
+  }
+
+  public getAttachmentPrototype(id: number): Observable<any> {
+    // TODO update with actual endpoint
+    return this.getUrlWrapper(`v1/plan/attachment-prototype/${id}`);
+  }
+
+  public saveAttachmentPrototype(data: any, id: number): Observable<any> {
+    // TODO update with actual endpoint
+    console.log('saving attachment prototype');
+    console.log(id);
+    console.log(data);
+    if(id) {
+      // update
+    } else {
+      // create
+    }
+    return null;
+  }
+
+  public getEntityPrototypes(id: number, operationVersionId = 'latest'): Observable<any> {
+    // TODO update with actual endpoint
+    return this.getUrlWrapper(`v1/plan/${id}/entity-prototype`);
+  }
+
+  public getEntityPrototype(id: number): Observable<any> {
+    // TODO update with actual endpoint
+    return this.getUrlWrapper(`v1/plan/attachment-prototype/${id}`);
+  }
+
+  public saveEntityPrototype(data: any, id: number): Observable<any> {
+    // TODO update with actual endpoint
+    console.log('saving entity prototype');
+    console.log(id);
+    console.log(data);
+    if(id) {
+      // update
+    } else {
+      // create
+    }
+    return null;
+  }
+
   public getOperationVersion(id: number): Observable<any> {
     return this.getUrlWrapper('v2/operationVersion/' + id);
   }
@@ -815,7 +861,26 @@ export class ApiService {
   }
 
   public getBlueprints(): Observable<any> {
-    return this.getUrlWrapper('v2/blueprint', {cache: true});
+    // TODO Update with actual endpoints
+    return this.getUrlWrapper('v2/plan-blueprint', {cache: true});
+  }
+
+  public getBlueprint(id: any): Observable<any> {
+    // TODO Update with actual endpoints
+    return this.getUrlWrapper(`v2/plan-blueprint/${id}`, {cache: true});
+  }
+
+  public saveBlueprint(data: any, id: any): Observable<any> {
+    // TODO Update with actual endpoints
+    console.log('saving blueprint.............')
+    console.log(id)
+    console.log(data)
+    if(id) {
+      //update blueprint
+    } else {
+      //create new blueprint
+    }
+    return null;
   }
 
   public getCdmViaSearch(query: any): Observable<any> {

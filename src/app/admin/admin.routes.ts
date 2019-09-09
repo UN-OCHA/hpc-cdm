@@ -9,42 +9,36 @@ import { AdminObjectListComponent } from './components/adminObjectList/adminObje
 import { AdminObjectComponent } from './components/adminObject/adminObject.component';
 import {ListparticipantComponent} from './components/listparticipant/listparticipant.component';
 import {ListblueprintComponent} from './components/listblueprint/listblueprint.component';
+import {BlueprintFormComponent} from './components/blueprintForm/blueprintForm.component';
+import {ListAttachmentPrototypeComponent} from './components/listAttachmentPrototype/listAttachmentPrototype.component';
+import {AttachmentPrototypeFormComponent} from './components/attachmentPrototypeForm/attachmentPrototypeForm.component';
+import {ListEntityPrototypeComponent} from './components/listEntityPrototype/listEntityPrototype.component';
+import {EntityPrototypeFormComponent} from './components/entityPrototypeForm/entityPrototypeForm.component';
 import {AddparticipantComponent} from './components/addparticipant/addparticipant.component';
 import {EditparticipantComponent} from './components/editparticipant/editparticipant.component';
-const adminRoutes: Routes = [
-  { path: 'admin',
-    component: AdminPageComponent,
-    canActivate: [AuthGuard],
-    data: { title: 'Admin', 'roles': ['hpcadmin', 'prismadmin'] }},
-    { path: 'admin/participants',
-    component: ListparticipantComponent,
-    canActivate: [AuthGuard],
-    data: { title: 'Admin', 'roles': ['hpcadmin', 'prismadmin'] }},
-    { path: 'admin/blueprints',
-    component: ListblueprintComponent,
-    canActivate: [AuthGuard],
-    data: { title: 'Admin', 'roles': ['hpcadmin', 'prismadmin'] }},
-    { path: 'admin/addparticipant',
-    component: AddparticipantComponent,
-    canActivate: [AuthGuard],
-    data: { title: 'Admin', 'roles': ['hpcadmin', 'prismadmin'] }},
-    { path: 'admin/editparticipant/:id',
-    component: EditparticipantComponent,
-    canActivate: [AuthGuard],
-    data: { title: 'Admin', 'roles': ['hpcadmin', 'prismadmin'] }},
-    { path: 'admin/:object',
-    component: AdminObjectListComponent,
-    canActivate: [AuthGuard],
-    data: { title: 'Admin', 'roles': ['hpcadmin', 'prismadmin'] }},
-  { path: 'admin/:object?page=:page',
-    component: AdminObjectListComponent,
-    canActivate: [AuthGuard],
-    data: { title: 'Admin', 'roles': ['hpcadmin', 'prismadmin'] }},
-  { path: 'admin/:object/:id',
-    component: AdminObjectComponent,
-    canActivate: [AuthGuard],
-    data: { 'roles': ['hpcadmin', 'prismadmin'] }},
 
+const route = (path, component, roles=['hpcadmin', 'prismadmin']) => {
+  return { path, component, canActivate: [AuthGuard],
+    data: { title: 'Admin', roles }};
+};
+
+const adminRoutes: Routes = [
+  route('admin', AdminPageComponent),
+  route('admin/participants', ListparticipantComponent),
+  route('admin/operations/:id/attachmentprotos', ListAttachmentPrototypeComponent),
+  route('admin/operations/:id/entityprotos', ListEntityPrototypeComponent),
+  route('admin/attachmentprotos/:id', AttachmentPrototypeFormComponent),
+  route('admin/attachmentproto', AttachmentPrototypeFormComponent),
+  route('admin/entityprotos/:id', EntityPrototypeFormComponent),
+  route('admin/entityproto', EntityPrototypeFormComponent),
+  route('admin/blueprints', ListblueprintComponent),
+  route('admin/blueprints/:id', BlueprintFormComponent),
+  route('admin/blueprint', BlueprintFormComponent),
+  route('admin/addparticipant',AddparticipantComponent),
+  route('admin/editparticipant/:id', EditparticipantComponent),
+  route('admin/:object', AdminObjectListComponent),
+  route('admin/:object?page=:page', AdminObjectListComponent),
+  route('admin/:object/:id', AdminObjectComponent)
 ];
 
 export const adminRoutingProviders: any[] = [];
