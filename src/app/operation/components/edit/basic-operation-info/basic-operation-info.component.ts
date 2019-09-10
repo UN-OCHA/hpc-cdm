@@ -74,12 +74,6 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
   }
 
   public save (): Observable<any> {
-    const operationVersionDataToSave = _.pick(this.createOperationService.operation, [
-      'name',
-      'description',
-    ]);
-
-
     if (this.createOperationService.isNewOperation) {
       const createdOperation = {
         operationVersion : this.createOperationService.operation.operationVersion,
@@ -97,11 +91,14 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
           };
         }))
     } else {
+
       const operationToSave = {
-        operationId: this.createOperationService.operation.id,
+        operationVersion : this.createOperationService.operation.operationVersion,
+        emergencies: this.createOperationService.operation.emergencies.map(emergency=> emergency.id),
+        locations: this.createOperationService.operation.locations,
+        id: this.createOperationService.operation.id,
         updatedAt: this.createOperationService.operation.updatedAt,
-        operationVersion: operationVersionDataToSave
-        };
+      };
       return this.apiService.saveOperation(operationToSave).pipe(map(result => {
         this.createOperationService.operation.updatedAt = result.updatedAt;
         return {

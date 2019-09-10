@@ -1,15 +1,15 @@
 <form #childForm="ngForm">
   <fieldset class="border p-4 governing-entities" *ngIf="createOperationService.operation">
       <section>
-        <div *ngFor="let governingEntity of createOperationService.operation.governingEntities; let idx = index;" class="form-check form-check-inline">
+        <div *ngFor="let governingEntity of createOperationService.operation.opGoverningEntities; let idx = index;" class="form-check form-check-inline">
           <div>
-            <label for="operationCluster-{{governingEntity.governingEntityVersion.name}}" class="form-check-label">
+            <label for="operationCluster-{{governingEntity.opGoverningEntityVersion.name}}" class="form-check-label">
               <figure class="figure">
-                <img *ngIf="governingEntity.governingEntityVersion.value.icon && governingEntity.governingEntityVersion.value.icon.length"
+                <img *ngIf="governingEntity.opGoverningEntityVersion.value.icon && governingEntity.opGoverningEntityVersion.value.icon.length"
                   class="clusterImg"
-                  src="/assets/images/fieldClusters/SVG/{{governingEntity.governingEntityVersion.value.icon}}.svg" title="{{governingEntity.governingEntityVersion.name}}">
+                  src="/assets/images/fieldClusters/SVG/{{governingEntity.opGoverningEntityVersion.value.icon}}.svg" title="{{governingEntity.opGoverningEntityVersion.name}}">
                 </figure>
-                {{governingEntity.governingEntityVersion.name}}
+                {{governingEntity.opGoverningEntityVersion.name}}
             </label>
           </div>
         </div>
@@ -17,7 +17,7 @@
       </section>
       <section>
 
-        <div *ngFor="let governingEntity of createOperationService.operation.governingEntities; let idx = index;" class="form">
+        <div *ngFor="let governingEntity of createOperationService.operation.opGoverningEntities; let idx = index;" class="form">
           <fieldset class="border mt-4 p-4" *ngIf="createOperationService.operation">
           <div class="form-group">
             <label for="name" translate="operation-edit.governing-entity-info.abbreviation"></label> <i class="text-danger">*</i>
@@ -25,7 +25,7 @@
               type="text"
               id="customReference{{idx}}"
               name="customReference{{idx}}"
-              [(ngModel)]="governingEntity.governingEntityVersion.customReference"
+              [(ngModel)]="governingEntity.opGoverningEntityVersion.customReference"
               required>
           </div>
           <div class="form-group">
@@ -34,7 +34,7 @@
               type="text"
               id="name{{idx}}"
               name="name{{idx}}"
-              [(ngModel)]="governingEntity.governingEntityVersion.name"
+              [(ngModel)]="governingEntity.opGoverningEntityVersion.name"
               required>
           </div>
 
@@ -46,10 +46,10 @@
               id="comments{{idx}}"
               [maxlength]="4000"
               name="comments{{idx}}"
-              [(ngModel)]="governingEntity.governingEntityVersion.comments">
+              [(ngModel)]="governingEntity.opGoverningEntityVersion.comments">
                 {{ 'operation-edit.basic-info.overview' | translate }}
             </textarea>
-            <small translate>Max length: {{governingEntity.governingEntityVersion.comments ? governingEntity.governingEntityVersion.comments.length : 0}}/4000</small>
+            <small translate>Max length: {{governingEntity.opGoverningEntityVersion.comments ? governingEntity.opGoverningEntityVersion.comments.length : 0}}/4000</small>
 
           </div>
 
@@ -61,7 +61,7 @@
                 #bsDatepickeractivationDate="bsDatepicker"
                 bsDatepicker
                 name="activationDate{{idx}}"
-                [(ngModel)]="governingEntity.governingEntityVersion.activationDate"
+                [(ngModel)]="governingEntity.opGoverningEntityVersion.activationDate"
                 [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
               <div class="input-group-append">
                 <button (click)="bsDatepickeractivationDate.toggle()" [attr.aria-expanded]="bsDatepickeractivationDate.isOpen" class="btn btn-outline-secondary" type="button">

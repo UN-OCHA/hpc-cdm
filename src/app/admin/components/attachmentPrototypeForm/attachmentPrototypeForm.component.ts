@@ -72,11 +72,12 @@ export class AttachmentPrototypeFormComponent implements OnInit {
     if(!this.form.invalid) {
       const formData = this.form.value;
       const id = this.prototype && this.prototype.id;
-      this.api.saveAttachmentPrototype({
+      this.prototype.opAttachmentPrototypeVersion = {
         refCode: formData.refCode,
         type: formData.refType,
         value: this.jsonModel
-      }, id).subscribe((result) => {
+      };
+      this.api.saveAttachmentPrototype(this.prototype, id).subscribe((result) => {
 
         this.router.navigate(['/admin/operations',result.operationId,'attachmentprotos']);
       });

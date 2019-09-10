@@ -40,8 +40,7 @@ export class GoverningEntitiesInfoComponent extends CreateOperationChildComponen
 
   public save (): Observable<any> {
     const postSaveObservables = [];
-    this.createOperationService.operation.governingEntities.forEach(governingEntity => {
-
+    this.createOperationService.operation.opGoverningEntities.forEach(governingEntity => {
       postSaveObservables.push(
         this.apiService.saveGoverningEntity(governingEntity));
     });
@@ -56,7 +55,7 @@ export class GoverningEntitiesInfoComponent extends CreateOperationChildComponen
       }));
   }
   public addNewGoverningEntity() {
-    this.createOperationService.operation.governingEntities.push(new GoverningEntity({governingEntityVersion:{value:{}}}));
+    this.createOperationService.operation.opGoverningEntities.push(new GoverningEntity({opGoverningEntityVersion:{value:{}}}));
   }
 
 }

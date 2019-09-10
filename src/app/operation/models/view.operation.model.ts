@@ -53,7 +53,7 @@ export class Operation extends ModelExtender {
 
 export class GoverningEntity extends ModelExtender {
   public id: number;
-  public governingEntityVersion: any;
+  public opGoverningEntityVersion: any;
   public clusterNumber: string;
   public entityPrototypeId: number;
   public entityType: string;

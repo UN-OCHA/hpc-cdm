@@ -366,14 +366,14 @@ export class ApiService {
 
   public createOperation(operation): Observable<any> {
     return this.postToEndpoint('v2/operation', {
-      data: { operation: operation }
+      data: { operation }
     });
   }
 
   public saveOperation(operation): Observable<any> {
-    return this.putToEndpoint('v2/operation/' + operation.operationId, {
+    return this.putToEndpoint('v2/operation/' + operation.id, {
       data: {
-        data: operation
+        operation
       }
     });
   }
