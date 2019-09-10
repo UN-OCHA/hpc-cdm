@@ -17,6 +17,8 @@ export class ListEntityPrototypeComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
+
+        let options = { scopes: 'entityPrototypeVersion'};
         this.apiService.getEntityPrototypes(params.id).subscribe(protos => {
           this.prototypes = protos;
         });

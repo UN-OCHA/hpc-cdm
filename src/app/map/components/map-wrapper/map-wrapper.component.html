@@ -32,10 +32,7 @@
         <small class="meta">
           {{ operation.code }}
         </small>
-        <h3>{{ operation.planVersion.name }}</h3>
-        <small>
-          <i class="material-icons" aria-hidden="true">calendar_today</i> {{ operation.planVersion.startDate | date:'mediumDate':'UTC' }} - {{ operation.planVersion.endDate | date:'mediumDate':'UTC' }}
-        </small>
+        <h3>{{ operation.operationVersion.name }}</h3>
       </div>
     </div>
     <div class="row">
@@ -48,8 +45,8 @@
         <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit']" href="/operation/">Operations</a>
         <a class="dropdown-item" href="/operation/edit/details">Operations details</a>
         <span *ngFor="let eP of operation.entityPrototypes">
-          <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit', 'gve',eP.refCode ]" href="/operation/">{{ eP.value.name.en.plural }}</a>
-          <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit', 'gve',eP.refCode, 'attachments' ]" href="/operation/">{{ eP.value.name.en.plural }} details</a>
+          <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit', 'gve',eP.entityPrototypeVersion.refCode ]" href="/operation/">{{ eP.entityPrototypeVersion.value.name.en.plural }}</a>
+          <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit', 'gve',eP.entityPrototypeVersion.refCode, 'attachments' ]" href="/operation/">{{ eP.entityPrototypeVersion.value.name.en.plural }} details</a>
         </span>
       </div>
     </div>
