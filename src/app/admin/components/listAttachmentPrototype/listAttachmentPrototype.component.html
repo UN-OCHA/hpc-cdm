@@ -27,8 +27,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let prototype of mf.data">
-                <td>{{prototype.refCode}}</td>
-                <td>{{prototype.type}}</td>
+                <td>{{prototype.opAttachmentPrototypeVersion.refCode}}</td>
+                <td>{{prototype.opAttachmentPrototypeVersion.type}}</td>
                 <td align="center"><a href="javascript:;" class="editIcon" title="Edit"
                     [routerLink]="['/admin/attachmentprotos',prototype.id]"><i class="material-icons">edit</i></a>
                 </td>

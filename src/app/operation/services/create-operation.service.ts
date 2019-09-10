@@ -104,7 +104,7 @@ export class CreateOperationService {
   }
 
   private associateOperationAttachmentsToEntities (gE, planEntities, typeName) {
-    this.operation.attachments.forEach(operationAttachment => {
+    this.operation.opAttachments.forEach(operationAttachment => {
       gE.attachments.forEach(entityAttachment => {
         if (operationAttachment.attachmentId === entityAttachment.id) {
           entityAttachment.operationVersionId = operationAttachment.operationVersionId;

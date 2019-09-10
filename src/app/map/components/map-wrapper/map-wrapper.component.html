@@ -30,7 +30,7 @@
     <div class="row">
       <div class="project col-lg-9">
         <small class="meta">
-          {{ operation |json }}
+          {{ operation.code }}
         </small>
         <h3>{{ operation.operationVersion.name }}</h3>
       </div>
@@ -44,9 +44,9 @@
       <div class="dropdown-menu">
         <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit']" href="/operation/">Operations</a>
         <a class="dropdown-item" href="/operation/edit/details">Operations details</a>
-        <span *ngFor="let eP of operation.entityPrototypes">
-          <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit', 'gve',eP.refCode ]" href="/operation/">{{ eP.value.name.en.plural }}</a>
-          <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit', 'gve',eP.refCode, 'attachments' ]" href="/operation/">{{ eP.value.name.en.plural }} details</a>
+        <span *ngFor="let eP of operation.opEntityPrototypes">
+          <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit', 'gve',eP.opEntityPrototypeVersion.refCode ]" href="/operation/">{{ eP.opEntityPrototypeVersion.value.name.en.plural }}</a>
+          <a class="dropdown-item" [routerLink]="['/operation', operation.id, 'edit', 'gve',eP.opEntityPrototypeVersion.refCode, 'attachments' ]" href="/operation/">{{ eP.opEntityPrototypeVersion.value.name.en.plural }} details</a>
         </span>
       </div>
     </div>

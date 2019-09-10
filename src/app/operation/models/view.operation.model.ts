@@ -8,16 +8,13 @@ export class Operation extends ModelExtender {
   public code: string;
   public version: number;
 
-  public startDate: Date;
-  public endDate: Date;
-
-  public planVersion: any;
+  public operationVersion: any;
   public emergencies: Array<any>;
   public locations: Array<any>;
-  public entityPrototypes: Array<any>;
-  public attachmentPrototypes: Array<any>;
-  public governingEntities: Array<any>
-  public attachments: Array<any>;
+  public opEntityPrototypes: Array<any>;
+  public opAttachmentPrototypes: Array<any>;
+  public opGoverningEntities: Array<any>
+  public opAttachments: Array<any>;
   public name: string;
   public latestVersionId: number;
   public currentPublishedVersionId: number;
@@ -39,9 +36,7 @@ export class Operation extends ModelExtender {
 
     this.createdAt = moment(options.createdAt).toDate();
     this.updatedAt = moment(options.updatedAt).toDate();
-    this.endDate = options.planVersion.endDate ? moment(options.planVersion.endDate).toDate() : null;
-    this.startDate = moment(options.startDate).toDate();
-    this.governingEntities = options.governingEntities;
+    this.opGoverningEntities = options.opGoverningEntities;
 
   }
 

@@ -75,7 +75,6 @@ export class MapWrapperComponent implements OnInit {
     //this.apiService.getPlans(options)
       .subscribe(results => {
         this.cdmResults = results;
-        console.log(this.cdmResults);
         this.loading = false;
         //this.processSearchResults(this.cdmResults);
 

@@ -42,11 +42,6 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
   ) {
     super(createOperationService, apiService);
 
-    if (this.createOperationService.isNewOperation) {
-      this.createOperationService.operation.startDate = null;
-      this.createOperationService.operation.endDate = null;
-    }
-
     this.dataSourceEmergency = Observable
       .create((observer: any) => observer.next(this.selectedEmergencyName))
       .pipe(mergeMap((token: string) => this.apiService.autocompleteEmergency(token)));
@@ -67,11 +62,6 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
       .subscribe(() => { this.checkValidity() });
   }
 
-  public setYear (year) {
-    this.createOperationService.operation.planVersion.startDate = moment(year, 'YYYY').startOf('year').toDate();
-    this.createOperationService.operation.planVersion.endDate = moment(year, 'YYYY').endOf('year').toDate();
-  }
-
   private doneLoading () {
     this.setEditable();
     this.checkValidity();
@@ -87,20 +77,15 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
     const operationVersionDataToSave = _.pick(this.createOperationService.operation, [
       'name',
       'description',
-      'startDate',
-      'endDate'
     ]);
 
 
     if (this.createOperationService.isNewOperation) {
       const createdOperation = {
-        planVersion : this.createOperationService.operation.planVersion,
-        categories:[5],
-        gregorianYears:[2019],
-        restricted:false,
+        operationVersion : this.createOperationService.operation.operationVersion,
         emergencies: this.createOperationService.operation.emergencies.map(emergency=> emergency.id),
         locations: this.createOperationService.operation.locations,
-        blueprintId: this.createOperationService.operation.planVersion.planBlueprintId,
+        blueprintId: this.createOperationService.operation.operationVersion.planBlueprintId,
       };
       return this.apiService.createOperation(createdOperation).pipe(
         map(newOperation => {

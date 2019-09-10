@@ -65,11 +65,11 @@ export class AttachmentEntryComponent implements OnInit {
     this.submitted = true;
     const formData = this.registerForm.value;
     if(this.registerForm.valid) {
-      this.api.saveOperationAttachment(this.operationId, {
+      this.api.saveOperationAttachment({
         id: formData.id,
         name: formData.id,
         file: this.fileToUpload
-      });
+      }, this.operationId);
     }
   }
 }

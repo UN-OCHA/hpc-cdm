@@ -111,7 +111,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
       .subscribe(() => {
         const operation = new Operation({
           editableByUser: true,
-          planVersion: {},
+          operationVersion: {},
           emergencies: [],
           locations: []
         });
@@ -279,9 +279,9 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
         });
 
         let attachmentFound = false;
-        operation.attachmentPrototypes.forEach(aP => {
+        operation.opAttachmentPrototypes.forEach(aP => {
           if (!attachmentFound) {
-            if (aP.value.entities.indexOf('OP')) {
+            if (aP.opAttachmentPrototypeVersion.value.entities.indexOf('OP')) {
               attachmentFound = true;
               this.allRouteSteps.push({
                 route: ['/operation', operation.id, 'edit','attachments'],
@@ -292,24 +292,24 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
             }
           }
         });
-        if (operation && operation.entityPrototypes && operation.entityPrototypes.length) {
-          operation.entityPrototypes.forEach(eP => {
+        if (operation && operation.opEntityPrototypes && operation.opEntityPrototypes.length) {
+          operation.opEntityPrototypes.forEach(eP => {
             this.allRouteSteps.push({
-              route: ['/operation', operation.id, 'edit','gve', eP.refCode],
+              route: ['/operation', operation.id, 'edit','gve', eP.opEntityPrototypeVersion.refCode],
               accessible: true,
               display: true,
-              name: eP.value.name.en.plural
+              name: eP.opEntityPrototypeVersion.value.name.en.plural
             });
             let attachmentFound = false;
-            operation.attachmentPrototypes.forEach(aP => {
+            operation.opAttachmentPrototypes.forEach(aP => {
               if (!attachmentFound) {
-                if (aP.value.entities.indexOf(eP.refCode)) {
+                if (aP.opAttachmentPrototypeVersion.value.entities.indexOf(eP.opEntityPrototypeVersion.refCode)) {
                   attachmentFound = true;
                   this.allRouteSteps.push({
-                    route: ['/operation', operation.id, 'edit','gve', eP.refCode,'attachments'],
+                    route: ['/operation', operation.id, 'edit','gve', eP.opEntityPrototypeVersion.refCode,'attachments'],
                     accessible: true,
                     display: true,
-                    name: eP.value.name.en.plural + ' attachments'
+                    name: eP.opEntityPrototypeVersion.value.name.en.plural + ' attachments'
                   });
                 }
               }
