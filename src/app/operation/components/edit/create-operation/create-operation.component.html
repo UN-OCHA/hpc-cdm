@@ -4,7 +4,7 @@
     <i class="fa fa-circle-o-notch fa-spin"></i>
   </div>
   <div class="row">
-    <div class="col-3 sidebar"
+    <div class="col-4 sidebar"
       *ngIf="createOperationService.editMode">
       <ol *ngIf="createOperationService.operation"
         class="steps nav nav-pills nav-stacked position-fixed">
@@ -29,7 +29,7 @@
       </ol>
     </div>
 
-    <div class="pt-5 col-9"
+    <div class="pt-5 col-8"
       *ngIf="createOperationService.operation"
       [ngClass]="{'processing': processing || createOperationService.processing}">
       <h2 *ngIf="createOperationService.operation.code" class="text-secondary">
@@ -58,8 +58,8 @@
         [editable]="editable && createOperationService.editMode"
         (loadOperation)="onLoadOperation($event)">
       </app-toolbar>
-      <router-outlet
-        (activate)='onActivate($event)'></router-outlet>
+
+      <router-outlet (activate)='onActivate($event)'></router-outlet>
 
       <nav class="navbar bg-light fixed-bottom"
         *ngIf="createOperationService.editMode">
