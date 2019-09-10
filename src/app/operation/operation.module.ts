@@ -27,8 +27,11 @@ import { ToolbarComponent } from './components/edit/toolbar/toolbar.component';
 import { ReviewBasicComponent } from './components/edit/review/review-basic/review-basic.component';
 import { ReviewGoverningEntitiesComponent } from './components/edit/review/review-governing-entities/review-governing-entities.component';
 import { CommentsComponent } from './components/edit/toolbar/comments/comments.component';
-import { OperationAttachmentsComponent } from './components/operation-attachments/operation-attachments.component';
-import { AttachmentEntryComponent } from './components/attachment-entry/attachment-entry.component';
+import { OperationAttachmentsComponent } from './components/edit/operation-attachments/operation-attachments.component';
+import { OperationGvesComponent } from './components/edit/operation-gves/operation-gves.component';
+import { AttachmentEntryComponent } from './components/edit/attachment-entry/attachment-entry.component';
+import { GveEntryComponent } from './components/edit/gve-entry/gve-entry.component';
+import { GveEntryIconComponent } from './components/edit/gve-entry/icon/gve-entry-icon.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +50,10 @@ import { AttachmentEntryComponent } from './components/attachment-entry/attachme
     CommentsComponent,
 
     OperationAttachmentsComponent,
-    AttachmentEntryComponent
+    OperationGvesComponent,
+    AttachmentEntryComponent,
+    GveEntryComponent,
+    GveEntryIconComponent
   ],
   imports: [
     BrowserModule,

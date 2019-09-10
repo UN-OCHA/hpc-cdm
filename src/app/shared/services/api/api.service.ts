@@ -259,15 +259,38 @@ export class ApiService {
     return this.getUrlWrapper('v1/plan/830/attachment-prototype');
   }
 
-  public saveOperationAttachment(id: number, attachment: any): Observable<any> {
+  public saveOperationAttachment(attachment: any, id: number): Observable<any> {
     // TODO update with actual endpoint
     console.log('saving operation attachment');
     console.log(id);
     console.log(attachment);
+    if(id) {
+      //update
+    } else {
+      //create
+    }
     return null;
   }
 
   public deleteOperationAttachment(id: number): Observable<any> {
+    // TODO update with actual endpoint
+    return null;
+  }
+
+  public saveOperationGve(gve: any, id: number): Observable<any> {
+    // TODO update with actual endpoint
+    console.log('saving operation gve');
+    console.log(id);
+    console.log(gve);
+    if(id) {
+      //update
+    } else {
+      //create
+    }
+    return null;
+  }
+
+  public deleteOperationGve(id: number): Observable<any> {
     // TODO update with actual endpoint
     return null;
   }

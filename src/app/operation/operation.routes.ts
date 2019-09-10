@@ -10,7 +10,8 @@ import { CreateOperationComponent } from './components/edit/create-operation/cre
 import { BasicOperationInfoComponent } from './components/edit/basic-operation-info/basic-operation-info.component';
 import { ReviewComponent } from './components/edit/review/review.component';
 import { GoverningEntitiesInfoComponent } from './components/edit/governing-entities-info/governing-entities-info.component';
-import { OperationAttachmentsComponent } from './components/operation-attachments/operation-attachments.component';
+import { OperationAttachmentsComponent } from './components/edit/operation-attachments/operation-attachments.component';
+import { OperationGvesComponent } from './components/edit/operation-gves/operation-gves.component';
 
 const operationRoutes: Routes = [
   { path: 'operation',
@@ -30,11 +31,6 @@ const operationRoutes: Routes = [
         component: BasicOperationInfoComponent,
       } ],
   },
-  { path: 'operation/:id/attachments',
-    component: OperationAttachmentsComponent,
-    canActivate: [AuthGuard],
-    canDeactivate: [PendingChangesGuard]
-  },
   { path: 'operation/:id/edit',
     component: CreateOperationComponent,
     canActivate: [AuthGuard],
@@ -49,6 +45,15 @@ const operationRoutes: Routes = [
         path: 'basic',
         canDeactivate: [PendingChangesGuard],
         component: BasicOperationInfoComponent,
+      }, {
+       path: 'attachments',
+       canDeactivate: [PendingChangesGuard],
+       component: OperationAttachmentsComponent,
+       pathMatch: 'full'
+      }, {
+       path: 'gves',
+       canDeactivate: [PendingChangesGuard],
+       component: OperationGvesComponent,
       }, {
         path: 'gve/:type',
         canDeactivate: [PendingChangesGuard],

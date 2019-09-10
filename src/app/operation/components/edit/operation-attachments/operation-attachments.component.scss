@@ -1,11 +1,12 @@
 .panel {
-  margin: 1em;
-
+  .panel-header {
+    margin-top: -2em;
+  }
   .panel-body {
     background-color: rgba(242, 242, 242, 1);
     border: 1px solid #bbb;
     border-radius: 2px;
-    max-width: 40em;
+    width: 100%;
     padding: 1em;
 
     .panel-actions {

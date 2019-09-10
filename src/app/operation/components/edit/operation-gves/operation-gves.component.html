@@ -1,0 +1,41 @@
+<div class="panel border p-5">
+  <div class="panel-header">
+    <h3>HCT/ICCGs</h3>
+    <p></p>
+  </div>
+  <div>
+    <div *ngFor="let governingEntity of list; let idx = index;" class="form-check form-check-inline">
+      <div *ngIf="governingEntity.selected">
+        <input class="form-check-input"
+          type="radio"
+          [(ngModel)]="operation.viewingGoverningEntityIdx"
+          [value]="idx"
+          (change)="selectNewGoverningEntity(operation, idx)"
+          name="operationClusterVisible"
+          id="operationCluster-{{governingEntity.governingEntityVersion.name}}"/>
+        <label for="operationCluster-{{governingEntity.governingEntityVersion.name}}" class="form-check-label">
+          <figure class="figure">
+            <img *ngIf="governingEntity.governingEntityVersion.value.icon && governingEntity.governingEntityVersion.value.icon.length"
+              class="clusterImg"
+              src="/assets/images/fieldClusters/SVG/{{governingEntity.governingEntityVersion.value.icon}}.svg" title="{{governingEntity.governingEntityVersion.name}}">
+              <figcaption class="figure-caption cluster-label">{{ governingEntity.governingEntityVersion.name }}
+                <i class="material-icons" *ngIf="governingEntity.selectedCount">check</i>
+              </figcaption>
+            </figure>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <div *ngFor="let entry of list; let i = index">
+      <gve-entry [entry]="entry" [entryIdx]="i+1"></gve-entry>
+    </div>
+    <div class="panel-actions">
+      <button [disabled]="isLastEntryNew()" type="button"
+        class="btn btn-primary" (click)="addGve()">
+        {{ 'Add HCT/ICCG' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
