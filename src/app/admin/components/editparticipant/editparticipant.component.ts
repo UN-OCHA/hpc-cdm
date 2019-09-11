@@ -102,7 +102,6 @@ export class EditparticipantComponent implements OnInit {
   }
   private parseParticipantData(participants): any[] {
     const partcipantRolesList: any[] = [];
-    console.log(participants.roles);
     participants.roles.forEach(role => {
       if (role && role.participantRoles) {
         role.participantRoles.forEach(participantRole => {
@@ -244,9 +243,7 @@ export class EditparticipantComponent implements OnInit {
             id: response.data.id
           }
         }
-        console.log('organizationItem',organizationItem);
         this.participant.organizations.push(organizationItem);
-        console.log('this.participant.organizations',this.participant.organizations);
         this.selectedOrganization = '';
         this.selectedOrganizationName = '';
         return this.toastr.success('Organization added.', 'Account updated');
@@ -297,7 +294,6 @@ export class EditparticipantComponent implements OnInit {
 
   public updateParticipant() {
     this.apiService.saveParticipant(this.participant).subscribe(response => {
-      console.log(response);
       this.toastr.success('Particpant Updated', 'Success!!!');
     })
   }

@@ -908,11 +908,11 @@ export class ApiService {
   }
 
   public getBlueprints(): Observable<any> {
-    return this.getUrlWrapper('v2/blueprint', {cache: true});
+    return this.getUrlWrapper('v2/blueprint');
   }
 
   public getBlueprint(id: any): Observable<any> {
-    return this.getUrlWrapper(`v2/blueprint/${id}`, {cache: true});
+    return this.getUrlWrapper(`v2/blueprint/${id}`);
   }
 
   public saveBlueprint(data: any, id: any): Observable<any> {

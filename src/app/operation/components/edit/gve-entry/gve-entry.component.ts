@@ -26,16 +26,16 @@ export class GveEntryComponent implements OnInit {
       name: ['', Validators.required],
       comments: [''],
       activationDate: [''],
-      filename: ['', Validators.required]
+      filename: ['']
     });
   }
 
   ngOnInit() {
     this.title = '';
-    if(this.entry && this.entry.abbreviation) {
-      this.title += `${this.entry.name}`;
+    if(this.entry && this.entry.opGoverningEntityVersion.customReference) {
+      this.title += `${this.entry.opGoverningEntityVersion.name}`;
     }
-    if(!this.entry || !this.entry.name) {
+    if(!this.entry || !this.entry.opGoverningEntityVersion.name) {
       this.expanded = true;
     }
   }

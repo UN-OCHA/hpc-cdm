@@ -78,12 +78,16 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
       const createdOperation = {
         operationVersion : this.createOperationService.operation.operationVersion,
         emergencies: this.createOperationService.operation.emergencies.map(emergency=> emergency.id),
-        locations: this.createOperationService.operation.locations,
+        locations: this.createOperationService.operation.locations.map(location=> location.id),
         blueprintId: this.createOperationService.operation.operationVersion.planBlueprintId,
       };
       return this.apiService.createOperation(createdOperation).pipe(
         map(newOperation => {
+          console.log(newOperation);
           this.createOperationService.operation.id = newOperation.id;
+          this.createOperationService.operation.operationVersion = newOperation.operationVersion;
+          this.createOperationService.operation.opEntityPrototypes = newOperation.opEntityPrototypes;
+          this.createOperationService.operation.opAttachmentPrototypes = newOperation.opAttachmentPrototypes;
           this.createOperationService.operation.updatedAt = newOperation.updatedAt;
           this.createOperationService.operationDoneLoading(newOperation);
           return {
@@ -96,12 +100,13 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
       const operationToSave = {
         operationVersion : this.createOperationService.operation.operationVersion,
         emergencies: this.createOperationService.operation.emergencies.map(emergency=> emergency.id),
-        locations: this.createOperationService.operation.locations,
+        locations: this.createOperationService.operation.locations.map(location=> location.id),
         id: this.createOperationService.operation.id,
         updatedAt: this.createOperationService.operation.updatedAt,
       };
       return this.apiService.saveOperation(operationToSave).pipe(map(result => {
         this.createOperationService.operation.updatedAt = result.updatedAt;
+          this.createOperationService.operation.operationVersion = result.operationVersion;
         this.createOperationService.operationDoneLoading(result);
         return {
           isNew: false,
@@ -120,7 +125,7 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
     this.selectedEmergencyName = '';
   }
 
-  public onDeleteEmergency(idx) {
+  public onDeleteEmergency(idx:any) {
     this.createOperationService.operation.emergencies.splice(idx, 1);
   }
 
@@ -129,7 +134,7 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
     this.selectedLocationName = '';
   }
 
-  public onDeleteLocation(idx) {
+  public onDeleteLocation(idx:any) {
     this.createOperationService.operation.locations.splice(idx, 1);
   }
 

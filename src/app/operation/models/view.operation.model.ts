@@ -7,6 +7,7 @@ export class Operation extends ModelExtender {
   public id: number;
   public code: string;
   public version: number;
+  public routeStepsGenerated: boolean;
 
   public operationVersion: any;
   public emergencies: Array<any>;
