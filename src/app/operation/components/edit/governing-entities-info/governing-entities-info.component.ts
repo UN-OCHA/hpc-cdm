@@ -55,7 +55,13 @@ export class GoverningEntitiesInfoComponent extends CreateOperationChildComponen
       }));
   }
   public addNewGoverningEntity() {
-    this.createOperationService.operation.opGoverningEntities.push(new GoverningEntity({opGoverningEntityVersion:{value:{}}}));
+    this.createOperationService.operation.opGoverningEntities.push(new GoverningEntity({
+      entityPrototypeId:8,
+      operationId: this.createOperationService.operation.id,
+      opGoverningEntityVersion:{
+        value:{}
+      }
+    }));
   }
 
 }

@@ -16,8 +16,6 @@ export class Operation extends ModelExtender {
   public opGoverningEntities: Array<any>
   public opAttachments: Array<any>;
   public name: string;
-  public latestVersionId: number;
-  public currentPublishedVersionId: number;
 
   public creatorParticipantId: number;
   public lastUpdated: any;

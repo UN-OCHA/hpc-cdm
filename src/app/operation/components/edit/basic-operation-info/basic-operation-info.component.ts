@@ -85,11 +85,12 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
         map(newOperation => {
           this.createOperationService.operation.id = newOperation.id;
           this.createOperationService.operation.updatedAt = newOperation.updatedAt;
+          this.createOperationService.operationDoneLoading(newOperation);
           return {
             isNew: true,
             stopSave: true
           };
-        }))
+        }));
     } else {
 
       const operationToSave = {
@@ -101,6 +102,7 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
       };
       return this.apiService.saveOperation(operationToSave).pipe(map(result => {
         this.createOperationService.operation.updatedAt = result.updatedAt;
+        this.createOperationService.operationDoneLoading(result);
         return {
           isNew: false,
           stopSave: true

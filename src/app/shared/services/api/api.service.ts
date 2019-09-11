@@ -378,16 +378,10 @@ export class ApiService {
     });
   }
 
-  public createGoverningEntity(governingEntity): Observable<any> {
-    return this.postToEndpoint('v2/operation/governingEntity', {
-      data: { governingEntity }
-    });
-  }
-
   public saveGoverningEntity(governingEntity): Observable<any> {
     if (!governingEntity.id) {
       return this.postToEndpoint('v2/operation/governingEntity', {
-        data: { governingEntity }
+        data: { opGoverningEntity: governingEntity }
       });
     }
     return this.putToEndpoint('v2/operation/governingEntity/' + governingEntity.id, {

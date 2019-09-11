@@ -233,9 +233,6 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
 
   public nextStep (operationId) {
     const route = this.displayRouteSteps[this.currentStepIdx + 1].route;
-    if (route === 'locations') {
-      this.createOperationService.processing = 1;
-    }
     this.router.navigate(route);
   }
 
@@ -303,7 +300,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
             let attachmentFound = false;
             operation.opAttachmentPrototypes.forEach(aP => {
               if (!attachmentFound) {
-                if (aP.opAttachmentPrototypeVersion.value.entities.indexOf(eP.opEntityPrototypeVersion.refCode)) {
+                if (aP.opAttachmentPrototypeVersion.value.entities.filter(entity => entity === eP.opEntityPrototypeVersion.refCode).length) {
                   attachmentFound = true;
                   this.allRouteSteps.push({
                     route: ['/operation', operation.id, 'edit','gve', eP.opEntityPrototypeVersion.refCode,'attachments'],
