@@ -1,0 +1,20 @@
+<div>
+  <operation-gves-icons></operation-gves-icons>
+
+  <gve-entry></gve-entry>
+
+  <div class="panel">
+    <p>Forms</p>
+    <div class="panel-body">
+      <div *ngFor="let entry of attachments; let i = index">
+        <attachment-entry [gveId]="gveId" [entry]="entry" [entryIdx]="i+1"></attachment-entry>
+      </div>
+
+      <div class="panel-actions">
+        <button type="button" class="btn btn-primary" (click)="addEntry()">
+          {{ 'Add Form' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

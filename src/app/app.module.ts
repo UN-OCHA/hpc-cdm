@@ -16,6 +16,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DragDropModule } from '@angular/cdk/drag-drop'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
@@ -76,6 +77,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     BrowserModule,
     CommonModule,
     BrowserAnimationsModule,
+    DragDropModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,

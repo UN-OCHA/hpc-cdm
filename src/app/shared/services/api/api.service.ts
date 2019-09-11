@@ -295,6 +295,24 @@ export class ApiService {
     return null;
   }
 
+  public saveGveAttachment(attachment: any, id: number): Observable<any> {
+    // TODO update with actual endpoint
+    console.log('saving gve attachment');
+    console.log(id);
+    console.log(attachment);
+    if(id) {
+      //update
+    } else {
+      //create
+    }
+    return null;
+  }
+
+  public deleteGveAttachment(id: number): Observable<any> {
+    // TODO update with actual endpoint
+    return null;
+  }
+
   public getAttachmentPrototypes(id: number, operationVersionId = 'latest'): Observable<any> {
     // TODO update with actual endpoint
     return this.getUrlWrapper(`v2/operation/${id}/attachmentPrototype`);
@@ -890,12 +908,10 @@ export class ApiService {
   }
 
   public getBlueprints(): Observable<any> {
-    // TODO Update with actual endpoints
     return this.getUrlWrapper('v2/blueprint', {cache: true});
   }
 
   public getBlueprint(id: any): Observable<any> {
-    // TODO Update with actual endpoints
     return this.getUrlWrapper(`v2/blueprint/${id}`, {cache: true});
   }
 

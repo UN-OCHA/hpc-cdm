@@ -9,9 +9,9 @@ import { CreateOperationComponent } from './components/edit/create-operation/cre
 
 import { BasicOperationInfoComponent } from './components/edit/basic-operation-info/basic-operation-info.component';
 import { ReviewComponent } from './components/edit/review/review.component';
-import { GoverningEntitiesInfoComponent } from './components/edit/governing-entities-info/governing-entities-info.component';
 import { OperationAttachmentsComponent } from './components/edit/operation-attachments/operation-attachments.component';
 import { OperationGvesComponent } from './components/edit/operation-gves/operation-gves.component';
+import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-attachments.component';
 
 const operationRoutes: Routes = [
   { path: 'operation',
@@ -55,14 +55,9 @@ const operationRoutes: Routes = [
        canDeactivate: [PendingChangesGuard],
        component: OperationGvesComponent,
       }, {
-        path: 'gve/:type',
+        path: 'gve/:type/attachments',
         canDeactivate: [PendingChangesGuard],
-        component: GoverningEntitiesInfoComponent,
-        children: [{
-          path: 'attachments',
-          canDeactivate: [PendingChangesGuard],
-          component: GoverningEntitiesInfoComponent,
-        }],
+        component: GveAttachmentsComponent
       }, {
         path: 'review',
         component: ReviewComponent,
