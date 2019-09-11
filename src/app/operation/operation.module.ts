@@ -22,7 +22,7 @@ import { CreateOperationComponent } from './components/edit/create-operation/cre
 import { SharedModule } from '../shared/shared.module';
 import { BasicOperationInfoComponent } from './components/edit/basic-operation-info/basic-operation-info.component';
 import { ReviewComponent } from './components/edit/review/review.component';
-import { GoverningEntitiesInfoComponent } from './components/edit/governing-entities-info/governing-entities-info.component';
+//import { GoverningEntitiesInfoComponent } from './components/edit/governing-entities-info/governing-entities-info.component';
 import { CreateOrSaveButtonsComponent } from './components/edit/create-or-save-buttons/create-or-save-buttons.component';
 import { ToolbarComponent } from './components/edit/toolbar/toolbar.component';
 import { ReviewBasicComponent } from './components/edit/review/review-basic/review-basic.component';
@@ -43,7 +43,7 @@ import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-a
     CreateOperationComponent,
     BasicOperationInfoComponent,
     ReviewComponent,
-    GoverningEntitiesInfoComponent,
+ //   GoverningEntitiesInfoComponent,
 
     CreateOrSaveButtonsComponent,
     ToolbarComponent,
