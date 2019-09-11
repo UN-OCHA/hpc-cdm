@@ -32,6 +32,7 @@ export class OperationAttachmentsComponent implements OnInit {
   }
 
   isLastEntryNew() {
-    return this.list[this.list.length - 1].id === null;
+    const lastEntry = this.list[this.list.length - 1];
+    return lastEntry && lastEntry.id === null;
   }
 }

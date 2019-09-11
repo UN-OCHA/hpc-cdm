@@ -11,6 +11,7 @@ export class AttachmentEntryComponent implements OnInit {
   registerForm: FormGroup;
 
   @Input() operationId: any;
+  @Input() gveId: any;
   @Input() entry: any;
   @Input() entryIdx: any;
   title: string;
@@ -50,7 +51,11 @@ export class AttachmentEntryComponent implements OnInit {
 
   remove() {
     if(this.entry.id) {
-      this.api.deleteOperationAttachment(this.entry.id);
+      if(this.operationId) {
+        this.api.deleteOperationAttachment(this.entry.id);
+      } else if(this.gveId) {
+        this.api.deleteGveAttachment(this.entry.id);
+      }
     }
   }
 
@@ -65,11 +70,16 @@ export class AttachmentEntryComponent implements OnInit {
     this.submitted = true;
     const formData = this.registerForm.value;
     if(this.registerForm.valid) {
-      this.api.saveOperationAttachment({
+      const xentry = {
         id: formData.id,
         name: formData.id,
         file: this.fileToUpload
-      }, this.operationId);
+      };
+      if(this.operationId) {
+        this.api.saveOperationAttachment(xentry, this.operationId);
+      } else if(this.gveId) {
+        this.api.saveGveAttachment(xentry, this.gveId);
+      }
     }
   }
 }

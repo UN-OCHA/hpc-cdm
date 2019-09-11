@@ -5,3 +5,43 @@ a {
     font-weight: bold;
   }
 }
+
+.icon-button {
+  margin-left: 1em;
+  background-color: transparent;
+  width: 120px;
+  cursor: pointer;
+  &:hover {
+    svg {
+      border-color: #f9d5bd;
+      path {
+        fill: #ee7325;
+      }
+    }
+  }
+  &.active {
+    background-color: transparent;
+    color: currentColor;
+    svg {
+      border-color:
+      path {
+        fill: #ee7325;
+      }
+    }
+  }
+  svg {
+    width: 6em;
+    height: 6em;
+    border: .5em solid #eee;
+    border-radius: 50%;
+    background-color: #fff;//rgba(color(white), 0.5);
+    background-clip: padding-box;
+    path {
+      fill: #026CB6;
+    }
+  }
+  .name {
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+}
