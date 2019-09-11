@@ -1,0 +1,70 @@
+
+.operation-gves-icons {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 1em 0 0 2em;
+  .gve-icon {
+    border: 1px dashed #888 !important;
+    max-width: 9em;
+    padding: 1em;
+    margin: 0 1em 1em 0;
+  }
+
+  .icon-button {
+    background-color: transparent;
+    width: 120px;
+    margin-left: .25em;
+    &:hover {
+      svg {
+        border-color: #f9d5bd;
+        path {
+          fill: #ee7325;
+        }
+      }
+    }
+    &.active {
+      background-color: transparent;
+      color: currentColor;
+      svg {
+        border-color:
+        path {
+          fill: #ee7325;
+        }
+      }
+    }
+    svg {
+      width: 6em;
+      height: 6em;
+      border: .5em solid #eee;
+      border-radius: 50%;
+      background-color: #fff;//rgba(color(white), 0.5);
+      background-clip: padding-box;
+      path {
+        fill: #026CB6;
+      }
+    }
+    .name {
+      margin: 1em 0 0 -.5em;
+      text-align: center;
+      width: 9em;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: .75em;
+    }
+  }
+}
+
+.description {
+  margin: 0 0 0 2.5em;
+  font-size: .75em;
+}
+
+/* Animate items as they're being sorted. */
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Animate an item that has been dropped. */
+.cdk-drag-animating {
+  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}

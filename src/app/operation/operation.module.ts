@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DragDropModule } from '@angular/cdk/drag-drop'
 
 // bootstrap
 import { AccordionModule } from 'ngx-bootstrap/accordion';
@@ -29,9 +30,11 @@ import { ReviewGoverningEntitiesComponent } from './components/edit/review/revie
 import { CommentsComponent } from './components/edit/toolbar/comments/comments.component';
 import { OperationAttachmentsComponent } from './components/edit/operation-attachments/operation-attachments.component';
 import { OperationGvesComponent } from './components/edit/operation-gves/operation-gves.component';
+import { OperationGvesIconsComponent } from './components/edit/operation-gves/icons/operation-gves-icons.component';
 import { AttachmentEntryComponent } from './components/edit/attachment-entry/attachment-entry.component';
 import { GveEntryComponent } from './components/edit/gve-entry/gve-entry.component';
 import { GveEntryIconComponent } from './components/edit/gve-entry/icon/gve-entry-icon.component';
+import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-attachments.component';
 
 @NgModule({
   declarations: [
@@ -51,12 +54,15 @@ import { GveEntryIconComponent } from './components/edit/gve-entry/icon/gve-entr
 
     OperationAttachmentsComponent,
     OperationGvesComponent,
+    OperationGvesIconsComponent,
     AttachmentEntryComponent,
     GveEntryComponent,
-    GveEntryIconComponent
+    GveEntryIconComponent,
+    GveAttachmentsComponent
   ],
   imports: [
     BrowserModule,
+    DragDropModule,
     FormsModule,
     BsDropdownModule,
     BsDatepickerModule.forRoot(),

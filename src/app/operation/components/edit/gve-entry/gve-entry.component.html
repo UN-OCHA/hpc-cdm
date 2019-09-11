@@ -4,15 +4,15 @@
       <gve-entry-icon></gve-entry-icon>
     </div>
     <div class="form-content">
-      <form [formGroup]="registerForm">
+      <form [formGroup]="registerForm" #form>
         <fieldset>
           <div class="row">
             <div class="form-group col-lg-4">
-              <label for="id" translate>Abbreviation</label> <i class="text-danger">*</i>
+              <label for="abbreviation" translate>Abbreviation</label> <i class="text-danger">*</i>
               <input class="form-control" type="text" id="abbreviation" name="abbreviation" required
                 formControlName="abbreviation"
                 (input)="clearErrors()"
-                [ngClass]="{ 'is-invalid': submitted && f.id.errors }"/>
+                [ngClass]="{ 'is-invalid': submitted && f.abbreviation.errors }"/>
             </div>
             <div class="form-group col-lg-8">
               <label for="name" translate>Name</label> <i class="text-danger">*</i>
@@ -53,10 +53,20 @@
             <div class="form-group col-lg-12">
               <input id="file" type="file" #file style="display: none"
                 (change)="handleFileInput($event.target.files)"/>
-              <div>
+              <div *ngIf="!fileToUpload">
                 <button id="selectedFile" type="button" class="btn btn-default"
                   onclick="document.getElementById('file').click();">
-                      {{ 'Upload File' | translate }}
+                    {{ 'Upload File' | translate }}
+                </button>
+              </div>
+              <div *ngIf="fileToUpload">
+                <button id="selectedFile" type="button" class="btn btn-default"
+                  onclick="document.getElementById('file').click();">
+                    {{ 'Replace File' | translate }}
+                </button>
+                <button type="button" class="btn btn-basic"
+                  (click)="removeFile()">
+                    {{ 'Remove File' | translate }}
                 </button>
               </div>
             </div>
@@ -80,7 +90,7 @@
     <button [disabled]="registerForm.invalid" type="button" class="btn btn-save" (click)="save()">
       {{ 'Save' | translate }}
     </button>
-    <button *ngIf="entry.id" type="button" class="btn btn-info" (click)="remove()">
+    <button *ngIf="entry && entry.id" type="button" class="btn btn-info" (click)="remove()">
       {{ 'Remove HCT/ICCG' | translate }}
     </button>
   </div>

@@ -297,24 +297,10 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
         if (operation && operation.entityPrototypes && operation.entityPrototypes.length) {
           operation.entityPrototypes.forEach(eP => {
             this.allRouteSteps.push({
-              route: ['/operation', operation.id, 'edit','gve', eP.refCode],
+              route: ['/operation', operation.id, 'edit','gve', eP.refCode, 'attachments'],
               accessible: true,
               display: true,
               name: eP.value.name.en.plural
-            });
-            let attachmentFound = false;
-            operation.attachmentPrototypes.forEach(aP => {
-              if (!attachmentFound) {
-                if (aP.value.entities.indexOf(eP.refCode)) {
-                  attachmentFound = true;
-                  this.allRouteSteps.push({
-                    route: ['/operation', operation.id, 'edit','gve', eP.refCode,'attachments'],
-                    accessible: true,
-                    display: true,
-                    name: eP.value.name.en.plural + ' attachments'
-                  });
-                }
-              }
             });
           });
         }

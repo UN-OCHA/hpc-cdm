@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
 
@@ -11,6 +11,7 @@ export class GveEntryComponent implements OnInit {
   registerForm: FormGroup;
   submitted = false;
   fileToUpload: any;
+  @ViewChild('form') form;
 
   @Input() entry: any;
   @Input() entryIdx: any;
@@ -31,10 +32,10 @@ export class GveEntryComponent implements OnInit {
 
   ngOnInit() {
     this.title = '';
-    if(this.entry.abbreviation) {
+    if(this.entry && this.entry.abbreviation) {
       this.title += `${this.entry.name}`;
     }
-    if(!this.entry.name) {
+    if(!this.entry || !this.entry.name) {
       this.expanded = true;
     }
   }
@@ -47,7 +48,7 @@ export class GveEntryComponent implements OnInit {
   handleFileInput(files: FileList) {
     this.fileToUpload = files.item(0);
     if(this.fileToUpload) {
-      this.registerForm.controls['filename'].setValue(this.fileToUpload.name);
+      this.f.filename.setValue(this.fileToUpload.name);
     }
   }
 
@@ -62,5 +63,16 @@ export class GveEntryComponent implements OnInit {
 
   remove() {
     this.api.deleteOperationGve(this.entry.id);
+  }
+
+  removeFile() {
+    //All these. just to allow second upload on the same file
+    const bkp = Object.assign(this.registerForm.value, {});
+    this.form.nativeElement.reset();
+    this.fileToUpload = null;
+    this.f.abbreviation.setValue(bkp.abbreviation);
+    this.f.name.setValue(bkp.name);
+    this.f.comments.setValue(bkp.comments);
+    this.f.activationDate.setValue(bkp.activationDate);
   }
 }
