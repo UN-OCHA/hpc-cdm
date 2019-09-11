@@ -356,11 +356,12 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
 
     this.setCurrentStepIdx(this.allRouteSteps);
 
+    // TODO: check why current index is not set correctly sometimes
     this.allRouteSteps.forEach((step:any, idx:any) => {
       if (idx < this.currentStepIdx) {
         step.accessible = true;
       } else if (idx === this.currentStepIdx) {
-        step.accessible = false;
+        step.accessible = true;
       }
     });
 
