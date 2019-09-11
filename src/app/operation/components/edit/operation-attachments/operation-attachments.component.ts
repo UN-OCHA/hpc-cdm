@@ -1,19 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from 'app/shared/services/api/api.service';
+import { CreateOperationService } from 'app/operation/services/create-operation.service';
+import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
+
 
 @Component({
   selector: 'operation-attachments',
   templateUrl: './operation-attachments.component.html',
   styleUrls: ['./operation-attachments.component.scss']
 })
-export class OperationAttachmentsComponent implements OnInit {
+export class OperationAttachmentsComponent extends CreateOperationChildComponent implements OnInit {
   public list = [];
   operationId: any;
 
   constructor(
     private api: ApiService,
-    private activatedRoute: ActivatedRoute) {}
+    public createOperationService: CreateOperationService,
+    private activatedRoute: ActivatedRoute) {
+      super(createOperationService, api);
+    }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {

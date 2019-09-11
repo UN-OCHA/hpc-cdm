@@ -3,15 +3,17 @@
     <h3>Operation attachments</h3>
     <p>Global forms</p>
   </div>
-  <div class="panel-body">
-    <div *ngFor="let entry of list; let i = index">
-      <attachment-entry [operationId]="operationId" [entry]="entry" [entryIdx]="i+1"></attachment-entry>
-    </div>
+  <form  #childForm="ngForm">
+    <div class="panel-body">
+      <div *ngFor="let entry of list; let i = index">
+        <attachment-entry [operationId]="operationId" [entry]="entry" [entryIdx]="i+1"></attachment-entry>
+      </div>
 
-    <div class="panel-actions">
-      <button [disabled]="isLastEntryNew()" type="button" class="btn btn-primary" (click)="addEntry()">
-        {{ 'Add Form' | translate }}
-      </button>
+      <div class="panel-actions">
+        <button [disabled]="isLastEntryNew()" type="button" class="btn btn-primary" (click)="addEntry()">
+          {{ 'Add Form' | translate }}
+        </button>
+      </div>
     </div>
-  </div>
+  </form>
 </div>

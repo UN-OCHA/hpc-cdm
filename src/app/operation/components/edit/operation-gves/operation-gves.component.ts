@@ -4,21 +4,22 @@ import {map} from 'rxjs/operators';
 
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
-import { GoverningEntity } from 'app/operation/models/view.operation.model';
+import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
 
 @Component({
   selector: 'operation-gves',
   templateUrl: './operation-gves.component.html',
   styleUrls: ['./operation-gves.component.scss']
 })
-export class OperationGvesComponent implements OnInit {
+export class OperationGvesComponent extends CreateOperationChildComponent implements OnInit {
   public list = [];
 
   constructor(
     public createOperationService: CreateOperationService,
     public apiService: ApiService
-  ) {}
-
+  ) {
+    super(createOperationService, apiService);
+  }
 
   ngOnInit() {
     this.list = this.createOperationService.operation.opGoverningEntities;
