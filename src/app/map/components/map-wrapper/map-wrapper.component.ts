@@ -64,18 +64,18 @@ export class MapWrapperComponent implements OnInit {
     this.cdmResults = [];
     this.working = true;
 
-    let options = { scopes: 'entityPrototypes,planVersion'}; // `options` is the local object that contains the search options.
+    let options = { scopes: 'entityPrototypes,operationVersion'};
+    //let options = { scopes: 'entityPrototypes,planVersion'};
 
-    // we assign `options` to searchOptions to pass it to child components.
     this.searchOptions = options;
 
     this.loading = true;
 
-    this.apiService.getPlans(options)
+    this.apiService.getOperations(options)
+    //this.apiService.getPlans(options)
       .subscribe(results => {
         this.cdmResults = results;
         this.loading = false;
-
         //this.processSearchResults(this.cdmResults);
 
         this.page = this.cdmResults.slice(0,10);

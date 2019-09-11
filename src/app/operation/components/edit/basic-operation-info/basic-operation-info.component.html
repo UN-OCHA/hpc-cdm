@@ -7,7 +7,7 @@
         type="text"
         id="name"
         name="name"
-        [(ngModel)]="createOperationService.operation.planVersion.name"
+        [(ngModel)]="createOperationService.operation.operationVersion.name"
         required>
     </div>
 
@@ -19,68 +19,12 @@
         id="description"
         [maxlength]="4000"
         name="description"
-        [(ngModel)]="createOperationService.operation.planVersion.description"
+        [(ngModel)]="createOperationService.operation.operationVersion.description"
         required>
           {{ 'operation-edit.basic-info.overview' | translate }}
       </textarea>
       <small translate>Max length: {{createOperationService.operation.description ? createOperationService.operation.description.length : 0}}/4000</small>
 
-    </div>
-
-    <div class="row">
-      <div class="form-group col-lg-4">
-        <label for="startDate" translate="Start Date"></label>
-        <div class="input-group">
-          <input
-            class="form-control"
-            [maxDate]="createOperationService.operation.planVersion.endDate"
-            #bsDatepickerstartDate="bsDatepicker"
-            required
-            bsDatepicker
-            name="startDate"
-            [(ngModel)]="createOperationService.operation.planVersion.startDate"
-            [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
-          <div class="input-group-append">
-            <button (click)="bsDatepickerstartDate.toggle()" [attr.aria-expanded]="bsDatepickerstartDate.isOpen" class="btn btn-outline-secondary" type="button">
-              <i class="material-icons">calendar_today</i>
-            </button>
-          </div>
-        </div>
-
-      </div>
-      <p class="red">TODO: remove Dates when operation endpoint available</p>
-      <div class="form-group col-lg-4">
-        <label for="endDate" translate="End Date"></label>
-        <div class="input-group">
-          <input
-            class="form-control"
-            [minDate]="createOperationService.operation.planVersion.startDate"
-            #bsDatepickerEndDate="bsDatepicker"
-            required
-            bsDatepicker
-            name="endDate"
-            [(ngModel)]="createOperationService.operation.planVersion.endDate"
-            [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
-          <div class="input-group-append">
-            <button (click)="bsDatepickerEndDate.toggle()" [attr.aria-expanded]="bsDatepickerEndDate.isOpen" class="btn btn-outline-secondary" type="button"><i class="material-icons">calendar_today</i></button>
-          </div>
-        </div>
-      </div>
-      <div class="form-group col-lg-4">
-        <label translate="operation-edit.basic-info.set-standard-dates"></label>
-        <div class="input-group">
-          <button class="btn btn-outline-secondary mr-2"
-            (click)="setYear(currentYear)"
-            translate="operation-edit.basic-info.set-to-year"
-            [translateParams]="{year: currentYear}">
-          </button>
-          <button class="btn btn-outline-secondary"
-            (click)="setYear(currentYear+1)"
-            translate="operation-edit.basic-info.set-to-year"
-            [translateParams]="{year: currentYear+1}">
-          </button>
-        </div>
-      </div>
     </div>
 
     <section class="mt-5">
@@ -146,7 +90,7 @@
         <select class="form-control"
           id="template"
           name="template"
-          [(ngModel)]="createOperationService.operation.planVersion.planBlueprintId"
+          [(ngModel)]="createOperationService.operation.operationVersion.planBlueprintId"
           required>
           <option value="" disabled>Choose your template</option>
           <option *ngFor="let blueprint of blueprints" [ngValue]="blueprint.id">{{blueprint.name}}</option>

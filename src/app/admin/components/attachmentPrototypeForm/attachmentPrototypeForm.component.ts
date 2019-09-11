@@ -35,8 +35,8 @@ export class AttachmentPrototypeFormComponent implements OnInit {
     if(proto) {
       this.prototype = proto;
       this.form.reset({
-        refCode: proto.refCode,
-        refType: proto.type
+        refCode: proto.opAttachmentPrototypeVersion.refCode,
+        refType: proto.opAttachmentPrototypeVersion.type
       });
     }
   }
@@ -72,12 +72,14 @@ export class AttachmentPrototypeFormComponent implements OnInit {
     if(!this.form.invalid) {
       const formData = this.form.value;
       const id = this.prototype && this.prototype.id;
-      this.api.saveAttachmentPrototype({
+      this.prototype.opAttachmentPrototypeVersion = {
         refCode: formData.refCode,
         type: formData.refType,
         value: this.jsonModel
-      }, id).subscribe(() => {
-        this.router.navigate(['/admin/attachmentprotos']);
+      };
+      this.api.saveAttachmentPrototype(this.prototype, id).subscribe((result) => {
+
+        this.router.navigate(['/admin/operations',result.operationId,'attachmentprotos']);
       });
     }
   }

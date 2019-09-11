@@ -31,8 +31,12 @@
                 <td>{{blueprint.name}}</td>
                 <td>{{blueprint.description}}</td>
                 <td>{{blueprint.status}}</td>
-                <td align="center"><a href="javascript:;" class="editIcon" title="Edit"
-                    [routerLink]="['/admin/blueprints',blueprint.id]"><i class="material-icons">edit</i></a>
+                <td align="center">
+                  <a href class="editIcon" title="Edit"
+                    [routerLink]="['/admin/blueprints',blueprint.id]"><i class="material-icons">edit</i>
+                  </a>
+                  <a class="editIcon clickable" title="Edit" (click)="deleteBlueprint(blueprint)"><i class="material-icons">delete</i>
+                  </a>
                 </td>
               </tr>
             </tbody>

@@ -1,9 +1,13 @@
 
+import { Observable,zip as observableZip } from 'rxjs';
+import {map} from 'rxjs/operators';
+
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 
 import { CreateOperationChildComponent } from '../create-operation-child/create-operation-child.component';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
+import { GoverningEntity } from 'app/operation/models/view.operation.model';
 
 @Component({
   selector: 'app-governing-entities-info',
@@ -14,7 +18,6 @@ export class GoverningEntitiesInfoComponent extends CreateOperationChildComponen
   objectKeys = Object.keys;
   openById = {};
 
-  public governingEntityBeingViewed = 0;
   public status = false;
 
   constructor(
@@ -33,6 +36,32 @@ export class GoverningEntitiesInfoComponent extends CreateOperationChildComponen
   }
   ngAfterViewInit() {
     this.status = true;
+  }
+
+  public save (): Observable<any> {
+    const postSaveObservables = [];
+    this.createOperationService.operation.opGoverningEntities.forEach(governingEntity => {
+      postSaveObservables.push(
+        this.apiService.saveGoverningEntity(governingEntity));
+    });
+
+    return observableZip(
+      ...postSaveObservables
+    ).pipe(map(results => {
+      console.log(results);
+        return {
+          stopSave: true
+        };
+      }));
+  }
+  public addNewGoverningEntity() {
+    this.createOperationService.operation.opGoverningEntities.push(new GoverningEntity({
+      entityPrototypeId:8,
+      operationId: this.createOperationService.operation.id,
+      opGoverningEntityVersion:{
+        value:{}
+      }
+    }));
   }
 
 }

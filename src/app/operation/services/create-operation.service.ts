@@ -12,7 +12,6 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class CreateOperationService {
-  // observable operation
   public operation: Operation;
   public isNewOperation = true;
   public editable = false;
@@ -105,7 +104,7 @@ export class CreateOperationService {
   }
 
   private associateOperationAttachmentsToEntities (gE, planEntities, typeName) {
-    this.operation.attachments.forEach(operationAttachment => {
+    this.operation.opAttachments.forEach(operationAttachment => {
       gE.attachments.forEach(entityAttachment => {
         if (operationAttachment.attachmentId === entityAttachment.id) {
           entityAttachment.operationVersionId = operationAttachment.operationVersionId;

@@ -1,114 +1,78 @@
 <form #childForm="ngForm">
-  <fieldset class="border p-4 governing-entities" *ngIf="createOperationService.operation" [disabled]="!editable">
+  <fieldset class="border p-4 governing-entities" *ngIf="createOperationService.operation">
       <section>
-        <div *ngFor="let governingEntity of operation.governingEntities; let idx = index;" class="form-check form-check-inline">
-          <div *ngIf="governingEntity.selected">
-            <input class="form-check-input"
-              type="radio"
-              [(ngModel)]="operation.viewingGoverningEntityIdx"
-              [value]="idx"
-              (change)="selectNewGoverningEntity(operation, idx)"
-              name="operationClusterVisible"
-              id="operationCluster-{{governingEntity.governingEntityVersion.name}}"/>
-            <label for="operationCluster-{{governingEntity.governingEntityVersion.name}}" class="form-check-label">
+        <div *ngFor="let governingEntity of createOperationService.operation.opGoverningEntities; let idx = index;" class="form-check form-check-inline">
+          <div>
+            <label for="operationCluster-{{governingEntity.opGoverningEntityVersion.name}}" class="form-check-label">
               <figure class="figure">
-                <img *ngIf="governingEntity.governingEntityVersion.value.icon && governingEntity.governingEntityVersion.value.icon.length"
+                <img *ngIf="governingEntity.opGoverningEntityVersion.value.icon && governingEntity.opGoverningEntityVersion.value.icon.length"
                   class="clusterImg"
-                  src="/assets/images/fieldClusters/SVG/{{governingEntity.governingEntityVersion.value.icon}}.svg" title="{{governingEntity.governingEntityVersion.name}}">
-                  <figcaption class="figure-caption cluster-label">{{ governingEntity.governingEntityVersion.name }}
-                    <i class="material-icons" *ngIf="governingEntity.selectedCount">check</i>
-                  </figcaption>
+                  src="/assets/images/fieldClusters/SVG/{{governingEntity.opGoverningEntityVersion.value.icon}}.svg" title="{{governingEntity.opGoverningEntityVersion.name}}">
                 </figure>
+                {{governingEntity.opGoverningEntityVersion.name}}
             </label>
           </div>
         </div>
 
-        <div *ngIf="operation.governingEntities[operation.viewingGoverningEntityIdx]">
-          <h2>
-            {{operation.governingEntities[operation.viewingGoverningEntityIdx].governingEntityVersion.name}}
-          </h2>
+      </section>
+      <section>
 
-          <p class="alert alert-danger" *ngIf="!operation.governingEntities[operation.viewingGoverningEntityIdx].isFrameworkUploaded">
-            The cluster/sector framework has not yet been uploaded. Please contact your cluster coordinator
-          </p>
-          <accordion>
-            <accordion-group *ngIf="operation.governingEntities[operation.viewingGoverningEntityIdx].caseloads && operation.governingEntities[operation.viewingGoverningEntityIdx].caseloads.length" [heading]="'Caseloads'" [isOpen]="true">
-            </accordion-group>
-            <accordion-group *ngFor="let key of objectKeys(operation.governingEntities[operation.viewingGoverningEntityIdx].childOperationEntities)">
-              <span accordion-heading>
-                {{ key }}<i class="material-icons md-36">add_circle_outline</i>
-              </span>
-              <div *ngFor="let operationEntity of operation.governingEntities[operation.viewingGoverningEntityIdx].childOperationEntities[key]"
-                class="mt-3">
-                <h3>
-                  <app-checkbox
-                    [object]="operationEntity"
-                    (onSelect)="onChangeOperationEntity($event)"
-                  ></app-checkbox>
-                  {{ operationEntity.composedReference }}
-                </h3>
-                <p>{{ operationEntity.operationEntityVersion.value.description }}</p>
+        <div *ngFor="let governingEntity of createOperationService.operation.opGoverningEntities; let idx = index;" class="form">
+          <fieldset class="border mt-4 p-4" *ngIf="createOperationService.operation">
+          <div class="form-group">
+            <label for="name" translate="operation-edit.governing-entity-info.abbreviation"></label> <i class="text-danger">*</i>
+            <input class="form-control"
+              type="text"
+              id="customReference{{idx}}"
+              name="customReference{{idx}}"
+              [(ngModel)]="governingEntity.opGoverningEntityVersion.customReference"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="name" translate="operation-edit.governing-entity-info.name"></label> <i class="text-danger">*</i>
+            <input class="form-control"
+              type="text"
+              id="name{{idx}}"
+              name="name{{idx}}"
+              [(ngModel)]="governingEntity.opGoverningEntityVersion.name"
+              required>
+          </div>
 
-                <div>
-                  <table class="table table-striped mb-0">
-                    <thead class="thead-dark">
-                      <tr>
-                        <th class="d-inline-block col-lg-1">{{ 'Indicator' | translate }}
-                        </th><th class="d-inline-block col-lg-4">{{ 'Description' | translate }}
-                        </th><th class="d-inline-block col-lg-2">{{ 'Unit' | translate }}
-                        </th><th class="d-inline-block col-lg-2">{{ 'Operation Target' | translate }}
-                        </th><th class="d-inline-block col-lg-2">{{ 'Operation Target' | translate }}</th>
-                      </tr>
-                    </thead>
-                  </table>
-                  <div *ngFor="let attachment of operationEntity.attachments| orderBy:'attachmentVersion.customReference'">
-                    <div class="col-lg-12">
-                    <table class="table">
-                      <tbody>
-                      <tr>
-                        <th class="d-inline-block col-lg-1" scope="row">
-                          <i *ngIf="attachment.selected && attachment.attachmentVersionId  && attachment.attachmentVersionId !== attachment.attachmentVersion.id" class="orange material-icons">warning</i>
-                          <input type="checkbox"
-                            class="form-control"
-                            name="attachmentSelected{{attachment.id}}"
-                            [(ngModel)]="attachment.selected"
-                             [ngModelOptions]="{standalone:true}"
-                            (change)="onChangeAttachmentSelection(attachment,operationEntity)"/>
-                          <label>{{operationEntity.operationEntityVersionId }}{{operationEntity.operationEntityVersion.customReference}}.{{attachment.attachmentVersion.customReference}}</label>
-                        </th>
-                        <td class="d-inline-block col-lg-4">{{attachment.attchmentVersionId }}{{ attachment.attachmentVersion.value.description }}</td>
-                        <td class="d-inline-block col-lg-2"><span *ngIf="attachment.attachmentVersion.value.metrics.unit && attachment.attachmentVersion.value.metrics.unit.object && attachment.attachmentVersion.value.metrics.unit.object.label">{{ attachment.attachmentVersion.value.metrics.unit.object.label }}</span></td>
-                        <td class="d-inline-block col-lg-2">{{ attachment.attachmentVersion.value.metrics.values.totals |filterTarget | number:'0.0-0'}}</td>
-                        <td class="d-inline-block col-lg-2">
-                          <input type="text"
-                            appNumberOnly
-                            [required]="attachment.selected"
-                            [readonly]="!attachment.selected"
-                            class="form-control"
-                            name="Indicator target value for {{ operationEntity.composedReference}} {{attachment.attachmentVersion.customReference}}"
-                            [(ngModel)]="attachment.operationValue"
-                            >
-                        </td>
-                      </tr>
-                      </tbody>
-                    </table>
-                  </div>
+          <div class="form-group">
+            <label for="comments" translate="operation-edit.basic-info.comments"></label> <i class="text-danger">*</i>
+            <textarea
+              class="form-control"
+              type="text"
+              id="comments{{idx}}"
+              [maxlength]="4000"
+              name="comments{{idx}}"
+              [(ngModel)]="governingEntity.opGoverningEntityVersion.comments">
+                {{ 'operation-edit.basic-info.overview' | translate }}
+            </textarea>
+            <small translate>Max length: {{governingEntity.opGoverningEntityVersion.comments ? governingEntity.opGoverningEntityVersion.comments.length : 0}}/4000</small>
 
-                    <div class="col-lg-12" *ngIf="attachment.selected && attachment.attachmentVersion.value.metrics.values.disaggregated">
-                      <input name="attachmentTargets{{attachment.id}}"
-                        type="checkbox"
-                        [ngModelOptions]="{standalone:true}"
-                        (change)="addDisaggregation(attachment)"
-                        [(ngModel)]="attachment.disaggregationIncluded"
-                      /> {{ 'operation-edit.governing-entities.Include disaggregation' | translate }}
+          </div>
 
-                    </div>
-                  </div>
-                </div>
+          <div class="form-group col-lg-4">
+            <label for="activationDate" translate="Activation Date"></label>
+            <div class="input-group">
+              <input
+                class="form-control"
+                #bsDatepickeractivationDate="bsDatepicker"
+                bsDatepicker
+                name="activationDate{{idx}}"
+                [(ngModel)]="governingEntity.opGoverningEntityVersion.activationDate"
+                [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
+              <div class="input-group-append">
+                <button (click)="bsDatepickeractivationDate.toggle()" [attr.aria-expanded]="bsDatepickeractivationDate.isOpen" class="btn btn-outline-secondary" type="button">
+                  <i class="material-icons">calendar_today</i>
+                </button>
               </div>
-            </accordion-group>
-          </accordion>
+            </div>
+          </div>
+          </fieldset>
         </div>
       </section>
+      <button class="mt-4 btn btn-primary" (click)="addNewGoverningEntity()">Add new GVE</button>
   </fieldset>
 </form>

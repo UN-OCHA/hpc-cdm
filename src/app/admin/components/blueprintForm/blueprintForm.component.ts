@@ -66,6 +66,8 @@ export class BlueprintFormComponent implements OnInit {
     if(!this.form.invalid) {
       const formData = this.form.value;
       formData.model = this.jsonModel;
+      // add a checkbox to set active / disabled
+      formData.status = 'active';
       const bpId = this.blueprint && this.blueprint.id;
       this.api.saveBlueprint(formData, bpId).subscribe(() => {
         this.router.navigate(['/admin/blueprints']);

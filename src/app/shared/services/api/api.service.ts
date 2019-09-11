@@ -37,7 +37,7 @@ export class ApiService {
   public processError(error: any): Observable<any> {
     let title = '';
     this.apiUp = true;
-    let errorJson;
+    let errorJson: any;
     if (error && error.json) {
       errorJson = error.json();
     } else {
@@ -75,7 +75,7 @@ export class ApiService {
     return observableThrowError(error);
   }
 
-  private displayMessage(errorJson) {
+  private displayMessage(errorJson: any) {
     if (errorJson && errorJson.error && errorJson.error.message) {
       let message = JSON.stringify(errorJson.error.message);
       let details = errorJson.error.details;
@@ -249,9 +249,9 @@ export class ApiService {
 
   public getOperation(id: number, operationVersionId = 'latest'): Observable<any> {
     let params={
-      scopes: 'entityPrototypes,attachmentPrototypes,locations,emergencies,planVersion'
+      scopes: 'entityPrototypes,attachmentPrototypes,locations,emergencies,operationVersion,attachments'
     };
-    return this.getUrlWrapper('v2/plan/' + id, {params});
+    return this.getUrlWrapper('v2/operation/' + id, {params});
   }
 
   public getOperationAttachments(id: number): Observable<any> {
@@ -315,48 +315,43 @@ export class ApiService {
 
   public getAttachmentPrototypes(id: number, operationVersionId = 'latest'): Observable<any> {
     // TODO update with actual endpoint
-    return this.getUrlWrapper(`v1/plan/${id}/attachment-prototype`);
+    return this.getUrlWrapper(`v2/operation/${id}/attachmentPrototype`);
   }
 
   public getAttachmentPrototype(id: number): Observable<any> {
     // TODO update with actual endpoint
-    return this.getUrlWrapper(`v1/plan/attachment-prototype/${id}`);
+    return this.getUrlWrapper(`v2/operation/attachmentPrototype/${id}`);
   }
 
   public saveAttachmentPrototype(data: any, id: number): Observable<any> {
-    // TODO update with actual endpoint
-    console.log('saving attachment prototype');
-    console.log(id);
-    console.log(data);
-    if(id) {
-      // update
-    } else {
-      // create
+    if (!id) {
+      return this.postToEndpoint('v2/operation/attachmentPrototype', {
+        data: {opAttachmentPrototype:data}
+      });
     }
-    return null;
+    return this.putToEndpoint('v2/operation/attachmentPrototype/' + id, {
+      data: {opAttachmentPrototype:data}
+    });
   }
 
-  public getEntityPrototypes(id: number, operationVersionId = 'latest'): Observable<any> {
-    // TODO update with actual endpoint
-    return this.getUrlWrapper(`v1/plan/${id}/entity-prototype`);
+  public getEntityPrototypes(id: number): Observable<any> {
+    return this.getUrlWrapper(`v2/operation/${id}/entityPrototype`);
   }
 
   public getEntityPrototype(id: number): Observable<any> {
     // TODO update with actual endpoint
-    return this.getUrlWrapper(`v1/plan/attachment-prototype/${id}`);
+    return this.getUrlWrapper(`v2/operation/entityPrototype/${id}`);
   }
 
   public saveEntityPrototype(data: any, id: number): Observable<any> {
-    // TODO update with actual endpoint
-    console.log('saving entity prototype');
-    console.log(id);
-    console.log(data);
-    if(id) {
-      // update
-    } else {
-      // create
+    if (!id) {
+      return this.postToEndpoint('v2/operation/entityPrototype', {
+        data: {opEntityPrototype:data}
+      });
     }
-    return null;
+    return this.putToEndpoint('v2/operation/entityPrototype/' + id, {
+      data: {opEntityPrototype:data}
+    });
   }
 
   public getOperationVersion(id: number): Observable<any> {
@@ -388,15 +383,28 @@ export class ApiService {
   }
 
   public createOperation(operation): Observable<any> {
-    return this.postToEndpoint('v1/plan/create', {
-      data: { plan: operation }
+    return this.postToEndpoint('v2/operation', {
+      data: { operation }
     });
   }
 
   public saveOperation(operation): Observable<any> {
-    return this.putToEndpoint('v2/operation/' + operation.operationId, {
+    return this.putToEndpoint('v2/operation/' + operation.id, {
       data: {
-        data: operation
+        operation
+      }
+    });
+  }
+
+  public saveGoverningEntity(governingEntity): Observable<any> {
+    if (!governingEntity.id) {
+      return this.postToEndpoint('v2/operation/governingEntity', {
+        data: { opGoverningEntity: governingEntity }
+      });
+    }
+    return this.putToEndpoint('v2/operation/governingEntity/' + governingEntity.id, {
+      data: {
+        governingEntity
       }
     });
   }
@@ -835,6 +843,11 @@ export class ApiService {
     return this.getUrlWrapper('v1/plan', {params, cache: true})
   }
 
+  public getOperations(options?: any): Observable<any> {
+    const params = _.cloneDeep(options);
+    return this.getUrlWrapper('v2/operation', {params, cache: true})
+  }
+
   public getLocations(): Observable<any> {
     return this.getUrlWrapper('v2/location', {cache: true});
   }
@@ -895,26 +908,35 @@ export class ApiService {
   }
 
   public getBlueprints(): Observable<any> {
-    // TODO Update with actual endpoints
-    return this.getUrlWrapper('v1/plan-blueprint', {cache: true});
+    return this.getUrlWrapper('v2/blueprint', {cache: true});
   }
 
   public getBlueprint(id: any): Observable<any> {
-    // TODO Update with actual endpoints
-    return this.getUrlWrapper(`v1/plan-blueprint/${id}`, {cache: true});
+    return this.getUrlWrapper(`v2/blueprint/${id}`, {cache: true});
   }
 
   public saveBlueprint(data: any, id: any): Observable<any> {
-    // TODO Update with actual endpoints
-    console.log('saving blueprint.............')
-    console.log(id)
-    console.log(data)
-    if(id) {
-      //update blueprint
-    } else {
-      //create new blueprint
+    if (!id) {
+      return this.postToEndpoint('v2/blueprint', {
+        data: {blueprint:data}
+      });
     }
-    return null;
+    return this.putToEndpoint('v2/blueprint/' + id, {
+      data: {blueprint:data}
+    });
+  }
+
+  public deleteBlueprint(blueprintId: any): Observable<any> {
+    const params = this.setParams();
+    const headers = this.setHeaders();
+
+    const url = environment.serviceBaseUrl + 'v2/blueprint/' + blueprintId;
+    this.processStart(url, {}, '');
+    return this.http.delete(url, { params, headers }).pipe(
+      map((res: HttpResponse<any>) => {
+        this.processSuccess(url, res);
+        return res;
+      }), catchError((error: any) => this.processError(error)));
   }
 
   public getCdmViaSearch(query: any): Observable<any> {
