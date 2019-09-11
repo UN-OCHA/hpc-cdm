@@ -12,7 +12,7 @@
           <a *ngIf="step.accessible"
             [routerLink]="step.route"
             href="/operation/"
-            [ngClass]="{'active': step.route === 'basic' && currentStepIdx === 0}"
+            [ngClass]="{'active': step.step === 'basic' && currentStepIdx === 0}"
             routerLinkActive="active"
             title="{{step.title}}">
             <span class="step-indicator">{{ idx + 1 }}</span>
@@ -20,7 +20,7 @@
           </a>
 
           <a *ngIf="!step.accessible"
-            [ngClass]="{'active': (step.route === 'basic' && currentStepIdx === 0) || currentChildRoute === step.route }"
+            [ngClass]="{'active': (step.step === 'basic' && currentStepIdx === 0) || currentChildRoute === step.step }"
             title="{{step.title}}">
             <span class="step-indicator">{{ idx + 1 }}</span>
             {{ step.name }}

@@ -31,7 +31,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
   public submittedModalRef: BsModalRef;
   public canSubmitOperation = false;
 
-  public currentChildComponent;
+  public currentChildComponent:any;
   public currentChildRoute = '';
 
   public currentStepIdx = 0;
@@ -127,7 +127,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
     }
   }
 
-  public save (nextOrPrevious) {
+  public save (nextOrPrevious:any) {
     if (this.currentChildComponent.childForm) {
       const invalidKeys = [];
       const minMax = []; // will keep the list of fields failing min / max value validation
@@ -158,7 +158,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
     // If the child component does a save, do that
     if (this.currentChildComponent.save) {
       this.currentChildComponent.save()
-        .subscribe(result => {
+        .subscribe((result:any) => {
           if (result.submitted) {
             this.processing = false;
             this.submittedModalRef = this.modalService.show(this.submittedModal, {class: 'modal-lg'});
@@ -178,7 +178,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
                 this.chooseNextComponentView(nextOrPrevious, updatedOperation.id);
               });
           }
-        }, (err) => {
+        }, (err:any) => {
           this.toastr.warning(err);
           console.error('err', err);
 
@@ -201,37 +201,37 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
     }
   }
 
-  private chooseNextComponentView (nextOrPrevious, operationId?, options = {isNew: false}) {
+  private chooseNextComponentView (nextOrPrevious:any, operationId?:any, options = {isNew: false}) {
     this.determineStepAccess();
     if (nextOrPrevious === 'next') {
-      this.nextStep(operationId);
+      this.nextStep();
     } else if (nextOrPrevious === 'previous') {
-      this.previousStep(operationId)
+      this.previousStep()
     } else if (options.isNew && nextOrPrevious === undefined) {
       this.router.navigate(['/operation', operationId, 'edit', 'basic'])
     }
   }
 
-  public onActivate (component) {
+  public onActivate (component:any) {
     this.currentChildComponent = component;
   }
 
-  public goToPreviousStep(checkIfChangesAndSave) {
+  public goToPreviousStep(checkIfChangesAndSave:any) {
     if (!this.canDeactivate() && checkIfChangesAndSave) {
       const confirmed = confirm(this.translate.instant('Confirm going to previous'));
       if (confirmed) {
-        this.previousStep(this.createOperationService.operation.id);
+        this.previousStep();
       }
     } else {
-      this.previousStep(this.createOperationService.operation.id);
+      this.previousStep();
     }
   }
 
-  public previousStep (operationId) {
+  public previousStep () {
     this.router.navigate(this.displayRouteSteps[this.currentStepIdx - 1].route)
   }
 
-  public nextStep (operationId) {
+  public nextStep () {
     const route = this.displayRouteSteps[this.currentStepIdx + 1].route;
     this.router.navigate(route);
   }
@@ -257,9 +257,9 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
     }
   }
 
-  private setCurrentStepIdx (useAllRoutes?) {
+  private setCurrentStepIdx (useAllRoutes?:any) {
     this.currentChildRoute = this.route.firstChild.routeConfig.path;
-    this.currentStepIdx = _.findIndex(useAllRoutes || this.displayRouteSteps, ['route', this.currentChildRoute]);
+    this.currentStepIdx = _.findIndex(useAllRoutes || this.displayRouteSteps, ['step', this.currentChildRoute]);
   }
 
   private determineStepAccess () {
@@ -271,6 +271,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
           route: ['/operation', operation.id, 'edit','basic'],
           accessible: true,
           display: true,
+          step: 'basic',
           name: 'Operation details',
           title: 'Edit the basic information of the operation'
         });
@@ -283,6 +284,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
               this.allRouteSteps.push({
                 route: ['/operation', operation.id, 'edit','attachments'],
                 accessible: true,
+                step: 'attachments',
                 display: true,
                 name: 'Operation attachments'
               });
@@ -292,19 +294,21 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
         if (operation && operation.opEntityPrototypes && operation.opEntityPrototypes.length) {
           operation.opEntityPrototypes.forEach(eP => {
             this.allRouteSteps.push({
-              route: ['/operation', operation.id, 'edit','gve', eP.opEntityPrototypeVersion.refCode],
+              route: ['/operation', operation.id, 'edit','gves', eP.opEntityPrototypeVersion.id],
               accessible: true,
+              step: 'gves',
               display: true,
               name: eP.opEntityPrototypeVersion.value.name.en.plural
             });
             let attachmentFound = false;
             operation.opAttachmentPrototypes.forEach(aP => {
               if (!attachmentFound) {
-                if (aP.opAttachmentPrototypeVersion.value.entities.filter(entity => entity === eP.opEntityPrototypeVersion.refCode).length) {
+                if (aP.opAttachmentPrototypeVersion.value.entities.filter((entity:any) => entity === eP.opEntityPrototypeVersion.refCode).length) {
                   attachmentFound = true;
                   this.allRouteSteps.push({
-                    route: ['/operation', operation.id, 'edit','gve', eP.opEntityPrototypeVersion.refCode,'attachments'],
+                    route: ['/operation', operation.id, 'edit','gves-attachments', eP.opEntityPrototypeVersion.id],
                     accessible: true,
+                    step: 'gves-attachments',
                     display: true,
                     name: eP.opEntityPrototypeVersion.value.name.en.plural + ' attachments'
                   });
@@ -318,6 +322,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
           route: ['/operation', operation.id, 'edit','review'],
           accessible: false,
           display: false,
+          step: 'review',
           rule: [],
           name: 'Review'
         });
@@ -328,6 +333,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
         this.allRouteSteps.push({
           route: ['/operation','create','basic'],
           accessible: true,
+          step: 'basic',
           display: true,
           name: 'Operation details',
           title: 'Edit the basic information of the operation'
@@ -336,6 +342,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
         this.allRouteSteps.push({
           route: ['/operation', operation.id, 'edit','review'],
           accessible: false,
+          step: 'review',
           display: false,
           rule: [],
           name: 'Review'
@@ -349,7 +356,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
 
     this.setCurrentStepIdx(this.allRouteSteps);
 
-    this.allRouteSteps.forEach((step, idx) => {
+    this.allRouteSteps.forEach((step:any, idx:any) => {
       if (idx < this.currentStepIdx) {
         step.accessible = true;
       } else if (idx === this.currentStepIdx) {
@@ -357,7 +364,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
       }
     });
 
-    this.displayRouteSteps = this.allRouteSteps.filter(step => step.display);
+    this.displayRouteSteps = this.allRouteSteps.filter((step:any) => step.display);
     this.setCurrentStepIdx();
   }
 

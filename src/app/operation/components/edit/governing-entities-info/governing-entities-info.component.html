@@ -5,9 +5,9 @@
           <div>
             <label for="operationCluster-{{governingEntity.opGoverningEntityVersion.name}}" class="form-check-label">
               <figure class="figure">
-                <img *ngIf="governingEntity.opGoverningEntityVersion.value.icon && governingEntity.opGoverningEntityVersion.value.icon.length"
+                <img *ngIf="governingEntity.opGoverningEntityVersion.icon && governingEntity.opGoverningEntityVersion.icon.length"
                   class="clusterImg"
-                  src="/assets/images/fieldClusters/SVG/{{governingEntity.opGoverningEntityVersion.value.icon}}.svg" title="{{governingEntity.opGoverningEntityVersion.name}}">
+                  src="/assets/images/fieldClusters/SVG/{{governingEntity.opGoverningEntityVersion.icon}}.svg" title="{{governingEntity.opGoverningEntityVersion.name}}">
                 </figure>
                 {{governingEntity.opGoverningEntityVersion.name}}
             </label>

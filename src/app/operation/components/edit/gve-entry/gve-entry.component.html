@@ -4,27 +4,28 @@
       <gve-entry-icon></gve-entry-icon>
     </div>
     <div class="form-content">
-      <form [formGroup]="registerForm" #form>
+      <form name="registerForm">
         <fieldset>
           <div class="row">
             <div class="form-group col-lg-4">
               <label for="abbreviation" translate>Abbreviation</label> <i class="text-danger">*</i>
               <input class="form-control" type="text" id="abbreviation" name="abbreviation" required
-                formControlName="abbreviation"
+                [(ngModel)]="entry.opGoverningEntityVersion.customReference"
                 (input)="clearErrors()"
                 [ngClass]="{ 'is-invalid': submitted && f.abbreviation.errors }"/>
             </div>
             <div class="form-group col-lg-8">
               <label for="name" translate>Name</label> <i class="text-danger">*</i>
               <input class="form-control" type="text" id="name" name="name" required
-                formControlName="name"
                 (input)="clearErrors()"
+                [(ngModel)]="entry.opGoverningEntityVersion.name"
                 [ngClass]="{ 'is-invalid': submitted && f.name.errors }"/>
             </div>
             <div class="form-group col-lg-12">
               <label for="comments" translate>Comments</label>
-              <textarea class="form-control" type="text" id="comments" name="comments"
-                formControlName="comments"></textarea>
+              <textarea class="form-control" type="text" id="comments"
+              [(ngModel)]="entry.opGoverningEntityVersion.comments"
+              name="comments"></textarea>
             </div>
             <div class="form-group col-lg-12">
               <label for="activationDate" translate="Activation Date"></label>
@@ -34,7 +35,7 @@
                   bsDatepicker
                   id="activationDate"
                   name="activationDate"
-                  formControlName="activationDate"
+                  [(ngModel)]="entry.opGoverningEntityVersion.activationDate"
                   [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
                 <div class="input-group-append">
                   <button (click)="bsDatepickerActivationDate.toggle()"
@@ -46,7 +47,6 @@
             <div class="form-group col-lg-12">
               <label for="filename" translate>Terms of reference</label> <i class="text-danger">*</i>
               <input class="form-control" type="text"
-                  formControlName="filename"
                   placeholder="{{fileToUpload && fileToUpload.name || 'No file uploaded'}}"
                   id="filename" name="filename" readonly/>
             </div>

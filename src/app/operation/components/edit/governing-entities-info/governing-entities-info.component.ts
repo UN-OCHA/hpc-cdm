@@ -59,7 +59,6 @@ export class GoverningEntitiesInfoComponent extends CreateOperationChildComponen
       entityPrototypeId:8,
       operationId: this.createOperationService.operation.id,
       opGoverningEntityVersion:{
-        value:{}
       }
     }));
   }

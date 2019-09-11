@@ -7,7 +7,7 @@
   <div *ngIf="expanded" class="form-body">
     <div class="form-content">
 
-      <form [formGroup]="registerForm">
+      <form [formGroup]="registerForm" #childForm>
         <fieldset>
           <div class="row">
             <div class="form-group col-lg-4">

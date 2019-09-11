@@ -48,14 +48,13 @@ const operationRoutes: Routes = [
       }, {
        path: 'attachments',
        canDeactivate: [PendingChangesGuard],
-       component: OperationAttachmentsComponent,
-       pathMatch: 'full'
+       component: OperationAttachmentsComponent
       }, {
-       path: 'gves',
+       path: 'gves/:entityPrototypeId',
        canDeactivate: [PendingChangesGuard],
        component: OperationGvesComponent,
       }, {
-        path: 'gve/:type/attachments',
+        path: 'gves-attachments/:entityPrototypeId',
         canDeactivate: [PendingChangesGuard],
         component: GveAttachmentsComponent
       }, {

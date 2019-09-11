@@ -38,6 +38,11 @@ export class EntityPrototypeFormComponent implements OnInit {
         refCode: proto.opEntityPrototypeVersion.refCode,
         refType: proto.opEntityPrototypeVersion.type
       });
+    } else {
+      this.prototype = {
+        operationId: 1,
+        opEntityPrototypeVersion: {}
+      };
     }
   }
 
@@ -72,6 +77,7 @@ export class EntityPrototypeFormComponent implements OnInit {
     if(!this.form.invalid) {
       const formData = this.form.value;
       const id = this.prototype && this.prototype.id;
+      // TODO: add operation id
       this.prototype.opEntityPrototypeVersion = {
         refCode: formData.refCode,
         type: formData.refType,
