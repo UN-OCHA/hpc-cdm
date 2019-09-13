@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
 
@@ -16,33 +17,48 @@ export class AttachmentEntryComponent implements OnInit {
   @Input() entryIdx: any;
   title: string;
   fileToUpload: any;
+  filePath: any;
   expanded = false;
   submitted = false;
 
   constructor(
     private api: ApiService,
-    private fb: FormBuilder) {}
-
-  ngOnInit() {
+    private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       id: ['', Validators.required],
       name: ['', Validators.required],
       filename: ['', Validators.required]
     });
+  }
 
-    this.title = `Form ${this.entryIdx}.`;
-    if(this.entry.id) {
-      this.title += ` ${this.entry.name}`;
-    }
+  ngOnInit() {
     if(!this.entry.id) {
       this.expanded = true;
+    }
+    if(this.entry) {
+      this.registerForm.reset({
+        id: this.entry.id,
+        name: this.entry.name,
+        filename: this.entry.id
+      });
+      this.setTitle();
     }
   }
 
   get f() { return this.registerForm.controls; }
 
-  clearErrors = () => {
+  clearErrors() {
     this.submitted = false;
+  }
+
+  handleNameChange() {
+    this.clearErrors();
+    this.setTitle();
+  }
+
+  setTitle() {
+    const name = this.registerForm.get('name').value;
+    this.title = `Form ${this.entryIdx}. ${name}`;
   }
 
   toggleExpand() {
@@ -63,22 +79,44 @@ export class AttachmentEntryComponent implements OnInit {
     this.fileToUpload = files.item(0);
     if(this.fileToUpload) {
       this.registerForm.controls['filename'].setValue(this.fileToUpload.name);
+
+      const formData = this.registerForm.value;
+      const xentry = {
+        id: `CF${formData.id}`,
+        name: formData.id,
+        file: this.fileToUpload
+      };
+      this.api.saveOperationAttachmentFile(xentry, this.operationId).subscribe(result=> {
+        this.filePath = result.file;
+      });
     }
   }
 
-  save() {
+  save(){
     this.submitted = true;
     const formData = this.registerForm.value;
     if(this.registerForm.valid) {
       const xentry = {
-        id: formData.id,
-        name: formData.id,
-        file: this.fileToUpload
+        objectId: this.operationId,
+        objectType:'operation',
+        opAttachmentPrototypeId:1,
+        type: 'form',
+        opAttachmentVersion: {
+          customReference: formData.id,
+          value: {
+            name: formData.name,
+            file: this.filePath
+          }
+        }
       };
       if(this.operationId) {
-        this.api.saveOperationAttachment(xentry, this.operationId);
+         this.api.saveOperationAttachment(xentry,this.operationId).subscribe(result => {
+          console.log(result);
+        });
+        //this.api.saveOperationAttachment(xentry, this.operationId).subscribe
+        // TODO save and then what?
       } else if(this.gveId) {
-        this.api.saveGveAttachment(xentry, this.gveId);
+        // this.api.saveGveAttachment(xentry, this.gveId);
       }
     }
   }

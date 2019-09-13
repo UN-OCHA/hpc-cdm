@@ -12,16 +12,19 @@
           <div class="row">
             <div class="form-group col-lg-4">
               <label for="id" translate>Form ID</label> <i class="text-danger">*</i>
-              <input class="form-control" type="text" id="id" name="id" required
-                formControlName="id"
-                (input)="clearErrors()"
-                [ngClass]="{ 'is-invalid': submitted && f.id.errors }"/>
+              <div class="form-id">
+                <label>CF</label>
+                <input class="form-control" type="text" id="id" name="id" required
+                  formControlName="id"
+                  (input)="clearErrors()"
+                  [ngClass]="{ 'is-invalid': submitted && f.id.errors }"/>
+              </div>
             </div>
             <div class="form-group col-lg-8">
               <label for="name" translate>Name</label> <i class="text-danger">*</i>
               <input class="form-control" type="text" id="name" name="name" required
                 formControlName="name"
-                (input)="clearErrors()"
+                (input)="handleNameChange()"
                 [ngClass]="{ 'is-invalid': submitted && f.name.errors }"/>
             </div>
             <div class="form-group col-lg-8">

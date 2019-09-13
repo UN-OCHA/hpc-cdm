@@ -26,7 +26,7 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
       if(params.id) {
         this.operationId = params.id;
         this.api.getOperationAttachments(this.operationId).subscribe(attachments => {
-          this.list = attachments;
+          // this.list = attachments;
           this.list.push({id: null, name: ''});
         });
       }

@@ -134,7 +134,7 @@ export class ApiService {
 
     return this.http[httpCommand](tryUrl, data, {params, headers})
       .pipe(map((res: HttpResponse<any>) => this.processSuccess(tryUrl, res)))
-      .pipe(map((res: any) => res.data))
+      .pipe(map((res: any) => res.data || res))
       .pipe(catchError((error: any) => this.processError(error)));
   }
 
@@ -254,24 +254,22 @@ export class ApiService {
     return this.getUrlWrapper('v2/operation/' + id, {params});
   }
 
-  public getOperationAttachments(id: number): Observable<any> {
-    // TODO update with actual endpoint
-    return this.getUrlWrapper('v1/plan/830/attachment-prototype');
+  public getOperationAttachments(id: any, operationVersionId = 'latest'): Observable<any> {
+    let params={
+      scopes: 'operationVersion,attachments'
+    };
+    return this.getUrlWrapper('v2/operation/' + id, {params});
+  }
+
+  public saveOperationAttachmentFile(attachment: any, id: number): Observable<any> {
+    const fd = new FormData();
+    fd.append('data', attachment.file);
+    return this.postToEndpoint('v2/files/forms', {data: fd});
   }
 
   public saveOperationAttachment(attachment: any, id: number): Observable<any> {
-    // TODO update with actual endpoint
-    console.log('saving operation attachment');
-    console.log(id);
-    console.log(attachment);
-    if(id) {
-      //update
-    } else {
-      //create
-    }
-    return null;
+    return this.postToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
   }
-
   public deleteOperationAttachment(id: number): Observable<any> {
     // TODO update with actual endpoint
     return null;
