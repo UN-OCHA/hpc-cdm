@@ -28,10 +28,12 @@ import { ToolbarComponent } from './components/edit/toolbar/toolbar.component';
 import { ReviewBasicComponent } from './components/edit/review/review-basic/review-basic.component';
 import { ReviewGoverningEntitiesComponent } from './components/edit/review/review-governing-entities/review-governing-entities.component';
 import { CommentsComponent } from './components/edit/toolbar/comments/comments.component';
+import { OperationReportsComponent } from './components/operation-reports/operation-reports.component';
 import { OperationAttachmentsComponent } from './components/edit/operation-attachments/operation-attachments.component';
 import { OperationGvesComponent } from './components/edit/operation-gves/operation-gves.component';
 import { OperationGvesIconsComponent } from './components/edit/operation-gves/icons/operation-gves-icons.component';
 import { AttachmentEntryComponent } from './components/edit/attachment-entry/attachment-entry.component';
+import { AttachmentViewComponent } from './components/operation-reports/attachment-view/attachment-view.component';
 import { GveEntryComponent } from './components/edit/gve-entry/gve-entry.component';
 import { GveEntryIconComponent } from './components/edit/gve-entry/icon/gve-entry-icon.component';
 import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-attachments.component';
@@ -52,10 +54,12 @@ import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-a
     ReviewGoverningEntitiesComponent,
     CommentsComponent,
 
+    OperationReportsComponent,
     OperationAttachmentsComponent,
     OperationGvesComponent,
     OperationGvesIconsComponent,
     AttachmentEntryComponent,
+    AttachmentViewComponent,
     GveEntryComponent,
     GveEntryIconComponent,
     GveAttachmentsComponent

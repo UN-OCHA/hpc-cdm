@@ -1,0 +1,97 @@
+<div class="form-panel">
+  <div class="form-title">
+    <i (click)="toggleExpand()" *ngIf="!expanded" class="material-icons">chevron_right</i>
+    <i (click)="toggleExpand()" *ngIf="expanded" class="material-icons">expand_more</i>
+    <span class="form-title">{{title}}</span>
+  </div>
+  <div *ngIf="expanded" class="form-body">
+    <div class="form-content">
+
+      <form [formGroup]="registerForm">
+        <fieldset>
+          <div><b>Reporting Period</b></div>
+          <div class="row">
+            <div class="form-group col-lg-2">
+              <label for="activationDate" translate="From"></label>
+              <div class="input-group">
+                <input class="form-control"
+                  #bsDatepickerActivationDate="bsDatepicker"
+                  bsDatepicker
+                  id="reportFrom"
+                  name="reportFrom"
+                  formControlName="reportFrom"
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
+                <div class="input-group-append">
+                  <button (click)="bsDatepickerActivationDate.toggle()"
+                    [attr.aria-expanded]="bsDatepickerActivationDate.isOpen" class="btn btn-outline-secondary" type="button"><i class="material-icons">calendar_today</i></button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-lg-2">
+              <label for="reportTo" translate="To"></label>
+              <div class="input-group">
+                <input class="form-control"
+                  #bsDatepickerActivationDate="bsDatepicker"
+                  bsDatepicker
+                  id="reportTo"
+                  name="reportTo"
+                  formControlName="reportTo"
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
+                <div class="input-group-append">
+                  <button (click)="bsDatepickerActivationDate.toggle()"
+                    [attr.aria-expanded]="bsDatepickerActivationDate.isOpen" class="btn btn-outline-secondary" type="button"><i class="material-icons">calendar_today</i></button>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+          </div>
+          <div class="row">
+            <div class="form-group col-lg-12">
+              <label for="file" translate>Data</label>
+              <input class="form-control" type="text" id="file" disabled
+                formControlName="file"
+                (change)="handleFileInput($event.target.files)"/>
+              <button type="button" class="btn btn-default">
+                    {{ 'Open Form' | translate }}
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-lg-12">
+              <label for="description" translate="">Comments</label>
+              <textarea class="form-control"  formControlName="comments" (input)="clearErrors()"
+                type="text" id="comments" name="comments"></textarea>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+
+
+      <div class="top-right">
+        <button *ngIf="!submitted" type="button" class="btn btn-default top-right">
+          {{ 'Copy from...' | translate }}
+        </button>
+      </div>
+      <div class="bottom-right">
+        <button type="button" class="btn btn-default ">
+          {{ 'Duplicate in...' | translate }}
+        </button>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button [disabled]="registerForm.invalid" type="button" class="btn btn-save" (click)="save()">
+        {{ 'Save' | translate }}
+      </button>
+      <button *ngIf="submitted && !registerForm.dirty" type="button" class="btn btn-info" (click)="remove()">
+        {{ 'Remove Form' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
