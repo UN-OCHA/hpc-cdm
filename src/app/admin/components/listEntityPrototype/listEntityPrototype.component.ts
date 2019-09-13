@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ListEntityPrototypeComponent implements OnInit {
   public prototypes: any[];
+  public operationId = null;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -17,7 +18,8 @@ export class ListEntityPrototypeComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
-        this.apiService.getEntityPrototypes(params.id).subscribe(protos => {
+        this.operationId = params.id
+        this.apiService.getEntityPrototypes(this.operationId).subscribe(protos => {
           this.prototypes = protos;
         });
       }

@@ -1,4 +1,9 @@
 <div>
+  <operation-gves-icons></operation-gves-icons>
+
+  <div *ngFor="let entry of createOperationService.operation.opGoverningEntities; let i = index">
+    <gve-entry [entry]="entry"></gve-entry>
+  </div>
 
   <form  #childForm="ngForm">
     <div class="panel">

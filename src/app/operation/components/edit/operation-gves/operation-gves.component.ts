@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Observable,zip as observableZip } from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -13,26 +14,33 @@ import { CreateOperationChildComponent } from './../create-operation-child/creat
 })
 export class OperationGvesComponent extends CreateOperationChildComponent implements OnInit {
   public list = [];
+  public entityPrototypeId = null;
 
   constructor(
     public createOperationService: CreateOperationService,
-    public apiService: ApiService
+    public apiService: ApiService,
+    private activatedRoute: ActivatedRoute
   ) {
     super(createOperationService, apiService);
   }
 
   ngOnInit() {
-    this.list = this.createOperationService.operation.opGoverningEntities;
+    this.activatedRoute.params.subscribe(params => {
+      if (params.entityPrototypeId) {
+        this.entityPrototypeId = this.entityPrototypeId;
+        this.list = this.createOperationService.operation.opGoverningEntities.filter(gve => gve.entityPrototypeId === params.entityPrototypeId);
+      }
+    });
   }
 
   addGve() {
     const EMPTY_GVE = {
-      entityPrototypeId:8,
+      entityPrototypeId:this.entityPrototypeId,
       operationId: this.createOperationService.operation.id,
       opGoverningEntityVersion:{
         abbreviation: '', name: '', comments: '', date:'', terms:''
       }
-  };
+    };
     this.list.push(EMPTY_GVE)
   }
 

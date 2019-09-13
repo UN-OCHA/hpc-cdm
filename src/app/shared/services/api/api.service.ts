@@ -845,7 +845,7 @@ export class ApiService {
 
   public getOperations(options?: any): Observable<any> {
     const params = _.cloneDeep(options);
-    return this.getUrlWrapper('v2/operation', {params, cache: true})
+    return this.getUrlWrapper('v2/operation', {params})
   }
 
   public getLocations(): Observable<any> {
