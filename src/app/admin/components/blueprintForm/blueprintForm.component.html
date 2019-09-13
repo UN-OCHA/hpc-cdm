@@ -12,7 +12,7 @@
       <div class="form-group">
         <label for="description" translate="">Description</label> <i class="text-danger">*</i>
         <textarea class="form-control"  formControlName="description" (input)="clearErrors()"
-          [ngClass]="{ 'is-invalid': submitted && f.description.errors }"
+          [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=3
           type="text" id="description" name="description" required></textarea>
       </div>
       <div class="form-group">

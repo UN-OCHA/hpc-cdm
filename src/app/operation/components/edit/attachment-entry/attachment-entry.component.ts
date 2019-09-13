@@ -21,28 +21,42 @@ export class AttachmentEntryComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private fb: FormBuilder) {}
-
-  ngOnInit() {
+    private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       id: ['', Validators.required],
       name: ['', Validators.required],
       filename: ['', Validators.required]
     });
+  }
 
-    this.title = `Form ${this.entryIdx}.`;
-    if(this.entry.id) {
-      this.title += ` ${this.entry.name}`;
-    }
+  ngOnInit() {
     if(!this.entry.id) {
       this.expanded = true;
+    }
+    if(this.entry) {
+      this.registerForm.reset({
+        id: this.entry.id,
+        name: this.entry.name,
+        filename: this.entry.id
+      });
+      this.setTitle();
     }
   }
 
   get f() { return this.registerForm.controls; }
 
-  clearErrors = () => {
+  clearErrors() {
     this.submitted = false;
+  }
+
+  handleNameChange() {
+    this.clearErrors();
+    this.setTitle();
+  }
+
+  setTitle() {
+    const name = this.registerForm.get('name').value;
+    this.title = `Form ${this.entryIdx}. ${name}`;
   }
 
   toggleExpand() {
@@ -71,14 +85,15 @@ export class AttachmentEntryComponent implements OnInit {
     const formData = this.registerForm.value;
     if(this.registerForm.valid) {
       const xentry = {
-        id: formData.id,
+        id: `CF${formData.id}`,
         name: formData.id,
         file: this.fileToUpload
       };
       if(this.operationId) {
         this.api.saveOperationAttachment(xentry, this.operationId);
+        // TODO save and then what?
       } else if(this.gveId) {
-        this.api.saveGveAttachment(xentry, this.gveId);
+        // this.api.saveGveAttachment(xentry, this.gveId);
       }
     }
   }

@@ -1,0 +1,10 @@
+<div class="panel border p-5">
+  <div class="panel-header">
+    <h3>Operation attachments</h3>
+  </div>
+  <div class="panel-body">
+    <div *ngFor="let entry of list; let i = index">
+      <attachment-view [operationId]="operationId" [entry]="entry" [entryIdx]="i+1"></attachment-view>
+    </div>
+  </div>
+</div>

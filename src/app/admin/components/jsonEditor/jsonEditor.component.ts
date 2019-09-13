@@ -49,7 +49,7 @@ export class JsonEditorComponent implements OnInit {
   }
 
   ngOnChanges() {
-    if(this.json) {
+    if(this.json && this.jsonEditorCode && this.jsonEditorTree) {
       this.jsonEditorCode.set(this.json)
       this.jsonEditorTree.set(this.json)
     }
