@@ -134,7 +134,7 @@ export class ApiService {
 
     return this.http[httpCommand](tryUrl, data, {params, headers})
       .pipe(map((res: HttpResponse<any>) => this.processSuccess(tryUrl, res)))
-      .pipe(map((res: any) => res.data))
+      .pipe(map((res: any) => res.data || res))
       .pipe(catchError((error: any) => this.processError(error)));
   }
 
@@ -261,19 +261,15 @@ export class ApiService {
     return this.getUrlWrapper('v2/operation/' + id, {params});
   }
 
-  public saveOperationAttachment(attachment: any, id: number): Observable<any> {
+  public saveOperationAttachmentFile(attachment: any, id: number): Observable<any> {
     const fd = new FormData();
     fd.append('data', attachment.file);
-    this.postToEndpoint('v2/files/forms', {data: fd}).subscribe(res => {
-      // TODO: Broken. Need your help here, pierrick.
-      // Don't know why this postToEndpoint does not return an observable.
-      // We do get a response from the endpoint but it does not show up here.
-      console.log(res)
-      // Also. Don't know all info that we must pass as attachment(op version, etc)
-      return this.postToEndpoint('v2/operation/attachment', attachment);
-    });
+    return this.postToEndpoint('v2/files/forms', {data: fd});
   }
 
+  public saveOperationAttachment(attachment: any, id: number): Observable<any> {
+    return this.postToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
+  }
   public deleteOperationAttachment(id: number): Observable<any> {
     // TODO update with actual endpoint
     return null;
