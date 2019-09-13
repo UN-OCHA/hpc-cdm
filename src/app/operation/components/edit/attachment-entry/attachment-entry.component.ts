@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
 
@@ -16,6 +17,7 @@ export class AttachmentEntryComponent implements OnInit {
   @Input() entryIdx: any;
   title: string;
   fileToUpload: any;
+  filePath: any;
   expanded = false;
   submitted = false;
 
@@ -77,20 +79,41 @@ export class AttachmentEntryComponent implements OnInit {
     this.fileToUpload = files.item(0);
     if(this.fileToUpload) {
       this.registerForm.controls['filename'].setValue(this.fileToUpload.name);
-    }
-  }
 
-  save() {
-    this.submitted = true;
-    const formData = this.registerForm.value;
-    if(this.registerForm.valid) {
+      const formData = this.registerForm.value;
       const xentry = {
         id: `CF${formData.id}`,
         name: formData.id,
         file: this.fileToUpload
       };
+      this.api.saveOperationAttachmentFile(xentry, this.operationId).subscribe(result=> {
+        this.filePath = result.file;
+      });
+    }
+  }
+
+  save(){
+    this.submitted = true;
+    const formData = this.registerForm.value;
+    if(this.registerForm.valid) {
+      const xentry = {
+        objectId: this.operationId,
+        objectType:'operation',
+        opAttachmentPrototypeId:1,
+        type: 'form',
+        opAttachmentVersion: {
+          customReference: formData.id,
+          value: {
+            name: formData.name,
+            file: this.filePath
+          }
+        }
+      };
       if(this.operationId) {
-        this.api.saveOperationAttachment(xentry, this.operationId);
+         this.api.saveOperationAttachment(xentry,this.operationId).subscribe(result => {
+          console.log(result);
+        });
+        //this.api.saveOperationAttachment(xentry, this.operationId).subscribe
         // TODO save and then what?
       } else if(this.gveId) {
         // this.api.saveGveAttachment(xentry, this.gveId);
