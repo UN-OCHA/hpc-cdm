@@ -1,4 +1,4 @@
-<div class="form-panel">
+<div *ngIf="!entry.hide" class="form-panel">
   <div class="form-title">
     <i (click)="toggleExpand()" *ngIf="!expanded" class="material-icons">chevron_right</i>
     <i (click)="toggleExpand()" *ngIf="expanded" class="material-icons">expand_more</i>
@@ -14,8 +14,8 @@
               <label for="id" translate>Form ID</label> <i class="text-danger">*</i>
               <div class="form-id">
                 <label>CF</label>
-                <input class="form-control" type="text" id="id" name="id" required
-                  formControlName="id"
+                <input class="form-control" type="text" id="customReference" name="customReference" required
+                  formControlName="customReference"
                   (input)="clearErrors()"
                   [ngClass]="{ 'is-invalid': submitted && f.id.errors }"/>
               </div>
@@ -58,7 +58,7 @@
         </button>
       </div>
       <div class="bottom-right">
-        <button type="button" class="btn btn-default ">
+        <button *ngIf="entry && entry.id" type="button" class="btn btn-default ">
           {{ 'Duplicate in...' | translate }}
         </button>
       </div>
@@ -67,7 +67,7 @@
       <button [disabled]="registerForm.invalid" type="button" class="btn btn-save" (click)="save()">
         {{ 'Save' | translate }}
       </button>
-      <button *ngIf="submitted && !registerForm.dirty" type="button" class="btn btn-info" (click)="remove()">
+      <button *ngIf="entry && entry.id" type="button" class="btn btn-info" (click)="remove()">
         {{ 'Remove Form' | translate }}
       </button>
     </div>

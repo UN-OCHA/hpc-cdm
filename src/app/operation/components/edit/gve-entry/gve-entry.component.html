@@ -20,10 +20,10 @@
                 [ngClass]="{ 'is-invalid': submitted && f.name.errors }"/>
             </div>
             <div class="form-group col-lg-12">
-              <label for="comments" translate>Comments</label>
-              <textarea class="form-control" type="text" id="comments"
-              [(ngModel)]="entry.opGoverningEntityVersion.comments"
-              name="comments"></textarea>
+              <label for="comment" translate>Comments</label>
+              <textarea class="form-control" type="text" id="comment"
+              [(ngModel)]="entry.opGoverningEntityVersion.comment"
+              name="comment"></textarea>
             </div>
             <div class="form-group col-lg-12">
               <label for="activationDate" translate="Activation Date"></label>
@@ -76,7 +76,7 @@
         </button>
       </div>
       <div class="bottom-right">
-        <button type="button" class="btn btn-default ">
+        <button *ngIf="entry && entry.id" type="button" class="btn btn-default ">
           {{ 'Duplicate in...' | translate }}
         </button>
       </div>
@@ -87,7 +87,7 @@
       {{ 'Save' | translate }}
     </button>
     <button *ngIf="entry && entry.id" type="button" class="btn btn-info" (click)="remove()">
-      {{ 'Remove HCT/ICCG' | translate }}
+      {{ 'Remove ' + entry.opEntityPrototype.opEntityPrototypeVersion.value.name.en.singular | translate }}
     </button>
   </div>
 </div>

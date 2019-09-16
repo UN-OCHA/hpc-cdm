@@ -25,17 +25,18 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
   }
 
   ngOnInit() {
+
     this.activatedRoute.params.subscribe(params => {
-      if (params.entityPrototypeId) {
-        this.entityPrototypeId = this.entityPrototypeId;
-        this.list = this.createOperationService.operation.opGoverningEntities.filter(gve => gve.entityPrototypeId === params.entityPrototypeId);
+      if(params.entityPrototypeId) {
+        this.entityPrototypeId = +params.entityPrototypeId;
+        this.list = this.createOperationService.operation.opGoverningEntities.filter(gve => gve.opEntityPrototype.id === this.entityPrototypeId);
       }
     });
   }
 
   addGve() {
     const EMPTY_GVE = {
-      entityPrototypeId:this.entityPrototypeId,
+      opEntityPrototypeId:this.entityPrototypeId,
       operationId: this.createOperationService.operation.id,
       opGoverningEntityVersion:{
         abbreviation: '', name: '', comments: '', date:'', terms:''
@@ -49,17 +50,16 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
   }
 
   public save (): Observable<any> {
-    console.log(this.list);
     const postSaveObservables = [];
     this.list.forEach(governingEntity => {
+      console.log(governingEntity);
       postSaveObservables.push(
         this.apiService.saveGoverningEntity(governingEntity));
     });
 
     return observableZip(
       ...postSaveObservables
-    ).pipe(map(results => {
-      console.log(results);
+    ).pipe(map(() => {
         return {
           stopSave: true
         };

@@ -268,11 +268,25 @@ export class ApiService {
   }
 
   public saveOperationAttachment(attachment: any, id: number): Observable<any> {
-    return this.postToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
+    if (attachment.id) {
+      return this.putToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
+
+    } else {
+      return this.postToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
+    }
   }
   public deleteOperationAttachment(id: number): Observable<any> {
-    // TODO update with actual endpoint
-    return null;
+
+    const params = this.setParams();
+    const headers = this.setHeaders();
+
+    const url = environment.serviceBaseUrl + 'v2/operation/attachment/' + id;
+    this.processStart(url, {}, '');
+    return this.http.delete(url, { params, headers }).pipe(
+      map((res: HttpResponse<any>) => {
+        this.processSuccess(url, res);
+        return res;
+      }), catchError((error: any) => this.processError(error)));
   }
 
   public saveOperationGve(gve: any, id: number): Observable<any> {
@@ -402,7 +416,7 @@ export class ApiService {
     }
     return this.putToEndpoint('v2/operation/governingEntity/' + governingEntity.id, {
       data: {
-        governingEntity
+        opGoverningEntity: governingEntity
       }
     });
   }

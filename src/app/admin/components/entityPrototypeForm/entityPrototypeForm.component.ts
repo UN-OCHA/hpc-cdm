@@ -50,6 +50,7 @@ export class EntityPrototypeFormComponent implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
         this.api.getEntityPrototype(params.id).subscribe(proto => {
+          console.log(proto);
           this.setMode(proto);
         })
       } else {
@@ -73,12 +74,15 @@ export class EntityPrototypeFormComponent implements OnInit {
   }
 
   onSubmit() {
+    console.log(this.prototype);
     this.submitted = true;
     if(!this.form.invalid) {
       const formData = this.form.value;
       const id = this.prototype && this.prototype.id;
       // TODO: add operation id
       this.prototype.opEntityPrototypeVersion = {
+        id: this.prototype.opEntityPrototypeVersion.id,
+        opEntityPrototypeId: this.prototype.id,
         refCode: formData.refCode,
         type: formData.refType,
         value: this.jsonModel

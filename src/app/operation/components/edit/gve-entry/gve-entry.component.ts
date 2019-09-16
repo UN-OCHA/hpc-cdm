@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
+import * as moment from 'moment';
+//import * as momentTimezone from 'moment-timezone';
 
 @Component({
   selector: 'gve-entry',
@@ -24,14 +26,21 @@ export class GveEntryComponent implements OnInit {
     this.registerForm = this.fb.group({
       abbreviation: ['', Validators.required],
       name: ['', Validators.required],
-      comments: [''],
+      comment: [''],
       activationDate: [''],
       filename: ['']
     });
   }
 
   ngOnInit() {
+    // TODO: check to remove with Vincent
+    //this.entry.opGoverningEntityVersion.opGoverningEntityId = this.entry.id;
+    //this.entry.opEntityPrototypeId = this.entry.opEntityPrototype.id;
     this.title = '';
+
+    if(this.entry && this.entry.opGoverningEntityVersion.activationDate) {
+      this.entry.opGoverningEntityVersion.activationDate = moment(this.entry.opGoverningEntityVersion.activationDate).toDate();
+    }
     if(this.entry && this.entry.opGoverningEntityVersion.customReference) {
       this.title += `${this.entry.opGoverningEntityVersion.name}`;
     }
@@ -56,6 +65,7 @@ export class GveEntryComponent implements OnInit {
     this.submitted = true;
     const formData = this.registerForm.value;
     formData.file = this.fileToUpload
+
     if(!this.registerForm.invalid) {
       this.api.saveOperationGve(formData, this.entry && this.entry.id);
     }

@@ -2,6 +2,9 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
+import { CreateOperationService } from 'app/operation/services/create-operation.service';
+
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'attachment-entry',
@@ -23,10 +26,13 @@ export class AttachmentEntryComponent implements OnInit {
 
   constructor(
     private api: ApiService,
+    private toastr: ToastrService,
+    private createOperationService: CreateOperationService,
     private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       id: ['', Validators.required],
       name: ['', Validators.required],
+      customReference: ['', Validators.required],
       filename: ['', Validators.required]
     });
   }
@@ -38,9 +44,11 @@ export class AttachmentEntryComponent implements OnInit {
     if(this.entry) {
       this.registerForm.reset({
         id: this.entry.id,
-        name: this.entry.name,
-        filename: this.entry.id
+        name: this.entry.opAttachmentVersion.value.name,
+        customReference: this.entry.opAttachmentVersion.customReference,
+        filename: this.entry.opAttachmentVersion.value.file
       });
+      this.filePath = this.entry.opAttachmentVersion.value.file;
       this.setTitle();
     }
   }
@@ -58,7 +66,8 @@ export class AttachmentEntryComponent implements OnInit {
 
   setTitle() {
     const name = this.registerForm.get('name').value;
-    this.title = `Form ${this.entryIdx}. ${name}`;
+    const customReference = this.registerForm.get('customReference').value;
+    this.title = `Form ${customReference}. ${name}`;
   }
 
   toggleExpand() {
@@ -67,11 +76,15 @@ export class AttachmentEntryComponent implements OnInit {
 
   remove() {
     if(this.entry.id) {
-      if(this.operationId) {
-        this.api.deleteOperationAttachment(this.entry.id);
-      } else if(this.gveId) {
-        this.api.deleteGveAttachment(this.entry.id);
-      }
+      this.api.deleteOperationAttachment(this.entry.id).subscribe(response => {
+        console.log(response);
+
+        if (response.status === 'ok') {
+          this.createOperationService.operation.opAttachments.splice(this.createOperationService.operation.opAttachments.indexOf(this.entry.id), 1);
+          this.entry.hide = true;
+          return this.toastr.success('Attachment removed.', 'Attachment removed');
+        }
+      });
     }
   }
 
@@ -96,27 +109,43 @@ export class AttachmentEntryComponent implements OnInit {
     this.submitted = true;
     const formData = this.registerForm.value;
     if(this.registerForm.valid) {
-      const xentry = {
-        objectId: this.operationId,
-        objectType:'operation',
-        opAttachmentPrototypeId:1,
-        type: 'form',
-        opAttachmentVersion: {
-          customReference: formData.id,
-          value: {
-            name: formData.name,
-            file: this.filePath
-          }
-        }
-      };
       if(this.operationId) {
-         this.api.saveOperationAttachment(xentry,this.operationId).subscribe(result => {
+        const xentry = {
+          id: this.entry.id,
+          objectId: this.operationId,
+          objectType:'operation',
+          opAttachmentPrototypeId:1,
+          type: 'form',
+          opAttachmentVersion: {
+            customReference: formData.id,
+            value: {
+              name: formData.name,
+              file: this.filePath
+            }
+          }
+        };
+        this.api.saveOperationAttachment(xentry,this.operationId).subscribe(result => {
           console.log(result);
         });
-        //this.api.saveOperationAttachment(xentry, this.operationId).subscribe
         // TODO save and then what?
       } else if(this.gveId) {
-        // this.api.saveGveAttachment(xentry, this.gveId);
+
+        const xentry = {
+          objectId: this.gveId,
+          objectType:'gve',
+          opAttachmentPrototypeId:1,
+          type: 'form',
+          opAttachmentVersion: {
+            customReference: formData.id,
+            value: {
+              name: formData.name,
+              file: this.filePath
+            }
+          }
+        };
+        this.api.saveOperationAttachment(xentry,this.operationId).subscribe(result => {
+          console.log(result);
+        });
       }
     }
   }
