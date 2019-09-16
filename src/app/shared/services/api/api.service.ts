@@ -269,7 +269,7 @@ export class ApiService {
 
   public saveOperationAttachment(attachment: any, id: number): Observable<any> {
     if (attachment.id) {
-      return this.putToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
+      return this.putToEndpoint('v2/operation/attachment/' + attachment.id, { data : {opAttachment: attachment}});
 
     } else {
       return this.postToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
@@ -289,34 +289,8 @@ export class ApiService {
       }), catchError((error: any) => this.processError(error)));
   }
 
-  public saveOperationGve(gve: any, id: number): Observable<any> {
-    // TODO update with actual endpoint
-    console.log('saving operation gve');
-    console.log(id);
-    console.log(gve);
-    if(id) {
-      //update
-    } else {
-      //create
-    }
-    return null;
-  }
-
   public deleteOperationGve(id: number): Observable<any> {
     // TODO update with actual endpoint
-    return null;
-  }
-
-  public saveGveAttachment(attachment: any, id: number): Observable<any> {
-    // TODO update with actual endpoint
-    console.log('saving gve attachment');
-    console.log(id);
-    console.log(attachment);
-    if(id) {
-      //update
-    } else {
-      //create
-    }
     return null;
   }
 
@@ -492,26 +466,6 @@ export class ApiService {
     return this.putToEndpoint(`v2/operation/${operation.id}/emergencies`, {
       data: {
         emergencyIds,
-        updatedAt: operation.updatedAt
-      }
-    });
-  }
-
-  public setOperationAttachments (operation, operationAttachments): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operation.id}/attachments`, {
-      data: {
-        operationVersionId: operation.operationVersion.id,
-        operationVersionAttachments: operationAttachments,
-        updatedAt: operation.updatedAt
-      }
-    })
-  }
-
-  public setOperationSegments (operation, segments: Array<any>): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operation.id}/segments`, {
-      data: {
-        operationVersionId: operation.operationVersion.id,
-        segments,
         updatedAt: operation.updatedAt
       }
     });

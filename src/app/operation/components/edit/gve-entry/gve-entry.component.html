@@ -7,28 +7,26 @@
           <div class="row">
             <div class="form-group col-lg-4">
               <label for="abbreviation" translate>Abbreviation</label> <i class="text-danger">*</i>
-              <input class="form-control" type="text" id="abbreviation" name="abbreviation" required
+              <input [disabled]="readOnly" class="form-control" type="text" id="abbreviation" name="abbreviation" required
                 [(ngModel)]="entry.opGoverningEntityVersion.customReference"
-                (input)="clearErrors()"
-                [ngClass]="{ 'is-invalid': submitted && f.abbreviation.errors }"/>
+                (input)="clearErrors()"/>
             </div>
             <div class="form-group col-lg-8">
               <label for="name" translate>Name</label> <i class="text-danger">*</i>
-              <input class="form-control" type="text" id="name" name="name" required
+              <input [disabled]="readOnly" class="form-control" type="text" id="name" name="name" required
                 (input)="clearErrors()"
-                [(ngModel)]="entry.opGoverningEntityVersion.name"
-                [ngClass]="{ 'is-invalid': submitted && f.name.errors }"/>
+                [(ngModel)]="entry.opGoverningEntityVersion.name"/>
             </div>
             <div class="form-group col-lg-12">
               <label for="comment" translate>Comments</label>
-              <textarea class="form-control" type="text" id="comment"
+              <textarea [disabled]="readOnly" class="form-control" type="text" id="comment"
               [(ngModel)]="entry.opGoverningEntityVersion.comment"
               name="comment"></textarea>
             </div>
             <div class="form-group col-lg-12">
               <label for="activationDate" translate="Activation Date"></label>
               <div class="input-group">
-                <input class="form-control"
+                <input [disabled]="readOnly" class="form-control"
                   #bsDatepickerActivationDate="bsDatepicker"
                   bsDatepicker
                   id="activationDate"
@@ -44,7 +42,7 @@
 
             <div class="form-group col-lg-12">
               <label for="filename" translate>Terms of reference</label> <i class="text-danger">*</i>
-              <input class="form-control" type="text"
+              <input [disabled]="readOnly" class="form-control" type="text"
                   placeholder="{{fileToUpload && fileToUpload.name || 'No file uploaded'}}"
                   id="filename" name="filename" readonly/>
             </div>
@@ -52,17 +50,17 @@
               <input id="file" type="file" #file style="display: none"
                 (change)="handleFileInput($event.target.files)"/>
               <div *ngIf="!fileToUpload">
-                <button id="selectedFile" type="button" class="btn btn-default"
+                <button *ngIf="!readOnly" id="selectedFile" type="button" class="btn btn-default"
                   onclick="document.getElementById('file').click();">
                     {{ 'Upload File' | translate }}
                 </button>
               </div>
               <div *ngIf="fileToUpload">
-                <button id="selectedFile" type="button" class="btn btn-default"
+                <button *ngIf="!readOnly" id="selectedFile" type="button" class="btn btn-default"
                   onclick="document.getElementById('file').click();">
                     {{ 'Replace File' | translate }}
                 </button>
-                <button type="button" class="btn btn-basic"
+                <button *ngIf="!readOnly" type="button" class="btn btn-basic"
                   (click)="removeFile()">
                     {{ 'Remove File' | translate }}
                 </button>
@@ -70,20 +68,20 @@
             </div>
           </div>
 
-      <div class="top-right">
+      <div *ngIf="!readOnly" class="top-right">
         <button type="button" class="btn btn-default top-right">
           {{ 'Copy from...' | translate }}
         </button>
       </div>
-      <div class="bottom-right">
+      <div *ngIf="!readOnly" class="bottom-right">
         <button *ngIf="entry && entry.id" type="button" class="btn btn-default ">
           {{ 'Duplicate in...' | translate }}
         </button>
       </div>
     </div>
   </div>
-  <div class="form-actions">
-    <button [disabled]="registerForm.invalid" type="button" class="btn btn-save" (click)="save()">
+  <div *ngIf="!readOnly" class="form-actions">
+    <button type="button" class="btn btn-save" (click)="save()">
       {{ 'Save' | translate }}
     </button>
     <button *ngIf="entry && entry.id" type="button" class="btn btn-info" (click)="remove()">

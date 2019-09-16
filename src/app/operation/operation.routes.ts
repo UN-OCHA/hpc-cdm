@@ -11,7 +11,6 @@ import { BasicOperationInfoComponent } from './components/edit/basic-operation-i
 import { ReviewComponent } from './components/edit/review/review.component';
 import { OperationAttachmentsComponent } from './components/edit/operation-attachments/operation-attachments.component';
 import { OperationGvesComponent } from './components/edit/operation-gves/operation-gves.component';
-import { OperationReportsComponent } from './components/operation-reports/operation-reports.component';
 import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-attachments.component';
 
 const operationRoutes: Routes = [
@@ -31,12 +30,6 @@ const operationRoutes: Routes = [
         path: 'basic',
         component: BasicOperationInfoComponent,
       } ],
-  },
-  { path: 'operation/:id/reports',
-    component: OperationReportsComponent,
-    canActivate: [AuthGuard],
-    canDeactivate: [PendingChangesGuard],
-    data: { title: 'Operation Reporting' }
   },
   { path: 'operation/:id/edit',
     component: CreateOperationComponent,

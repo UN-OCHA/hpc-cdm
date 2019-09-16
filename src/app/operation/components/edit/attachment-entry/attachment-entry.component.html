@@ -11,21 +11,21 @@
         <fieldset>
           <div class="row">
             <div class="form-group col-lg-4">
-              <label for="id" translate>Form ID</label> <i class="text-danger">*</i>
+              <label for="customReference" translate>Form ID</label> <i class="text-danger">*</i>
               <div class="form-id">
                 <label>CF</label>
                 <input class="form-control" type="text" id="customReference" name="customReference" required
-                  formControlName="customReference"
-                  (input)="clearErrors()"
-                  [ngClass]="{ 'is-invalid': submitted && f.id.errors }"/>
+                  [(ngModel)]="entry.opAttachmentVersion.customReference"
+                  [ngModelOptions]="{standalone: true}"
+                  (input)="handleNameChange()"/>
               </div>
             </div>
             <div class="form-group col-lg-8">
               <label for="name" translate>Name</label> <i class="text-danger">*</i>
               <input class="form-control" type="text" id="name" name="name" required
-                formControlName="name"
-                (input)="handleNameChange()"
-                [ngClass]="{ 'is-invalid': submitted && f.name.errors }"/>
+                [(ngModel)]="entry.opAttachmentVersion.value.name"
+                [ngModelOptions]="{standalone: true}"
+                (input)="handleNameChange()"/>
             </div>
             <div class="form-group col-lg-8">
               <label for="filename" translate>Form Definition</label> <i class="text-danger">*</i>

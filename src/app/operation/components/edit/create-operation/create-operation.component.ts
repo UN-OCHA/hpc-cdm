@@ -165,7 +165,10 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
             this.determineStepAccess();
             return;
           }
-
+          if (result.isNew) {
+            this.routeStepsGenerated = false;
+            this.allRouteSteps = [];
+          }
           if (result.stopSave) {
             this.processing = false;
             this.currentChildComponent.childForm.form.pristine = true;
@@ -294,9 +297,9 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
         if (operation && operation.opEntityPrototypes && operation.opEntityPrototypes.length) {
           operation.opEntityPrototypes.forEach(eP => {
             this.allRouteSteps.push({
-              route: ['/operation', operation.id, 'edit','gves', eP.opEntityPrototypeVersion.id],
+              route: ['/operation', operation.id, 'edit','gves', eP.id],
               accessible: true,
-              step: 'gves',
+              step: 'gves/:entityPrototypeId',
               display: true,
               name: eP.opEntityPrototypeVersion.value.name.en.plural
             });
@@ -306,9 +309,9 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
                 if (aP.opAttachmentPrototypeVersion.value.entities.filter((entity:any) => entity === eP.opEntityPrototypeVersion.refCode).length) {
                   attachmentFound = true;
                   this.allRouteSteps.push({
-                    route: ['/operation', operation.id, 'edit','gves-attachments', eP.opEntityPrototypeVersion.id],
+                    route: ['/operation', operation.id, 'edit','gves-attachments', eP.id],
                     accessible: true,
-                    step: 'gves-attachments',
+                    step: 'gves-attachments/:entityPrototypeId',
                     display: true,
                     name: eP.opEntityPrototypeVersion.value.name.en.plural + ' attachments'
                   });

@@ -1,8 +1,8 @@
 <div>
-  <operation-gves-icons></operation-gves-icons>
+  <operation-gves-icons [list]="createOperationService.operation.opGoverningEntities"></operation-gves-icons>
 
   <div *ngFor="let entry of createOperationService.operation.opGoverningEntities; let i = index">
-    <gve-entry [entry]="entry"></gve-entry>
+    <gve-entry  [readOnly]="true" [entry]="entry"></gve-entry>
   </div>
 
   <form  #childForm="ngForm">

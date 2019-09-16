@@ -83,7 +83,6 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
       };
       return this.apiService.createOperation(createdOperation).pipe(
         map(newOperation => {
-          console.log(newOperation);
           this.createOperationService.operation.id = newOperation.id;
           this.createOperationService.operation.operationVersion = newOperation.operationVersion;
           this.createOperationService.operation.opEntityPrototypes = newOperation.opEntityPrototypes;
@@ -96,7 +95,6 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
           };
         }));
     } else {
-
       const operationToSave = {
         operationVersion : this.createOperationService.operation.operationVersion,
         emergencies: this.createOperationService.operation.emergencies.map(emergency=> emergency.id),

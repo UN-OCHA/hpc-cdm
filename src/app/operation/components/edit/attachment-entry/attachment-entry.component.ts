@@ -30,9 +30,6 @@ export class AttachmentEntryComponent implements OnInit {
     private createOperationService: CreateOperationService,
     private fb: FormBuilder) {
     this.registerForm = this.fb.group({
-      id: ['', Validators.required],
-      name: ['', Validators.required],
-      customReference: ['', Validators.required],
       filename: ['', Validators.required]
     });
   }
@@ -43,9 +40,6 @@ export class AttachmentEntryComponent implements OnInit {
     }
     if(this.entry) {
       this.registerForm.reset({
-        id: this.entry.id,
-        name: this.entry.opAttachmentVersion.value.name,
-        customReference: this.entry.opAttachmentVersion.customReference,
         filename: this.entry.opAttachmentVersion.value.file
       });
       this.filePath = this.entry.opAttachmentVersion.value.file;
@@ -65,8 +59,8 @@ export class AttachmentEntryComponent implements OnInit {
   }
 
   setTitle() {
-    const name = this.registerForm.get('name').value;
-    const customReference = this.registerForm.get('customReference').value;
+    const name = this.entry.opAttachmentVersion.value.name;
+    const customReference = this.entry.opAttachmentVersion.customReference;
     this.title = `Form ${customReference}. ${name}`;
   }
 
@@ -77,12 +71,10 @@ export class AttachmentEntryComponent implements OnInit {
   remove() {
     if(this.entry.id) {
       this.api.deleteOperationAttachment(this.entry.id).subscribe(response => {
-        console.log(response);
-
         if (response.status === 'ok') {
           this.createOperationService.operation.opAttachments.splice(this.createOperationService.operation.opAttachments.indexOf(this.entry.id), 1);
           this.entry.hide = true;
-          return this.toastr.success('Attachment removed.', 'Attachment removed');
+          return this.toastr.warning('Attachment removed.', 'Attachment removed');
         }
       });
     }
@@ -93,60 +85,23 @@ export class AttachmentEntryComponent implements OnInit {
     if(this.fileToUpload) {
       this.registerForm.controls['filename'].setValue(this.fileToUpload.name);
 
-      const formData = this.registerForm.value;
       const xentry = {
-        id: `CF${formData.id}`,
-        name: formData.id,
+        id: `CF${this.entry.opAttachmentVersion.customReference}`,
+        name: this.entry.opAttachmentVersion.customReference,
         file: this.fileToUpload
       };
       this.api.saveOperationAttachmentFile(xentry, this.operationId).subscribe(result=> {
-        this.filePath = result.file;
+        this.entry.opAttachmentVersion.value.file = result.file;
       });
     }
   }
 
   save(){
     this.submitted = true;
-    const formData = this.registerForm.value;
     if(this.registerForm.valid) {
-      if(this.operationId) {
-        const xentry = {
-          id: this.entry.id,
-          objectId: this.operationId,
-          objectType:'operation',
-          opAttachmentPrototypeId:1,
-          type: 'form',
-          opAttachmentVersion: {
-            customReference: formData.id,
-            value: {
-              name: formData.name,
-              file: this.filePath
-            }
-          }
-        };
-        this.api.saveOperationAttachment(xentry,this.operationId).subscribe(result => {
-          console.log(result);
+        this.api.saveOperationAttachment(this.entry,this.operationId).subscribe(() => {
+          return this.toastr.success('Attachment create.', 'Attachment created');
         });
-        // TODO save and then what?
-      } else if(this.gveId) {
-
-        const xentry = {
-          objectId: this.gveId,
-          objectType:'gve',
-          opAttachmentPrototypeId:1,
-          type: 'form',
-          opAttachmentVersion: {
-            customReference: formData.id,
-            value: {
-              name: formData.name,
-              file: this.filePath
-            }
-          }
-        };
-        this.api.saveOperationAttachment(xentry,this.operationId).subscribe(result => {
-          console.log(result);
-        });
-      }
     }
   }
 }

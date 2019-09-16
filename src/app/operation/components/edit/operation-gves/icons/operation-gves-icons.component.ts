@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
 // import { ApiService } from 'app/shared/services/api/api.service';
 
@@ -8,8 +8,8 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
   styleUrls: ['./operation-gves-icons.component.scss']
 })
 export class OperationGvesIconsComponent implements OnInit {
-  list = [];
 
+  @Input() list: Array<any>;
   // constructor(private api: ApiService) {}
 
   ngOnInit() {

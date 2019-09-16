@@ -22,11 +22,23 @@ export class GveAttachmentsComponent extends CreateOperationChildComponent imple
 
 
   ngOnInit() {
-    this.addEntry();
   }
 
   addEntry() {
-    this.attachments.push({id: null, name: ''})
+
+    const EMPTY_ATTACHMENT = {
+      opAttachmentPrototypeId:this.createOperationService.operation.opAttachmentPrototypes[0].id,
+      objectId: this.createOperationService.operation.id,
+      objectType: 'gve',
+      opAttachmentVersion:{
+        customReference: '',
+        value :{
+          name: '',
+          file: ''
+        }
+      }
+    };
+    this.attachments.push(EMPTY_ATTACHMENT)
   }
 
 }

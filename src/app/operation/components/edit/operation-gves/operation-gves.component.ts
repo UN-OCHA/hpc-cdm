@@ -15,6 +15,7 @@ import { CreateOperationChildComponent } from './../create-operation-child/creat
 export class OperationGvesComponent extends CreateOperationChildComponent implements OnInit {
   public list = [];
   public entityPrototypeId = null;
+  public entity = {};
 
   constructor(
     public createOperationService: CreateOperationService,
@@ -29,6 +30,7 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
     this.activatedRoute.params.subscribe(params => {
       if(params.entityPrototypeId) {
         this.entityPrototypeId = +params.entityPrototypeId;
+        this.entity = this.createOperationService.operation.opEntityPrototypes.filter(eP=> eP.id === this.entityPrototypeId)[0];
         this.list = this.createOperationService.operation.opGoverningEntities.filter(gve => gve.opEntityPrototype.id === this.entityPrototypeId);
       }
     });
@@ -52,7 +54,6 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
   public save (): Observable<any> {
     const postSaveObservables = [];
     this.list.forEach(governingEntity => {
-      console.log(governingEntity);
       postSaveObservables.push(
         this.apiService.saveGoverningEntity(governingEntity));
     });

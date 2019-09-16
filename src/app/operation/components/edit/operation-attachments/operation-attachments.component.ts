@@ -36,13 +36,15 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
 
   addEntry() {
     const EMPTY_ATTACHMENT = {
-      //opAttachmentPrototypeId:this.attachmentPrototypeId,
+      opAttachmentPrototypeId:this.createOperationService.operation.opAttachmentPrototypes[0].id,
       objectId: this.createOperationService.operation.id,
+      objectType: 'operation',
       opAttachmentVersion:{
         customReference: '',
         value :{
-          name: ''
-        },
+          name: '',
+          file: ''
+        }
       }
     };
     this.list.push(EMPTY_ATTACHMENT)
@@ -57,7 +59,6 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
   public save (): Observable<any> {
     const postSaveObservables = [];
     this.list.forEach(attachment => {
-      console.log(attachment);
       postSaveObservables.push(
         this.api.saveOperationAttachment(attachment, this.createOperationService.operation.id));
     });
