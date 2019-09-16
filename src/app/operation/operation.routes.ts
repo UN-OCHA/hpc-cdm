@@ -53,13 +53,13 @@ const operationRoutes: Routes = [
         canDeactivate: [PendingChangesGuard],
         component: BasicOperationInfoComponent,
       }, {
-       path: 'attachments',
-       canDeactivate: [PendingChangesGuard],
-       component: OperationAttachmentsComponent
+        path: 'attachments',
+        canDeactivate: [PendingChangesGuard],
+        component: OperationAttachmentsComponent
       }, {
-       path: 'gves/:entityPrototypeId',
-       canDeactivate: [PendingChangesGuard],
-       component: OperationGvesComponent,
+        path: 'gves/:entityPrototypeId',
+        canDeactivate: [PendingChangesGuard],
+        component: OperationGvesComponent,
       }, {
         path: 'gves-attachments/:entityPrototypeId',
         canDeactivate: [PendingChangesGuard],
@@ -75,17 +75,17 @@ const operationRoutes: Routes = [
     canActivate: [],
     data: { title: 'View Operation' },
     children: [{
-          path: '',
-          component: ReviewComponent,
-          pathMatch: 'full'
+      path: '',
+      component: ReviewComponent,
+      pathMatch: 'full'
     }] },
   { path: 'operation/:id/view',
     component: CreateOperationComponent,
     canActivate: [],
     data: { title: 'View Operation' },
     children: [{
-          path: '',
-          component: ReviewComponent,
+      path: '',
+      component: ReviewComponent,
     }] }
 ];
 

@@ -6,13 +6,12 @@
   </div>
   <div *ngIf="expanded" class="form-body">
     <div class="form-content">
-
       <form [formGroup]="registerForm">
         <fieldset>
-          <div><b>Reporting Period</b></div>
-          <div class="row">
-            <div class="form-group col-lg-2">
-              <label for="activationDate" translate="From"></label>
+          <div class="title"><b>Reporting Period</b></div>
+          <div class="row dates">
+            <div class="form-group col-lg-3 flex-row date">
+              <div class="label"><label for="reportFrom" translate="From"></label></div>
               <div class="input-group">
                 <input class="form-control"
                   #bsDatepickerActivationDate="bsDatepicker"
@@ -27,8 +26,8 @@
                 </div>
               </div>
             </div>
-            <div class="form-group col-lg-2">
-              <label for="reportTo" translate="To"></label>
+            <div class="form-group col-lg-3 flex-row date">
+              <div class="label"><label for="reportTo" translate="To"></label></div>
               <div class="input-group">
                 <input class="form-control"
                   #bsDatepickerActivationDate="bsDatepicker"
@@ -43,23 +42,15 @@
                 </div>
               </div>
             </div>
-
-
-
-
-
-
-
-
           </div>
           <div class="row">
             <div class="form-group col-lg-12">
               <label for="file" translate>Data</label>
               <input class="form-control" type="text" id="file" disabled
-                formControlName="file"
+                formControlName="filename"
                 (change)="handleFileInput($event.target.files)"/>
-              <button type="button" class="btn btn-default">
-                    {{ 'Open Form' | translate }}
+              <button (click)="openForm(template)" type="button" class="btn btn-default openform">
+                  {{ 'Open Form' | translate }}
               </button>
             </div>
           </div>
@@ -72,18 +63,6 @@
           </div>
         </fieldset>
       </form>
-
-
-      <div class="top-right">
-        <button *ngIf="!submitted" type="button" class="btn btn-default top-right">
-          {{ 'Copy from...' | translate }}
-        </button>
-      </div>
-      <div class="bottom-right">
-        <button type="button" class="btn btn-default ">
-          {{ 'Duplicate in...' | translate }}
-        </button>
-      </div>
     </div>
     <div class="form-actions">
       <button [disabled]="registerForm.invalid" type="button" class="btn btn-save" (click)="save()">
@@ -95,3 +74,15 @@
     </div>
   </div>
 </div>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <enketo-form formId="{{entry.formFileId}}"></enketo-form>
+  </div>
+</ng-template>

@@ -1,3 +1,33 @@
+<div class="container create-operation mb-0" *ngIf="createOperationService.operation">
+  <h2 *ngIf="createOperationService.operation.operationVersion.code" class="text-secondary">
+    {{ createOperationService.operation.operationVersion.code }}
+  </h2>
+  <h1 *ngIf="createOperationService.operation.operationVersion.name && createOperationService.operation.operationVersion.name !== ''; else defaultOperationName">
+    {{ createOperationService.operation.operationVersion.name }}
+  </h1>
+  <ng-template #defaultOperationName><h1 translate>xxxNew Operation</h1></ng-template>
+
+  <div>
+    <small class="text-secondary" *ngIf="createOperationService.operation.created">
+      Created by {{ createOperationService.operation.created.participant.name_given }}
+      {{ createOperationService.operation.created.participant.name_family }} on {{ createOperationService.operation.created.createdAt | date: 'yyyy-MM-d HH:mm:ss' }}.
+    </small>
+  </div>
+
+  <div>
+    <small class="text-secondary" *ngIf="createOperationService.operation.lastUpdated">
+      Last updated by {{ createOperationService.operation.lastUpdated.participant.name_given }}
+      {{ createOperationService.operation.lastUpdated.participant.name_family }} on {{ createOperationService.operation.lastUpdated.updatedAt | date: 'yyyy-MM-d HH:mm:ss' }}.
+    </small>
+  </div>
+
+  <app-toolbar
+    [editable]="editable && createOperationService.editMode"
+    (loadOperation)="onLoadOperation($event)">
+  </app-toolbar>
+</div>
+
+
 <div class="container create-operation">
   <div *ngIf="!createOperationService.operation || processing || createOperationService.processing"
       class="operation-page-loader">
@@ -29,74 +59,52 @@
       </ol>
     </div>
 
-    <div class="pt-5 col-8"
+    <div class="col-8"
       *ngIf="createOperationService.operation"
       [ngClass]="{'processing': processing || createOperationService.processing}">
-      <h2 *ngIf="createOperationService.operation.code" class="text-secondary">
-        {{ createOperationService.operation.operationVersion.code }}
-      </h2>
-      <h1 *ngIf="createOperationService.operation.operationVersion.name && createOperationService.operation.operationVersion.name !== ''; else defaultOperationName">
-        {{ createOperationService.operation.operationVersion.name }}
-      </h1>
-      <ng-template #defaultOperationName><h1 translate>New Operation</h1></ng-template>
-
-      <div>
-        <small class="text-secondary" *ngIf="createOperationService.operation.created">
-          Created by {{ createOperationService.operation.created.participant.name_given }}
-          {{ createOperationService.operation.created.participant.name_family }} on {{ createOperationService.operation.created.createdAt | date: 'yyyy-MM-d HH:mm:ss' }}.
-        </small>
-      </div>
-
-      <div>
-        <small class="text-secondary" *ngIf="createOperationService.operation.lastUpdated">
-          Last updated by {{ createOperationService.operation.lastUpdated.participant.name_given }}
-          {{ createOperationService.operation.lastUpdated.participant.name_family }} on {{ createOperationService.operation.lastUpdated.updatedAt | date: 'yyyy-MM-d HH:mm:ss' }}.
-        </small>
-      </div>
-
-      <app-toolbar
-        [editable]="editable && createOperationService.editMode"
-        (loadOperation)="onLoadOperation($event)">
-      </app-toolbar>
 
       <router-outlet (activate)='onActivate($event)'></router-outlet>
 
-      <nav class="navbar bg-light fixed-bottom"
-        *ngIf="createOperationService.editMode">
-        <div class="container d-flex justify-content-end">
-          <form class="form-inline">
-            <a type="button"
-              class="mr-2 btn btn-outline-secondary"
-              [routerLink]="['/map']"
-              [queryParams]="{source: 'operation'}"
-              translate>
-              {{ 'Close' | translate }}
-            </a>
-            <button *ngIf="currentStepIdx > 0"
-              type="button"
-              class="mr-2 btn btn-outline-primary"
-              (click)="goToPreviousStep(currentChildRoute && currentChildRoute !== 'review')"
-              translate>
-              {{ 'Previous' | translate }} <i class="material-icons">arrow_back</i>
-            </button>
-            <button
-              *ngIf="editable && currentChildRoute !== 'review'"
-              type="button"
-              class="mr-2 btn btn-outline-primary"
-              (click)="save()"
-              translate>
-              Save
-            </button>
-            <button
-              *ngIf="editable && currentChildRoute !== 'review'"
-              type="button"
-              class="btn btn-primary"
-              (click)="save('next')">
-              {{ 'Save & Next' | translate }} <i class="material-icons">arrow_forward</i>
-            </button>
-          </form>
-        </div>
-      </nav>
+
+      <nav class="navbar bg-light"
+           *ngIf="createOperationService.editMode">
+           <div class="container d-flex justify-content-end">
+             <form class="form-inline">
+               <a type="button"
+                    class="mr-2 btn btn-outline-secondary"
+                    [routerLink]="['/map']"
+                    [queryParams]="{source: 'operation'}"
+               translate>
+               {{ 'Close' | translate }}
+             </a>
+             <button *ngIf="currentStepIdx > 0"
+               type="button"
+               class="mr-2 btn btn-outline-primary"
+               (click)="goToPreviousStep(currentChildRoute && currentChildRoute !== 'review')"
+               translate>
+               {{ 'Previous' | translate }} <i class="material-icons">arrow_back</i>
+             </button>
+             <button
+               *ngIf="editable && currentChildRoute !== 'review'"
+               type="button"
+               class="mr-2 btn btn-outline-primary"
+               (click)="save()"
+               translate>
+               Save
+             </button>
+             <button
+               *ngIf="editable && currentChildRoute !== 'review'"
+               type="button"
+               class="btn btn-primary"
+               (click)="save('next')">
+               {{ 'Save & Next' | translate }} <i class="material-icons">arrow_forward</i>
+             </button>
+           </form>
+         </div>
+       </nav>
+
+
+
     </div>
   </div>
 </div>

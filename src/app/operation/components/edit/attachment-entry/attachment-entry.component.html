@@ -53,21 +53,21 @@
 
 
       <div class="top-right">
-        <button *ngIf="!submitted" type="button" class="btn btn-default top-right">
+        <button *ngIf="!entry || !entry.id" type="button" class="btn btn-default top-right">
           {{ 'Copy from...' | translate }}
         </button>
       </div>
-      <div class="bottom-right">
+      <div *ngIf="entry && entry.id" class="bottom-right">
         <button type="button" class="btn btn-default ">
           {{ 'Duplicate in...' | translate }}
         </button>
       </div>
     </div>
     <div class="form-actions">
-      <button [disabled]="registerForm.invalid" type="button" class="btn btn-save" (click)="save()">
+      <button [disabled]="!registerForm.dirty || registerForm.invalid" type="button" class="btn btn-save" (click)="save()">
         {{ 'Save' | translate }}
       </button>
-      <button *ngIf="submitted && !registerForm.dirty" type="button" class="btn btn-info" (click)="remove()">
+      <button *ngIf="entry && entry.id" type="button" class="btn btn-info" (click)="remove()">
         {{ 'Remove Form' | translate }}
       </button>
     </div>

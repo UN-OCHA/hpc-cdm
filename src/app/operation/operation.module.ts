@@ -14,6 +14,9 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
 
 import { OAuthModule } from 'angular-oauth2-oidc';
 
+import { EnketoFormModule, ENKETO_FORM_SERVICE } from 'ng-enketo-form';
+import { EnketoFormService } from 'app/operation/services/enketo-form.service';
+
 import { routing, operationRoutingProviders } from './operation.routes';
 import { Nl2BrPipeModule } from 'nl2br-pipe';
 // Edit Page
@@ -79,6 +82,12 @@ import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-a
     TabsModule,
     Nl2BrPipeModule,
     SharedModule,
+    EnketoFormModule.forRoot({
+      enketoFormServiceProvider: {
+        provide: ENKETO_FORM_SERVICE,
+        useClass: EnketoFormService
+      }
+    }),
     routing
   ],
   providers: [

@@ -4,6 +4,28 @@
   border-radius: .25em;
   width: 100%;
   margin-bottom: 1em;
+
+  form {
+    .title {
+      margin-bottom: 1em;
+    }
+    .dates {
+
+      .label {
+        margin: .5em .5em 0 0;
+      }
+      .date {
+      }
+    }
+    .openform {
+      margin-top: .75em;
+    }
+  }
+
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+  }
   .btn-save {
     background-color: #026CB6;
     color: white;

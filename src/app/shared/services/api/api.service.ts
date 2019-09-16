@@ -261,18 +261,26 @@ export class ApiService {
     return this.getUrlWrapper('v2/operation/' + id, {params});
   }
 
-  public saveOperationAttachmentFile(attachment: any, id: number): Observable<any> {
+  public saveFile(file: any): Observable<any> {
     const fd = new FormData();
-    fd.append('data', attachment.file);
+    fd.append('data', file);
     return this.postToEndpoint('v2/files/forms', {data: fd});
+  }
+
+  public getFile(fileId: any): Observable<any> {
+    return this.getUrlWrapper(`v2/files/download/forms/${fileId}`, {});
   }
 
   public saveOperationAttachment(attachment: any, id: number): Observable<any> {
     return this.postToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
   }
+
   public deleteOperationAttachment(id: number): Observable<any> {
-    // TODO update with actual endpoint
-    return null;
+    if (id) {
+      const url = `${environment.serviceBaseUrl}v2/operation/attachment/${id}`;
+      const [params, headers] = [this.setParams(), this.setHeaders()];
+      return this.http.delete(url, { params, headers });
+    }
   }
 
   public saveOperationGve(gve: any, id: number): Observable<any> {

@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
+import { OperationService } from 'app/operation/services/operation.service';
 
 @Component({
   selector: 'attachment-entry',
@@ -17,12 +18,15 @@ export class AttachmentEntryComponent implements OnInit {
   @Input() entryIdx: any;
   title: string;
   fileToUpload: any;
+  fileName: any;
   filePath: any;
+  fileId: any;
   expanded = false;
   submitted = false;
 
   constructor(
     private api: ApiService,
+    private operation: OperationService,
     private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       id: ['', Validators.required],
@@ -37,9 +41,9 @@ export class AttachmentEntryComponent implements OnInit {
     }
     if(this.entry) {
       this.registerForm.reset({
-        id: this.entry.id,
-        name: this.entry.name,
-        filename: this.entry.id
+        id: this.entry.formId,
+        name: this.entry.formName,
+        filename: this.entry.formFileName
       });
       this.setTitle();
     }
@@ -66,9 +70,9 @@ export class AttachmentEntryComponent implements OnInit {
   }
 
   remove() {
-    if(this.entry.id) {
+    if(this.entry && this.entry.id) {
       if(this.operationId) {
-        this.api.deleteOperationAttachment(this.entry.id);
+        this.operation.removeAttachment(this.entry.id);
       } else if(this.gveId) {
         this.api.deleteGveAttachment(this.entry.id);
       }
@@ -79,15 +83,10 @@ export class AttachmentEntryComponent implements OnInit {
     this.fileToUpload = files.item(0);
     if(this.fileToUpload) {
       this.registerForm.controls['filename'].setValue(this.fileToUpload.name);
-
-      const formData = this.registerForm.value;
-      const xentry = {
-        id: `CF${formData.id}`,
-        name: formData.id,
-        file: this.fileToUpload
-      };
-      this.api.saveOperationAttachmentFile(xentry, this.operationId).subscribe(result=> {
+      this.api.saveFile(this.fileToUpload).subscribe(result=> {
+        this.fileId = result.id;
         this.filePath = result.file;
+        this.fileName = result.originalname;
       });
     }
   }
@@ -96,25 +95,14 @@ export class AttachmentEntryComponent implements OnInit {
     this.submitted = true;
     const formData = this.registerForm.value;
     if(this.registerForm.valid) {
-      const xentry = {
-        objectId: this.operationId,
-        objectType:'operation',
-        opAttachmentPrototypeId:1,
-        type: 'form',
-        opAttachmentVersion: {
-          customReference: formData.id,
-          value: {
-            name: formData.name,
-            file: this.filePath
-          }
-        }
-      };
       if(this.operationId) {
-         this.api.saveOperationAttachment(xentry,this.operationId).subscribe(result => {
-          console.log(result);
-        });
-        //this.api.saveOperationAttachment(xentry, this.operationId).subscribe
-        // TODO save and then what?
+        this.operation.addAttachment({
+          formId: formData.id,
+          formName: formData.name,
+          formFileId: this.fileId,
+          formFileName: this.fileName,
+          formFilePath: this.filePath
+        }, this.operationId);
       } else if(this.gveId) {
         // this.api.saveGveAttachment(xentry, this.gveId);
       }

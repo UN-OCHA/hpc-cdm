@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
+import { OperationService } from 'app/operation/services/operation.service';
 import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
 
 
@@ -11,34 +12,37 @@ import { CreateOperationChildComponent } from './../create-operation-child/creat
   styleUrls: ['./operation-attachments.component.scss']
 })
 export class OperationAttachmentsComponent extends CreateOperationChildComponent implements OnInit {
-  public list = [];
   operationId: any;
 
   constructor(
     private api: ApiService,
+    private operation: OperationService,
     public createOperationService: CreateOperationService,
     private activatedRoute: ActivatedRoute) {
       super(createOperationService, api);
-    }
+  }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
         this.operationId = params.id;
-        this.api.getOperationAttachments(this.operationId).subscribe(attachments => {
-          // this.list = attachments;
-          this.list.push({id: null, name: ''});
-        });
+        this.operation.getAttachments(this.operationId);
       }
     });
   }
 
   addEntry() {
-    this.list.push({id: null, name: ''})
+    this.operation.attachments.push({id: null, formId: null, formName: ''})
   }
 
   isLastEntryNew() {
-    const lastEntry = this.list[this.list.length - 1];
+    const list = this.operation.attachments;
+    const lastEntry = list && list[list.length - 1];
     return lastEntry && lastEntry.id === null;
+  }
+
+  //TODO api unread error otherwise
+  dummyOp() {
+    this.api.getFile(1);
   }
 }

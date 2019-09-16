@@ -26,7 +26,7 @@ export class GveAttachmentsComponent extends CreateOperationChildComponent imple
   }
 
   addEntry() {
-    this.attachments.push({id: null, name: ''})
+    this.attachments.push({id: null, formName: ''})
   }
 
 }

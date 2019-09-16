@@ -19,7 +19,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { NgxsModule } from '@ngxs/store';
 
 import { ToastrModule } from 'ngx-toastr';
 
@@ -47,7 +46,6 @@ import { AuthService } from 'app/shared/services/auth/auth.service';
 import { ExportService } from 'app/shared/services/export.service';
 import { PromptUpdateService } from 'app/shared/services/prompt-update.service';
 import { LocalStorageService } from 'app/shared/services/localStorage.service';
-import { AppState } from './state/app.state';
 
 import { LoginComponent } from './shared/components/shell/login/login.component';
 import { LogoutComponent } from './shared/components/shell/logout/logout.component';
@@ -73,7 +71,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     HeaderComponent,
     HomeComponent,
     LoginComponent,
-    LogoutComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,
@@ -109,9 +107,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     OperationModule,
 
     SharedModule,
-    NgxsModule.forRoot([
-      AppState,
-    ], { developmentMode: !environment.production }),
 
     ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
 
