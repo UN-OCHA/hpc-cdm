@@ -36,6 +36,10 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
     });
   }
 
+  public refreshList() {
+    this.list = this.createOperationService.operation.opGoverningEntities.filter(gve => gve.opEntityPrototype.id === this.entityPrototypeId);
+  }
+
   addGve() {
     const EMPTY_GVE = {
       opEntityPrototypeId:this.entityPrototypeId,

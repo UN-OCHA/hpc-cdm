@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
@@ -19,8 +19,12 @@ export class GveEntryComponent implements OnInit {
   @ViewChild('form') form;
 
   @Input() entry: any;
+  @Input() entityPrototype: any;
   @Input() entryIdx: any;
   @Input() readOnly: boolean;
+
+  @Output() onRefreshList = new EventEmitter();
+
 
   title: string;
   expanded = false;
@@ -77,10 +81,12 @@ export class GveEntryComponent implements OnInit {
     //if(this.registerForm.valid) {
       this.api.saveGoverningEntity(this.entry).subscribe((result) => {
         if (this.entry.id) {
-          return this.toastr.success('Attachment updated.', 'Attachment updated');
+          return this.toastr.success('Governing entity updated.', 'Governing entity updated');
         } else {
-          this.createOperationService.operation.opGoverningEntities.push(result);
-          return this.toastr.success('Attachment create.', 'Attachment created');
+          this.entry.id = result.id;
+          this.entry.opEntityPrototype = this.entityPrototype;
+          this.createOperationService.operation.opGoverningEntities.push(this.entry);
+          return this.toastr.success('Governing entity create.', 'Governing entity created');
         }
       });
     //}
@@ -92,7 +98,7 @@ export class GveEntryComponent implements OnInit {
       this.api.deleteOperationGve(this.entry.id).subscribe(response => {
         if (response.status === 'ok') {
           this.createOperationService.operation.opGoverningEntities.splice(this.createOperationService.operation.opGoverningEntities.indexOf(this.entry.id), 1);
-          this.entry.hide = true;
+          this.onRefreshList.emit();
           return this.toastr.warning('Governing entity removed.', 'Governing entity removed');
         }
       });

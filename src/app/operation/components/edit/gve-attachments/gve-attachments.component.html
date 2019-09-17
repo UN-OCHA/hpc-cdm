@@ -21,24 +21,27 @@
             </label>
         </div>
 
-  <div *ngFor="let entry of createOperationService.operation.opGoverningEntities; let i = index">
-    <gve-entry *ngIf="i === viewingGoverningEntityIdx" [readOnly]="true" [entry]="entry"></gve-entry>
+  <form #childForm="ngForm">
+    <div *ngIf="createOperationService.operation.opGoverningEntities && !createOperationService.operation.opGoverningEntities.length">
+      <h4 translate>Please create governing entities first</h4>
+    </div>
+    <div *ngFor="let entry of createOperationService.operation.opGoverningEntities; let i = index">
+      <gve-entry *ngIf="i === viewingGoverningEntityIdx" [readOnly]="true" [entry]="entry"></gve-entry>
 
-    <form *ngIf="i === viewingGoverningEntityIdx" #childForm="ngForm">
-      <div class="panel">
-        <p>Forms</p>
-        <div class="panel-body">
-          <div *ngFor="let entry of attachments; let i = index">
-            <attachment-entry  [operationId]="createOperationService.operation.id" [gveId]="entry.id" [entry]="entry" [entryIdx]="i+1"></attachment-entry>
-          </div>
+        <div *ngIf="i === viewingGoverningEntityIdx" class="panel">
+          <p>Forms</p>
+          <div class="panel-body">
+            <div *ngFor="let entry of attachments; let i = index">
+              <attachment-entry (onRefreshList)="refreshList(entry)" [operationId]="createOperationService.operation.id" [gveId]="entry.id" [entry]="entry" [entryIdx]="i+1"></attachment-entry>
+            </div>
 
-          <div class="panel-actions">
-            <button type="button" class="btn btn-primary" (click)="addEntry(entry)">
-              {{ 'Add Form' | translate }}
-            </button>
+            <div class="panel-actions">
+              <button type="button" class="btn btn-primary" (click)="addEntry(entry)">
+                {{ 'Add Form' | translate }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </div>

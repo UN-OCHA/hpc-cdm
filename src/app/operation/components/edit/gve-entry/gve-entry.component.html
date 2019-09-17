@@ -1,4 +1,4 @@
-<div *ngIf="!entry.hide" class="form-panel">
+<div class="form-panel">
   <div class="form-body">
     <div class="form-icon">
       <gve-entry-icon></gve-entry-icon>
@@ -85,7 +85,7 @@
       {{ 'Save' | translate }}
     </button>
     <button *ngIf="entry && entry.id" type="button" class="btn btn-info" (click)="remove()">
-      {{ 'Remove ' + entry.opEntityPrototype.opEntityPrototypeVersion.value.name.en.singular | translate }}
+      {{ 'Remove ' | translate }}
     </button>
   </div>
 </div>
