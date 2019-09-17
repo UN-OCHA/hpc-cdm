@@ -15,6 +15,7 @@ export class EntityPrototypeFormComponent implements OnInit {
   submitted = false;
   title: String;
   prototype: any;
+  operationId: any;
   jsonModel: any;
 
   constructor(
@@ -30,7 +31,7 @@ export class EntityPrototypeFormComponent implements OnInit {
     });
   }
 
-  setMode(proto) {
+  setMode(proto:any) {
     this.title = proto ? 'Edit Entity Prototpe' : 'New Entity Prototype';
     if(proto) {
       this.prototype = proto;
@@ -40,17 +41,23 @@ export class EntityPrototypeFormComponent implements OnInit {
       });
     } else {
       this.prototype = {
-        operationId: 1,
-        opEntityPrototypeVersion: {}
+        operationId: this.operationId,
+        opEntityPrototypeVersion: {
+          value: {},
+          refCode:'',
+          refType:''
+        }
       };
     }
   }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
+      if(params.operationId) {
+        this.operationId = params.operationId;
+      }
       if(params.id) {
         this.api.getEntityPrototype(params.id).subscribe(proto => {
-          console.log(proto);
           this.setMode(proto);
         })
       } else {
@@ -74,7 +81,6 @@ export class EntityPrototypeFormComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.prototype);
     this.submitted = true;
     if(!this.form.invalid) {
       const formData = this.form.value;

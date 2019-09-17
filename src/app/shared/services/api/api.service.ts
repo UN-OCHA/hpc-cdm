@@ -316,7 +316,7 @@ export class ApiService {
 
   public saveAttachmentPrototype(data: any, id: number): Observable<any> {
     if (!id) {
-      return this.postToEndpoint('v2/operation/attachmentPrototype', {
+      return this.postToEndpoint(`v2/operation/${data.operationId}/attachmentPrototype`, {
         data: {opAttachmentPrototype:data}
       });
     }
@@ -336,7 +336,7 @@ export class ApiService {
 
   public saveEntityPrototype(data: any, id: number): Observable<any> {
     if (!id) {
-      return this.postToEndpoint('v2/operation/entityPrototype', {
+      return this.postToEndpoint(`v2/operation/${data.operationId}/entityPrototype`, {
         data: {opEntityPrototype:data}
       });
     }
