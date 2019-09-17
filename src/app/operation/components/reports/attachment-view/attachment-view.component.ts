@@ -19,6 +19,7 @@ export class AttachmentViewComponent implements OnInit {
   expanded = false;
   formId = null;
   submissionId = null;
+  editable = true;
 
   constructor(
     private fb: FormBuilder,
@@ -61,7 +62,7 @@ export class AttachmentViewComponent implements OnInit {
   }
 
   saveAndFinalise() {
-
+    this.editable=false;
   }
 
 }
