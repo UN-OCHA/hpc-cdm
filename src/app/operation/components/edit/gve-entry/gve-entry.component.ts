@@ -1,6 +1,10 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
+import { CreateOperationService } from 'app/operation/services/create-operation.service';
+import { ToastrService } from 'ngx-toastr';
+import * as moment from 'moment';
+//import * as momentTimezone from 'moment-timezone';
 
 @Component({
   selector: 'gve-entry',
@@ -11,27 +15,39 @@ export class GveEntryComponent implements OnInit {
   registerForm: FormGroup;
   submitted = false;
   fileToUpload: any;
+
   @ViewChild('form') form;
 
   @Input() entry: any;
   @Input() entryIdx: any;
+  @Input() readOnly: boolean;
+
   title: string;
   expanded = false;
 
   constructor(
     private api: ApiService,
+    public createOperationService: CreateOperationService,
+    private toastr: ToastrService,
     private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       abbreviation: ['', Validators.required],
       name: ['', Validators.required],
-      comments: [''],
+      comment: [''],
       activationDate: [''],
       filename: ['']
     });
   }
 
   ngOnInit() {
+    // TODO: check to remove with Vincent
+    //this.entry.opGoverningEntityVersion.opGoverningEntityId = this.entry.id;
+    //this.entry.opEntityPrototypeId = this.entry.opEntityPrototype.id;
     this.title = '';
+
+    if(this.entry && this.entry.opGoverningEntityVersion.activationDate) {
+      this.entry.opGoverningEntityVersion.activationDate = moment(this.entry.opGoverningEntityVersion.activationDate).toDate();
+    }
     if(this.entry && this.entry.opGoverningEntityVersion.customReference) {
       this.title += `${this.entry.opGoverningEntityVersion.name}`;
     }
@@ -56,9 +72,18 @@ export class GveEntryComponent implements OnInit {
     this.submitted = true;
     const formData = this.registerForm.value;
     formData.file = this.fileToUpload
-    if(!this.registerForm.invalid) {
-      this.api.saveOperationGve(formData, this.entry && this.entry.id);
-    }
+
+    this.submitted = true;
+    //if(this.registerForm.valid) {
+      this.api.saveGoverningEntity(this.entry).subscribe((result) => {
+        if (this.entry.id) {
+          return this.toastr.success('Attachment updated.', 'Attachment updated');
+        } else {
+          this.createOperationService.operation.opGoverningEntities.push(result);
+          return this.toastr.success('Attachment create.', 'Attachment created');
+        }
+      });
+    //}
   }
 
   remove() {

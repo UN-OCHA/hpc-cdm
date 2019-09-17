@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ListAttachmentPrototypeComponent implements OnInit {
   public prototypes: any[];
+  public operationId = null;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -17,7 +18,8 @@ export class ListAttachmentPrototypeComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
-        this.apiService.getAttachmentPrototypes(params.id).subscribe(protos => {
+        this.operationId = params.id
+        this.apiService.getAttachmentPrototypes(this.operationId).subscribe(protos => {
           this.prototypes = protos;
         });
       }

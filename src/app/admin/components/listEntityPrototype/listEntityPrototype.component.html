@@ -5,8 +5,8 @@
         <h3>Entity Prototypes</h3>
       </div>
       <div class="col-sm-6 text-right">
-        <button type="button" class="btn btn-info" routerLink="/admin/entityproto">Add
-          Entity Prototype</button>
+        <a class="btn btn-info" href [routerLink]="['/admin/operations/entityproto',operationId]">Add
+          Entity Prototype</a>
       </div>
     </div>
     <!-- Grid Section -->
@@ -30,7 +30,7 @@
                 <td>{{prototype.opEntityPrototypeVersion.refCode}}</td>
                 <td>{{prototype.opEntityPrototypeVersion.type}}</td>
                 <td align="center"><a href="javascript:;" class="editIcon" title="Edit"
-                    [routerLink]="['/admin/entityprotos',prototype.id]"><i class="material-icons">edit</i></a>
+                    [routerLink]="['/admin/operations/entityproto',operationId,prototype.id]"><i class="material-icons">edit</i></a>
                 </td>
               </tr>
             </tbody>

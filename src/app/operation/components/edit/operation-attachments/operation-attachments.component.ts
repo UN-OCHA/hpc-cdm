@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
+import { Observable,zip as observableZip } from 'rxjs';
+import {map} from 'rxjs/operators';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
 import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
@@ -25,20 +28,46 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
         this.operationId = params.id;
-        this.api.getOperationAttachments(this.operationId).subscribe(attachments => {
-          // this.list = attachments;
-          this.list.push({id: null, name: ''});
-        });
+        this.list = this.createOperationService.operation.opAttachments.filter(attachment => attachment.objectType === 'operation');
       }
     });
   }
 
   addEntry() {
-    this.list.push({id: null, name: ''})
+    const EMPTY_ATTACHMENT = {
+      opAttachmentPrototypeId:this.createOperationService.operation.opAttachmentPrototypes[0].id,
+      objectId: this.createOperationService.operation.id,
+      objectType: 'operation',
+      opAttachmentVersion:{
+        customReference: '',
+        value :{
+          name: '',
+          file: ''
+        }
+      }
+    };
+    this.list.push(EMPTY_ATTACHMENT)
   }
 
   isLastEntryNew() {
     const lastEntry = this.list[this.list.length - 1];
     return lastEntry && lastEntry.id === null;
+  }
+
+
+  public save (): Observable<any> {
+    const postSaveObservables = [];
+    this.list.forEach(attachment => {
+      postSaveObservables.push(
+        this.api.saveOperationAttachment(attachment, this.createOperationService.operation.id));
+    });
+
+    return observableZip(
+      ...postSaveObservables
+    ).pipe(map(() => {
+        return {
+          stopSave: true
+        };
+      }));
   }
 }

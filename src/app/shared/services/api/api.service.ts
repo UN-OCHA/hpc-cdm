@@ -261,48 +261,36 @@ export class ApiService {
     return this.getUrlWrapper('v2/operation/' + id, {params});
   }
 
-  public saveOperationAttachmentFile(attachment: any, id: number): Observable<any> {
+  public saveOperationAttachmentFile(attachment: any): Observable<any> {
     const fd = new FormData();
     fd.append('data', attachment.file);
     return this.postToEndpoint('v2/files/forms', {data: fd});
   }
 
   public saveOperationAttachment(attachment: any, id: number): Observable<any> {
-    return this.postToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
+    if (attachment.id) {
+      return this.putToEndpoint('v2/operation/attachment/' + attachment.id, { data : {opAttachment: attachment}});
+
+    } else {
+      return this.postToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
+    }
   }
   public deleteOperationAttachment(id: number): Observable<any> {
-    // TODO update with actual endpoint
-    return null;
-  }
 
-  public saveOperationGve(gve: any, id: number): Observable<any> {
-    // TODO update with actual endpoint
-    console.log('saving operation gve');
-    console.log(id);
-    console.log(gve);
-    if(id) {
-      //update
-    } else {
-      //create
-    }
-    return null;
+    const params = this.setParams();
+    const headers = this.setHeaders();
+
+    const url = environment.serviceBaseUrl + 'v2/operation/attachment/' + id;
+    this.processStart(url, {}, '');
+    return this.http.delete(url, { params, headers }).pipe(
+      map((res: HttpResponse<any>) => {
+        this.processSuccess(url, res);
+        return res;
+      }), catchError((error: any) => this.processError(error)));
   }
 
   public deleteOperationGve(id: number): Observable<any> {
     // TODO update with actual endpoint
-    return null;
-  }
-
-  public saveGveAttachment(attachment: any, id: number): Observable<any> {
-    // TODO update with actual endpoint
-    console.log('saving gve attachment');
-    console.log(id);
-    console.log(attachment);
-    if(id) {
-      //update
-    } else {
-      //create
-    }
     return null;
   }
 
@@ -402,7 +390,7 @@ export class ApiService {
     }
     return this.putToEndpoint('v2/operation/governingEntity/' + governingEntity.id, {
       data: {
-        governingEntity
+        opGoverningEntity: governingEntity
       }
     });
   }
@@ -478,26 +466,6 @@ export class ApiService {
     return this.putToEndpoint(`v2/operation/${operation.id}/emergencies`, {
       data: {
         emergencyIds,
-        updatedAt: operation.updatedAt
-      }
-    });
-  }
-
-  public setOperationAttachments (operation, operationAttachments): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operation.id}/attachments`, {
-      data: {
-        operationVersionId: operation.operationVersion.id,
-        operationVersionAttachments: operationAttachments,
-        updatedAt: operation.updatedAt
-      }
-    })
-  }
-
-  public setOperationSegments (operation, segments: Array<any>): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operation.id}/segments`, {
-      data: {
-        operationVersionId: operation.operationVersion.id,
-        segments,
         updatedAt: operation.updatedAt
       }
     });
@@ -843,7 +811,7 @@ export class ApiService {
 
   public getOperations(options?: any): Observable<any> {
     const params = _.cloneDeep(options);
-    return this.getUrlWrapper('v2/operation', {params, cache: true})
+    return this.getUrlWrapper('v2/operation', {params})
   }
 
   public getLocations(): Observable<any> {

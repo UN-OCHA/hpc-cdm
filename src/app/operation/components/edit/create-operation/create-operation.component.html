@@ -88,7 +88,7 @@
               Save
             </button>
             <button
-              *ngIf="editable && currentChildRoute !== 'review'"
+              *ngIf="editable && currentChildRoute !== 'review' && currentChildRoute !== 'gves-attachments/:entityPrototypeId'"
               type="button"
               class="btn btn-primary"
               (click)="save('next')">

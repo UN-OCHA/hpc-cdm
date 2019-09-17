@@ -1,7 +1,7 @@
 <div class="panel border p-5">
   <div class="panel-header">
-    <h3>HCT/ICCGs</h3>
-    <operation-gves-icons></operation-gves-icons>
+    <h3>{{ entity.opEntityPrototypeVersion.value.name.en.plural }}</h3>
+    <operation-gves-icons [list]="list"></operation-gves-icons>
   </div>
   <div>
     <div *ngFor="let governingEntity of list; let idx = index;" class="form-check form-check-inline">
@@ -35,7 +35,7 @@
       <div class="panel-actions">
         <button type="button"
           class="btn btn-primary" (click)="addGve()">
-          {{ 'Add HCT/ICCG' | translate }}
+          {{ 'Add ' + entity.opEntityPrototypeVersion.value.name.en.singular | translate }}
         </button>
       </div>
     </form>

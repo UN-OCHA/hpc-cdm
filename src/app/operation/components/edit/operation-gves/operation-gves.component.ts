@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Observable,zip as observableZip } from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -13,26 +14,36 @@ import { CreateOperationChildComponent } from './../create-operation-child/creat
 })
 export class OperationGvesComponent extends CreateOperationChildComponent implements OnInit {
   public list = [];
+  public entityPrototypeId = null;
+  public entity = {};
 
   constructor(
     public createOperationService: CreateOperationService,
-    public apiService: ApiService
+    public apiService: ApiService,
+    private activatedRoute: ActivatedRoute
   ) {
     super(createOperationService, apiService);
   }
 
   ngOnInit() {
-    this.list = this.createOperationService.operation.opGoverningEntities;
+
+    this.activatedRoute.params.subscribe(params => {
+      if(params.entityPrototypeId) {
+        this.entityPrototypeId = +params.entityPrototypeId;
+        this.entity = this.createOperationService.operation.opEntityPrototypes.filter(eP=> eP.id === this.entityPrototypeId)[0];
+        this.list = this.createOperationService.operation.opGoverningEntities.filter(gve => gve.opEntityPrototype.id === this.entityPrototypeId);
+      }
+    });
   }
 
   addGve() {
     const EMPTY_GVE = {
-      entityPrototypeId:8,
+      opEntityPrototypeId:this.entityPrototypeId,
       operationId: this.createOperationService.operation.id,
       opGoverningEntityVersion:{
         abbreviation: '', name: '', comments: '', date:'', terms:''
       }
-  };
+    };
     this.list.push(EMPTY_GVE)
   }
 
@@ -41,7 +52,6 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
   }
 
   public save (): Observable<any> {
-    console.log(this.list);
     const postSaveObservables = [];
     this.list.forEach(governingEntity => {
       postSaveObservables.push(
@@ -50,8 +60,7 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
 
     return observableZip(
       ...postSaveObservables
-    ).pipe(map(results => {
-      console.log(results);
+    ).pipe(map(() => {
         return {
           stopSave: true
         };
