@@ -264,7 +264,12 @@ textarea {
 @import "./components/map";
 @import "./print";
 @import '~jsoneditor/dist/jsoneditor.css';
+@import './components/enketo';
 
 .jsoneditor-poweredBy {
   display: none !important;
+}
+
+.modal-lg, .modal-xl {
+  max-width: 96% !important;
 }

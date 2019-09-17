@@ -34,6 +34,12 @@ import { AttachmentEntryComponent } from './components/edit/attachment-entry/att
 import { GveEntryComponent } from './components/edit/gve-entry/gve-entry.component';
 import { GveEntryIconComponent } from './components/edit/gve-entry/icon/gve-entry-icon.component';
 import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-attachments.component';
+import { ReportsComponent } from './components/reports/reports.component';
+import { ReportsNavigationComponent } from './components/reports/navigation/navigation.component';
+import { AttachmentViewComponent } from './components/reports/attachment-view/attachment-view.component';
+
+import { EnketoFormModule, ENKETO_FORM_SERVICE } from 'ng-enketo-form';
+import { EnketoFormService } from './services/enketo-form.service';
 
 @NgModule({
   declarations: [
@@ -54,9 +60,12 @@ import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-a
     OperationGvesComponent,
     OperationGvesIconsComponent,
     AttachmentEntryComponent,
+    AttachmentViewComponent,
     GveEntryComponent,
     GveEntryIconComponent,
-    GveAttachmentsComponent
+    GveAttachmentsComponent,
+    ReportsComponent,
+    ReportsNavigationComponent
   ],
   imports: [
     BrowserModule,
@@ -73,6 +82,12 @@ import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-a
     TabsModule,
     Nl2BrPipeModule,
     SharedModule,
+    EnketoFormModule.forRoot({
+      enketoFormServiceProvider: {
+        provide: ENKETO_FORM_SERVICE,
+        useClass: EnketoFormService
+      }
+    }),
     routing
   ],
   providers: [

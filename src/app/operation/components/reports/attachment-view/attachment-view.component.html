@@ -1,0 +1,89 @@
+<div class="form-panel">
+  <div class="form-title">
+    <i (click)="toggleExpand()" *ngIf="!expanded" class="material-icons">chevron_right</i>
+    <i (click)="toggleExpand()" *ngIf="expanded" class="material-icons">expand_more</i>
+    <span class="form-title">{{title}}</span>
+    <div class="status">{{status}}</div>
+  </div>
+  <div *ngIf="expanded" class="form-body">
+    <div class="form-content">
+      <form [formGroup]="registerForm">
+        <fieldset>
+          <div class="title"><b>Reporting Period</b></div>
+          <div class="row dates">
+            <div class="form-group col-lg-4 flex-row date">
+              <div class="label"><label for="reportFrom" translate="From"></label></div>
+              <div class="input-group">
+                <input class="form-control"
+                  #bsDatepickerFromDate="bsDatepicker"
+                  bsDatepicker
+                  id="reportFrom"
+                  name="reportFrom"
+                  formControlName="reportFrom"
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
+                <div class="input-group-append">
+                  <button (click)="bsDatepickerFromDate.toggle()"
+                    [attr.aria-expanded]="bsDatepickerFromDate.isOpen" class="btn btn-outline-secondary" type="button"><i class="material-icons">calendar_today</i></button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-lg-4 flex-row date">
+              <div class="label"><label for="reportTo" translate="To"></label></div>
+              <div class="input-group">
+                <input class="form-control"
+                  #bsDatepickerToDate="bsDatepicker"
+                  bsDatepicker
+                  id="reportTo"
+                  name="reportTo"
+                  formControlName="reportTo"
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
+                <div class="input-group-append">
+                  <button (click)="bsDatepickerToDate.toggle()"
+                    [attr.aria-expanded]="bsDatepickerToDate.isOpen" class="btn btn-outline-secondary" type="button"><i class="material-icons">calendar_today</i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-lg-12">
+              <label for="file" translate>Data</label>
+              <input class="form-control" type="text" id="file" disabled
+                formControlName="filename"
+                (change)="handleFileInput($event.target.files)"/>
+              <button (click)="openForm(template)" type="button" class="btn btn-default openform">
+                  {{ 'Open Form' | translate }}
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-lg-12">
+              <label for="description" translate="">Comments</label>
+              <textarea class="form-control"  formControlName="comments" (input)="clearErrors()"
+                type="text" id="comments" name="comments"></textarea>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="form-actions">
+      <button [disabled]="registerForm.invalid" type="button" class="btn btn-save" (click)="save()">
+        {{ 'Save' | translate }}
+      </button>
+      <button [disabled]="registerForm.invalid" type="button" class="btn btn-primary" (click)="saveAndFinalise()">
+        {{ 'Save and Finalise' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">{{entry.formName}}</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <enketo-form formId="{{entry.formFilePath}}"></enketo-form>
+  </div>
+</ng-template>
