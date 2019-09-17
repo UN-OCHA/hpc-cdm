@@ -25,12 +25,12 @@ export class GveAttachmentsComponent extends CreateOperationChildComponent imple
 
 
   ngOnInit() {
-    this.attachments = this.createOperationService.operation.opGoverningEntities[this.viewingGoverningEntityIdx].opAttachments;
+    this.attachments = this.createOperationService.operation.opGoverningEntities[this.viewingGoverningEntityIdx].opAttachments || [];
   }
 
   public selectNewGoverningEntity(idx:any) {
     this.viewingGoverningEntityIdx = idx;
-    this.attachments = this.createOperationService.operation.opGoverningEntities[idx].opAttachments;
+    this.attachments = this.createOperationService.operation.opGoverningEntities[idx].opAttachments|| [];
   }
 
   addEntry(gve:any) {
