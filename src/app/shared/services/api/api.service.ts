@@ -261,7 +261,7 @@ export class ApiService {
     return this.getUrlWrapper('v2/operation/' + id, {params});
   }
 
-  public saveOperationAttachmentFile(attachment: any, id: number): Observable<any> {
+  public saveOperationAttachmentFile(attachment: any): Observable<any> {
     const fd = new FormData();
     fd.append('data', attachment.file);
     return this.postToEndpoint('v2/files/forms', {data: fd});

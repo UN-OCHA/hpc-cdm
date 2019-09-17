@@ -81,6 +81,7 @@ export class AttachmentEntryComponent implements OnInit {
   }
 
   handleFileInput(files: FileList) {
+    console.log("gandfze");
     this.fileToUpload = files.item(0);
     if(this.fileToUpload) {
       this.registerForm.controls['filename'].setValue(this.fileToUpload.name);
@@ -90,7 +91,7 @@ export class AttachmentEntryComponent implements OnInit {
         name: this.entry.opAttachmentVersion.customReference,
         file: this.fileToUpload
       };
-      this.api.saveOperationAttachmentFile(xentry, this.operationId).subscribe(result=> {
+      this.api.saveOperationAttachmentFile(xentry).subscribe(result=> {
         this.entry.opAttachmentVersion.value.file = result.file;
       });
     }
@@ -100,7 +101,10 @@ export class AttachmentEntryComponent implements OnInit {
     this.submitted = true;
     if(this.registerForm.valid) {
         this.api.saveOperationAttachment(this.entry,this.operationId).subscribe(() => {
-          return this.toastr.success('Attachment create.', 'Attachment created');
+          if (this.entry.id) {
+            return this.toastr.success('Attachment updated.', 'Attachment updated');
+          }
+          return this.toastr.success('Attachment created.', 'Attachment created');
         });
     }
   }

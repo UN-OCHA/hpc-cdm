@@ -28,7 +28,6 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
         this.operationId = params.id;
-        console.log(this.createOperationService.operation.opAttachments);
         this.list = this.createOperationService.operation.opAttachments.filter(attachment => attachment.objectType === 'operation');
       }
     });
