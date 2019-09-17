@@ -295,8 +295,17 @@ export class ApiService {
   }
 
   public deleteOperationGve(id: number): Observable<any> {
-    // TODO update with actual endpoint
-    return null;
+
+    const params = this.setParams();
+    const headers = this.setHeaders();
+
+    const url = environment.serviceBaseUrl + 'v2/operation/governingEntity/' + id;
+    this.processStart(url, {}, '');
+    return this.http.delete(url, { params, headers }).pipe(
+      map((res: HttpResponse<any>) => {
+        this.processSuccess(url, res);
+        return res;
+      }), catchError((error: any) => this.processError(error)));
   }
 
   public deleteGveAttachment(id: number): Observable<any> {
@@ -316,7 +325,7 @@ export class ApiService {
 
   public saveAttachmentPrototype(data: any, id: number): Observable<any> {
     if (!id) {
-      return this.postToEndpoint('v2/operation/attachmentPrototype', {
+      return this.postToEndpoint(`v2/operation/${data.operationId}/attachmentPrototype`, {
         data: {opAttachmentPrototype:data}
       });
     }
@@ -336,7 +345,7 @@ export class ApiService {
 
   public saveEntityPrototype(data: any, id: number): Observable<any> {
     if (!id) {
-      return this.postToEndpoint('v2/operation/entityPrototype', {
+      return this.postToEndpoint(`v2/operation/${data.operationId}/entityPrototype`, {
         data: {opEntityPrototype:data}
       });
     }

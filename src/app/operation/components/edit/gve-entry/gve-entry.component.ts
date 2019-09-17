@@ -87,7 +87,16 @@ export class GveEntryComponent implements OnInit {
   }
 
   remove() {
-    this.api.deleteOperationGve(this.entry.id);
+
+    if(this.entry.id) {
+      this.api.deleteOperationGve(this.entry.id).subscribe(response => {
+        if (response.status === 'ok') {
+          this.createOperationService.operation.opGoverningEntities.splice(this.createOperationService.operation.opGoverningEntities.indexOf(this.entry.id), 1);
+          this.entry.hide = true;
+          return this.toastr.warning('Governing entity removed.', 'Governing entity removed');
+        }
+      });
+    }
   }
 
   removeFile() {

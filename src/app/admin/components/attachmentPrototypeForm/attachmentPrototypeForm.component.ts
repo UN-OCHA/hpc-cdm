@@ -16,6 +16,7 @@ export class AttachmentPrototypeFormComponent implements OnInit {
   title: String;
   prototype: any;
   jsonModel: any;
+  operationId: any;
 
   constructor(
     private location: Location,
@@ -38,11 +39,23 @@ export class AttachmentPrototypeFormComponent implements OnInit {
         refCode: proto.opAttachmentPrototypeVersion.refCode,
         refType: proto.opAttachmentPrototypeVersion.type
       });
+    } else {
+      this.prototype = {
+        operationId: this.operationId,
+        opAttachmentPrototypeVersion: {
+          value: {},
+          refCode:'',
+          refType:''
+        }
+      };
     }
   }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
+      if(params.operationId) {
+        this.operationId = params.operationId;
+      }
       if(params.id) {
         this.api.getAttachmentPrototype(params.id).subscribe(proto => {
           this.setMode(proto);
@@ -73,9 +86,11 @@ export class AttachmentPrototypeFormComponent implements OnInit {
       const formData = this.form.value;
       const id = this.prototype && this.prototype.id;
       this.prototype.opAttachmentPrototypeVersion = {
+        id: this.prototype.opAttachmentPrototypeVersion.id,
+        opAttachmentPrototypeId: this.prototype.id,
         refCode: formData.refCode,
         type: formData.refType,
-        value: this.jsonModel
+        value: this.jsonModel || this.prototype.opAttachmentPrototypeVersion.value
       };
       this.api.saveAttachmentPrototype(this.prototype, id).subscribe((result) => {
 
