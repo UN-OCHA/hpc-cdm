@@ -48,17 +48,19 @@
             <div class="form-group col-lg-12">
               <label for="file" translate>Data</label>
               <input class="form-control" type="text" id="file" disabled
-                formControlName="filename"
-                (change)="handleFileInput($event.target.files)"/>
-              <button (click)="openForm(template)" type="button" class="btn btn-default openform">
+                formControlName="filename"/>
+              <button *ngIf="!submissions.tempSubmission && !submissions.submission" (click)="openForm(templateCreate)" type="button" class="btn btn-default openform">
                   {{ 'Open Form' | translate }}
+              </button>
+              <button *ngIf="submissions.tempSubmission" (click)="openForm(templateEdit)" type="button" class="btn btn-default openform">
+                  {{ 'Edit Form' | translate }}
               </button>
             </div>
           </div>
           <div class="row">
             <div class="form-group col-lg-12">
               <label for="description" translate="">Comments</label>
-              <textarea class="form-control"  formControlName="comments" (input)="clearErrors()"
+              <textarea class="form-control"  formControlName="comments"
                 type="text" id="comments" name="comments"></textarea>
             </div>
           </div>
@@ -76,7 +78,7 @@
   </div>
 </div>
 
-<ng-template #template>
+<ng-template #templateCreate>
   <div class="modal-header">
     <h4 class="modal-title pull-left">{{entry.formName}}</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
@@ -85,5 +87,16 @@
   </div>
   <div class="modal-body">
     <enketo-form formId="{{entry.formFilePath}}"></enketo-form>
+  </div>
+</ng-template>
+<ng-template #templateEdit>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">{{entry.formName}}</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <enketo-form submissionId="{{entry.id}}"></enketo-form>
   </div>
 </ng-template>
