@@ -90,7 +90,7 @@ export class AttachmentPrototypeFormComponent implements OnInit {
         opAttachmentPrototypeId: this.prototype.id,
         refCode: formData.refCode,
         type: formData.refType,
-        value: this.jsonModel
+        value: this.jsonModel || this.prototype.opAttachmentPrototypeVersion.value
       };
       this.api.saveAttachmentPrototype(this.prototype, id).subscribe((result) => {
 

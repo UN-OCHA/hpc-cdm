@@ -60,7 +60,11 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
 
     return observableZip(
       ...postSaveObservables
-    ).pipe(map(() => {
+    ).pipe(map((result) => {
+        result.forEach((gve) => {
+          gve['opEntityPrototype'] = this.entity;
+        })
+        this.createOperationService.operation.opGoverningEntities = result;
         return {
           stopSave: true
         };

@@ -91,7 +91,7 @@ export class EntityPrototypeFormComponent implements OnInit {
         opEntityPrototypeId: this.prototype.id,
         refCode: formData.refCode,
         type: formData.refType,
-        value: this.jsonModel
+        value: this.jsonModel || this.prototype.opEntityPrototypeVersion.value
       };
       this.api.saveEntityPrototype(this.prototype, id).subscribe((result) => {
         this.router.navigate(['/admin/operations',result.operationId,'entityprotos']);
