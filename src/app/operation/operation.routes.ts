@@ -12,6 +12,7 @@ import { ReviewComponent } from './components/edit/review/review.component';
 import { OperationAttachmentsComponent } from './components/edit/operation-attachments/operation-attachments.component';
 import { OperationGvesComponent } from './components/edit/operation-gves/operation-gves.component';
 import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-attachments.component';
+import { ReportsComponent } from './components/reports/reports.component';
 
 const operationRoutes: Routes = [
   { path: 'operation',
@@ -30,6 +31,18 @@ const operationRoutes: Routes = [
         path: 'basic',
         component: BasicOperationInfoComponent,
       } ],
+  },
+  { path: 'operation/:id/reports',
+    component: ReportsComponent,
+    canActivate: [AuthGuard],
+    canDeactivate: [PendingChangesGuard],
+    data: { title: 'Operation Reporting' }
+  },
+  { path: 'operation/:id/entityreports',
+    component: ReportsComponent,
+    canActivate: [AuthGuard],
+    canDeactivate: [PendingChangesGuard],
+    data: { title: 'Operation Reporting' }
   },
   { path: 'operation/:id/edit',
     component: CreateOperationComponent,

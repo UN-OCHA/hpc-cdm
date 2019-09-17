@@ -1,0 +1,33 @@
+.reports-nav {
+  a {
+    color: #3f3f3f;
+    &.active {
+      color: #ee7325;
+      text-decoration: none;
+      cursor: default;
+    }
+    &.active:not([href]):hover {
+      // color: #ee7325;
+    }
+  }
+
+  li {
+    font-weight: bold !important;
+  }
+
+  .step-indicator {
+    margin-right: 1rem;
+    border: 1px solid #3f3f3f;
+    border-radius: 100%;
+    width: 1.5rem;
+    display: inline-block;
+    height: 1.5rem;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: .05rem;
+  }
+
+  .active .step-indicator {
+    border-color: #ee7325;
+  }
+}

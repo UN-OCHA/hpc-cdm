@@ -289,6 +289,11 @@ export class ApiService {
       }), catchError((error: any) => this.processError(error)));
   }
 
+  public getFile(fileUrl: any): Observable<any> {
+    const url = this.buildUrl(fileUrl);
+    return this.http.get(url, {});
+  }
+
   public deleteOperationGve(id: number): Observable<any> {
     // TODO update with actual endpoint
     return null;

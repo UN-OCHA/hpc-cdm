@@ -1,0 +1,18 @@
+<div class="panel p-5">
+  <div class="panel-header">
+    <h3>{{title}}</h3>
+    <p>Forms</p>
+  </div>
+  <div class="">
+    <div class="row">
+      <div class="col-3 sidebar">
+        <reports-nav></reports-nav>
+      </div>
+      <div *ngIf="reports.stepIdx === 0" class="col-9 panel-body">
+        <div *ngFor="let entry of operation.attachments$ | async; let i = index">
+          <attachment-view [entry]="entry" [entryIdx]="i+1"></attachment-view>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
