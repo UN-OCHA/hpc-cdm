@@ -64,7 +64,8 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
 
     return observableZip(
       ...postSaveObservables
-    ).pipe(map(() => {
+    ).pipe(map((results) => {
+        this.list = results;
         return {
           stopSave: true
         };

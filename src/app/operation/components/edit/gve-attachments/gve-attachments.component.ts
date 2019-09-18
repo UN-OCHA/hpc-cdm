@@ -33,18 +33,13 @@ export class GveAttachmentsComponent extends CreateOperationChildComponent imple
     }
   }
 
-  public refreshList(entry:any) {
-    if (this.createOperationService.operation.opGoverningEntities[this.viewingGoverningEntityIdx].opAttachments) {
-      this.createOperationService.operation.opGoverningEntities[this.viewingGoverningEntityIdx].opAttachments.push(entry);
-    } else {
-      this.createOperationService.operation.opGoverningEntities[this.viewingGoverningEntityIdx].opAttachments = [entry];
-
-    }
+  public refreshList() {
+    this.attachments = this.createOperationService.operation.opGoverningEntities[this.viewingGoverningEntityIdx].opAttachments|| [];
   }
 
   public selectNewGoverningEntity(idx:any) {
     this.viewingGoverningEntityIdx = idx;
-    this.attachments = this.createOperationService.operation.opGoverningEntities[idx].opAttachments|| [];
+    this.attachments = this.createOperationService.operation.opGoverningEntities[this.viewingGoverningEntityIdx].opAttachments;
   }
 
   addEntry(gve:any) {
@@ -72,7 +67,8 @@ export class GveAttachmentsComponent extends CreateOperationChildComponent imple
 
     return observableZip(
       ...postSaveObservables
-    ).pipe(map(() => {
+    ).pipe(map((results) => {
+        this.attachments = results;
         return {
           stopSave: true
         };

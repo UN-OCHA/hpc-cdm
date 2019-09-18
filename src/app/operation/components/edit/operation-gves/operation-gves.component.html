@@ -30,7 +30,7 @@
   <div class="panel-body">
     <form  #childForm="ngForm">
       <div *ngFor="let entry of list; let i = index">
-        <gve-entry (onRefreshList)="refreshList()" [entityPrototype]="entity" [entry]="entry" [entryIdx]="i+1"></gve-entry>
+        <gve-entry (onDelete)="delete(entry)" [entityPrototype]="entity" [entry]="entry" [entryIdx]="i+1"></gve-entry>
       </div>
       <div class="panel-actions">
         <button type="button"

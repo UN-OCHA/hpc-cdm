@@ -84,7 +84,6 @@ export class AttachmentEntryComponent implements OnInit {
   }
 
   handleFileInput(files: FileList) {
-    console.log("gandfze");
     this.fileToUpload = files.item(0);
     if(this.fileToUpload) {
       this.registerForm.controls['filename'].setValue(this.fileToUpload.name);
@@ -107,8 +106,10 @@ export class AttachmentEntryComponent implements OnInit {
           if (this.entry.id) {
             return this.toastr.success('Attachment updated.', 'Attachment updated');
           }
-          this.entry.id = result.id
-          this.onRefreshList.emit(this.entry);
+          this.entry = result;
+          if (this.gveId) {
+            this.onRefreshList.emit();
+          }
           return this.toastr.success('Attachment created.', 'Attachment created');
         });
     }

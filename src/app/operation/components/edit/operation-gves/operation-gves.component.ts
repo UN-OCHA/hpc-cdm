@@ -4,6 +4,7 @@ import { Observable,zip as observableZip } from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import { ApiService } from 'app/shared/services/api/api.service';
+import { ToastrService } from 'ngx-toastr';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
 import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
 
@@ -20,6 +21,7 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
   constructor(
     public createOperationService: CreateOperationService,
     public apiService: ApiService,
+    private toastr: ToastrService,
     private activatedRoute: ActivatedRoute
   ) {
     super(createOperationService, apiService);
@@ -36,6 +38,19 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
     });
   }
 
+  delete(entry:any) {
+    if(entry.id) {
+      this.apiService.deleteOperationGve(entry.id).subscribe(response => {
+        if (response.status === 'ok') {
+          let index = this.createOperationService.operation.opGoverningEntities.map(function(o) { return o.id; }).indexOf(entry.id);
+          this.createOperationService.operation.opGoverningEntities.splice(index, 1);
+          this.refreshList();
+          this.list.splice(index, 1);
+          return this.toastr.warning('Governing entity removed.', 'Governing entity removed');
+        }
+      });
+    }
+  }
   public refreshList() {
     this.list = this.createOperationService.operation.opGoverningEntities.filter(gve => gve.opEntityPrototype.id === this.entityPrototypeId);
   }
@@ -64,11 +79,9 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
 
     return observableZip(
       ...postSaveObservables
-    ).pipe(map((result) => {
-        result.forEach((gve) => {
-          gve['opEntityPrototype'] = this.entity;
-        })
-        this.createOperationService.operation.opGoverningEntities = result;
+    ).pipe(map((results) => {
+        this.createOperationService.operation.opGoverningEntities = results;
+        this.refreshList();
         return {
           stopSave: true
         };

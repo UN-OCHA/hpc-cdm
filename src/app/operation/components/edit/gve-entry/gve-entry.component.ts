@@ -24,6 +24,7 @@ export class GveEntryComponent implements OnInit {
   @Input() readOnly: boolean;
 
   @Output() onRefreshList = new EventEmitter();
+  @Output() onDelete = new EventEmitter();
 
 
   title: string;
@@ -83,8 +84,7 @@ export class GveEntryComponent implements OnInit {
         if (this.entry.id) {
           return this.toastr.success('Governing entity updated.', 'Governing entity updated');
         } else {
-          this.entry.id = result.id;
-          this.entry.opEntityPrototype = this.entityPrototype;
+          this.entry = result;
           this.createOperationService.operation.opGoverningEntities.push(this.entry);
           return this.toastr.success('Governing entity create.', 'Governing entity created');
         }
@@ -93,16 +93,7 @@ export class GveEntryComponent implements OnInit {
   }
 
   remove() {
-
-    if(this.entry.id) {
-      this.api.deleteOperationGve(this.entry.id).subscribe(response => {
-        if (response.status === 'ok') {
-          this.createOperationService.operation.opGoverningEntities.splice(this.createOperationService.operation.opGoverningEntities.indexOf(this.entry.id), 1);
-          this.onRefreshList.emit();
-          return this.toastr.warning('Governing entity removed.', 'Governing entity removed');
-        }
-      });
-    }
+    this.onDelete.emit(this.entry);
   }
 
   removeFile() {
