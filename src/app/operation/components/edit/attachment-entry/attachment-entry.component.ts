@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
@@ -18,6 +18,10 @@ export class AttachmentEntryComponent implements OnInit {
   @Input() gveId: any;
   @Input() entry: any;
   @Input() entryIdx: any;
+
+  @Output() onRefreshList = new EventEmitter();
+  @Output() onDelete = new EventEmitter();
+
   title: string;
   fileToUpload: any;
   filePath: any;
@@ -40,7 +44,7 @@ export class AttachmentEntryComponent implements OnInit {
     }
     if(this.entry) {
       this.registerForm.reset({
-        filename: this.entry.opAttachmentVersion.value.file
+        filename: this.entry.opAttachmentVersion.value.file || ''
       });
       this.filePath = this.entry.opAttachmentVersion.value.file;
       this.setTitle();
@@ -70,18 +74,11 @@ export class AttachmentEntryComponent implements OnInit {
 
   remove() {
     if(this.entry.id) {
-      this.api.deleteOperationAttachment(this.entry.id).subscribe(response => {
-        if (response.status === 'ok') {
-          this.createOperationService.operation.opAttachments.splice(this.createOperationService.operation.opAttachments.indexOf(this.entry.id), 1);
-          this.entry.hide = true;
-          return this.toastr.warning('Attachment removed.', 'Attachment removed');
-        }
-      });
+      this.onDelete.emit(this.entry);
     }
   }
 
   handleFileInput(files: FileList) {
-    console.log("gandfze");
     this.fileToUpload = files.item(0);
     if(this.fileToUpload) {
       this.registerForm.controls['filename'].setValue(this.fileToUpload.name);
@@ -100,9 +97,13 @@ export class AttachmentEntryComponent implements OnInit {
   save(){
     this.submitted = true;
     if(this.registerForm.valid) {
-        this.api.saveOperationAttachment(this.entry,this.operationId).subscribe(() => {
+        this.api.saveOperationAttachment(this.entry,this.operationId).subscribe((result) => {
           if (this.entry.id) {
             return this.toastr.success('Attachment updated.', 'Attachment updated');
+          }
+          this.entry = result;
+          if (this.gveId) {
+            this.onRefreshList.emit();
           }
           return this.toastr.success('Attachment created.', 'Attachment created');
         });

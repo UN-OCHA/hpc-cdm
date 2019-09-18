@@ -37,14 +37,8 @@
                   />
             </div>
             <div class="form-group col-lg-12">
-              <input id="file" type="file" #file 
+              <input class="form-control" id="file" type="file" #file
                 (change)="handleFileInput($event.target.files)"/>
-              <div>
-                <button id="selectedFile" type="button" class="btn btn-default"
-                  onclick="document.getElementById('file').click();">
-                      {{ 'Upload File' | translate }}
-                </button>
-              </div>
             </div>
           </div>
 

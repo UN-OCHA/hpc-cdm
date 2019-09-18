@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { Observable,zip as observableZip } from 'rxjs';
+import { Observable,zip as observableZip, of } from 'rxjs';
 import {map} from 'rxjs/operators';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
 import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -14,11 +15,11 @@ import { CreateOperationChildComponent } from './../create-operation-child/creat
   styleUrls: ['./operation-attachments.component.scss']
 })
 export class OperationAttachmentsComponent extends CreateOperationChildComponent implements OnInit {
-  public list = [];
   operationId: any;
 
   constructor(
     private api: ApiService,
+    private toastr: ToastrService,
     public createOperationService: CreateOperationService,
     private activatedRoute: ActivatedRoute) {
       super(createOperationService, api);
@@ -28,7 +29,6 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
         this.operationId = params.id;
-        this.list = this.createOperationService.operation.opAttachments.filter(attachment => attachment.objectType === 'operation');
       }
     });
   }
@@ -46,28 +46,42 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
         }
       }
     };
-    this.list.push(EMPTY_ATTACHMENT)
+    this.createOperationService.operation.opAttachments.push(EMPTY_ATTACHMENT)
   }
 
   isLastEntryNew() {
-    const lastEntry = this.list[this.list.length - 1];
+    const lastEntry = this.createOperationService.operation.opAttachments[this.createOperationService.operation.opAttachments.length - 1];
     return lastEntry && lastEntry.id === null;
   }
 
+  public delete(attachment:any) {
+    this.api.deleteOperationAttachment(attachment.id).subscribe(response => {
+      if (response.status === 'ok') {
+        const index = this.createOperationService.operation.opAttachments.map(function(o) { return o.id; }).indexOf(attachment.id);
+        this.createOperationService.operation.opAttachments.splice(index, 1);
+        return this.toastr.warning('Attachment removed.', 'Attachment removed');
+      }
+    });
+  }
 
   public save (): Observable<any> {
-    const postSaveObservables = [];
-    this.list.forEach(attachment => {
-      postSaveObservables.push(
-        this.api.saveOperationAttachment(attachment, this.createOperationService.operation.id));
-    });
+    if (this.createOperationService.operation.opAttachments && this.createOperationService.operation.opAttachments.length) {
+      const postSaveObservables = [];
+      this.createOperationService.operation.opAttachments.forEach(attachment => {
+        postSaveObservables.push(
+          this.api.saveOperationAttachment(attachment, this.createOperationService.operation.id));
+      });
 
-    return observableZip(
-      ...postSaveObservables
-    ).pipe(map(() => {
-        return {
-          stopSave: true
-        };
+      return observableZip(
+        ...postSaveObservables
+      ).pipe(map((results) => {
+          this.createOperationService.operation.opAttachments = results;
+          return {
+            stopSave: true
+          };
       }));
+    } else {
+      return of({stopSave:true});
+    }
   }
 }

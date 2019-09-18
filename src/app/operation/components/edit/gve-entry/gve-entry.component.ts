@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
@@ -19,8 +19,13 @@ export class GveEntryComponent implements OnInit {
   @ViewChild('form') form;
 
   @Input() entry: any;
+  @Input() entityPrototype: any;
   @Input() entryIdx: any;
   @Input() readOnly: boolean;
+
+  @Output() onRefreshList = new EventEmitter();
+  @Output() onDelete = new EventEmitter();
+
 
   title: string;
   expanded = false;
@@ -75,28 +80,25 @@ export class GveEntryComponent implements OnInit {
 
     this.submitted = true;
     //if(this.registerForm.valid) {
-      this.api.saveGoverningEntity(this.entry).subscribe((result) => {
+      this.api.saveGoverningEntity(this.entry).subscribe((result:any) => {
         if (this.entry.id) {
-          return this.toastr.success('Attachment updated.', 'Attachment updated');
+          const opAttachments = this.entry.opAttachments || [];
+          this.entry = result;
+          this.entry.opAttachments = opAttachments;
+          return this.toastr.success('Governing entity updated.', 'Governing entity updated');
         } else {
-          this.createOperationService.operation.opGoverningEntities.push(result);
-          return this.toastr.success('Attachment create.', 'Attachment created');
+          this.entry = result;
+          this.entry.opAttachments = [];
+          this.onRefreshList.emit(this.entry);
+
+          return this.toastr.success('Governing entity create.', 'Governing entity created');
         }
       });
     //}
   }
 
   remove() {
-
-    if(this.entry.id) {
-      this.api.deleteOperationGve(this.entry.id).subscribe(response => {
-        if (response.status === 'ok') {
-          this.createOperationService.operation.opGoverningEntities.splice(this.createOperationService.operation.opGoverningEntities.indexOf(this.entry.id), 1);
-          this.entry.hide = true;
-          return this.toastr.warning('Governing entity removed.', 'Governing entity removed');
-        }
-      });
-    }
+    this.onDelete.emit(this.entry);
   }
 
   removeFile() {

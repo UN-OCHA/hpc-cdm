@@ -4,6 +4,7 @@ import { Observable,zip as observableZip } from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import { ApiService } from 'app/shared/services/api/api.service';
+import { ToastrService } from 'ngx-toastr';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
 import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
 
@@ -20,6 +21,7 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
   constructor(
     public createOperationService: CreateOperationService,
     public apiService: ApiService,
+    private toastr: ToastrService,
     private activatedRoute: ActivatedRoute
   ) {
     super(createOperationService, apiService);
@@ -34,6 +36,26 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
         this.list = this.createOperationService.operation.opGoverningEntities.filter(gve => gve.opEntityPrototype.id === this.entityPrototypeId);
       }
     });
+  }
+
+  delete(gve:any) {
+    if(gve.id) {
+      this.apiService.deleteOperationGve(gve.id).subscribe(response => {
+        if (response.status === 'ok') {
+          let index = this.createOperationService.operation.opGoverningEntities.map(function(o) { return o.id; }).indexOf(gve.id);
+          this.createOperationService.operation.opGoverningEntities.splice(index, 1);
+          this.refreshList();
+          return this.toastr.warning('Governing entity removed.', 'Governing entity removed');
+        }
+      });
+    }
+  }
+
+  public refreshList(newGve?:any) {
+    if (newGve) {
+      this.createOperationService.operation.opGoverningEntities.push(newGve);
+    }
+    this.list = this.createOperationService.operation.opGoverningEntities.filter(gve => gve.opEntityPrototype.id === this.entityPrototypeId);
   }
 
   addGve() {
@@ -60,14 +82,23 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
 
     return observableZip(
       ...postSaveObservables
-    ).pipe(map((result) => {
-        result.forEach((gve) => {
-          gve['opEntityPrototype'] = this.entity;
+    ).pipe(map((results) => {
+      if (results.length != this.createOperationService.operation.opGoverningEntities.length) {
+        results.forEach((r:any)=> {
+          if (!this.createOperationService.operation.opGoverningEntities.filter(newGve => newGve.id === r.id).length) {
+            this.createOperationService.operation.opGoverningEntities.push(r);
+          }
         })
-        this.createOperationService.operation.opGoverningEntities = result;
-        return {
-          stopSave: true
-        };
-      }));
+      }
+      this.createOperationService.operation.opGoverningEntities.forEach((gve:any) => {
+        const opAttachments = gve.opAttachments || [];
+        gve = results.filter((r:any)=>r.id === gve.id)[0];
+        gve.opAttachments = opAttachments;
+      });
+      this.refreshList();
+      return {
+        stopSave: true
+      };
+    }));
   }
 }
