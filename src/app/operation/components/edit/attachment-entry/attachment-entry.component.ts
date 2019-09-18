@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
-import { CreateOperationService } from 'app/operation/services/create-operation.service';
 
 import { ToastrService } from 'ngx-toastr';
 
@@ -31,7 +30,6 @@ export class AttachmentEntryComponent implements OnInit {
   constructor(
     private api: ApiService,
     private toastr: ToastrService,
-    private createOperationService: CreateOperationService,
     private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       filename: ['', Validators.required]
