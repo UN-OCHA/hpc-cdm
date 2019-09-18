@@ -38,20 +38,23 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
     });
   }
 
-  delete(entry:any) {
-    if(entry.id) {
-      this.apiService.deleteOperationGve(entry.id).subscribe(response => {
+  delete(gve:any) {
+    if(gve.id) {
+      this.apiService.deleteOperationGve(gve.id).subscribe(response => {
         if (response.status === 'ok') {
-          let index = this.createOperationService.operation.opGoverningEntities.map(function(o) { return o.id; }).indexOf(entry.id);
+          let index = this.createOperationService.operation.opGoverningEntities.map(function(o) { return o.id; }).indexOf(gve.id);
           this.createOperationService.operation.opGoverningEntities.splice(index, 1);
           this.refreshList();
-          this.list.splice(index, 1);
           return this.toastr.warning('Governing entity removed.', 'Governing entity removed');
         }
       });
     }
   }
-  public refreshList() {
+
+  public refreshList(newGve?:any) {
+    if (newGve) {
+      this.createOperationService.operation.opGoverningEntities.push(newGve);
+    }
     this.list = this.createOperationService.operation.opGoverningEntities.filter(gve => gve.opEntityPrototype.id === this.entityPrototypeId);
   }
 
@@ -80,11 +83,22 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
     return observableZip(
       ...postSaveObservables
     ).pipe(map((results) => {
-        this.createOperationService.operation.opGoverningEntities = results;
-        this.refreshList();
-        return {
-          stopSave: true
-        };
-      }));
+      if (results.length != this.createOperationService.operation.opGoverningEntities.length) {
+        results.forEach((r:any)=> {
+          if (!this.createOperationService.operation.opGoverningEntities.filter(newGve => newGve.id === r.id).length) {
+            this.createOperationService.operation.opGoverningEntities.push(r);
+          }
+        })
+      }
+      this.createOperationService.operation.opGoverningEntities.forEach((gve:any) => {
+        const opAttachments = gve.opAttachments || [];
+        gve = results.filter((r:any)=>r.id === gve.id)[0];
+        gve.opAttachments = opAttachments;
+      });
+      this.refreshList();
+      return {
+        stopSave: true
+      };
+    }));
   }
 }

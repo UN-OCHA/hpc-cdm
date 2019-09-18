@@ -20,6 +20,7 @@ export class AttachmentEntryComponent implements OnInit {
   @Input() entryIdx: any;
 
   @Output() onRefreshList = new EventEmitter();
+  @Output() onDelete = new EventEmitter();
 
   title: string;
   fileToUpload: any;
@@ -73,13 +74,7 @@ export class AttachmentEntryComponent implements OnInit {
 
   remove() {
     if(this.entry.id) {
-      this.api.deleteOperationAttachment(this.entry.id).subscribe(response => {
-        if (response.status === 'ok') {
-          this.createOperationService.operation.opAttachments.splice(this.createOperationService.operation.opAttachments.indexOf(this.entry.id), 1);
-          this.entry.hide = true;
-          return this.toastr.warning('Attachment removed.', 'Attachment removed');
-        }
-      });
+      this.onDelete.emit(this.entry);
     }
   }
 
