@@ -5,6 +5,13 @@
   width: 100%;
   margin-bottom: 1em;
 
+  input#reportFrom, input#reportTo {
+    max-width: 7.75em;
+    border: none;
+    background-color: #ddd;
+    padding: 0 1em;
+  }
+
   form {
     .title {
       margin-bottom: 1em;
@@ -44,7 +51,7 @@
       top: 1.35em;
       right: 1.5em;
       font-weight: bold;
-      color: #ddd;
+      color: #888;
     }
   }
 

@@ -1,16 +1,24 @@
 <div class="panel p-5">
   <div class="panel-header">
-    <h3>{{title}}</h3>
-    <p>Forms</p>
+    <h3>{{operation.operation && operation.operation.operationVersion.name}}</h3>
+    <h4>{{title}}</h4>
   </div>
-  <div class="">
+  <div>
     <div class="row">
       <div class="col-3 sidebar">
         <reports-nav></reports-nav>
       </div>
-      <div *ngIf="reports.stepIdx === 0" class="col-9 panel-body">
+      <div *ngIf="!operation.attachmentsLoading && operation.attachments.length && reports.stepIdx === 0" class="col-9 panel-body">
         <div *ngFor="let entry of operation.attachments$ | async; let i = index">
           <attachment-view [entry]="entry" [entryIdx]="i+1"></attachment-view>
+        </div>
+      </div>
+      <div *ngIf="operation.entities.length && reports.stepIdx === 1" class="col-9">
+        <entities></entities>
+        <div *ngIf="operation.entityAttachments.length" class="panel-body mt-2">
+          <div *ngFor="let entry of operation.entityAttachments$ | async; let i = index">
+            <attachment-view [entry]="entry" [entryIdx]="i+1"></attachment-view>
+          </div>
         </div>
       </div>
     </div>

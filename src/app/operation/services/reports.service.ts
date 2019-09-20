@@ -1,26 +1,26 @@
 import { Injectable } from '@angular/core';
-// import {BehaviorSubject} from 'rxjs';
-// import { ApiService } from 'app/shared/services/api/api.service';
-
+import { OperationService } from './operation.service';
+import { ApiService } from 'app/shared/services/api/api.service';
 
 @Injectable({providedIn: 'root'})
 export class ReportsService {
-  // api: ApiService;
-  public operation: any;
   public stepIdx = 0;
 
-  // private readonly _attachments = new BehaviorSubject<Attachment[]>([]);
-  // readonly attachments$ = this._attachments.asObservable();
+  constructor(
+    private operation: OperationService,
+    private api: ApiService) {}
 
-  constructor() {
-    // this.api = api;
+  public saveReport(opAttachmentId, submission, comments, finalized = false) {
+    return this.api.saveReport({
+      id: this.operation.report && this.operation.report.id,
+      operationId: this.operation.id,
+      reportingWindowId: this.operation.reportingWindow.id,
+      opAttachmentId,
+      dataReportVersion: {
+        value: {
+          submission, comments, finalized
+        }
+      }
+    });
   }
-
-  // get attachments(): Attachment[] {
-  //   return this._attachments.getValue();
-  // }
-  //
-  // set attachments(val: Attachment[]) {
-  //   this._attachments.next(val);
-  // }
 }

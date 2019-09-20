@@ -1,5 +1,5 @@
 
-import {throwError as observableThrowError,  Observable } from 'rxjs';
+import {throwError as observableThrowError, from, Observable } from 'rxjs';
 
 import {catchError,  map, shareReplay } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
@@ -261,6 +261,10 @@ export class ApiService {
     return this.getUrlWrapper('v2/operation/' + id, {params});
   }
 
+  public getOperationEntities(id: any, operationVersionId = 'latest'): Observable<any> {
+    return this.getUrlWrapper(`v2/operation/${id}`, {});
+  }
+
   public saveOperationAttachmentFile(attachment: any): Observable<any> {
     const fd = new FormData();
     fd.append('data', attachment.file);
@@ -269,9 +273,14 @@ export class ApiService {
 
   public saveOperationAttachment(attachment: any, id: number): Observable<any> {
     if (attachment.id) {
+      console.log('updating operation attachment..............');
+      console.log(attachment);
+
       return this.putToEndpoint('v2/operation/attachment/' + attachment.id, { data : {opAttachment: attachment}});
 
     } else {
+      console.log('saving operation attachment..............');
+      console.log(attachment);
       return this.postToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
     }
   }
@@ -289,9 +298,28 @@ export class ApiService {
       }), catchError((error: any) => this.processError(error)));
   }
 
+  public saveFormFile(file: any, name?: string) {
+    return new Promise(resolve => {
+      const fd = new FormData();
+      fd.append('data', file, name || file.name);
+      this.postToEndpoint('v2/files/cdm', {data: fd}).subscribe(response => {
+        resolve(response);
+      });
+    });
+  }
+
+  public getFormFile(file: any): Observable<any> {
+    const url = this.buildUrl(`public/files/cdm/${file}`);
+    return this.http.get(url, {});
+  }
+
   public getFile(fileUrl: any): Observable<any> {
     const url = this.buildUrl(fileUrl);
     return this.http.get(url, {});
+  }
+
+  public getFormFileUrl(filename: any) {
+    return this.buildUrl(`/public/files/cdm/${filename}`);
   }
 
   public deleteOperationGve(id: number): Observable<any> {
@@ -689,11 +717,11 @@ export class ApiService {
   }
 
   public getGoverningEntity(id, scopes?): Observable<any> {
-    let params;
+    let params = {};
     if (scopes) {
-      params = {scope: scopes.join(',')}
+      params = {scopes: scopes.join(',')}
     }
-    return this.getUrlWrapper('v2/governingEntity/' + id, {params});
+    return this.getUrlWrapper(`v2/operation/governingEntity/${id}`, {params});
   }
 
   public getPlan(id, scopes: string | boolean = 'procedure,attachments,planVersion,locations', isPublic = false): Observable<any> {
@@ -968,6 +996,39 @@ export class ApiService {
     return this.getUrlWrapper('v2/governingEntity/' + id);
   }
 
+  public getReportingWindows(operationId: number): Observable<any> {
+    // TODO use direct end point for single operation
+    return this.getUrlWrapper('v2/reportingWindow');
+  }
+
+  public saveReportingWindow(xdata: any): Observable<any> {
+    return this.postToEndpoint('v2/reportingWindow', {
+      data: {reportingWindow: xdata}});
+  }
+
+  public getReport(attachmentId, reportingWindowId): Observable<any> {
+    // TODO fetch single report
+    return from(new Promise(resolve => {
+      this.getUrlWrapper('v2/dataReport').subscribe(reports => {
+        const report = reports.filter(r => r.opAttachmentId === attachmentId
+          && r.reportingWindowId === reportingWindowId);
+        if(report.length > 0) {
+          resolve(report[0]);
+        }
+        resolve(null);
+      })
+    }));
+  }
+
+  public saveReport(xdata: any): Observable<any> {
+    if(xdata.id) {
+      return this.putToEndpoint(`v2/dataReport/${xdata.id}`, {
+        data: {dataReport: xdata}});
+    } else {
+      return this.postToEndpoint('v2/dataReport', {
+        data: {dataReport: xdata}});
+    }
+  }
 
   public getParticipantRoles(): Observable<Array<any>> {
     const claims = this.oauthService.getIdentityClaims();

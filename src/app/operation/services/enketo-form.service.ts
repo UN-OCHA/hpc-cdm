@@ -3,35 +3,56 @@ import { Observable, from } from 'rxjs';
 import { IEnketoFormService } from 'ng-enketo-form';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { SubmissionsService } from 'app/operation/services/submissions.service';
+import fileManager from 'enketo-core/src/js/file-manager';
 
 @Injectable({providedIn: 'root'})
 export class EnketoFormService implements IEnketoFormService {
 
   constructor(
     private api: ApiService,
-    private submissions: SubmissionsService) {}
+    private submissions: SubmissionsService) {
+    fileManager.getFileUrl = async (file) => {
+      if(typeof file === 'string') {
+        return await this.api.getFormFileUrl(file);
+      } else if(file && file.name) {
+        var timestamp = new Date().getUTCMilliseconds();
+        // This is a temporary url to preview files
+        const name = `${timestamp}${file.name}`;
+        await this.api.saveFormFile(file, name);
+        return await this.api.getFormFileUrl(name);
+      }
+    }
+  }
 
-  getForm(formUrl: string): Observable<any> {
+  getForm(formUrl: any): Observable<any> {
     return this.api.getFile(formUrl);
   }
 
-  getSubmission(id: string): Observable<any> {
+  getSubmission(formUrl: any, submissionId: any): Observable<any> {
     return from(new Promise(resolve => {
       // TODO document this.
       resolve({
-        form: this.submissions.formUrl,
+        form: formUrl,
         content: JSON.stringify(this.submissions.tempSubmission || {})
       });
     }));
   }
 
-  addSubmission(data: any): Observable<any> {
+  addSubmission(formUrl: any, submissionId: any, data: any): Observable<any> {
     this.submissions.tempSubmission = data;
+    const files = fileManager.getCurrentFiles();
+    files.map(blob => {
+      this.api.saveFormFile(new File([blob], blob.name));
+    });
     return null;
   }
 
-  updateSubmission(submissionId: string, data: any): Observable<any> {
+  updateSubmission(formUrl: any, submissionId: any, data: any): Observable<any> {
     this.submissions.tempSubmission = data;
+    const files = fileManager.getCurrentFiles();
+    files.map(blob => {
+      this.api.saveFormFile(new File([blob], blob.name));
+    });
     return null;
   }
 }
