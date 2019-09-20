@@ -35,6 +35,7 @@ import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-a
 import { ReportsComponent } from './components/reports/reports.component';
 import { ReportsNavigationComponent } from './components/reports/navigation/navigation.component';
 import { AttachmentViewComponent } from './components/reports/attachment-view/attachment-view.component';
+import { EntitiesComponent } from './components/reports/entities/entities.component';
 
 import { EnketoFormModule, ENKETO_FORM_SERVICE } from 'ng-enketo-form';
 import { EnketoFormService } from './services/enketo-form.service';
@@ -59,7 +60,8 @@ import { EnketoFormService } from './services/enketo-form.service';
     GveEntryIconComponent,
     GveAttachmentsComponent,
     ReportsComponent,
-    ReportsNavigationComponent
+    ReportsNavigationComponent,
+    EntitiesComponent
   ],
   imports: [
     BrowserModule,

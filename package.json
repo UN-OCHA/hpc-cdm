@@ -40,7 +40,7 @@
     "markdown-to-html-pipe": "^1.2.4",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.26",
-    "ng-enketo-form": "0.0.1-beta.2",
+    "ng-enketo-form": "0.0.1-beta.6",
     "ng2-date-picker": "^2.10.2",
     "ng2-json-editor": "^0.25.12",
     "ngx-bootstrap": "^3.1.2",

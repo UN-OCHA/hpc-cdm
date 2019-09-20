@@ -14,33 +14,19 @@
             <div class="form-group col-lg-4 flex-row date">
               <div class="label"><label for="reportFrom" translate="From"></label></div>
               <div class="input-group">
-                <input class="form-control"
-                  #bsDatepickerFromDate="bsDatepicker"
-                  bsDatepicker
+                <input readonly
                   id="reportFrom"
                   name="reportFrom"
-                  formControlName="reportFrom"
-                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
-                <div class="input-group-append">
-                  <button (click)="bsDatepickerFromDate.toggle()"
-                    [attr.aria-expanded]="bsDatepickerFromDate.isOpen" class="btn btn-outline-secondary" type="button"><i class="material-icons">calendar_today</i></button>
-                </div>
+                  formControlName="reportFrom">
               </div>
             </div>
             <div class="form-group col-lg-4 flex-row date">
               <div class="label"><label for="reportTo" translate="To"></label></div>
               <div class="input-group">
                 <input class="form-control"
-                  #bsDatepickerToDate="bsDatepicker"
-                  bsDatepicker
                   id="reportTo"
                   name="reportTo"
-                  formControlName="reportTo"
-                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
-                <div class="input-group-append">
-                  <button (click)="bsDatepickerToDate.toggle()"
-                    [attr.aria-expanded]="bsDatepickerToDate.isOpen" class="btn btn-outline-secondary" type="button"><i class="material-icons">calendar_today</i></button>
-                </div>
+                  formControlName="reportTo">
               </div>
             </div>
           </div>
@@ -49,29 +35,44 @@
               <label for="file" translate>Data</label>
               <input class="form-control" type="text" id="file" disabled
                 formControlName="filename"/>
-              <button *ngIf="!submissions.tempSubmission && !submissions.submission" (click)="openForm(templateCreate)" type="button" class="btn btn-default openform">
+              <button *ngIf="!(operation.report && operation.report.finalized) && !submissions.tempSubmission && !submissions.submission" (click)="openForm(templateCreate)" type="button" class="btn btn-default openform">
                   {{ 'Open Form' | translate }}
               </button>
-              <button *ngIf="submissions.tempSubmission" (click)="openForm(templateEdit)" type="button" class="btn btn-default openform">
+              <button *ngIf="!(operation.report && operation.report.finalized) && submissions.tempSubmission" (click)="openForm(templateEdit)" type="button" class="btn btn-default openform">
                   {{ 'Edit Form' | translate }}
+              </button>
+              <button *ngIf="operation.report && operation.report.finalized" (click)="openForm(templateEdit)" type="button" class="btn btn-default openform">
+                  {{ 'View Form' | translate }}
               </button>
             </div>
           </div>
           <div class="row">
             <div class="form-group col-lg-12">
-              <label for="description" translate="">Comments</label>
-              <textarea class="form-control"  formControlName="comments"
+              <label for="comments" translate="">Comments</label>
+              <textarea disabled *ngIf="operation.report && operation.report.finalized" class="form-control"  formControlName="comments"
                 type="text" id="comments" name="comments"></textarea>
+              <textarea *ngIf="!(operation.report && operation.report.finalized)" class="form-control"  formControlName="comments"
+                type="text" id="comments" name="comments"></textarea>
+            </div>
+          </div>
+          <div class="row message">
+            <div class="form-group col-lg-12">
+              <div *ngIf="!(operation.report && operation.report.finalized)">
+                Click "Save" to save your changes. Until finalised, you can return to the form at any time to make further edits. Click "Save and Finalise" to submit your data. Once you click finalise, you will no longer be able to make further changes.
+              </div>
+              <div *ngIf="operation.report && operation.report.finalized">
+                The form has been finalised. No further changes are possible.
+              </div>
             </div>
           </div>
         </fieldset>
       </form>
     </div>
-    <div class="form-actions">
-      <button [disabled]="registerForm.invalid" type="button" class="btn btn-save" (click)="save()">
+    <div *ngIf="!(operation.report && operation.report.finalized)" class="form-actions">
+      <button [disabled]="!submissions.tempSubmission" type="button" class="btn btn-save" (click)="saveAndFinalize(false)">
         {{ 'Save' | translate }}
       </button>
-      <button [disabled]="registerForm.invalid" type="button" class="btn btn-primary" (click)="saveAndFinalise()">
+      <button [disabled]="!submissions.tempSubmission" type="button" class="btn btn-primary" (click)="saveAndFinalize(true)">
         {{ 'Save and Finalise' | translate }}
       </button>
     </div>
@@ -91,12 +92,12 @@
 </ng-template>
 <ng-template #templateEdit>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">{{entry.formName}}</h4>
+    <h4 class="modal-title pull-left">{{entry.formName}}{{entry.id}}</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <enketo-form submissionId="{{entry.id}}"></enketo-form>
+    <enketo-form formId="{{entry.formFilePath}}" submissionId="{{entry.id}}" editable="{{!(operation.report && operation.report.finalized)}}"></enketo-form>
   </div>
 </ng-template>

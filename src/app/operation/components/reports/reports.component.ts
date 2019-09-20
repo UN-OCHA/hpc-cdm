@@ -37,12 +37,13 @@ export class ReportsComponent implements OnInit {
     this.title = TITLES[stepIdx];
     this.reports.stepIdx = stepIdx;
     this.activatedRoute.params.subscribe(params => {
-      // switch(stepIdx) {
-      //   case 0:
-        this.operation.getAttachments(params.id);
-        // case 1:
-        //   this.operation.getEntities(params.id);
-      // }
+      switch(stepIdx) {
+        case 0:
+          this.operation.getAttachments(params.id);
+          return;
+        case 1:
+          this.operation.getEntities(params.id);
+      }
     });
   }
 }
