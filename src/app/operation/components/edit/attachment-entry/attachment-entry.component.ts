@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
+import { CreateOperationService } from 'app/operation/services/create-operation.service';
 
 import { ToastrService } from 'ngx-toastr';
 
@@ -29,6 +30,7 @@ export class AttachmentEntryComponent implements OnInit {
 
   constructor(
     private api: ApiService,
+    public createOperationService: CreateOperationService,
     private toastr: ToastrService,
     private fb: FormBuilder) {
     this.registerForm = this.fb.group({
@@ -77,6 +79,7 @@ export class AttachmentEntryComponent implements OnInit {
   }
 
   handleFileInput(files: FileList) {
+    this.createOperationService.processing = 1;
     this.fileToUpload = files.item(0);
     if(this.fileToUpload) {
       this.registerForm.controls['filename'].setValue(this.fileToUpload.name);
@@ -88,6 +91,7 @@ export class AttachmentEntryComponent implements OnInit {
       };
       this.api.saveOperationAttachmentFile(xentry).subscribe(result=> {
         this.entry.opAttachmentVersion.value.file = result.file;
+        this.createOperationService.processing = 0;
       });
     }
   }

@@ -219,30 +219,6 @@ export class ApiService {
     return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : '' }operation/${id}/governingEntities`);
   }
 
-  public getGlobalClustersforOperation (id, getPublic = false): Observable<any> {
-    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : '' }operation/${id}/globalClusters`);
-  }
-
-  public getFulfillmentsForOperation (id, getPublic = false): Observable<any> {
-    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : ''}operation/${id}/fulfillments`);
-  }
-
-  public getOperationPlans (id, getPublic = false): Observable<any> {
-    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : ''}operation/${id}/plans`);
-  }
-
-  public getSegmentsForOperation (id): Observable<any> {
-    return this.getUrlWrapper('v2/public/operation/' + id + '/segments');
-  }
-
-  public getOperationFieldsForOperation (id): Observable<any> {
-    return this.getUrlWrapper('v2/public/operation/' + id + '/fields');
-  }
-
-  public getWorkflowStatusForOperation (id): Observable<any> {
-    return this.getUrlWrapper('v2/operation/' + id + '/statuses');
-  }
-
   public getCommentsForOperation (id): Observable<any> {
     return this.getUrlWrapper('v2/operation/' + id + '/comments');
   }
@@ -308,11 +284,6 @@ export class ApiService {
       }), catchError((error: any) => this.processError(error)));
   }
 
-  public deleteGveAttachment(id: number): Observable<any> {
-    // TODO update with actual endpoint
-    return null;
-  }
-
   public getAttachmentPrototypes(id: number, operationVersionId = 'latest'): Observable<any> {
     // TODO update with actual endpoint
     return this.getUrlWrapper(`v2/operation/${id}/attachmentPrototype`);
@@ -354,34 +325,6 @@ export class ApiService {
     });
   }
 
-  public getOperationVersion(id: number): Observable<any> {
-    return this.getUrlWrapper('v2/operationVersion/' + id);
-  }
-
-  public getProcedureStepsForVersions (planId, operationVersionIds): Observable<any> {
-    return this.getUrlWrapper(`v2/planProcedure/${planId}/operationVersionSteps`, {
-      params: {
-        operationVersionIds
-      }
-    })
-  }
-
-  public getPossibleActionsForOperations (ids: Array<number>): Observable<boolean> {
-    return this.getUrlWrapper('v2/operation/possibleActions', {
-      params: {
-        ids: ids.join(',')
-      }
-    });
-  }
-
-  public publishLastVersion(id: number): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${id}/publish`)
-  }
-
-  public unPublishLastVersion(id: number): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${id}/unpublish`)
-  }
-
   public createOperation(operation): Observable<any> {
     return this.postToEndpoint('v2/operation', {
       data: { operation }
@@ -409,64 +352,6 @@ export class ApiService {
     });
   }
 
-  public duplicateOperation(operationId): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operationId}/duplicateVersion`, {});
-  }
-
-  public setOperationContacts (operation, contacts): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operation.id}/contacts`, {
-      data: {
-        contacts,
-        updatedAt: operation.updatedAt
-      }
-    });
-  }
-
-  public setOperationOrganizations (operation, organizationIds): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operation.id}/organizations`, {
-      data: {
-        organizationIds,
-        updatedAt: operation.updatedAt
-      }
-    });
-  }
-
-  public setOperationFields (operation, fields): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operation.id}/fields`, {
-      data: {
-        fields,
-        updatedAt: operation.updatedAt
-      }
-    });
-  }
-
-  public setOperationPlans (operation, planIds): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operation.id}/plans`, {
-      data: {
-        planIds,
-        updatedAt: operation.updatedAt
-      }
-    });
-  }
-
-  public setOperationGoverningEntities (operation, governingEntityIds): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operation.id}/governingEntities`, {
-      data: {
-        governingEntityIds,
-        updatedAt: operation.updatedAt
-      }
-    });
-  }
-
-  public setOperationPlanEntities (operation, planEntityIds): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operation.id}/planEntities`, {
-      data: {
-        planEntityIds,
-        updatedAt: operation.updatedAt
-      }
-    });
-  }
-
   public setOperationLocations (operation, locationIds): Observable<any> {
     return this.putToEndpoint(`v2/operation/${operation.id}/locations`, {
       data: {
@@ -485,342 +370,12 @@ export class ApiService {
     });
   }
 
-  public setOperationComments (operation, comments: Array<any>): Observable<any> {
-    return this.putToEndpoint(`v2/operation/${operation.id}/comments`, {
-      data: {
-        comments,
-        updatedAt: operation.updatedAt
-      }
-    });
-  }
-  public searchByEmail(email) {
-    const params = this.setParams();
-    const headers = this.setHeaders();
-    const url = environment.serviceBaseUrl + 'v2/participant/searchByEmail'
-    this.processStart(url, {}, '');
-    return this.http.post(url, { email: email }, { params, headers })
-      .pipe(map((res: HttpResponse<any>) => {
-        this.processSuccess(url, res);
-        return res;
-      })).pipe(catchError((error: any) => this.processError(error)));
-  }
-
-  public saveParticipant(participant): Observable<any> {
-    const params = this.setParams();
-    const headers = this.setHeaders();
-
-    if (participant.id) {
-      const url = environment.serviceBaseUrl + 'v1/participant/' + participant.id
-      this.processStart(url, {}, '');
-      return this.http.put(url, {participant: participant}, {params, headers})
-        .pipe(map((res: HttpResponse<any>) => {
-          this.processSuccess(url, res);
-          return res;
-        })).pipe(catchError((error: any) => this.processError(error)));
-    } else {
-      const url = environment.serviceBaseUrl + 'v1/participant';
-      this.processStart(url, {}, '');
-      return this.http.post(environment.serviceBaseUrl + 'v1/participant', {participant: participant}, {params, headers}).pipe(
-        map((res: HttpResponse<any>) => {
-          this.processSuccess(url, res);
-          return res;
-        }), catchError((error: any) => this.processError(error)));
-    }
-  }
-
-  public saveParticipantOrganization(participant, organization): Observable<any> {
-    const params = this.setParams();
-    const headers = this.setHeaders();
-
-    if (participant.organizations[0]) {
-      const participantOrganizationId = participant.organizations[0].participantOrganization.id
-      const url = environment.serviceBaseUrl + 'v2/participantOrganization/' + participantOrganizationId;
-      this.processStart(url, {}, '');
-      return this.http.put(url, {
-        participantOrganization: {
-          participantId: participant.id,
-          organizationId: organization.id
-        }
-      }, {params, headers}).pipe(
-        map((res: HttpResponse<any>) => {
-          this.processSuccess(url, res);
-          return res;
-        }), catchError((error: any) => this.processError(error)));
-    } else {
-      const url = environment.serviceBaseUrl + 'v2/participantOrganization';
-      this.processStart(url, {}, '');
-      return this.http.post(url, {
-        participantOrganization: {
-          participantId: participant.id,
-          organizationId: organization.id
-        }
-      }, { params, headers }).pipe(
-        map((res: HttpResponse<any>) => {
-          this.processSuccess(url, res);
-          return res;
-        }), catchError((error: any) => this.processError(error)));
-    }
-  }
-
-  public updateParticipantOrganization(participantOrganization): Observable<any> {
-    const params = this.setParams();
-    const headers = this.setHeaders();
-
-    if (participantOrganization.participantId) {
-      const url = `${environment.serviceBaseUrl}/v2/participantOrganization/${participantOrganization.id}`;
-      this.processStart(url, {}, '');
-      return this.http.put(url, {
-        participantOrganization: participantOrganization
-      }, { params, headers }).pipe(
-        map((res: HttpResponse<any>) => {
-          this.processSuccess(url, res);
-          return res;
-        }), catchError((error: any) => this.processError(error)));
-    }
-  }
-
-  public saveParticipantCountry(participant, country): Observable<any> {
-    const params = this.setParams();
-    const headers = this.setHeaders();
-
-    if (participant.id) {
-      const url = environment.serviceBaseUrl + 'v2/participantCountry';
-      this.processStart(url, {}, '');
-      return this.http.post(url, {
-        participantCountry: {
-          participantId: participant.id,
-          locationId: country.id
-        }
-      }, { params, headers }).pipe(
-        map((res: HttpResponse<any>) => {
-          this.processSuccess(url, res);
-          return res;
-        }), catchError((error: any) => this.processError(error)));
-    }
-  }
-  public saveParticipantRole(participantRole): Observable<any> {
-    const params = this.setParams();
-    const headers = this.setHeaders();
-
-    if (participantRole.participantId) {
-      const url = environment.serviceBaseUrl + 'v2/participantRole';
-      this.processStart(url, {}, '');
-      return this.http.post(url, {
-        participantRole: participantRole
-      }, { params, headers }).pipe(
-        map((res: HttpResponse<any>) => {
-          this.processSuccess(url, res);
-          return res;
-        }), catchError((error: any) => this.processError(error)));
-    }
-  }
-  public updateParticipantCountry(participantCountry): Observable<any> {
-    const params = this.setParams();
-    const headers = this.setHeaders();
-
-    if (participantCountry.participantId) {
-      const url = `${environment.serviceBaseUrl}/v2/participantCountry/${participantCountry.id}`;
-      this.processStart(url, {}, '');
-      return this.http.put(url, {
-        participantCountry: participantCountry
-      }, { params, headers }).pipe(
-        map((res: HttpResponse<any>) => {
-          this.processSuccess(url, res);
-          return res;
-        }), catchError((error: any) => this.processError(error)));
-    }
-  }
-
-  public deleteParticipantCountry(participant, country): Observable<any> {
-    const params = this.setParams();
-    const headers = this.setHeaders();
-
-    if (participant.id) {
-      const url = environment.serviceBaseUrl + 'v2/participantCountry/' + country;
-      this.processStart(url, {}, '');
-      return this.http.delete(url, { params, headers }).pipe(
-        map((res: HttpResponse<any>) => {
-          this.processSuccess(url, res);
-          return res;
-        }), catchError((error: any) => this.processError(error)));
-    }
-  }
-
-  public deleteParticipantOrganization(participant, organization): Observable<any> {
-    const params = this.setParams();
-    const headers = this.setHeaders();
-
-    if (participant.id) {
-      const url = environment.serviceBaseUrl + 'v2/participantOrganization/' + organization;
-      this.processStart(url, {}, '');
-      return this.http.delete(url, { params, headers }).pipe(
-        map((res: HttpResponse<any>) => {
-          this.processSuccess(url, res);
-          return res;
-        }), catchError((error: any) => this.processError(error)));
-    }
-  }
-
-  public deleteParticipantRole(participant, role): Observable<any> {
-    const params = this.setParams();
-    const headers = this.setHeaders();
-
-    if (participant.id) {
-      const url = environment.serviceBaseUrl + 'v2/participantRole/' + role;
-      this.processStart(url, {}, '');
-      return this.http.delete(url, { params, headers }).pipe(
-        map((res: HttpResponse<any>) => {
-          this.processSuccess(url, res);
-          return res;
-        }), catchError((error: any) => this.processError(error)));
-    }
-  }
-
-  public getGlobalClusters(): Observable<any> {
-    return this.getUrlWrapper('v1/global-cluster');
-  }
-
-  public getGlobalClustersByPlan(planId): Observable<any> {
-    let params;
-    if (planId) {
-      params = { planId: planId }
-    }
-    return this.getUrlWrapper('v2/governingEntity', { params });
-  }
-
   public getGoverningEntity(id, scopes?): Observable<any> {
     let params;
     if (scopes) {
       params = {scope: scopes.join(',')}
     }
     return this.getUrlWrapper('v2/governingEntity/' + id, {params});
-  }
-
-  public getPlan(id, scopes: string | boolean = 'procedure,attachments,planVersion,locations', isPublic = false): Observable<any> {
-    let url = 'v2/plan/' + id;
-    if (isPublic) {
-      url =  `v2/public/plan/${id}?content=attachments`;
-    } else {
-      if (scopes) {
-        if (scopes === true) {// handle legacy calls
-          scopes = 'procedure,attachments,planVersion';
-        }
-        url += `?scopes=${scopes}`;
-      }
-    }
-    return this.getUrlWrapper(url, {cache: true});
-  }
-
-  public getGroupedOperations(params: {
-    planId?,
-    groupBy?
-    filterByStatus?
-    filterByConditionField?,
-    year?
-  }): Observable<any> {
-    const options = { params, cache: true };
-
-    if (params.filterByStatus) {
-      options.params['filterByStatus'] = params.filterByStatus
-    }
-
-    return this.getUrlWrapper(`v2/operation/requirements`, options)
-  }
-
-  public getPlanOperationsByGroup(id, {
-    groupBy,
-    groupId,
-    filterByStatus,
-    filterByConditionField
-    }: {
-      groupBy?,
-      filterByStatus?,
-      groupId?,
-      filterByConditionField?
-    }): Observable<any> {
-    const options = {
-      params: {
-        groupBy,
-        groupId,
-        filterByStatus,
-        filterByConditionField
-      }
-    }
-
-    return this.getUrlWrapper(`v2/plan/${id}/operations`, options).shareReplay()
-  }
-
-  private reportWrapper (url, statusOptions = null) {
-    const options = {
-      params: {
-        statusOptions
-      }
-    }
-
-    return this.getUrlWrapper(url, options)
-  }
-
-  public getOperationPDFs (ids: Array<number>, forceRegeneration = false): Observable<any> {
-    return this.getUrlWrapper(`v2/operation/pdfDownload?forceRegeneration=${forceRegeneration}&ids=${ids.join(',')}`);
-  }
-
-  public getOperationExports (planId): Observable<any> {
-    return this.getUrlWrapper(`v2/operation/export?planId=${planId}`);
-  }
-
-  public getOperationVersionLocationsByPlan (searchOptions): Observable<any> {
-    const planId = searchOptions.planIds[0];
-    return this.getUrlWrapper(`v2/operation/locationsByPlan/${planId}?` +
-      `workflowStatusOptionIds=${searchOptions.workflowStatusOptionIds.join(',')}` +
-      `&governingEntityIds=${searchOptions.governingEntityIds.join(',')}`
-    );
-  }
-
-  public getEntityInformationByIds(entityType: string, ids: Array<number>, planId?: number): Observable<any> {
-    return this.getUrlWrapper(`v2/public/${entityType}?ids=${ids.join(',')}&planId=${planId ? planId : ''}&scopes=prototype`)
-  }
-
-  public getPlanIndicatorOverview(id, statusOptions = null): Observable<any> {
-    return this.reportWrapper(`v2/plan/${id}/reports?reportType=overview&entityType=planEntity&attachmentType=indicator`, statusOptions)
-  }
-
-  public getPlanIndicatorTargetList(id, statusOptions = null): Observable<any> {
-    return this.reportWrapper(`v2/plan/${id}/reports?reportType=detail&entityType=planEntity&attachmentType=indicator`, statusOptions)
-  }
-
-  public getPlanCaseloadsOverview(id, statusOptions = null): Observable<any> {
-    return this.getUrlWrapper(`v2/plan/${id}/reports?reportType=overview&entityType=governingEntity&attachmentType=caseload`, statusOptions)
-  }
-
-  public getPlanCaseloadsDetail(id, statusOptions = null): Observable<any> {
-    return this.getUrlWrapper(`v2/plan/${id}/reports?reportType=detail&entityType=governingEntity&attachmentType=caseload`, statusOptions)
-  }
-
-  public getProcedureByPlanId(planId, getPublic = false): Observable<any> {
-    return this.getUrlWrapper(`v2/${ getPublic ? 'public/' : '' }plan/${planId}/procedure`, {cache: true});
-  }
-
-  public getProcedureSteps(planId, operationId): Observable<any> {
-    return this.getUrlWrapper('v2/planProcedure/' + planId + '/steps', {params: {operationId}});
-  }
-
-  public getWorkflowStatusOptionById(workflowStatusOptionId): Observable<any> {
-    return this.getUrlWrapper(`v2/workflowStatusOption/${workflowStatusOptionId}?scopes=steps`);
-  }
-
-  public updateWorkflowStatus(operationId, toStatusOptionId): Observable<any> {
-    const options = {
-      data: {
-        workflowStatusOptionId: toStatusOptionId
-      }
-    }
-
-    return this.postToEndpoint('v2/operation/' + operationId + '/moveToStep', options);
-  }
-
-  public getPlans(options?: any): Observable<any> {
-    const params = _.cloneDeep(options);
-    return this.getUrlWrapper('v1/plan', {params, cache: true})
   }
 
   public getOperations(options?: any): Observable<any> {
@@ -830,15 +385,6 @@ export class ApiService {
 
   public getLocations(): Observable<any> {
     return this.getUrlWrapper('v2/location', {cache: true});
-  }
-
-  public getWorkflowStatusOptions (options): Observable<any> {
-    const scopeParams = options.scope ? '?scopes=' + options.scope : '';
-    return this.getUrlWrapper('v2/workflowStatusOption' + scopeParams);
-  }
-
-  public getWorkflowStatusOptionsForOperationVersions (operationVersionIds): Observable<any> {
-    return this.getUrlWrapper(`v2/workflowStatusOption/currentForOperationVersion?operationVersionIds=${operationVersionIds.join(',')}`)
   }
 
   public autocompleteLocation(search: string, adminLevel?: number): Observable<any> {
@@ -862,24 +408,8 @@ export class ApiService {
     return this.getUrlWrapper(`v2/location/nested/${id}`, {cache: true});
   }
 
-  public getOrganizations(): Observable<any> {
-    return this.getUrlWrapper('v2/organization', {cache: true});
-  }
-
-  public autocompleteOrganization(search: string): Observable<any> {
-    return this.autocomplete('organization', search);
-  }
-
   public autocompleteEmergency(search: string): Observable<any> {
     return this.autocomplete('emergency', search);
-  }
-
-  public autocompleteSector(search: string): Observable<any> {
-    return this.autocomplete('globalCluster', search);
-  }
-
-  public autocompletePlan(search: string): Observable<any> {
-    return this.autocomplete('plan', search);
   }
 
   private autocomplete(objectType: string, search: string): Observable<any> {
@@ -919,55 +449,13 @@ export class ApiService {
       }), catchError((error: any) => this.processError(error)));
   }
 
-  public getCdmViaSearch(query: any): Observable<any> {
-
-    const params = {};
-
-    // Need to flatten the arrays in search to be string-separated.
-    Object.keys(query).forEach(key => {
-      if (Array.isArray(query[key])) {
-        params[key] = query[key].join(',');
-      } else {
-        params[key] = query[key];
-      }
-    })
-
-    const options = {params, cache: true };
-
-    return this.getUrlWrapper('v2/plan', options)
-  }
-
   public getParticipantByHid(hid: string): Observable<any> {
     return this.getUrlWrapper('v2/participant/hidId/' + hid);
-  }
-
-  public getAllParticipants(): Observable<any> {
-    return this.getUrlWrapper('v2/participant');
-  }
-
-  public getAllPlans(): Observable<any> {
-    return this.getUrlWrapper('v2/plan');
-  }
-
-  public getAllRoles(): Observable<any> {
-    return this.getUrlWrapper('v2/role');
-  }
-
-  public getAllGloablClusters(): Observable<any> {
-    return this.getUrlWrapper('v1/global-cluster');
-  }
-
-  public getAllOrganizations(): Observable<any> {
-    return this.getUrlWrapper('v2/organization');
   }
 
   public getParticipantById(id: number): Observable<any> {
     return this.getUrlWrapper('v1/participant/' + id);
   }
-  public getgoveningEntityById(id: number): Observable<any> {
-    return this.getUrlWrapper('v2/governingEntity/' + id);
-  }
-
 
   public getParticipantRoles(): Observable<Array<any>> {
     const claims = this.oauthService.getIdentityClaims();
@@ -979,10 +467,6 @@ export class ApiService {
     } else {
       return observableThrowError('No one is logged in.');
     }
-  }
-
-  public csvDownload(url): Observable<any> {
-    return this.http.get(url);
   }
 
   public setParams(options?: any): HttpParams {

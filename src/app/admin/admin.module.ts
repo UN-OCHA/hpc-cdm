@@ -10,19 +10,9 @@ import { SharedModule } from '../shared/shared.module';
 import { DataTableModule } from 'angular-6-datatable';
 
 // Admin
-import { AdminPageComponent } from './components/adminPage/adminPage.component';
-import { AdminObjectListComponent } from './components/adminObjectList/adminObjectList.component';
-import { AdminObjectComponent } from './components/adminObject/adminObject.component';
-import { DynamicFormComponent } from './components/dynamicForm/dynamic-form.component';
-import { DynamicFormQuestionComponent } from './components/dynamicFormQuestion/dynamic-form-question.component';
 
 import { IsValidJSONValidatorDirective } from './directives/is-valid-JSON.directive';
 import { ShowJsonAsFormComponent } from './components/showJsonAsForm/show-json-as-form.component';
-import { AddNewObjectComponent } from './components/addNewObject/add-new-object.component';
-import { AdminParticipantOrganizationandCountryComponent } from './components/admin-participant-organizationand-country/admin-participant-organizationand-country.component';
-import { AddparticipantComponent } from './components/addparticipant/addparticipant.component';
-import { EditparticipantComponent } from './components/editparticipant/editparticipant.component';
-import { ListparticipantComponent } from './components/listparticipant/listparticipant.component';
 import { ListblueprintComponent } from './components/listblueprint/listblueprint.component';
 import { ListAttachmentPrototypeComponent } from './components/listAttachmentPrototype/listAttachmentPrototype.component';
 import { ListEntityPrototypeComponent } from './components/listEntityPrototype/listEntityPrototype.component';
@@ -33,21 +23,10 @@ import { JsonEditorComponent } from './components/jsonEditor/jsonEditor.componen
 
 @NgModule({
   declarations: [
-    AdminPageComponent,
-    AdminObjectListComponent,
-    AdminObjectComponent,
-    DynamicFormComponent,
-    DynamicFormQuestionComponent,
     ShowJsonAsFormComponent,
-    AddNewObjectComponent,
 
     IsValidJSONValidatorDirective,
 
-    AdminParticipantOrganizationandCountryComponent,
-
-    AddparticipantComponent,
-    EditparticipantComponent,
-    ListparticipantComponent,
     ListblueprintComponent,
     ListAttachmentPrototypeComponent,
     ListEntityPrototypeComponent,
@@ -71,7 +50,6 @@ import { JsonEditorComponent } from './components/jsonEditor/jsonEditor.componen
   ],
   providers: [
     adminRoutingProviders,
-  ],
-  bootstrap: [AdminPageComponent]
+  ]
 })
 export class AdminModule { }

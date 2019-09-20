@@ -54,11 +54,6 @@
         </small>
       </div>
 
-      <app-toolbar
-        [editable]="editable && createOperationService.editMode"
-        (loadOperation)="onLoadOperation($event)">
-      </app-toolbar>
-
       <router-outlet (activate)='onActivate($event)'></router-outlet>
 
       <nav class="navbar bg-light fixed-bottom"

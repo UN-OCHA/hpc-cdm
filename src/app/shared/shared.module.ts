@@ -14,7 +14,6 @@ import { PercentValidatorDirective } from './directives/percent.directive';
 import { IsValidDateValidatorDirective } from './directives/is-valid-date.directive';
 
 import { DateInputFormatterDirective } from './directives/date-input-formatter.directive';
-import { CheckboxComponent } from './components/checkbox/checkbox.component';
 import { InputErrorTextComponent } from './components/input-error-text/input-error-text.component';
 import { AppMinDirective } from './directives/min.directive';
 import { AppMaxDirective } from './directives/max.directive';
@@ -23,7 +22,6 @@ import { AppMaxDirective } from './directives/max.directive';
   declarations: [
     // Components
     HeaderStatisticComponent,
-    CheckboxComponent,
 
     // Pipes
     GroupByPipe,
@@ -45,7 +43,6 @@ import { AppMaxDirective } from './directives/max.directive';
   exports: [
     TranslateModule,
     HeaderStatisticComponent,
-    CheckboxComponent,
     InputErrorTextComponent,
 
     GroupByPipe,
