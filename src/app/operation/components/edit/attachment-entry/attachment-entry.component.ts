@@ -3,6 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
+import { Attachment } from 'app/operation/models/view.operation.model';
 
 import { ToastrService } from 'ngx-toastr';
 
@@ -16,7 +17,7 @@ export class AttachmentEntryComponent implements OnInit {
 
   @Input() operationId: any;
   @Input() gveId: any;
-  @Input() entry: any;
+  @Input() entry: Attachment;
   @Input() entryIdx: any;
 
   @Output() onRefreshList = new EventEmitter();
@@ -27,6 +28,7 @@ export class AttachmentEntryComponent implements OnInit {
   filePath: any;
   expanded = false;
   submitted = false;
+  uploading = false;
 
   constructor(
     private api: ApiService,
@@ -79,7 +81,7 @@ export class AttachmentEntryComponent implements OnInit {
   }
 
   handleFileInput(files: FileList) {
-    this.createOperationService.processing = 1;
+    this.uploading = true;
     this.fileToUpload = files.item(0);
     if(this.fileToUpload) {
       this.registerForm.controls['filename'].setValue(this.fileToUpload.name);
@@ -91,7 +93,7 @@ export class AttachmentEntryComponent implements OnInit {
       };
       this.api.saveOperationAttachmentFile(xentry).subscribe(result=> {
         this.entry.opAttachmentVersion.value.file = result.file;
-        this.createOperationService.processing = 0;
+        this.uploading = false;
       });
     }
   }
@@ -99,13 +101,10 @@ export class AttachmentEntryComponent implements OnInit {
   save(){
     this.submitted = true;
     if(this.registerForm.valid) {
-        this.api.saveOperationAttachment(this.entry,this.operationId).subscribe((result) => {
+        this.api.saveOperationAttachment(this.entry,this.operationId).subscribe((result:Attachment) => {
+          Object.assign(this.entry, result);
           if (this.entry.id) {
             return this.toastr.success('Attachment updated.', 'Attachment updated');
-          }
-          this.entry = result;
-          if (this.gveId) {
-            this.onRefreshList.emit();
           }
           return this.toastr.success('Attachment created.', 'Attachment created');
         });

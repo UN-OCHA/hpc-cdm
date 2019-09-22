@@ -5,6 +5,7 @@ import {map} from 'rxjs/operators';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
 import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
+import { Attachment } from 'app/operation/models/view.operation.model';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -50,11 +51,11 @@ export class GveAttachmentsComponent extends CreateOperationChildComponent imple
       }
     });
   }
-  addEntry(gve:any) {
-    const EMPTY_ATTACHMENT = {
+  addEntry() {
+    let newAttachment = new Attachment({
       id:null,
       opAttachmentPrototypeId:this.createOperationService.operation.opAttachmentPrototypes[0].id,
-      objectId: gve.id,
+      objectId: this.currentGve.id,
       objectType: 'opGoverningEntity',
       opAttachmentVersion:{
         customReference: '',
@@ -63,8 +64,8 @@ export class GveAttachmentsComponent extends CreateOperationChildComponent imple
           file: ''
         }
       }
-    };
-    this.currentGve.opAttachments.push(EMPTY_ATTACHMENT);
+    });
+    this.currentGve.opAttachments.push(newAttachment);
   }
 
   public save (): Observable<any> {
@@ -78,7 +79,7 @@ export class GveAttachmentsComponent extends CreateOperationChildComponent imple
 
     return observableZip(
       ...postSaveObservables
-    ).pipe(map((results) => {
+    ).pipe(map((results:Array<Attachment>) => {
       this.createOperationService.operation.opGoverningEntities.forEach(gve => {
         gve.opAttachments = results.filter((attachment:any) => attachment.objectId === gve.id);
       });

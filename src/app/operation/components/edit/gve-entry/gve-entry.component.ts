@@ -83,13 +83,12 @@ export class GveEntryComponent implements OnInit {
       this.api.saveGoverningEntity(this.entry).subscribe((result:any) => {
         if (this.entry.id) {
           const opAttachments = this.entry.opAttachments || [];
-          this.entry = result;
+          Object.assign(this.entry, result);
           this.entry.opAttachments = opAttachments;
           return this.toastr.success('Governing entity updated.', 'Governing entity updated');
         } else {
-          this.entry = result;
+          Object.assign(this.entry, result);
           this.entry.opAttachments = [];
-          this.onRefreshList.emit(this.entry);
 
           return this.toastr.success('Governing entity create.', 'Governing entity created');
         }

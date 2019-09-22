@@ -83,13 +83,13 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
     return observableZip(
       ...postSaveObservables
     ).pipe(map((results) => {
-      if (results.length != this.createOperationService.operation.opGoverningEntities.length) {
+      /*if (results.length != this.createOperationService.operation.opGoverningEntities.length) {
         results.forEach((r:any)=> {
           if (!this.createOperationService.operation.opGoverningEntities.filter(newGve => newGve.id === r.id).length) {
             this.createOperationService.operation.opGoverningEntities.push(r);
           }
         })
-      }
+      }*/
       this.createOperationService.operation.opGoverningEntities.forEach((gve:any) => {
         const opAttachments = gve.opAttachments || [];
         gve = results.filter((r:any)=>r.id === gve.id)[0];

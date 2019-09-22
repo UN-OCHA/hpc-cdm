@@ -6,6 +6,7 @@ import {map} from 'rxjs/operators';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
 import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
+import { Attachment } from 'app/operation/models/view.operation.model';
 import { ToastrService } from 'ngx-toastr';
 
 
@@ -28,13 +29,20 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
+
         this.operationId = params.id;
+        this.createOperationService.operationHasLoaded$
+        .subscribe(() => {
+          this.operationId = params.id;
+        });
       }
     });
   }
 
   addEntry() {
-    const EMPTY_ATTACHMENT = {
+
+    let newAttachment = new Attachment({
+      id:null,
       opAttachmentPrototypeId:this.createOperationService.operation.opAttachmentPrototypes[0].id,
       objectId: this.createOperationService.operation.id,
       objectType: 'operation',
@@ -45,8 +53,8 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
           file: ''
         }
       }
-    };
-    this.createOperationService.operation.opAttachments.push(EMPTY_ATTACHMENT)
+    });
+    this.createOperationService.operation.opAttachments.push(newAttachment);
   }
 
   isLastEntryNew() {
@@ -74,7 +82,7 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
 
       return observableZip(
         ...postSaveObservables
-      ).pipe(map((results) => {
+      ).pipe(map((results:Array<Attachment>) => {
           this.createOperationService.operation.opAttachments = results;
           return {
             stopSave: true
