@@ -139,7 +139,9 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
   public checkValidity () {
     if (this.childForm &&
         this.childForm.valid &&
-        this.createOperationService.operation) {
+        this.createOperationService.operation &&
+        this.createOperationService.operation.emergencies.length &&
+        this.createOperationService.operation.emergencies.length) {
       this.isValid = true;
     } else {
       this.isValid = false;

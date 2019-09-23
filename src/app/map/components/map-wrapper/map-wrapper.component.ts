@@ -84,12 +84,6 @@ export class MapWrapperComponent implements OnInit {
       });
   }
 
-  /*private processSearchResults (cdmResults) {
-    cdmResults.forEach(cdm => {
-      //console.log(cdm);
-    });
-  }*/
-
   private getRelevantYear () {
     const thisMoment = moment();
     if (thisMoment.month() >= 8) { // remember it's 0 based.

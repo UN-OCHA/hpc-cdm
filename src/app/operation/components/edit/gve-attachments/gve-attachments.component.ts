@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 
-import { Observable,zip as observableZip } from 'rxjs';
+import { Observable,zip as observableZip, of } from 'rxjs';
 import {map} from 'rxjs/operators';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
 import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
 import { Attachment } from 'app/operation/models/view.operation.model';
 import { ToastrService } from 'ngx-toastr';
+import { AttachmentEntryComponent } from './../attachment-entry/attachment-entry.component';
 
 @Component({
   selector: 'gve-attachments',
@@ -18,6 +19,7 @@ export class GveAttachmentsComponent extends CreateOperationChildComponent imple
   attachments = [];
   viewingGoverningEntityIdx = 0;
   currentGve: any;
+  @ViewChildren(AttachmentEntryComponent) atts:QueryList<AttachmentEntryComponent>;
 
   constructor(
     public createOperationService: CreateOperationService,
@@ -69,23 +71,29 @@ export class GveAttachmentsComponent extends CreateOperationChildComponent imple
   }
 
   public save (): Observable<any> {
-    const postSaveObservables = [];
-    this.createOperationService.operation.opGoverningEntities.forEach(gve => {
-      gve.opAttachments.forEach((attachment:any) => {
-      postSaveObservables.push(
-        this.api.saveOperationAttachment(attachment, this.createOperationService.operation.id));
-      });
-    });
-
-    return observableZip(
-      ...postSaveObservables
-    ).pipe(map((results:Array<Attachment>) => {
+    const isInvalid = this.atts.toArray().filter(att=> att.attachmentForm.invalid).length;
+    if (!isInvalid) {
+      const postSaveObservables = [];
       this.createOperationService.operation.opGoverningEntities.forEach(gve => {
-        gve.opAttachments = results.filter((attachment:any) => attachment.objectId === gve.id);
+        gve.opAttachments.forEach((attachment:any) => {
+        postSaveObservables.push(
+          this.api.saveOperationAttachment(attachment, this.createOperationService.operation.id));
+        });
       });
-      return {
-        stopSave: true
-      };
-    }));
+
+      return observableZip(
+        ...postSaveObservables
+      ).pipe(map((results:Array<Attachment>) => {
+        this.createOperationService.operation.opGoverningEntities.forEach(gve => {
+          gve.opAttachments = results.filter((attachment:any) => attachment.objectId === gve.id);
+        });
+        return {
+          stopSave: true
+        };
+      }));
+    } else {
+      this.toastr.error("Somes attachments are not valid, please correct");
+      return of({stopSave:true});
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgForm } from '@angular/forms';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
 import { ToastrService } from 'ngx-toastr';
@@ -16,7 +17,7 @@ export class GveEntryComponent implements OnInit {
   submitted = false;
   fileToUpload: any;
 
-  @ViewChild('form') form;
+  @ViewChild('gveForm') public gveForm: NgForm;
 
   @Input() entry: any;
   @Input() entityPrototype: any;
@@ -36,7 +37,7 @@ export class GveEntryComponent implements OnInit {
     private toastr: ToastrService,
     private fb: FormBuilder) {
     this.registerForm = this.fb.group({
-      abbreviation: ['', Validators.required],
+      customReference: ['', Validators.required],
       name: ['', Validators.required],
       comment: [''],
       activationDate: [''],
@@ -45,9 +46,6 @@ export class GveEntryComponent implements OnInit {
   }
 
   ngOnInit() {
-    // TODO: check to remove with Vincent
-    //this.entry.opGoverningEntityVersion.opGoverningEntityId = this.entry.id;
-    //this.entry.opEntityPrototypeId = this.entry.opEntityPrototype.id;
     this.title = '';
 
     if(this.entry && this.entry.opGoverningEntityVersion.activationDate) {
@@ -79,7 +77,7 @@ export class GveEntryComponent implements OnInit {
     formData.file = this.fileToUpload
 
     this.submitted = true;
-    //if(this.registerForm.valid) {
+    if(this.gveForm.valid) {
       this.api.saveGoverningEntity(this.entry).subscribe((result:any) => {
         if (this.entry.id) {
           const opAttachments = this.entry.opAttachments || [];
@@ -93,7 +91,7 @@ export class GveEntryComponent implements OnInit {
           return this.toastr.success('Governing entity create.', 'Governing entity created');
         }
       });
-    //}
+    }
   }
 
   remove() {
@@ -103,7 +101,6 @@ export class GveEntryComponent implements OnInit {
   removeFile() {
     //All these. just to allow second upload on the same file
     const bkp = Object.assign(this.registerForm.value, {});
-    this.form.nativeElement.reset();
     this.fileToUpload = null;
     this.f.abbreviation.setValue(bkp.abbreviation);
     this.f.name.setValue(bkp.name);
