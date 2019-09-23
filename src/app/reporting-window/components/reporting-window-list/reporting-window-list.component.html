@@ -1,0 +1,43 @@
+<div class="container-fluid map-container h-100">
+  <div *ngIf="loading"
+      class="project-page-loader">
+    <i class="fa fa-circle-o-notch fa-spin"></i>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 map-results" >
+
+<div class="header-results border-bottom sticky-top bg-light" *ngIf="results">
+  <div class="row" *ngIf="results && results.length">
+    <div class="col-lg-10">
+      <ul class="search-stats d-inline-block mb-0 pt-1">
+        <li>
+          {{ results.length }} Reporting windows
+        </li>
+      </ul>
+    </div>
+    <div class="col-lg-2">
+      <a class="btn btn-primary" routerLink="/reporting-window/create">{{ 'New Reporting window' | translate }}</a>
+    </div>
+  </div>
+</div>
+
+<div class="p-4" *ngIf="!results.length && !working">
+  <p>You currently have no reporting window. Click here to create a <a class="btn btn-outline-secondary" routerLink="/reporting-period/create">{{ 'New Reporting window' | translate }}</a></p>
+</div>
+  <div class="p-4 border-bottom" *ngFor="let reportingWindow of page" [ngClass]="{'bg-light': reportingWindow.selected}">
+    <div class="row">
+      <div class="project col-lg-8">
+        <h3>{{ reportingWindow.value.name || 'RW Name' }}</h3>
+        <small>Status : {{ reportingWindow.status}} | {{ reportingWindow.value.description || 'description'}}</small>
+      </div>
+      <div class="project col-lg-4">
+        <a class="ml-4 btn btn-outline-secondary" [routerLink]="['/reporting-window/',reportingWindow.id,'edit' ]">Define</a>
+        <a class="ml-4 btn btn-outline-secondary" [routerLink]="['/reporting-window/',reportingWindow.id,'data-queue']">Data queue</a>
+        <a class="ml-4 btn btn-outline-secondary" [routerLink]="['/reporting-window/',reportingWindow.id,'states']">Change states</a>
+      </div>
+    </div>
+  </div>
+  <pagination *ngIf="results.length && ! working"  [itemsPerPage]="10" [totalItems]="results.length" [maxSize]="10" [(ngModel)]="currentPage" (pageChanged)="pageChanged($event)"></pagination>
+    </div>
+  </div>
+</div>

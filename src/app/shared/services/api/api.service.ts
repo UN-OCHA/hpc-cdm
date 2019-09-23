@@ -488,6 +488,9 @@ export class ApiService {
     return this.getUrlWrapper('v2/governingEntity/' + id);
   }
 
+  public getAllReportingWindows(): Observable<any> {
+    return this.getUrlWrapper('v2/reportingWindow');
+  }
   public getReportingWindows(operationId: number): Observable<any> {
     // TODO use direct end point for single operation
     return this.getUrlWrapper('v2/reportingWindow');
