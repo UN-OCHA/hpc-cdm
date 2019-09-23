@@ -105,7 +105,7 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
       return this.apiService.saveOperation(operationToSave).pipe(map(result => {
         this.createOperationService.operation.updatedAt = result.updatedAt;
           this.createOperationService.operation.operationVersion = result.operationVersion;
-        this.createOperationService.operationDoneLoading(result);
+        this.createOperationService.operationDoneLoading(this.createOperationService.operation);
         return {
           isNew: false,
           stopSave: true
@@ -139,7 +139,9 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
   public checkValidity () {
     if (this.childForm &&
         this.childForm.valid &&
-        this.createOperationService.operation) {
+        this.createOperationService.operation &&
+        this.createOperationService.operation.emergencies.length &&
+        this.createOperationService.operation.emergencies.length) {
       this.isValid = true;
     } else {
       this.isValid = false;

@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable,zip as observableZip } from 'rxjs';
+import { Observable,zip as observableZip, of } from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import { ApiService } from 'app/shared/services/api/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
 import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
+import { GveEntryComponent } from './../gve-entry/gve-entry.component';
 
 @Component({
   selector: 'operation-gves',
@@ -17,6 +18,7 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
   public list = [];
   public entityPrototypeId = null;
   public entity = {};
+  @ViewChildren(GveEntryComponent) gves:QueryList<GveEntryComponent>;
 
   constructor(
     public createOperationService: CreateOperationService,
@@ -74,31 +76,39 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
   }
 
   public save (): Observable<any> {
-    const postSaveObservables = [];
-    this.list.forEach(governingEntity => {
-      postSaveObservables.push(
-        this.apiService.saveGoverningEntity(governingEntity));
-    });
-
-    return observableZip(
-      ...postSaveObservables
-    ).pipe(map((results) => {
-      if (results.length != this.createOperationService.operation.opGoverningEntities.length) {
-        results.forEach((r:any)=> {
-          if (!this.createOperationService.operation.opGoverningEntities.filter(newGve => newGve.id === r.id).length) {
-            this.createOperationService.operation.opGoverningEntities.push(r);
-          }
-        })
-      }
-      this.createOperationService.operation.opGoverningEntities.forEach((gve:any) => {
-        const opAttachments = gve.opAttachments || [];
-        gve = results.filter((r:any)=>r.id === gve.id)[0];
-        gve.opAttachments = opAttachments;
+    const isInvalid = this.gves.toArray().filter(att=> att.gveForm.invalid).length;
+    if (this.list && this.list.length) {
+      const postSaveObservables = [];
+      this.list.forEach(governingEntity => {
+        postSaveObservables.push(
+          this.apiService.saveGoverningEntity(governingEntity));
       });
-      this.refreshList();
-      return {
-        stopSave: true
-      };
-    }));
+
+      return observableZip(
+        ...postSaveObservables
+      ).pipe(map((results) => {
+        if (results.length != this.createOperationService.operation.opGoverningEntities.length) {
+          results.forEach((r:any)=> {
+            if (!this.createOperationService.operation.opGoverningEntities.filter(newGve => newGve.id === r.id).length) {
+              this.createOperationService.operation.opGoverningEntities.push(r);
+            }
+          })
+        }
+        this.createOperationService.operation.opGoverningEntities.forEach((gve:any) => {
+          const opAttachments = gve.opAttachments || [];
+          gve = results.filter((r:any)=>r.id === gve.id)[0];
+          gve.opAttachments = opAttachments;
+        });
+        this.refreshList();
+        return {
+          stopSave: true
+        };
+      }));
+    } else {
+      if (isInvalid) {
+        this.toastr.error("Somes entities are not valid, please correct");
+      }
+      return of({stopSave:true});
+    }
   }
 }

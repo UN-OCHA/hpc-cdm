@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Observable,zip as observableZip, of } from 'rxjs';
@@ -6,6 +6,8 @@ import {map} from 'rxjs/operators';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
 import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
+import { AttachmentEntryComponent } from './../attachment-entry/attachment-entry.component';
+import { Attachment } from 'app/operation/models/view.operation.model';
 import { ToastrService } from 'ngx-toastr';
 
 
@@ -16,7 +18,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class OperationAttachmentsComponent extends CreateOperationChildComponent implements OnInit {
   operationId: any;
-
+  @ViewChildren(AttachmentEntryComponent) atts:QueryList<AttachmentEntryComponent>;
   constructor(
     private api: ApiService,
     private toastr: ToastrService,
@@ -28,13 +30,20 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
+
         this.operationId = params.id;
+        this.createOperationService.operationHasLoaded$
+        .subscribe(() => {
+          this.operationId = params.id;
+        });
       }
     });
   }
 
   addEntry() {
-    const EMPTY_ATTACHMENT = {
+
+    let newAttachment = new Attachment({
+      id:null,
       opAttachmentPrototypeId:this.createOperationService.operation.opAttachmentPrototypes[0].id,
       objectId: this.createOperationService.operation.id,
       objectType: 'operation',
@@ -45,8 +54,8 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
           file: ''
         }
       }
-    };
-    this.createOperationService.operation.opAttachments.push(EMPTY_ATTACHMENT)
+    });
+    this.createOperationService.operation.opAttachments.push(newAttachment);
   }
 
   isLastEntryNew() {
@@ -65,22 +74,26 @@ export class OperationAttachmentsComponent extends CreateOperationChildComponent
   }
 
   public save (): Observable<any> {
-    if (this.createOperationService.operation.opAttachments && this.createOperationService.operation.opAttachments.length) {
+    const isInvalid = this.atts.toArray().filter(att=> att.attachmentForm.invalid).length;
+    if (this.createOperationService.operation.opAttachments && this.createOperationService.operation.opAttachments.length && !isInvalid) {
       const postSaveObservables = [];
       this.createOperationService.operation.opAttachments.forEach(attachment => {
-        postSaveObservables.push(
-          this.api.saveOperationAttachment(attachment, this.createOperationService.operation.id));
+          postSaveObservables.push(
+            this.api.saveOperationAttachment(attachment, this.createOperationService.operation.id));
       });
 
       return observableZip(
         ...postSaveObservables
-      ).pipe(map((results) => {
+      ).pipe(map((results:Array<Attachment>) => {
           this.createOperationService.operation.opAttachments = results;
           return {
             stopSave: true
           };
       }));
     } else {
+      if (isInvalid) {
+        this.toastr.error("Somes attachments are not valid, please correct");
+      }
       return of({stopSave:true});
     }
   }

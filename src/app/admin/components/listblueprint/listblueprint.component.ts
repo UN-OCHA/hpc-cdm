@@ -20,7 +20,6 @@ export class ListblueprintComponent implements OnInit {
   deleteBlueprint(blueprint: any) {
     return this.apiService.deleteBlueprint(blueprint.id)
       .subscribe(response => {
-        console.log(response);
         if (response.status === 'ok') {
           this.blueprints.splice(this.blueprints.indexOf(blueprint), 1);
           return this.toastr.success('Blueprint removed.', 'Blueprint removed');
