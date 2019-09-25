@@ -3535,7 +3535,7 @@
       cursor: pointer;
       padding: 4px;
       margin: 0 10px 1px 10px;
-      flex-basis: 48%;
+      flex-basis: 98%;
       flex-grow: 0;
     }
       .option-wrapper > label:hover:not(.filler) {
@@ -8733,5 +8733,34 @@
       background-position: -1px; }
     input[type=radio]:checked + .option-label::before {
       background-position: 0; } }
+
+
+  .question-label {
+    p {
+      display: inline;
+      margin: 0;
+    }
+  }
+
+  section {
+    .disabled {
+      display: none !important;
+    }
+  }
+
+  .or-group {
+    h4 {
+      border-right: 1px solid black !important;
+      border-right-color: transparent !important;
+    }
+  }
+
+  .or-repeat {
+    background: white!important;
+  }
+
+  h5 {
+    font-weight: bold!important;
+  }
 
 }

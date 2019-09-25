@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { OAuthModule } from 'angular-oauth2-oidc';
-import {MarkdownToHtmlModule} from 'markdown-to-html-pipe';
 
 import { routing, adminRoutingProviders } from './admin.routes';
 import { SharedModule } from '../shared/shared.module';
@@ -43,7 +42,6 @@ import { JsonEditorComponent } from './components/jsonEditor/jsonEditor.componen
     TypeaheadModule,
     ReactiveFormsModule,
     OAuthModule.forRoot(),
-    MarkdownToHtmlModule,
     routing,
     SharedModule,
     DataTableModule
