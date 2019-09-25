@@ -24,10 +24,10 @@ const reportingWindowRoutes: Routes = [
     data: { title: 'Create Reporting Window' },
     children: [ {
         path: '',
-        redirectTo: 'details',
+        redirectTo: 'detail',
         pathMatch: 'full'
       }, {
-        path: 'details',
+        path: 'detail',
         component: ReportingWindowDetailComponent,
       } ],
   },
@@ -38,11 +38,11 @@ const reportingWindowRoutes: Routes = [
     data: { title: 'Edit Operation' },
     children: [{
         path: '',
-        redirectTo: 'details',
+        redirectTo: 'detail',
         canDeactivate: [PendingChangesGuard],
         pathMatch: 'full'
       }, {
-        path: 'basic',
+        path: 'detail',
         canDeactivate: [PendingChangesGuard],
         component: ReportingWindowDetailComponent,
       }, {

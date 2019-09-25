@@ -8,6 +8,7 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import { routing, mapRoutingProviders } from './reporting-window.routes';
 
@@ -28,6 +29,7 @@ import { DataQueueComponent } from './components/data-queue/data-queue/data-queu
     routing,
     SharedModule,
     AccordionModule.forRoot(),
+    BsDatepickerModule.forRoot(),
     TypeaheadModule.forRoot(),
     PopoverModule.forRoot(),
     PaginationModule.forRoot(),
