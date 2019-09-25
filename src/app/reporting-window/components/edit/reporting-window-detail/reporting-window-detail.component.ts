@@ -20,7 +20,7 @@ import { CreateReportingWindowChildComponent } from './../create-reporting-windo
 export class ReportingWindowDetailComponent extends CreateReportingWindowChildComponent implements OnInit {
 
   @Input() entry: any;
-  registerForm: FormGroup;
+  public registerForm: FormGroup;
 
   constructor(
     public apiService: ApiService,

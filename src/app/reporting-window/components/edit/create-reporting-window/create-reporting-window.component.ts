@@ -170,10 +170,10 @@ export class CreateReportingWindowComponent implements OnInit , ComponentCanDeac
   }
 
   public save (nextOrPrevious:any) {
-    if (this.currentChildComponent.childForm) {
+    if (this.currentChildComponent.registerForm) {
       const invalidKeys = [];
       const minMax = []; // will keep the list of fields failing min / max value validation
-      _.forEach(this.currentChildComponent.childForm.form.controls, (value, key) => {
+      _.forEach(this.currentChildComponent.registerForm.controls, (value, key) => {
         if (value['status'] === 'INVALID') {
           const validationErrors = Object.keys(value['errors']);
           if (validationErrors.indexOf('appMax') !== -1) {
@@ -210,7 +210,7 @@ export class CreateReportingWindowComponent implements OnInit , ComponentCanDeac
           }
           if (result.stopSave) {
             this.processing = false;
-            this.currentChildComponent.childForm.form.pristine = true;
+            this.currentChildComponent.registerForm.pristine = true;
             this.chooseNextComponentView(nextOrPrevious, this.createReportingWindowService.reportingWindow.id, result);
           } else {
             this.apiService.saveReportingWindow(this.createReportingWindowService.reportingWindow)
@@ -292,7 +292,7 @@ export class CreateReportingWindowComponent implements OnInit , ComponentCanDeac
   }
   public canDeactivate(): Observable<boolean> | boolean {
     return (this.currentChildComponent === undefined ||
-      !(this.currentChildComponent.childForm && !this.currentChildComponent.childForm.form.pristine));
+      !(this.currentChildComponent.registerForm && !this.currentChildComponent.registerForm.pristine));
   }
 
   // TODO: can we make this a mixin or something like that?
