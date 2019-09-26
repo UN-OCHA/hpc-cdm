@@ -2,11 +2,10 @@
 import {zip as observableZip,  Observable } from 'rxjs';
 
 import {filter} from 'rxjs/operators';
-import { Component, OnInit, HostListener, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 
 import { ToastrService } from 'ngx-toastr';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { TranslateService } from '@ngx-translate/core';
 
 import * as _ from 'lodash';
@@ -28,7 +27,6 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
   public operation: Operation;
   public processing = true;
   public editable = true;
-  public submittedModalRef: BsModalRef;
   public canSubmitOperation = false;
 
   public currentChildComponent:any;
@@ -39,7 +37,6 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
   private routeStepsGenerated = false;
   private allRouteSteps: any = [];
 
-  @ViewChild('submittedModal') submittedModal: TemplateRef<any>;
 
   constructor(
     private apiService: ApiService,
@@ -48,8 +45,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
     private authService: AuthService,
     public createOperationService: CreateOperationService,
     private translate: TranslateService,
-    private toastr: ToastrService,
-    private modalService: BsModalService
+    private toastr: ToastrService
   ) {
   }
 
@@ -74,6 +70,7 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
       this.createOperationService.operationHasLoaded$
         .subscribe(() => {
           this.determineStepAccess();
+          this.setLeads();
         });
       this.router.events.pipe(
         filter(evt => evt instanceof NavigationEnd))
@@ -81,6 +78,29 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
           this.determineStepAccess();
         });
     });
+  }
+
+ private setLeads () {
+   const isEntityCoordinatorLeadFor = this.buildLeadObjectArray('clusterlead');
+   const isOperationLeadFor = this.buildLeadObjectArray('planlead');
+   const isAdmin = this.authService.participant.roles.filter((role:any) => (role.name === 'rpmadmin') || (role.name === 'hcpadmin'));
+   let isEntityCoordinatorLead = 0;
+   if (Array.isArray(this.createOperationService.operation.opGoverningEntities)) {
+     isEntityCoordinatorLead = this.createOperationService.operation.opGoverningEntities.filter(gE => isEntityCoordinatorLeadFor.indexOf(gE.id) !== -1).length;
+   }
+   console.log(isEntityCoordinatorLead);
+
+   const isOperationLead = isOperationLeadFor.filter((operation:any)=>operation.id === this.createOperationService.operation.id);
+   if (isAdmin || isOperationLead) {
+     this.createOperationService.operation.editableByUser = true;
+   }
+
+ }
+ private buildLeadObjectArray (leadType: string) {
+    return this.authService.participant.roles.filter((role:any) => role.name === leadType)
+      .reduce((array:any, role:any) => {
+        return array.concat(role.participantRoles.map((pR:any) => pR.objectId))
+      }, []);
   }
 
   public onLoadOperation (id: number) {
@@ -161,7 +181,6 @@ export class CreateOperationComponent implements OnInit, ComponentCanDeactivate 
         .subscribe((result:any) => {
           if (result.submitted) {
             this.processing = false;
-            this.submittedModalRef = this.modalService.show(this.submittedModal, {class: 'modal-lg'});
             this.determineStepAccess();
             return;
           }

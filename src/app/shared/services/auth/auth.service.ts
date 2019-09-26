@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpResponse, HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router, ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 
 import { Observable, of ,  ReplaySubject } from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
@@ -24,8 +24,7 @@ export class AuthService {
   constructor(
     private apiService: ApiService,
     private http: HttpClient,
-    private oauthService: OAuthService,
-    private router: Router
+    private oauthService: OAuthService
   ) {}
 
   public rolesCheck(): void {
@@ -40,12 +39,7 @@ export class AuthService {
               isAdmin = true;
             }
           }
-
-          if (!isAdmin && !user.organizations.length && !user.locations.length) {
-            this.router.navigate(['/user/profile']);
-          }
-        } else {
-          this.router.navigate(['/user/profile']);
+          user.isAdmin = isAdmin;
         }
       });
   }
@@ -63,10 +57,7 @@ export class AuthService {
       map((res: HttpResponse<any>) => this.apiService.processSuccess(url, res)),
       map(res => {
         if (res.email) {
-          // This avoids an infinite loop caused by canActivate
-          if (!(route.routeConfig.path === 'user/profile')) {
-            this.verifyUserProfile(res.email);
-          }
+          this.verifyUserProfile(res.email);
           return true;
         } else {
           this.verifiedUser = false;

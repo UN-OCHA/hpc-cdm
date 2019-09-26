@@ -65,7 +65,7 @@ export class OperationGvesComponent extends CreateOperationChildComponent implem
       opEntityPrototypeId:this.entityPrototypeId,
       operationId: this.createOperationService.operation.id,
       opGoverningEntityVersion:{
-        abbreviation: '', name: '', comments: '', date:'', terms:''
+        abbreviation: '', name: '', comments: '', activationDate:'', terms:''
       }
     };
     this.list.push(EMPTY_GVE)

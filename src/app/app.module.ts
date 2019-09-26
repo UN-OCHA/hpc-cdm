@@ -53,6 +53,7 @@ import { LogoutComponent } from './shared/components/shell/logout/logout.compone
 import { MapModule } from './map/map.module';
 import { OperationModule } from './operation/operation.module';
 import { AdminModule } from './admin/admin.module';
+import { ReportingWindowModule } from './reporting-window/reporting-window.module';
 
 import { SharedModule } from './shared/shared.module';
 
@@ -105,6 +106,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MapModule,
     AdminModule,
     OperationModule,
+    ReportingWindowModule,
 
     SharedModule,
 

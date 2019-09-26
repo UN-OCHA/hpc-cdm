@@ -488,12 +488,26 @@ export class ApiService {
     return this.getUrlWrapper('v2/governingEntity/' + id);
   }
 
+  public getAllReportingWindows(): Observable<any> {
+    return this.getUrlWrapper('v2/reportingWindow');
+  }
+
+  public getReportingWindow(id: number, reportingWindowVersionId = 'latest'): Observable<any> {
+    let params={
+      scopes: ''
+    };
+    return this.getUrlWrapper('v2/reportingWindow/' + id, {params});
+  }
   public getReportingWindows(operationId: number): Observable<any> {
     // TODO use direct end point for single operation
     return this.getUrlWrapper('v2/reportingWindow');
   }
 
   public saveReportingWindow(xdata: any): Observable<any> {
+    if (xdata.id) {
+      return this.putToEndpoint(`v2/reportingWindow/${xdata.id}`, {
+        data: {reportingWindow: xdata}});
+    }
     return this.postToEndpoint('v2/reportingWindow', {
       data: {reportingWindow: xdata}});
   }

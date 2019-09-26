@@ -1,0 +1,67 @@
+<div class="col-9 panel-body">
+  <div class="form-panel">
+    <div class="form-content">
+      <form [formGroup]="registerForm">
+        <fieldset>
+          <div class="row">
+            <div class="form-group col-lg-8">
+              <label for="name" translate="">Name</label>
+                <input class="form-control"
+                  id="name"
+                  name="name"
+                  formControlName="name" />
+            </div>
+
+            <div class="form-group col-lg-8">
+              <label for="status" translate="">Status</label>
+                <input class="form-control"
+                  id="status"
+                  name="status"
+                  formControlName="status" />
+            </div>
+          </div>
+          <div class="row dates">
+            <div class="form-group col-lg-6">
+              <label for="startDate" translate="Start Date"></label>
+              <div class="input-group">
+                <input class="form-control"
+                  #bsDatepickerStartDate="bsDatepicker"
+                  bsDatepicker
+                  id="startDate"
+                  name="startDate"
+                  formControlName="startDate"
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
+                <div class="input-group-append">
+                  <button (click)="bsDatepickerStartDate.toggle()"
+                    [attr.aria-expanded]="bsDatepickerStartDate.isOpen" class="btn btn-outline-secondary" type="button"><i class="material-icons">calendar_today</i></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group col-lg-6">
+              <label for="endDate" translate="End Date"></label>
+              <div class="input-group">
+                <input class="form-control"
+                  #bsDatepickerEndDate="bsDatepicker"
+                  bsDatepicker
+                  id="startDate"
+                  name="startDate"
+                  formControlName="endDate"
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
+                <div class="input-group-append">
+                  <button (click)="bsDatepickerEndDate.toggle()"
+                    [attr.aria-expanded]="bsDatepickerEndDate.isOpen" class="btn btn-outline-secondary" type="button"><i class="material-icons">calendar_today</i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-primary" (click)="save()">
+        {{ 'Save' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
