@@ -1,0 +1,14 @@
+<div class="data-queue">
+  <div class="container-fluid map-container h-100">
+    <div *ngIf="loading" class="project-page-loader">
+      <i class="fa fa-circle-o-notch fa-spin"></i>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 map-results" >
+        <queue-header></queue-header>
+        <queue-filters></queue-filters>
+        <queue-table></queue-table>
+      </div>
+    </div>
+  </div>
+</div>
