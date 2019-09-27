@@ -30,6 +30,8 @@ export class ReportingWindowDetailComponent extends CreateReportingWindowChildCo
       super(createReportingWindowService, apiService);
       this.registerForm = this.fb.group({
         name: ['', Validators.required],
+        context: [''],
+        description: [''],
         status: ['', Validators.required],
         startDate: ['', Validators.required],
         endDate: ['', Validators.required],
@@ -43,6 +45,8 @@ export class ReportingWindowDetailComponent extends CreateReportingWindowChildCo
   reset() {
     this.registerForm.reset({
       name: this.createReportingWindowService.reportingWindow.value.name,
+      description: this.createReportingWindowService.reportingWindow.value.description,
+      context: this.createReportingWindowService.reportingWindow.value.context,
       status: this.createReportingWindowService.reportingWindow.status,
       startDate: this._date(this.createReportingWindowService.reportingWindow.startDate),
       endDate: this._date(this.createReportingWindowService.reportingWindow.endDate)
@@ -57,7 +61,9 @@ export class ReportingWindowDetailComponent extends CreateReportingWindowChildCo
       startDate:formData.startDate,
       endDate:formData.endDate,
       value: {
-        name: formData.name
+        name: formData.name,
+        description: formData.description,
+        context: formData.context
       }
 
     };

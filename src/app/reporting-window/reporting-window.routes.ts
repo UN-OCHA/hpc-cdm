@@ -12,6 +12,7 @@ import { ReportingWindowWorkflowComponent } from './components/edit/reporting-wi
 import { DataQueueComponent } from './components/data-queue/data-queue.component';
 
 
+//  TODO: check why canDeactivate: [PendingChangesGuard] is not working here
 const reportingWindowRoutes: Routes = [
   { path: 'reporting-window',
     component: ReportingWindowListComponent,
@@ -20,7 +21,6 @@ const reportingWindowRoutes: Routes = [
   { path: 'reporting-window/create',
     component: CreateReportingWindowComponent,
     canActivate: [AuthGuard],
-    canDeactivate: [PendingChangesGuard],
     data: { title: 'Create Reporting Window' },
     children: [ {
         path: '',
@@ -34,24 +34,19 @@ const reportingWindowRoutes: Routes = [
   { path: 'reporting-window/:id/edit',
     component: CreateReportingWindowComponent,
     canActivate: [AuthGuard],
-    canDeactivate: [PendingChangesGuard],
     data: { title: 'Edit Operation' },
     children: [{
         path: '',
         redirectTo: 'detail',
-        canDeactivate: [PendingChangesGuard],
         pathMatch: 'full'
       }, {
         path: 'detail',
-        canDeactivate: [PendingChangesGuard],
         component: ReportingWindowDetailComponent,
       }, {
        path: 'elements',
-       canDeactivate: [PendingChangesGuard],
        component: ReportingWindowElementsComponent
       }, {
        path: 'workflow',
-       canDeactivate: [PendingChangesGuard],
        component: ReportingWindowWorkflowComponent
       }
     ]

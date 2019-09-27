@@ -28,7 +28,7 @@ export class CreateReportingWindowService {
     private apiService: ApiService,
   ) {}
 
-  public fetchReportingWindow(id: number, version = 'latest', isPublic?) {
+  public fetchReportingWindow(id: number, version = 'latest') {
     let subscription = this.apiService.getReportingWindow(id, version);
     return subscription.pipe(
       map(reportingWindow => {

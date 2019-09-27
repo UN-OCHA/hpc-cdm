@@ -11,6 +11,17 @@
                   name="name"
                   formControlName="name" />
             </div>
+            <div class="form-group col-lg-8">
+              <label for="context" translate="">Context</label>
+                <input class="form-control"
+                  id="context"
+                  name="context"
+                  formControlName="context" />
+            </div>
+            <div class="form-group col-lg-8">
+              <label for="description" translate="">Description</label>
+              <textarea formControlName="description" id="description" name="description" rows="8" cols="80"></textarea>
+            </div>
 
             <div class="form-group col-lg-8">
               <label for="status" translate="">Status</label>
@@ -21,9 +32,17 @@
             </div>
           </div>
           <div class="row dates">
-            <div class="form-group col-lg-6">
-              <label for="startDate" translate="Start Date"></label>
-              <div class="input-group">
+            <h3>Reporting period</h3>
+            <div class="pb-4 col-lg-12">
+              <button class="btn btn-secondary mr-2">Current<br/>Year</button>
+              <button class="btn btn-secondary mr-2">Previous<br/>Year</button>
+              <button class="btn btn-secondary mr-2">Current<br/>Quarter</button>
+              <button class="btn btn-secondary mr-2">Previous<br/>Quarter</button>
+              <button class="btn btn-secondary">Custom<br/>Dates</button>
+            </div>
+            <div class="form-group row col-lg-6">
+              <label  class="col-sm-2 col-form-label" for="startDate" translate="From"></label>
+              <div class="input-group col-sm-10">
                 <input class="form-control"
                   #bsDatepickerStartDate="bsDatepicker"
                   bsDatepicker
@@ -38,9 +57,9 @@
               </div>
             </div>
 
-            <div class="form-group col-lg-6">
-              <label for="endDate" translate="End Date"></label>
-              <div class="input-group">
+            <div class="form-group row col-lg-6">
+              <label  class="col-sm-2 col-form-label" for="endDate" translate="To"></label>
+              <div class="input-group col-sm-10">
                 <input class="form-control"
                   #bsDatepickerEndDate="bsDatepicker"
                   bsDatepicker
@@ -57,11 +76,6 @@
           </div>
         </fieldset>
       </form>
-    </div>
-    <div class="form-actions">
-      <button type="button" class="btn btn-primary" (click)="save()">
-        {{ 'Save' | translate }}
-      </button>
     </div>
   </div>
 </div>
