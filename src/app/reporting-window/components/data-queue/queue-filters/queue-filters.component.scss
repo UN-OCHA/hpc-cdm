@@ -1,0 +1,31 @@
+.queue-filters {
+  padding: 1em;
+  margin: 1em auto;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+
+  .title {
+    padding-top:2.5em;
+    font-weight: bold;
+    margin-right: 2em;
+  }
+
+  .filter {
+    margin-left: 1em;
+    min-width: 8em;
+    text-align: left;
+    flex-grow: 1;
+  }
+
+  .actions {
+    padding-top: 2em;
+    margin-left: 2em;
+    .btn {
+      color: #fff;
+      &:first-child {
+        margin-right: .75em;
+      }
+    }
+  }
+}
