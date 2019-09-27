@@ -82,7 +82,7 @@ export class CreateReportingWindowComponent implements OnInit , ComponentCanDeac
   }
 
   public loadForExistingReportingWindow (id: number, version = 'latest') {
-    this.createReportingWindowService.fetchReportingWindow(id, version, !this.createReportingWindowService.editMode)
+    this.createReportingWindowService.fetchReportingWindow(id, version)
       .subscribe(() => {
         this.afterLoadReportingWindow();
       }, (err) => {
@@ -106,6 +106,7 @@ export class CreateReportingWindowComponent implements OnInit , ComponentCanDeac
         const reportingWindow = new ReportingWindow({
           editableByUser: true,
           status:'notYetOpen',
+          context: null,
           startDate: null,
           endDate: null,
           value: {},
@@ -136,6 +137,14 @@ export class CreateReportingWindowComponent implements OnInit , ComponentCanDeac
           name: 'Elements',
           title: 'Add elements to the reporting window'
         });
+        this.allRouteSteps.push({
+          route: ['/reporting-window', reportingWindow.id, 'edit','workflow'],
+          accessible: true,
+          display: true,
+          step: 'worflow',
+          name: 'Worflow',
+          title: 'Define workflow for the reporting window'
+        });
     } else {
         this.allRouteSteps.push({
           route: ['/reporting-window','create','detail'],
@@ -150,15 +159,6 @@ export class CreateReportingWindowComponent implements OnInit , ComponentCanDeac
     this.setEditableMode();
 
     this.setCurrentStepIdx(this.allRouteSteps);
-
-    // TODO: check why current index is not set correctly sometimes
-    this.allRouteSteps.forEach((step:any, idx:any) => {
-      if (idx < this.currentStepIdx) {
-        step.accessible = true;
-      } else if (idx === this.currentStepIdx) {
-        step.accessible = true;
-      }
-    });
 
     this.displayRouteSteps = this.allRouteSteps.filter((step:any) => step.display);
     this.setCurrentStepIdx();
@@ -281,7 +281,6 @@ export class CreateReportingWindowComponent implements OnInit , ComponentCanDeac
   private afterLoadReportingWindow () {
     this.processing = false;
 
-    console.log("before step");
     this.determineStepAccess();
   }
 

@@ -11,6 +11,7 @@ export class ReportingWindow extends ModelExtender {
   public operationId: number;
   public planId: number;
   public status: string;
+  public context: any;
   public startDate: Date;
   public endDate: Date;
   public createdAt: Date;
