@@ -18,7 +18,7 @@ import { CreateReportingWindowComponent } from './components/edit/create-reporti
 import { ReportingWindowDetailComponent } from './components/edit/reporting-window-detail/reporting-window-detail.component';
 import { ReportingWindowElementsComponent } from './components/edit/reporting-window-elements/reporting-window-elements.component';
 import { ReportingWindowWorkflowComponent } from './components/edit/reporting-window-workflow/reporting-window-workflow.component';
-import { DataQueueComponent } from './components/data-queue/data-queue/data-queue.component';
+import { DataQueueModule } from './components/data-queue/data-queue.module';
 
 
 @NgModule({
@@ -34,14 +34,14 @@ import { DataQueueComponent } from './components/data-queue/data-queue/data-queu
     PopoverModule.forRoot(),
     PaginationModule.forRoot(),
     BsDropdownModule,
+    DataQueueModule
   ],
   declarations: [
-  ReportingWindowListComponent,
-  CreateReportingWindowComponent,
-  ReportingWindowDetailComponent,
-  ReportingWindowElementsComponent,
-  ReportingWindowWorkflowComponent,
-  DataQueueComponent
+    ReportingWindowListComponent,
+    CreateReportingWindowComponent,
+    ReportingWindowDetailComponent,
+    ReportingWindowElementsComponent,
+    ReportingWindowWorkflowComponent
   ],
   providers: [
     mapRoutingProviders,

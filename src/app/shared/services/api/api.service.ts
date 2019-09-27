@@ -1,5 +1,5 @@
 
-import {throwError as observableThrowError, from, Observable } from 'rxjs';
+import {throwError as observableThrowError, from, Observable, defer } from 'rxjs';
 
 import {catchError,  map, shareReplay } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
@@ -546,6 +546,20 @@ export class ApiService {
     } else {
       return observableThrowError('No one is logged in.');
     }
+  }
+
+  public getDataEntries(reportingWindowId: any): Observable<any> {
+    //TODO use actual endpoint
+    return defer(() => new Promise(resolve => {
+      resolve([1,2,3,4,5]);
+    }));
+  }
+
+  public getDataVersions(entry: any): Observable<any> {
+    //TODO use actual endpoint
+    return defer(() => new Promise(resolve => {
+      resolve([1,2,3,4,5]);
+    }));
   }
 
   public setParams(options?: any): HttpParams {
