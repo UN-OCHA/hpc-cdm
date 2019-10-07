@@ -1,10 +1,10 @@
-<div class="panel border p-5">
+<div class="panel" *ngIf="operation.selectedEntityPrototype">
   <div class="panel-header">
-    <h3>{{ entity.opEntityPrototypeVersion.value.name.en.plural }}</h3>
-    <operation-gves-icons [list]="list"></operation-gves-icons>
+    <h3 >{{ operation.selectedEntityPrototype.value.name.en.plural }}</h3>
+    <operation-gves-icons></operation-gves-icons>
   </div>
   <div>
-    <div *ngFor="let governingEntity of list; let idx = index;" class="form-check form-check-inline">
+    <div *ngFor="let governingEntity of operation.entities$ | async; let idx = index;" class="form-check form-check-inline">
       <div *ngIf="governingEntity.selected">
         <input class="form-check-input"
           type="radio"
@@ -18,7 +18,7 @@
             <img *ngIf="governingEntity.governingEntityVersion.value.icon && governingEntity.governingEntityVersion.value.icon.length"
               class="clusterImg"
               src="/assets/images/fieldClusters/SVG/{{governingEntity.governingEntityVersion.value.icon}}.svg" title="{{governingEntity.governingEntityVersion.name}}">
-              <figcaption class="figure-caption cluster-label">{{ governingEntity.governingEntityVersion.name }}
+              <figcaption class="figure-caption cluster-label">{{ governingEntity.name }}
                 <i class="material-icons" *ngIf="governingEntity.selectedCount">check</i>
               </figcaption>
             </figure>
@@ -28,14 +28,12 @@
   </div>
 
   <div class="panel-body">
-    <form  #childForm="ngForm">
-      <div *ngFor="let entry of list; let i = index">
-        <gve-entry (onDelete)="delete($event)" (onRefreshList)="refreshList($event)" [entityPrototype]="entity" [entry]="entry" [entryIdx]="i+1"></gve-entry>
-      </div>
+    <form>
+      <gve-entry *ngIf="operation.selectedEntity"></gve-entry>
+      <gve-entry *ngIf="!operation.selectedEntity && operation.mode === 'ADD_ENTITY_MODE'"></gve-entry>
       <div class="panel-actions">
-        <button type="button"
-          class="btn btn-primary" (click)="addGve()">
-          {{ 'Add ' + entity.opEntityPrototypeVersion.value.name.en.singular | translate }}
+        <button type="button" class="btn btn-primary" (click)="operation.mode = 'ADD_ENTITY_MODE'">
+          {{ 'Add ' + operation.selectedEntityPrototype.value.name.en.singular | translate }}
         </button>
       </div>
     </form>

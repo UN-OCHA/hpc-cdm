@@ -289,6 +289,17 @@ export class ApiService {
     return this.http.get(url, {});
   }
 
+  // TODO: we have attachment files (files/forms),
+  // form files (files/cdm -- api does not assign unique ids)
+  // and we can also have other files (governing entity activation/deactivation letters);
+  // should we have a different collection?
+  // Using the same here but assigning unique names from the caller.
+  public saveFile(file: any, name?: string): Observable<any> {
+    const fd = new FormData();
+    fd.append('data', file, name || file.name);
+    return this.postToEndpoint('v2/files/cdm', {data: fd});
+  }
+
   public getFile(fileUrl: any): Observable<any> {
     const url = this.buildUrl(fileUrl);
     return this.http.get(url, {});
@@ -368,6 +379,14 @@ export class ApiService {
   }
 
   public saveGoverningEntity(governingEntity): Observable<any> {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+    console.log(governingEntity);
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+
     if (!governingEntity.id) {
       return this.postToEndpoint('v2/operation/governingEntity', {
         data: { opGoverningEntity: governingEntity }

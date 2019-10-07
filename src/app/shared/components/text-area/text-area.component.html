@@ -1,0 +1,16 @@
+<div class="text-area">
+  <div class="form-group">
+    <label class="label-control" translate>{{label}}</label> <i *ngIf="required" class="text-danger">*</i>
+    <textarea
+      [ngClass]="required && control.valid ? 'ng-valid' : required ? 'ng-invalid' : ''"
+      (input)="handleChange($event.target.value)"
+      (change)="handleChange($event.target.value)"
+      (blur)="onTouched($event.target.value)"
+      class="form-control" type="text" [value]="value"></textarea>
+    <div style="display:none"
+      [hidden]="control.valid || control.pristine"
+      class="alert alert-danger">
+      {{label}} is required
+    </div>
+  </div>
+</div>

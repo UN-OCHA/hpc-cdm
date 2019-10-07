@@ -38,7 +38,7 @@ const operationRoutes: Routes = [
     canDeactivate: [PendingChangesGuard],
     data: { title: 'Operation Reporting' }
   },
-  { path: 'operation/:id/entityreports',
+  { path: 'operation/:id/entityreports/:entityPrototypeId',
     component: ReportsComponent,
     canActivate: [AuthGuard],
     canDeactivate: [PendingChangesGuard],

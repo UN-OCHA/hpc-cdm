@@ -14,6 +14,6 @@ export class EntitiesComponent implements OnInit {
   ngOnInit() {}
 
   dummy() {
-    this.operation.getEntities(1);
+    this.operation.entities;
   }
 }

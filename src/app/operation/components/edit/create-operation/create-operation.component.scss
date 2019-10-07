@@ -1,0 +1,37 @@
+.create-operation {
+  max-width: 100%;
+  // border: 1px solid red;
+  margin: 0 auto;
+  padding: 0;
+
+  .main-content {
+    max-width: 1200px!important;
+    // border: 1px solid red;
+    margin: 0 auto;
+  }
+
+  .title {
+    // border: 1px solid red;
+    padding: .5em 0 .15em 0;
+    background-color: #6c757d;
+    color: #fff;
+    margin-bottom: 1em;
+    h1 {
+      font-size: 2em;
+    }
+    h2 {
+
+    }
+  }
+
+  .sidebar {
+    margin: 0;
+    padding: 0;
+  }
+
+  .navbar {
+    .container {
+      padding-right: 0;
+    }
+  }
+}

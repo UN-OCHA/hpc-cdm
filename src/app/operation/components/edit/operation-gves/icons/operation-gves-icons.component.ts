@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
-// import { ApiService } from 'app/shared/services/api/api.service';
+import { Component, OnInit } from '@angular/core';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { OperationService } from 'app/operation/services/operation.service';
 
 @Component({
   selector: 'operation-gves-icons',
@@ -9,15 +9,16 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
 })
 export class OperationGvesIconsComponent implements OnInit {
 
-  @Input() list: Array<any>;
-  // constructor(private api: ApiService) {}
+  constructor(private operation: OperationService){}
 
   ngOnInit() {
-    // TODO
-    // this.api.getOperationGves()
+    this.operation.entities$.subscribe(entities => {
+      console.log(entities)
+      console.log(entities.length);
+    });
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.list, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.operation.entities, event.previousIndex, event.currentIndex);
   }
 }

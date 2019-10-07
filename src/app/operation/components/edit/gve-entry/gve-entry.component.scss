@@ -11,6 +11,14 @@
     color: white;
   }
 
+  .ng-valid {
+    border-left: none;
+  }
+
+  .ng-invalid {
+    border-left: none;
+  }
+
   .form-title {
     min-height: 2em;
     .material-icons {

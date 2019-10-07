@@ -32,6 +32,7 @@ import { AttachmentEntryComponent } from './components/edit/attachment-entry/att
 import { GveEntryComponent } from './components/edit/gve-entry/gve-entry.component';
 import { GveEntryIconComponent } from './components/edit/gve-entry/icon/gve-entry-icon.component';
 import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-attachments.component';
+import { GveAttachmentsIconsComponent } from './components/edit/gve-attachments/icons/gve-attachments-icons.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { ReportsNavigationComponent } from './components/reports/navigation/navigation.component';
 import { AttachmentViewComponent } from './components/reports/attachment-view/attachment-view.component';
@@ -59,6 +60,7 @@ import { EnketoFormService } from './services/enketo-form.service';
     GveEntryComponent,
     GveEntryIconComponent,
     GveAttachmentsComponent,
+    GveAttachmentsIconsComponent,
     ReportsComponent,
     ReportsNavigationComponent,
     EntitiesComponent

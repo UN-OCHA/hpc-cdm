@@ -1,99 +1,22 @@
-import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
-
-import { Observable,zip as observableZip, of } from 'rxjs';
-import {map} from 'rxjs/operators';
-import { ApiService } from 'app/shared/services/api/api.service';
-import { CreateOperationService } from 'app/operation/services/create-operation.service';
-import { CreateOperationChildComponent } from './../create-operation-child/create-operation-child.component';
-import { Attachment } from 'app/operation/models/view.operation.model';
-import { ToastrService } from 'ngx-toastr';
-import { AttachmentEntryComponent } from './../attachment-entry/attachment-entry.component';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { OperationService } from 'app/operation/services/operation.service';
 
 @Component({
   selector: 'gve-attachments',
   templateUrl: './gve-attachments.component.html',
   styleUrls: ['./gve-attachments.component.scss']
 })
-export class GveAttachmentsComponent extends CreateOperationChildComponent implements OnInit {
-  gveId: any;
-  attachments = [];
-  viewingGoverningEntityIdx = 0;
-  currentGve: any;
-  @ViewChildren(AttachmentEntryComponent) atts:QueryList<AttachmentEntryComponent>;
+export class GveAttachmentsComponent implements OnInit {
 
   constructor(
-    public createOperationService: CreateOperationService,
-    private toastr: ToastrService,
-    public api: ApiService
-  ) {
-    super(createOperationService, api);
-  }
-
+    private activatedRoute: ActivatedRoute,
+    private operation: OperationService){}
 
   ngOnInit() {
-    if (this.createOperationService.operation.opGoverningEntities && this.createOperationService.operation.opGoverningEntities.length) {
-      this.currentGve = this.createOperationService.operation.opGoverningEntities[this.viewingGoverningEntityIdx];
-    }
-  }
-
-  public refreshList() {
-  }
-
-  public selectNewGoverningEntity(idx:any) {
-    this.viewingGoverningEntityIdx = idx;
-    this.currentGve = this.createOperationService.operation.opGoverningEntities[this.viewingGoverningEntityIdx];
-  }
-
-  public delete(attachment:any) {
-    this.api.deleteOperationAttachment(attachment.id).subscribe(response => {
-      if (response.status === 'ok') {
-        const index = this.currentGve.opAttachments.map(function(o) { return o.id; }).indexOf(attachment.id);
-        this.currentGve.opAttachments.splice(index, 1);
-        return this.toastr.warning('Attachment removed.', 'Attachment removed');
-      }
+    this.activatedRoute.params.subscribe(params => {
+      this.operation.route = 'EDIT_ENTITY_ATTACHMENTS';
+      this.operation.getEntities(params.entityPrototypeId, params.id);
     });
-  }
-  addEntry() {
-    let newAttachment = new Attachment({
-      id:null,
-      opAttachmentPrototypeId:this.createOperationService.operation.opAttachmentPrototypes[0].id,
-      objectId: this.currentGve.id,
-      objectType: 'opGoverningEntity',
-      opAttachmentVersion:{
-        customReference: '',
-        value :{
-          name: '',
-          file: ''
-        }
-      }
-    });
-    this.currentGve.opAttachments.push(newAttachment);
-  }
-
-  public save (): Observable<any> {
-    const isInvalid = this.atts.toArray().filter(att=> att.attachmentForm.invalid).length;
-    if (!isInvalid) {
-      const postSaveObservables = [];
-      this.createOperationService.operation.opGoverningEntities.forEach(gve => {
-        gve.opAttachments.forEach((attachment:any) => {
-        postSaveObservables.push(
-          this.api.saveOperationAttachment(attachment, this.createOperationService.operation.id));
-        });
-      });
-
-      return observableZip(
-        ...postSaveObservables
-      ).pipe(map((results:Array<Attachment>) => {
-        this.createOperationService.operation.opGoverningEntities.forEach(gve => {
-          gve.opAttachments = results.filter((attachment:any) => attachment.objectId === gve.id);
-        });
-        return {
-          stopSave: true
-        };
-      }));
-    } else {
-      this.toastr.error("Somes attachments are not valid, please correct");
-      return of({stopSave:true});
-    }
   }
 }

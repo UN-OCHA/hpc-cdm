@@ -101,7 +101,7 @@ export class AttachmentViewComponent implements OnInit {
       this.operation.report = response;
 
       if(this.router.url.indexOf('entityreports') > 0) {
-        this.operation.getEntityAttachments(this.operation.selectedEntityIdx);
+        this.operation.getEntityAttachments(this.operation.selectedEntity.id);
       } else {
         this.operation.getAttachments(this.operation.id);
       }

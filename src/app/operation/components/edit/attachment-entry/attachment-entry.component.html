@@ -1,4 +1,4 @@
-<form #attachmentForm="ngForm" novalidate>
+<form [formGroup]="form" novalidate>
 <div *ngIf="!entry.hide" class="form-panel">
   <div class="form-title">
     <i (click)="toggleExpand()" *ngIf="!expanded" class="material-icons">chevron_right</i>
@@ -7,7 +7,6 @@
   </div>
   <div *ngIf="expanded" class="form-body">
     <div class="form-content">
-
         <fieldset>
           <div class="row">
             <div class="form-group col-lg-4">
@@ -15,8 +14,6 @@
               <div class="form-id">
                 <label>CF</label>
                 <input class="form-control" type="text" id="customReference" name="customReference" required
-                  [(ngModel)]="entry.opAttachmentVersion.customReference"
-                  #customReference="ngModel"
                   (input)="handleNameChange()"/>
               </div>
               <div [hidden]="customReference.valid || customReference.pristine"
@@ -27,8 +24,6 @@
             <div class="form-group col-lg-8">
               <label for="name" translate>Name</label> <i class="text-danger">*</i>
               <input class="form-control" type="text" id="name" name="name" required
-                [(ngModel)]="entry.opAttachmentVersion.value.name"
-                #name="ngModel"
                 (input)="handleNameChange()"/>
               <div [hidden]="name.valid || name.pristine"
                 class="alert alert-danger">
