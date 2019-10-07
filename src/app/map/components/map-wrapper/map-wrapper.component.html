@@ -8,15 +8,25 @@
 
 <div class="header-results border-bottom sticky-top bg-light" *ngIf="cdmResults">
   <div class="row" *ngIf="cdmResults && cdmResults.length">
-    <div class="col-lg-10">
+    <div class="col-lg-6">
       <ul class="search-stats d-inline-block mb-0 pt-1">
         <li>
           {{ cdmResults.length }} Operations
         </li>
       </ul>
     </div>
-    <div class="col-lg-2">
-      <a class="btn btn-primary" routerLink="/operation/create">{{ 'New operation' | translate }}</a>
+    <div *ngIf="authService.verifiedUser && isAdmin" class="col-lg-6">
+      <ul class="list-group list-group-horizontal">
+      <li *ngIf="authService.verifiedUser && isAdmin" class="nav-item px-3 d-flex align-items-center">
+        <a  class="btn btn-primary" routerLink="/operation/create">{{ 'New operation' | translate }}</a>
+      </li>
+      <li *ngIf="authService.verifiedUser && isAdmin" class="nav-item px-3 d-flex align-items-center">
+        <a class="btn btn-primary" routerLink="/admin/blueprints">{{ 'Operation blueprints' | translate }}</a>
+      </li>
+      <li *ngIf="authService.verifiedUser && isAdmin" class="nav-item px-3 d-flex align-items-center">
+        <a class="btn btn-primary" routerLink="/reporting-window">{{ 'Reporting windows' | translate }}</a>
+      </li>
+      </ul>
     </div>
   </div>
 

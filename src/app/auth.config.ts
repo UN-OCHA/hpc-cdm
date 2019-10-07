@@ -9,7 +9,7 @@ export const authConfig: AuthConfig = {
     requireHttps : false,
     responseType: 'token',
     oidc: false,
-    clearHashAfterLogin : true,
+    clearHashAfterLogin : false,
     postLogoutRedirectUri : window.location.origin + '/',
     userinfoEndpoint : environment.authBaseUrl + 'account.json',
     logoutUrl : environment.authBaseUrl + 'logout?redirect=' + window.location.origin + '/'
