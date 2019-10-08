@@ -7,23 +7,25 @@
       <div class="form-content">
         <div class="row">
           <div class="form-group col-lg-12">
-            <text-area label="Technical Area" formControlName="technicalArea" required></text-area>
+            <text-area label="Technical Area" formControlName="technicalArea" required
+              [disabled]="isDisabledField('technicalArea')"></text-area>
           </div>
         </div>
         <div class="row">
           <div class="form-group col-lg-4">
-            <date-input label="Activation Date" formControlName="activationDate" required></date-input>
+            <date-input label="Activation Date" formControlName="activationDate" required
+              [disabled]="isDisabledField('activationDate')"></date-input>
           </div>
           <div class="form-group col-lg-8">
-            <file-upload id="activationLetter" label="Activation Letter" formControlName="activationLetter" required></file-upload>
+            <file-upload id="activationLetter" label="Activation Letter" formControlName="activationLetter"></file-upload>
           </div>
         </div>
         <div class="row">
           <div class="form-group col-lg-4">
-            <date-input label="Deactivation Date" formControlName="deactivationDate" required></date-input>
+            <date-input label="Deactivation Date" formControlName="deactivationDate"></date-input>
           </div>
           <div class="form-group col-lg-8">
-            <file-upload id="deactivationLetter" label="Deactivation Letter" formControlName="deactivationLetter" required></file-upload>
+            <file-upload id="deactivationLetter" label="Deactivation Letter" formControlName="deactivationLetter"></file-upload>
           </div>
         </div>
         <div class="row">
@@ -48,7 +50,7 @@
       <button [disabled]="!form.valid || form.pristine" type="button" class="btn btn-save" (click)="save()">
         {{ 'Save' | translate }}
       </button>
-      <button *ngIf="entity && entity.id" type="button" class="btn btn-info" (click)="remove()">
+      <button *ngIf="isRemovable()" type="button" class="btn btn-info" (click)="remove()">
         {{ 'Remove ' | translate }}
       </button>
     </div>

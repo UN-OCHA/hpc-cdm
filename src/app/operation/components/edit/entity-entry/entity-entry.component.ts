@@ -19,9 +19,9 @@ export class EntityEntryComponent implements OnInit {
       id: [''],
       technicalArea: ['', Validators.required],
       activationDate: ['', Validators.required],
-      deactivationDate: ['', Validators.required],
-      activationLetter: ['', Validators.required],
-      deactivationLetter: ['', Validators.required],
+      deactivationDate: [''],
+      activationLetter: [''],
+      deactivationLetter: [''],
       notes: ['']
     });
   }
@@ -45,5 +45,14 @@ export class EntityEntryComponent implements OnInit {
 
   remove() {
     this.operation.removeEntity(this.entity.id);
+  }
+
+  isRemovable() {
+    return this.entity && this.entity.id &&
+      this.operation.route !== 'EDIT_ENTITY_ATTACHMENTS';
+  }
+
+  isDisabledField(field) {
+    return this.operation.route === 'EDIT_ENTITY_ATTACHMENTS';
   }
 }

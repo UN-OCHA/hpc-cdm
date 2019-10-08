@@ -21,12 +21,12 @@ import { ControlContainer, AbstractControl, ControlValueAccessor, NG_VALUE_ACCES
 export class TextAreaComponent implements ControlValueAccessor, OnInit {
   @Input() label: string;
   @Input() required?: boolean;
+  @Input() disabled?: boolean;
   @Input() formControlName: string;
 
   onTouched: any = () => {};
   onChange: any = () => {};
 
-  disabled: boolean;
   value: string;
   // valid: boolean;
 

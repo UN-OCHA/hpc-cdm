@@ -69,10 +69,12 @@
       </form>
     </div>
     <div *ngIf="!(operation.report && operation.report.finalized)" class="form-actions">
-      <button [disabled]="!submissions.tempSubmission" type="button" class="btn btn-save" (click)="saveAndFinalize(false)">
+      <button [disabled]="!submissions.tempSubmission" type="button" class="btn btn-save"
+          (click)="saveAndFinalize(false)">
         {{ 'Save' | translate }}
       </button>
-      <button [disabled]="!submissions.tempSubmission" type="button" class="btn btn-primary" (click)="saveAndFinalize(true)">
+      <button [disabled]="!submissions.tempSubmission" type="button" class="btn btn-primary"
+          (click)="saveAndFinalize(true)">
         {{ 'Save and Finalise' | translate }}
       </button>
     </div>
