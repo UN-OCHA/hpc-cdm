@@ -37,7 +37,7 @@
           </button>
         </div>
       </div>
-      <div *ngIf="!operation.processing" class="form-actions">
+      <div *ngIf="!operation.saving" class="form-actions">
         <button [disabled]="form.invalid || form.pristine" type="button" class="btn btn-save" (click)="save()">
           {{ 'Save' | translate }}
         </button>
@@ -45,7 +45,7 @@
           {{ 'Remove Form' | translate }}
         </button>
       </div>
-      <div *ngIf="operation.processing" class="form-actions">
+      <div *ngIf="operation.saving" class="form-actions">
         <button disabled="true" type="button" class="btn btn-save">
           {{ 'Saving...' | translate }}
         </button>

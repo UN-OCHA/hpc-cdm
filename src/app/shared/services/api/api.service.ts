@@ -248,19 +248,9 @@ export class ApiService {
   }
 
   public saveOperationAttachment(attachment: any): Observable<any> {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
     if (attachment.id) {
-      console.log('updating operation attachment..............');
-      console.log(attachment);
       return this.putToEndpoint('v2/operation/attachment/' + attachment.id, { data : {opAttachment: attachment}});
     } else {
-      console.log('saving operation attachment..............');
-      console.log(attachment);
       return this.postToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
     }
   }
@@ -383,14 +373,6 @@ export class ApiService {
   }
 
   public saveGoverningEntity(governingEntity): Observable<any> {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-    console.log(governingEntity);
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-
     if (!governingEntity.id) {
       return this.postToEndpoint('v2/operation/governingEntity', {
         data: { opGoverningEntity: governingEntity }

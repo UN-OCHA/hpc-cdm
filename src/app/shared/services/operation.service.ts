@@ -114,6 +114,7 @@ export class OperationService {
   private readonly _mode = new BehaviorSubject<string>('');
   private readonly _route = new BehaviorSubject<string>('');
   private readonly _processing = new BehaviorSubject<boolean>(false);
+  private readonly _saving = new BehaviorSubject<boolean>(false);
   private readonly _entityPrototypes = new BehaviorSubject<EntityPrototype[]>([]);
   private readonly _selectedEntityPrototype = new BehaviorSubject<EntityPrototype>(null);
   private readonly _selectedAttachment = new BehaviorSubject<Attachment>(null);
@@ -126,6 +127,7 @@ export class OperationService {
   readonly mode$ = this._mode.asObservable();
   readonly route$ = this._route.asObservable();
   readonly processing$ = this._processing.asObservable();
+  readonly saving$ = this._saving.asObservable();
   readonly selectedAttachment$ = this._selectedAttachment.asObservable();
   readonly selectedEntityPrototype$ = this._selectedEntityPrototype.asObservable();
   readonly selectedEntity$ = this._selectedEntity.asObservable();
@@ -206,6 +208,9 @@ export class OperationService {
   get processing(): boolean { return this._processing.getValue(); }
   set processing(val: boolean) { this._processing.next(val); }
 
+  get saving(): boolean { return this._saving.getValue(); }
+  set saving(val: boolean) { this._saving.next(val); }
+
   get attachments(): Attachment[] { return this._attachments.getValue(); }
   set attachments(val: Attachment[]) { this._attachments.next(val); }
   get entities(): Entity[] { return this._entities.getValue(); }
@@ -214,24 +219,6 @@ export class OperationService {
   set entityPrototypes(val: EntityPrototype[]) { this._entityPrototypes.next(val); }
   get entityAttachments(): Attachment[] { return this._entityAttachments.getValue(); }
   set entityAttachments(val: Attachment[]) { this._entityAttachments.next(val); }
-
-
-  //       id: `CF${this.entry.opAttachmentVersion.customReference}`,
-  //       name: this.entry.opAttachmentVersion.customReference,
-  //       file: this.fileToUpload
-
-  // this.submitted = true;
-  // if(this.attachmentForm.valid) {
-  //   console.log(this.entry)
-  //   // this.api.saveOperationAttachment(this.entry, this.operationId).subscribe((result:Attachment) => {
-  //   //   Object.assign(this.entry, result);
-  //   //   if (this.entry.id) {
-  //   //     return this.toastr.success('Attachment updated.', 'Attachment updated');
-  //   //   }
-  //   //   return this.toastr.success('Attachment created.', 'Attachment created');
-  //   // });
-  // }
-
 
   _saveOperationAttachment(attachment: Attachment) {
     try {
@@ -274,17 +261,17 @@ export class OperationService {
         }
         this.selectedAttachment = attachment;
         this.mode = null;
-        this.processing = false;
+        this.saving = false;
       });
     } catch (e) {
-      this.processing = false;
+      this.saving = false;
       console.error(e);
     }
   }
 
   async saveAttachment(attachment: Attachment, oldAttachment?: Attachment) {
     if(!attachment.formFile.id) {//file has not been uploaded or has been updated
-      this.processing = true;
+      this.saving = true;
       const originalName = attachment.formFile.name;
       // const uniqueName = `${new Date().valueOf()}${originalName}`;
       this.api.saveOperationAttachmentFile(attachment.formFile).subscribe(file => {
@@ -324,13 +311,18 @@ export class OperationService {
     this.loadOperation(operationId).subscribe(() => {
       this.api.getOperationAttachments(operationId).subscribe(response => {
         const opas = response.opAttachments;
-        forkJoin(opas.map(a => this.api.getReport(a.id, this.reportingWindow.id)))
-        .subscribe(reports => {
-          this.attachments = reports.map((r, i) => {
-            return buildAttachment(opas[i], r);
-          }).sort((a, b) => (a.id > b.id) ? 1 : -1);
+        if(opas.length) {
+          forkJoin(opas.map(a => this.api.getReport(a.id, this.reportingWindow.id)))
+          .subscribe(reports => {
+            this.processing = false;
+            this.attachments = reports.map((r, i) => {
+              return buildAttachment(opas[i], r);
+            }).sort((a, b) => (a.id > b.id) ? 1 : -1);
+            this.processing = false;
+          });
+        } else {
           this.processing = false;
-        });
+        }
       });
     })
   }
@@ -351,7 +343,7 @@ export class OperationService {
           });
         } else {
           this.entityAttachments = opas.map(opa => buildAttachment(opa));
-          this.processing = true;
+          this.processing = false;
         }
       });
   }

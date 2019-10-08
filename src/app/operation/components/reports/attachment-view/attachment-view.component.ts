@@ -45,7 +45,6 @@ export class AttachmentViewComponent implements OnInit {
   ngOnInit() {
     this.title= `Form ${this.entryIdx}. ${this.entry.formName}`
     this.status = STATUS_OPTIONS[this.entry.status];
-    console.log(this.entry)
     this.registerForm.reset({
       id: this.entry.formId,
       name: this.entry.formName,
