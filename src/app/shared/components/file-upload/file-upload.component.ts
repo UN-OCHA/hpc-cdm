@@ -40,14 +40,10 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit {
     } else {
       this.uid = `file${new Date().valueOf()}`;
     }
-    // console.log(this.id)
-    // console.log(this.uid)
-    // console.log(this.formControlName)
     this.control = this.controlContainer.control.get(this.formControlName);
   }
 
   writeValue(value: any): void {
-    // console.log(value)
     this.value = value ? value : {};
   }
 
@@ -60,13 +56,9 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit {
 
   handleFileInput(files: FileList) {
     const fileToUpload = files.item(0);
-    // console.log(fileToUpload)
     if(fileToUpload) {
       this.onChange(fileToUpload);
       this.value = fileToUpload;
-      // console.log(this.value)
-    } else {
-      // this.valid = this.required ? false : true;
     }
   }
 
