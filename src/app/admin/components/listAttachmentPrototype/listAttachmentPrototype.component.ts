@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'app/shared/services/api/api.service';
+import { OperationService } from 'app/shared/services/operation.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -13,16 +14,17 @@ export class ListAttachmentPrototypeComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
+    private operation: OperationService,
     private apiService: ApiService) {}
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
-      if(params.id) {
-        this.operationId = params.id
-        this.apiService.getAttachmentPrototypes(this.operationId).subscribe(protos => {
-          this.prototypes = protos;
-        });
-      }
+      this.operationId = params.id
+      this.apiService.getAttachmentPrototypes(this.operationId).subscribe(protos => {
+        this.prototypes = protos;
+      });
+      //TODO remove api and use operation to drive the table.
+      this.operation.getEntityPrototypes(params.id);
     });
   }
 }

@@ -8,8 +8,14 @@
     width: 100%;
     padding: 1em;
 
+    .panel-attachments {
+      min-height: 31.5em;
+    }
+
     .panel-actions {
-      margin-top: 1em;
+      .btn {
+        min-width: 13em;
+      }
     }
   }
 }

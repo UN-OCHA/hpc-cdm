@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OperationService } from 'app/operation/services/operation.service';
+import { OperationService } from 'app/shared/services/operation.service';
 
 @Component({
-  selector: 'gve-attachments',
-  templateUrl: './gve-attachments.component.html',
-  styleUrls: ['./gve-attachments.component.scss']
+  selector: 'entity-attachments',
+  templateUrl: './entity-attachments.component.html',
+  styleUrls: ['./entity-attachments.component.scss']
 })
-export class GveAttachmentsComponent implements OnInit {
+export class EntityAttachmentsComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -18,5 +18,10 @@ export class GveAttachmentsComponent implements OnInit {
       this.operation.route = 'EDIT_ENTITY_ATTACHMENTS';
       this.operation.getEntities(params.entityPrototypeId, params.id);
     });
+    this.operation.entities$.subscribe(entities => {
+      if(entities.length === 1) {
+        this.operation.selectedEntity = entities[0];
+      }
+    })
   }
 }

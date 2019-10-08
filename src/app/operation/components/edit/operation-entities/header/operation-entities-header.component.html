@@ -1,7 +1,7 @@
 <div>
-  <div class="operation-gves-icons" cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="list" (cdkDropListDropped)="drop($event)">
+  <div class="operation-entities-header" cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="list" (cdkDropListDropped)="drop($event)">
     <div *ngFor="let gve of operation.entities$ | async" cdkDrag>
-      <div class="gve-icon" (click)="operation.selectedEntity = gve">
+      <div class="entity-icon" (click)="operation.selectedEntity = gve">
         <div class="icon-button" [ngClass]="{'selected': operation.selectedEntity && operation.selectedEntity.id == gve.id}">
           <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
           	 width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
@@ -16,5 +16,5 @@
       </div>
     </div>
   </div>
-  <div *ngIf="operation.entities.length > 1" class="description">Drag above to change order</div>
+  <div *ngIf="operation.entities.length > 1" class="description">Drag above to change order or select to edit</div>
 </div>

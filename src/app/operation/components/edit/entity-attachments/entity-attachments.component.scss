@@ -1,0 +1,25 @@
+.entity-attachments {
+  min-height: 31.5em;
+  .panel {
+
+    .panel-header {
+    }
+    .panel-body {
+      background-color: rgba(242, 242, 242, 1);
+      border: 1px solid #bbb;
+      border-radius: 2px;
+      width: 100%;
+      padding: 1em;
+
+      .panel-attachments {
+      }
+
+      .panel-actions {
+      }
+    }
+  }
+  .description {
+    margin: 0;
+    font-size: .75em;
+  }
+}

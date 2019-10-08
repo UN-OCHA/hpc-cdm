@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { OperationService } from './operation.service';
+import { OperationService } from 'app/shared/services/operation.service';
 import { ApiService } from 'app/shared/services/api/api.service';
 
 @Injectable({providedIn: 'root'})

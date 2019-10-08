@@ -1,7 +1,6 @@
 <div class="panel" *ngIf="operation.selectedEntityPrototype">
   <div class="panel-header">
-    <h3 >{{ operation.selectedEntityPrototype.value.name.en.plural }}</h3>
-    <operation-gves-icons></operation-gves-icons>
+    <operation-entities-header></operation-entities-header>
   </div>
   <div>
     <div *ngFor="let governingEntity of operation.entities$ | async; let idx = index;" class="form-check form-check-inline">
@@ -29,10 +28,13 @@
 
   <div class="panel-body">
     <form>
-      <gve-entry *ngIf="operation.selectedEntity"></gve-entry>
-      <gve-entry *ngIf="!operation.selectedEntity && operation.mode === 'ADD_ENTITY_MODE'"></gve-entry>
+      <div class="panel-entities">
+        <entity-entry *ngIf="operation.selectedEntity"></entity-entry>
+        <entity-entry *ngIf="!operation.selectedEntity && operation.mode === 'ADD_ENTITY'"></entity-entry>
+      </div>
       <div class="panel-actions">
-        <button type="button" class="btn btn-primary" (click)="operation.mode = 'ADD_ENTITY_MODE'">
+        <button [disabled]="!isAddButtonEnabled()" 
+            type="button" class="btn btn-primary" (click)="addEntity()">
           {{ 'Add ' + operation.selectedEntityPrototype.value.name.en.singular | translate }}
         </button>
       </div>

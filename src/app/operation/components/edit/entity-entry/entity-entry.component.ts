@@ -1,16 +1,15 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { OperationService } from 'app/operation/services/operation.service';
+import { OperationService } from 'app/shared/services/operation.service';
 
 @Component({
-  selector: 'gve-entry',
-  templateUrl: './gve-entry.component.html',
-  styleUrls: ['./gve-entry.component.scss']
+  selector: 'entity-entry',
+  templateUrl: './entity-entry.component.html',
+  styleUrls: ['./entity-entry.component.scss']
 })
-export class GveEntryComponent implements OnInit {
+export class EntityEntryComponent implements OnInit {
   form: FormGroup;
   entity: any;
-  // submitted = false;
   @Input() readOnly?: boolean;
 
   constructor(

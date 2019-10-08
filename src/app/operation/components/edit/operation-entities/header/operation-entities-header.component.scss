@@ -1,9 +1,9 @@
 
-.operation-gves-icons {
+.operation-entities-header {
   display: flex;
   flex-wrap: wrap;
-  margin: 1em 0 0 2em;
-  .gve-icon {
+  margin: 0;
+  .entity-icon {
     border: 1px dashed #888 !important;
     max-width: 9em;
     padding: 1em;
@@ -32,16 +32,6 @@
         }
       }
     }
-    // &.active {
-    //   background-color: transparent;
-    //   color: currentColor;
-    //   svg {
-    //     border-color: #ee7325;
-    //     path {
-    //       fill: #ee7325;
-    //     }
-    //   }
-    // }
     svg {
       width: 6em;
       height: 6em;
@@ -65,7 +55,7 @@
 }
 
 .description {
-  margin: 0 0 0 2.5em;
+  margin: 0;
   font-size: .75em;
 }
 

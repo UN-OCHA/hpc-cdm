@@ -87,7 +87,7 @@
     </button>
   </div>
   <div class="modal-body">
-    <enketo-form formId="{{entry.formFilePath}}"></enketo-form>
+    <enketo-form formId="{{entry.formFile.filepath}}"></enketo-form>
   </div>
 </ng-template>
 <ng-template #templateEdit>
@@ -98,6 +98,6 @@
     </button>
   </div>
   <div class="modal-body">
-    <enketo-form formId="{{entry.formFilePath}}" submissionId="{{entry.id}}" editable="{{!(operation.report && operation.report.finalized)}}"></enketo-form>
+    <enketo-form formId="{{entry.formFile.filepath}}" submissionId="{{entry.id}}" editable="{{!(operation.report && operation.report.finalized)}}"></enketo-form>
   </div>
 </ng-template>

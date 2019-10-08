@@ -10,8 +10,8 @@ import { CreateOperationComponent } from './components/edit/create-operation/cre
 import { BasicOperationInfoComponent } from './components/edit/basic-operation-info/basic-operation-info.component';
 import { ReviewComponent } from './components/edit/review/review.component';
 import { OperationAttachmentsComponent } from './components/edit/operation-attachments/operation-attachments.component';
-import { OperationGvesComponent } from './components/edit/operation-gves/operation-gves.component';
-import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-attachments.component';
+import { OperationEntitiesComponent } from './components/edit/operation-entities/operation-entities.component';
+import { EntityAttachmentsComponent } from './components/edit/entity-attachments/entity-attachments.component';
 import { ReportsComponent } from './components/reports/reports.component';
 
 const operationRoutes: Routes = [
@@ -65,11 +65,11 @@ const operationRoutes: Routes = [
       }, {
        path: 'gves/:entityPrototypeId',
        canDeactivate: [PendingChangesGuard],
-       component: OperationGvesComponent,
+       component: OperationEntitiesComponent,
       }, {
         path: 'gves-attachments/:entityPrototypeId',
         canDeactivate: [PendingChangesGuard],
-        component: GveAttachmentsComponent
+        component: EntityAttachmentsComponent
       }, {
         path: 'review',
         component: ReviewComponent,

@@ -1,0 +1,37 @@
+.page-title {
+  padding: .25em 0;
+  // background-color: #8a8a8a;
+  background-color: #17a2b8;
+  background-color: #222;
+  color: #222;
+  min-height: 4em;
+  display: flex;
+  flex-direction: col;
+  align-items: center;
+  margin-bottom: 1em;
+
+  .secondary {
+    font-size: .75em;
+  }
+
+  .title {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    font-size: 1.75em;
+    .main {
+      flex-grow: 1;
+      color: #222;
+      color: #fff;
+    }
+
+    .route {
+      margin-top: -.25em;
+      font-size: .65em;
+      color: #fff;
+      color: #17a2b8;
+      font-weight: bold;
+    }
+  }
+}

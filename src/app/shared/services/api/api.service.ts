@@ -241,19 +241,23 @@ export class ApiService {
     return this.getUrlWrapper(`v2/operation/${id}`, {});
   }
 
-  public saveOperationAttachmentFile(attachment: any): Observable<any> {
+  public saveOperationAttachmentFile(file: any): Observable<any> {
     const fd = new FormData();
-    fd.append('data', attachment.file);
+    fd.append('data', file);
     return this.postToEndpoint('v2/files/forms', {data: fd});
   }
 
-  public saveOperationAttachment(attachment: any, id: number): Observable<any> {
+  public saveOperationAttachment(attachment: any): Observable<any> {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>123')
     if (attachment.id) {
       console.log('updating operation attachment..............');
       console.log(attachment);
-
       return this.putToEndpoint('v2/operation/attachment/' + attachment.id, { data : {opAttachment: attachment}});
-
     } else {
       console.log('saving operation attachment..............');
       console.log(attachment);
@@ -274,7 +278,7 @@ export class ApiService {
       }), catchError((error: any) => this.processError(error)));
   }
 
-  public saveFormFile(file: any, name?: string) {
+  public saveFormFile(file: any, name?: string): any {
     return new Promise(resolve => {
       const fd = new FormData();
       fd.append('data', file, name || file.name);

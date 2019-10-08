@@ -1,13 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-// import { ActivatedRoute, Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-import { OperationService } from '../../services/operation.service';
+import { OperationService } from 'app/shared/services/operation.service';
 import { ReportsService } from '../../services/reports.service';
-
-// const findStep = (url) => {
-  // const route = Object.keys(ROUTES_STEPS).filter(k => url.endsWith(k));
-  // return ROUTES_STEPS[route[0]];
-// };
 
 @Component({
   selector: 'reports',
@@ -22,11 +16,9 @@ export class ReportsComponent implements OnInit {
   constructor(
     private operation: OperationService,
     private reports: ReportsService,
-    // private router: Router,
     private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    console.log('----------------------------')
     this.activatedRoute.params.subscribe(params => {
       this.operationId = params.id;
       this.entityPrototypeId = params.entityPrototypeId;
@@ -42,6 +34,7 @@ export class ReportsComponent implements OnInit {
           })
         });
       } else {
+        console.log('getting attachments for operations.............')
         this.reports.stepIdx = 0;
         this.operation.getAttachments(params.id);
         this.title = 'Operation Attachments';

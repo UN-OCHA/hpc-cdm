@@ -1,72 +1,55 @@
 <form [formGroup]="form" novalidate>
-<div *ngIf="!entry.hide" class="form-panel">
-  <div class="form-title">
-    <i (click)="toggleExpand()" *ngIf="!expanded" class="material-icons">chevron_right</i>
-    <i (click)="toggleExpand()" *ngIf="expanded" class="material-icons">expand_more</i>
-    <span class="form-title">{{title}}</span>
-  </div>
-  <div *ngIf="expanded" class="form-body">
-    <div class="form-content">
+  <div *ngIf="!entry.hide" class="form-panel">
+    <div class="form-title">
+      <i (click)="toggleExpand()" *ngIf="!expanded" class="material-icons">chevron_right</i>
+      <i (click)="toggleExpand()" *ngIf="expanded" class="material-icons">expand_more</i>
+      <span class="form-title">Form {{form.value.formId}}. {{form.value.formName}}</span>
+    </div>
+    <div *ngIf="expanded" class="form-body">
+      <div class="form-content">
         <fieldset>
           <div class="row">
             <div class="form-group col-lg-4">
               <label for="customReference" translate>Form ID</label> <i class="text-danger">*</i>
               <div class="form-id">
                 <label>CF</label>
-                <input class="form-control" type="text" id="customReference" name="customReference" required
-                  (input)="handleNameChange()"/>
-              </div>
-              <div [hidden]="customReference.valid || customReference.pristine"
-                class="alert alert-danger">
-                ID is required
+                <input class="form-control" type="text" formControlName="formId" required/>
               </div>
             </div>
             <div class="form-group col-lg-8">
               <label for="name" translate>Name</label> <i class="text-danger">*</i>
-              <input class="form-control" type="text" id="name" name="name" required
-                (input)="handleNameChange()"/>
-              <div [hidden]="name.valid || name.pristine"
-                class="alert alert-danger">
-                Name is required
-              </div>
+              <input class="form-control" type="text" formControlName="formName" required/>
             </div>
-            <div class="form-group col-lg-8">
-              <label for="filename" translate>Form Definition</label> <i class="text-danger">*</i>
-              <input class="form-control" type="text"
-                  [(ngModel)]="entry.opAttachmentVersion.value.file"
-                  placeholder="{{fileToUpload && fileToUpload.name || 'No file uploaded'}}"
-                  id="filename" name="filename" readonly required
-                  />
-            </div>
-            <div class="form-group col-lg-12">
-              <input [disabled]="uploading" class="form-control-file" id="file" type="file" #file
-                (change)="handleFileInput($event.target.files)"/>
-                <i *ngIf="uploading" class="fa fa-circle-o-notch fa-spin"></i>
+            <div class="form-group col-lg-12 form-definition">
+              <file-upload label="Form Definition" formControlName="formFile" required></file-upload>
             </div>
           </div>
-
         </fieldset>
 
-
-      <div class="top-right">
-        <button *ngIf="!submitted" type="button" class="btn btn-default top-right">
-          {{ 'Copy from...' | translate }}
+        <div class="top-right">
+          <button *ngIf="!submitted" type="button" class="btn btn-default top-right">
+            {{ 'Copy from...' | translate }}
+          </button>
+        </div>
+        <div class="bottom-right">
+          <button *ngIf="entry && entry.id" type="button" class="btn btn-default ">
+            {{ 'Duplicate in...' | translate }}
+          </button>
+        </div>
+      </div>
+      <div *ngIf="!operation.processing" class="form-actions">
+        <button [disabled]="form.invalid || form.pristine" type="button" class="btn btn-save" (click)="save()">
+          {{ 'Save' | translate }}
+        </button>
+        <button *ngIf="entry && entry.id" type="button" class="btn btn-info" (click)="remove()">
+          {{ 'Remove Form' | translate }}
         </button>
       </div>
-      <div class="bottom-right">
-        <button *ngIf="entry && entry.id" type="button" class="btn btn-default ">
-          {{ 'Duplicate in...' | translate }}
+      <div *ngIf="operation.processing" class="form-actions">
+        <button disabled="true" type="button" class="btn btn-save">
+          {{ 'Saving...' | translate }}
         </button>
       </div>
-    </div>
-    <div class="form-actions">
-      <button [disabled]="attachmentForm.form.invalid || uploading" type="button" class="btn btn-save" (click)="save()">
-        {{ 'Save' | translate }}
-      </button>
-      <button *ngIf="entry && entry.id" type="button" class="btn btn-info" (click)="remove()">
-        {{ 'Remove Form' | translate }}
-      </button>
     </div>
   </div>
-</div>
 </form>

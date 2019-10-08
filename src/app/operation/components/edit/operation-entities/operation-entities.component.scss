@@ -1,16 +1,22 @@
 .panel {
+
   .panel-header {
-    margin-top: -2em;
   }
+
   .panel-body {
     background-color: rgba(242, 242, 242, 1);
     border: 1px solid #bbb;
     border-radius: 2px;
-    width: 100%;
     padding: 1em;
 
+    .panel-entities {
+      // min-height: 31.5em;
+    }
+
     .panel-actions {
-      margin-top: 1em;
+      .btn {
+        min-width: 13em;
+      }
     }
   }
 }

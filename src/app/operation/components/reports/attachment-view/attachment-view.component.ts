@@ -2,8 +2,8 @@ import { Component, TemplateRef, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { Router } from '@angular/router';
-import { SubmissionsService } from '../../../services/submissions.service';
-import { OperationService } from '../../../services/operation.service';
+import { OperationService } from 'app/shared/services/operation.service';
+import { SubmissionsService } from 'app/shared/services/submissions.service';
 import { ReportsService } from '../../../services/reports.service';
 
 const STATUS_OPTIONS = ['NOT YET ENTERED', 'ENTERED', 'FINALISED'];
@@ -45,10 +45,11 @@ export class AttachmentViewComponent implements OnInit {
   ngOnInit() {
     this.title= `Form ${this.entryIdx}. ${this.entry.formName}`
     this.status = STATUS_OPTIONS[this.entry.status];
+    console.log(this.entry)
     this.registerForm.reset({
       id: this.entry.formId,
       name: this.entry.formName,
-      filename: this.entry.formFilePath,
+      filename: this.entry.formFile.filepath,
       comments: this.entry.comments,
       reportFrom: this._date(this.operation.reportingWindow.startDate),
       reportTo: this._date(this.operation.reportingWindow.endDate)
@@ -82,7 +83,7 @@ export class AttachmentViewComponent implements OnInit {
   }
 
   openForm(template: TemplateRef<any>) {
-    this.submissions.formUrl = this.entry.formFilePath;
+    this.submissions.formUrl = this.entry.formFile.filepath;
     this.modalRef = this.modalService.show(template, {class: 'modal-lg'});
     document.body.querySelector('#submit-form')
       .addEventListener('click', this.formSubmitClick.bind(this));

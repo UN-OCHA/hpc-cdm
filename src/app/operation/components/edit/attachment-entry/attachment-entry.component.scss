@@ -57,4 +57,14 @@
       }
     }
   }
+
+  .form-definition {
+    .ng-valid, .ng-invalid {
+      border-left: none;
+    }
+  }
+
+  .btn-save {
+    min-width: 10em;
+  }
 }

@@ -43,7 +43,6 @@ export class TextAreaComponent implements ControlValueAccessor, OnInit {
   }
 
   writeValue(value: string): void {
-    console.log(value)
     this.value = value ? value : '';
   }
 
@@ -53,9 +52,4 @@ export class TextAreaComponent implements ControlValueAccessor, OnInit {
   handleChange(value): void {
     this.onChange(value);
   }
-
-  // validate({value}: FormControl) {
-  //   console.log(value);
-  //   return {invalid: this.value.length === 0};
-  // }
 }

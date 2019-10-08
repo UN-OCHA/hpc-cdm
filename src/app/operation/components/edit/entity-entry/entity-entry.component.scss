@@ -41,7 +41,10 @@
 
     .form-content {
       min-height: 15em;
-      padding: 5em 0 1em 1em;
+      padding: 2.5em 0 0 1em;
+      .row:nth-child(2) {
+        margin-top: -1em;
+      }
       .top-right {
         position: absolute;;
         top: .55em;
@@ -62,9 +65,10 @@
   }
 
   .form-actions {
-    padding: 1em;
+    padding: 0 1em 1em 1em;
     button:first-child {
       margin-right: .5em;
+      min-width: 10em;
     }
   }
 }

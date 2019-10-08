@@ -1,11 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-
-import { NgForm } from '@angular/forms';
-import { ApiService } from 'app/shared/services/api/api.service';
-import { CreateOperationService } from 'app/operation/services/create-operation.service';
-import { Attachment } from 'app/operation/models/view.operation.model';
-
-import { ToastrService } from 'ngx-toastr';
+import { Component, OnInit, Input } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { OperationService, Attachment } from 'app/shared/services/operation.service';
 
 @Component({
   selector: 'attachment-entry',
@@ -13,88 +8,41 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./attachment-entry.component.scss']
 })
 export class AttachmentEntryComponent implements OnInit {
-
-  @Input() operationId: any;
-  @Input() gveId: any;
+  form: FormGroup;
   @Input() entry: Attachment;
-  @Input() entryIdx: any;
-
-  @Output() onRefreshList = new EventEmitter();
-  @Output() onDelete = new EventEmitter();
 
   title: string;
-  fileToUpload: any;
-  filePath: any;
   expanded = false;
   submitted = false;
-  uploading = false;
-  @ViewChild('attachmentForm') public attachmentForm: NgForm;
 
   constructor(
-    private api: ApiService,
-    public createOperationService: CreateOperationService,
-    private toastr: ToastrService) {
+    private operation: OperationService,
+    private fb: FormBuilder) {
+    this.form = this.fb.group({
+      id: [''],
+      formId: ['', Validators.required],
+      formName: ['', Validators.required],
+      formFile: ['', Validators.required]
+    });
   }
 
   ngOnInit() {
-    if(!this.entry.id) {
-      this.expanded = true;
-    }
-    if(this.entry) {
-      this.setTitle();
-    }
-  }
-  clearErrors() {
-    this.submitted = false;
-  }
-
-  handleNameChange() {
-    this.clearErrors();
-    this.setTitle();
-  }
-
-  setTitle() {
-    const name = this.entry.opAttachmentVersion.value.name;
-    const customReference = this.entry.opAttachmentVersion.customReference;
-    this.title = `Form ${customReference}. ${name}`;
+    this.form.reset(this.entry);
+    this.operation.selectedAttachment$.subscribe(selected => {
+      this.expanded = selected ? (selected.id == this.entry.id) : false;
+    });
   }
 
   toggleExpand() {
     this.expanded = !this.expanded;
+    this.operation.selectedAttachment = this.expanded ? this.entry : null;
   }
 
   remove() {
-    if(this.entry.id) {
-      this.onDelete.emit(this.entry);
-    }
+    this.operation.removeAttachment(this.entry.id);
   }
 
-  handleFileInput(files: FileList) {
-    this.uploading = true;
-    this.fileToUpload = files.item(0);
-    if(this.fileToUpload) {
-      const xentry = {
-        id: `CF${this.entry.opAttachmentVersion.customReference}`,
-        name: this.entry.opAttachmentVersion.customReference,
-        file: this.fileToUpload
-      };
-      this.api.saveOperationAttachmentFile(xentry).subscribe(result=> {
-        this.entry.opAttachmentVersion.value.file = result.file;
-        this.uploading = false;
-      });
-    }
-  }
-
-  save(){
-    this.submitted = true;
-    if(this.attachmentForm.valid) {
-        this.api.saveOperationAttachment(this.entry,this.operationId).subscribe((result:Attachment) => {
-          Object.assign(this.entry, result);
-          if (this.entry.id) {
-            return this.toastr.success('Attachment updated.', 'Attachment updated');
-          }
-          return this.toastr.success('Attachment created.', 'Attachment created');
-        });
-    }
+  save() {
+    this.operation.saveAttachment(this.form.value, this.entry);
   }
 }

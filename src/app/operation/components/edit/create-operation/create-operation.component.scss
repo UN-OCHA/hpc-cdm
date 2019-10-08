@@ -1,13 +1,13 @@
 .create-operation {
   max-width: 100%;
-  // border: 1px solid red;
+
   margin: 0 auto;
   padding: 0;
 
-  .main-content {
-    max-width: 1200px!important;
+  .container-fluid {
     // border: 1px solid red;
-    margin: 0 auto;
+    padding: 0 3em;
+    min-width: 1140px;
   }
 
   .title {
