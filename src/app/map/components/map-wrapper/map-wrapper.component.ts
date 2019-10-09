@@ -83,7 +83,6 @@ export class MapWrapperComponent implements OnInit {
                   authorizedOperations.push(operation);
               }
 
-              console.log(operation,pR);
               if (pR.objectType === 'opGoverningEntity' && operation.opGoverningEntities && operation.opGoverningEntities.length &&  operation.opGoverningEntities.filter(gE => gE.id === pR.objectId).length) {
                   operation.opGoverningEntities.filter(gE => gE.id === pR.objectId)[0].isEditable = true;
                   operation.isGoverningEntityLead = true;
@@ -93,7 +92,6 @@ export class MapWrapperComponent implements OnInit {
           });
         });
       }
-      console.log(authorizedOperations);
       return authorizedOperations;
     }
   }
