@@ -11,8 +11,8 @@ const { version: appVersion } = require('../../../../../../package.json')
 })
 export class HeaderComponent implements OnInit {
 
-  
-  public appVersion;
+
+  public appVersion: any;
   public title: string;
   public selectedLanguage: string;
 
@@ -23,14 +23,13 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     console.log(appVersion);
-    this.appVersion = appVersion
     if (environment.title) {
       this.title = environment.title;
     }
     this.selectedLanguage = this.translate.currentLang.toUpperCase();
   }
 
-  public setLanguage (language) {
+  public setLanguage (language:any) {
     this.translate.use(language);
     this.selectedLanguage = language.toUpperCase();
   }

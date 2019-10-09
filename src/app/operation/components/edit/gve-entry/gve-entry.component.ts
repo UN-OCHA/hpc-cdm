@@ -83,10 +83,18 @@ export class GveEntryComponent implements OnInit {
           const opAttachments = this.entry.opAttachments || [];
           Object.assign(this.entry, result);
           this.entry.opAttachments = opAttachments;
+
+          if(this.entry && this.entry.opGoverningEntityVersion.activationDate) {
+            this.entry.opGoverningEntityVersion.activationDate = moment(this.entry.opGoverningEntityVersion.activationDate).toDate();
+          }
           return this.toastr.success('Governing entity updated.', 'Governing entity updated');
         } else {
           Object.assign(this.entry, result);
           this.entry.opAttachments = [];
+
+          if(this.entry && this.entry.opGoverningEntityVersion.activationDate) {
+            this.entry.opGoverningEntityVersion.activationDate = moment(this.entry.opGoverningEntityVersion.activationDate).toDate();
+          }
 
           return this.toastr.success('Governing entity create.', 'Governing entity created');
         }
