@@ -1,4 +1,4 @@
-import { Component, TemplateRef, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, TemplateRef, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import entityIcons from './entity.icons';
 
@@ -10,6 +10,7 @@ import entityIcons from './entity.icons';
 export class EntityEntryIconComponent implements OnInit {
   icons = [];
   modalRef: BsModalRef;
+  @Input() icon: any;
   @Output() change: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private modalService: BsModalService) {}

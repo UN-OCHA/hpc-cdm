@@ -1,7 +1,9 @@
 <div class="entity-icon">
   <legend>Icon</legend>
   <div class="icon-button" (click)="openModal(templateIconSelector)">
-    <svg-icon-sprite [src]="icon" [width]="'4em'" [classes]="'styled-icon'"></svg-icon-sprite>    
+    <div class="styled-icon-wrapper">
+      <svg-icon-sprite [src]="icon" [width]="'4em'" [classes]="'styled-icon'"></svg-icon-sprite>
+    </div>
   </div>
   <div class="description">Click to change the icon</div>
 </div>
@@ -15,8 +17,8 @@
   </div>
   <div class="modal-body">
     <div class="all-icons">
-      <div *ngFor="let icon of icons" class="styled-icon-wrapper" (click)="selectIcon(icon)">
-        <svg-icon-sprite [src]="icon" [width]="'4em'" [classes]="'styled-icon'"></svg-icon-sprite>
+      <div *ngFor="let iconName of icons" class="styled-icon-wrapper" (click)="selectIcon(iconName)">
+        <svg-icon-sprite [src]="iconName" [width]="'4em'" [classes]="'styled-icon'"></svg-icon-sprite>
       </div>
     </div>
   </div>

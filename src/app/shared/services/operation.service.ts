@@ -391,6 +391,7 @@ export class OperationService {
       operationId: this.id,
       opEntityPrototypeId: this.selectedEntityPrototype.id,
       opGoverningEntityVersion: {
+        icon: entity.icon,
         technicalArea: entity.technicalArea,
         activationDate: entity.activationDate,
         activationLetter: {

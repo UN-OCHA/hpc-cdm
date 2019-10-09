@@ -37,10 +37,8 @@ export class EntityEntryComponent implements OnInit {
   }
 
   get f() { return this.form.controls; }
-  // clearErrors = () => { this.submitted = false; }
 
   save() {
-    // this.submitted = true;
     this.operation.addEntity(this.form.value, this.entity);
   }
 
@@ -59,5 +57,6 @@ export class EntityEntryComponent implements OnInit {
 
   onIconChange(icon) {
     this.f.icon.setValue(icon);
+    this.f.icon.markAsDirty();
   }
 }

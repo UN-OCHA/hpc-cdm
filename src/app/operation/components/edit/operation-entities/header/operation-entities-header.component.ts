@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { OperationService } from 'app/shared/services/operation.service';
+import { OperationService, Entity } from 'app/shared/services/operation.service';
 
 @Component({
   selector: 'operation-entities-header',
@@ -12,11 +12,18 @@ export class OperationEntitiesHeaderComponent implements OnInit {
   constructor(private operation: OperationService){}
 
   ngOnInit() {
-    // this.operation.entities$.subscribe(entities => {
-    // });
   }
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.operation.entities, event.previousIndex, event.currentIndex);
+  }
+
+  selectEntity(entity: Entity) {
+    this.operation.selectedEntity = entity
+  }
+
+  isSelectedEntity(entity: Entity) {
+    return this.operation.selectedEntity &&
+      this.operation.selectedEntity.id == entity.id;
   }
 }
