@@ -41,6 +41,8 @@
       <div class="project col-lg-9">
         <small class="meta">
           {{ operation.code }}
+          {{ operation.isOperationLead ? 'operation lead ' : ''  }}
+          {{ operation.isGoverningEntityLead ? 'governing entity lead ' : ''  }}
         </small>
         <h3>{{ operation.operationVersion.name }}</h3>
       </div>
@@ -48,7 +50,7 @@
     <div class="row">
       <!-- Example single danger button -->
     <div class="btn-group dropdown ml-2">
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button *ngIf="authService.verifiedUser && (isAdmin || operation.isOperationLead)" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         EDIT
       </button>
       <div class="dropdown-menu">
@@ -70,7 +72,7 @@
 
     </div>
     <div class="btn-group dropdown ml-2">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button *ngIf="authService.verifiedUser && (isAdmin || operation.isOperationLead)" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         CONFIGURATION
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -80,7 +82,7 @@
 
     </div>
     <div class="btn-group dropdown ml-2">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button *ngIf="authService.verifiedUser && (isAdmin || operation.isOperationLead)" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         STATES
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">

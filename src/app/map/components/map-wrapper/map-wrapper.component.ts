@@ -39,7 +39,7 @@ export class MapWrapperComponent implements OnInit {
     this.cdmResults = [];
     this.working = true;
 
-    let options = { scopes: 'entityPrototypes,operationVersion'};
+    let options = { scopes: 'entityPrototypes,operationVersion,attachments'};
 
     this.searchOptions = options;
 
@@ -73,19 +73,27 @@ export class MapWrapperComponent implements OnInit {
       const authorizedOperations = [];
       if (this.authService.participant && this.authService.participant.roles) {
         results.forEach((operation:any) => {
-          console.log(operation.id);
           this.apiService.getPermittedActionsForOperation(operation.id).subscribe(permittedActions=> {
             operation.permittedActions = permittedActions;
           });
           this.authService.participant.roles.forEach((role:any)=> {
             role.participantRoles.forEach((pR:any)=> {
               if (pR.objectType === 'operation' && pR.objectId === operation.id) {
+                  operation.isOperationLead = true;
+                  authorizedOperations.push(operation);
+              }
+
+              console.log(operation,pR);
+              if (pR.objectType === 'opGoverningEntity' && operation.opGoverningEntities && operation.opGoverningEntities.length &&  operation.opGoverningEntities.filter(gE => gE.id === pR.objectId).length) {
+                  operation.opGoverningEntities.filter(gE => gE.id === pR.objectId)[0].isEditable = true;
+                  operation.isGoverningEntityLead = true;
                   authorizedOperations.push(operation);
               }
             });
           });
         });
       }
+      console.log(authorizedOperations);
       return authorizedOperations;
     }
   }
