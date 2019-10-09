@@ -17,6 +17,7 @@ export class EntityEntryComponent implements OnInit {
     private fb: FormBuilder) {
     this.form = this.fb.group({
       id: [''],
+      icon: [''],
       technicalArea: ['', Validators.required],
       activationDate: ['', Validators.required],
       deactivationDate: [''],
@@ -54,5 +55,9 @@ export class EntityEntryComponent implements OnInit {
 
   isDisabledField(field) {
     return this.operation.route === 'EDIT_ENTITY_ATTACHMENTS';
+  }
+
+  onIconChange(icon) {
+    this.f.icon.setValue(icon);
   }
 }

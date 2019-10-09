@@ -12,6 +12,8 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 
+import { IconSpriteModule } from 'ng-svg-icon-sprite';
+
 import { OAuthModule } from 'angular-oauth2-oidc';
 
 import { routing, operationRoutingProviders } from './operation.routes';
@@ -71,6 +73,7 @@ import { EnketoFormService } from './services/enketo-form.service';
     FormsModule,
     BsDropdownModule,
     BsDatepickerModule.forRoot(),
+    IconSpriteModule.forRoot({ path: 'assets/sprites/sprite.svg' }),
     PopoverModule,
     ModalModule,
     ReactiveFormsModule,

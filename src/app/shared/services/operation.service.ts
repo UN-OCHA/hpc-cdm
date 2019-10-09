@@ -25,6 +25,7 @@ export interface Entity {
   id?: any;
   versionId?: any;
   name?: any;
+  icon?: any;
   technicalArea: any;
   activationDate: any;
   deactivationDate: any;
@@ -79,6 +80,7 @@ function buildEntity(ge, v): Entity {
     versionId: v.id,
     name,
     technicalArea: v.technicalArea,
+    icon: v.icon,
     activationDate: moment(v.activationDate).toDate(),
     deactivationDate: moment(v.deactivationDate).toDate(),
     activationLetter: v.activationLetter,
