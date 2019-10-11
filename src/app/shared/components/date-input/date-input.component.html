@@ -3,7 +3,7 @@
 <div class="input-group">
   <input class="form-control"
     [ngClass]="disabled ? '' : required && control.valid ? 'ng-valid' : required ? 'ng-invalid' : ''"
-    [value]="value | date: 'dd/MM/yyyy'"
+    [value]="value"
     [disabled]="disabled"
     #bsDatepicker="bsDatepicker"
     bsDatepicker

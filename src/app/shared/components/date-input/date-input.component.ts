@@ -1,5 +1,6 @@
 import { Optional, Host, SkipSelf, Component, Input, OnInit, forwardRef } from '@angular/core';
 import { ControlContainer, AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import * as moment from 'moment';
 
 @Component({
   selector: 'date-input',
@@ -36,13 +37,13 @@ export class DateInputComponent implements ControlValueAccessor, OnInit {
   }
 
   writeValue(value: string): void {
-    this.value = value ? value : '';
+    if(value && JSON.stringify(value) !== 'null') {
+      this.value = moment(value).format('DD/MM/YYYY');
+    } else {
+      this.value = '';
+    }
   }
+
   registerOnChange(fn: any): void { this.onChange = fn; }
   registerOnTouched(fn: any): void { this.onTouched = fn; }
-
-  // validate({value}: FormControl) {
-  //   console.log(value);
-  //   return {invalid: false};//this.value.length === 0};
-  // }
 }

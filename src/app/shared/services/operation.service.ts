@@ -99,6 +99,10 @@ function buildEntityPrototype(ep): EntityPrototype {
   }
 }
 
+function updatedFile(entity, oldEntity, fieldName): boolean {
+  const field = entity[fieldName];
+  return field && field.name && field.lastModified && !field.id;
+}
 
 @Injectable({providedIn: 'root'})
 export class OperationService {
@@ -385,8 +389,8 @@ export class OperationService {
     });
   }
 
-  formatDbEntity(entity, activationFile, deactivationFile) {
-    return {
+  formatDbEntity(entity, activationFile, deactivationFile): any {
+    const obj: any = {
       id: entity.id,
       operationId: this.id,
       opEntityPrototypeId: this.selectedEntityPrototype.id,
@@ -394,20 +398,31 @@ export class OperationService {
         icon: entity.icon,
         technicalArea: entity.technicalArea,
         activationDate: entity.activationDate,
-        activationLetter: {
-          id: activationFile.id,
-          name: entity.activationLetter.name,
-          filepath: activationFile.file
-        },
-        deactivationDate: entity.deactivationDate,
-        deactivationLetter: {
-          id: deactivationFile.id,
-          name: entity.deactivationLetter.name,
-          filepath: deactivationFile.file
-        },
         notes: entity.notes
       }
     };
+    if(entity.deactivationDate) {
+      obj.opGoverningEntityVersion.deactivationDate = entity.deactivationDate;
+    }
+    if(activationFile) {
+      obj.opGoverningEntityVersion.activationLetter = {
+        id: activationFile.id,
+        name: entity.activationLetter.name,
+        filepath: activationFile.file
+      };
+    } else {
+      obj.opGoverningEntityVersion.activationLetter = null;
+    }
+    if(deactivationFile) {
+      obj.opGoverningEntityVersion.deactivationLetter = {
+        id: deactivationFile.id,
+        name: entity.deactivationLetter.name,
+        filepath: deactivationFile.file
+      };
+    } else {
+      obj.opGoverningEntityVersion.deactivationLetter = null;
+    }
+    return obj;
   }
 
   _saveEntity(entity, activationFile, deactivationFile) {
@@ -427,18 +442,20 @@ export class OperationService {
   addEntity(entity, oldEntity, operationId?: number) {
     const token = new Date().valueOf();
     const refCode = this.selectedEntityPrototype.refCode;
-    if(!entity.activationLetter.id) {
-      let uid = `${refCode}${token}${entity.activationLetter.name}`;
+    if(updatedFile(entity, oldEntity, 'activationLetter')) {
+      let uid = `${refCode}A${token}${entity.activationLetter.name}`;
       this.api.saveFile(entity.activationLetter, uid).subscribe(activationFile=> {
-        if(!entity.deactivationLetter.id) {
-          uid = `${refCode}${token}${entity.deactivationLetter.name}`;
+        if(entity.deactivationLetter && entity.deactivationLetter.name && !entity.deactivationLetter.id) {
+          uid = `${refCode}D${token}${entity.deactivationLetter.name}`;
           this.api.saveFile(entity.deactivationLetter, uid).subscribe(deactivationFile=> {
             this._saveEntity(entity, activationFile, deactivationFile);
           });
+        } else {
+          this._saveEntity(entity, entity.activationLetter, entity.deactivationLetter);
         }
       });
     } else {
-      if(!entity.deactivationLetter.id) {
+      if(updatedFile(entity, oldEntity, 'deactivationLetter')) {
         const uid = `${refCode}${token}${entity.deactivationLetter.name}`;
         this.api.saveFile(entity.deactivationLetter, uid).subscribe(deactivationFile=> {
           this._saveEntity(entity, entity.activationLetter, deactivationFile);

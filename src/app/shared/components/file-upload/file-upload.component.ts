@@ -5,13 +5,11 @@ import { ControlContainer, AbstractControl, ControlValueAccessor, NG_VALUE_ACCES
   selector: 'file-upload',
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => FileUploadComponent),
-      multi: true
-    }
-  ]
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => FileUploadComponent),
+    multi: true
+  }]
 })
 export class FileUploadComponent implements ControlValueAccessor, OnInit {
   @Input() id?: string;
@@ -63,6 +61,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit {
   }
 
   removeFile() {
+    this.onChange(null);
     this.value = {};
   }
 }
