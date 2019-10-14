@@ -9,14 +9,17 @@ import { OperationService, Entity } from 'app/shared/services/operation/operatio
 })
 export class EntityBoxComponent implements OnInit {
   @Input() entity: Entity;
+  selected: boolean;
 
   constructor(private operation: OperationService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.operation.selectedEntity$.subscribe(xentity => {
+      this.selected = xentity && xentity.id === this.entity.id;
+    });
+  }
 
   select() {
-    console.log('selecting...............')
-    console.log(this.entity)
     this.operation.selectedEntity = this.entity;
   }
 }

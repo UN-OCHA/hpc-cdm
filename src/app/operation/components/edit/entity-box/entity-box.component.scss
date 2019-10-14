@@ -1,16 +1,18 @@
-.entity-icon {
+.entity-box {
   border: 1px dashed #888 !important;
   max-width: 9em;
   padding: 1em;
   margin: 0 1em 1em 0;
   cursor: pointer;
 
-  ::ng-deep {
-    .selected {
-      svg {
+  .selected {
+    ::ng-deep {
+      .styled-icon-wrapper {
         border-color: #ee7325!important;
-        path {
-          fill: #ee7325!important;
+        .styled-icon {
+          use {
+            fill: #ee7325!important;
+          }
         }
       }
     }
@@ -25,7 +27,7 @@
       height: 6em;
       border: .5em solid #eee;
       border-radius: 50%;
-      background-color: #fff;//rgba(color(white), 0.5);
+      background-color: #fff;
       background-clip: padding-box;
       path {
         fill: #026CB6;
