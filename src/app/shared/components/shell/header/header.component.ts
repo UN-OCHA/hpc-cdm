@@ -7,11 +7,12 @@ const { version: appVersion } = require('../../../../../../package.json')
 
 @Component({
   selector: 'app-header',
-  templateUrl: './header.component.html'
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
 
-  
+
   public appVersion;
   public title: string;
   public selectedLanguage: string;
