@@ -19,7 +19,7 @@ export class EntityAttachmentsComponent implements OnInit {
       this.operation.loadEntities(params.entityPrototypeId, params.id);
     });
     this.operation.entities$.subscribe(entities => {
-      if(entities.length === 1) {
+      if(entities.length) {
         this.operation.selectedEntity = entities[0];
       }
     })

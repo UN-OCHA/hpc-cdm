@@ -20,6 +20,12 @@ export class OperationEntitiesComponent implements OnInit {
     this.operation.entities$.subscribe(entities => {
       if(entities.length === 0) {
         this.addEntity();
+      } else {
+        if(!this.operation.mode) {
+          this.operation.selectedEntity = entities[entities.length-1];
+        } else {
+          this.operation.selectedEntity = entities[0];
+        }
       }
     })
   }
