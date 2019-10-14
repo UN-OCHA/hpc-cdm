@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'app/shared/services/api/api.service';
-import { OperationService } from 'app/shared/services/operation.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -24,7 +24,7 @@ export class ListAttachmentPrototypeComponent implements OnInit {
         this.prototypes = protos;
       });
       //TODO remove api and use operation to drive the table.
-      this.operation.getEntityPrototypes(params.id);
+      this.operation.loadEntityPrototypes(params.id);
     });
   }
 }

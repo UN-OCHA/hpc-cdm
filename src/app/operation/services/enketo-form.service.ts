@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { IEnketoFormService } from 'ng-enketo-form';
 import { ApiService } from 'app/shared/services/api/api.service';
-import { SubmissionsService } from 'app/shared/services/submissions.service';
+import { SubmissionsService } from 'app/shared/services/operation/submissions.service';
 import fileManager from 'enketo-core/src/js/file-manager';
 
 @Injectable({providedIn: 'root'})

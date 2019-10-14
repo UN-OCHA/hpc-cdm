@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { OperationService, Attachment } from 'app/shared/services/operation.service';
+import { OperationService, Attachment } from 'app/shared/services/operation/operation.service';
 
 @Component({
   selector: 'attachment-entry',

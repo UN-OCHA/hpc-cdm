@@ -167,7 +167,7 @@ export class OperationService {
   set selectedEntity(val: Entity) {
     if(val && this.route === 'EDIT_ENTITY_ATTACHMENTS') {
       this.mode = null;
-      this.getEntityAttachments(val.id, false);
+      this.loadEntityAttachments(val.id, false);
     }
     this._selectedEntity.next(val);
   }
@@ -261,9 +261,9 @@ export class OperationService {
         this.attachments[idx] = {...attachment};
         this.attachments = [...this.attachments];
         if(this.route === 'EDIT_ENTITY_ATTACHMENTS') {
-          this.getEntityAttachments(this.selectedEntity.id);
+          this.loadEntityAttachments(this.selectedEntity.id);
         } else {
-          this.getAttachments(this.id);
+          this.loadAttachments(this.id);
         }
         this.selectedAttachment = attachment;
         this.mode = null;
@@ -310,7 +310,7 @@ export class OperationService {
     }
   }
 
-  getAttachments(operationId: number, route?: string) {
+  loadAttachments(operationId: number, route?: string) {
     this.processing = true;
     if(route) { this.route = route; }
     this.attachments = [];
@@ -333,7 +333,7 @@ export class OperationService {
     })
   }
 
-  getEntityAttachments(entityId: number, includeReports: boolean = true) {
+  loadEntityAttachments(entityId: number, includeReports: boolean = true) {
     this.processing = true;
     this.entityAttachments = [];
     this.api.getGoverningEntity(entityId, ['opAttachments'])
@@ -354,7 +354,7 @@ export class OperationService {
       });
   }
 
-  getEntities(entityPrototypeId: number, operationId?: number) {
+  loadEntities(entityPrototypeId: number, operationId?: number) {
     this.processing = true;
     this.entities = [];
     this.loadOperation(operationId || this.id).subscribe(response => {
@@ -374,14 +374,14 @@ export class OperationService {
     });
   }
 
-  getEntityPrototypes(operationId?: number) {
+  loadEntityPrototypes(operationId?: number) {
     this.loadOperation(operationId || this.id).subscribe(response => {
       this.entityPrototypes = response.opEntityPrototypes
         .map(ep => buildEntityPrototype(ep));
     });
   }
 
-  getEntityPrototype(operationId: number, id: number) {
+  loadEntityPrototype(operationId: number, id: number) {
     this.loadOperation(operationId).subscribe(response => {
       const entityPrototype = response.opEntityPrototypes
         .filter(ep => ep.id === id);
@@ -433,7 +433,7 @@ export class OperationService {
       } else {
         this.toastr.success('Governing entity create.', 'Governing entity created');
       }
-      this.getEntities(this.selectedEntityPrototype.id);
+      this.loadEntities(this.selectedEntityPrototype.id);
       // this.selectedEntity = entity;
       this.mode = null;
     });
@@ -469,7 +469,7 @@ export class OperationService {
   removeEntity(entityId: number) {
     this.api.deleteOperationGve(entityId).subscribe(() => {
       this.toastr.success('Governing entity remove.', 'Governing entity removed');
-      this.getEntities(this.selectedEntityPrototype.id, this.id);
+      this.loadEntities(this.selectedEntityPrototype.id, this.id);
       this.selectedEntity = null;
     })
   }

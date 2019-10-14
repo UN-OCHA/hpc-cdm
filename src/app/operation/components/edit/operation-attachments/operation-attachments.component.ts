@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OperationService } from 'app/shared/services/operation.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
 
 @Component({
   selector: 'operation-attachments',
@@ -14,7 +14,7 @@ export class OperationAttachmentsComponent implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
-      this.operation.getAttachments(params.id, 'EDIT_OPERATION_ATTACHMENTS');
+      this.operation.loadAttachments(params.id, 'EDIT_OPERATION_ATTACHMENTS');
     });
     this.operation.attachments$.subscribe(attachments => {
       if(attachments.length === 0) {

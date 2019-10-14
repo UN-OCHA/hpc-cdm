@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { OperationService, Entity } from 'app/shared/services/operation.service';
+import { OperationService, Entity } from 'app/shared/services/operation/operation.service';
 
 @Component({
   selector: 'operation-entities-header',

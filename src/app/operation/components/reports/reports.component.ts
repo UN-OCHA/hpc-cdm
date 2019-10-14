@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OperationService } from 'app/shared/services/operation.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
 import { ReportsService } from '../../services/reports.service';
 
 @Component({
@@ -23,7 +23,7 @@ export class ReportsComponent implements OnInit {
       this.operationId = params.id;
       this.entityPrototypeId = params.entityPrototypeId;
       if(params.entityPrototypeId) {
-        this.operation.getEntities(params.entityPrototypeId, params.id);
+        this.operation.loadEntities(params.entityPrototypeId, params.id);
         this.operation.entityPrototypes$.subscribe(response => {
           response.forEach((ep, idx) => {
             if(ep.id == params.entityPrototypeId) {
@@ -34,10 +34,14 @@ export class ReportsComponent implements OnInit {
           })
         });
       } else {
-        console.log('getting attachments for operations.............')
         this.reports.stepIdx = 0;
-        this.operation.getAttachments(params.id);
+        this.operation.loadAttachments(params.id);
         this.title = 'Operation Attachments';
+      }
+    });
+    this.operation.selectedEntity$.subscribe(entity => {
+      if(entity) {
+        this.operation.loadEntityAttachments(entity.id);
       }
     });
   }

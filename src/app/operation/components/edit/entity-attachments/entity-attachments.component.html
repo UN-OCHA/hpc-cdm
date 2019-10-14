@@ -1,7 +1,7 @@
 <div class="entity-attachments">
   <entity-attachments-header></entity-attachments-header>
   <p class="description" *ngIf="operation.entities.length > 1 && !operation.selectedEntity">Select one of the above entities to edit attachments.</p>
-  <entity-entry></entity-entry>
+  <entity-entry *ngIf="operation.selectedEntity"></entity-entry>
   <form>
     <div class="panel" *ngIf="operation.entities.length && operation.selectedEntity">
       <div class="panel-body">

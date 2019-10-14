@@ -1,0 +1,8 @@
+<div class="entity-icon" [ngClass]="{'selected': this.operation.selectedEntity && this.operation.selectedEntity.id === entity.id}">
+  <div class="icon-button" (click)="select()">
+    <div class="styled-icon-wrapper">
+      <svg-icon-sprite [src]="entity.icon" [width]="'4em'" [classes]="'styled-icon'"></svg-icon-sprite>
+    </div>
+    <div class="name">{{entity.name}}</div>
+  </div>
+</div>

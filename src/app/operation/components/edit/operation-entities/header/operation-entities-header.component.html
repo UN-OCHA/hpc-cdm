@@ -1,14 +1,7 @@
 <div>
   <div class="operation-entities-header" cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="list" (cdkDropListDropped)="drop($event)">
     <div *ngFor="let entity of operation.entities$ | async" cdkDrag>
-      <div class="entity-icon" (click)="selectEntity(entity)">
-        <div class="icon-button" [ngClass]="{'selected': isSelectedEntity(entity)}">
-          <div class="styled-icon-wrapper">
-            <svg-icon-sprite [src]="entity.icon" [width]="'4em'" [classes]="'styled-icon'"></svg-icon-sprite>
-          </div>
-          <div class="name">{{entity.name}}</div>
-        </div>
-      </div>
+      <entity-box [entity]="entity"></entity-box>
     </div>
   </div>
   <div *ngIf="operation.entities.length > 1" class="description">Drag above to change order or select to edit</div>

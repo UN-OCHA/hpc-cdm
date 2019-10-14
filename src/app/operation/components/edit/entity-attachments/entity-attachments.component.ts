@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OperationService } from 'app/shared/services/operation.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
 
 @Component({
   selector: 'entity-attachments',
@@ -16,7 +16,7 @@ export class EntityAttachmentsComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       this.operation.route = 'EDIT_ENTITY_ATTACHMENTS';
-      this.operation.getEntities(params.entityPrototypeId, params.id);
+      this.operation.loadEntities(params.entityPrototypeId, params.id);
     });
     this.operation.entities$.subscribe(entities => {
       if(entities.length === 1) {

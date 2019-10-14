@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { OperationService } from 'app/shared/services/operation.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
 
 @Component({
   selector: 'entity-attachments-header',

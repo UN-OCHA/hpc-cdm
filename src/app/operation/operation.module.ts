@@ -32,6 +32,7 @@ import { OperationEntitiesComponent } from './components/edit/operation-entities
 import { OperationEntitiesHeaderComponent } from './components/edit/operation-entities/header/operation-entities-header.component';
 import { AttachmentEntryComponent } from './components/edit/attachment-entry/attachment-entry.component';
 import { EntityEntryComponent } from './components/edit/entity-entry/entity-entry.component';
+import { EntityBoxComponent } from './components/edit/entity-box/entity-box.component';
 import { EntityEntryIconComponent } from './components/edit/entity-entry/icon/entity-entry-icon.component';
 import { EntityAttachmentsComponent } from './components/edit/entity-attachments/entity-attachments.component';
 import { EntityAttachmentsHeaderComponent } from './components/edit/entity-attachments/header/entity-attachments-header.component';
@@ -59,6 +60,7 @@ import { EnketoFormService } from './services/enketo-form.service';
     OperationEntitiesHeaderComponent,
     AttachmentEntryComponent,
     AttachmentViewComponent,
+    EntityBoxComponent,
     EntityEntryComponent,
     EntityEntryIconComponent,
     EntityAttachmentsComponent,

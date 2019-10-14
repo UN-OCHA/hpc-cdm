@@ -2,8 +2,8 @@ import { Component, TemplateRef, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { Router } from '@angular/router';
-import { OperationService } from 'app/shared/services/operation.service';
-import { SubmissionsService } from 'app/shared/services/submissions.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
+import { SubmissionsService } from 'app/shared/services/operation/submissions.service';
 import { ReportsService } from '../../../services/reports.service';
 
 const STATUS_OPTIONS = ['NOT YET ENTERED', 'ENTERED', 'FINALISED'];
@@ -101,9 +101,9 @@ export class AttachmentViewComponent implements OnInit {
       this.operation.report = response;
 
       if(this.router.url.indexOf('entityreports') > 0) {
-        this.operation.getEntityAttachments(this.operation.selectedEntity.id);
+        this.operation.loadEntityAttachments(this.operation.selectedEntity.id);
       } else {
-        this.operation.getAttachments(this.operation.id);
+        this.operation.loadAttachments(this.operation.id);
       }
     });
   }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OperationService } from 'app/shared/services/operation.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
 import { ReportsService } from '../../../services/reports.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class ReportsNavigationComponent implements OnInit {
         route: `/operation/${this.operation.id}/reports`,
         id: undefined
       }];
-      this.operation.getEntityPrototypes();
+      this.operation.loadEntityPrototypes();
       this.operation.entityPrototypes$.subscribe(response => {
         response.forEach((ep, idx) => {
           if(this.steps.filter(s => s.name === ep.value.name.en.plural).length === 0) {
