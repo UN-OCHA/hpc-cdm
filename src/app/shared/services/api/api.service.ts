@@ -249,22 +249,16 @@ export class ApiService {
     return this.getUrlWrapper(`v2/operation/${id}`, {});
   }
 
-  public saveOperationAttachmentFile(attachment: any): Observable<any> {
+  public saveOperationAttachmentFile(file: any): Observable<any> {
     const fd = new FormData();
-    fd.append('data', attachment.file);
+    fd.append('data', file);
     return this.postToEndpoint('v2/files/forms', {data: fd});
   }
 
-  public saveOperationAttachment(attachment: any, id: number): Observable<any> {
+  public saveOperationAttachment(attachment: any): Observable<any> {
     if (attachment.id) {
-      console.log('updating operation attachment..............');
-      console.log(attachment);
-
       return this.putToEndpoint('v2/operation/attachment/' + attachment.id, { data : {opAttachment: attachment}});
-
     } else {
-      console.log('saving operation attachment..............');
-      console.log(attachment);
       return this.postToEndpoint('v2/operation/attachment', { data : {opAttachment: attachment}});
     }
   }
@@ -282,7 +276,7 @@ export class ApiService {
       }), catchError((error: any) => this.processError(error)));
   }
 
-  public saveFormFile(file: any, name?: string) {
+  public saveFormFile(file: any, name?: string): any {
     return new Promise(resolve => {
       const fd = new FormData();
       fd.append('data', file, name || file.name);
@@ -295,6 +289,17 @@ export class ApiService {
   public getFormFile(file: any): Observable<any> {
     const url = this.buildUrl(`public/files/cdm/${file}`);
     return this.http.get(url, {});
+  }
+
+  // TODO: we have attachment files (files/forms),
+  // form files (files/cdm -- api does not assign unique ids)
+  // and we can also have other files (governing entity activation/deactivation letters);
+  // should we have a different collection?
+  // Using the same here but assigning unique names from the caller.
+  public saveFile(file: any, name?: string): Observable<any> {
+    const fd = new FormData();
+    fd.append('data', file, name || file.name);
+    return this.postToEndpoint('v2/files/cdm', {data: fd});
   }
 
   public getFile(fileUrl: any): Observable<any> {

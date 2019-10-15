@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-// import { ActivatedRoute } from '@angular/router';
-import { OperationService } from '../../../services/operation.service';
+import { ActivatedRoute } from '@angular/router';
+import { OperationService } from 'app/shared/services/operation/operation.service';
 import { ReportsService } from '../../../services/reports.service';
 
 @Component({
@@ -10,25 +10,39 @@ import { ReportsService } from '../../../services/reports.service';
 })
 export class ReportsNavigationComponent implements OnInit {
   steps = [];
+  operationId: number;
+  entityPrototypeId: number;
 
   constructor(
     private operation: OperationService,
-    private reports: ReportsService) {
+    private reports: ReportsService,
+    private activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit() {
-    this.steps = [
-      {
+    this.activatedRoute.params.subscribe(params => {
+      this.operationId = params.id;
+      this.entityPrototypeId = params.entityPrototypeId;
+      this.steps = [{
         name: 'Operation',
         title: 'Operation Attachments',
-        route: `/operation/${this.operation.id}/reports`
-      },
-      {
-        name: 'HCT/ICCGs',
-        title: 'HCT/ICCGs',
-        route: `/operation/${this.operation.id}/entityreports`
-      }
-    ]
+        route: `/operation/${this.operation.id}/reports`,
+        id: undefined
+      }];
+      this.operation.loadEntityPrototypes();
+      this.operation.entityPrototypes$.subscribe(response => {
+        response.forEach((ep, idx) => {
+          if(this.steps.filter(s => s.name === ep.value.name.en.plural).length === 0) {
+            this.steps.push({
+              name: ep.value.name.en.plural,
+              title: ep.value.name.en.plural,
+              route: `/operation/${this.operation.id}/entityreports/${ep.id}`,
+              id: ep.id
+            });
+          }
+        });
+      });
+    });
   }
 
   nextStep() {

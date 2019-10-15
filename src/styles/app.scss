@@ -281,3 +281,38 @@ textarea {
 .ng-invalid:not(form)  {
   border-left: 5px solid #a94442; /* red */
 }
+
+.container-fluid {
+  padding: 0 3em!important;
+}
+
+.styled-icon-wrapper {
+  cursor: pointer;
+  width: 6em;
+  height: 6em;
+  margin: 0 .5em .5em 0;
+  border: .5em solid #eee;
+  border-radius: 50%;
+  background-clip: padding-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: #407CCA;
+  padding-left: .5em;
+  // transition: color ease-in-out 0.3s;
+
+  &:hover, &:focus {
+    color: #ee7325;
+    border: .5em solid #ffd0b5;
+  }
+
+  ::ng-deep {
+    .styled-icon {
+      use {
+        fill: #fff;
+        stroke: currentColor;
+        stroke-width: 1.35;
+      }
+    }
+  }
+}

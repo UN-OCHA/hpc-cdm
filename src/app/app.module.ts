@@ -41,6 +41,8 @@ import { routing, appRoutingProviders } from './app.routes';
 import { AuthGuard } from 'app/shared/services/auth/auth.guard.service';
 import { PendingChangesGuard } from 'app/shared/services/auth/pendingChanges.guard.service';
 import { ApiService } from 'app/shared/services/api/api.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
+import { SubmissionsService } from 'app/shared/services/operation/submissions.service';
 import { UtilitiesService } from 'app/shared/services/utilities.service';
 import { AuthService } from 'app/shared/services/auth/auth.service';
 import { ExportService } from 'app/shared/services/export.service';
@@ -118,6 +120,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     AuthService,
     ExportService,
     UtilitiesService,
+    OperationService,
+    SubmissionsService,
     PromptUpdateService,
     AuthGuard,
     PendingChangesGuard,

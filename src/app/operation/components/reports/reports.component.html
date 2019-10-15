@@ -1,22 +1,23 @@
-<div class="panel p-5">
-  <div class="panel-header">
-    <h3>{{operation.operation && operation.operation.operationVersion.name}}</h3>
-    <h4>{{title}}</h4>
-  </div>
-  <div>
+<div class="panel">
+  <page-title [title]="operation.operation && operation.operation.name" route="Reports"></page-title>
+  <div class="container-fluid">
     <div class="row">
       <div class="col-3 sidebar">
         <reports-nav></reports-nav>
       </div>
-
-      <div *ngIf="!operation.attachmentsLoading && operation.attachments.length && reports.stepIdx === 0" class="col-9 panel-body">
+      <div *ngIf="!entityPrototypeId" class="col-9 panel-body">
+        <div class="message" *ngIf="!operation.processing && operation.attachments.length === 0">This operation does not have any attachments.</div>
         <div *ngFor="let entry of operation.attachments$ | async; let i = index">
           <attachment-view [entry]="entry" [entryIdx]="i+1"></attachment-view>
         </div>
       </div>
-      <div *ngIf="operation.entities.length && reports.stepIdx === 1" class="col-9">
+      <div *ngIf="entityPrototypeId" class="col-9">
+        <div class="panel-body" *ngIf="!operation.processing && operation.entities.length === 0">
+          <div class="message">This operation does not have any entities.</div>
+        </div>
         <entities></entities>
-        <div *ngIf="operation.entityAttachments.length" class="panel-body mt-2">
+        <div class="panel-body p-2 message" *ngIf="operation.selectedEntity && operation.entityAttachments.length === 0">This entity does not have any attachments.</div>
+        <div *ngIf="!operation.processing && operation.entityAttachments.length" class="panel-body mt-2">
           <div *ngFor="let entry of operation.entityAttachments$ | async; let i = index">
             <attachment-view [entry]="entry" [entryIdx]="i+1"></attachment-view>
           </div>

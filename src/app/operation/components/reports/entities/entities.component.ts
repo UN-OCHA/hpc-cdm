@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { OperationService } from '../../../services/operation.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
 
 @Component({
   selector: 'entities',
@@ -8,12 +8,14 @@ import { OperationService } from '../../../services/operation.service';
 })
 export class EntitiesComponent implements OnInit {
 
-  constructor(
-    private operation: OperationService) {}
+  constructor(private operation: OperationService) {}
 
-  ngOnInit() {}
-
-  dummy() {
-    this.operation.getEntities(1);
+  ngOnInit() {
+    this.operation.entities$.subscribe(entities => {
+      if(!this.operation.selectedEntity && entities.length) {
+        this.operation.selectedEntity = entities[0];
+        this.operation.loadEntityAttachments(entities[0].id);
+      }
+    });
   }
 }

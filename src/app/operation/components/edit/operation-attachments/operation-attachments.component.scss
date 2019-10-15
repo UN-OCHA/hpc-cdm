@@ -1,6 +1,5 @@
 .panel {
   .panel-header {
-    margin-top: -2em;
   }
   .panel-body {
     background-color: rgba(242, 242, 242, 1);
@@ -9,8 +8,14 @@
     width: 100%;
     padding: 1em;
 
+    .panel-attachments {
+      min-height: 31.5em;
+    }
+
     .panel-actions {
-      margin-top: 1em;
+      .btn {
+        min-width: 13em;
+      }
     }
   }
 }

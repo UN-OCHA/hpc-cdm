@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { IEnketoFormService } from 'ng-enketo-form';
 import { ApiService } from 'app/shared/services/api/api.service';
-import { SubmissionsService } from 'app/operation/services/submissions.service';
+import { SubmissionsService } from 'app/shared/services/operation/submissions.service';
 import fileManager from 'enketo-core/src/js/file-manager';
 
 @Injectable({providedIn: 'root'})
@@ -15,7 +15,7 @@ export class EnketoFormService implements IEnketoFormService {
       if(typeof file === 'string') {
         return await this.api.getFormFileUrl(file);
       } else if(file && file.name) {
-        var timestamp = new Date().getUTCMilliseconds();
+        var timestamp = new Date().valueOf();
         // This is a temporary url to preview files
         const name = `${timestamp}${file.name}`;
         await this.api.saveFormFile(file, name);

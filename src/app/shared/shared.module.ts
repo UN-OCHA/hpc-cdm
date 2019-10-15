@@ -15,13 +15,23 @@ import { IsValidDateValidatorDirective } from './directives/is-valid-date.direct
 
 import { DateInputFormatterDirective } from './directives/date-input-formatter.directive';
 import { InputErrorTextComponent } from './components/input-error-text/input-error-text.component';
+import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { DateInputComponent } from './components/date-input/date-input.component';
+import { TextAreaComponent } from './components/text-area/text-area.component';
+import { PageTitleComponent } from './components/page-title/page-title.component';
 import { AppMinDirective } from './directives/min.directive';
 import { AppMaxDirective } from './directives/max.directive';
+
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 @NgModule({
   declarations: [
     // Components
+    PageTitleComponent,
     HeaderStatisticComponent,
+    FileUploadComponent,
+    DateInputComponent,
+    TextAreaComponent,
 
     // Pipes
     GroupByPipe,
@@ -38,11 +48,18 @@ import { AppMaxDirective } from './directives/max.directive';
     AppMinDirective,
     AppMaxDirective,
   ],
-  imports: [BrowserModule],
+  imports: [
+    BrowserModule,
+    BsDatepickerModule.forRoot()
+  ],
   providers: [],
   exports: [
     TranslateModule,
     HeaderStatisticComponent,
+    PageTitleComponent,
+    FileUploadComponent,
+    DateInputComponent,
+    TextAreaComponent,
     InputErrorTextComponent,
 
     GroupByPipe,

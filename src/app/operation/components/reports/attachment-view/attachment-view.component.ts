@@ -2,8 +2,8 @@ import { Component, TemplateRef, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { Router } from '@angular/router';
-import { SubmissionsService } from '../../../services/submissions.service';
-import { OperationService } from '../../../services/operation.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
+import { SubmissionsService } from 'app/shared/services/operation/submissions.service';
 import { ReportsService } from '../../../services/reports.service';
 
 const STATUS_OPTIONS = ['NOT YET ENTERED', 'ENTERED', 'FINALISED'];
@@ -48,7 +48,7 @@ export class AttachmentViewComponent implements OnInit {
     this.registerForm.reset({
       id: this.entry.formId,
       name: this.entry.formName,
-      filename: this.entry.formFilePath,
+      filename: this.entry.formFile.filepath,
       comments: this.entry.comments,
       reportFrom: this._date(this.operation.reportingWindow.startDate),
       reportTo: this._date(this.operation.reportingWindow.endDate)
@@ -82,7 +82,7 @@ export class AttachmentViewComponent implements OnInit {
   }
 
   openForm(template: TemplateRef<any>) {
-    this.submissions.formUrl = this.entry.formFilePath;
+    this.submissions.formUrl = this.entry.formFile.filepath;
     this.modalRef = this.modalService.show(template, {class: 'modal-lg'});
     document.body.querySelector('#submit-form')
       .addEventListener('click', this.formSubmitClick.bind(this));
@@ -101,9 +101,9 @@ export class AttachmentViewComponent implements OnInit {
       this.operation.report = response;
 
       if(this.router.url.indexOf('entityreports') > 0) {
-        this.operation.getEntityAttachments(this.operation.selectedEntityIdx);
+        this.operation.loadEntityAttachments(this.operation.selectedEntity.id);
       } else {
-        this.operation.getAttachments(this.operation.id);
+        this.operation.loadAttachments(this.operation.id);
       }
     });
   }

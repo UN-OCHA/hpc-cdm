@@ -7,7 +7,11 @@
     border: 1px solid #bbb;
     border-radius: 2px;
     width: 100%;
-    padding: 1em 1em 0 1em;    
+    padding: 1em 1em 0 1em;
+
+    .message {
+      padding: 0 1em 1em 1em;
+    }
 
     .panel-actions {
       margin-top: 1em;

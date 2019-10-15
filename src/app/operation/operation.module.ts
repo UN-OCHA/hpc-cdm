@@ -12,6 +12,8 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 
+import { IconSpriteModule } from 'ng-svg-icon-sprite';
+
 import { OAuthModule } from 'angular-oauth2-oidc';
 
 import { routing, operationRoutingProviders } from './operation.routes';
@@ -26,12 +28,14 @@ import { ReviewComponent } from './components/edit/review/review.component';
 import { ReviewBasicComponent } from './components/edit/review/review-basic/review-basic.component';
 import { ReviewGoverningEntitiesComponent } from './components/edit/review/review-governing-entities/review-governing-entities.component';
 import { OperationAttachmentsComponent } from './components/edit/operation-attachments/operation-attachments.component';
-import { OperationGvesComponent } from './components/edit/operation-gves/operation-gves.component';
-import { OperationGvesIconsComponent } from './components/edit/operation-gves/icons/operation-gves-icons.component';
+import { OperationEntitiesComponent } from './components/edit/operation-entities/operation-entities.component';
+import { OperationEntitiesHeaderComponent } from './components/edit/operation-entities/header/operation-entities-header.component';
 import { AttachmentEntryComponent } from './components/edit/attachment-entry/attachment-entry.component';
-import { GveEntryComponent } from './components/edit/gve-entry/gve-entry.component';
-import { GveEntryIconComponent } from './components/edit/gve-entry/icon/gve-entry-icon.component';
-import { GveAttachmentsComponent } from './components/edit/gve-attachments/gve-attachments.component';
+import { EntityEntryComponent } from './components/edit/entity-entry/entity-entry.component';
+import { EntityBoxComponent } from './components/edit/entity-box/entity-box.component';
+import { EntityEntryIconComponent } from './components/edit/entity-entry/icon/entity-entry-icon.component';
+import { EntityAttachmentsComponent } from './components/edit/entity-attachments/entity-attachments.component';
+import { EntityAttachmentsHeaderComponent } from './components/edit/entity-attachments/header/entity-attachments-header.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { ReportsNavigationComponent } from './components/reports/navigation/navigation.component';
 import { AttachmentViewComponent } from './components/reports/attachment-view/attachment-view.component';
@@ -52,13 +56,15 @@ import { EnketoFormService } from './services/enketo-form.service';
     ReviewGoverningEntitiesComponent,
 
     OperationAttachmentsComponent,
-    OperationGvesComponent,
-    OperationGvesIconsComponent,
+    OperationEntitiesComponent,
+    OperationEntitiesHeaderComponent,
     AttachmentEntryComponent,
     AttachmentViewComponent,
-    GveEntryComponent,
-    GveEntryIconComponent,
-    GveAttachmentsComponent,
+    EntityBoxComponent,
+    EntityEntryComponent,
+    EntityEntryIconComponent,
+    EntityAttachmentsComponent,
+    EntityAttachmentsHeaderComponent,
     ReportsComponent,
     ReportsNavigationComponent,
     EntitiesComponent
@@ -69,6 +75,7 @@ import { EnketoFormService } from './services/enketo-form.service';
     FormsModule,
     BsDropdownModule,
     BsDatepickerModule.forRoot(),
+    IconSpriteModule.forRoot({ path: 'assets/sprites/sprite.svg' }),
     PopoverModule,
     ModalModule,
     ReactiveFormsModule,

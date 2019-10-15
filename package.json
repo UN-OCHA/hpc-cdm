@@ -9,7 +9,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e --environment test",
     "e2e-travis": "ng e2e --devServerTarget=\"ngShell:serve:travisTest\" --port=49152",
-    "ci": "npm run unit && npm run e2e-travis"
+    "ci": "npm run unit && npm run e2e-travis",
+    "generate:svg-sprite": "svg2sprite ./src/assets/icons ./src/assets/sprites/sprite.svg --stripAttrs fill --stripAttrs stroke --stripAttrs id --stripAttrs width --stripAttrs height"
   },
   "private": true,
   "dependencies": {
@@ -40,6 +41,7 @@
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.26",
     "ng-enketo-form": "0.0.1-beta.10",
+    "ng-svg-icon-sprite": "^1.6.1",
     "ng2-date-picker": "^2.10.2",
     "ng2-json-editor": "^0.25.12",
     "ngx-bootstrap": "^3.1.2",
@@ -58,12 +60,12 @@
     "@angular/cli": "~7.3.9",
     "@angular/compiler-cli": "~7.2.0",
     "@angular/language-service": "~7.2.0",
-    "@types/lodash": "^4.14.118",
-    "@types/node": "~8.9.4",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
-    "css-loader": "^0.28.11",
+    "@types/lodash": "^4.14.118",
+    "@types/node": "~8.9.4",
     "codelyzer": "~4.5.0",
+    "css-loader": "^0.28.11",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.0.0",
@@ -72,6 +74,7 @@
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.4.0",
+    "svg2sprite-cli": "^2.0.1",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
     "typescript": "~3.2.2"

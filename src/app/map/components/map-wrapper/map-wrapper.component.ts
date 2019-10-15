@@ -73,9 +73,9 @@ export class MapWrapperComponent implements OnInit {
       const authorizedOperations = [];
       if (this.authService.participant && this.authService.participant.roles) {
         results.forEach((operation:any) => {
-          this.apiService.getPermittedActionsForOperation(operation.id).subscribe(permittedActions=> {
+          /*this.apiService.getPermittedActionsForOperation(operation.id).subscribe(permittedActions=> {
             operation.permittedActions = permittedActions;
-          });
+          });*/
           this.authService.participant.roles.forEach((role:any)=> {
             role.participantRoles.forEach((pR:any)=> {
               if (pR.objectType === 'operation' && pR.objectId === operation.id) {
