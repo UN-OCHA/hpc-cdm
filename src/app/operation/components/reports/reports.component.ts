@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { OperationService } from 'app/shared/services/operation/operation.service';
 import { ReportsService } from '../../services/reports.service';
+import { AuthService } from 'app/shared/services/auth/auth.service';
 
 @Component({
   selector: 'reports',
@@ -12,13 +13,27 @@ export class ReportsComponent implements OnInit {
   title: string;
   operationId: number;
   entityPrototypeId: number;
+  public isAdmin = false;
 
   constructor(
     private operation: OperationService,
+    private authService: AuthService,
     private reports: ReportsService,
     private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
+    if (!this.authService.participant) {
+      this.authService.fetchParticipant().subscribe(participant => {
+        if (participant && participant.roles) {
+          this.isAdmin = participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin');
+        }
+      });
+    } else {
+      if (this.authService.participant && this.authService.participant.roles) {
+        this.isAdmin = this.authService.participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin');
+      }
+    }
+
     this.activatedRoute.params.subscribe(params => {
       this.operationId = params.id;
       this.entityPrototypeId = params.entityPrototypeId;

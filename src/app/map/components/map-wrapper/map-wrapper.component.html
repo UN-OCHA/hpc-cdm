@@ -8,15 +8,25 @@
 
 <div class="header-results border-bottom sticky-top bg-light" *ngIf="cdmResults">
   <div class="row" *ngIf="cdmResults && cdmResults.length">
-    <div class="col-lg-10">
+    <div class="col-lg-6">
       <ul class="search-stats d-inline-block mb-0 pt-1">
         <li>
           {{ cdmResults.length }} Operations
         </li>
       </ul>
     </div>
-    <div class="col-lg-2">
-      <a class="btn btn-primary" routerLink="/operation/create">{{ 'New operation' | translate }}</a>
+    <div *ngIf="authService.verifiedUser && isAdmin" class="col-lg-6">
+      <ul class="list-group list-group-horizontal">
+      <li *ngIf="authService.verifiedUser && isAdmin" class="nav-item px-3 d-flex align-items-center">
+        <a  class="btn btn-primary" routerLink="/operation/create">{{ 'New operation' | translate }}</a>
+      </li>
+      <li *ngIf="authService.verifiedUser && isAdmin" class="nav-item px-3 d-flex align-items-center">
+        <a class="btn btn-primary" routerLink="/admin/blueprints">{{ 'Operation blueprints' | translate }}</a>
+      </li>
+      <li *ngIf="authService.verifiedUser && isAdmin" class="nav-item px-3 d-flex align-items-center">
+        <a class="btn btn-primary" routerLink="/reporting-window">{{ 'Reporting windows' | translate }}</a>
+      </li>
+      </ul>
     </div>
   </div>
 
@@ -31,6 +41,8 @@
       <div class="project col-lg-9">
         <small class="meta">
           {{ operation.code }}
+          {{ operation.isOperationLead ? 'operation lead ' : ''  }}
+          {{ operation.isGoverningEntityLead ? 'governing entity lead ' : ''  }}
         </small>
         <h3>{{ operation.operationVersion.name }}</h3>
       </div>
@@ -38,7 +50,7 @@
     <div class="row">
       <!-- Example single danger button -->
     <div class="btn-group dropdown ml-2">
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button *ngIf="authService.verifiedUser && (isAdmin || operation.isOperationLead)" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         EDIT
       </button>
       <div class="dropdown-menu">
@@ -60,7 +72,7 @@
 
     </div>
     <div class="btn-group dropdown ml-2">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button *ngIf="authService.verifiedUser && (isAdmin || operation.isOperationLead)" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         CONFIGURATION
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -70,7 +82,7 @@
 
     </div>
     <div class="btn-group dropdown ml-2">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button *ngIf="authService.verifiedUser && (isAdmin || operation.isOperationLead)" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         STATES
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">

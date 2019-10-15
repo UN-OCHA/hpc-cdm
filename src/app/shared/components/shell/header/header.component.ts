@@ -24,14 +24,13 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     console.log(appVersion);
-    this.appVersion = appVersion
     if (environment.title) {
       this.title = environment.title;
     }
     this.selectedLanguage = this.translate.currentLang.toUpperCase();
   }
 
-  public setLanguage (language) {
+  public setLanguage (language:any) {
     this.translate.use(language);
     this.selectedLanguage = language.toUpperCase();
   }

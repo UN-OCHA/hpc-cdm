@@ -223,6 +223,14 @@ export class ApiService {
     return this.getUrlWrapper('v2/operation/' + id + '/comments');
   }
 
+  public getPermittedActionsForOperation (id): Observable<any> {
+    let params={
+      operationId: id
+    };
+    console.log(params);
+    return this.getUrlWrapper('v2/operationRole/permittedActions',{params});
+  }
+
   public getOperation(id: number, operationVersionId = 'latest'): Observable<any> {
     let params={
       scopes: 'entityPrototypes,attachmentPrototypes,locations,emergencies,operationVersion,attachments'

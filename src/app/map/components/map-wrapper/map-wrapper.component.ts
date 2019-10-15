@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
-import * as moment from 'moment';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 
 import { ApiService } from 'app/shared/services/api/api.service';
+import { AuthService } from 'app/shared/services/auth/auth.service';
 
 @Component({
   selector: 'app-map-wrapper',
@@ -11,37 +11,17 @@ import { ApiService } from 'app/shared/services/api/api.service';
 })
 export class MapWrapperComponent implements OnInit {
 
-  public currentYear: any = this.getRelevantYear();
-
   public loading = false;
 
-  public emptyQuery = {
-    latest: true,
-    search: '',
-    date: this.currentYear,
-    limit: 50,
-    searchRepresentation: '',
-    searchDate: null,
-    order: 'id',
-    orderDirection: 'desc'
-  }
-
-  public query = _.cloneDeep(this.emptyQuery);
-
-  public activeSidebar = 'history';
-  public activeButton = 'myProjects';
-
-  public isClusterLead: boolean | any = false;
-
-  public savedSearches = [];
+  public isAdmin: boolean | any = false;
 
   public currentPage = 1;
   public page = [];
 
-  public options;
-  public searchOptions;
+  public options: any;
+  public searchOptions: any;
 
-  public cdmResults;
+  public cdmResults: any;
 
   typeaheadNoResults = false;
   working = false;
@@ -49,47 +29,70 @@ export class MapWrapperComponent implements OnInit {
   public hideMap = true;
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private authService: AuthService
   ) {
   }
 
   ngOnInit() {
-    delete this.query.date;
-
-    this.query.date = {
-      start: moment().startOf('year').format('YYYY-MM-DD'),
-      end: moment().add(1, 'y').endOf('year').format('YYYY-MM-DD')
-    }
 
     this.cdmResults = [];
     this.working = true;
 
-    let options = { scopes: 'entityPrototypes,operationVersion'};
-    //let options = { scopes: 'entityPrototypes,planVersion'};
+    let options = { scopes: 'entityPrototypes,operationVersion,attachments'};
 
     this.searchOptions = options;
 
     this.loading = true;
 
+    if (!this.authService.participant) {
+      this.authService.fetchParticipant().subscribe(participant => {
+        if (participant && participant.roles) {
+          this.isAdmin = participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin');
+        }
+      });
+    } else {
+      if (this.authService.participant && this.authService.participant.roles) {
+        this.isAdmin = this.authService.participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin');
+      }
+    }
+
     this.apiService.getOperations(options)
-    //this.apiService.getPlans(options)
       .subscribe(results => {
-        this.cdmResults = results;
+        this.cdmResults = this.processSearchResults(results);
         this.loading = false;
-        //this.processSearchResults(this.cdmResults);
-
         this.page = this.cdmResults.slice(0,10);
-
         this.working = false;
       });
   }
 
-  private getRelevantYear () {
-    const thisMoment = moment();
-    if (thisMoment.month() >= 8) { // remember it's 0 based.
-      return thisMoment.add(1, 'year').year()
+  private processSearchResults (results:any) {
+    if (this.isAdmin) {
+      return results;
     } else {
-      return thisMoment.year();
+      const authorizedOperations = [];
+      if (this.authService.participant && this.authService.participant.roles) {
+        results.forEach((operation:any) => {
+          /*this.apiService.getPermittedActionsForOperation(operation.id).subscribe(permittedActions=> {
+            operation.permittedActions = permittedActions;
+          });*/
+          this.authService.participant.roles.forEach((role:any)=> {
+            role.participantRoles.forEach((pR:any)=> {
+              if (pR.objectType === 'operation' && pR.objectId === operation.id) {
+                  operation.isOperationLead = true;
+                  authorizedOperations.push(operation);
+              }
+
+              if (pR.objectType === 'opGoverningEntity' && operation.opGoverningEntities && operation.opGoverningEntities.length &&  operation.opGoverningEntities.filter(gE => gE.id === pR.objectId).length) {
+                  operation.opGoverningEntities.filter(gE => gE.id === pR.objectId)[0].isEditable = true;
+                  operation.isGoverningEntityLead = true;
+                  authorizedOperations.push(operation);
+              }
+            });
+          });
+        });
+      }
+      return authorizedOperations;
     }
   }
 
