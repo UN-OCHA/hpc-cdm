@@ -514,7 +514,7 @@ export class OperationService {
     return from(p);
   }
 
-  private checkPermissionOperation(operationId) {
+  /*private checkPermissionOperation(operationId) {
     if (!this.authService.participant) {
       this.authService.fetchParticipant().subscribe(participant => {
         if (participant && participant.roles) {
@@ -573,5 +573,5 @@ export class OperationService {
       });
     }
     return ge.isEditable;
-  }
+    }*/
 }
