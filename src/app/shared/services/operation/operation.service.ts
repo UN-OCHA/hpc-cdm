@@ -148,6 +148,7 @@ export class OperationService {
   constructor(
     submissions: SubmissionsService,
     api: ApiService,
+    authService: AuthService,
     toastr: ToastrService) {
     this.api = api;
     this.authService = authService;
@@ -513,7 +514,7 @@ export class OperationService {
     return from(p);
   }
 
-  private checkPermissionOperation(operationId) {
+  /*private checkPermissionOperation(operationId) {
     if (!this.authService.participant) {
       this.authService.fetchParticipant().subscribe(participant => {
         if (participant && participant.roles) {
@@ -540,7 +541,6 @@ export class OperationService {
         });
       });
     }
-    console.log(haveAccess);
     return haveAccess;
   }
   private checkPermissionGe(ge) {
@@ -573,5 +573,5 @@ export class OperationService {
       });
     }
     return ge.isEditable;
-  }
+    }*/
 }
