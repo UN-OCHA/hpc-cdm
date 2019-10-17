@@ -4,67 +4,8 @@ import { ApiService } from 'app/shared/services/api/api.service';
 import { SubmissionsService } from './submissions.service';
 import { ToastrService } from 'ngx-toastr';
 import { OperationState, EntityState, AttachmentState } from './operation.state';
-import { Operation, Entity, EntityPrototype, Attachment } from './operation.models';
-import * as moment from 'moment';
-
-
-function buildOperation(op): Operation {
-  const v = op.operationVersion;
-  return {
-    version: v.code,
-    name: v.name,
-    description: v.description
-  }
-}
-
-function buildAttachment(att, report?: any): Attachment {
-  const v = att.opAttachmentVersion;
-  const value = report
-    && report.dataReportVersion
-    && report.dataReportVersion.value;
-  const finalized = value && value.finalized;
-  const comments = value && value.comments;
-  return {
-    id: att.id,
-    status: !report ? 0 : !finalized ? 1 : 2,
-    versionId: v.id,
-    formId: v.customReference,
-    formName: v.value.name,
-    formFile: v.value.file,
-    comments
-  };
-}
-
-const ENTITY_NAME_LIMIT = 10;
-function buildEntity(ge, v): Entity {
-  const ta = v.technicalArea;
-  const limit = ENTITY_NAME_LIMIT;
-  const tooLong = ta.length > limit;
-  let name = ta.slice(0,  tooLong ? limit : ta.length);
-  name += tooLong ? '...' : '';
-  return {
-    id: ge.id,
-    versionId: v.id,
-    name,
-    technicalArea: v.technicalArea,
-    icon: v.icon,
-    activationDate: moment(v.activationDate).toDate(),
-    deactivationDate: moment(v.deactivationDate).toDate(),
-    activationLetter: v.activationLetter,
-    deactivationLetter: v.deactivationLetter,
-    notes: v.notes
-  };
-}
-
-function buildEntityPrototype(ep): EntityPrototype {
-  const version = ep.opEntityPrototypeVersion;
-  return {
-    id: ep.id,
-    type: version.type,
-    refCode: version.refCode,
-    value: version.value,
-  }
-}
+import { Entity, EntityPrototype, Attachment } from './operation.models';
+import { buildOperation, buildEntity, buildEntityPrototype, buildAttachment } from './operation.builders';
 
 function updatedFile(entity, oldEntity, fieldName): boolean {
   const field = entity[fieldName];
