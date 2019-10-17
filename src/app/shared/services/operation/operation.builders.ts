@@ -3,7 +3,8 @@
  * Intended to decouple the api vs ui formats to provides a single point
  * of reference which should:
  * - simplify maintenance on any future api response updates/enhancements
- * - make obvious/transparent/traceable the data being used for each response
+ * - make obvious/transparent/traceable the data being used from each response
+ * - increase code testability 
  */
 import { Operation, Entity, EntityPrototype, Attachment } from './operation.models';
 import * as moment from 'moment';
