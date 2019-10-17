@@ -48,7 +48,6 @@ export class EntityState {
 @Injectable({providedIn: 'root'})
 export class AttachmentState {
   private readonly _attachment = new BehaviorSubject<Attachment>(null);
-
   readonly attachment$ = this._attachment.asObservable();
 
   get attachment(): Attachment { return this._attachment.getValue(); }

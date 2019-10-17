@@ -26,17 +26,17 @@ export class ReportsNavigationComponent implements OnInit {
       this.steps = [{
         name: 'Operation',
         title: 'Operation Attachments',
-        route: `/operation/${this.operation.id}/reports`,
+        route: `/operation/${params.id}/reports`,
         id: undefined
       }];
-      this.operation.loadEntityPrototypes();
+      this.operation.loadEntityPrototypes(params.id);
       this.operation.entityPrototypes$.subscribe(response => {
         response.forEach((ep, idx) => {
           if(this.steps.filter(s => s.name === ep.value.name.en.plural).length === 0) {
             this.steps.push({
               name: ep.value.name.en.plural,
               title: ep.value.name.en.plural,
-              route: `/operation/${this.operation.id}/entityreports/${ep.id}`,
+              route: `/operation/${params.id}/entityreports/${ep.id}`,
               id: ep.id
             });
           }

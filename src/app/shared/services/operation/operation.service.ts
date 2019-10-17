@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, from, forkJoin } from 'rxjs';
+import { Observable, from, forkJoin } from 'rxjs';
 import { ApiService } from 'app/shared/services/api/api.service';
 import { SubmissionsService } from './submissions.service';
 import { ToastrService } from 'ngx-toastr';
@@ -15,27 +15,21 @@ function updatedFile(entity, oldEntity, fieldName): boolean {
 
 @Injectable({providedIn: 'root'})
 export class OperationService {
-  api: ApiService;
-  submissions: SubmissionsService;
-  toastr: ToastrService;
-  operationState: OperationState;
-  entityState: EntityState;
-  routeState: RouteState;
-  attachmentState: AttachmentState;
-  formatter: Formatter;
-  public id: number;
+  private api: ApiService;
+  private submissions: SubmissionsService;
+  private toastr: ToastrService;
+  private operationState: OperationState;
+  private entityState: EntityState;
+  private routeState: RouteState;
+  private attachmentState: AttachmentState;
+  private formatter: Formatter;
   public reportingWindow: any;
   public report: any;
   newAttachment = {id: null, formId: '', formName: '', formFile: null};
 
-  private readonly _selectedAttachmentId = new Subject<number>();
-
-  readonly selectedAttachmentId$ = this._selectedAttachmentId.asObservable();
-
   constructor(
     submissions: SubmissionsService,
     api: ApiService,
-    // authService: AuthService,
     formatter: Formatter,
     operationState: OperationState,
     entityState: EntityState,
@@ -52,6 +46,7 @@ export class OperationService {
   }
 
   // State related exposed functions
+  get id(): number { return this.operationState.operation.id; }
   get operation(): Operation { return this.operationState.operation; }
   get attachments(): Attachment[] { return this.operationState.attachments; };
   get attachments$(): Observable<Attachment[]> { return this.operationState.attachments$; };
@@ -64,7 +59,29 @@ export class OperationService {
   get selectedEntityPrototype(): EntityPrototype { return this.entityState.prototype; };
   get selectedEntity(): Entity { return this.entityState.entity; };
   get selectedEntity$(): Observable<Entity> { return this.entityState.entity$; };
-  set selectedAttachment(val: Attachment) { this.attachmentState.attachment = val; }
+  set selectedAttachment(val: Attachment) {
+
+    if(val && this.routeState.mode === 'REPORTS_VIEW') {
+      this.api.getReport(val.id, this.reportingWindow.id)
+      .subscribe(report => {
+        this.report = report;
+        if(report) {
+          this.report.finalized =
+            report.dataReportVersion &&
+            report.dataReportVersion.value &&
+            report.dataReportVersion.value.finalized;
+          this.submissions.tempSubmission =
+            report.dataReportVersion &&
+            report.dataReportVersion.value &&
+            report.dataReportVersion.value.submission;
+        } else {
+          this.submissions.tempSubmission = {};
+        }
+      });
+    }
+
+    this.attachmentState.attachment = val;
+  }
   set selectedEntity(val: Entity) {
     this.entityState.entity = val;
     if(val && this.routeState.route === 'EDIT_ENTITY_ATTACHMENTS') {
@@ -79,33 +96,13 @@ export class OperationService {
   get mode(): string { return this.routeState.mode; }
   set mode(mode: string) {
     this.routeState.mode = mode;
-    if(val === 'ADD_ENTITY') {
+    if(mode === 'ADD_ENTITY') {
       this.entityState.entity = null;
-    } else if(val === 'ADD_OPERATION_ATTACHMENT') {
+    } else if(mode === 'ADD_OPERATION_ATTACHMENT') {
       this.attachmentState.attachment = this.newAttachment;
-    } else if(val === 'ADD_ENTITY_ATTACHMENT') {
+    } else if(mode === 'ADD_ENTITY_ATTACHMENT') {
       this.attachmentState.attachment = this.newAttachment;
     }
-  }
-
-  set selectedAttachmentId(attachmentId: number) {
-    this.api.getReport(attachmentId, this.reportingWindow.id)
-    .subscribe(report => {
-      this.report = report;
-      if(report) {
-        this.report.finalized =
-          report.dataReportVersion &&
-          report.dataReportVersion.value &&
-          report.dataReportVersion.value.finalized;
-        this.submissions.tempSubmission =
-          report.dataReportVersion &&
-          report.dataReportVersion.value &&
-          report.dataReportVersion.value.submission;
-      } else {
-        this.submissions.tempSubmission = {};
-      }
-    });
-    this._selectedAttachmentId.next(attachmentId);
   }
 
   _saveOperationAttachment(attachment: Attachment) {
@@ -124,7 +121,7 @@ export class OperationService {
         if(this.routeState.route === 'EDIT_ENTITY_ATTACHMENTS') {
           this.loadEntityAttachments(this.entityState.entity.id);
         } else {
-          this.loadAttachments(this.id);
+          this.loadAttachments(this.operationState.operation.id);
         }
         this.attachmentState.attachment = attachment;
         this.routeState.mode = null;
@@ -217,7 +214,7 @@ export class OperationService {
   loadEntities(entityPrototypeId: number, operationId?: number) {
     this.routeState.processing = true;
     this.operationState.entities = [];
-    this.loadOperation(operationId || this.id).subscribe(response => {
+    this.loadOperation(operationId || this.operationState.operation.id).subscribe(response => {
       const opep = response.opEntityPrototypes
         .filter(ep => ep.id == entityPrototypeId);
 
@@ -233,7 +230,8 @@ export class OperationService {
   }
 
   loadEntityPrototypes(operationId?: number) {
-    this.loadOperation(operationId || this.id).subscribe(response => {
+    this.loadOperation(operationId || this.operationState.operation.id)
+    .subscribe(response => {
       this.operationState.entityPrototypes = response.opEntityPrototypes
         .map(ep => buildEntityPrototype(ep));
     });
@@ -290,14 +288,13 @@ export class OperationService {
   removeEntity(entityId: number) {
     this.api.deleteOperationGve(entityId).subscribe(() => {
       this.toastr.success('Governing entity remove.', 'Governing entity removed');
-      this.loadEntities(this.entityState.prototype.id, this.id);
+      this.loadEntities(this.entityState.prototype.id, this.operationState.operation.id);
       this.entityState.entity = null;
     })
   }
 
   private loadOperation(operationId: number): any {
     return from(new Promise(resolve => {
-      this.id = operationId;
       this.ensureReportingWindowExists(operationId).subscribe(() => {
         this.api.getOperation(operationId).subscribe(response => {
           this.operationState.operation = buildOperation(response);
