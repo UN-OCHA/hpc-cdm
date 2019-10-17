@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { OperationService, Entity } from 'app/shared/services/operation/operation.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
+import { Entity } from 'app/shared/services/operation/operation.models';
 
 
 @Component({
