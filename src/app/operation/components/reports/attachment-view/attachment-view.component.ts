@@ -54,7 +54,7 @@ export class AttachmentViewComponent implements OnInit {
       reportTo: this._date(this.operation.reportingWindow.endDate)
     });
     this.operation.selectedAttachment$.subscribe(val => {
-      this.expanded = val.id === this.entry.id;
+      this.expanded = val && val.id === this.entry.id;
     });
   }
 

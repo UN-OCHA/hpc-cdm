@@ -60,7 +60,6 @@ export class OperationService {
   get selectedEntity(): Entity { return this.entityState.entity; };
   get selectedEntity$(): Observable<Entity> { return this.entityState.entity$; };
   set selectedAttachment(val: Attachment) {
-
     if(val && this.routeState.mode === 'REPORTS_VIEW') {
       this.api.getReport(val.id, this.reportingWindow.id)
       .subscribe(report => {
@@ -79,7 +78,6 @@ export class OperationService {
         }
       });
     }
-
     this.attachmentState.attachment = val;
   }
   set selectedEntity(val: Entity) {
@@ -194,21 +192,21 @@ export class OperationService {
     this.routeState.processing = true;
     this.entityState.attachments = [];
     this.api.getGoverningEntity(entityId, ['opAttachments'])
-      .subscribe(response => {
-        const opas = response.opAttachments;
-        if(includeReports) {
-          forkJoin(opas.map(a => this.api.getReport(a.id, this.reportingWindow.id)))
-          .subscribe(reports => {
-            this.entityState.attachments = reports.map((r, i) => {
-              return buildAttachment(opas[i], r);
-            });
-            this.routeState.processing = false;
+    .subscribe(response => {
+      const opas = response.opAttachments;
+      if(includeReports) {
+        forkJoin(opas.map(a => this.api.getReport(a.id, this.reportingWindow.id)))
+        .subscribe(reports => {
+          this.entityState.attachments = reports.map((r, i) => {
+            return buildAttachment(opas[i], r);
           });
-        } else {
-          this.entityState.attachments = opas.map(opa => buildAttachment(opa));
           this.routeState.processing = false;
-        }
-      });
+        });
+      } else {
+        this.entityState.attachments = opas.map(opa => buildAttachment(opa));
+        this.routeState.processing = false;
+      }
+    });
   }
 
   loadEntities(entityPrototypeId: number, operationId?: number) {
@@ -327,65 +325,66 @@ export class OperationService {
     });
     return from(p);
   }
-
-  /*private checkPermissionOperation(operationId) {
-    if (!this.authService.participant) {
-      this.authService.fetchParticipant().subscribe(participant => {
-        if (participant && participant.roles) {
-          if (participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin')) {
-            return true;
-          }
-        }
-      });
-    } else {
-      if (this.authService.participant && this.authService.participant.roles) {
-        if (this.authService.participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin')) {
-          return true;
-        }
-      }
-    }
-    let haveAccess = false;
-    if (this.authService.participant && this.authService.participant.roles) {
-      this.authService.participant.roles.forEach((role:any)=> {
-        role.participantRoles.forEach((pR:any)=> {
-          console.log(pR,operationId);
-          if (pR.objectType === 'operation' && pR.objectId === +operationId) {
-            haveAccess = true;
-          }
-        });
-      });
-    }
-    return haveAccess;
-  }
-  private checkPermissionGe(ge) {
-    ge.isEditable = false;
-    if (!this.authService.participant) {
-      this.authService.fetchParticipant().subscribe(participant => {
-        if (participant && participant.roles) {
-          if (participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin')) {
-            return true;
-          }
-        }
-      });
-    } else {
-      if (this.authService.participant && this.authService.participant.roles) {
-        if (this.authService.participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin')) {
-          return true;
-        }
-      }
-    }
-    if (this.authService.participant && this.authService.participant.roles) {
-      this.authService.participant.roles.forEach((role:any)=> {
-        role.participantRoles.forEach((pR:any)=> {
-          if (pR.objectType === 'operation' && pR.objectId === this.operation.id) {
-            ge.isEditable = true;
-          }
-          if (pR.objectType === 'opGoverningEntity' && pR.objectId  === ge.id) {
-            ge.isEditable = true;
-          }
-        });
-      });
-    }
-    return ge.isEditable;
-    }*/
 }
+
+// TODO revisit this
+// private checkPermissionOperation(operationId) {
+//   if (!this.authService.participant) {
+//     this.authService.fetchParticipant().subscribe(participant => {
+//       if (participant && participant.roles) {
+//         if (participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin')) {
+//           return true;
+//         }
+//       }
+//     });
+//   } else {
+//     if (this.authService.participant && this.authService.participant.roles) {
+//       if (this.authService.participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin')) {
+//         return true;
+//       }
+//     }
+//   }
+//   let haveAccess = false;
+//   if (this.authService.participant && this.authService.participant.roles) {
+//     this.authService.participant.roles.forEach((role:any)=> {
+//       role.participantRoles.forEach((pR:any)=> {
+//         console.log(pR,operationId);
+//         if (pR.objectType === 'operation' && pR.objectId === +operationId) {
+//           haveAccess = true;
+//         }
+//       });
+//     });
+//   }
+//   return haveAccess;
+// }
+// private checkPermissionGe(ge) {
+//   ge.isEditable = false;
+//   if (!this.authService.participant) {
+//     this.authService.fetchParticipant().subscribe(participant => {
+//       if (participant && participant.roles) {
+//         if (participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin')) {
+//           return true;
+//         }
+//       }
+//     });
+//   } else {
+//     if (this.authService.participant && this.authService.participant.roles) {
+//       if (this.authService.participant.roles.find((role:any) => role.name === 'rpmadmin' || role.name === 'hpcadmin')) {
+//         return true;
+//       }
+//     }
+//   }
+//   if (this.authService.participant && this.authService.participant.roles) {
+//     this.authService.participant.roles.forEach((role:any)=> {
+//       role.participantRoles.forEach((pR:any)=> {
+//         if (pR.objectType === 'operation' && pR.objectId === this.operation.id) {
+//           ge.isEditable = true;
+//         }
+//         if (pR.objectType === 'opGoverningEntity' && pR.objectId  === ge.id) {
+//           ge.isEditable = true;
+//         }
+//       });
+//     });
+//   }
+//   return ge.isEditable;
+//   }
