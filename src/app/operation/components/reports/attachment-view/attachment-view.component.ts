@@ -53,8 +53,8 @@ export class AttachmentViewComponent implements OnInit {
       reportFrom: this._date(this.operation.reportingWindow.startDate),
       reportTo: this._date(this.operation.reportingWindow.endDate)
     });
-    this.operation.selectedAttachmentId$.subscribe(val => {
-      this.expanded = val === this.entry.id;
+    this.operation.selectedAttachment$.subscribe(val => {
+      this.expanded = val && val.id === this.entry.id;
     });
   }
 
@@ -64,10 +64,10 @@ export class AttachmentViewComponent implements OnInit {
 
   toggleExpand() {
     if(!this.expanded) {
-      this.operation.selectedAttachmentId = this.entry.id;
+      this.operation.selectedAttachment = this.entry;
       this.expanded = true;
     } else {
-      this.operation.selectedAttachmentId = null;
+      this.operation.selectedAttachment = null;
       this.expanded = false;
     }
   }

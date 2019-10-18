@@ -35,6 +35,7 @@ export class ReportsComponent implements OnInit {
     }
 
     this.activatedRoute.params.subscribe(params => {
+      this.operation.route = 'REPORTS_VIEW';
       this.operationId = params.id;
       this.entityPrototypeId = params.entityPrototypeId;
       if(params.entityPrototypeId) {
