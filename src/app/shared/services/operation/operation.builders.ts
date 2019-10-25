@@ -4,17 +4,22 @@
  * of reference which should:
  * - simplify maintenance on any future api response updates/enhancements
  * - make obvious/transparent/traceable the data being used from each response
- * - increase code testability 
+ * - increase code testability
  */
-import { Operation, Entity, EntityPrototype, Attachment } from './operation.models';
+import { Operation, Entity, EntityPrototype,
+  Attachment, AttachmentPrototype } from './operation.models';
 import * as moment from 'moment';
 
 export function buildOperation(op: any): Operation {
   const v = op.operationVersion;
+  console
   return {
+    id: op.id,
     version: v.code,
     name: v.name,
-    description: v.description
+    description: v.description,
+    entityPrototypes: op.opEntityPrototypes.map(p => buildEntityPrototype(p)),
+    updatedAt: op.updatedAt
   }
 }
 
@@ -64,5 +69,17 @@ export function buildEntityPrototype(ep: any): EntityPrototype {
     type: version.type,
     refCode: version.refCode,
     value: version.value,
+    name: version.value.name
+  }
+}
+
+export function buildAttachmentPrototype(ep: any): AttachmentPrototype {
+  const version = ep.opAttachmentPrototypeVersion;
+  return {
+    id: ep.id,
+    type: version.type,
+    refCode: version.refCode,
+    value: version.value,
+    name: version.value.name
   }
 }

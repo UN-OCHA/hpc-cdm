@@ -1,8 +1,5 @@
 <div class="addParticpant">
-  <page-title
-    [title]="operation.operation && operation.operation.name"
-    route="Configuration"></page-title>  
-  <div class="container-fluid">
+  <operation-page route="Attachments Configuration">
     <div class="row mt-4 mb-3 pb-3">
       <div class="col-sm-6 text-left">
         <h3>Attachment Prototypes</h3>
@@ -30,8 +27,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let prototype of mf.data">
-                <td>{{prototype.opAttachmentPrototypeVersion.refCode}}</td>
-                <td>{{prototype.opAttachmentPrototypeVersion.type}}</td>
+                <td>{{prototype.refCode}}</td>
+                <td>{{prototype.type}}</td>
                 <td align="center"><a href="javascript:;" class="editIcon" title="Edit"
                     [routerLink]="['/admin/operations/attachmentproto', operationId, prototype.id]"><i class="material-icons">edit</i></a>
                 </td>
@@ -45,17 +42,12 @@
               </tr>
             </tfoot>
           </table>
-          <div *ngIf="blueprints?.length ==0" class="text-danger">
-            No entity prototypes Found..
+          <div *ngIf="prototypes?.length ==0" class="text-danger">
+            No attachment prototypes Found..
           </div>
         </div>
       </div>
     </div>
     <!-- Grid Section -->
-  </div>
-</div>
-<div class="loaderMainPanel" *ngIf="apiService.inProgress">
-  <div class="project-page-loader">
-    <i class="fa fa-circle-o-notch fa-spin"></i>
-  </div>
+  </operation-page>
 </div>

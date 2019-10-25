@@ -1,0 +1,27 @@
+<div *ngIf="op" class="operation-menu">
+  <div *ngIf="participant.isAdmin" class="section">
+    <label>Edit</label>
+    <a [routerLink]="['/operation', op.id, 'edit']">Operations</a>
+    <a [routerLink]="['/operation', op.id, 'edit','attachments']">Operations details</a>
+    <span *ngFor="let eP of op.entityPrototypes">
+      <a [routerLink]="['/operation', op.id, 'edit', 'gves',eP.id ]">{{ eP.name.en.plural }}</a>
+      <a [routerLink]="['/operation', op.id, 'edit', 'gves-attachments',eP.id ]">{{ eP.name.en.plural }} details</a>
+    </span>
+  </div>
+
+  <div class="section">
+    <label>Submit Data</label>
+    <a [routerLink]="['/operation', op.id, 'reports']">New reporting window</a>
+  </div>
+
+  <div *ngIf="participant.isAdmin" class="section">
+    <label>Configuration</label>
+    <a [routerLink]="['/admin/operations', op.id, 'entityprotos']">Entities</a>
+    <a [routerLink]="['/admin/operations', op.id, 'attachmentprotos']">Attachments</a>
+  </div>
+
+  <div class="section">
+    <label>States</label>
+    <a [routerLink]="['/admin/operations', op.id, 'publish']">Publishing & Versions</a>
+  </div>
+</div>

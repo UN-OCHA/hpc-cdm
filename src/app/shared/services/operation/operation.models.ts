@@ -3,6 +3,8 @@ export interface Operation {
   version?: string;
   name: string;
   description?: string;
+  entityPrototypes?: EntityPrototype[];
+  updatedAt?: any;
 }
 
 export interface Attachment {
@@ -33,4 +35,13 @@ export interface EntityPrototype {
   value: any;
   type: string;
   refCode: string;
+  name: any;
+}
+
+export interface AttachmentPrototype {
+  id: number;
+  value: any;
+  type: string;
+  refCode: string;
+  name: any;
 }

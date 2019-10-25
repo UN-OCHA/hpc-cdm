@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from 'app/shared/services/api/api.service';
 import { OperationService } from 'app/shared/services/operation/operation.service';
+import { AttachmentPrototype } from 'app/shared/services/operation/operation.models';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -9,22 +9,19 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: [ './listAttachmentPrototype.component.scss' ]
 })
 export class ListAttachmentPrototypeComponent implements OnInit {
-  public prototypes: any[];
-  public operationId = null;
+  prototypes: AttachmentPrototype[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private operation: OperationService,
-    private apiService: ApiService) {}
+    private operation: OperationService) {}
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
-      this.operationId = params.id
-      this.apiService.getAttachmentPrototypes(this.operationId).subscribe(protos => {
-        this.prototypes = protos;
-      });
-      //TODO remove api and use operation to drive the table.
-      this.operation.loadEntityPrototypes(params.id);
+      this.operation.loadAttachmentPrototypes(params.id);
+    });
+
+    this.operation.attachmentPrototypes$.subscribe(protos => {
+      this.prototypes = protos;
     });
   }
 }

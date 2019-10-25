@@ -12,6 +12,8 @@ import { routing, mapRoutingProviders } from './map.routes';
 
 import { SharedModule } from '../shared/shared.module';
 import { MapWrapperComponent } from './components/map-wrapper/map-wrapper.component';
+import { OperationsComponent } from './components/operations/operations.component';
+import { OperationItemComponent } from './components/operation-item/operation-item.component';
 
 
 @NgModule({
@@ -29,6 +31,8 @@ import { MapWrapperComponent } from './components/map-wrapper/map-wrapper.compon
   ],
   declarations: [
     MapWrapperComponent,
+    OperationsComponent,
+    OperationItemComponent
   ],
   providers: [
     mapRoutingProviders,

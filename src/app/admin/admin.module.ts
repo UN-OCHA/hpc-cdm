@@ -12,6 +12,7 @@ import { DataTableModule } from 'angular-6-datatable';
 
 import { IsValidJSONValidatorDirective } from './directives/is-valid-JSON.directive';
 import { ShowJsonAsFormComponent } from './components/showJsonAsForm/show-json-as-form.component';
+import { OperationPublishComponent } from './components/operation-publish/operation-publish.component';
 import { ListblueprintComponent } from './components/listblueprint/listblueprint.component';
 import { ListAttachmentPrototypeComponent } from './components/listAttachmentPrototype/listAttachmentPrototype.component';
 import { ListEntityPrototypeComponent } from './components/listEntityPrototype/listEntityPrototype.component';
@@ -26,6 +27,7 @@ import { JsonEditorComponent } from './components/jsonEditor/jsonEditor.componen
 
     IsValidJSONValidatorDirective,
 
+    OperationPublishComponent,
     ListblueprintComponent,
     ListAttachmentPrototypeComponent,
     ListEntityPrototypeComponent,

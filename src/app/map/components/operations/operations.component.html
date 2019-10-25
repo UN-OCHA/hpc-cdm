@@ -1,0 +1,27 @@
+<div class="container-fluid map-container h-100">
+  <div *ngIf="loading" class="project-page-loader">
+    <i class="fa fa-circle-o-notch fa-spin"></i>
+  </div>
+  <div class="map-results" >
+    <div class="border-bottom sticky-top bg-light">
+      <div class="operations" *ngIf="app.operations && app.operations.length">
+        <div class="operations-title">
+          Operations ({{ app.operations.length }})
+        </div>
+        <div class="operations-actions" *ngIf="participant.isAdmin">
+          <a class="btn btn-primary" routerLink="/operation/create">{{ 'New operation' | translate }}</a>
+          <a class="btn btn-primary" routerLink="/admin/blueprints">{{ 'Operation blueprints' | translate }}</a>
+          <a class="btn btn-primary" routerLink="/reporting-window">{{ 'Reporting windows' | translate }}</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4" *ngIf="(!app.operations || !app.operations.length) && !working">
+      <p>You currently have no operations. Click here to create a <a class="btn btn-outline-secondary" routerLink="/operation/create">{{ 'New Operation' | translate }}</a></p>
+    </div>
+    <div *ngFor="let operation of app.operations" [ngClass]="{'bg-light': operation.selected}">
+      <operation-item [operation]="operation"></operation-item>
+    </div>
+    <pagination *ngIf="(!app.operations || !app.operations.length) && ! working"  [itemsPerPage]="10" [totalItems]="app.operations.length" [maxSize]="10" [(ngModel)]="currentPage" (pageChanged)="pageChanged($event)"></pagination>
+  </div>
+</div>

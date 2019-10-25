@@ -1,14 +1,12 @@
 <div class="addParticpant">
-  <page-title
-    [title]="operation.operation && operation.operation.name"
-    route="Configuration"></page-title>
-  <div class="container-fluid">
+  <operation-page route="Entities Configuration">
     <div class="row mt-4 mb-3 pb-3">
       <div class="col-sm-6 text-left">
         <h3>Entity Prototypes</h3>
       </div>
       <div class="col-sm-6 text-right">
-        <a class="btn btn-info" href [routerLink]="['/admin/operations/entityproto',operationId]">Add
+        <a class="btn btn-info" href
+        [routerLink]="['/admin/operations/entityproto',operationId]">Add
           Entity Prototype</a>
       </div>
     </div>
@@ -16,7 +14,8 @@
     <div class="row mt-3">
       <div class="col-sm-12">
         <div class="table-responsive">
-          <table class="table table-striped table-bordered tblGrid" *ngIf="prototypes?.length > 0"
+          <table class="table table-striped table-bordered tblGrid"
+            *ngIf="prototypes?.length > 0"
             [mfData]="prototypes" #mf="mfDataTable" [mfRowsOnPage]="25">
             <thead>
               <tr class="bg-light">
@@ -30,8 +29,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let prototype of mf.data">
-                <td>{{prototype.opEntityPrototypeVersion.refCode}}</td>
-                <td>{{prototype.opEntityPrototypeVersion.type}}</td>
+                <td>{{prototype.refCode}}</td>
+                <td>{{prototype.type}}</td>
                 <td align="center"><a href="javascript:;" class="editIcon" title="Edit"
                     [routerLink]="['/admin/operations/entityproto',operationId,prototype.id]"><i class="material-icons">edit</i></a>
                 </td>
@@ -45,17 +44,11 @@
               </tr>
             </tfoot>
           </table>
-          <div *ngIf="blueprints?.length ==0" class="text-danger">
+          <div *ngIf="prototypes?.length ==0" class="text-danger">
             No entity prototypes Found..
           </div>
         </div>
       </div>
     </div>
-    <!-- Grid Section -->
-  </div>
-</div>
-<div class="loaderMainPanel" *ngIf="apiService.inProgress">
-  <div class="project-page-loader">
-    <i class="fa fa-circle-o-notch fa-spin"></i>
-  </div>
+  </operation-page>
 </div>

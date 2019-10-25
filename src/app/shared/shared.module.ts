@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -18,6 +19,9 @@ import { InputErrorTextComponent } from './components/input-error-text/input-err
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { DateInputComponent } from './components/date-input/date-input.component';
 import { TextAreaComponent } from './components/text-area/text-area.component';
+import { OperationPageComponent } from './components/operation-page/operation-page.component';
+import { OperationPageHeaderComponent } from './components/operation-page/header/header.component';
+import { OperationMenuComponent } from './components/operation-menu/operation-menu.component';
 import { PageTitleComponent } from './components/page-title/page-title.component';
 import { AppMinDirective } from './directives/min.directive';
 import { AppMaxDirective } from './directives/max.directive';
@@ -27,6 +31,9 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 @NgModule({
   declarations: [
     // Components
+    OperationPageComponent,
+    OperationPageHeaderComponent,
+    OperationMenuComponent,
     PageTitleComponent,
     HeaderStatisticComponent,
     FileUploadComponent,
@@ -50,12 +57,15 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
   ],
   imports: [
     BrowserModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    RouterModule
   ],
   providers: [],
   exports: [
     TranslateModule,
     HeaderStatisticComponent,
+    OperationPageComponent,
+    OperationMenuComponent,
     PageTitleComponent,
     FileUploadComponent,
     DateInputComponent,

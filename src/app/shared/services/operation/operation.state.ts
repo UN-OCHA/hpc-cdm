@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Operation, Attachment, Entity, EntityPrototype } from './operation.models';
+import { Operation, Attachment, AttachmentPrototype, Entity, EntityPrototype } from './operation.models';
 
 @Injectable({providedIn: 'root'})
 export class OperationState {
   private readonly _operation = new BehaviorSubject<Operation>(null);
   private readonly _attachments = new BehaviorSubject<Attachment[]>([]);
+  private readonly _attachmentPrototypes = new BehaviorSubject<AttachmentPrototype[]>([]);
   private readonly _entities = new BehaviorSubject<Entity[]>([]);
   private readonly _entityPrototypes = new BehaviorSubject<EntityPrototype[]>([]);
   readonly operation$ = this._operation.asObservable();
   readonly attachments$ = this._attachments.asObservable();
+  readonly attachmentPrototypes$ = this._attachmentPrototypes.asObservable();
   readonly entities$ = this._entities.asObservable();
   readonly entityPrototypes$ = this._entityPrototypes.asObservable();
 
@@ -24,6 +26,9 @@ export class OperationState {
 
   get entityPrototypes(): EntityPrototype[] { return this._entityPrototypes.getValue(); }
   set entityPrototypes(val: EntityPrototype[]) { this._entityPrototypes.next(val); }
+
+  get attachmentPrototypes(): AttachmentPrototype[] { return this._attachmentPrototypes.getValue(); }
+  set attachmentPrototypes(val: AttachmentPrototype[]) { this._attachmentPrototypes.next(val); }
 }
 
 @Injectable({providedIn: 'root'})

@@ -4,8 +4,9 @@ import { ApiService } from 'app/shared/services/api/api.service';
 import { SubmissionsService } from './submissions.service';
 import { ToastrService } from 'ngx-toastr';
 import { OperationState, EntityState, AttachmentState, RouteState } from './operation.state';
-import { Operation, Entity, EntityPrototype, Attachment } from './operation.models';
-import { buildOperation, buildEntity, buildEntityPrototype, buildAttachment } from './operation.builders';
+import { Operation, Entity, EntityPrototype, Attachment, AttachmentPrototype } from './operation.models';
+import { buildOperation, buildEntity, buildEntityPrototype,
+  buildAttachmentPrototype, buildAttachment } from './operation.builders';
 import { Formatter } from './operation.formatter';
 
 function updatedFile(entity, oldEntity, fieldName): boolean {
@@ -47,9 +48,12 @@ export class OperationService {
 
   // State related exposed functions
   get id(): number { return this.operationState.operation.id; }
+  get operation$(): Observable<Operation> { return this.operationState.operation$; }
   get operation(): Operation { return this.operationState.operation; }
+  set operation(op: Operation) { this.operationState.operation = op; }
   get attachments(): Attachment[] { return this.operationState.attachments; };
   get attachments$(): Observable<Attachment[]> { return this.operationState.attachments$; };
+  get attachmentPrototypes$(): Observable<AttachmentPrototype[]> { return this.operationState.attachmentPrototypes$ };
   get entities$(): Observable<Entity[]> { return this.operationState.entities$ };
   get entities(): Entity[] { return this.operationState.entities; }
   get entityPrototypes$(): Observable<EntityPrototype[]> { return this.operationState.entityPrototypes$ };
@@ -227,6 +231,14 @@ export class OperationService {
     });
   }
 
+  loadAttachmentPrototypes(operationId?: number) {
+    this.loadOperation(operationId || this.operationState.operation.id)
+    .subscribe(response => {
+      this.operationState.attachmentPrototypes = response.opAttachmentPrototypes
+        .map(ap => buildAttachmentPrototype(ap));
+    });
+  }
+
   loadEntityPrototypes(operationId?: number) {
     this.loadOperation(operationId || this.operationState.operation.id)
     .subscribe(response => {
@@ -291,7 +303,7 @@ export class OperationService {
     })
   }
 
-  private loadOperation(operationId: number): any {
+  loadOperation(operationId: number): any {
     return from(new Promise(resolve => {
       this.ensureReportingWindowExists(operationId).subscribe(() => {
         this.api.getOperation(operationId).subscribe(response => {

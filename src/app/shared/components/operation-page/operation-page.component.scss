@@ -1,0 +1,22 @@
+.operation-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  .page-title-header {
+    width: 100%;
+    .menu {
+      background-color: #222;
+    }
+  }
+
+  .page-title-body {
+    width: 100%;
+    margin-top: 1em;
+  }
+
+  .secondary {
+    font-size: .75em;
+  }
+}
