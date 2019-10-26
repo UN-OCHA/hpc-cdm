@@ -1,15 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { OperationService } from 'app/shared/services/operation/operation.service';
-import { EntityPrototype } from 'app/shared/services/operation/operation.models';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-listentityproto',
-  templateUrl: './listEntityPrototype.component.html',
-  styleUrls: [ './listEntityPrototype.component.scss' ]
+  selector: 'operation-publish',
+  templateUrl: './operation-publish.component.html',
+  styleUrls: [ './operation-publish.component.scss' ]
 })
-export class ListEntityPrototypeComponent implements OnInit {
-  prototypes: EntityPrototype[] = [];
+export class OperationPublishComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -17,11 +15,8 @@ export class ListEntityPrototypeComponent implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
+      // TODO load whatever is needed
       this.operation.loadEntityPrototypes(params.id);
-    });
-
-    this.operation.entityPrototypes$.subscribe(protos => {
-      this.prototypes = protos;
     });
   }
 }

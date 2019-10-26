@@ -10,6 +10,7 @@ import {ListAttachmentPrototypeComponent} from './components/listAttachmentProto
 import {AttachmentPrototypeFormComponent} from './components/attachmentPrototypeForm/attachmentPrototypeForm.component';
 import {ListEntityPrototypeComponent} from './components/listEntityPrototype/listEntityPrototype.component';
 import {EntityPrototypeFormComponent} from './components/entityPrototypeForm/entityPrototypeForm.component';
+import {OperationPublishComponent} from './components/operation-publish/operation-publish.component';
 
 const route = (path, component, roles=['hpcadmin', 'prismadmin']) => {
   return { path, component, canActivate: [AuthGuard],
@@ -19,6 +20,7 @@ const route = (path, component, roles=['hpcadmin', 'prismadmin']) => {
 const adminRoutes: Routes = [
   route('admin/operations/:id/attachmentprotos', ListAttachmentPrototypeComponent),
   route('admin/operations/:id/entityprotos', ListEntityPrototypeComponent),
+  route('admin/operations/:id/publish', OperationPublishComponent),
   route('admin/operations/attachmentproto/:operationId', AttachmentPrototypeFormComponent),
   route('admin/operations/attachmentproto/:operationId/:id', AttachmentPrototypeFormComponent),
   route('admin/operations/entityproto/:operationId', EntityPrototypeFormComponent),

@@ -4,15 +4,84 @@
     <i class="fa fa-circle-o-notch fa-spin"></i>
   </div>
 
-  <page-title *ngIf="!processing && !createOperationService.isNewOperation"
+  <operation-page *ngIf="!processing && !createOperationService.isNewOperation"
       [description] = "createOperationService.operation.operationVersion.code"
-      [title]="createOperationService.operation.operationVersion.name"
-      route="Edit Operation"></page-title>
+      route="Edit Operation">
+      <div class="row">
+        <div class="col-3 sidebar" *ngIf="createOperationService.editMode">
+          <ol *ngIf="createOperationService.operation"
+            class="steps nav nav-pills nav-stacked">
+            <li class="w-100 pt-2 pb-2"  *ngFor="let step of displayRouteSteps; let idx = index;">
+              <a *ngIf="step.accessible"
+                [routerLink]="step.route"
+                href="/operation/"
+                [ngClass]="{'active': step.step === 'basic' && currentStepIdx === 0}"
+                routerLinkActive="active"
+                title="{{step.title}}">
+                <span class="step-indicator">{{ idx + 1 }}</span>
+                {{ step.name }}
+              </a>
+
+              <a *ngIf="!step.accessible"
+                [ngClass]="{'active': (step.step === 'basic' && currentStepIdx === 0) || currentChildRoute === step.step }"
+                title="{{step.title}}">
+                <span class="step-indicator">{{ idx + 1 }}</span>
+                {{ step.name }}
+              </a>
+            </li>
+          </ol>
+        </div>
+
+        <div class="col-9"
+          *ngIf="createOperationService.operation"
+          [ngClass]="{'processing': processing || createOperationService.processing}">
+
+          <router-outlet (activate)='onActivate($event)'></router-outlet>
+
+          <nav class="navbar bg-light mt-2"
+            *ngIf="createOperationService.editMode">
+            <div class="container d-flex justify-content-end">
+              <form class="form-inline">
+                <a type="button"
+                  class="mr-2 btn btn-outline-secondary"
+                  [routerLink]="['/map']"
+                  [queryParams]="{source: 'operation'}"
+                  translate>
+                  {{ 'Close' | translate }}
+                </a>
+                <button *ngIf="currentStepIdx > 0"
+                  type="button"
+                  class="mr-2 btn btn-outline-primary"
+                  (click)="goToPreviousStep(currentChildRoute && currentChildRoute !== 'review')"
+                  translate>
+                  {{ 'Previous' | translate }} <i class="material-icons">arrow_back</i>
+                </button>
+                <button
+                  *ngIf="editable && currentChildRoute !== 'review'"
+                  type="button"
+                  class="mr-2 btn btn-outline-primary"
+                  (click)="save()"
+                  translate>
+                  Save
+                </button>
+                <button
+                  *ngIf="editable && currentChildRoute !== 'review' && currentChildRoute !== 'gves-attachments/:entityPrototypeId'"
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="save('next')">
+                  {{ 'Save & Next' | translate }} <i class="material-icons">arrow_forward</i>
+                </button>
+              </form>
+            </div>
+          </nav>
+        </div>
+      </div>  
+  </operation-page>
 
   <page-title *ngIf="!processing && createOperationService.isNewOperation"
       title="New Operation"></page-title>
 
-  <div class="container-fluid">
+  <div *ngIf="!processing && createOperationService.isNewOperation" class="container-fluid">
     <div class="row">
       <div class="col-3 sidebar" *ngIf="createOperationService.editMode">
         <ol *ngIf="createOperationService.operation"

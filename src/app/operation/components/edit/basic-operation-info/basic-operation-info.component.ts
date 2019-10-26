@@ -3,12 +3,13 @@ import { Subscription ,  Observable } from 'rxjs';
 
 import {map, mergeMap} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
-
+import { ActivatedRoute } from '@angular/router';
 
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
+import { OperationService } from 'app/shared/services/operation/operation.service';
 
 import { Operation } from 'app/operation/models/view.operation.model';
 
@@ -38,7 +39,9 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
 
   constructor(
     public createOperationService: CreateOperationService,
-    public apiService: ApiService
+    public apiService: ApiService,
+    private operationService: OperationService,
+    private activatedRoute: ActivatedRoute
   ) {
     super(createOperationService, apiService);
 
@@ -60,6 +63,12 @@ export class BasicOperationInfoComponent extends CreateOperationChildComponent i
 
     this.childForm.statusChanges
       .subscribe(() => { this.checkValidity() });
+
+    this.activatedRoute.params.subscribe(params => {
+      if(params.id) {
+        this.operationService.loadOperation(params.id);
+      }
+    });
   }
 
   private doneLoading () {

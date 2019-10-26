@@ -1,0 +1,13 @@
+<div *ngIf="op" class="operation-page-header">
+  <div class="container-fluid">
+    <div *ngIf="description" class="secondary">
+      {{ description }}
+    </div>
+    <div class="title">
+      <div class="main">{{ op.name }}</div>
+      <div *ngIf="route" class="route">{{route}}</div>
+    </div>
+
+    <i class="material-icons">more_vert</i>
+  </div>
+</div>
