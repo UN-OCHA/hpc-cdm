@@ -1,0 +1,19 @@
+<div *ngIf="!renderType">
+  <div *ngIf="auth.user" class="login">
+    <a mat-button [matMenuTriggerFor]="menu">
+      <mat-icon>perm_identity</mat-icon> {{auth.user.email}}
+    </a>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="logout()">Logout</button>
+    </mat-menu>
+  </div>
+
+  <div *ngIf="!auth.user" class="login">
+    <a mat-button (click)="login()">
+      <mat-icon>perm_identity</mat-icon> Login
+    </a>
+  </div>
+</div>
+<div *ngIf="renderType=== 'simplelink'" class="simplelink">
+  <a (click)="login()">login</a>
+</div>

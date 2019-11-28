@@ -1,0 +1,35 @@
+$cd-ocha-blue: #026CB6;
+$cd-dark-blue: #025995;
+$cd-primary-bg-color: $cd-ocha-blue;
+$cd-dark-primary-bg-color: $cd-dark-blue;
+
+:host {
+  background: $cd-primary-bg-color;
+  background-image: linear-gradient(-180deg, $cd-primary-bg-color 67%, $cd-dark-primary-bg-color 97%);
+  padding: .5em 0;
+  height: 2em;
+
+  .content {
+    .container {
+      display: flex;
+      flex-direction: row;
+      vertical-align: middle;
+
+      width: 100%;
+      .logo {
+        flex-grow: 1;
+      }
+
+      .links {
+        display: flex;
+        flex-direction: row;
+        vertical-align: middle;
+        margin-top: -.25em;
+        .divider {
+          color: #fff;
+          font-size: 1.75em;
+        }
+      }
+    }    
+  }
+}

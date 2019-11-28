@@ -1,0 +1,30 @@
+<operation-title [operation]="operationService.operation"></operation-title>
+<operation-menu></operation-menu>
+
+<div class="panel">
+  <operation-page route="Reports">
+    <div class="row">
+      <div class="col-3 sidebar">
+        <report-nav></report-nav>
+      </div>
+      <div *ngIf="!entityPrototypeId" class="col-9 panel-body">
+        <div class="message" *ngIf="!operationService.processing && operationService.attachments.length === 0">This operation does not have any attachments.</div>
+        <div *ngFor="let entry of operationService.attachments$ | async; let i = index">
+          <attachment-view [entry]="entry" [entryIdx]="i+1"></attachment-view>
+        </div>
+      </div>
+      <div *ngIf="entityPrototypeId" class="col-9">
+        <div class="panel-body" *ngIf="!operationService.processing && operationService.entities.length === 0">
+          <div class="message">This operation does not have any entities.</div>
+        </div>
+        <entities></entities>
+        <div class="panel-body p-2 message" *ngIf="operationService.selectedEntity && operationService.entityAttachments.length === 0">This entity does not have any attachments.</div>
+        <div *ngIf="!operationService.processing && operationService.entityAttachments.length" class="panel-body mt-2">
+          <div *ngFor="let entry of operationService.entityAttachments$ | async; let i = index">
+            <attachment-view [entry]="entry" [entryIdx]="i+1"></attachment-view>
+          </div>
+        </div>
+      </div>
+    </div>
+  </operation-page>
+</div>

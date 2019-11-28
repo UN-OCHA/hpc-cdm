@@ -1,0 +1,7 @@
+<div class="description">
+  <h2>{{operation.name}}</h2>
+  <h5>Last updated on {{ operation.updatedAt | date:'mediumDate' }}</h5>
+</div>
+<div *ngIf="!expandedElement" class="actions">
+  <mat-icon>more_vert</mat-icon>
+</div>

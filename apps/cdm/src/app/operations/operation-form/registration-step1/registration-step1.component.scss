@@ -1,0 +1,20 @@
+.form-control.ng-touched.ng-invalid{
+    border-color:red;
+}
+
+.step1 {
+  padding: 1em 0;
+
+  .step11 {
+    padding: 1em 0;
+    margin: 2em;
+    min-height: 8em;
+    // border: 1px solid red;
+  }
+
+  .step12 {
+    padding: 1em 0;
+    margin: 2em;
+    min-height: 8em;
+  }
+}

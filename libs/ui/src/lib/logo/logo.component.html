@@ -1,0 +1,54 @@
+<button [matMenuTriggerFor]="menu" class="logo"></button>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item [matMenuTriggerFor]='dss'>Data Sharing Services</button>
+  <button mat-menu-item [matMenuTriggerFor]='fcp'>Financial Contribution & Pooled Funds</button>
+  <button mat-menu-item [matMenuTriggerFor]='rcc'>Response Coordination & Crisis Information</button>
+  <button mat-menu-item [matMenuTriggerFor]='cia'>Corporate Information, Activities & More</button>
+  <button mat-menu-item [matMenuTriggerFor]='gta'>Gateway to all OCHA services</button>
+</mat-menu>
+
+<mat-menu #dss="matMenu">
+  <button mat-menu-item>
+    <a class="hdx" href="https://data.humdata.org/" target="_blank">Humanitarian Data Exchange</a>
+  </button>
+</mat-menu>
+
+<mat-menu #fcp="matMenu">
+  <button mat-menu-item>
+    <a class="cerf" href="https://cerf.un.org/" target="_blank">Central Emergency Response Fund</a>
+  </button>
+  <button mat-menu-item>
+    <a class="fts" href="https://fts.unocha.org/" target="_blank">Financial Tracking Services</a>
+  </button>
+</mat-menu>
+
+<mat-menu #rcc="matMenu">
+  <button mat-menu-item>
+    <a class="events" href="https://events.rwlabs.org/" target="_blank">Humanitarian Events</a>
+  </button>
+  <button mat-menu-item>
+    <a class="hid" href="https://humanitarian.id/" target="_blank">Humanitarian ID</a>
+  </button>
+  <button mat-menu-item>
+    <a class="hrinfo" href="https://humanitarianresponse.info/" target="_blank">Humanitarian Response</a>
+  </button>
+  <button mat-menu-item>
+    <a class="vosocc" href="https://vosocc.unocha.org/" target="_blank">Virtual OSOCC</a>
+  </button>
+</mat-menu>
+
+<mat-menu #cia="matMenu">
+  <button mat-menu-item>
+    <a class="iasc" href="https://www.interagencystandingcommittee.org/" target="_blank">Inter Agency Standing Committee</a>
+  </button>
+  <button mat-menu-item>
+    <a class="ocha" href="http://unocha.org/" target="_blank">United Nations OCHA</a>
+  </button>
+</mat-menu>
+
+<mat-menu #gta="matMenu">
+  <button mat-menu-item>
+    <a class="rw" href="https://reliefweb.int/" target="_blank">ReliefWeb</a>
+  </button>
+</mat-menu>

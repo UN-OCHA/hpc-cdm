@@ -1,0 +1,23 @@
+:host {
+  .content {
+    .container {
+      .mat-table {
+        .mat-column-name {
+          width: 98%;
+        }
+        .mat-column-actions {
+          width: 2%;
+          text-align: right;
+          .mat-button {
+            display: inline-block;
+            margin-left: 1em;
+          }
+          .mat-icon {
+            color: #aaa;
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+}

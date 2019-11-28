@@ -1,0 +1,58 @@
+.entity-icon {
+  padding-top: 1em;
+
+  legend {
+    color: #444;
+    font-size: 1em;
+  }
+  .description {
+    margin: 1em 0 0 0;
+    font-size: .75em;
+  }
+
+  .icon-button {
+    cursor: pointer;
+    margin-left: 1em;
+    background-color: transparent;
+    width: 120px;
+    &:hover {
+      svg {
+        border-color: #f9d5bd;
+        path {
+          fill: #ee7325;
+        }
+      }
+    }
+    &.active {
+      background-color: transparent;
+      color: currentColor;
+      svg {
+        border-color:
+        path {
+          fill: #ee7325;
+        }
+      }
+    }
+    svg {
+      width: 6em;
+      height: 6em;
+      border: .5em solid #eee;
+      border-radius: 50%;
+      background-color: #fff;
+      background-clip: padding-box;
+      path {
+        fill: #026CB6;
+      }
+    }
+    .cluster-name {
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  }
+}
+
+.all-icons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}

@@ -1,0 +1,33 @@
+:host {
+  .content {
+    .container {
+      .mat-expansion-panel {
+        .mat-expansion-panel-header {
+
+          .mat-panel-title {
+            width: 30%;
+          }
+          .mat-panel-description {
+
+          }
+        }
+      }
+      .mat-table {
+        .mat-column-name {
+          width: 30%!important;
+        }
+        .mat-column-description {
+          width: 56%!important;
+          padding: 1em 0;
+        }
+        .mat-column-status {
+          width: 12%!important;
+          padding-left:1em;
+        }
+        .mat-column-actions {
+          width: 2%!important;
+        }
+      }
+    }
+  }
+}

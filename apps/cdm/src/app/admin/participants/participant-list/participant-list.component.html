@@ -1,0 +1,11 @@
+<operation-table
+    title="Participants"
+    [dataSource]="participants"
+    [columns]="tableColumns">
+  <div titleActions>
+    <button mat-raised-button color="warn" routerLink="/participant">Add Participant</button>
+  </div>
+  <div rowActions>
+    <button mat-raised-button color="primary" [routerLink]="['/participants']"><mat-icon>edit</mat-icon> Edit Participant</button>
+  </div>
+</operation-table>

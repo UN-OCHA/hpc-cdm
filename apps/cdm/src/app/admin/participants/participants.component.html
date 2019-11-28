@@ -1,0 +1,11 @@
+<cdm-table
+    title="Participants"
+    [dataSource]=""
+    [columns]="tableColumns">
+  <div titleActions>
+    <button mat-raised-button color="warn" routerLink="/participant">Add Participant</button>
+  </div>
+  <div rowActions>
+    <button mat-raised-button color="primary" [routerLink]="['/participant']"><mat-icon>edit</mat-icon> Edit Participant</button>
+  </div>
+</cdm-table>

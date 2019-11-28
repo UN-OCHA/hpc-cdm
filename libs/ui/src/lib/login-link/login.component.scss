@@ -1,0 +1,20 @@
+:host {
+  .simplelink {
+    display: inline-block;
+    a {
+      cursor: pointer;
+      color: #ee7325;
+    }
+  }
+
+  .login {
+    .mat-button {
+      padding: 0!important;
+      margin-left: 1em;
+    }
+    a {
+      color: #fff!important;
+      cursor: pointer;
+    }
+  }
+}

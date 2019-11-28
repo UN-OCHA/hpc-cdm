@@ -1,0 +1,36 @@
+.operation-item {
+  position: relative;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #545b62;
+    color: #fff;
+    h5 {
+      color: #ddd;
+    }
+    h3 {
+      color: #fff;
+    }
+    .material-icons {
+      color: #fff;
+    }
+  }
+
+  .operation-item-header {
+    padding: 1em;
+    .material-icons {
+      font-size: 2em;
+      position: absolute;
+      right: 0;
+      top: 1em;
+      color: #ddd;
+    }
+  }
+
+  .operation-item-menu {
+    border-top: 1px solid #78818b;
+    padding: .5em 1em;
+    cursor: normal;
+    background-color: #545b62;
+  }
+}

@@ -1,0 +1,15 @@
+<div class="content">
+  <div class="container">
+    <operation-page-header></operation-page-header>
+    <div class="page-title-header" (mouseleave)="showMenu=false">
+      <div class="container-fluid page-title-menu">
+        <operation-menu *ngIf="showMenu"></operation-menu>
+      </div>
+    </div>
+    <div class="page-title-body">
+      <div class="container-fluid">
+        <ng-content></ng-content>
+      </div>
+    </div>    
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<div class="container create-operation">
+  <div *ngIf="!createReportingWindowService.reportingWindow || processing || createReportingWindowService.processing"
+      class="reportingWindow-page-loader">
+    <i class="fa fa-circle-o-notch fa-spin"></i>
+  </div>
+  <div class="row">
+    <div class="col-4 sidebar"
+      *ngIf="createReportingWindowService.editMode">
+      <ol *ngIf="createReportingWindowService.reportingWindow"
+        class="steps nav nav-pills nav-stacked position-fixed">
+        <li class="w-100 pt-2 pb-2"  *ngFor="let step of displayRouteSteps; let idx = index;">
+          <a *ngIf="step.accessible"
+            [routerLink]="step.route"
+            href="/reportingWindow/"
+            [ngClass]="{'active': step.step === 'detail' && currentStepIdx === 0}"
+            routerLinkActive="active"
+            title="{{step.title}}">
+            <span class="step-indicator">{{ idx + 1 }}</span>
+            {{ step.name }}
+          </a>
+        </li>
+      </ol>
+    </div>
+
+    <div class="pt-5 col-8"
+      *ngIf="createReportingWindowService.reportingWindow"
+      [ngClass]="{'processing': processing || createReportingWindowService.processing}">
+      <h1 *ngIf="createReportingWindowService.reportingWindow.value && createReportingWindowService.reportingWindow.value.name && createReportingWindowService.reportingWindow.value.name !== ''; else defaultReportingWindowName">
+        {{ createReportingWindowService.reportingWindow.value.name }}
+      </h1>
+      <ng-template #defaultReportingWindowName><h1 translate>New ReportingWindow</h1></ng-template>
+
+      <div>
+        <small class="text-secondary" *ngIf="createReportingWindowService.reportingWindow.created">
+          Created by {{ createReportingWindowService.reportingWindow.created.participant.name_given }}
+          {{ createReportingWindowService.reportingWindow.created.participant.name_family }} on {{ createReportingWindowService.reportingWindow.created.createdAt | date: 'yyyy-MM-d HH:mm:ss' }}.
+        </small>
+      </div>
+
+      <div>
+        <small class="text-secondary" *ngIf="createReportingWindowService.reportingWindow.lastUpdated">
+          Last updated by {{ createReportingWindowService.reportingWindow.lastUpdated.participant.name_given }}
+          {{ createReportingWindowService.reportingWindow.lastUpdated.participant.name_family }} on {{ createReportingWindowService.reportingWindow.lastUpdated.updatedAt | date: 'yyyy-MM-d HH:mm:ss' }}.
+        </small>
+      </div>
+
+      <router-outlet (activate)='onActivate($event)'></router-outlet>
+
+      <nav class="navbar bg-light fixed-bottom"
+        *ngIf="createReportingWindowService.editMode">
+        <div class="container d-flex justify-content-end">
+          <form class="form-inline">
+            <a type="button"
+              class="mr-2 btn btn-outline-secondary"
+              [routerLink]="['/windows']"
+              [queryParams]="{source: 'reportingWindow'}"
+              translate>
+              {{ 'Close' }}
+            </a>
+            <button *ngIf="currentStepIdx > 0"
+              type="button"
+              class="mr-2 btn btn-outline-primary"
+              (click)="goToPreviousStep(currentChildRoute && currentChildRoute !== 'workflow')"
+              translate>
+              {{ 'Previous' }} <i class="material-icons">arrow_back</i>
+            </button>
+            <button
+              *ngIf="editable"
+              type="button"
+              class="mr-2 btn btn-outline-primary"
+              (click)="save()"
+              translate>
+              Save
+            </button>
+            <button
+              *ngIf="editable && currentChildRoute !== 'workflow'"
+              type="button"
+              class="btn btn-primary"
+              (click)="save('next')">
+              {{ 'Save & Next' }} <i class="material-icons">arrow_forward</i>
+            </button>
+          </form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+<span [ngClass]="{'data-load-finished': createReportingWindowService.reportingWindow && !processing && !createReportingWindowService.processing}"></span>

@@ -1,0 +1,8 @@
+<div>
+  <div class="operation-entities-header" cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="list" (cdkDropListDropped)="drop($event)">
+    <div *ngFor="let entity of operation.entities$ | async" cdkDrag>
+      <entity-box [entity]="entity"></entity-box>
+    </div>
+  </div>
+  <div *ngIf="operation.entities.length > 1" class="description">Drag above to change order or select to edit</div>
+</div>

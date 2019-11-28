@@ -1,0 +1,54 @@
+// @import '../../../../assets/variables.scss';
+$dark-grey: #3f3f3f;
+$light-grey: #dddddd;
+$orange: #ee7325;
+
+:host {
+  border-bottom: 1px solid #ddd;
+  max-height: 4.75em;
+  .content {
+    .container {
+      padding: 1em 0;
+      display: flex;
+      flex-direction: row;
+
+      .app-name {
+        font-weight: bold;
+        line-height: 2.7em;
+        flex-grow: 1;
+
+        a {
+          border: 1px solid #222;
+          border-radius: 2px;
+          text-transform: uppercase;
+          text-decoration: none;
+          background: $light-grey;
+          padding: .75em;
+          text-align: none;
+          color: #444;
+        }
+      }
+
+      .app-links {
+        display: flex;
+        flex-direction: row;
+        .app-status-links {
+          display: flex;
+          flex-direction: row;
+          vertical-align: middle;
+          margin-top: -.75em;
+          .mat-divider {
+            margin-top: 1em;
+          }
+          .help {
+            padding: 1.5em 1em 0 1em;
+            a {
+              color: $orange;
+              text-decoration: none;
+            }
+          }
+        }
+      }
+    }
+  }
+}

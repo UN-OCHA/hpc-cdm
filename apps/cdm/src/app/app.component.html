@@ -1,0 +1,11 @@
+<app-toolbar></app-toolbar>
+<app-nav [name]="name" [version]="ver">
+  <div *ngIf="auth.user?.isAdmin" class="links">
+    <a mat-stroked-button routerLink="/operations">{{ 'Operations' }}</a>
+    <a mat-stroked-button routerLink="/blueprints">{{ 'Blueprints' }}</a>
+    <a mat-stroked-button routerLink="/windows">{{ 'Reporting Windows' }}</a>
+  </div>
+</app-nav>
+<div class="main-content">
+<router-outlet></router-outlet>
+</div>

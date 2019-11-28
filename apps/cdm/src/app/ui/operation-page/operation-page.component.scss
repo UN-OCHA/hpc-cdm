@@ -1,0 +1,31 @@
+.operation-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  .page-title-header {
+    width: 100%;
+    color: #222;
+
+    &:hover {
+      background-color: #545b62;
+      color: #fff;
+      .page-title-menu {
+        border-top: 1px solid #78818b;
+      }
+    }
+    .page-title-menu {
+      border-top: 1px solid #ddd;
+    }
+  }
+
+  .page-title-body {
+    width: 100%;
+    margin-top: 1em;
+  }
+
+  .secondary {
+    font-size: .75em;
+  }
+}

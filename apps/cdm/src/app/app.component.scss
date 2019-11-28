@@ -1,0 +1,18 @@
+$orange: #ee7325;
+:host {
+  display: flex;
+  flex-direction: column;
+  .links {
+    margin-right: 1em;
+    a {
+      margin-left: 1em;
+      .selected {
+        background-color: $orange;
+        color: #fff;
+      }
+    }
+  }
+  .main-content {
+    margin-top: 1em;
+  }
+}

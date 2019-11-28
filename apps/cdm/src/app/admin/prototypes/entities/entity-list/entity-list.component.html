@@ -1,0 +1,11 @@
+<operation-table
+    title="Entity Prototypes"
+    [dataSource]="prototypes"
+    [columns]="tableColumns">
+  <div titleActions>
+    <button mat-raised-button color="warn" routerLink="/eprototype">Add Entity Prototype</button>
+  </div>
+  <div rowActions>
+    <button mat-raised-button color="primary" [routerLink]="['/eprototypes']"><mat-icon>edit</mat-icon> Edit Prototype</button>
+  </div>
+</operation-table>

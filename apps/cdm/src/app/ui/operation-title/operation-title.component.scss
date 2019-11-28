@@ -1,0 +1,23 @@
+:host {
+  width: 100%;
+  .title {
+    display: flex;
+    flex-direction: row;
+    .description {
+      flex-grow: 1;
+      h2 {
+        color: #888;
+        margin-bottom: 0;
+      }
+
+      h5 {
+        color: #555;
+        font-weight: normal;
+        margin-top: .5em;
+      }
+    }
+    .actions {
+      padding-top: 2em;
+    }
+  }
+}
