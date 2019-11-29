@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatIconModule, MatButtonModule, MatTableModule } from '@angular/material';
+import { MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTableModule } from '@angular/material';
 
 import { UIModule } from '@hpc/ui';
 import { CdmUIModule } from '@cdm/ui';
@@ -18,10 +18,9 @@ import { AttachmentPrototypesRoutingModule } from './routing.module';
     AttachmentListComponent
   ],
   imports: [
-    CommonModule,
-    RouterModule,
+    CommonModule, RouterModule,
     FormsModule, ReactiveFormsModule,
-    MatIconModule, MatButtonModule, MatTableModule,
+    MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTableModule,
     UIModule, CdmUIModule,
     AttachmentPrototypesRoutingModule
   ],

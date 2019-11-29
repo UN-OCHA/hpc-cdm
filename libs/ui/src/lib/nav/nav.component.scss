@@ -4,9 +4,10 @@ $light-grey: #dddddd;
 $orange: #ee7325;
 
 :host {
-  border-bottom: 1px solid #ddd;
   max-height: 4.75em;
   .content {
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
     .container {
       padding: 1em 0;
       display: flex;

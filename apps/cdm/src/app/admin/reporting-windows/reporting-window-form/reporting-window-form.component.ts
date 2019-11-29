@@ -1,5 +1,6 @@
 import {zip as observableZip,  Observable } from 'rxjs';
 import {filter} from 'rxjs/operators';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { ApiService, AuthService } from '@hpc/core';
@@ -15,7 +16,7 @@ import { ReportingWindow } from '@hpc/data';
   styleUrls: ['./reporting-window-form.component.scss']
 })
 export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDeactivate {
-
+  form: FormGroup;
   // reportingWindow: ReportingWindow;
   // processing = true;
   // editable = true;
@@ -24,13 +25,20 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
 
   constructor(
     private router: Router,
+    private fb: FormBuilder,
     private route: ActivatedRoute,
     private api: ApiService,
     private auth: AuthService,
     // private rw: ReportingWindowService,
     // private translate: TranslateService,
     // private toastr: ToastrService
-  ) {}
+  ) {
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+      description: ['', Validators.required],
+      context: ['', Validators.required]
+    });
+  }
 
   ngOnInit() {
     // observableZip(

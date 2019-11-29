@@ -1,8 +1,8 @@
-.form-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-container > * {
-  width: 100%;
+.window-form {
+  .mat-radio-group {
+    margin: 1em 0;
+    .mat-radio-button {
+      margin-right: 2em;
+    }
+  }
 }

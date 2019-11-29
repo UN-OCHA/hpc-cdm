@@ -21,10 +21,14 @@ export class BlueprintListComponent implements OnInit {
   columnsToDisplay = ['name', 'description', 'status', 'actions'];
   expandedElement: any | null;
 
+  limit: number = 10;
+  full: boolean = false;
+
   constructor(
     public apiService: ApiService,
     private toastr: ToastrService) {
   }
+
   ngOnInit() {
     this.apiService.getBlueprints().subscribe(blueprints => {
       this.blueprints = blueprints;
@@ -44,6 +48,18 @@ export class BlueprintListComponent implements OnInit {
         }
       });
   }
+
+  handleScroll = (scrolled: boolean) => {
+    console.timeEnd('lastScrolled');
+    // scrolled ? this.getData() : _noop();
+    console.time('lastScrolled');
+  }
+
+  hasMore = () => {
+    // !this.dataSource || this.dataSource.data.length < this.limit;
+    return false;
+  }
+
 }
 
 

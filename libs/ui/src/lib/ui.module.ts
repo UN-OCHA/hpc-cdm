@@ -20,6 +20,8 @@ import { LanguagesComponent } from './languages/languages.component';
 import { LanguagesModule } from './languages/languages.module';
 import { FeedComponent } from './feed/feed.component';
 import { FeedModule } from './feed/feed.module';
+import { ScrollContainerComponent } from './scroll-container/scroll-container.component';
+// import { ScrollContainerModule } from './scroll-container/scroll-container.module';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { SpinnerModule } from './spinner/spinner.module';
 
@@ -27,6 +29,7 @@ import { SpinnerModule } from './spinner/spinner.module';
   declarations: [
     FileUploadComponent,
     JsonEditorComponent,
+    ScrollContainerComponent,
     TextAreaComponent,
     ToolbarComponent,
   ],
@@ -41,6 +44,7 @@ import { SpinnerModule } from './spinner/spinner.module';
     LanguagesModule,
     NavModule,
     FeedModule,
+    // ScrollContainerModule,
     SpinnerModule
   ],
   exports: [
@@ -55,6 +59,7 @@ import { SpinnerModule } from './spinner/spinner.module';
     LogoComponent,
     LanguagesComponent,
     NavComponent,
+    ScrollContainerComponent,
     SpinnerComponent
   ]
 })

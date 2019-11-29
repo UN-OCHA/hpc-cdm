@@ -22,11 +22,8 @@ import { CdmUIModule } from '@cdm/ui';
     BlueprintListComponent
   ],
   imports: [
-    CommonModule,
-    RouterModule,
-    BrowserAnimationsModule,
-    UIModule,
-    CdmUIModule,
+    CommonModule, RouterModule, BrowserAnimationsModule,
+    UIModule, CdmUIModule,
     FormsModule, ReactiveFormsModule,
     BlueprintsRoutingModule,
     MatInputModule, MatFormFieldModule, MatExpansionModule, MatIconModule, MatButtonModule, MatTableModule,

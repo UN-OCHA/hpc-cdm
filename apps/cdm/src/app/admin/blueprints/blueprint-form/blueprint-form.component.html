@@ -1,29 +1,33 @@
-<div class="new-blueprint" >
-  <div class="content p-5">
-    <h1 translate>{{title}}</h1>
-    <form (ngSubmit)="onSubmit()" [formGroup]="form" class="bg-light my-3 border p-5">
-    <fieldset>
-      <div class="form-group">
-        <label for="name" translate>Blueprint Name</label> <i class="text-danger">*</i>
-        <input class="form-control" formControlName="name"
+<div class="blueprint-form">
+  <div class="content">
+    <div class="content-header">
+      <h1 translate>{{title}}</h1>
+    </div>
+    <form (ngSubmit)="onSubmit()" [formGroup]="form">
+
+      <mat-form-field appearance="outline">
+        <input matInput class="form-control" formControlName="name"
+          placeholder="Blueprint Name"
           (input)="clearErrors()" [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
           type="text" id="name" name="name" required>
-      </div>
-      <div class="form-group">
-        <label for="description" translate="">Description</label> <i class="text-danger">*</i>
-        <textarea class="form-control"  formControlName="description" (input)="clearErrors()"
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <textarea matInput
+          placeholder="Description"
+          class="form-control"  formControlName="description" (input)="clearErrors()"
           [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=3
           type="text" id="description" name="description" required></textarea>
+      </mat-form-field>
+
+
+      <label for="description" translate="">JSON Model?</label>
+      <json-editor [json]="blueprint && blueprint.model" (change)="onJsonChange($event)" ></json-editor>
+
+      <div class="buttons">
+        <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
+        <button mat-raised-button [routerLink]="['/blueprints']">Close</button>
       </div>
-      <div class="form-group">
-        <label for="description" translate="">JSON Model?</label>
-        <json-editor [json]="blueprint && blueprint.model" (change)="onJsonChange($event)" ></json-editor>
-      </div>
-      <div class="form-row">
-        <button type="submit" [disabled]="!form.valid" class="btn btn-primary">Save</button>
-        <button type="button" class="btn btn-basic" [routerLink]="['/blueprints']">Close</button>
-      </div>
-    </fieldset>
   </form>
 </div>
 </div>

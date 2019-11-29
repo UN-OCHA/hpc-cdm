@@ -3,9 +3,12 @@
     [dataSource]="prototypes"
     [columns]="tableColumns">
   <div titleActions>
-    <button mat-raised-button color="warn" routerLink="/aprototype">Add Attachment Prototype</button>
+    <button mat-raised-button color="warn"
+      [routerLink]="['/operations', operation.id, 'aprototype']">Add Attachment Prototype</button>
   </div>
   <div rowActions>
-    <button mat-raised-button color="primary" [routerLink]="['/aprototypes']"><mat-icon>edit</mat-icon> Edit Attachment Prototype</button>
+    <button mat-raised-button color="primary" [routerLink]="['/aprototypes']">
+      <mat-icon>edit</mat-icon> Edit Attachment Prototype
+    </button>
   </div>
 </operation-table>

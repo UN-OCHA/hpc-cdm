@@ -2,6 +2,7 @@ $orange: #ee7325;
 :host {
   display: flex;
   flex-direction: column;
+  height: 100%;
   .links {
     margin-right: 1em;
     a {
@@ -13,6 +14,11 @@ $orange: #ee7325;
     }
   }
   .main-content {
-    margin-top: 1em;
+    // overflow-y: scroll;
+    // height: 100%;
+    padding-bottom: 2em;
+  }
+  .mat-stroked-button {
+    background-color: #fff;
   }
 }

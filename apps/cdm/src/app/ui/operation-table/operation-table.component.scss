@@ -1,9 +1,22 @@
 :host {
   .content {
+    .mat-expansion-panel {
+      margin-top: 1em;
+      h1 {
+        color: #888;
+      }
+    }
+
+    .content-header {
+      padding: 0 1em;
+    }
+    
     .container {
-      margin-top: 2em;
-      height: 70em;
-      overflow: auto;
+      // margin-top: 2em;
+      // height: 70em;
+      // overflow: auto;
+
+
 
       .title-row {
         display: flex;
@@ -94,7 +107,7 @@
         .example-element-detail {
           overflow: hidden;
           display: flex;
-          justify-content: flex-end;
+          justify-content: flex-start;
         }
 
         .example-element-symbol {
