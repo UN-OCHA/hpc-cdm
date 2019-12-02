@@ -1,10 +1,6 @@
-<div class="entity-form" >
-  <div class="content">
-    <div class="content-header">
-      <h1 translate>{{title}}</h1>
-    </div>
-
-    <form (ngSubmit)="onSubmit()" [formGroup]="form">
+<operation-page [title]="title">
+  <ng-template #operationPageBodyTemplate>
+    <form class="entity-form" (ngSubmit)="onSubmit()" [formGroup]="form">
       <mat-form-field appearance="outline">
         <input matInput class="form-control" formControlName="refCode"
           placeholder="refCode"
@@ -12,19 +8,22 @@
           type="text" id="refCode" name="refCode" required>
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <input matInput class="form-control"  formControlName="refType" (input)="clearErrors()"
+        <input matInput class="form-control" formControlName="refType"
+          (input)="clearErrors()"
           placeholder="type"
           [ngClass]="{ 'is-invalid': submitted && f.refType.errors }"
           type="text" id="refType" name="refType" required>
       </mat-form-field>
 
       <label for="description" translate="">JSON Model?</label>
-      <json-editor [json]="prototype && prototype.opEntityPrototypeVersion.value" (change)="onJsonChange($event)" ></json-editor>
+      <json-editor
+        [json]="prototype && prototype.opEntityPrototypeVersion.value"
+        (change)="onJsonChange($event)"></json-editor>
 
       <div class="buttons">
         <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
-        <button mat-raised-button class="btn btn-basic" (click)="close()">Close</button>
+        <button mat-raised-button [routerLink]="['/operations', operationId, 'eprototypes']">Close</button>
       </div>
     </form>
-  </div>
-</div>
+  </ng-template>
+</operation-page>

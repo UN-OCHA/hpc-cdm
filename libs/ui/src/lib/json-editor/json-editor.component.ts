@@ -43,6 +43,10 @@ export class JsonEditorComponent implements OnInit {
         }
       }
     };
+    console.log('---------------------------------------------1')
+    console.log(document.getElementById('jsonEditorCode'))
+    console.log(this.options)
+    console.log('---------------------------------------------2')
     this.jsonEditorCode = new JSONEditor(document.getElementById('jsonEditorCode'), this.options.code);
     this.jsonEditorTree = new JSONEditor(document.getElementById('jsonEditorTree'), this.options.tree);
     this.setDefaultOptions();

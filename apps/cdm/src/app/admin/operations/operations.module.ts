@@ -6,7 +6,7 @@ import { OperationPublishComponent } from './operation-publish/operation-publish
 
 import { UIModule } from '@hpc/ui';
 import { CdmUIModule } from '@cdm/ui';
-import { OperationsRoutingModule } from './routing.module';
+import { OperationsRoutingModule } from './operations-routing.module';
 
 @NgModule({
   declarations: [

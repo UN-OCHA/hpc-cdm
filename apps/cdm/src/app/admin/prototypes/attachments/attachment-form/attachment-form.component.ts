@@ -53,9 +53,9 @@ export class AttachmentFormComponent implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
-      if(params.operationId) {
-        this.operationId = params.operationId;
-      }
+      // if(params.operationId) {
+      this.operationId = params.operationId;
+      // }
       if(params.id) {
         this.api.getAttachmentPrototype(params.id).subscribe(proto => {
           this.setMode(proto);

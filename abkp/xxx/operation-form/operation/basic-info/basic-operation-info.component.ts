@@ -5,7 +5,7 @@ import {map, mergeMap} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
+// import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 import { ApiService } from 'app/shared/services/api/api.service';
 import { CreateOperationService } from 'app/operation/services/create-operation.service';
@@ -126,24 +126,6 @@ export class BasicOperationInfoComponent implements OnInit {
 
   public changeTypeaheadNoResults(e: boolean) {
     this.typeaheadNoResults = e;
-  }
-
-  public emergencyTypeaheadOnSelect(e: TypeaheadMatch) {
-    this.createOperationService.operation.emergencies.push(e.item);
-    this.selectedEmergencyName = '';
-  }
-
-  public onDeleteEmergency(idx:any) {
-    this.createOperationService.operation.emergencies.splice(idx, 1);
-  }
-
-  public locationTypeaheadOnSelect(e: TypeaheadMatch) {
-    this.createOperationService.operation.locations.push(e.item);
-    this.selectedLocationName = '';
-  }
-
-  public onDeleteLocation(idx:any) {
-    this.createOperationService.operation.locations.splice(idx, 1);
   }
 
   public checkValidity () {

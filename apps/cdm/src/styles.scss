@@ -307,3 +307,35 @@ form {
 // ::ng-deep .mat-form-field.mat-form-field-invalid .mat-form-field-label {
 //     color: red!important;
 // }
+
+.mat-stroked-button {
+  background-color: #fff;
+}
+
+.operation-page {
+  .mat-stroked-button {
+    background-color: #fff;
+    min-width: 13em;
+  }
+  a {
+    color: #026CB6;
+  }
+}
+
+.cdm-page {
+  .mat-stroked-button {
+    background-color: #fff;
+    min-width: 13em;
+  }
+  a {
+    color: #026CB6;
+  }
+}
+
+.mat-column-expandedDetail {
+  a {
+    color: #026CB6;
+    text-decoration: underline;
+    margin-right: 1em;
+  }
+}

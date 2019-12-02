@@ -1,65 +1,62 @@
-<div class="content">
-  <div class="content-header">
-    <h1>Blueprints</h1>
-    <div class="content-header-actions">
-      <button mat-raised-button color="warn" routerLink="/blueprint">Add Blueprint</button>
-    </div>
-  </div>
-  <div class="container">
+<cdm-page title="Blueprints">
+  <ng-template #cdmPageTitleActionsTemplate>
+    <button mat-stroked-button routerLink="/blueprint">Add Blueprint</button>
+  </ng-template>
+  <ng-template #cdmPageBodyTemplate>
     <div *ngIf="blueprints?.length ==0" class="text-danger">
       No blueprints Found..
     </div>
 
     <scroll-container [more]="hasMore()" [scrollOffset]="2500" [scrollDelay]="3000"
       (scrolled)="handleScroll($event)" [class.full]="full" [class.part]="!full">
-
-    <table *ngIf="blueprints" mat-table [dataSource]="blueprints" multiTemplateDataRows class="mat-elevation-z8">
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>Name</th>
-        <td mat-cell *matCellDef="let element"><h2>{{element.name}}</h2></td>
-      </ng-container>
-      <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef>Description</th>
-        <td mat-cell *matCellDef="let element">{{element.description}}</td>
-      </ng-container>
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Status</th>
-        <td mat-cell *matCellDef="let element">
-          <mat-icon *ngIf="element.status === 'active'">radio_button_checked</mat-icon>
-          <mat-icon *ngIf="element.status === 'disabled'">radio_button_unchecked</mat-icon>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element">
-          <div *ngIf="element !== expandedElement" class="actions">
-            <mat-icon>more_vert</mat-icon>
-          </div>
-        </td>
-      </ng-container>
-
-      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-      <ng-container matColumnDef="expandedDetail">
-        <td mat-cell *matCellDef="let element" [attr.colspan]="4">
-          <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-            <div class="example-element-description">
-              <button mat-raised-button color="primary" [routerLink]="['/blueprints', element.id]"><mat-icon>edit</mat-icon> Edit Blueprint</button>
-              <button mat-raised-button color="primary"><mat-icon>delete</mat-icon> Delete Blueprint</button>
+      <table *ngIf="blueprints" mat-table [dataSource]="blueprints" multiTemplateDataRows class="mat-elevation-z8">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let element"><h2>{{element.name}}</h2></td>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let element">{{element.description}}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-icon *ngIf="element.status === 'active'">radio_button_checked</mat-icon>
+            <mat-icon *ngIf="element.status === 'disabled'">radio_button_unchecked</mat-icon>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <div class="actions">
+              <mat-icon *ngIf="element !== expandedElement">expand_more</mat-icon>
+              <mat-icon *ngIf="element === expandedElement">expand_less</mat-icon>
             </div>
-          </div>
-        </td>
-      </ng-container>
+          </td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+        <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+        <ng-container matColumnDef="expandedDetail">
+          <td mat-cell *matCellDef="let element" [attr.colspan]="4">
+            <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+              <div class="example-element-description">
+                <a [routerLink]="['/blueprints', element.id]">Edit</a>
+                <a [routerLink]="['/blueprints', element.id]">Delete</a>
+              </div>
+            </div>
+          </td>
+        </ng-container>
 
-      <tr mat-row *matRowDef="let element; columns: columnsToDisplay;"
-          class="example-element-row"
-          [class.example-expanded-row]="expandedElement === element"
-          (click)="expandedElement = expandedElement === element ? null : element">
-      </tr>
-      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
 
-    </table>
+        <tr mat-row *matRowDef="let element; columns: columnsToDisplay;"
+            class="example-element-row"
+            [class.example-expanded-row]="expandedElement === element"
+            (click)="expandedElement = expandedElement === element ? null : element">
+        </tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+      </table>
     </scroll-container>
-  </div>
-</div>
+  </ng-template>
+</cdm-page>

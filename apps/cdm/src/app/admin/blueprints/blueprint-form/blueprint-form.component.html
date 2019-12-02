@@ -1,15 +1,12 @@
-<div class="blueprint-form">
-  <div class="content">
-    <div class="content-header">
-      <h1 translate>{{title}}</h1>
-    </div>
-    <form (ngSubmit)="onSubmit()" [formGroup]="form">
-
+<cdm-page [title]="title">
+  <ng-template #cdmPageBodyTemplate>
+    <form class="blueprint-form" (ngSubmit)="onSubmit()" [formGroup]="form">
       <mat-form-field appearance="outline">
-        <input matInput class="form-control" formControlName="name"
+        <input matInput
+        formControlName="name"
           placeholder="Blueprint Name"
           (input)="clearErrors()" [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
-          type="text" id="name" name="name" required>
+          required>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -20,7 +17,6 @@
           type="text" id="description" name="description" required></textarea>
       </mat-form-field>
 
-
       <label for="description" translate="">JSON Model?</label>
       <json-editor [json]="blueprint && blueprint.model" (change)="onJsonChange($event)" ></json-editor>
 
@@ -28,6 +24,6 @@
         <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
         <button mat-raised-button [routerLink]="['/blueprints']">Close</button>
       </div>
-  </form>
-</div>
-</div>
+    </form>
+  </ng-template>
+</cdm-page>

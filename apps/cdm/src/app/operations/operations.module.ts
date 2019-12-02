@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatIconModule, MatButtonModule, MatTableModule } from '@angular/material';
+// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from '@hpc/material';
 
 import { OperationsRoutingModule } from './operations-routing.module';
 import { OperationListComponent } from './operation-list/operation-list.component';
@@ -10,6 +10,7 @@ import { OperationItemComponent } from './operation-item/operation-item.componen
 // import { OperationFormComponent } from './operation-form/operation-form.component';
 import { OperationFormModule } from './operation-form/operation-form.module';
 
+import { TranslatorModule } from '@hpc/core';
 import { UIModule } from '@hpc/ui';
 import { CdmUIModule } from '../ui/cdm-ui.module';
 
@@ -20,14 +21,10 @@ import { CdmUIModule } from '../ui/cdm-ui.module';
     // OperationFormComponent,
   ],
   imports: [
-    CommonModule,
-    BrowserAnimationsModule,
-    RouterModule,
-    UIModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    CdmUIModule,
+    CommonModule, RouterModule,
+    // BrowserAnimationsModule,
+    UIModule, CdmUIModule, TranslatorModule,
+    MaterialModule,
     OperationsRoutingModule,
     OperationFormModule
   ],

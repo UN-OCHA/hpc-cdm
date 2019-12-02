@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ContentChild, TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'cdm-page',
@@ -7,6 +7,12 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class CdmPageComponent implements OnInit {
   @Input() title: string;
+
+  @ContentChild('cdmPageBodyTemplate', {static: false})
+  pageBodyTemplateRef: TemplateRef<any>;
+
+  @ContentChild('cdmPageTitleActionsTemplate', {static: false})
+  pageTitleTemplateRef: TemplateRef<any>;
 
   constructor() {}
 

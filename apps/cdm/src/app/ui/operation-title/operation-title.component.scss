@@ -17,7 +17,17 @@
       }
     }
     .actions {
+      width: 2%;
+      text-align: right;
       padding-top: 2em;
+      .mat-button {
+        display: inline-block;
+        margin-left: 1em;
+      }
+      .mat-icon {
+        color: #aaa;
+        display: inline-block;
+      }
     }
   }
 }

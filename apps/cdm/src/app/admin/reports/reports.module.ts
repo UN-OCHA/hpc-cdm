@@ -8,7 +8,7 @@ import { ReportNavComponent } from './report-nav/report-nav.component';
 import { EntitiesComponent } from './entities/entities.component';
 import { AttachmentViewComponent } from './attachment-view/attachment-view.component';
 
-import { ReportsRoutingModule } from './routing.module';
+import { ReportsRoutingModule } from './reports-routing.module';
 
 import { EnketoFormModule, ENKETO_FORM_SERVICE } from 'ng-enketo-form';
 import { EnketoFormService } from '@cdm/core';

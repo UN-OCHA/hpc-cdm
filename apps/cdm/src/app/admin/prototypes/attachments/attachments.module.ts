@@ -10,7 +10,7 @@ import { CdmUIModule } from '@cdm/ui';
 import { AttachmentFormComponent } from './attachment-form/attachment-form.component';
 import { AttachmentListComponent } from './attachment-list/attachment-list.component';
 
-import { AttachmentPrototypesRoutingModule } from './routing.module';
+import { AttachmentPrototypesRoutingModule } from './attachments-routing.module';
 
 @NgModule({
   declarations: [

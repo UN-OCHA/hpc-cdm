@@ -1,11 +1,17 @@
-<div class="cdm-page">
-  <div class="cdm-page-header">
-    <div class="cdm-page-header-title">{{title}}</div>
-    <div class="actions">
-      <ng-content select="[actions]"></ng-content>
+<div class="content">
+  <div class="cdm-page">
+    <div class="cdm-page-header">
+      <div class="cdm-page-header-title">{{title}}</div>
+      <div class="actions">
+        <ng-container [ngTemplateOutlet]="pageTitleTemplateRef">
+        </ng-container>
+      </div>
     </div>
-  </div>
-  <div class="cdm-page-body">
-    <ng-content select="[body]"></ng-content>
+    <div class="cdm-page-body">
+      <div class="container">
+        <ng-container [ngTemplateOutlet]="pageBodyTemplateRef">
+        </ng-container>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,8 +1,6 @@
 $orange: #ee7325;
 :host {
   z-index: 99999;
-  // border: 2px solid red;
-  // background-color: black;
 
   .menu {
     z-index: 99999;
@@ -13,22 +11,18 @@ $orange: #ee7325;
     cursor: normal;
 
     .mat-icon {
-      // background-color: #222;
-      // color: #fff;
+      display: none;
       font-size: 1em;
     }
 
     .section {
       display: flex;
       flex-direction: column;
-      margin-right: 3em;
+      margin-right: 2em;
       background-color: white;
       label {
         font-size: 1.25em;
         line-height: 1em;
-        // text-align: center;
-        // background-color: #444;
-        // color: #fff;
         color: #999;
         min-width: 8em;
         margin: 0 0 .15em 0;
@@ -39,6 +33,8 @@ $orange: #ee7325;
         font-size: 1.15em;
         display:block;
         color: $orange;
+        color: #026CB6;
+        text-decoration: underline;
         margin-bottom: .25em;
         cursor: pointer;
       }

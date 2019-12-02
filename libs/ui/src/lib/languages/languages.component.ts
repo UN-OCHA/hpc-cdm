@@ -10,7 +10,7 @@ export class LanguagesComponent implements OnInit {
 
   ngOnInit() {}
 
-  public setLanguage(language:any) {
+  setLanguage(language:any) {
     // this.app.language = language;
   }
 }

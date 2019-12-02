@@ -12,21 +12,9 @@ import { OperationsModule } from './operations/operations.module';
 import { TranslatorModule } from '@hpc/core';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeModule } from '@hpc/views';
-
-// import { MatToolbarModule, MatIconModule, MatSidenavModule, MatListModule, MatButtonModule } from  '@angular/material';
-import { MatButtonModule, MatButtonToggleModule, MatTableModule } from  '@angular/material';
+import { MaterialModule } from  '@hpc/material';
 
 import 'font-awesome/css/font-awesome.css';
-import 'bootstrap/dist/css/bootstrap.css';
-
-
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { CollapseModule } from 'ngx-bootstrap/collapse';
-import { DatepickerModule } from 'ngx-bootstrap/datepicker';
-import { ModalModule } from 'ngx-bootstrap/modal';
-import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
-import { TabsModule } from 'ngx-bootstrap/tabs';
-
 
 const ROUTES = [];
 
@@ -36,17 +24,10 @@ const ROUTES = [];
     BrowserModule,
     BrowserAnimationsModule,
 
-    BsDropdownModule.forRoot(),
-    CollapseModule.forRoot(),
-    DatepickerModule.forRoot(),
-    ModalModule.forRoot(),
-    TabsModule.forRoot(),
-    TypeaheadModule.forRoot(),
-
     UIModule,
     HomeModule, AdminModule, DashboardModule, OperationsModule,
 
-    MatButtonModule, MatButtonToggleModule, MatTableModule,
+    MaterialModule,
     RouterModule.forRoot(ROUTES, {preloadingStrategy: PreloadAllModules}),
     TranslatorModule,
     AppRoutingModule

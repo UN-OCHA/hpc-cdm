@@ -1,15 +1,26 @@
-<div class="content">
+<div *ngIf="operation" class="content operation-page">
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h1>{{operation.name}}</h1>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <operation-menu></operation-menu>
+    </mat-expansion-panel>
+  </mat-accordion>
+
   <div class="container">
-    <operation-page-header></operation-page-header>
-    <div class="page-title-header" (mouseleave)="showMenu=false">
-      <div class="container-fluid page-title-menu">
-        <operation-menu *ngIf="showMenu"></operation-menu>
+
+    <div class="content-header">
+      <h1 *ngIf="title">{{title}}</h1>
+      <div class="content-header-actions">
+        <ng-container [ngTemplateOutlet]="pageTitleTemplateRef">
+        </ng-container>
       </div>
     </div>
-    <div class="page-title-body">
-      <div class="container-fluid">
-        <ng-content></ng-content>
-      </div>
-    </div>    
+
+    <ng-container [ngTemplateOutlet]="pageBodyTemplateRef">
+    </ng-container>
   </div>
 </div>

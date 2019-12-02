@@ -7,7 +7,7 @@ import { UIModule } from '@hpc/ui';
 import { CdmUIModule } from '@cdm/ui';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
-import { EntityPrototypesRoutingModule } from './routing.module';
+import { EntityPrototypesRoutingModule } from './entities-routing.module';
 
 @NgModule({
   declarations: [

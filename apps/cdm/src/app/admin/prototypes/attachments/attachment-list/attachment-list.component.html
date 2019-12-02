@@ -1,14 +1,15 @@
-<operation-table
-    title="Attachment Prototypes"
-    [dataSource]="prototypes"
-    [columns]="tableColumns">
-  <div titleActions>
-    <button mat-raised-button color="warn"
-      [routerLink]="['/operations', operation.id, 'aprototype']">Add Attachment Prototype</button>
-  </div>
-  <div rowActions>
-    <button mat-raised-button color="primary" [routerLink]="['/aprototypes']">
-      <mat-icon>edit</mat-icon> Edit Attachment Prototype
+<operation-page title="Attachment Prototypes">
+  <ng-template #operationPageTitleActionsTemplate>
+    <button mat-stroked-button
+      [routerLink]="['/operations', operation.id, 'aprototype']">
+      Add Attachment Prototype
     </button>
-  </div>
-</operation-table>
+  </ng-template>
+  <ng-template #operationPageBodyTemplate>
+    <operation-table [dataSource]="prototypes" [columns]="tableColumns">
+      <ng-template #operationTableExpandedRowTemplate let-element>
+        <a [routerLink]="['/aprototypes', element.id]">Edit</a>
+      </ng-template>
+    </operation-table>
+  </ng-template>
+</operation-page>

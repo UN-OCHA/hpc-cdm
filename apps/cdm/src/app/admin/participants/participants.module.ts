@@ -7,7 +7,7 @@ import { UIModule } from '@hpc/ui';
 import { CdmUIModule } from '@cdm/ui';
 import { ParticipantListComponent } from './participant-list/participant-list.component';
 import { ParticipantFormComponent } from './participant-form/participant-form.component';
-import { ParticipantsRoutingModule } from './routing.module';
+import { ParticipantsRoutingModule } from './participants-routing.module';
 
 @NgModule({
   declarations: [

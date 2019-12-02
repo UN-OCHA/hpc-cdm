@@ -1,9 +1,6 @@
-<div class="attachment-form" >
-  <div class="content">
-    <div class="content-header">
-      <h1 translate>{{title}}</h1>
-    </div>
-    <form (ngSubmit)="onSubmit()" [formGroup]="form">
+<operation-page [title]="title">
+  <ng-template #operationPageBodyTemplate>
+    <form class="attachment-form" (ngSubmit)="onSubmit()" [formGroup]="form">
       <mat-form-field appearance="outline">
         <input matInput class="form-control" formControlName="refCode"
           placeholder="refCode"
@@ -19,12 +16,14 @@
       </mat-form-field>
 
       <label for="description" translate="">JSON Model?</label>
-      <json-editor [json]="prototype && prototype.opAttachmentPrototypeVersion.value" (change)="onJsonChange($event)" ></json-editor>
+      <json-editor
+        [json]="prototype && prototype.opAttachmentPrototypeVersion.value"
+        (change)="onJsonChange($event)"></json-editor>
 
       <div class="buttons">
         <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
-        <button mat-raised-button type="button" (click)="close()">Close</button>
+        <button mat-raised-button [routerLink]="['/operations', operationId, 'aprototypes']">Close</button>
       </div>
-  </form>
-</div>
-</div>
+    </form>
+  </ng-template>
+</operation-page>

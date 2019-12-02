@@ -34,7 +34,6 @@ export class AppService {
   }
 
   loadOperations(): void {
-    console.log('Loading operations==============================1')
     const options = { scopes: 'entityPrototypes,operationVersion' };
     this.api.getOperations(options).subscribe(operations => {
       this.operations = operations.map(o => buildOperation(o));

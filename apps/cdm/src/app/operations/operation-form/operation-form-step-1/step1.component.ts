@@ -1,12 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from'@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { ApiService } from '@hpc/core';
 import { Operation } from '@hpc/data';
 import { OperationService } from '@cdm/core';
-import { FormGroup } from '@angular/forms';
 import * as moment from 'moment';
-import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
+
+// import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 
 @Component({
@@ -15,37 +17,26 @@ import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
   styleUrls: ['./step1.component.scss']
 })
 export class OperationFormStep1Component implements OnInit {
-  public dataSourceEmergency: Observable<any>;
-  public dataSourceLocation: Observable<any>;
-
-  public currentYear = moment().year();
-
-  public operation: Operation;
+  currentYear = moment().year();
+  operation: Operation;
   // public operationSubscription: Subscription;
-  public typeaheadNoResults = false;
-  public selectedEmergencyName = '';
-  public selectedLocationName = '';
-  public blueprints : Array<any>;
+  blueprints : Array<any>;
 
-
-  @Input() regForm: FormGroup;
-
+  form: FormGroup;
+  // @Input() form: FormGroup;
 
   constructor(
-    public operationService: OperationService,
-    public api: ApiService
-  ) {
-    this.dataSourceEmergency = Observable
-      .create((observer: any) => observer.next(this.selectedEmergencyName))
-      .pipe(mergeMap((token: string) => this.api.autocompleteEmergency(token)));
-
-    this.dataSourceLocation = Observable
-      .create((observer: any) => observer.next(this.selectedLocationName))
-      .pipe(mergeMap((token: string) => this.api.autocompleteLocation(token)));
+    private operationService: OperationService,
+    private fb: FormBuilder,
+    private translate: TranslateService) {
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+      description: ['', Validators.required]
+    });
   }
 
   ngOnInit() {
-    this.doneLoading();
+    // this.doneLoading();
     // this.createOperationService.operationHasLoaded$
     //   .subscribe(() => {
     //     this.doneLoading();
@@ -54,7 +45,9 @@ export class OperationFormStep1Component implements OnInit {
     // this.childForm.statusChanges.subscribe(() => { this.checkValidity() });
   }
 
-  private doneLoading () {
+  get f() { return this.form.controls; }
+
+  // doneLoading () {
     // this.setEditable();
     // this.checkValidity();
 
@@ -63,9 +56,9 @@ export class OperationFormStep1Component implements OnInit {
     //     this.blueprints = blueprints;
     //   });
     // }
-  }
+  // }
 
-  public save (): Observable<any> {
+  save (): Observable<any> {
     // if (this.createOperationService.isNewOperation) {
     //   const createdOperation = {
     //     operationVersion : this.createOperationService.operation.operationVersion,
@@ -107,29 +100,7 @@ export class OperationFormStep1Component implements OnInit {
     return null;
   }
 
-  public changeTypeaheadNoResults(e: boolean) {
-    this.typeaheadNoResults = e;
-  }
-
-  public emergencyTypeaheadOnSelect(e: TypeaheadMatch) {
-    // this.createOperationService.operation.emergencies.push(e.item);
-    this.selectedEmergencyName = '';
-  }
-
-  public onDeleteEmergency(idx:any) {
-    // this.createOperationService.operation.emergencies.splice(idx, 1);
-  }
-
-  public locationTypeaheadOnSelect(e: TypeaheadMatch) {
-    // this.createOperationService.operation.locations.push(e.item);
-    this.selectedLocationName = '';
-  }
-
-  public onDeleteLocation(idx:any) {
-    // this.createOperationService.operation.locations.splice(idx, 1);
-  }
-
-  public checkValidity () {
+  checkValidity () {
     // if (this.childForm &&
     //     this.childForm.valid &&
     //     this.createOperationService.operation &&
@@ -140,4 +111,81 @@ export class OperationFormStep1Component implements OnInit {
       // this.isValid = false;
     // }
   }
+
+  clearErrors() {
+    
+  }
 }
+
+
+// <label for="name" translate="Name"></label> <i class="text-danger">*</i>
+// <label for="description" translate="operation-edit.basic-info.operation-summary"></label> <i class="text-danger">*</i>
+
+
+      // <div [hidden]="f.name.valid || f.name.pristine" class="alert alert-danger">Name is required</div>
+
+
+// <section class="mt-2">
+//   <div class="form-group" formGroupName="operationDetails">
+//     <label translate>Emergencies<i class="text-danger">*</i></label>
+//     <input [typeahead]="dataSourceEmergency"
+//            (typeaheadOnSelect)="emergencyTypeaheadOnSelect($event)"
+//            (typeaheadNoResults)="changeTypeaheadNoResults($event)"
+//            typeaheadMinLength="3"
+//            typeaheadOptionField="name"
+//            (change)="checkValidity()"
+//            [placeholder]="((operation.emergencies.length) ?  'operation-edit.basic-info.add-emergency2' : 'operation-edit.basic-info.add-emergency') | translate"
+//            class="form-control inputStart"
+//            [required]="operation.emergencies.length === 0"
+//            autocomplete="off"
+//            formControlName="emergency">
+//     <div *ngIf="typeaheadNoResults" class="" style="">
+//       <i class="fa fa-remove"></i>{{ 'No Results Found' | translate }}
+//     </div>
+//
+//     <ul class="list-group" *ngFor="let emergency of operation.emergencies; let index = index;">
+//       <li class="list-group-item">{{ emergency.name }}
+//         <i class="material-icons remove-org clickable"
+//           (click)="onDeleteEmergency(index)">clear
+//         </i>
+//       </li>
+//     </ul>
+//   </div>
+//
+// </section>
+//
+// <section class="mt-2">
+//   <div class="form-group" formGroupName="operationDetails">
+//     <label translate>Locations<i class="text-danger">*</i></label>
+//     <input [typeahead]="dataSourceLocation"
+//            (typeaheadOnSelect)="locationTypeaheadOnSelect($event)"
+//            (typeaheadNoResults)="changeTypeaheadNoResults($event)"
+//            typeaheadMinLength="3"
+//            typeaheadOptionField="name"
+//            (change)="checkValidity()"
+//            [placeholder]="((operation.locations.length) ?  'operation-edit.basic-info.add-location2' : 'operation-edit.basic-info.add-location') | translate"
+//            formControlName="location"
+//            class="form-control inputStart"
+//            [required]="operation.locations.length === 0"
+//            autocomplete="off">
+//     <div *ngIf="typeaheadNoResults" class="" style="">
+//       <i class="fa fa-remove"></i>{{ 'No Results Found' | translate }}
+//     </div>
+//
+//     <ul class="list-group" *ngFor="let location of operation.locations; let index = index;">
+//       <li class="list-group-item">{{ location.name }}
+//         <i class="material-icons remove-org clickable"
+//           (click)="onDeleteLocation(index)">clear
+//         </i>
+//       </li>
+//     </ul>
+//   </div>
+//
+//   <div class="form-group" formGroupName="operationDetails">
+//     <label for="template" translate="operation-edit.basic-info.Operation Template"></label> <i class="text-danger">*</i>
+//     <select class="form-control" formControlName="blueprint" required>
+//       <option value="" disabled>Choose your template</option>
+//       <option *ngFor="let blueprint of blueprints" [ngValue]="blueprint.id">{{blueprint.name}}</option>
+//     </select>
+//   </div>
+// </section>

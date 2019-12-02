@@ -1,4 +1,3 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { QueueHeaderComponent } from './queue-header/queue-header.component';
@@ -18,7 +17,6 @@ import { DataQueueComponent } from './data-queue.component';
     DataQueueComponent
   ],
   imports: [
-    BrowserModule,
     CommonModule
   ],
   exports: [

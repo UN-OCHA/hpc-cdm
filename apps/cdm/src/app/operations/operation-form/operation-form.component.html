@@ -1,47 +1,10 @@
-<div class="content">
-<div class="container">
-<table mat-table [dataSource]="[]" multiTemplateDataRows class="mat-elevation-z8">
-  <ng-container matColumnDef="{{column}}" *ngFor="let column of ['name']">
-    <th mat-header-cell *matHeaderCellDef>
-      <cdm-page title="New Operation">
-      </cdm-page>
-    </th>
-    <td mat-cell *matCellDef="let operation">
-      hello1
-    </td>
-  </ng-container>
-
-
-  <tr mat-header-row *matHeaderRowDef="['name']"></tr>
-  <tr mat-row *matRowDef="let element; columns: ['name']"
-      class="example-element-row">
-      hello2
-  </tr>
-</table>
-
-
-
-
-
-<div id="registration" class="conatiner col-md-12">
-  <form id="regForm" [formGroup]="registrationForm">
-    <mat-vertical-stepper #stepper linear>
-      <mat-step formGroupName="personalDetails"
-        [stepControl]="registrationForm.get('personalDetails')">
-        <ng-template matStepLabel>Operation Details</ng-template>
-        <operation-form-step2 [regForm]="registrationForm"></operation-form-step2>
-      </mat-step>
-      <mat-step formGroupName="contactDetails"
-      [stepControl]="registrationForm.get('contactDetails')">
-        <ng-template matStepLabel>Field Clusters</ng-template>
-        <operation-form-step3 [regForm]="registrationForm"></operation-form-step3>
-      </mat-step>
-      <mat-step>
-        <ng-template matStepLabel>Confirm Details</ng-template>
-        <operation-form-step4 [regForm]="registrationForm"></operation-form-step4>
-      </mat-step>
-    </mat-vertical-stepper>
-  </form>
-</div>
-</div>
-</div>
+<cdm-page title="New Operation">
+  <ng-template #cdmPageBodyTemplate>
+    <form>
+      <div class="buttons">
+        <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
+        <button mat-raised-button [routerLink]="['/operations']">Close</button>
+      </div>
+    </form>
+  </ng-template>
+</cdm-page>

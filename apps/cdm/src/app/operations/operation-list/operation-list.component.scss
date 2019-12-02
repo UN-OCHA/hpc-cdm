@@ -1,16 +1,40 @@
 :host {
-  .content {
-    .container {
-      overflow: auto;
-      .mat-table{
-        .mat-header-row {
-          display: none;
+  .mat-table {
+    .mat-header-row {
+      display: none;
+    }
+    .mat-cell {
+      width: 100%;
+      .title {
+        display: flex;
+        flex-direction: row;
+        .description {
+          flex-grow: 1;
+          h2 {
+            color: #888;
+            margin-bottom: 0;
+          }
+
+          h5 {
+            color: #555;
+            font-weight: normal;
+            margin-top: .5em;
+          }
         }
-      }
-      // table {
-      //   border: 1px solid red;
-      //   box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
-      // }
+        .actions {
+          width: 2%;
+          text-align: right;
+          padding-top: 2em;
+          .mat-button {
+            display: inline-block;
+            margin-left: 1em;
+          }
+          .mat-icon {
+            color: #aaa;
+            display: inline-block;
+          }
+        }
+      }      
     }
   }
 }

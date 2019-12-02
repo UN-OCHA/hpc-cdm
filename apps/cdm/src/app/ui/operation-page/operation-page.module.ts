@@ -1,24 +1,26 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material';
+import { RouterModule } from '@angular/router';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from '@hpc/material';
+import { UIModule } from '@hpc/ui';
+// import { CdmPageModule } from '../cdm-page/cdm-page.module';
 
 import { OperationPageComponent } from './operation-page.component';
-import { OperationPageHeaderComponent } from './operation-page-header/header.component';
+import { OperationTitleModule } from '../operation-title/operation-title.module';
+import { OperationMenuModule } from '../operation-menu/operation-menu.module';
 
 @NgModule({
   declarations: [
     OperationPageComponent,
-    OperationPageHeaderComponent,
   ],
   imports: [
-    CommonModule,
-    RouterModule,
-    MatIconModule
+    CommonModule, RouterModule, BrowserAnimationsModule,
+    MaterialModule, UIModule,
+    OperationTitleModule, OperationMenuModule
   ],
   exports: [
-    OperationPageComponent,
-    OperationPageHeaderComponent
+    OperationPageComponent
   ]
 })
-export class CdmUIModule { }
+export class OperationPageModule { }

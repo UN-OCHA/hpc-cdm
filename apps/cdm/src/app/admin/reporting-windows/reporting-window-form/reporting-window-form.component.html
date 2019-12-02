@@ -1,9 +1,6 @@
-<div class="window-form">
-  <div class="content">
-    <div class="content-header">
-      <h1 translate>New Reporting Window</h1>
-    </div>
-    <form (ngSubmit)="onSubmit()">
+<window-page [title]="title" [reportingWindow]="reportingWindow">
+  <ng-template #windowPageBodyTemplate>
+    <form class="window-form" (ngSubmit)="onSubmit()">
       <mat-form-field appearance="outline">
         <input matInput formControlName="name"
           placeholder="Name"
@@ -11,7 +8,6 @@
           required>
       </mat-form-field>
 
-      
       <mat-radio-group>
         <mat-radio-button color="primary" [value]="1">Global</mat-radio-button>
         <mat-radio-button color="primary" [value]="3">Operation</mat-radio-button>
@@ -34,8 +30,8 @@
 
       <div class="buttons">
         <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
-        <button mat-raised-button type="button" (click)="close()">Close</button>
+        <button mat-raised-button [routerLink]="['/windows']">Close</button>
       </div>
     </form>
-  </div>
-</div>
+  </ng-template>
+</window-page>

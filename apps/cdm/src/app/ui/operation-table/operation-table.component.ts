@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ContentChild, TemplateRef } from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { Operation } from '@hpc/data';
 import { OperationService } from '@cdm/core';
@@ -29,6 +29,9 @@ export class OperationTableComponent implements OnInit {
   columnsToDisplay = [];
   titleExpanded = false;
   expandedTitle = true;
+
+  @ContentChild('operationTableExpandedRowTemplate', {static: false})
+  expandedRowTemplateRef: TemplateRef<any>;
 
   constructor(private operationService: OperationService) {}
 

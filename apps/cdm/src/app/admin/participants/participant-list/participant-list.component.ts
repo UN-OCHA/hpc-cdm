@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-// import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 // import { Participant } from '@hpc/data';
 // import {  } from '@cdm/core';
 
@@ -11,5 +11,15 @@ import { Component, OnInit } from '@angular/core';
 export class ParticipantListComponent implements OnInit {
   participants = [];
   tableColumns = [];
-  ngOnInit() {}
+  operationId: number;
+
+  constructor(
+    private activatedRoute: ActivatedRoute){
+  }
+
+  ngOnInit() {
+    this.activatedRoute.params.subscribe(params => {
+      this.operationId = params.operationId;
+    });
+  }
 }

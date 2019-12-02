@@ -18,10 +18,7 @@ export class OperationMenuComponent implements OnInit {
 
   ngOnInit() {
     this.operation.operation$.subscribe(op => {
-      console.log('1111111111111111111111111111111111111111-100');
-      console.log(this.op)
       this.op = op;
     });
-    console.log(this.app);
   }
 }

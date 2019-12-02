@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ContentChild, TemplateRef } from '@angular/core';
 import { Operation } from '@hpc/data';
 // import { OperationService } from '@cdm/core';
 
@@ -9,8 +9,14 @@ import { Operation } from '@hpc/data';
 })
 export class OperationTitleComponent implements OnInit {
   @Input() operation;
+  @Input() element?;
+  @Input() expandedElement?;
+
+  @ContentChild('operationTitleActionsTemplate', {static: false})
+  titleActionsTemplateRef: TemplateRef<any>;
+
   // op: Operation;
-  expanded: boolean = false;
+  // expanded: boolean = false;
 
   // constructor(private operation: OperationService) {}
 

@@ -1,0 +1,9 @@
+:host {
+  .json-editor-component {
+    display: flex;
+    flex-direction: row;
+    div {
+      flex-grow: 1;
+    }
+  }
+}

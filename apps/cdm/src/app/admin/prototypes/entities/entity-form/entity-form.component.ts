@@ -99,3 +99,6 @@ export class EntityFormComponent implements OnInit {
     }
   }
 }
+
+// <json-editor [json]="prototype && prototype.opEntityPrototypeVersion.value" (change)="onJsonChange($event)" ></json-editor>
+// [ngTemplateOutletContext]="{$implicit: option}">

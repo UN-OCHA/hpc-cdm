@@ -48,7 +48,6 @@ export class ReportingWindowListComponent implements OnInit {
 
     this.api.getAllReportingWindows()
       .subscribe(results => {
-        console.log(results);
         this.results = results;
         this.loading = false;
         this.page = this.results.slice(0,10);

@@ -1,11 +1,8 @@
-<div class="content">
-  <div class="content-header">
-    <h1>Reporting Windows</h1>
-    <div class="content-header-actions">
-      <button mat-raised-button color="warn" routerLink="/window">Add Reporting Window</button>
-    </div>
-  </div>
-  <div class="container">
+<cdm-page title="Reporting Windows">
+  <ng-template #cdmPageTitleActionsTemplate>
+    <button mat-stroked-button routerLink="/window">Add Reporting Window</button>
+  </ng-template>
+  <ng-template #cdmPageBodyTemplate>
     <div *ngIf="page.length <= 0">
       <p>You currently have no reporting windows.</p>
     </div>
@@ -23,8 +20,9 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element">
-          <div *ngIf="element !== expandedElement" class="actions">
-            <mat-icon>more_vert</mat-icon>
+          <div class="actions">
+            <mat-icon *ngIf="element !== expandedElement">expand_more</mat-icon>
+            <mat-icon *ngIf="element === expandedElement">expand_less</mat-icon>
           </div>
         </td>
       </ng-container>
@@ -35,12 +33,9 @@
           <div class="example-element-detail"
                [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
             <div class="example-element-description">
-              <button mat-raised-button color="primary" [routerLink]="['/windows/',element.id,'edit' ]">
-                <mat-icon>edit</mat-icon>Edit Reporting Window</button>
-              <button mat-raised-button color="primary" [routerLink]="['/windows/',element.id,'data-queue']">
-                <mat-icon>remove_red_eye</mat-icon>View Data queue</button>
-              <button mat-raised-button color="primary" [routerLink]="['/windows/',element.id,'states']">
-                <mat-icon>panorama_fish_eye</mat-icon>Change states</button>
+              <a [routerLink]="['/windows', element.id]">Edit Reporting Window</a>
+              <a [routerLink]="['/windows', element.id, 'queue']">View Data queue</a>
+              <a [routerLink]="['/windows', element.id, 'states']">Change states</a>
             </div>
           </div>
         </td>
@@ -55,5 +50,5 @@
       <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 
     </table>
-  </div>
-</div>
+  </ng-template>
+</cdm-page>

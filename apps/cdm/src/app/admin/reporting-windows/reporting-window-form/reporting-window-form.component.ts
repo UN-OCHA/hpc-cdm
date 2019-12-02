@@ -17,7 +17,9 @@ import { ReportingWindow } from '@hpc/data';
 })
 export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDeactivate {
   form: FormGroup;
-  // reportingWindow: ReportingWindow;
+  editMode: boolean = false;
+  title: string;
+  reportingWindow: ReportingWindow;
   // processing = true;
   // editable = true;
   // canSubmitReportingWindow = false;
@@ -26,7 +28,7 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private api: ApiService,
     private auth: AuthService,
     // private rw: ReportingWindowService,
@@ -41,6 +43,22 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
   }
 
   ngOnInit() {
+    this.activatedRoute.params.subscribe(params => {
+      if(params.id) {
+        this.editMode = true;
+        this.title = 'Edit Reporting Window';
+        this.api.getReportingWindow(params.id).subscribe(rw => {
+          console.log(rw);
+          rw.name = 'RW Name';
+          this.reportingWindow = rw;
+        });
+        // this.form.reset({
+        // });
+      } else {
+        this.title = 'New Reporting Window';
+      }
+    });
+
     // observableZip(
     //   this.route.params,
     //   this.route.queryParamMap,

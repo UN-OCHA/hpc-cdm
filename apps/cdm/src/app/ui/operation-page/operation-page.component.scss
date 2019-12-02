@@ -1,31 +1,61 @@
-.operation-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-
-  .page-title-header {
-    width: 100%;
-    color: #222;
-
-    &:hover {
-      background-color: #545b62;
-      color: #fff;
-      .page-title-menu {
-        border-top: 1px solid #78818b;
+:host {
+  .content {
+    .mat-expansion-panel {
+      margin-top: 1em;
+      h1 {
+        color: #888;
       }
     }
-    .page-title-menu {
-      border-top: 1px solid #ddd;
+
+    .container {
+      .content-header {
+        margin-top: 1em;
+        background-color: #026CB6;
+
+        padding:.5em 1.5em;
+        h1 {
+          color: #fff;
+          line-height: 1.35em;
+          padding-top: .1em;
+          padding-bottom: 0;
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+        .content-header-actions {
+          margin: 0;
+          padding: 0;
+        }
+      }
+
+      // .title-row {
+      //   display: flex;
+      //   flex-direction: row;
+      //   border-bottom: 1px solid #ddd;
+      //   cursor: pointer;
+      //   h1 {
+      //     line-height: 1.5em;
+      //     // color: $orange;
+      //     color: #222;
+      //     font-size: 1.5em;
+      //     font-weight: bold;
+      //     flex-grow: 1;
+      //   }
+      //   .mat-icon {
+      //     padding-top: 1em;
+      //   }
+      // }
+      //
+      // .expanded-title {
+      //   border: 1px solid red;
+      // }
+      //
+      // .op-artifact-table {
+      //   background-color: white;
+      // }
+      //
+      // .op-menu {
+      //   padding-top: 1em;
+      // }
     }
-  }
-
-  .page-title-body {
-    width: 100%;
-    margin-top: 1em;
-  }
-
-  .secondary {
-    font-size: .75em;
   }
 }
