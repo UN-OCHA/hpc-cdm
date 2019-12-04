@@ -26,6 +26,7 @@ export class OperationListComponent implements OnInit {
     {columnDef: 'name', header: '', cell: (row) => `${row.name}`},
     // {columnDef: 'type', header: 'Type', cell: (row) => `${row.type}`}
   ];
+  starred = [];
 
 
   constructor(
@@ -63,5 +64,20 @@ export class OperationListComponent implements OnInit {
   toggleExpansion(element) {
     this.expandedElement = this.expandedElement === element ? null : element;
     this.operationService.operation = element;
+  }
+
+
+  toggleStar(event, operation) {
+    console.log('simona.........................')
+    event.stopPropagation();
+    if(this.starred.includes(operation.id)) {
+      const idx = this.starred.indexOf(operation.id);
+      if(idx >= 0) {
+        this.starred.splice(idx, 1);
+      }
+    } else {
+      this.starred.push(operation.id);
+      operation.starred = true;
+    }
   }
 }

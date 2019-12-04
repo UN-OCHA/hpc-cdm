@@ -33,7 +33,8 @@ export function buildOperation(op: any): Operation {
     name: v.name,
     description: v.description,
     entityPrototypes: op.opEntityPrototypes.map(p => buildEntityPrototype(p)),
-    updatedAt: op.updatedAt
+    updatedAt: op.updatedAt,
+    starred: true
   }
 }
 

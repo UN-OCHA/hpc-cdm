@@ -1,15 +1,48 @@
 :host {
+
   .mat-table {
+
+    ::ng-deep {
+      .menu {
+        padding-left: 3.15em;
+      }
+    }
+
     .mat-header-row {
       display: none;
     }
     .mat-cell {
-      width: 100%;
+      padding: 0;
+
+      .example-element-detail {
+        cursor: normal;
+      }
       .title {
+        padding: 0 1em;
         display: flex;
         flex-direction: row;
+        cursor: pointer;
+        position: relative;
+
+        .starred {
+          font-size: 1.5em;
+          position: absolute;
+          top: .9em;
+          color: #888;
+          .active {
+            color: #FFC107;
+            svg {
+              fill: #FFC107;
+            }
+          }
+          .active svg {
+            fill: #FFC107;
+          }
+        }
+
         .description {
           flex-grow: 1;
+          padding-left: 2.25em;
           h2 {
             color: #888;
             margin-bottom: 0;
@@ -34,7 +67,7 @@
             display: inline-block;
           }
         }
-      }      
+      }
     }
   }
 }

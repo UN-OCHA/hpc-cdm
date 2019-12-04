@@ -8,10 +8,5 @@
       (change)="handleChange($event.target.value)"
       (blur)="onTouched($event.target.value)"
       class="form-control" type="text" [value]="value"></textarea>
-    <div style="display:none"
-      [hidden]="control.valid || control.pristine"
-      class="alert alert-danger">
-      {{label}} is required
-    </div>
   </div>
 </div>

@@ -9,6 +9,7 @@ import { AttachmentPrototypesModule } from './prototypes/attachments/attachments
 import { EntityPrototypesModule } from './prototypes/entities/entities.module';
 import { ReportingWindowsModule } from './reporting-windows/reporting-windows.module';
 import { ReportingWindowListComponent } from './reporting-windows/reporting-window-list/reporting-window-list.component';
+import { PlansModule } from './plans/plans.module';
 import { ParticipantsModule } from './participants/participants.module';
 import { ReportsModule } from './reports/reports.module';
 
@@ -22,6 +23,7 @@ import { ReportsModule } from './reports/reports.module';
     EntityPrototypesModule,
     OperationsModule,
     ReportingWindowsModule,
+    PlansModule,
     ParticipantsModule,
     ReportsModule
   ],

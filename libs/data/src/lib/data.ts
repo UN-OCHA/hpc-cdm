@@ -11,6 +11,7 @@ export interface Operation {
   description?: string;
   entityPrototypes?: EntityPrototype[];
   updatedAt?: any;
+  starred: boolean;
 }
 
 export interface Attachment {

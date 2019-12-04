@@ -11,15 +11,15 @@ import { Operation, Entity, EntityPrototype,
 import * as moment from 'moment';
 
 export function buildOperation(op: any): Operation {
-  const v = op.operationVersion;
-  console
+  const v = op.operationVersion;  
   return {
     id: op.id,
     version: v.code,
     name: v.name,
     description: v.description,
     entityPrototypes: op.opEntityPrototypes.map(p => buildEntityPrototype(p)),
-    updatedAt: op.updatedAt
+    updatedAt: op.updatedAt,
+    starred: true
   }
 }
 

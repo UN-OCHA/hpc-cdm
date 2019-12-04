@@ -15,36 +15,40 @@ import { ApiService } from '@hpc/core';
   styleUrls: ['emergency-select.component.scss']
 })
 export class EmergencySelectComponent implements OnInit {
-  emergencies: Observable<any>;
+  // emergencies: Observable<any>;
   selectedEmergencyName = '';
-  typeaheadNoResults = false;
+  // typeaheadNoResults = false;
 
   visible = true;
   selectable = true;
   removable = true;
   addOnBlur = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  fruitCtrl = new FormControl();
-  filteredFruits: Observable<string[]>;
-  fruits: string[] = ['Lemon'];
-  allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
+  optionCtrl = new FormControl();
+  filteredOptions: Observable<string[]>;
+  values: string[] = ['Lemon'];
+  options: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
 
-  @ViewChild('fruitInput', {static: false}) fruitInput: ElementRef<HTMLInputElement>;
+  @ViewChild('optionInput', {static: false}) optionInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
-
 
   constructor(
     private api: ApiService,
     private translate: TranslateService) {
-    this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
+    this.filteredOptions = this.optionCtrl.valueChanges.pipe(
       startWith(null),
-      map((fruit: string | null) => fruit ? this._filter(fruit) : this.allFruits.slice()));
+      map((value: string | null) =>
+        value ? this._filter(value) : this.options.slice()));
   }
 
   ngOnInit() {
-    this.emergencies = Observable
-      .create((observer: any) => observer.next(this.selectedEmergencyName))
-      .pipe(mergeMap((token: string) => this.api.autocompleteEmergency(token)));
+    // this.emergencies = Observable
+    //   .create((observer: any) => observer.next(this.selectedEmergencyName))
+    //   .pipe(mergeMap((token: string) => this.api.autocompleteEmergency(token)));
+
+    // this.api.autocompleteEmergency('').subscribe(results => {
+    //   console.log(results)
+    // })
   }
 
   changeTypeaheadNoResults(e: boolean) {
@@ -73,15 +77,16 @@ export class EmergencySelectComponent implements OnInit {
   }
 
   add(event: MatChipInputEvent): void {
-    // Add fruit only when MatAutocomplete is not open
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-add')
+    // Add emergency only when MatAutocomplete is not open
     // To make sure this does not conflict with OptionSelected Event
     if (!this.matAutocomplete.isOpen) {
       const input = event.input;
       const value = event.value;
 
-      // Add our fruit
+      // Add emergency
       if ((value || '').trim()) {
-        this.fruits.push(value.trim());
+        this.values.push(value.trim());
       }
 
       // Reset the input value
@@ -89,28 +94,37 @@ export class EmergencySelectComponent implements OnInit {
         input.value = '';
       }
 
-      this.fruitCtrl.setValue(null);
+      this.optionCtrl.setValue(null);
     }
   }
 
-  remove(fruit: string): void {
-    const index = this.fruits.indexOf(fruit);
+  remove(value: string): void {
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-remove')
+    const index = this.values.indexOf(value);
 
     if (index >= 0) {
-      this.fruits.splice(index, 1);
+      this.values.splice(index, 1);
     }
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.fruits.push(event.option.viewValue);
-    this.fruitInput.nativeElement.value = '';
-    this.fruitCtrl.setValue(null);
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-selected')
+    this.values.push(event.option.viewValue);
+    this.optionInput.nativeElement.value = '';
+    this.optionCtrl.setValue(null);
   }
 
   private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-
-    return this.allFruits.filter(fruit => fruit.toLowerCase().indexOf(filterValue) === 0);
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-filter:'+value.length)
+    // if(value.length >= 3) {
+      const filterValue = value.toLowerCase();
+      // this.filteredOptions = ['one'];
+      return this.options
+        .filter(option => option.toLowerCase().indexOf(filterValue) === 0);
+    // } else {
+    //   this.filteredOptions = [];
+    //   return this.options = [];
+    // }
   }
 }
 

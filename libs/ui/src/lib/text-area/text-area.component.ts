@@ -2,7 +2,7 @@ import { Optional, Host, SkipSelf, Component, Input, OnInit, forwardRef } from '
 import { ControlContainer, AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-  selector: 'text-area',
+  selector: 'hpc-textarea',
   templateUrl: './text-area.component.html',
   styleUrls: ['./text-area.component.scss'],
   providers: [
@@ -53,3 +53,9 @@ export class TextAreaComponent implements ControlValueAccessor, OnInit {
     this.onChange(value);
   }
 }
+
+
+// <div style="display:none"
+//   [hidden]="control.valid || control.pristine"
+//   class="alert alert-danger">
+//   {{label}} is required

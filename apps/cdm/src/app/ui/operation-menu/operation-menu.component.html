@@ -4,6 +4,7 @@
     <a mat-button [routerLink]="['/operations', op.id, 'aprototypes']">Attachments</a>
     <a mat-button [routerLink]="['/operations', op.id, 'eprototypes']">Entities</a>
     <a mat-button [routerLink]="['/operations', op.id, 'participants']">Participants</a>
+    <a mat-button [routerLink]="['/operations', op.id, 'plans']">Plans</a>
   </div>
 
   <div *ngIf="auth.user.isAdmin" class="section">

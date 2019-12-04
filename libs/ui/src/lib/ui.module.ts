@@ -10,6 +10,8 @@ import { DateInputComponent } from './date-input/date-input.component';
 import { EmergencySelectComponent } from './emergency-select/emergency-select.component';
 import { EmergencySelectModule } from './emergency-select/emergency-select.module';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { InputModule } from './input/input.module';
+import { InputComponent } from './input/input.component';
 import { JsonEditorModule } from './json-editor/json-editor.module';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
 import { TextAreaComponent } from './text-area/text-area.component';
@@ -45,6 +47,7 @@ import { SpinnerModule } from './spinner/spinner.module';
     RouterModule,
     DateInputModule,
     EmergencySelectModule,
+    InputModule,
     JsonEditorModule,
     TableExpandableRowsModule,
     TableSelectableRowsModule,
@@ -63,6 +66,7 @@ import { SpinnerModule } from './spinner/spinner.module';
     DateInputComponent,
     EmergencySelectComponent,
     FileUploadComponent,
+    InputComponent,
     JsonEditorComponent,
     TableExpandableRowsComponent,
     TableSelectableRowsComponent,
