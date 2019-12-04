@@ -1,8 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {Component, OnInit, ElementRef, ViewChild} from '@angular/core';
 import {FormControl} from '@angular/forms';
+import {MatAutocompleteSelectedEvent, MatAutocomplete} from '@angular/material/autocomplete';
+import {MatChipInputEvent} from '@angular/material/chips';
+import {Observable} from 'rxjs';
+import {map, startWith, mergeMap} from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 import { ApiService } from '@hpc/core';
-import { Observable } from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+
 
 @Component({
   selector: 'location-select',
@@ -11,53 +16,93 @@ import {map, mergeMap} from 'rxjs/operators';
 })
 export class LocationSelectComponent implements OnInit {
   selectedLocationName = '';
-  locations: Observable<any>;
-  myControl = new FormControl();
-  options: string[] = ['One', 'Two', 'Three'];
-  typeaheadNoResults = false;
 
-  constructor(private api: ApiService) {
+  visible = true;
+  selectable = true;
+  removable = true;
+  addOnBlur = true;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  optionCtrl = new FormControl();
+  filteredOptions: Observable<string[]>;
+  values: string[] = ['Lemon'];
+  options: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
+
+  @ViewChild('locationInput', {static: false}) locationInput: ElementRef<HTMLInputElement>;
+  @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
+
+  constructor(
+    private api: ApiService,
+    private translate: TranslateService) {
+    this.filteredOptions = this.optionCtrl.valueChanges.pipe(
+      startWith(null),
+      map((value: string | null) =>
+        value ? this._filter(value) : this.options.slice()));
   }
 
   ngOnInit() {
-    this.locations = Observable
-      .create((observer: any) => observer.next(this.selectedLocationName))
-      .pipe(mergeMap((token: string) => this.api.autocompleteLocation(token)));
   }
 
-  // locationTypeaheadOnSelect(e: TypeaheadMatch) {
-  //   // this.createOperationService.operation.locations.push(e.item);
-  //   this.selectedLocationName = '';
-  // }
+  changeTypeaheadNoResults(e: boolean) {
+    // this.typeaheadNoResults = e;
+  }
 
   onDeleteLocation(idx:any) {
-    // this.createOperationService.operation.locations.splice(idx, 1);
+  }
+
+  checkValidity () {
+    // if (this.childForm &&
+    //     this.childForm.valid &&
+    //     this.createOperationService.operation &&
+    //     this.createOperationService.operation.emergencies.length &&
+    //     this.createOperationService.operation.emergencies.length) {
+    //   this.isValid = true;
+    // } else {
+    //   this.isValid = false;
+    // }
+  }
+
+  add(event: MatChipInputEvent): void {
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-add')
+    // Add location only when MatAutocomplete is not open
+    // To make sure this does not conflict with OptionSelected Event
+    if (!this.matAutocomplete.isOpen) {
+      const input = event.input;
+      const value = event.value;
+
+      // Add location
+      if ((value || '').trim()) {
+        this.values.push(value.trim());
+      }
+
+      // Reset the input value
+      if (input) {
+        input.value = '';
+      }
+
+      this.optionCtrl.setValue(null);
+    }
+  }
+
+  remove(value: string): void {
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-remove')
+    const index = this.values.indexOf(value);
+
+    if (index >= 0) {
+      this.values.splice(index, 1);
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-selected')
+    this.values.push(event.option.viewValue);
+    this.locationInput.nativeElement.value = '';
+    this.optionCtrl.setValue(null);
+  }
+
+  private _filter(value: string): string[] {
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-filter:'+value.length)
+    const filterValue = value.toLowerCase();
+    return this.options
+      .filter(option => option.toLowerCase().indexOf(filterValue) === 0);
   }
 }
-
-// http://service.hpc.vm/v1/location/autocomplete/yem?userid=alex@example.com_1485421117650
-
-
-// <input [(ngModel)]="selectedLocationName"
-//        [typeahead]="dataSourceLocation"
-//        (typeaheadOnSelect)="locationTypeaheadOnSelect($event)"
-//        (typeaheadNoResults)="changeTypeaheadNoResults($event)"
-//        typeaheadMinLength="3"
-//        typeaheadOptionField="name"
-//        (change)="checkValidity()"
-//        [placeholder]="((locations.length) ?  'operation-edit.basic-info.add-location2' : 'operation-edit.basic-info.add-location') | translate"
-//        name="locationName"
-//        class="form-control inputStart"
-//        [required]="locations.length === 0"
-//        autocomplete="off">
-// <div *ngIf="typeaheadNoResults" class="" style="">
-//   <i class="fa fa-remove"></i>{{ 'No Results Found' | translate }}
-// </div>
-//
-// <ul class="list-group" *ngFor="let location of locations; let index = index;">
-//   <li class="list-group-item">{{ location.name }}
-//     <i class="material-icons remove-org clickable"
-//       (click)="onDeleteLocation(index)">clear
-//     </i>
-//   </li>
-// </ul>

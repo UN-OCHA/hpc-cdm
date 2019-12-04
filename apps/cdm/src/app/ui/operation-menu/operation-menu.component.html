@@ -9,9 +9,9 @@
 
   <div *ngIf="auth.user.isAdmin" class="section">
     <label><mat-icon>edit</mat-icon>Edit</label>
-    <a mat-button [routerLink]="['/operation', op.id, 'edit']">Operations</a>
+    <a mat-button [routerLink]="['/operations', op.id]">Operation</a>
     <span *ngFor="let ep of op.entityPrototypes">
-      <a mat-button [routerLink]="['/operations', op.id, 'entities', ep.id ]">{{ ep.name.en.plural }}</a>
+      <a mat-button [routerLink]="['/operations', op.id]">{{ ep.name.en.plural }}</a>
     </span>
   </div>
 

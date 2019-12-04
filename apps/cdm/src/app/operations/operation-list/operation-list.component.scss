@@ -4,7 +4,8 @@
 
     ::ng-deep {
       .menu {
-        padding-left: 3.15em;
+        // padding-left: 3.15em;
+        padding-left: 1em;
       }
     }
 
@@ -25,6 +26,7 @@
         position: relative;
 
         .starred {
+          display: none;
           font-size: 1.5em;
           position: absolute;
           top: .9em;
@@ -42,7 +44,7 @@
 
         .description {
           flex-grow: 1;
-          padding-left: 2.25em;
+          // padding-left: 2.25em;
           h2 {
             color: #888;
             margin-bottom: 0;

@@ -1,0 +1,25 @@
+<div class="content">
+  <div class="container">
+    <form [formGroup]="form">
+      <mat-vertical-stepper #stepper linear>
+        <mat-step formGroupName="operationDetails"
+          [stepControl]="form.get('operationDetails')">
+          <ng-template matStepLabel>Operation</ng-template>
+            <operation-form></operation-form>
+          <div class="buttons">
+            <button mat-raised-button matStepperNext>Next</button>
+          </div>
+        </mat-step>
+        <mat-step formGroupName="clusterDetails"
+          [stepControl]="form.get('clusterDetails')">
+          <ng-template matStepLabel>Cluster</ng-template>
+
+          <div class="buttons">
+            <button mat-raised-button matStepperPrevious>Back</button>
+            <button mat-raised-button matStepperNext>Next</button>
+          </div>
+        </mat-step>
+      </mat-vertical-stepper>
+    </form>
+  </div>
+</div>

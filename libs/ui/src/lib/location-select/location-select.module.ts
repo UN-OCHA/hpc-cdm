@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '@hpc/material';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LocationSelectComponent } from './location-select.component';
 
 @NgModule({
@@ -8,7 +9,7 @@ import { LocationSelectComponent } from './location-select.component';
     LocationSelectComponent
   ],
   imports: [
-    CommonModule,
+    CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule
   ],
   exports: [

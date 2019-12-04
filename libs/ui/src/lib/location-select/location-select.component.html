@@ -1,11 +1,27 @@
-<mat-form-field class="example-full-width">
-  <input
-    placeholder="Locations"
-    matInput
-    formControl="myControl"
-    [matAutocomplete]="auto">
-  <mat-autocomplete #auto="matAutocomplete">
-    <mat-option *ngFor="let option of options" [value]="option">
+<mat-form-field appearance="outline">
+  <mat-label>Locations</mat-label>
+  <mat-chip-list #chipList aria-label="Location selection">
+    <mat-chip
+      *ngFor="let value of values"
+      [selectable]="selectable"
+      [removable]="removable"
+      (removed)="remove(value)">
+      {{value}}
+      <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+    </mat-chip>
+    <input
+      matInput
+      required
+      #locationInput
+      [formControl]="optionCtrl"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      [matChipInputAddOnBlur]="addOnBlur"
+      (matChipInputTokenEnd)="add($event)">
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
       {{option}}
     </mat-option>
   </mat-autocomplete>

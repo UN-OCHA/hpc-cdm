@@ -36,6 +36,9 @@ import { OperationFormComponent } from './operation-form.component';
     //       deps: [HttpClient]
     //     }
     // }),
+  ],
+  exports: [
+    OperationFormComponent
   ]
 })
 export class OperationFormModule { }

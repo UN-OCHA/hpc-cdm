@@ -6,6 +6,7 @@ import { AuthService } from '@hpc/core';
 
 import { OperationFormComponent } from './operation-form/operation-form.component';
 import { OperationListComponent } from './operation-list/operation-list.component';
+import { OperationStepperComponent } from './operation-stepper/operation-stepper.component';
 
 
 @Injectable({providedIn: 'root'})
@@ -24,6 +25,7 @@ const route = (path, component) => {
 }
 
 const routes: Routes = [
+  route('operations/:id', OperationStepperComponent),
   route('operations', OperationListComponent),
   route('operation', OperationFormComponent),
 ];
