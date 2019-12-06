@@ -26,7 +26,8 @@
     "update:check": "ng update",
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
-    "help": "nx help"
+    "help": "nx help",
+    "generate:svg-sprite": "svg2sprite ./apps/cdm/src/assets/icons ./apps/cdm/src/assets/sprites/sprite.svg --stripAttrs fill --stripAttrs stroke --stripAttrs id --stripAttrs width --stripAttrs height"
   },
   "private": true,
   "dependencies": {
@@ -57,7 +58,7 @@
     "hammerjs": "^2.0.8",
     "jsoneditor": "^7.0.3",
     "ng-enketo-form": "0.0.1-beta.10",
-    "ng-svg-icon-sprite": "^1.6.1",
+    "ng-svg-icon-sprite": "^1.7.0",
     "ngx-bootstrap": "^5.2.0",
     "ngx-toastr": "^11.2.1",
     "reflect-metadata": "^0.1.13",

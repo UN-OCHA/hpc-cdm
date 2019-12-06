@@ -26,13 +26,25 @@ export function buildUser(participant: any): User {
 
 export function buildOperation(op: any): Operation {
   const v = op.operationVersion;
-  console
+  console.log(op)
+  let attachmentPrototypes = [];
+  let attachmentPrototype = null;
+  if(op.opAttachmentPrototypes) {
+    attachmentPrototypes =
+      op.opAttachmentPrototypes.map(p => buildAttachmentPrototype(p));
+    attachmentPrototype =
+      attachmentPrototypes.find(ap => ap.entities.includes('OP'));
+  }
+  const entityPrototypes =
+    op.opEntityPrototypes.map(p => buildEntityPrototype(p, attachmentPrototypes));
   return {
     id: op.id,
     version: v.code,
     name: v.name,
     description: v.description,
-    entityPrototypes: op.opEntityPrototypes.map(p => buildEntityPrototype(p)),
+    entityPrototypes,
+    attachmentPrototypes,
+    attachmentPrototype, // Operation Attachment
     updatedAt: op.updatedAt,
     starred: true
   }
@@ -77,14 +89,18 @@ export function buildEntity(ge, v): Entity {
   };
 }
 
-export function buildEntityPrototype(ep: any): EntityPrototype {
+export function buildEntityPrototype(ep: any, aprototypes=[]): EntityPrototype {
   const version = ep.opEntityPrototypeVersion;
+  console.log('---------------------------------------------')
+  console.log(ep)
+  const attachmentPrototype = aprototypes.find(p => p.entities.includes(version.refCode));
   return {
     id: ep.id,
     type: version.type,
     refCode: version.refCode,
     value: version.value,
-    name: version.value.name
+    name: version.value.name,
+    attachmentPrototype
   }
 }
 
@@ -95,6 +111,7 @@ export function buildAttachmentPrototype(ep: any): AttachmentPrototype {
     type: version.type,
     refCode: version.refCode,
     value: version.value,
+    entities: version.value.entities,
     name: version.value.name
   }
 }

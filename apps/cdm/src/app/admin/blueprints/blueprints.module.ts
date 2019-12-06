@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatInputModule, MatFormFieldModule, MatExpansionModule, MatIconModule, MatButtonModule, MatTableModule } from '@angular/material';
+import { MaterialModule } from '@hpc/material';
 import { ToastrModule } from 'ngx-toastr';
 
 // import { DataTableModule } from 'angular-6-datatable';
@@ -26,7 +26,7 @@ import { CdmUIModule } from '@cdm/ui';
     UIModule, CdmUIModule,
     FormsModule, ReactiveFormsModule,
     BlueprintsRoutingModule,
-    MatInputModule, MatFormFieldModule, MatExpansionModule, MatIconModule, MatButtonModule, MatTableModule,
+    MaterialModule,
     ToastrModule.forRoot({
       positionClass: 'toast-top-center',
       closeButton: true,

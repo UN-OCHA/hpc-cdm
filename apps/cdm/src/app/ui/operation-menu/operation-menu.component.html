@@ -1,11 +1,4 @@
 <div *ngIf="op" class="menu">
-  <div *ngIf="auth.user.isAdmin" class="section">
-    <label><mat-icon>build</mat-icon>Configure</label>
-    <a mat-button [routerLink]="['/operations', op.id, 'aprototypes']">Attachments</a>
-    <a mat-button [routerLink]="['/operations', op.id, 'eprototypes']">Entities</a>
-    <a mat-button [routerLink]="['/operations', op.id, 'participants']">Participants</a>
-    <a mat-button [routerLink]="['/operations', op.id, 'plans']">Plans</a>
-  </div>
 
   <div *ngIf="auth.user.isAdmin" class="section">
     <label><mat-icon>edit</mat-icon>Edit</label>
@@ -13,11 +6,19 @@
     <span *ngFor="let ep of op.entityPrototypes">
       <a mat-button [routerLink]="['/operations', op.id]">{{ ep.name.en.plural }}</a>
     </span>
+    <a mat-button [routerLink]="['/operations', op.id, 'plans']">Plans</a>
   </div>
 
   <div class="section">
     <label><mat-icon>publish</mat-icon>Submit Data</label>
     <a mat-button [routerLink]="['/operations', op.id, 'reports']">New reporting window</a>
+  </div>
+
+  <div *ngIf="auth.user.isAdmin" class="section">
+    <label><mat-icon>build</mat-icon>Configure</label>
+    <a mat-button [routerLink]="['/operations', op.id, 'aprototypes']">Attachment Prototypes</a>
+    <a mat-button [routerLink]="['/operations', op.id, 'eprototypes']">Entity Prototypes</a>
+    <a mat-button [routerLink]="['/operations', op.id, 'participants']">Participants</a>
   </div>
 
   <div class="section">

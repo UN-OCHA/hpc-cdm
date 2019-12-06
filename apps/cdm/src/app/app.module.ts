@@ -13,6 +13,7 @@ import { TranslatorModule } from '@hpc/core';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeModule } from '@hpc/views';
 import { MaterialModule } from  '@hpc/material';
+import { IconSpriteModule } from 'ng-svg-icon-sprite';
 
 import 'font-awesome/css/font-awesome.css';
 
@@ -23,7 +24,7 @@ const ROUTES = [];
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-
+    IconSpriteModule,
     UIModule,
     HomeModule, AdminModule, DashboardModule, OperationsModule,
 

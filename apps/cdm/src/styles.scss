@@ -340,3 +340,7 @@ form {
     margin-right: 1em;
   }
 }
+
+::ng-deep .mat-expansion-indicator {
+  // color: #026CB6!important;
+}

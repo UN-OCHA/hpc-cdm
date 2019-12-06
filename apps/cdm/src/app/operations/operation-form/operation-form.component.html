@@ -1,38 +1,34 @@
-<cdm-page [title]="title">
-  <ng-template #cdmPageBodyTemplate>
-    <form (ngSubmit)="onSubmit()" [formGroup]="form">
-      <mat-form-field appearance="outline">
-        <mat-label for="name">Name</mat-label>
-        <input matInput
-          formControlName="name"
-          (input)="clearErrors()" [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
-          id="name" name="name" required>
-      </mat-form-field>
+<form (ngSubmit)="onSubmit()" [formGroup]="form">
+  <mat-form-field appearance="outline">
+    <mat-label for="name">Name</mat-label>
+    <input matInput
+      formControlName="name"
+      (input)="clearErrors()" [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
+      id="name" name="name" required>
+  </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label for="description">Summary</mat-label>
-        <textarea matInput
-          class="form-control"  formControlName="description" (input)="clearErrors()"
-          [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=3
-          type="text" id="description" name="description" required></textarea>
-      </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label for="description">Summary</mat-label>
+    <textarea matInput
+      class="form-control"  formControlName="description" (input)="clearErrors()"
+      [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=3
+      type="text" id="description" name="description" required></textarea>
+  </mat-form-field>
 
-      <emergency-select></emergency-select>
-      <location-select></location-select>
+  <emergency-select></emergency-select>
+  <location-select></location-select>
 
-      <mat-form-field *ngIf="!editMode" appearance="outline">
-        <mat-label>Blueprint</mat-label>
-        <mat-select required formControlName="blueprint">
-          <mat-option *ngFor="let bp of blueprints" [value]="bp">
-            {{bp.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+  <mat-form-field *ngIf="!editMode" appearance="outline">
+    <mat-label>Blueprint</mat-label>
+    <mat-select required formControlName="blueprint">
+      <mat-option *ngFor="let bp of blueprints" [value]="bp">
+        {{bp.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-      <div *ngIf="!editMode" class="buttons">
-        <button mat-raised-button [routerLink]="['/operations']">Close</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">Save & Next</button>
-      </div>
-    </form>
-  </ng-template>
-</cdm-page>
+  <div *ngIf="!editMode" class="buttons">
+    <button mat-raised-button [routerLink]="['/operations']">Close</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">Save & Next</button>
+  </div>
+</form>

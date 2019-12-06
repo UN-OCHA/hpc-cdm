@@ -1,6 +1,6 @@
 <div *ngIf="operation" class="content operation-page">
   <mat-accordion>
-    <mat-expansion-panel>
+    <mat-expansion-panel [expanded]="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h1>{{operation.name}}</h1>

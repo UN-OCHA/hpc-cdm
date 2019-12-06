@@ -176,7 +176,7 @@ export class OperationService {
     this.routeState.processing = true;
     if(route) { this.routeState.route = route; }
     this.operationState.attachments = [];
-    this.loadOperation(operationId).subscribe(() => {
+    this._loadOperation(operationId).subscribe(() => {
       this.api.getOperationAttachments(operationId).subscribe(response => {
         const opas = response.opAttachments;
         if(opas.length) {
@@ -219,11 +219,14 @@ export class OperationService {
   loadEntities(entityPrototypeId: number, operationId?: number) {
     this.routeState.processing = true;
     this.operationState.entities = [];
-    this.loadOperation(operationId || this.operationState.operation.id).subscribe(response => {
+    this._loadOperation(operationId || this.operationState.operation.id).subscribe(response => {
       const opep = response.opEntityPrototypes
-        .filter(ep => ep.id == entityPrototypeId);
+        .find(ep => ep.id === entityPrototypeId);
 
-      const x = buildEntityPrototype(opep[0]);
+        console.log(response)
+        console.log(entityPrototypeId)
+        console.log(opep)
+      const x = buildEntityPrototype(opep);
       if(!this.entityState.prototype || this.entityState.prototype.id !== x.id) {
         this.entityState.prototype = x;
       }
@@ -235,7 +238,7 @@ export class OperationService {
   }
 
   loadAttachmentPrototypes(operationId?: number) {
-    this.loadOperation(operationId || this.operationState.operation.id)
+    this._loadOperation(operationId || this.operationState.operation.id)
     .subscribe(response => {
       this.operationState.attachmentPrototypes = response.opAttachmentPrototypes
         .map(ap => buildAttachmentPrototype(ap));
@@ -243,7 +246,7 @@ export class OperationService {
   }
 
   loadEntityPrototypes(operationId?: number) {
-    this.loadOperation(operationId || this.operationState.operation.id)
+    this._loadOperation(operationId || this.operationState.operation.id)
     .subscribe(response => {
       this.operationState.entityPrototypes = response.opEntityPrototypes
         .map(ep => buildEntityPrototype(ep));
@@ -251,7 +254,7 @@ export class OperationService {
   }
 
   loadEntityPrototype(operationId: number, id: number) {
-    this.loadOperation(operationId).subscribe(response => {
+    this._loadOperation(operationId).subscribe(response => {
       const entityPrototype = response.opEntityPrototypes
         .filter(ep => ep.id === id);
       return entityPrototype ? entityPrototype[0] : null;
@@ -306,13 +309,20 @@ export class OperationService {
     })
   }
 
+  _loadOperation(operationId: number): any {
+    return from(new Promise(resolve => {
+      this.api.getOperation(operationId).subscribe(response => {
+        this.operationState.operation = buildOperation(response);
+        resolve(response);
+      });
+    }));
+  }
+
   loadOperation(operationId: number): any {
     return from(new Promise(resolve => {
-      this.ensureReportingWindowExists(operationId).subscribe(() => {
-        this.api.getOperation(operationId).subscribe(response => {
-          this.operationState.operation = buildOperation(response);
-          resolve(response);
-        });
+      this.api.getOperation(operationId).subscribe(response => {
+        this.operationState.operation = buildOperation(response);
+        resolve(this.operationState.operation);
       });
     }));
   }

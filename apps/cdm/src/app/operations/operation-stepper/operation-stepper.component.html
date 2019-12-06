@@ -1,25 +1,21 @@
-<div class="content">
-  <div class="container">
-    <form [formGroup]="form">
-      <mat-vertical-stepper #stepper linear>
-        <mat-step formGroupName="operationDetails"
-          [stepControl]="form.get('operationDetails')">
-          <ng-template matStepLabel>Operation</ng-template>
-            <operation-form></operation-form>
-          <div class="buttons">
-            <button mat-raised-button matStepperNext>Next</button>
-          </div>
-        </mat-step>
-        <mat-step formGroupName="clusterDetails"
-          [stepControl]="form.get('clusterDetails')">
-          <ng-template matStepLabel>Cluster</ng-template>
+<operation-page title="Edit Operation">
+  <ng-template #operationPageBodyTemplate>
+    <form>
+      <mat-horizontal-stepper [linear]="isLinear" #stepper>
+        <mat-step *ngFor="let step of steps; let index = index;" [ngSwitch]="step.type">
+          <ng-template matStepLabel>{{step.name}}</ng-template>
+
+
+          <router-outlet></router-outlet>
+
 
           <div class="buttons">
-            <button mat-raised-button matStepperPrevious>Back</button>
-            <button mat-raised-button matStepperNext>Next</button>
+            <button *ngIf="index > 0" mat-raised-button matStepperPrevious>Back</button>
+            <button *ngIf="index < (steps.length - 1)" mat-raised-button matStepperNext>Next</button>
           </div>
         </mat-step>
-      </mat-vertical-stepper>
+
+      </mat-horizontal-stepper>
     </form>
-  </div>
-</div>
+  </ng-template>
+</operation-page>

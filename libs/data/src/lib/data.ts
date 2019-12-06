@@ -9,7 +9,9 @@ export interface Operation {
   version?: string;
   name: string;
   description?: string;
-  entityPrototypes?: EntityPrototype[];
+  entityPrototypes: EntityPrototype[];
+  attachmentPrototypes: AttachmentPrototype[];
+  attachmentPrototype?: AttachmentPrototype;
   updatedAt?: any;
   starred: boolean;
 }
@@ -30,6 +32,7 @@ export interface AttachmentPrototype {
   type: string;
   refCode: string;
   name: any;
+  entities: string[];
 }
 
 export interface Entity {
@@ -51,6 +54,7 @@ export interface EntityPrototype {
   type: string;
   refCode: string;
   name: any;
+  attachmentPrototype?: AttachmentPrototype;
 }
 
 export interface ReportingWindow {

@@ -4,7 +4,7 @@ import { CanActivate, RouterModule, Routes } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { AuthService } from '@hpc/core';
 
-import { OperationFormComponent } from './operation-form/operation-form.component';
+import { OperationAddComponent } from './operation-add/operation-add.component';
 import { OperationListComponent } from './operation-list/operation-list.component';
 import { OperationStepperComponent } from './operation-stepper/operation-stepper.component';
 
@@ -25,9 +25,9 @@ const route = (path, component) => {
 }
 
 const routes: Routes = [
-  route('operations/:id', OperationStepperComponent),
   route('operations', OperationListComponent),
-  route('operation', OperationFormComponent),
+  route('operations/:id', OperationStepperComponent),
+  route('operation', OperationAddComponent),
 ];
 
 @NgModule({

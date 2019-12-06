@@ -13,11 +13,14 @@
   .mat-table {
     // overflow-y: scroll;
     .mat-column-name {
-      width: 30%!important;
+      width: 24%!important;
     }
     .mat-column-description {
-      width: 56%!important;
+      width: 40%!important;
       padding: 1em 0;
+    }
+    .mat-column-type {
+      width: 6%!important;
     }
     .mat-column-status {
       width: 6%!important;

@@ -18,7 +18,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class BlueprintListComponent implements OnInit {
   blueprints: any[];
-  columnsToDisplay = ['name', 'description', 'status', 'actions'];
+  columnsToDisplay = ['name', 'description', 'status', 'type', 'actions'];
   expandedElement: any | null;
 
   limit: number = 10;

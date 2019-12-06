@@ -24,7 +24,7 @@ import { OperationService } from '@cdm/core';
 export class OperationPageComponent implements OnInit {
   @Input() title?;
   operation: Operation;
-  titleExpanded = false;
+  titleExpanded = true;
 
   @ContentChild('operationPageTitleActionsTemplate', {static: false})
   pageTitleTemplateRef: TemplateRef<any>;

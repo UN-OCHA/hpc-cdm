@@ -1,0 +1,18 @@
+:host {
+  form {
+    margin: 0;
+    padding: 0;
+    .mat-stepper-vertical {
+      margin: 0;
+      padding: 0;
+      .mat-step {
+        margin: 0;
+        padding: 0;
+        .mat-step-header {
+          margin: 0;
+          padding: 0;
+        }
+      }
+    }
+  }
+}
