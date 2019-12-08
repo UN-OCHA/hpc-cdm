@@ -78,6 +78,7 @@ export class AuthService {
         );
       return true;
     } else {
+      console.log('3333333333333333333333333333333333')
       this.user = null;
       return false;
     }

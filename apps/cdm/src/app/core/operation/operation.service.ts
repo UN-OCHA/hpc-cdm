@@ -99,6 +99,7 @@ export class OperationService {
   get processing(): Boolean { return this.routeState.processing; }
   get saving(): Boolean { return this.routeState.saving; }
   get mode(): string { return this.routeState.mode; }
+  get mode$(): Observable<string> { return this.routeState.mode$; }
   set mode(mode: string) {
     this.routeState.mode = mode;
     if(mode === 'ADD_ENTITY') {

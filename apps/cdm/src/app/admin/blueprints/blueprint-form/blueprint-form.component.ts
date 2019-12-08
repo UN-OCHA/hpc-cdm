@@ -2,7 +2,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { ApiService } from '@hpc/core';
+import { ApiService, ModeService } from '@hpc/core';
 
 @Component({
   selector: 'blueprint-form',
@@ -17,6 +17,7 @@ export class BlueprintFormComponent implements OnInit {
   jsonModel: any;
 
   constructor(
+    private service: ModeService,
     private injector: Injector,
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
@@ -42,13 +43,15 @@ export class BlueprintFormComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
+        this.service.mode = 'edit';
         this.api.getBlueprint(params.id).subscribe(bp => {
           this.setMode(bp);
-        })
+        });
       } else {
+        this.service.mode = 'add';
         this.setMode(this.injector.get('blueprint', null));
       }
-    })
+    });
   }
 
   get f() { return this.form.controls; }

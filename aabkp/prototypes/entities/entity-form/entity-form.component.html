@@ -1,0 +1,29 @@
+<operation-page [title]="title">
+  <ng-template #operationPageBodyTemplate>
+    <form class="entity-form" (ngSubmit)="onSubmit()" [formGroup]="form">
+      <mat-form-field appearance="outline">
+        <mat-label>RefCode</mat-label>
+        <input matInput class="form-control" formControlName="refCode"
+          (input)="clearErrors()" [ngClass]="{ 'is-invalid': submitted && f.refCode.errors }"
+          type="text" id="refCode" name="refCode" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Type</mat-label>
+        <input matInput class="form-control" formControlName="refType"
+          (input)="clearErrors()"
+          [ngClass]="{ 'is-invalid': submitted && f.refType.errors }"
+          type="text" id="refType" name="refType" required>
+      </mat-form-field>
+
+      <label>JSON Model?</label>
+      <json-editor
+        [json]="prototype && prototype.opEntityPrototypeVersion.value"
+        (change)="onJsonChange($event)"></json-editor>
+
+      <div class="buttons">
+        <button mat-raised-button [routerLink]="['/operations', operationId, 'eprototypes']">Close</button>
+        <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
+      </div>
+    </form>
+  </ng-template>
+</operation-page>

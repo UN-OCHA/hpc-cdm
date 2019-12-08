@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 import { AuthService } from '@hpc/core';
 import { AppService, OperationService } from '@cdm/core';
 
 @Component({
-  selector: 'operations',
+  selector: 'operation-list',
   templateUrl: './operation-list.component.html',
   styleUrls: [ './operation-list.component.scss' ],
   animations: [
@@ -32,25 +32,28 @@ export class OperationListComponent implements OnInit {
   constructor(
     private auth: AuthService,
     private app: AppService,
-    private operationService: OperationService) {}
+    private service: OperationService) {}
 
   ngOnInit() {
+    console.log('simon............')
+    // console.log(this.auth.user)
+    this.service.mode = 'list';
     this.loading = true;
     // TODO revisit this. authentication service might not
     // be required here. it is only here because this is the first
     // route after the user logs in and to prevent requesting
     // operations after the user has been authenticated but before
     // the user/roles have been fetched.
-    if(this.auth.user) {
+    // if(this.auth.user) {
       this.app.loadOperations();
-    } else {
-      this.auth.user$.subscribe(user => {
-        if(user) {
-          this.armed = true;
-          this.app.loadOperations();
-        }
-      });
-    }
+    // } else {
+    //   this.auth.user$.subscribe(user => {
+    //     if(user) {
+    //       this.armed = true;
+    //       this.app.loadOperations();
+    //     }
+    //   });
+    // }
     this.app.operations$.subscribe(operations => {
       // TODO understand why this is called even before we
       // set operations
@@ -63,7 +66,7 @@ export class OperationListComponent implements OnInit {
 
   toggleExpansion(element) {
     this.expandedElement = this.expandedElement === element ? null : element;
-    this.operationService.operation = element;
+    this.service.operation = element;
   }
 
 

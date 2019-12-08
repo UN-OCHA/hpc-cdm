@@ -1,0 +1,16 @@
+<div class="cdm-title">
+  <h1>{{title}}</h1>
+  <div class="cdm-title-icons">
+    <a mat-button
+      [routerLink]="['/operations', operationService.id, 'eprototypes', 'new']">
+      <mat-icon>add_box</mat-icon>
+    </a>
+    <a mat-button
+      [routerLink]="['/operations', operationService.id, 'eprototypes']">
+      <mat-icon>format_align_justify</mat-icon>
+    </a>
+  </div>
+</div>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>

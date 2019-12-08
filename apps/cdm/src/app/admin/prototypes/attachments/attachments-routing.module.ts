@@ -1,18 +1,27 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { AttachmentsComponent } from './attachments.component';
 import { AttachmentListComponent } from './attachment-list/attachment-list.component';
 import { AttachmentFormComponent } from './attachment-form/attachment-form.component';
 
-import { operationAdminRoute, adminRoute } from '../../admin.utils';
+import { AuthenticatedGuard, AdminGuard } from '@hpc/core';
 
 const routes: Routes = [
-  adminRoute('aprototypes/:id', AttachmentFormComponent),
-  operationAdminRoute('aprototypes', AttachmentListComponent),
-  operationAdminRoute('aprototype', AttachmentFormComponent),
+  {
+    path: '',
+    component: AttachmentsComponent,
+    canActivate: [AdminGuard],
+    children: [
+      { path: '', component: AttachmentListComponent },
+      { path: 'new', component: AttachmentFormComponent },
+      { path: ':id', component: AttachmentFormComponent },
+    ]
+  }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
-export class AttachmentPrototypesRoutingModule { }
+export class AttachmentsRoutingModule { }

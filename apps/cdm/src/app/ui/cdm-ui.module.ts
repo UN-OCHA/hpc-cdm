@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IconSpriteModule } from 'ng-svg-icon-sprite';
 import { UIModule } from '@hpc/ui';
+import { MaterialModule } from '@hpc/material';
 import { OperationPageModule } from './operation-page/operation-page.module';
 import { OperationPageComponent } from './operation-page/operation-page.component';
 import { WindowPageModule } from './window-page/window-page.module';
@@ -23,11 +23,14 @@ import { OperationTableModule } from './operation-table/operation-table.module';
     EntityBoxComponent,
   ],
   imports: [
-    CommonModule, RouterModule,
+    CommonModule,
     LayoutModule,
     IconSpriteModule.forRoot({ path: 'assets/sprites/sprite.svg' }),
-    UIModule, CdmPageModule,
-    OperationPageModule, OperationTableModule, WindowPageModule,
+    UIModule,
+    CdmPageModule,
+    OperationPageModule,
+    OperationTableModule,
+    WindowPageModule,
     OperationTitleModule, OperationMenuModule,
   ],
   exports: [
@@ -36,7 +39,8 @@ import { OperationTableModule } from './operation-table/operation-table.module';
     OperationTitleComponent,
     OperationMenuComponent,
     EntityBoxComponent,
-    CdmPageComponent, OperationTableComponent
+    CdmPageComponent, OperationTableComponent,
+    UIModule, MaterialModule
   ]
 })
 export class CdmUIModule { }

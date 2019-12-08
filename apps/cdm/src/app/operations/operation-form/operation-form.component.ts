@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '@hpc/core';
+import { OperationService } from '@cdm/core';
 
 @Component({
   selector: 'operation-form',
@@ -11,11 +12,10 @@ import { ApiService } from '@hpc/core';
 export class OperationFormComponent implements OnInit {
   form: FormGroup;
   blueprints = [];
-  title = '';
   editMode = false;
-  // blueprint;
 
   constructor(
+    private operationService: OperationService,
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private api: ApiService) {
@@ -30,10 +30,10 @@ export class OperationFormComponent implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       console.log(params)
       if(params.id) {
-        this.title = 'Edit Operation';
+        this.operationService.mode = 'edit';
         this.editMode = true;
       } else {
-        this.title = 'New Operation';
+        this.operationService.mode = 'add';
         this.api.getBlueprints().subscribe(blueprints => {
           this.blueprints = blueprints;
         });

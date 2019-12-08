@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService, OperationService } from '@cdm/core';
-import { Operation } from '@hpc/data';
+import { Operation, User } from '@hpc/data';
 import { AuthService } from '@hpc/core';
 
 @Component({
@@ -10,6 +10,7 @@ import { AuthService } from '@hpc/core';
 })
 export class OperationMenuComponent implements OnInit {
   op: Operation;
+  user: User;
 
   constructor(
     private auth: AuthService,
@@ -20,5 +21,8 @@ export class OperationMenuComponent implements OnInit {
     this.operation.operation$.subscribe(op => {
       this.op = op;
     });
+    this.auth.user$.subscribe(user => {
+      this.user = user;
+    })
   }
 }

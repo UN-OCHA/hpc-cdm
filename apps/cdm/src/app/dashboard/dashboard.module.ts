@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+// import { RouterModule } from '@angular/router';
 import { MatIconModule, MatButtonModule } from '@angular/material';
 
-import { AdminModule } from '../admin/admin.module';
-import { OperationsModule } from '../operations/operations.module';
+// import { AdminModule } from '../admin/admin.module';
+// import { OperationsModule } from '../operations/operations.module';
 
 import { DashboardComponent } from './dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
@@ -18,8 +18,10 @@ import { CdmUIModule } from '../ui/cdm-ui.module';
     DashboardComponent
   ],
   imports: [
-    CommonModule, RouterModule,
-    AdminModule, OperationsModule,
+    CommonModule,
+    // RouterModule,
+    // AdminModule,
+    // OperationsModule,
     MatButtonModule, MatIconModule,
     UIModule, CdmUIModule,
     DashboardRoutingModule

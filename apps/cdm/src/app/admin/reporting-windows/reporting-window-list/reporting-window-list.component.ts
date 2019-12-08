@@ -4,6 +4,7 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 // import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 
 import { ApiService } from '@hpc/core';
+import { ReportingWindowsService } from '../reporting-windows.service';
 
 @Component({
   selector: 'reporting-windows',
@@ -33,9 +34,13 @@ export class ReportingWindowListComponent implements OnInit {
   typeaheadNoResults = false;
   working = false;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private service: ReportingWindowsService,
+    private api: ApiService) {}
 
   ngOnInit() {
+    this.service.mode = 'list';
+
     this.results = [];
     this.working = true;
 

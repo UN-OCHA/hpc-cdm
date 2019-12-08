@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { ApiService, AuthService } from '@hpc/core';
-import { ReportingWindowService } from '@cdm/core';
+import { ReportingWindowsService } from '../reporting-windows.service';
 import { ReportingWindow } from '@hpc/data';
 
 // import { ToastrService } from 'ngx-toastr';
@@ -31,6 +31,7 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
     private activatedRoute: ActivatedRoute,
     private api: ApiService,
     private auth: AuthService,
+    private service: ReportingWindowsService,
     // private rw: ReportingWindowService,
     // private translate: TranslateService,
     // private toastr: ToastrService
@@ -45,8 +46,8 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
+        this.service.mode = 'edit';
         this.editMode = true;
-        this.title = 'Edit Reporting Window';
         this.api.getReportingWindow(params.id).subscribe(rw => {
           console.log(rw);
           rw.name = 'RW Name';
@@ -55,7 +56,7 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
         // this.form.reset({
         // });
       } else {
-        this.title = 'New Reporting Window';
+        this.service.mode = 'add';
       }
     });
 

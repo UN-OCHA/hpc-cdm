@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTableModule, MatButtonModule, MatIconModule } from '@angular/material';
 
 import { CdmTableComponent } from './cdm-table.component';
@@ -14,7 +14,8 @@ import { OperationMenuModule } from '../operation-menu/operation-menu.module';
     CdmTableComponent,
   ],
   imports: [
-    CommonModule, RouterModule, BrowserAnimationsModule,
+    CommonModule, RouterModule,
+    // BrowserAnimationsModule,
     MatTableModule, MatButtonModule, MatIconModule,
     CdmPageModule, OperationTitleModule, OperationMenuModule
   ],

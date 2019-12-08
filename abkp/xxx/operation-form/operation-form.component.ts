@@ -86,7 +86,7 @@ export class OperationFormComponent implements OnInit, ComponentCanDeactivate {
    if (Array.isArray(this.createOperationService.operation.opGoverningEntities)) {
      isEntityCoordinatorLead = this.createOperationService.operation.opGoverningEntities.filter(gE => isEntityCoordinatorLeadFor.indexOf(gE.id) !== -1).length;
    }
-   console.log(isEntityCoordinatorLead);
+   // console.log(isEntityCoordinatorLead);
 
    const isOperationLead = isOperationLeadFor.filter((operation:any)=>operation.id === this.createOperationService.operation.id);
    if (isAdmin || isOperationLead) {

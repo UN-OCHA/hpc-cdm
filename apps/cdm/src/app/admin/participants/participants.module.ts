@@ -1,29 +1,34 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule, MatButtonModule, MatTableModule } from '@angular/material';
 import { UIModule } from '@hpc/ui';
 import { CdmUIModule } from '@cdm/ui';
+import { ParticipantsRoutingModule } from './participants-routing.module';
+import { ParticipantsComponent } from './participants.component';
 import { ParticipantListComponent } from './participant-list/participant-list.component';
 import { ParticipantFormComponent } from './participant-form/participant-form.component';
-import { ParticipantsRoutingModule } from './participants-routing.module';
+import { ModeService } from '@hpc/core';
 
 @NgModule({
   declarations: [
+    ParticipantsComponent,
     ParticipantListComponent,
     ParticipantFormComponent
   ],
   imports: [
-    CommonModule, RouterModule,
+    CommonModule,
     FormsModule, ReactiveFormsModule,
     MatIconModule, MatButtonModule, MatTableModule,
     UIModule, CdmUIModule,
     ParticipantsRoutingModule
   ],
-  exports: [
-    ParticipantListComponent,
-    ParticipantFormComponent
+  // exports: [
+  //   ParticipantListComponent,
+  //   ParticipantFormComponent
+  // ],
+  providers: [
+    ModeService
   ]
 })
 export class ParticipantsModule { }

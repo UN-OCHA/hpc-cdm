@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { ApiService } from '@hpc/core';
+import { ApiService, ModeService } from '@hpc/core';
 
 @Component({
   selector: 'entity-prototype-form',
@@ -24,6 +24,7 @@ export class EntityFormComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     private router: Router,
+    private modeService: ModeService,
     private api: ApiService) {
     this.form = this.fb.group({
       refCode: ['', Validators.required],
@@ -57,10 +58,12 @@ export class EntityFormComponent implements OnInit {
         this.operationId = params.operationId;
       }
       if(params.id) {
+        this.modeService.mode = 'edit';
         this.api.getEntityPrototype(params.id).subscribe(proto => {
           this.setMode(proto);
         })
       } else {
+        this.modeService.mode = 'add';
         this.setMode(this.injector.get('prototype', null));
       }
     })

@@ -1,18 +1,24 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { BlueprintsComponent } from './blueprints.component';
 import { BlueprintListComponent } from './blueprint-list/blueprint-list.component';
 import { BlueprintFormComponent } from './blueprint-form/blueprint-form.component';
-
-import { adminRoute } from '../admin.utils';
+import { AdminGuard } from '@hpc/core';
 
 const routes: Routes = [
-  adminRoute('blueprints', BlueprintListComponent),
-  adminRoute('blueprints/:id', BlueprintFormComponent),
-  adminRoute('blueprint', BlueprintFormComponent),
+  {
+    path: '',
+    component: BlueprintsComponent,
+    children: [
+      { path: '', component: BlueprintListComponent, canActivate: [AdminGuard] },
+      { path: 'new', component: BlueprintFormComponent, canActivate: [AdminGuard] },
+      { path: ':id', component: BlueprintFormComponent, canActivate: [AdminGuard] }
+    ]}
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
 export class BlueprintsRoutingModule { }

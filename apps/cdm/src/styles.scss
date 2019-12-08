@@ -112,6 +112,8 @@ body {
       }
     }
   }
+
+
 }
 
 
@@ -343,4 +345,42 @@ form {
 
 ::ng-deep .mat-expansion-indicator {
   // color: #026CB6!important;
+}
+
+
+
+.cdm-title {
+  display: flex;
+  flex-direction: row;
+  background-color: #026cb6;
+  color: #fff;
+  padding: .5em;
+  border-top-left-radius: .25em;
+  border-top-right-radius: .25em;
+  margin-top: 1em;
+  h1 {
+    margin: 0;
+    font-size: 1.75em;
+    line-height: 1.5em;
+    padding-left: .25em;
+    flex-grow: 1;
+  }
+  .cdm-title-icons {
+    display: flex;
+    flex-direction: row;
+    vertical-align: middle;
+    padding-right: .25em;
+    .mat-button {
+      color: #fff;
+      margin-left: .5em;
+      padding: 0;
+      min-width: 0;
+      .mat-icon {
+        font-size: 2.5em;
+        padding: 0;
+        height: 1em;
+        width: 1em;
+      }
+    }
+  }
 }

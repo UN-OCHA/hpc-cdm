@@ -1,14 +1,5 @@
-<operation-page title="Participants">
-  <ng-template #operationPageTitleActionsTemplate>
-    <a mat-stroked-button
-      [routerLink]="['/operations', operationId, 'participant']">
-      Add Participant</a>
+<operation-table [dataSource]="participants" [columns]="tableColumns">
+  <ng-template #operationTableExpandedRowTemplate let-element>
+    <a [routerLink]="['/participants', element.id]">Edit Participant</a>
   </ng-template>
-  <ng-template #operationPageBodyTemplate>
-    <operation-table [dataSource]="participants" [columns]="tableColumns">
-      <ng-template #operationTableExpandedRowTemplate let-element>
-        <a [routerLink]="['/participants', element.id]">Edit Participant</a>
-      </ng-template>
-    </operation-table>
-  </ng-template>
-</operation-page>
+</operation-table>

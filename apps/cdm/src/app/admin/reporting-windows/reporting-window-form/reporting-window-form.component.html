@@ -1,37 +1,33 @@
-<window-page [title]="title" [reportingWindow]="reportingWindow">
-  <ng-template #windowPageBodyTemplate>
-    <form class="window-form" (ngSubmit)="onSubmit()">
-      <mat-radio-group>
-        <mat-radio-button color="primary" [value]="1">Global</mat-radio-button>
-        <mat-radio-button color="primary" [value]="3">Operation</mat-radio-button>
-        <mat-radio-button color="primary" [value]="2">Plan</mat-radio-button>
-      </mat-radio-group>
+<form class="window-form" (ngSubmit)="onSubmit()">
+  <mat-radio-group>
+    <mat-radio-button color="primary" [value]="1">Global</mat-radio-button>
+    <mat-radio-button color="primary" [value]="3">Operation</mat-radio-button>
+    <mat-radio-button color="primary" [value]="2">Plan</mat-radio-button>
+  </mat-radio-group>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Context</mat-label>
-        <input matInput formControlName="context"
-          (input)="clearErrors()"
-          required>
-      </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Context</mat-label>
+    <input matInput formControlName="context"
+      (input)="clearErrors()"
+      required>
+  </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Name</mat-label>
-        <input matInput formControlName="name"
-          (input)="clearErrors()"
-          required>
-      </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name"
+      (input)="clearErrors()"
+      required>
+  </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Description</mat-label>
-        <textarea matInput formControlName="description"
-          (input)="clearErrors()"
-          required></textarea>
-      </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Description</mat-label>
+    <textarea matInput formControlName="description"
+      (input)="clearErrors()"
+      required></textarea>
+  </mat-form-field>
 
-      <div class="buttons">
-        <button mat-raised-button [routerLink]="['/windows']">Close</button>
-        <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
-      </div>
-    </form>
-  </ng-template>
-</window-page>
+  <div class="buttons">
+    <button mat-raised-button [routerLink]="['/windows']">Close</button>
+    <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
+  </div>
+</form>

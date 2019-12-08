@@ -1,36 +1,49 @@
-import { Injectable } from '@angular/core';
 import { NgModule } from '@angular/core';
-import { CanActivate, RouterModule, Routes } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { AuthService } from '@hpc/core';
+import { Routes, RouterModule } from '@angular/router';
 
-import { OperationAddComponent } from './operation-add/operation-add.component';
+import { OperationsComponent } from './operations.component';
+import { OperationComponent } from './operation/operation.component';
 import { OperationListComponent } from './operation-list/operation-list.component';
-import { OperationStepperComponent } from './operation-stepper/operation-stepper.component';
+import { OperationAddComponent } from './operation-add/operation-add.component';
+import { OperationFormComponent } from './operation-form/operation-form.component';
 
-
-@Injectable({providedIn: 'root'})
-export class OperationsGuard implements CanActivate {
-  constructor(private auth: AuthService) {}
-
-  canActivate(): Observable<boolean> {
-    // console.log(this.auth.isAuthenticated() && this.auth.user)
-    return of(this.auth.isAuthenticated());
-    // return of(true);
-  }
-}
-
-const route = (path, component) => {
-  return {path, component, canActivate: [OperationsGuard]}
-}
+import { AuthenticatedGuard, AdminGuard } from '@hpc/core';
 
 const routes: Routes = [
-  route('operations', OperationListComponent),
-  route('operations/:id', OperationStepperComponent),
-  route('operation', OperationAddComponent),
+  {
+    path: '',
+    // pathMatch: 'full',
+    component: OperationsComponent,
+    children: [
+      { path: '', component: OperationListComponent, canActivate: [AuthenticatedGuard] },
+      { path: 'new', component: OperationFormComponent, canActivate: [AdminGuard] },
+    ]
+  },
+  {
+    path: ':id',
+    component: OperationComponent,
+    children: [
+      {
+        path: '', component: OperationFormComponent, canActivate: [AuthenticatedGuard]
+      },
+      {
+        path: 'aprototypes',
+        loadChildren: '../admin/prototypes/attachments/attachments.module#AttachmentPrototypesModule',
+      },
+      {
+        path: 'eprototypes',
+        loadChildren: '../admin/prototypes/entities/entities.module#EntityPrototypesModule',
+      },
+      {
+        path: 'participants',
+        loadChildren: '../admin/participants/participants.module#ParticipantsModule',
+      },
+    ]
+  }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
 export class OperationsRoutingModule { }

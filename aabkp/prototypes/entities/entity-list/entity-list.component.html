@@ -1,0 +1,15 @@
+<operation-page title="Entity Prototypes">
+  <ng-template #operationPageTitleActionsTemplate>
+    <button mat-stroked-button
+      [routerLink]="['/operations', operation.id, 'eprototype']">
+      Add Entity Prototype
+    </button>
+  </ng-template>
+  <ng-template #operationPageBodyTemplate>
+    <operation-table [dataSource]="prototypes" [columns]="tableColumns">
+      <ng-template #operationTableExpandedRowTemplate let-element>
+        <a [routerLink]="['/eprototypes', element.id]">Edit Prototype</a>
+      </ng-template>
+    </operation-table>
+  </ng-template>
+</operation-page>

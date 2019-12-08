@@ -1,53 +1,46 @@
-<cdm-page title="Operations">
-  <ng-template #cdmPageTitleActionsTemplate>
-    <a mat-stroked-button [routerLink]="['/operation']">Add Operation</a>
-  </ng-template>
-  <ng-template #cdmPageBodyTemplate>
-    <div *ngIf="!loading && (!app.operations || !app.operations.length)">
-      <p>You currently have no operations.
-    </div>
+<div *ngIf="!loading && (!app.operations || !app.operations.length)">
+  <p>You currently have no operations.
+</div>
 
-    <table *ngIf="app.operations" mat-table [dataSource]="app.operations" multiTemplateDataRows class="mat-elevation-z8">
-      <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let operation">
-          <div class="title">
-            <div class="starred">
-              <mat-icon
-                [ngClass]="{ 'active': operation.starred }"
-                (click)="toggleStar($event, operation)">star_border</mat-icon>
-            </div>
-            <div class="description">
-              <h2>{{operation.name}}</h2>
-              <h5>Last updated on {{ operation.updatedAt | date:'mediumDate' }}</h5>
-            </div>
-            <div class="actions">
-              <mat-icon *ngIf="operation !== expandedElement">expand_more</mat-icon>
-              <mat-icon *ngIf="operation === expandedElement">expand_less</mat-icon>
-            </div>
-          </div>
-        </td>
-      </ng-container>
+<table *ngIf="app.operations" mat-table [dataSource]="app.operations" multiTemplateDataRows class="mat-elevation-z8">
+  <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let operation">
+      <div class="title">
+        <div class="starred">
+          <mat-icon
+            [ngClass]="{ 'active': operation.starred }"
+            (click)="toggleStar($event, operation)">star_border</mat-icon>
+        </div>
+        <div class="description">
+          <h2>{{operation.name}}</h2>
+          <h5>Last updated on {{ operation.updatedAt | date:'mediumDate' }}</h5>
+        </div>
+        <div class="actions">
+          <mat-icon *ngIf="operation !== expandedElement">expand_more</mat-icon>
+          <mat-icon *ngIf="operation === expandedElement">expand_less</mat-icon>
+        </div>
+      </div>
+    </td>
+  </ng-container>
 
-      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-      <ng-container matColumnDef="expandedDetail">
-        <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
-          <div class="example-element-detail"
-               [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-            <div class="example-element-description">
-              <operation-menu></operation-menu>
-            </div>
-          </div>
-        </td>
-      </ng-container>
+  <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+  <ng-container matColumnDef="expandedDetail">
+    <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+      <div class="example-element-detail"
+           [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+        <div class="example-element-description">
+          <operation-menu></operation-menu>
+        </div>
+      </div>
+    </td>
+  </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-      <tr mat-row *matRowDef="let element; columns: columnsToDisplay;"
-          class="example-element-row"
-          [class.example-expanded-row]="expandedElement === element"
-          (click)="toggleExpansion(element)">
-      </tr>
-      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
-    </table>
-  </ng-template>
-</cdm-page>
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let element; columns: columnsToDisplay;"
+      class="example-element-row"
+      [class.example-expanded-row]="expandedElement === element"
+      (click)="toggleExpansion(element)">
+  </tr>
+  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+</table>

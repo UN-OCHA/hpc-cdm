@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ModeService } from '@hpc/core';
 import { EntityPrototype } from '@hpc/data';
 import { OperationService } from '@cdm/core';
 
@@ -17,14 +18,16 @@ export class EntityListComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private operation: OperationService) {}
+    private modeService: ModeService,
+    private operationService: OperationService) {}
 
   ngOnInit() {
+    this.modeService.mode = 'list';
     this.activatedRoute.params.subscribe(params => {
-      this.operation.loadEntityPrototypes(params.id);
+      this.operationService.loadEntityPrototypes(params.id);
     });
 
-    this.operation.entityPrototypes$.subscribe(protos => {
+    this.operationService.entityPrototypes$.subscribe(protos => {
       this.prototypes = protos;
     });
   }

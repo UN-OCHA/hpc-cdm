@@ -1,29 +1,29 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule } from '@angular/material';
-import { UIModule } from '@hpc/ui';
 import { CdmUIModule } from '@cdm/ui';
-import { EntityFormComponent } from './entity-form/entity-form.component';
+import { MaterialModule } from '@hpc/material';
+import { EntitiesRoutingModule } from './entities-routing.module';
+import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
-import { EntityPrototypesRoutingModule } from './entities-routing.module';
+import { EntityFormComponent } from './entity-form/entity-form.component';
 
 @NgModule({
   declarations: [
+    EntitiesComponent,
+    EntityListComponent,
     EntityFormComponent,
-    EntityListComponent
   ],
   imports: [
-    CommonModule, RouterModule,
+    CommonModule,
     FormsModule, ReactiveFormsModule,
-    MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule,
-    UIModule, CdmUIModule,
-    EntityPrototypesRoutingModule
+    CdmUIModule, MaterialModule,
+    EntitiesRoutingModule
   ],
   exports: [
+    EntitiesComponent,
+    EntityListComponent,
     EntityFormComponent,
-    EntityListComponent
   ]
 })
 export class EntityPrototypesModule { }

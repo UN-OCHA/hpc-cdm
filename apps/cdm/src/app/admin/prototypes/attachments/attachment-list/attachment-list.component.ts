@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { OperationService } from '@cdm/core';
+import { ModeService } from '@hpc/core';
 import { Operation, AttachmentPrototype } from '@hpc/data';
 import { ActivatedRoute } from '@angular/router';
 
@@ -19,9 +20,11 @@ export class AttachmentListComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
+    private modeService: ModeService,
     private operationService: OperationService) {}
 
   ngOnInit() {
+    this.modeService.mode = 'list';
     this.activatedRoute.params.subscribe(params => {
       this.operationService.loadAttachmentPrototypes(params.id);
     });

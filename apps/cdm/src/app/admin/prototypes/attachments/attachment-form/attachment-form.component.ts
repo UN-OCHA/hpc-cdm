@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { ApiService } from '@hpc/core';
+import { ApiService, ModeService } from '@hpc/core';
 
 @Component({
   selector: 'attachment-prototype-form',
@@ -13,7 +13,6 @@ import { ApiService } from '@hpc/core';
 export class AttachmentFormComponent implements OnInit {
   form: FormGroup;
   submitted = false;
-  title: String;
   prototype: any;
   jsonModel: any;
   operationId: any;
@@ -24,7 +23,8 @@ export class AttachmentFormComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     private router: Router,
-    private api: ApiService) {
+    private api: ApiService,
+    private modeService: ModeService) {
     this.form = this.fb.group({
       refCode: ['', Validators.required],
       refType: ['', Validators.required]
@@ -32,7 +32,6 @@ export class AttachmentFormComponent implements OnInit {
   }
 
   setMode(proto) {
-    this.title = proto ? 'Edit Attachment Prototpe' : 'New Attachment Prototype';
     if(proto) {
       this.prototype = proto;
       this.form.reset({
@@ -57,10 +56,12 @@ export class AttachmentFormComponent implements OnInit {
       this.operationId = params.operationId;
       // }
       if(params.id) {
+        this.modeService.mode = 'edit';
         this.api.getAttachmentPrototype(params.id).subscribe(proto => {
           this.setMode(proto);
         })
       } else {
+        this.modeService.mode = 'add';
         this.setMode(this.injector.get('prototype', null));
       }
     })

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule, MatFormFieldModule, MatExpansionModule, MatTableModule, MatButtonModule, MatIconModule } from '@angular/material';
 
 import { OperationTableComponent } from './operation-table.component';
@@ -14,7 +14,8 @@ import { OperationMenuModule } from '../operation-menu/operation-menu.module';
     OperationTableComponent,
   ],
   imports: [
-    CommonModule, RouterModule, BrowserAnimationsModule,
+    CommonModule, RouterModule,
+    // BrowserAnimationsModule,
     MatInputModule, MatFormFieldModule, MatExpansionModule, MatTableModule, MatButtonModule, MatIconModule,
     CdmPageModule, OperationTitleModule, OperationMenuModule
   ],

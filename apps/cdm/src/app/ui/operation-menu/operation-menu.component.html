@@ -1,4 +1,4 @@
-<div *ngIf="op" class="menu">
+<div *ngIf="op && auth.user" class="menu">
 
   <div *ngIf="auth.user.isAdmin" class="section">
     <label><mat-icon>edit</mat-icon>Edit</label>

@@ -16,7 +16,7 @@ const ADMIN_ROLES = ['rpmadmin', 'hpcadmin'];
 export function buildUser(participant: any): User {
   const roles = (participant && participant.roles) || [];
   const adminRoles = roles.find(r => ADMIN_ROLES.includes(r.name));
-  console.log(participant)
+  // console.log(participant)
   return {
     id: participant.id,
     email: participant.email,
@@ -26,7 +26,7 @@ export function buildUser(participant: any): User {
 
 export function buildOperation(op: any): Operation {
   const v = op.operationVersion;
-  console.log(op)
+  // console.log(op)
   let attachmentPrototypes = [];
   let attachmentPrototype = null;
   if(op.opAttachmentPrototypes) {
@@ -91,8 +91,8 @@ export function buildEntity(ge, v): Entity {
 
 export function buildEntityPrototype(ep: any, aprototypes=[]): EntityPrototype {
   const version = ep.opEntityPrototypeVersion;
-  console.log('---------------------------------------------')
-  console.log(ep)
+  // console.log('---------------------------------------------')
+  // console.log(ep)
   const attachmentPrototype = aprototypes.find(p => p.entities.includes(version.refCode));
   return {
     id: ep.id,

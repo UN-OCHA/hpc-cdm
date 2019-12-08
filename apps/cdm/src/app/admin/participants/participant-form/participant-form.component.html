@@ -1,10 +1,6 @@
-<operation-page title="New Participant">
-  <ng-template #operationPageBodyTemplate>
-    <form class="attachment-form" (ngSubmit)="onSubmit()" [formGroup]="form">
-      <div class="buttons">
-        <button mat-raised-button [routerLink]="['/operations', operationId, 'participants']">Close</button>
-        <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
-      </div>
-    </form>
-  </ng-template>
-</operation-page>
+<form (ngSubmit)="onSubmit()" [formGroup]="form">
+  <div class="buttons">
+    <button mat-raised-button [routerLink]="['/operations', operationId, 'participants']">Close</button>
+    <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
+  </div>
+</form>

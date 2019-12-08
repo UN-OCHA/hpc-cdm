@@ -1,32 +1,33 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTableModule } from '@angular/material';
-
-import { UIModule } from '@hpc/ui';
+import { ModeService } from '@hpc/core';
 import { CdmUIModule } from '@cdm/ui';
-
-import { AttachmentFormComponent } from './attachment-form/attachment-form.component';
+import { MaterialModule } from '@hpc/material';
+import { AttachmentsRoutingModule } from './attachments-routing.module';
+import { AttachmentsComponent } from './attachments.component';
 import { AttachmentListComponent } from './attachment-list/attachment-list.component';
-
-import { AttachmentPrototypesRoutingModule } from './attachments-routing.module';
+import { AttachmentFormComponent } from './attachment-form/attachment-form.component';
 
 @NgModule({
   declarations: [
+    AttachmentsComponent,
+    AttachmentListComponent,
     AttachmentFormComponent,
-    AttachmentListComponent
   ],
   imports: [
-    CommonModule, RouterModule,
+    CommonModule,
     FormsModule, ReactiveFormsModule,
-    MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTableModule,
-    UIModule, CdmUIModule,
-    AttachmentPrototypesRoutingModule
+    CdmUIModule, MaterialModule,
+    AttachmentsRoutingModule
   ],
   exports: [
+    AttachmentsComponent,
+    AttachmentListComponent,
     AttachmentFormComponent,
-    AttachmentListComponent
   ],
+  providers: [
+    ModeService
+  ]
 })
 export class AttachmentPrototypesModule { }

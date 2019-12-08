@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import { ApiService } from '@hpc/core';
-import { ToastrService } from 'ngx-toastr';
+import { ApiService, ModeService } from '@hpc/core';
+// import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -25,11 +25,14 @@ export class BlueprintListComponent implements OnInit {
   full: boolean = false;
 
   constructor(
+    private service: ModeService,
     public apiService: ApiService,
-    private toastr: ToastrService) {
+    // private toastr: ToastrService
+  ) {
   }
 
   ngOnInit() {
+    this.service.mode = 'list';
     this.apiService.getBlueprints().subscribe(blueprints => {
       this.blueprints = blueprints;
     });
@@ -44,7 +47,7 @@ export class BlueprintListComponent implements OnInit {
       .subscribe(response => {
         if (response.status === 'ok') {
           this.blueprints.splice(this.blueprints.indexOf(blueprint), 1);
-          return this.toastr.success('Blueprint removed.', 'Blueprint removed');
+          // return this.toastr.success('Blueprint removed.', 'Blueprint removed');
         }
       });
   }

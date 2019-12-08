@@ -1,17 +1,27 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+
+import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 
-import { operationAdminRoute, adminRoute } from '../../admin.utils';
+import { AdminGuard } from '@hpc/core';
 
 const routes: Routes = [
-  adminRoute('eprototypes/:id', EntityFormComponent),
-  operationAdminRoute('eprototypes', EntityListComponent),
-  operationAdminRoute('eprototype', EntityFormComponent)
+  {
+    path: '',
+    component: EntitiesComponent,
+    canActivate: [AdminGuard],
+    children: [
+      { path: '', component: EntityListComponent },
+      { path: 'new', component: EntityFormComponent },
+      { path: ':id', component: EntityFormComponent },
+    ]
+  }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
-export class EntityPrototypesRoutingModule { }
+export class EntitiesRoutingModule { }
