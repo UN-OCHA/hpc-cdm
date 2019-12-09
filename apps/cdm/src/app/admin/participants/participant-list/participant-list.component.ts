@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 // import { Participant } from '@hpc/data';
 import { ModeService } from '@hpc/core';
+import { OperationService } from '@cdm/core';
 
 @Component({
   selector: 'participant-list',
@@ -14,12 +15,13 @@ export class ParticipantListComponent implements OnInit {
   operationId: number;
 
   constructor(
-    private service: ModeService,
+    private modeService: ModeService,
+    private operationService: OperationService,
     private activatedRoute: ActivatedRoute){
   }
 
   ngOnInit() {
-    this.service.mode = 'list';
+    this.modeService.mode = 'list';
     this.activatedRoute.params.subscribe(params => {
       this.operationId = params.operationId;
     });

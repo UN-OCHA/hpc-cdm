@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatTableModule } from '@angular/material';
+import { MaterialModule } from '@hpc/material';
 
 import { TableExpandableRowsComponent } from './table-expandable-rows.component';
 
@@ -12,12 +11,10 @@ import { TableExpandableRowsComponent } from './table-expandable-rows.component'
   ],
   imports: [
     CommonModule,
-    // BrowserAnimationsModule,
-    MatTableModule
+    MaterialModule
   ],
   exports: [
     TableExpandableRowsComponent
   ]
 })
-export class TableExpandableRowsModule {
-}
+export class TableExpandableRowsModule {}

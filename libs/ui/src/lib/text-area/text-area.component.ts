@@ -59,3 +59,6 @@ export class TextAreaComponent implements ControlValueAccessor, OnInit {
 //   [hidden]="control.valid || control.pristine"
 //   class="alert alert-danger">
 //   {{label}} is required
+
+
+// <label class="label-control" translate>{{label}}</label> <i *ngIf="required && !disabled" class="text-danger">*</i>

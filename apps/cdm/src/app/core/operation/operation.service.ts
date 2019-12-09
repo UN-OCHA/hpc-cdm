@@ -222,7 +222,7 @@ export class OperationService {
     this.operationState.entities = [];
     this._loadOperation(operationId || this.operationState.operation.id).subscribe(response => {
       const opep = response.opEntityPrototypes
-        .find(ep => ep.id === entityPrototypeId);
+        .find(p => p.id == entityPrototypeId);
 
         console.log(response)
         console.log(entityPrototypeId)
@@ -312,18 +312,23 @@ export class OperationService {
 
   _loadOperation(operationId: number): any {
     return from(new Promise(resolve => {
-      this.api.getOperation(operationId).subscribe(response => {
-        this.operationState.operation = buildOperation(response);
-        resolve(response);
+      this.ensureReportingWindowExists(operationId).subscribe(() => {
+        this.api.getOperation(operationId).subscribe(response => {
+          this.operationState.operation = buildOperation(response);
+          resolve(response);
+        });
       });
     }));
   }
 
   loadOperation(operationId: number): any {
     return from(new Promise(resolve => {
-      this.api.getOperation(operationId).subscribe(response => {
-        this.operationState.operation = buildOperation(response);
-        resolve(this.operationState.operation);
+      // this.id = operationId;
+      this.ensureReportingWindowExists(operationId).subscribe(() => {
+        this.api.getOperation(operationId).subscribe(response => {
+          this.operationState.operation = buildOperation(response);
+          resolve(this.operationState.operation);
+        });
       });
     }));
   }

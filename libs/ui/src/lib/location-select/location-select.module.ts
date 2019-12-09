@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { MaterialModule } from '@hpc/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LocationSelectComponent } from './location-select.component';
@@ -10,7 +11,7 @@ import { LocationSelectComponent } from './location-select.component';
   ],
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
-    MaterialModule
+    MaterialModule, FlexLayoutModule
   ],
   exports: [
     LocationSelectComponent

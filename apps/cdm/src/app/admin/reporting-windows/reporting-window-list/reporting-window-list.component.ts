@@ -3,8 +3,8 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 // import * as _ from 'lodash';
 // import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 
-import { ApiService } from '@hpc/core';
-import { ReportingWindowsService } from '../reporting-windows.service';
+import { ApiService, ModeService } from '@hpc/core';
+
 
 @Component({
   selector: 'reporting-windows',
@@ -35,11 +35,11 @@ export class ReportingWindowListComponent implements OnInit {
   working = false;
 
   constructor(
-    private service: ReportingWindowsService,
+    private modeService: ModeService,
     private api: ApiService) {}
 
   ngOnInit() {
-    this.service.mode = 'list';
+    this.modeService.mode = 'list';
 
     this.results = [];
     this.working = true;

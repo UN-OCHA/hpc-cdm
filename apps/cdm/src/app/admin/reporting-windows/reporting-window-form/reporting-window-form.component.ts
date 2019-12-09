@@ -3,8 +3,7 @@ import {filter} from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { ApiService, AuthService } from '@hpc/core';
-import { ReportingWindowsService } from '../reporting-windows.service';
+import { ApiService, AuthService, ModeService } from '@hpc/core';
 import { ReportingWindow } from '@hpc/data';
 
 // import { ToastrService } from 'ngx-toastr';
@@ -31,7 +30,7 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
     private activatedRoute: ActivatedRoute,
     private api: ApiService,
     private auth: AuthService,
-    private service: ReportingWindowsService,
+    private modeService: ModeService,
     // private rw: ReportingWindowService,
     // private translate: TranslateService,
     // private toastr: ToastrService
@@ -46,7 +45,7 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
-        this.service.mode = 'edit';
+        this.modeService.mode = 'edit';
         this.editMode = true;
         this.api.getReportingWindow(params.id).subscribe(rw => {
           console.log(rw);
@@ -56,7 +55,7 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
         // this.form.reset({
         // });
       } else {
-        this.service.mode = 'add';
+        this.modeService.mode = 'add';
       }
     });
 

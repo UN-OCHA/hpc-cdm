@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '@hpc/core';
-import { ReportingWindowsService } from './reporting-windows.service';
+import { AuthService, ModeService } from '@hpc/core';
 
 
 const TITLES = {
@@ -17,10 +16,10 @@ export class ReportingWindowsComponent implements OnInit {
   title: string;
 
   constructor(
-    private service: ReportingWindowsService){}
+    private modeService: ModeService){}
 
   ngOnInit() {
-    this.service.mode$.subscribe(mode => {
+    this.modeService.mode$.subscribe(mode => {
       this.title =  TITLES[mode];
     });
   }

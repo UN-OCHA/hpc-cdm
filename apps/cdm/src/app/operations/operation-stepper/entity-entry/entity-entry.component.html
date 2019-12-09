@@ -1,0 +1,34 @@
+<form [formGroup]="form" novalidate>
+  <div class="form-panel">
+    <div class="form-panel-body">
+      <div class="form-icon">
+        <entity-entry-icon [icon]="f.icon.value" (change)="onIconChange($event)"></entity-entry-icon>
+      </div>
+      <div class="form-content">
+        <hpc-textarea label="Technical Area" formControlName="technicalArea" required
+              [disabled]="isDisabledField('technicalArea')"></hpc-textarea>
+        <date-input label="Activation Date" formControlName="activationDate" required
+              [disabled]="isDisabledField('activationDate')"></date-input>
+        <file-upload id="activationLetter" label="Activation Letter" formControlName="activationLetter"></file-upload>
+
+        <date-input label="Deactivation Date" formControlName="deactivationDate"></date-input>
+
+        <file-upload id="deactivationLetter" label="Deactivation Letter" formControlName="deactivationLetter"></file-upload>
+
+        <hpc-textarea label="Notes" formControlName="notes"></hpc-textarea>
+
+        <div *ngIf="!readOnly" class="top-right">
+          <a mat-raised-button>{{ 'Copy from...' }}</a>
+        </div>
+        <div *ngIf="!readOnly" class="bottom-right">
+          <a *ngIf="entry && entry.id" mat-raised-button>{{ 'Duplicate in...' }}</a>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!readOnly" class="form-actions">
+      <a [disabled]="!form.valid || form.pristine" mat-raised-button color="primary"
+        (click)="save()">{{ 'Save' }}</a>
+      <a *ngIf="isRemovable()" (click)="remove()" mat-raised-button>{{ 'Remove ' }}</a>
+    </div>
+  </div>
+</form>

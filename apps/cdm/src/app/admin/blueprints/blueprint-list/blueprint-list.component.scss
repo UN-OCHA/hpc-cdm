@@ -1,41 +1,23 @@
 :host {
-  .mat-expansion-panel {
-    .mat-expansion-panel-header {
-
-      .mat-panel-title {
-        width: 30%;
-      }
-      .mat-panel-description {
-
-      }
-    }
-  }
   .mat-table {
+    .mat-row {
+      cursor: pointer;
+      border: 1px solid red;
+      border-bottom: 1px solid #ddd!important;
+    }
     // overflow-y: scroll;
     .mat-column-name {
-      width: 24%!important;
+      width: 32%!important;
     }
     .mat-column-description {
-      width: 40%!important;
+      width: 60%!important;
       padding: 1em 0;
     }
     .mat-column-type {
-      width: 6%!important;
+      width: 4%!important;
     }
     .mat-column-status {
-      width: 6%!important;
-    }
-    .mat-column-actions {
-      width: 2%;
-      text-align: right;
-      .mat-button {
-        display: inline-block;
-        margin-left: 1em;
-      }
-      .mat-icon {
-        color: #aaa;
-        display: inline-block;
-      }
+      width: 4%!important;
     }
   }
 }

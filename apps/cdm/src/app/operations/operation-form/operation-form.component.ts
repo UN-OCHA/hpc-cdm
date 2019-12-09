@@ -27,9 +27,9 @@ export class OperationFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe(params => {
-      console.log(params)
-      if(params.id) {
+    // this.activatedRoute.params.subscribe(params => {
+      // console.log(params)
+      if(this.operationService.id) {
         this.operationService.mode = 'edit';
         this.editMode = true;
       } else {
@@ -38,7 +38,7 @@ export class OperationFormComponent implements OnInit {
           this.blueprints = blueprints;
         });
       }
-    });
+    // });
   }
 
   clearErrors() {

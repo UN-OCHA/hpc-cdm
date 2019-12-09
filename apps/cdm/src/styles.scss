@@ -205,7 +205,7 @@ body {
   }
 }
 
-form {
+.cdm-form {
   background: #f8f9fa;
   border: 1px solid #dee2e6;
   padding: 1em;
@@ -353,6 +353,7 @@ form {
   display: flex;
   flex-direction: row;
   background-color: #026cb6;
+  background-color: #ee7325;
   color: #fff;
   padding: .5em;
   border-top-left-radius: .25em;

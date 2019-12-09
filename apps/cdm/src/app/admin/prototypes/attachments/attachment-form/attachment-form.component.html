@@ -1,13 +1,13 @@
 <form class="attachment-form" (ngSubmit)="onSubmit()" [formGroup]="form">
   <mat-form-field appearance="outline">
     <mat-label>RefCode</mat-label>
-    <input matInput class="form-control" formControlName="refCode"
+    <input matInput formControlName="refCode"
       (input)="clearErrors()" [ngClass]="{ 'is-invalid': submitted && f.refCode.errors }"
       type="text" id="refCode" name="refCode" required/>
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Type</mat-label>
-    <input matInput class="form-control"
+    <input matInput
       formControlName="refType" (input)="clearErrors()"
       [ngClass]="{ 'is-invalid': submitted && f.refType.errors }"
       type="text" id="refType" name="refType" required/>

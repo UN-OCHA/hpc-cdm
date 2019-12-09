@@ -1,9 +1,6 @@
-<div class="date-input">
-<label>{{label}}</label> <i *ngIf="required && !disabled" class="text-danger">*</i>
-
-
-<mat-form-field>
-  <input matInput [matDatepicker]="picker3" placeholder="Value binding" [value]="date.value">
+<mat-form-field appearance="outline" fxFlex="grow">
+  <mat-label>{{label}}</mat-label>
+  <input matInput [matDatepicker]="picker3" >
   <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
   <mat-datepicker #picker3></mat-datepicker>
 </mat-form-field>

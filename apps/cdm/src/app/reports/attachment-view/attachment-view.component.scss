@@ -1,0 +1,109 @@
+:host {
+  .mat-expansion-panel {
+    border-left: .75em solid #026cb6;
+    margin-left: 0;
+    padding-left: 0;
+    margin-bottom: .5em;
+    .mat-expansion-panel-header {
+      padding-left: 1em;
+      margin-left: 0;
+    }
+    .panel-content {
+      margin-left: -.75em;
+      margin-top: .5em;
+    }
+  }
+}
+
+
+
+
+
+// .form-panel {
+//   background-color: white;
+//   border-left:1em solid #026CB6;
+//   border-radius: .25em;
+//   width: 100%;
+//   margin-bottom: 1em;
+//
+//   input#reportFrom, input#reportTo {
+//     max-width: 7.75em;
+//     border: none;
+//     background-color: #ddd;
+//     padding: 0 1em;
+//   }
+//
+//   form {
+//     .title {
+//       margin-bottom: 1em;
+//     }
+//     .dates {
+//
+//       .label {
+//         margin: .5em .5em 0 0;
+//       }
+//       .date {
+//       }
+//     }
+//     .openform {
+//       margin-top: .75em;
+//     }
+//   }
+//
+//   .flex-row {
+//     display: flex;
+//     flex-direction: row;
+//   }
+//   .btn-save {
+//     background-color: #026CB6;
+//     color: white;
+//   }
+//   .form-title {
+//     min-height: 2em;
+//     position: relative;
+//     .material-icons {
+//       cursor: pointer;
+//       font-size: 4em;
+//       font-weight: bold;
+//       color: #026CB6;
+//     }
+//     .status {
+//       position: absolute;
+//       top: 1.35em;
+//       right: 1.5em;
+//       font-weight: bold;
+//       color: #888;
+//     }
+//   }
+//
+//   .form-body {
+//     margin: 0 1em;
+//     padding-bottom: 1em;
+//     // border: 1px solid red;
+//     position: relative;
+//     .btn-default {
+//       border: 1px solid #ccc;
+//     }
+//     .form-content {
+//       min-height: 15em;
+//       .top-right {
+//         position: absolute;;
+//         top: -1.5em;
+//         right: 0;
+//         width: 10em;
+//       }
+//       .bottom-right {
+//         position: absolute;;
+//         bottom: 1em;
+//         right: 0;
+//         width: 10em;
+//       }
+//     }
+//
+//     .form-actions {
+//       button:first-child {
+//         margin-right: .5em;
+//       }
+//     }
+//   }
+// }

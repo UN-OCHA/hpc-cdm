@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDatepickerModule, MatFormFieldModule } from '@angular/material';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatDatepickerModule, MatFormFieldModule, MatInputModule } from '@angular/material';
 
 import { DateInputComponent } from './date-input.component';
 
@@ -9,9 +10,10 @@ import { DateInputComponent } from './date-input.component';
     DateInputComponent
   ],
   imports: [
-    CommonModule,
+    CommonModule, FlexLayoutModule,
     MatDatepickerModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatInputModule
   ],
   exports: [
     DateInputComponent
@@ -19,3 +21,6 @@ import { DateInputComponent } from './date-input.component';
 })
 export class DateInputModule {
 }
+
+// <div class="date-input">
+// <label>{{label}}</label> <i *ngIf="required && !disabled" class="text-danger">*</i>

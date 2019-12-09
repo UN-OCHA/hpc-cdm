@@ -1,5 +1,5 @@
-<operation-table [dataSource]="participants" [columns]="tableColumns">
-  <ng-template #operationTableExpandedRowTemplate let-element>
-    <a [routerLink]="['/participants', element.id]">Edit Participant</a>
-  </ng-template>
-</operation-table>
+<table-selectable-rows
+  [dataSource]="prototypes"
+  [columns]="tableColumns"
+  [route]="['/operations', operationService.id, 'participants']">
+</table-selectable-rows>

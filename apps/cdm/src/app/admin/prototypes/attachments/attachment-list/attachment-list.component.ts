@@ -37,7 +37,6 @@ export class AttachmentListComponent implements OnInit {
       this.operation = operation;
     });
   }
-
 }
 
 

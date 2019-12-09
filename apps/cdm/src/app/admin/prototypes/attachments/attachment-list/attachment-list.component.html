@@ -1,7 +1,5 @@
-<operation-table [dataSource]="prototypes" [columns]="tableColumns">
-  <ng-template #operationTableExpandedRowTemplate let-element>
-    <a mat-button
-      [routerLink]="['/operations', operationService.id, 'aprototypes', element.id]">
-      Edit Prototype</a>
-  </ng-template>
-</operation-table>
+<table-selectable-rows
+  [dataSource]="prototypes"
+  [columns]="tableColumns"
+  [route]="['/operations', operationService.id, 'aprototypes']">
+</table-selectable-rows>

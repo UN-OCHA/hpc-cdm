@@ -24,7 +24,6 @@ export class OperationComponent implements OnInit {
 
   ngOnInit() {
     this.operationService.operation$.subscribe(operation => {
-      console.log(operation.name)
       this.op = operation;
     });
   }

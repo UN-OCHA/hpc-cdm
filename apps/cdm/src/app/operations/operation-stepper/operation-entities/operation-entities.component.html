@@ -1,0 +1,43 @@
+<div class="panel" *ngIf="operation.selectedEntityPrototype">
+  <div class="panel-header">
+    <operation-entities-header></operation-entities-header>
+  </div>
+  <div>
+    <div *ngFor="let governingEntity of operation.entities$ | async; let idx = index;" class="form-check form-check-inline">
+      <div *ngIf="governingEntity.selected">
+        <input class="form-check-input"
+          type="radio"
+          [(ngModel)]="operation.viewingGoverningEntityIdx"
+          [value]="idx"
+          (change)="selectNewGoverningEntity(operation, idx)"
+          name="operationClusterVisible"
+          id="operationCluster-{{governingEntity.governingEntityVersion.name}}"/>
+        <label for="operationCluster-{{governingEntity.governingEntityVersion.name}}" class="form-check-label">
+          <figure class="figure">
+            <img *ngIf="governingEntity.governingEntityVersion.value.icon && governingEntity.governingEntityVersion.value.icon.length"
+              class="clusterImg"
+              src="/assets/images/fieldClusters/SVG/{{governingEntity.governingEntityVersion.value.icon}}.svg" title="{{governingEntity.governingEntityVersion.name}}">
+              <figcaption class="figure-caption cluster-label">{{ governingEntity.name }}
+                <i class="material-icons" *ngIf="governingEntity.selectedCount">check</i>
+              </figcaption>
+            </figure>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <form>
+      <div class="panel-entities">
+        <entity-entry *ngIf="operation.selectedEntity"></entity-entry>
+        <entity-entry *ngIf="!operation.selectedEntity && operation.mode === 'ADD_ENTITY'"></entity-entry>
+      </div>
+      <div class="panel-actions">
+        <button [disabled]="!isAddButtonEnabled()"
+            mat-raised-button (click)="addEntity()">
+          {{ 'Add ' + operation.selectedEntityPrototype.value.name.en.singular }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

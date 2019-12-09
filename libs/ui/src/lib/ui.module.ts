@@ -5,15 +5,19 @@ import { TranslatorModule } from '@hpc/core';
 
 import { NavComponent } from './nav/nav.component';
 import { NavModule } from './nav/nav.module';
+import { CustomStepperModule } from './custom-stepper/stepper.module';
+import { CustomStepperComponent } from './custom-stepper/stepper.component';
 import { DateInputModule } from './date-input/date-input.module';
 import { DateInputComponent } from './date-input/date-input.component';
 import { EmergencySelectComponent } from './emergency-select/emergency-select.component';
 import { EmergencySelectModule } from './emergency-select/emergency-select.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { InputModule } from './input/input.module';
 import { InputComponent } from './input/input.component';
 import { JsonEditorModule } from './json-editor/json-editor.module';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
+import { TextAreaModule } from './text-area/text-area.module';
 import { TextAreaComponent } from './text-area/text-area.component';
 import { LocationSelectComponent } from './location-select/location-select.component';
 import { LocationSelectModule } from './location-select/location-select.module';
@@ -37,20 +41,21 @@ import { SpinnerModule } from './spinner/spinner.module';
 
 @NgModule({
   declarations: [
-    FileUploadComponent,
     ScrollContainerComponent,
-    TextAreaComponent,
     ToolbarComponent,
   ],
   imports: [
     CommonModule,
     RouterModule,
+    CustomStepperModule,
     DateInputModule,
     EmergencySelectModule,
+    FileUploadModule,
     InputModule,
     JsonEditorModule,
     TableExpandableRowsModule,
     TableSelectableRowsModule,
+    TextAreaModule,
     TranslatorModule,
     LocationSelectModule,
     LoginLinkModule,
@@ -63,6 +68,7 @@ import { SpinnerModule } from './spinner/spinner.module';
   ],
   exports: [
     FeedComponent,
+    CustomStepperComponent,
     DateInputComponent,
     EmergencySelectComponent,
     FileUploadComponent,

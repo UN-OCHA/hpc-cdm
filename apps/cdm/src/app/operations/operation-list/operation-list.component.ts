@@ -35,8 +35,6 @@ export class OperationListComponent implements OnInit {
     private service: OperationService) {}
 
   ngOnInit() {
-    console.log('simon............')
-    // console.log(this.auth.user)
     this.service.mode = 'list';
     this.loading = true;
     // TODO revisit this. authentication service might not

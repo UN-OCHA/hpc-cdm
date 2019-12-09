@@ -1,0 +1,29 @@
+<mat-drawer-container *ngIf="allSteps">
+  <mat-drawer #drawer mode="side" opened="true">
+    <nav>
+      <button *ngFor="let step of _steps; let i = index;"
+          (click)="onClick(i)">{{allSteps[i].name}}</button>
+    </nav>
+  </mat-drawer>
+
+  <div class="stepper-content">
+      <div class="menu">
+        <a mat-button (click)="drawer.toggle()">
+          <mat-icon>menu</mat-icon>
+        </a>
+        <h2>{{allSteps[selectedIndex].name}}</h2>
+      </div>
+      <div class="main-content" *ngIf="selected">
+        <ng-container [ngTemplateOutlet]="selected.content">
+        </ng-container>
+
+        <div class="main-actions">
+          <a mat-raised-button *ngIf="selectedIndex > 0"
+            (click)="navigateTo(selectedIndex - 1)">Prev</a>
+          <a mat-raised-button *ngIf="selectedIndex < (steps.length-1)"
+            color="warn"
+            (click)="navigateTo(selectedIndex + 1)">Next</a>
+        </div>
+      </div>
+  </div>
+</mat-drawer-container>

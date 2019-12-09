@@ -1,0 +1,39 @@
+<form [formGroup]="form" novalidate>
+  <mat-expansion-panel *ngIf="!entry.hide">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Form {{form.value.formId}}. {{form.value.formName}}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="panel-content">
+      <div fxLayout="row" fxLayoutAlign="space-between">
+        <mat-form-field appearance="outline">
+          <mat-label>Form ID</mat-label>
+          <div fxLayout="row">
+            <input matInput formControlName="formId" required>
+          </div>
+        </mat-form-field>
+        <mat-form-field class="name" appearance="outline" fxFlex="grow">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="formName" required>
+        </mat-form-field>
+      </div>
+      <file-upload label="Form Definition" formControlName="formFile" required></file-upload>
+
+      <div fxLayout="row">
+        <div fxLayout="row" fxFlex="grow" *ngIf="!operation.saving" class="form-actions">
+          <a [disabled]="form.invalid || form.pristine" color="warn"
+            mat-raised-button (click)="save()">{{ 'Save' }}</a>
+          <a *ngIf="entry && entry.id" class="btn btn-info"
+            mat-raised-button (click)="remove()">{{ 'Remove Form' }}</a>
+        </div>
+        <div *ngIf="operation.saving" class="form-actions">
+          <a disabled="true" mat-raised-button>{{ 'Saving...' }}</a>
+        </div>
+        <a *ngIf="!(entry && entry.id)" mat-raised-button>{{ 'Copy from...' }}</a>
+        <a *ngIf="entry && entry.id" mat-raised-button>{{ 'Duplicate in...' }}</a>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</form>

@@ -19,8 +19,12 @@ const routes: Routes = [
     loadChildren: './admin/blueprints/blueprints.module#BlueprintsModule'
   },
   {
-    path: 'windows',
+    path: 'rwindows',
     loadChildren: './admin/reporting-windows/reporting-windows.module#ReportingWindowsModule'
+  },
+  {
+    path: 'xforms',
+    loadChildren: './xforms/xforms.module#XFormsModule'
   },
   {
     path: '', redirectTo: '/home', pathMatch: 'full'

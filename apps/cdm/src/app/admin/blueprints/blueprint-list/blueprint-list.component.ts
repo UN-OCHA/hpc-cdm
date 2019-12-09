@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { ApiService, ModeService } from '@hpc/core';
 // import { ToastrService } from 'ngx-toastr';
@@ -27,6 +28,7 @@ export class BlueprintListComponent implements OnInit {
   constructor(
     private service: ModeService,
     public apiService: ApiService,
+    private router: Router
     // private toastr: ToastrService
   ) {
   }

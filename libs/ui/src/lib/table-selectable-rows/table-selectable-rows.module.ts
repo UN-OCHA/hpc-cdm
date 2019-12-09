@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatTableModule } from '@angular/material';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '@hpc/material';
 
 import { TableSelectableRowsComponent } from './table-selectable-rows.component';
 
@@ -11,9 +11,8 @@ import { TableSelectableRowsComponent } from './table-selectable-rows.component'
     TableSelectableRowsComponent
   ],
   imports: [
-    CommonModule,
-    // BrowserAnimationsModule,
-    MatTableModule
+    CommonModule, RouterModule,
+    MaterialModule
   ],
   exports: [
     TableSelectableRowsComponent

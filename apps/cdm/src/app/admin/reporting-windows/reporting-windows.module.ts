@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '@hpc/material';
+import { ModeService } from '@hpc/core';
 import { CdmUIModule } from '@cdm/ui';
 
 import { DataQueueModule } from './data-queue/data-queue.module';
@@ -9,7 +10,7 @@ import { ReportingWindowFormComponent } from './reporting-window-form/reporting-
 import { ReportingWindowListComponent } from './reporting-window-list/reporting-window-list.component';
 import { ReportingWindowStatesComponent } from './reporting-window-states/reporting-window-states.component';
 import { ReportingWindowsRoutingModule } from './reporting-windows-routing.module';
-import { ReportingWindowsService } from './reporting-windows.service';
+
 
 @NgModule({
   declarations: [
@@ -28,7 +29,7 @@ import { ReportingWindowsService } from './reporting-windows.service';
     ReportingWindowListComponent
   ],
   providers: [
-    ReportingWindowsService
+    ModeService
   ]
 })
 export class ReportingWindowsModule { }

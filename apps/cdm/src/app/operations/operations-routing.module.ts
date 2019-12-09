@@ -12,7 +12,6 @@ import { AuthenticatedGuard, AdminGuard } from '@hpc/core';
 const routes: Routes = [
   {
     path: '',
-    // pathMatch: 'full',
     component: OperationsComponent,
     children: [
       { path: '', component: OperationListComponent, canActivate: [AuthenticatedGuard] },
@@ -24,7 +23,8 @@ const routes: Routes = [
     component: OperationComponent,
     children: [
       {
-        path: '', component: OperationFormComponent, canActivate: [AuthenticatedGuard]
+        path: '', //component: OperationStepperComponent, canActivate: [AdminGuard]
+        loadChildren: './operation-stepper/operation-stepper.module#OperationStepperModule'
       },
       {
         path: 'aprototypes',
@@ -37,6 +37,18 @@ const routes: Routes = [
       {
         path: 'participants',
         loadChildren: '../admin/participants/participants.module#ParticipantsModule',
+      },
+      {
+        path: 'versions',
+        loadChildren: '../admin/versions/versions.module#VersionsModule',
+      },
+      {
+        path: 'reports',
+        loadChildren: '../reports/reports.module#ReportsModule',
+      },
+      {
+        path: 'plans',
+        loadChildren: '../plans/plans.module#PlansModule',
       },
     ]
   }

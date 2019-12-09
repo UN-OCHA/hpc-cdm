@@ -4,7 +4,7 @@
     <label><mat-icon>edit</mat-icon>Edit</label>
     <a mat-button [routerLink]="['/operations', op.id]">Operation</a>
     <span *ngFor="let ep of op.entityPrototypes">
-      <a mat-button [routerLink]="['/operations', op.id]">{{ ep.name.en.plural }}</a>
+      <a mat-button [routerLink]="['/operations', op.id, 'entities', ep.id]">{{ ep.name.en.plural }}</a>
     </span>
     <a mat-button [routerLink]="['/operations', op.id, 'plans']">Plans</a>
   </div>
@@ -23,6 +23,6 @@
 
   <div class="section">
     <label><mat-icon>dynamic_feed</mat-icon>States</label>
-    <a mat-button [routerLink]="['/operations', op.id, 'publish']">Publishing & Versions</a>
+    <a mat-button [routerLink]="['/operations', op.id, 'versions']">Publishing & Versions</a>
   </div>
 </div>

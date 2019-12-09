@@ -19,7 +19,7 @@ export class DateInputComponent implements ControlValueAccessor, OnInit {
   @Input() label: string;
   @Input() required?: boolean;
   @Input() disabled?: boolean;
-  @Input() formControlName: string;
+  @Input() formControlName?: string;
 
   onTouched: any = () => {};
   onChange: any = () => {};

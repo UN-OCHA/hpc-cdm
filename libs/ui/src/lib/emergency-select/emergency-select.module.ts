@@ -2,6 +2,7 @@ import { NgModule, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '@hpc/material';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { EmergencySelectComponent } from './emergency-select.component';
 
@@ -11,7 +12,7 @@ import { EmergencySelectComponent } from './emergency-select.component';
   ],
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
-    MaterialModule
+    MaterialModule, FlexLayoutModule
   ],
   exports: [
     EmergencySelectComponent

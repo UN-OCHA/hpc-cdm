@@ -1,0 +1,21 @@
+<div class="border review"
+  *ngIf="createOperationService.operation && finishedLoading">
+  <section class="alert alert-danger mb-0 sticky-top" role="alert"
+    *ngIf="errors && errors.length">
+    <h4 class="alert-heading" translate="operation-edit.review.review-errors"></h4>
+    <p translate="operation-edit.review.errors-found"></p>
+    <hr>
+    <ul>
+      <li *ngFor="let error of errors">
+        <strong class="alert-link">{{ error.header }}</strong>: {{ error.message }}
+      </li>
+    </ul>
+  </section>
+  <app-review-basic
+    [operation]="createOperationService.operation">
+  </app-review-basic>
+  <app-review-governing-entities
+    [loadedComplete]="loadedComplete"
+    [operation]="createOperationService.operation">
+  </app-review-governing-entities>
+</div>
