@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModeService } from '@hpc/core';
 import { CdmUIModule } from '@cdm/ui';
@@ -17,7 +18,7 @@ import { AttachmentFormComponent } from './attachment-form/attachment-form.compo
   ],
   imports: [
     CommonModule,
-    FormsModule, ReactiveFormsModule,
+    FlexLayoutModule, FormsModule, ReactiveFormsModule,
     CdmUIModule, MaterialModule,
     AttachmentsRoutingModule
   ],

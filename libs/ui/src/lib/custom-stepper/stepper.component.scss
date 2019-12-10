@@ -12,6 +12,7 @@
 
  .stepper-content {
    position: relative;
+   // box-sizing: border-box;
    .menu {
      top: -2.75em;
      left: -.75em;
@@ -28,6 +29,9 @@
    .main-content {
      margin-top: 2em;
      padding: 1em 0 1em 1em;
+     .content-content {
+       // max-width: 20em;
+     }
      .main-actions {
        display: flex;
        flex-direction: row;

@@ -27,7 +27,6 @@ export class OperationStepperComponent implements OnInit {
         this.steps = [];
         this.steps.push({name: 'Operation Details', type: 'OP',
           route: ['/operations', op.id, 'details']});
-        console.log(op)
         if(op.attachmentPrototype) {
           this.steps.push({
             name: 'Operation Attachments',
@@ -49,6 +48,8 @@ export class OperationStepperComponent implements OnInit {
         }
         this.steps.push({name: 'Review', type: 'RE',
           route: ['/operations', op.id, 'review']});
+
+        console.log(this.steps)
       })
     });
   }
@@ -69,24 +70,3 @@ export class OperationStepperComponent implements OnInit {
   //   });
   // }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// <custom-stepper [allSteps]="steps" (change)="onSelectionChange($event)">
-//   <cdk-step *ngFor="let step of steps; let i = index;">
-//     <router-outlet *ngIf="i === selectedStepIndex"></router-outlet>
-//   </cdk-step>
-// </custom-stepper>

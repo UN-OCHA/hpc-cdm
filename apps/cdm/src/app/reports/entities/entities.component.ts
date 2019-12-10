@@ -11,7 +11,6 @@ export class EntitiesComponent implements OnInit {
   constructor(private operation: OperationService) {}
 
   ngOnInit() {
-    console.log('simona..............................')
     this.operation.entities$.subscribe(entities => {
       if(!this.operation.selectedEntity && entities.length) {
         this.operation.selectedEntity = entities[0];

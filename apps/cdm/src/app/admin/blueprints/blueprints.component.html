@@ -2,8 +2,10 @@
   <div class="cdm-title">
     <h1>{{title}}</h1>
     <div class="cdm-title-icons">
-      <a mat-button [routerLink]="['/blueprints/new']"><mat-icon>add_box</mat-icon></a>
-      <a mat-button [routerLink]="['/blueprints']"><mat-icon>format_align_justify</mat-icon></a>
+      <a mat-button matTooltip="Add New Blueprint"
+        [routerLink]="['/blueprints/new']"><mat-icon>add_box</mat-icon></a>
+      <a mat-button matTooltip="Blueprints"
+        [routerLink]="['/blueprints']"><mat-icon>format_align_justify</mat-icon></a>
     </div>
   </div>
   <div class="container">

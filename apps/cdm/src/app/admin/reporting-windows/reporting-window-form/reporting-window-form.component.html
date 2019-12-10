@@ -1,4 +1,4 @@
-<form class="window-form" (ngSubmit)="onSubmit()">
+<form class="edit" (ngSubmit)="onSubmit()">
   <mat-radio-group>
     <mat-radio-button color="primary" [value]="1">Global</mat-radio-button>
     <mat-radio-button color="primary" [value]="3">Operation</mat-radio-button>
@@ -26,8 +26,8 @@
       required></textarea>
   </mat-form-field>
 
-  <div class="buttons">
-    <button mat-raised-button [routerLink]="['/windows']">Close</button>
-    <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
+  <div class="actions">
+    <a mat-raised-button [routerLink]="['/rwindows']">Close</a>
+    <a mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</a>
   </div>
 </form>

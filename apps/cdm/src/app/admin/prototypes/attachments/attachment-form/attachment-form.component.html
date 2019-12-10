@@ -1,4 +1,4 @@
-<form class="attachment-form" (ngSubmit)="onSubmit()" [formGroup]="form">
+<form fxLayout="column" class="edit" (ngSubmit)="onSubmit()" [formGroup]="form">
   <mat-form-field appearance="outline">
     <mat-label>RefCode</mat-label>
     <input matInput formControlName="refCode"
@@ -18,8 +18,8 @@
     [json]="prototype && prototype.opAttachmentPrototypeVersion.value"
     (change)="onJsonChange($event)"></json-editor>
 
-  <div class="buttons">
-    <button mat-raised-button [routerLink]="['/operations', operationId, 'aprototypes']">Close</button>
-    <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
+  <div class="actions">
+    <a mat-raised-button [routerLink]="['/operations', operationId, 'aprototypes']">Close</a>
+    <a mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</a>
   </div>
 </form>

@@ -1,23 +1,30 @@
 :host {
   .mat-table {
+
     .mat-row {
-      cursor: pointer;
-      border: 1px solid red;
-      border-bottom: 1px solid #ddd!important;
+      border: 10px solid blue;
     }
-    // overflow-y: scroll;
+    
     .mat-column-name {
-      width: 32%!important;
+      width: 28%!important;
     }
     .mat-column-description {
       width: 60%!important;
       padding: 1em 0;
     }
     .mat-column-type {
-      width: 4%!important;
+      width: 6%!important;
+      text-align: center;
     }
     .mat-column-status {
-      width: 4%!important;
+      width: 6%!important;
+      text-align: center;
+      .mat-icon {
+        color:#888;
+      }
+      .active {
+        color: #ee7325;
+      }
     }
   }
 }

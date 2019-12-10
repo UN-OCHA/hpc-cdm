@@ -4,6 +4,7 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import { ApiService, ModeService } from '@hpc/core';
 // import { ToastrService } from 'ngx-toastr';
 
+const MAX_LENGTH = 280;
 
 @Component({
   selector: 'blueprints',
@@ -36,7 +37,12 @@ export class BlueprintListComponent implements OnInit {
   ngOnInit() {
     this.service.mode = 'list';
     this.apiService.getBlueprints().subscribe(blueprints => {
-      this.blueprints = blueprints;
+      this.blueprints = blueprints.map(bp => {
+        if(bp.description.length > MAX_LENGTH) {
+          bp.description = bp.description.substring(0, MAX_LENGTH) + '...';
+        }
+        return bp;
+      });
     });
   }
 

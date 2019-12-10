@@ -27,6 +27,7 @@ body {
 
 
 @import '~jsoneditor/dist/jsoneditor.css';
+@import './enketo';
 
 // .mat-table::-webkit-scrollbar {
 //     width: 1em;
@@ -382,6 +383,24 @@ body {
         height: 1em;
         width: 1em;
       }
+    }
+  }
+}
+
+
+form.edit {
+  border: 1px solid #ddd;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  .actions {
+    margin-top: 1em;
+    display: flex;
+    flex-direction: row;
+    align-content: flex-end;
+    justify-content: flex-end;
+    a {
+      margin-left: 1em;
     }
   }
 }

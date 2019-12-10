@@ -15,13 +15,13 @@
     </ng-container>
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef>Type</th>
-      <td mat-cell *matCellDef="let element"></td>
+      <td mat-cell *matCellDef="let element">PL</td>
     </ng-container>
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef>Status</th>
-      <td mat-cell *matCellDef="let element">
-        <mat-icon *ngIf="element.status === 'active'">radio_button_checked</mat-icon>
-        <mat-icon *ngIf="element.status === 'disabled'">radio_button_unchecked</mat-icon>
+      <td mat-cell *matCellDef="let element"
+          [ngClass]="{'active': element.status === 'active'}">
+        <mat-icon [ngClass]="{'active': element.status === 'active'}">brightness_1</mat-icon>
       </td>
     </ng-container>
     <ng-container matColumnDef="actions">
@@ -33,8 +33,10 @@
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
 
     <tr mat-row *matRowDef="let element; columns: columnsToDisplay;"
-        class="example-element-row"
         (click)="router.navigate(['/blueprints', element.id])">
     </tr>
   </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+
 </scroll-container>

@@ -69,7 +69,6 @@ export class OperationListComponent implements OnInit {
 
 
   toggleStar(event, operation) {
-    console.log('simona.........................')
     event.stopPropagation();
     if(this.starred.includes(operation.id)) {
       const idx = this.starred.indexOf(operation.id);

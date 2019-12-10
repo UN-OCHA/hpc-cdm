@@ -250,7 +250,7 @@ export class ReportingWindowFormComponent implements OnInit {
     } else if (nextOrPrevious === 'previous') {
       this.previousStep()
     } else if (options.isNew && nextOrPrevious === undefined) {
-      this.router.navigate(['/windows', reportingWindowId, 'edit', 'detail'])
+      this.router.navigate(['/rwindows', reportingWindowId, 'edit', 'detail'])
     }
   }
 

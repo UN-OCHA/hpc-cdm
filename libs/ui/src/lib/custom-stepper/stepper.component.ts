@@ -34,3 +34,19 @@ export class CustomStepperComponent extends CdkStepper {
     this.router.navigate(this.allSteps[index].route);
   }
 }
+
+
+
+
+
+
+
+
+
+// <mat-drawer-container *ngIf="allSteps">
+//
+//   <mat-drawer #drawer mode="side" opened="true">
+//   </mat-drawer>
+//
+//
+// </mat-drawer-container>

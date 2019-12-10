@@ -24,7 +24,7 @@ export class ReportsComponent implements OnInit {
             route: ['/operations', op.id, 'ereports']});
             // route: ['/operations', op.id, 'ereports', p.id]});
         });
-      }
+      }      
     });
   }
 
