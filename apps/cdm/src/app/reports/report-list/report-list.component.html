@@ -7,16 +7,4 @@
       </div>
     </mat-accordion>
   </div>
-  <div>
-    <div *ngIf="!operationService.processing && operationService.entities.length === 0">
-      <div class="message">This operation does not have any entities.</div>
-    </div>
-    <entities></entities>
-    <div *ngIf="operationService.selectedEntity && operationService.entityAttachments.length === 0">This entity does not have any attachments.</div>
-    <div *ngIf="!operationService.processing && operationService.entityAttachments.length">
-      <div *ngFor="let entry of operationService.entityAttachments$ | async; let i = index">
-        <attachment-view [entry]="entry" [entryIdx]="i+1"></attachment-view>
-      </div>
-    </div>
-  </div>
 </div>

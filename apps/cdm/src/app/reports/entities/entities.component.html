@@ -1,7 +1,22 @@
 <div class="entities">
   <div class="operation-entities-header">
-    <div *ngFor="let entity of operation.entities$ | async" class="gve-icon">
+    <div *ngIf="operationService.entities.length === 0">
+      <div class="message">This operation does not have any entities.</div>
+    </div>
+
+    <div *ngFor="let entity of operationService.entities$ | async" class="gve-icon">
       <entity-box [entity]="entity"></entity-box>
     </div>
   </div>
+</div>
+
+<div *ngIf="operationService.selectedEntity">
+  <div *ngIf="operationService.entityAttachments.length === 0">
+    This entity does not have any attachments.
+  </div>
+  <mat-accordion *ngIf="operationService.entityAttachments.length > 0">
+    <div *ngFor="let entry of operationService.entityAttachments$ | async; let i = index">
+      <attachment-view [entry]="entry" [entryIdx]="i+1"></attachment-view>
+    </div>
+  </mat-accordion>
 </div>

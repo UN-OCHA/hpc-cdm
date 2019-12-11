@@ -21,6 +21,7 @@ export class CustomStepperComponent extends CdkStepper {
     router: Router) {
     super(dir, changeDetectorRef);
     this.router = router;
+    console.log(this.allSteps)
   }
 
   onClick(index: number): void {

@@ -12,8 +12,7 @@ const routes: Routes = [
     path: '', component: ReportsComponent, canActivate: [AdminGuard],
     children: [
       { path: '', component: ReportListComponent },
-      { path: 'reports', component: ReportListComponent },
-      { path: 'ereports', component: EntitiesComponent },      
+      { path: ':entityId', component: EntitiesComponent },      
     ]
   },
 ];

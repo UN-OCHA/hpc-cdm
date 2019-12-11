@@ -1,4 +1,4 @@
-<mat-drawer-container class="example-container" autosize>
+<mat-drawer-container *ngIf="allSteps" class="example-container" autosize>
   <mat-drawer #drawer class="example-sidenav" mode="side" opened="true">
     <nav>
       <button *ngFor="let step of _steps; let i = index;"
@@ -20,7 +20,6 @@
           <ng-container [ngTemplateOutlet]="selected.content">
           </ng-container>
         </div>
-
         <div class="main-actions">
           <a mat-raised-button *ngIf="selectedIndex > 0"
             (click)="navigateTo(selectedIndex - 1)">Prev</a>
@@ -30,7 +29,5 @@
         </div>
       </div>
     </div>
-
   </div>
-
 </mat-drawer-container>

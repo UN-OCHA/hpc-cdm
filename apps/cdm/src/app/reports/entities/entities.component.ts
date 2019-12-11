@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { OperationService } from '@cdm/core';
 
 @Component({
@@ -8,13 +9,25 @@ import { OperationService } from '@cdm/core';
 })
 export class EntitiesComponent implements OnInit {
 
-  constructor(private operation: OperationService) {}
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private operationService: OperationService) {}
 
   ngOnInit() {
-    this.operation.entities$.subscribe(entities => {
-      if(!this.operation.selectedEntity && entities.length) {
-        this.operation.selectedEntity = entities[0];
-        this.operation.loadEntityAttachments(entities[0].id);
+    this.activatedRoute.params.subscribe(params => {
+      const entityId = params.entityId;
+      if(entityId) {
+        this.operationService.loadEntities(entityId, this.operationService.id);
+      }
+    })
+
+    this.operationService.entityAttachments$.subscribe(as => {
+      console.log(as)
+    })
+
+    this.operationService.selectedEntity$.subscribe(entity => {
+      if(entity) {
+        this.operationService.loadEntityAttachments(entity.id);
       }
     });
   }

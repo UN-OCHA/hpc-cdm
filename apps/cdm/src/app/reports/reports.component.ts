@@ -21,14 +21,16 @@ export class ReportsComponent implements OnInit {
         op.entityPrototypes.forEach(p => {
           const stepName = p.name.en;
           this.steps.push({name: stepName.plural, type: p.refCode,
-            route: ['/operations', op.id, 'ereports']});
-            // route: ['/operations', op.id, 'ereports', p.id]});
+            route: ['/operations', op.id, 'reports', p.id]});
         });
-      }      
+      }
+      console.log(this.steps)
     });
   }
 
   onSelectionChange(event: any) {
+    console.log('Got selection index')
+    console.log(event)
     this.selectedStepIndex= event;
   }
 }
