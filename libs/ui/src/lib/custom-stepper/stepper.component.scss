@@ -7,6 +7,17 @@
    nav {
      display: flex;
      flex-direction: column;
+     a {
+       position: relative;
+       text-align: left;
+       padding-left: 3em;
+       margin-bottom: .5em;
+       span {
+         position: absolute;
+         top: .25em;
+         left: .25em;
+       }
+     }
    }
  }
 

@@ -27,7 +27,7 @@ import { OperationFormModule } from '../operation-form/operation-form.module';
     CommonModule,
     CdkStepperModule,
     CdmUIModule,
-    IconSpriteModule,
+    IconSpriteModule.forRoot({ path: '../../assets/sprites/sprite.svg' }),
     FlexLayoutModule,
     FormsModule, ReactiveFormsModule,
     OperationFormModule,

@@ -48,25 +48,11 @@ export class OperationStepperComponent implements OnInit {
         }
         this.steps.push({name: 'Review', type: 'RE',
           route: ['/operations', op.id, 'review']});
-
-        console.log(this.steps)
       })
     });
   }
 
   onSelectionChange(event: any) {
-    console.log(event);
-    // this.jsonModel = event;
     this.selectedStepIndex= event;
   }
-
-  // selectionChanged(event: any) {
-  //   this.loadingStep = true;
-  //   this.selectedStepIndex= event.selectedIndex;
-  //   setTimeout(() => {
-  //     console.log('navigating...................')
-  //     this.router.navigate(this.steps[this.selectedStepIndex]);
-  //     this.loadingStep = false;
-  //   });
-  // }
 }

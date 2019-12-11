@@ -23,7 +23,6 @@ export class OperationsComponent implements OnInit {
 
   ngOnInit() {
     this.operationService.mode$.subscribe(mode => {
-      console.log(mode)
       this.title =  TITLES[mode];
     });
   }

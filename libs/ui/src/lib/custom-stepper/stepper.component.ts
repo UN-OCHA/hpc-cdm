@@ -21,7 +21,6 @@ export class CustomStepperComponent extends CdkStepper {
     router: Router) {
     super(dir, changeDetectorRef);
     this.router = router;
-    console.log(this.allSteps)
   }
 
   onClick(index: number): void {
@@ -31,7 +30,6 @@ export class CustomStepperComponent extends CdkStepper {
   navigateTo(index: number) {
     this.change.emit(index);
     this.selectedIndex = index;
-    console.log(this.allSteps[index].route)
     this.router.navigate(this.allSteps[index].route);
   }
 }

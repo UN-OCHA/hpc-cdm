@@ -1,8 +1,9 @@
 <mat-drawer-container *ngIf="allSteps" class="example-container" autosize>
   <mat-drawer #drawer class="example-sidenav" mode="side" opened="true">
     <nav>
-      <button *ngFor="let step of _steps; let i = index;"
-         (click)="onClick(i)">{{allSteps[i].name}}</button>
+      <a *ngFor="let step of _steps; let i = index;" mat-stroked-button
+         (click)="onClick(i)">
+         <span [matBadge]="i + 1"></span> {{allSteps[i].name}}</a>
     </nav>
   </mat-drawer>
 
