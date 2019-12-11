@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CdkStepperModule } from '@angular/cdk/stepper';
+import { IconSpriteModule } from 'ng-svg-icon-sprite';
 import { UIModule } from '@hpc/ui';
 import { AuthService } from '@hpc/core';
 import { MaterialModule } from  '@hpc/material';
@@ -20,6 +21,7 @@ const ROUTES = [];
     BrowserModule,
     BrowserAnimationsModule,
     CdkStepperModule,
+    IconSpriteModule.forRoot({ path: '../assets/sprites/sprite.svg' }),
     UIModule,
     MaterialModule,
     AppRoutingModule

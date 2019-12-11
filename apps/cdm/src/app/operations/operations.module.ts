@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IconSpriteModule } from 'ng-svg-icon-sprite';
+// import { IconSpriteModule } from 'ng-svg-icon-sprite';
 import { MaterialModule } from '@hpc/material';
 import { ModeService } from '@hpc/core';
 import { CdmUIModule } from '@cdm/ui';
@@ -25,7 +25,7 @@ import { OperationModule } from './operation/operation.module';
     CommonModule,
     FormsModule, ReactiveFormsModule,
     CdmUIModule, UIModule, MaterialModule,
-    IconSpriteModule.forRoot({ path: 'assets/sprites/sprite.svg' }),
+    // IconSpriteModule.forRoot({ path: 'assets/sprites/sprite.svg' }),
     OperationModule,
     OperationFormModule,
     OperationsRoutingModule

@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { CdmUIModule } from '@cdm/ui';
-import { IconSpriteModule } from 'ng-svg-icon-sprite';
+// import { IconSpriteModule } from 'ng-svg-icon-sprite';
 import { OperationStepperComponent } from './operation-stepper.component';
 import { OperationStepperRoutingModule } from './operation-stepper-routing.module';
 import { OperationAttachmentsComponent } from './operation-attachments/operation-attachments.component';
@@ -27,7 +27,7 @@ import { OperationFormModule } from '../operation-form/operation-form.module';
     CommonModule,
     CdkStepperModule,
     CdmUIModule,
-    IconSpriteModule.forRoot({ path: '../../assets/sprites/sprite.svg' }),
+    // IconSpriteModule.forRoot({ path: '../../assets/sprites/sprite.svg' }),
     FlexLayoutModule,
     FormsModule, ReactiveFormsModule,
     OperationFormModule,

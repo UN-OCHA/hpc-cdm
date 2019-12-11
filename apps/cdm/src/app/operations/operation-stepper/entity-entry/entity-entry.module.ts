@@ -17,7 +17,8 @@ import { IconsModalComponent } from './icon/icons-modal.component';
     EntityEntryComponent
   ],
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule, IconSpriteModule,
+    CommonModule, FormsModule, ReactiveFormsModule,
+    IconSpriteModule,
     CdmUIModule, UIModule, MaterialModule,
   ],
   entryComponents: [

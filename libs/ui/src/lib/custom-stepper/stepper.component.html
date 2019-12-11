@@ -2,6 +2,7 @@
   <mat-drawer #drawer class="example-sidenav" mode="side" opened="true">
     <nav>
       <a *ngFor="let step of _steps; let i = index;" mat-stroked-button
+          [ngClass]="{'active': selectedIndex === i}"
          (click)="onClick(i)">
          <span [matBadge]="i + 1"></span> {{allSteps[i].name}}</a>
     </nav>
@@ -25,7 +26,7 @@
           <a mat-raised-button *ngIf="selectedIndex > 0"
             (click)="navigateTo(selectedIndex - 1)">Prev</a>
           <a mat-raised-button *ngIf="selectedIndex < (steps.length-1)"
-            color="warn"
+            color="primary"
             (click)="navigateTo(selectedIndex + 1)">Next</a>
         </div>
       </div>
