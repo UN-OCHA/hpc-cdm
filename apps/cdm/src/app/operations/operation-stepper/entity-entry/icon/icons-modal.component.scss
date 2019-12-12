@@ -3,3 +3,13 @@
   flex-direction: row;
   flex-wrap: wrap;
 }
+
+.modal-header {
+  position: relative;
+  width: 100%;
+  a {
+    position: absolute;
+    right: 1em;
+    top: 1em;
+  }
+}

@@ -21,12 +21,11 @@
   .icon-button {
     background-color: transparent;
     width: 120px;
-    margin-left: .25em;
+    margin-left: .75em;
     svg {
-      width: 6em;
-      height: 6em;
-      border: .5em solid #eee;
+      margin-left: 3em;
       border-radius: 50%;
+      border: .5em solid #eee;
       background-color: #fff;
       background-clip: padding-box;
       path {
@@ -42,7 +41,7 @@
       }
     }
     .name {
-      margin: 1em 0 0 -.5em;
+      margin: 1em 0 0 0;
       text-align: center;
       width: 9em;
       font-weight: 600;
