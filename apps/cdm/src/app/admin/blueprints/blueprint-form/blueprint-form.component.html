@@ -1,4 +1,4 @@
-<form class="blueprint-form" (ngSubmit)="onSubmit()" [formGroup]="form">
+<form class="edit" (ngSubmit)="onSubmit()" [formGroup]="form">
 
   <div class="operation-type">
     <div>
@@ -28,8 +28,8 @@
   <mat-label>JSON Model?</mat-label>
   <json-editor [json]="blueprint && blueprint.model" (change)="onJsonChange($event)" ></json-editor>
 
-  <div class="buttons">
-    <button mat-raised-button [routerLink]="['/blueprints']">Close</button>
-    <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
+  <div class="actions">
+    <a mat-raised-button [routerLink]="['/blueprints']">Close</a>
+    <a mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</a>
   </div>
 </form>

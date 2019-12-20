@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ContentChild, ElementRef } from '@angular/cor
 import { environment, AuthService } from '@hpc/core';
 
 @Component({
-  selector: 'app-nav',
+  selector: 'hpc-nav',
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
