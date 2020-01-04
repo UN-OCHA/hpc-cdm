@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModeService } from '@hpc/core';
-import { OperationService } from '@cdm/core';
+import { AppService, ModeService } from '@hpc/core';
 
 const TITLES = {
   'add': 'New Participant',
@@ -14,10 +13,11 @@ const TITLES = {
 })
 export class ParticipantsComponent implements OnInit {
   title: string;
+  operation$ = this.appService.operation$;
 
   constructor(
     private modeService: ModeService,
-    private operationService: OperationService){}
+    private appService: AppService){}
 
   ngOnInit() {
     this.modeService.mode$.subscribe(mode => {

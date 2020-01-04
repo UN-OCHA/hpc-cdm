@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AuthService } from '@hpc/core';
-import { AppService, OperationService, ReportsService } from '@cdm/core';
+import { AppService, AuthService } from '@hpc/core';
+import { ReportsService } from '@cdm/core';
 
 @Component({
   selector: 'report-list',
@@ -14,14 +14,15 @@ export class ReportListComponent implements OnInit {
   entityPrototypeId: number;
 
   constructor(
-    private app: AppService,
-    private operationService: OperationService,
+    private appService: AppService,
     private authService: AuthService,
     private reports: ReportsService,
     private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    this.operationService.route = 'REPORTS_VIEW';
+    console.log('44444444444444444444444444444444444444444444444444')
+    console.log('44444444444444444444444444444444444444444444444444')
+    // this.operationService.route = 'REPORTS_VIEW';
     // this.operationId = params.id;
     // this.entityPrototypeId = params.entityPrototypeId;
 
@@ -39,14 +40,15 @@ export class ReportListComponent implements OnInit {
     // } else {
       // console.log(params)
       this.reports.stepIdx = 0;
-      this.operationService.loadAttachments(2);
+      this.appService.loadAttachments(2);
       this.title = 'Operation Attachments';
     // }
 
-    this.operationService.selectedEntity$.subscribe(entity => {
-      if(entity) {
-        this.operationService.loadEntityAttachments(entity.id);
-      }
-    });
+    // TODO vimago
+    // this.appService.selectedEntity$.subscribe(entity => {
+    //   if(entity) {
+    //     this.operationService.loadEntityAttachments(entity.id);
+    //   }
+    // });
   }
 }

@@ -1,28 +1,33 @@
-<div *ngIf="op && auth.user" class="menu">
-
-  <div *ngIf="auth.user.isAdmin" class="section">
+<div *ngIf="user$ | async as user" class="menu">
+  <section *ngIf="user.isAdmin">
     <label><mat-icon>edit</mat-icon>Edit</label>
-    <a mat-button [routerLink]="['/operations', op.id]">Operation</a>
-    <span *ngFor="let ep of op.entityPrototypes">
-      <a mat-button [routerLink]="['/operations', op.id, 'entities', ep.id]">{{ ep.name.en.plural }}</a>
+    <a *ngIf="operation$ | async as operation" mat-button
+        [routerLink]="['/operations', operation.id]">Operation</a>
+    <span *ngFor="let ep of entityPrototypes$ | async">
+      <a *ngIf="operation$ | async as operation" mat-button
+        [routerLink]="['/operations', operation.id, 'entities', ep.id]">{{ ep.name.en.plural }}</a>
     </span>
-    <a mat-button [routerLink]="['/operations', op.id, 'plans']">Plans</a>
-  </div>
+    <a *ngIf="operation$ | async as operation" mat-button
+      [routerLink]="['/operations', operation.id, 'plans']">Plans</a>
+  </section>
 
-  <div class="section">
+  <section>
     <label><mat-icon>publish</mat-icon>Submit Data</label>
-    <a mat-button [routerLink]="['/operations', op.id, 'reports']">New reporting window</a>
-  </div>
+    <a *ngIf="operation$ | async as operation" mat-button
+      [routerLink]="['/operations', operation.id, 'reports']">New reporting window</a>
+  </section>
 
-  <div *ngIf="auth.user.isAdmin" class="section">
+  <section *ngIf="user.isAdmin">
     <label><mat-icon>build</mat-icon>Configure</label>
-    <a mat-button [routerLink]="['/operations', op.id, 'aprototypes']">Attachment Prototypes</a>
-    <a mat-button [routerLink]="['/operations', op.id, 'eprototypes']">Entity Prototypes</a>
-    <a mat-button [routerLink]="['/operations', op.id, 'participants']">Participants</a>
-  </div>
+    <div *ngIf="operation$ | async as operation">
+      <a mat-button [routerLink]="['/operations', operation.id, 'aprototypes']">Attachment Prototypes</a>
+      <a mat-button [routerLink]="['/operations', operation.id, 'eprototypes']">Entity Prototypes</a>
+      <a mat-button [routerLink]="['/operations', operation.id, 'participants']">Participants</a>
+    </div>
+  </section>
 
-  <div class="section">
+  <section *ngIf="operation$ | async as operation">
     <label><mat-icon>dynamic_feed</mat-icon>States</label>
-    <a mat-button [routerLink]="['/operations', op.id, 'versions']">Publishing & Versions</a>
-  </div>
+    <a mat-button [routerLink]="['/operations', operation.id, 'versions']">Publishing & Versions</a>
+  </section>
 </div>

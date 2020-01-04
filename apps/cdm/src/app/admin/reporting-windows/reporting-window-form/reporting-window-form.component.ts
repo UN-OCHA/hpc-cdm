@@ -1,13 +1,10 @@
+import { Component, OnInit, HostListener } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import {zip as observableZip,  Observable } from 'rxjs';
 import {filter} from 'rxjs/operators';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Component, OnInit, HostListener } from '@angular/core';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { ApiService, AuthService, ModeService } from '@hpc/core';
+import { AppService, AuthService, ModeService } from '@hpc/core';
 import { ReportingWindow } from '@hpc/data';
-
-// import { ToastrService } from 'ngx-toastr';
-// import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'reporting-window-form',
@@ -16,23 +13,19 @@ import { ReportingWindow } from '@hpc/data';
 })
 export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDeactivate {
   form: FormGroup;
-  editMode: boolean = false;
   title: string;
-  reportingWindow: ReportingWindow;
+  reportingWindow$ = this.appService.reportingWindow$;
   // processing = true;
-  // editable = true;
   // canSubmitReportingWindow = false;
-
 
   constructor(
     private router: Router,
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
-    private api: ApiService,
     private auth: AuthService,
+    private appService: AppService,
     private modeService: ModeService,
     // private rw: ReportingWindowService,
-    // private translate: TranslateService,
     // private toastr: ToastrService
   ) {
     this.form = this.fb.group({
@@ -46,12 +39,7 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
         this.modeService.mode = 'edit';
-        this.editMode = true;
-        this.api.getReportingWindow(params.id).subscribe(rw => {
-          console.log(rw);
-          rw.name = 'RW Name';
-          this.reportingWindow = rw;
-        });
+        this.appService.loadReportingWindow(params.id);
         // this.form.reset({
         // });
       } else {

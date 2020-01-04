@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '@hpc/core';
+import { ActivatedRoute } from '@angular/router';
+import { AppService, AuthService } from '@hpc/core';
 import { Operation } from '@hpc/data';
-import { OperationService } from '@cdm/core';
 
 const TITLES = {
   'add': 'New Operation',
@@ -15,16 +15,18 @@ const TITLES = {
   styleUrls: [ './operation.component.scss' ],
 })
 export class OperationComponent implements OnInit {
-  title: string;
-  op: Operation;
+  operation$ = this.appService.operation$;
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private authService: AuthService,
-    private operationService: OperationService){}
+    private appService: AppService){
+  }
 
   ngOnInit() {
-    this.operationService.operation$.subscribe(operation => {
-      this.op = operation;
+    this.activatedRoute.params.subscribe(params => {
+      console.log(params)
+      this.appService.loadOperation(params.id);
     });
   }
 }

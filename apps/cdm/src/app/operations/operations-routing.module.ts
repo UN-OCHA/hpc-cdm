@@ -19,11 +19,11 @@ const routes: Routes = [
     ]
   },
   {
-    path: ':id',
+    path: ':operationId',
     component: OperationComponent,
     children: [
       {
-        path: '', //component: OperationStepperComponent, canActivate: [AdminGuard]
+        path: '',
         loadChildren: './operation-stepper/operation-stepper.module#OperationStepperModule'
       },
       {

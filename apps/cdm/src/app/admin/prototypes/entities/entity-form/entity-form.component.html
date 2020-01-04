@@ -13,13 +13,17 @@
       type="text" id="refType" name="refType" required>
   </mat-form-field>
 
-  <label>JSON Model?</label>
-  <json-editor
-    [json]="prototype && prototype.opEntityPrototypeVersion.value"
-    (change)="onJsonChange($event)"></json-editor>
+  <ng-container *ngIf="(prototype$ | async) as prototype; else emptyjson">
+    <json-editor
+      [json]="prototype.value"
+      (change)="onJsonChange($event)"></json-editor>
+  </ng-container>
+  <ng-template #emptyjson>
+    <json-editor [json]="{}" (change)="onJsonChange($event)"></json-editor>
+  </ng-template>
 
-  <div class="actions">
-    <a mat-raised-button [routerLink]="['/operations', operationId, 'eprototypes']">Close</a>
+  <div *ngIf="(operation$ | async) as operation" class="actions">
+    <a mat-raised-button [routerLink]="['/operations', operation.id, 'eprototypes']">Close</a>
     <a mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</a>
   </div>
 </form>

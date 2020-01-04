@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
-import { AuthService } from '@hpc/core';
-import { AppService, OperationService } from '@cdm/core';
+import { AppService, ModeService } from '@hpc/core';
 
 @Component({
   selector: 'operation-list',
@@ -18,55 +17,28 @@ import { AppService, OperationService } from '@cdm/core';
 })
 export class OperationListComponent implements OnInit {
   view?: string;
-  loading: boolean = false;
   armed: boolean = false;
   columnsToDisplay = ['name'];
   expandedElement: any | null;
   tableColumns = [
     {columnDef: 'name', header: '', cell: (row) => `${row.name}`},
-    // {columnDef: 'type', header: 'Type', cell: (row) => `${row.type}`}
   ];
   starred = [];
-
+  readonly operations$ = this.appService.operations$;
 
   constructor(
-    private auth: AuthService,
-    private app: AppService,
-    private service: OperationService) {}
+    private appService: AppService,
+    private modeService: ModeService) {}
 
   ngOnInit() {
-    this.service.mode = 'list';
-    this.loading = true;
-    // TODO revisit this. authentication service might not
-    // be required here. it is only here because this is the first
-    // route after the user logs in and to prevent requesting
-    // operations after the user has been authenticated but before
-    // the user/roles have been fetched.
-    // if(this.auth.user) {
-      this.app.loadOperations();
-    // } else {
-    //   this.auth.user$.subscribe(user => {
-    //     if(user) {
-    //       this.armed = true;
-    //       this.app.loadOperations();
-    //     }
-    //   });
-    // }
-    this.app.operations$.subscribe(operations => {
-      // TODO understand why this is called even before we
-      // set operations
-      if(this.armed || operations.length) {
-        this.loading = false;
-        this.armed = false;
-      }
-    })
+    this.modeService.mode = 'list';
+    this.appService.loadOperations();
   }
 
   toggleExpansion(element) {
     this.expandedElement = this.expandedElement === element ? null : element;
-    this.service.operation = element;
+    this.appService.loadOperation(element.id)
   }
-
 
   toggleStar(event, operation) {
     event.stopPropagation();
@@ -81,3 +53,46 @@ export class OperationListComponent implements OnInit {
     }
   }
 }
+
+
+// <div *ngIf="!loading && (!app.operations || !app.operations.length)">
+//   <p>You currently have no operations.
+// </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // TODO revisit this. authentication service might not
+// // be required here. it is only here because this is the first
+// // route after the user logs in and to prevent requesting
+// // operations after the user has been authenticated but before
+// // the user/roles have been fetched.
+// // if(this.auth.user) {
+//   this.app.loadOperations();
+// // } else {
+// //   this.auth.user$.subscribe(user => {
+// //     if(user) {
+// //       this.armed = true;
+// //       this.app.loadOperations();
+// //     }
+// //   });
+// // }
+// this.app.operations$.subscribe(operations => {
+//   // TODO understand why this is called even before we
+//   // set operations
+//   if(this.armed || operations.length) {
+//     this.loading = false;
+//     this.armed = false;
+//   }
+// })

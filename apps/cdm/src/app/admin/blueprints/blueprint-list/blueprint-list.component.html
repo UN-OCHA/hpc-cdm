@@ -1,10 +1,6 @@
-<div *ngIf="blueprints?.length ==0" class="text-danger">
-  No blueprints Found..
-</div>
-
 <scroll-container [more]="hasMore()" [scrollOffset]="2500" [scrollDelay]="3000"
   (scrolled)="handleScroll($event)" [class.full]="full" [class.part]="!full">
-  <table *ngIf="blueprints" mat-table [dataSource]="blueprints" multiTemplateDataRows class="mat-elevation-z8">
+  <table mat-table [dataSource]="blueprints$" multiTemplateDataRows>
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Name</th>
       <td mat-cell *matCellDef="let element">{{element.name}}</td>
@@ -36,7 +32,5 @@
         (click)="router.navigate(['/blueprints', element.id])">
     </tr>
   </table>
-
   <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
-
 </scroll-container>

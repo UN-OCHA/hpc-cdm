@@ -1,19 +1,18 @@
 <div *ngIf="!loading" class="op-attachments">
-  <div class="panel-body">
+  <div *ngIf="(mode$ | async) as mode" class="panel-body">
     <div class="panel-attachments">
       <mat-accordion>
-        <div *ngFor="let entry of operation.attachments$ | async">
+        <div *ngFor="let entry of attachments$ | async">
           <attachment-entry [entry]="entry"></attachment-entry>
         </div>
 
-        <attachment-entry
-          *ngIf="operation.mode === 'ADD_OPERATION_ATTACHMENT'"
+        <attachment-entry *ngIf="mode === 'ADD'"
           [entry]="operation.newAttachment"></attachment-entry>
       </mat-accordion>
     </div>
     <div class="panel-actions">
       <a mat-raised-button color="warn"
-        [disabled]="operation.mode === 'ADD_OPERATION_ATTACHMENT'"
+        [disabled]="mode === 'ADD'"
         (click)="addForm()">
         {{ 'Add Form' }}
       </a>

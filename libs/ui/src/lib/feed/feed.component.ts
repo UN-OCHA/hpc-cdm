@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ApiService } from '@hpc/core';
+// import { ApiService } from '@hpc/core';
 
 
 @Component({
@@ -11,8 +11,8 @@ export class FeedComponent {
   mode: string = 'determinate';
 
   // api = { inProgress: false, isUp: true };
-  constructor(private api: ApiService) {
-  }
+  // constructor(private api: ApiService) {
+  // }
 }
 
 // <div class="marker">

@@ -1,14 +1,10 @@
-<div *ngIf="page.length <= 0">
-  <p>You currently have no reporting windows.</p>
-</div>
-
-<table *ngIf="page" mat-table [dataSource]="page" multiTemplateDataRows class="mat-elevation-z8">
+<table mat-table [dataSource]="reportingWindows$" multiTemplateDataRows>
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef>Name</th>
-    <td mat-cell *matCellDef="let reportingWindow">
+    <td mat-cell *matCellDef="let rw">
       <div class="description">
-        <h2>{{ reportingWindow.value.name || 'RW Name' }}</h2>
-        <small>Status : {{ reportingWindow.status}} | {{ reportingWindow.value.description || 'description'}}</small>
+        <h2>{{ rw.name }}</h2>
+        <small>Status : {{ rw.status }} | {{ rw.description }}</small>
       </div>
     </td>
   </ng-container>
@@ -27,11 +23,7 @@
     <td mat-cell *matCellDef="let element" [attr.colspan]="4">
       <div class="example-element-detail"
            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-        <div class="example-element-description">
-          <a [routerLink]="['/rwindows', element.id]">Edit Reporting Window</a>
-          <a [routerLink]="['/rwindows', element.id, 'queue']">View Data queue</a>
-          <a [routerLink]="['/rwindows', element.id, 'states']">Change states</a>
-        </div>
+        <reporting-window-menu [reportingWindow]="element"></reporting-window-menu>
       </div>
     </td>
   </ng-container>

@@ -5,7 +5,7 @@ import {map} from 'rxjs/operators';
 
 import { ReportingWindow } from './reporting-window.model';
 
-import { ApiService } from '@hpc/core';
+// import { ApiService } from '@hpc/core';
 
 import * as _ from 'lodash';
 
@@ -25,17 +25,18 @@ export class CreateReportingWindowService {
   public reportingWindowHasLoaded$ = this.reportingWindowLoadedSource.asObservable();
 
   constructor(
-    private apiService: ApiService,
+    // private apiService: ApiService,
   ) {}
 
   public fetchReportingWindow(id: number, version = 'latest') {
-    let subscription = this.apiService.getReportingWindow(id, version);
-    return subscription.pipe(
-      map(reportingWindow => {
-        this.isNewReportingWindow = false;
-        reportingWindow.exists = true;
-        this.reportingWindowDoneLoading(reportingWindow);
-      }));
+    // TODO vimago
+    // let subscription = this.apiService.getReportingWindow(id, version);
+    // return subscription.pipe(
+    //   map(reportingWindow => {
+    //     this.isNewReportingWindow = false;
+    //     reportingWindow.exists = true;
+    //     this.reportingWindowDoneLoading(reportingWindow);
+    //   }));
   }
 
   public reportingWindowDoneLoading(reportingWindow: ReportingWindow) {

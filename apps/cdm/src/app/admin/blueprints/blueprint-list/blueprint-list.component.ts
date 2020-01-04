@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import { ApiService, ModeService } from '@hpc/core';
-// import { ToastrService } from 'ngx-toastr';
+import { AppService, ModeService } from '@hpc/core';
 
 const MAX_LENGTH = 280;
 
@@ -19,7 +18,7 @@ const MAX_LENGTH = 280;
   ]
 })
 export class BlueprintListComponent implements OnInit {
-  blueprints: any[];
+  blueprints$ = this.appService.blueprints$;
   columnsToDisplay = ['name', 'description', 'status', 'type', 'actions'];
   expandedElement: any | null;
 
@@ -27,23 +26,15 @@ export class BlueprintListComponent implements OnInit {
   full: boolean = false;
 
   constructor(
-    private service: ModeService,
-    public apiService: ApiService,
+    private appService: AppService,
+    private modeService: ModeService,
     private router: Router
-    // private toastr: ToastrService
   ) {
   }
 
   ngOnInit() {
-    this.service.mode = 'list';
-    this.apiService.getBlueprints().subscribe(blueprints => {
-      this.blueprints = blueprints.map(bp => {
-        if(bp.description.length > MAX_LENGTH) {
-          bp.description = bp.description.substring(0, MAX_LENGTH) + '...';
-        }
-        return bp;
-      });
-    });
+    this.modeService.mode = 'list';
+    this.appService.loadBlueprints();
   }
 
   capitalized(s) {
@@ -51,13 +42,7 @@ export class BlueprintListComponent implements OnInit {
   }
 
   deleteBlueprint(blueprint: any) {
-    return this.apiService.deleteBlueprint(blueprint.id)
-      .subscribe(response => {
-        if (response.status === 'ok') {
-          this.blueprints.splice(this.blueprints.indexOf(blueprint), 1);
-          // return this.toastr.success('Blueprint removed.', 'Blueprint removed');
-        }
-      });
+    this.appService.deleteBlueprint(blueprint.id);
   }
 
   handleScroll = (scrolled: boolean) => {
@@ -72,6 +57,27 @@ export class BlueprintListComponent implements OnInit {
   }
 
 }
+
+
+
+
+
+
+// <div *ngIf="blueprints$?.length ==0" class="text-danger">
+//   No blueprints Found..
+// </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // <td align="center">

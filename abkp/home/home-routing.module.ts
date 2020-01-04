@@ -14,14 +14,15 @@ export class HomeAuthGuard implements CanActivate {
     if(!this.auth.isAuthenticated()) {
       return of(true);
     }
-    this.router.navigate(['/dashboard']);
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+    // this.router.navigate(['/dashboard']);
     return of(false);
   }
 }
 
 const routes: Routes = [
   {
-    // pathMatch: 'full', 
+    // pathMatch: 'full',
     path: '', component: HomeComponent, canActivate: [HomeAuthGuard]
   }
 ];

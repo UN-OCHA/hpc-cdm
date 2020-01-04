@@ -20,7 +20,7 @@ body {
   font-family: $body-font;
   font-size: $font-size;
   color: #585858;
-  background-color: $white;
+  background-color: #EFF5F9;;
   min-width: 800px;
   overflow: hidden;
 }
@@ -262,6 +262,14 @@ body {
       margin-left: 1em;
     }
   }
+
+  ::ng-deep {
+    a:disabled {
+      .mat-icon {
+        opacity: .4;
+      }
+    }
+  }
 }
 
 // mat-icon-stepper selected color change
@@ -355,11 +363,13 @@ body {
   flex-direction: row;
   background-color: #026cb6;
   background-color: #ee7325;
-  color: #fff;
+  background-color: #fff;
+  color: #212529;
   padding: .5em;
   border-top-left-radius: .25em;
   border-top-right-radius: .25em;
   margin-top: 1em;
+  // border-bottom: .25em solid #f2f2f2;
   h1 {
     margin: 0;
     font-size: 1.75em;
@@ -382,6 +392,7 @@ body {
         padding: 0;
         height: 1em;
         width: 1em;
+        color: #999;
       }
     }
   }
@@ -389,10 +400,14 @@ body {
 
 
 form.edit {
-  border: 1px solid #ddd;
+  border: .15em solid #f2f2f2;
   padding: 1em;
   display: flex;
   flex-direction: column;
+  background-color: #fff;
+  .mat-form-field-outline {
+    background-color: #fff;
+  }
   .actions {
     margin-top: 1em;
     display: flex;
@@ -415,3 +430,12 @@ form.edit {
 //     }
 //   }
 // }
+
+.mat-button-toggle-group {
+  border: none;
+  .mat-button-toggle {
+    border: 1px solid #ddd;
+    min-width: 14em;
+  }
+  margin-bottom: 1em;
+}

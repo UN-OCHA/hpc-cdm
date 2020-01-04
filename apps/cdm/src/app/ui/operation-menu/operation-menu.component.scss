@@ -8,22 +8,21 @@ $orange: #ee7325;
     color: #fff;
     display: flex;
     flex-direction: row;
-    cursor: normal;    
+    cursor: normal;
     .mat-icon {
       display: none;
       font-size: 1em;
     }
 
-    .section {
+    section {
       display: flex;
       flex-direction: column;
-      margin-right: 2em;
+      margin-right: 1em;
       background-color: white;
       label {
         font-size: 1.25em;
         line-height: 1em;
         color: #999;
-        min-width: 8em;
         margin: 0 0 .15em 0;
         padding: .35em 0 0 0;
         border-radius: 3px;
@@ -34,7 +33,7 @@ $orange: #ee7325;
         color: $orange;
         color: #026CB6;
         text-decoration: underline;
-        margin-bottom: .25em;
+        margin-bottom: 1em;
         cursor: pointer;
       }
       .mat-button {

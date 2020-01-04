@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 // import { Participant } from '@hpc/data';
-import { ModeService } from '@hpc/core';
-import { OperationService } from '@cdm/core';
+import { AppService, ModeService } from '@hpc/core';
+
 
 @Component({
   selector: 'participant-list',
@@ -10,20 +10,20 @@ import { OperationService } from '@cdm/core';
   styleUrls: [ './participant-list.component.scss' ]
 })
 export class ParticipantListComponent implements OnInit {
-  participants = [];
   tableColumns = [];
-  operationId: number;
+  operation$ = this.appService.operation$;
+  participants$ = this.appService.participants$;
 
   constructor(
     private modeService: ModeService,
-    private operationService: OperationService,
+    private appService: AppService,
     private activatedRoute: ActivatedRoute){
   }
 
   ngOnInit() {
     this.modeService.mode = 'list';
     this.activatedRoute.params.subscribe(params => {
-      this.operationId = params.operationId;
+      this.appService.loadParticipants(params.id);
     });
   }
 }

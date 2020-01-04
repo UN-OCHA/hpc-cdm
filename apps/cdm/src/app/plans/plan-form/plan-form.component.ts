@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AppService, OperationService } from '@cdm/core';
+import { OperationService } from '@cdm/core';
 import { Operation } from '@hpc/data';
 import { ModeService } from '@hpc/core';
 

@@ -13,9 +13,18 @@ const routes: Routes = [
     component: AttachmentsComponent,
     canActivate: [AdminGuard],
     children: [
-      { path: '', component: AttachmentListComponent },
-      { path: 'new', component: AttachmentFormComponent },
-      { path: ':id', component: AttachmentFormComponent },
+      {
+        path: '', component: AttachmentListComponent,
+        data: {mode: 'list'}
+      },
+      {
+        path: 'new', component: AttachmentFormComponent,
+        data: {mode: 'add'}
+      },
+      {
+        path: ':id', component: AttachmentFormComponent,
+        data: {mode: 'edit'}
+      },
     ]
   }
 ];

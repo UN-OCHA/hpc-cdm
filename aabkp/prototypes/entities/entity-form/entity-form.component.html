@@ -15,7 +15,6 @@
           type="text" id="refType" name="refType" required>
       </mat-form-field>
 
-      <label>JSON Model?</label>
       <json-editor
         [json]="prototype && prototype.opEntityPrototypeVersion.value"
         (change)="onJsonChange($event)"></json-editor>

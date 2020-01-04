@@ -4,29 +4,27 @@ import { MaterialModule } from '@hpc/material';
 import { ModeService } from '@hpc/core';
 import { CdmUIModule } from '@cdm/ui';
 
-import { DataQueueModule } from './data-queue/data-queue.module';
 import { ReportingWindowsComponent } from './reporting-windows.component';
-import { ReportingWindowFormComponent } from './reporting-window-form/reporting-window-form.component';
-import { ReportingWindowListComponent } from './reporting-window-list/reporting-window-list.component';
-import { ReportingWindowStatesComponent } from './reporting-window-states/reporting-window-states.component';
+import { ReportingWindowListModule } from './reporting-window-list';
+import { ReportingWindowFormModule } from './reporting-window-form';
+import { ReportingWindowMenuModule } from './reporting-window-menu';
 import { ReportingWindowsRoutingModule } from './reporting-windows-routing.module';
 
 
 @NgModule({
   declarations: [
     ReportingWindowsComponent,
-    ReportingWindowFormComponent,
-    ReportingWindowListComponent,
-    ReportingWindowStatesComponent,
   ],
   imports: [
     CommonModule,
     CdmUIModule, MaterialModule,
-    DataQueueModule,
+    ReportingWindowMenuModule,
+    ReportingWindowListModule,
+    ReportingWindowFormModule,
     ReportingWindowsRoutingModule
   ],
   exports: [
-    ReportingWindowListComponent
+    ReportingWindowsComponent
   ],
   providers: [
     ModeService

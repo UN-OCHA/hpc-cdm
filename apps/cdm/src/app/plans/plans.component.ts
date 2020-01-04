@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-import { ModeService } from '@hpc/core';
-import { OperationService } from '@cdm/core';
+import { AppService, ModeService } from '@hpc/core';
 
 const TITLES = {
   'list': 'Plans',
@@ -15,15 +13,16 @@ const TITLES = {
   styleUrls: ['./plans.component.scss']
 })
 export class PlansComponent implements OnInit {
-  title: string;
+  titles;
+  mode$ = this.modeService.mode$;
+  operation$ = this.appService.operation$;
 
   constructor(
     private modeService: ModeService,
-    private operationService: OperationService){}
+    private appService: AppService){
+    this.titles = TITLES;
+  }
 
   ngOnInit() {
-    this.modeService.mode$.subscribe(mode => {
-      this.title =  TITLES[mode];
-    });
   }
 }

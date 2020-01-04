@@ -1,57 +1,59 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { ApiService, ModeService } from '@hpc/core';
+import { AppService, ModeService } from '@hpc/core';
 
 @Component({
   selector: 'blueprint-form',
   templateUrl: './blueprint-form.component.html',
   styleUrls: ['./blueprint-form.component.scss']
 })
-export class BlueprintFormComponent implements OnInit {
+export class BlueprintFormComponent implements OnInit, OnDestroy {
   form: FormGroup;
+  loading = false;
   submitted = false;
   title: String;
-  blueprint: any;
+  blueprint$ = this.appService.blueprint$;
   jsonModel: any;
+  blueprintType: string = 'operation';
 
   constructor(
-    private service: ModeService,
-    private injector: Injector,
+    private appService: AppService,
+    private modeService: ModeService,
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
-    private router: Router,
-    private api: ApiService) {
+    private router: Router) {
     this.form = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required]
     });
   }
 
-  setMode(bp) {
-    this.title = bp ? 'Edit Blueprint' : 'New Blueprint';
-    if(bp) {
-      this.blueprint = bp;
-      this.form.reset({
-        name: bp.name,
-        description: bp.description
-      });
-    }
-  }
-
   ngOnInit() {
+    this.activatedRoute.data.subscribe(data => {
+      this.modeService.mode = data.mode;
+    });
+
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
-        this.service.mode = 'edit';
-        this.api.getBlueprint(params.id).subscribe(bp => {
-          this.setMode(bp);
+        this.loading = true;
+        this.appService.loadBlueprint(params.id);
+        this.appService.blueprint$.subscribe(bp => {
+          this.form.patchValue(bp);
+          this.loading = false;
         });
-      } else {
-        this.service.mode = 'add';
-        this.setMode(this.injector.get('blueprint', null));
       }
     });
+  }
+
+  // setBlueprintType(type) {
+  //   const bptype = type === 'operation' ? 1 : 2;
+  //   this.modeService.mode = `${this.modeService.mode}${bptype}`;
+  // }
+
+  ngOnDestroy() {
+    // this.activatedRoute.params.unsubscribe();
   }
 
   get f() { return this.form.controls; }
@@ -71,10 +73,11 @@ export class BlueprintFormComponent implements OnInit {
       formData.model = this.jsonModel;
       // add a checkbox to set active / disabled
       formData.status = 'active';
-      const bpId = this.blueprint && this.blueprint.id;
-      this.api.saveBlueprint(formData, bpId).subscribe(() => {
-        this.router.navigate(['/blueprints']);
-      });
+      // const bpId = this.blueprint && this.blueprint.id;
+      // TODO vimago
+      // this.api.saveBlueprint(formData, bpId).subscribe(() => {
+      //   this.router.navigate(['/blueprints']);
+      // });
     }
   }
 }

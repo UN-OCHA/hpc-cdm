@@ -1,32 +1,35 @@
-<form class="edit" (ngSubmit)="onSubmit()" [formGroup]="form">
+<form *ngIf="!loading" class="edit" (ngSubmit)="onSubmit()" [formGroup]="form">
 
-  <div class="operation-type">
-    <div>
-      <mat-radio-group aria-label="Select an option">
-        <mat-radio-button value="1">Operation Blueprint</mat-radio-button>
-        <mat-radio-button value="2">Plan Blueprint</mat-radio-button>
-      </mat-radio-group>
-    </div>
-  </div>
+  <mat-button-toggle-group name="bptype" aria-label="Blueprint Type">
+    <mat-button-toggle value="operation" checked="true">Operation Blueprint</mat-button-toggle>
+    <mat-button-toggle value="plan">Plan Blueprint</mat-button-toggle>
+  </mat-button-toggle-group>
 
   <mat-form-field appearance="outline">
     <mat-label>Name</mat-label>
     <input matInput
       formControlName="name"
-      (input)="clearErrors()" [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
+      (input)="clearErrors()"
+      [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
       required>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
     <mat-label>Description</mat-label>
     <textarea matInput
-      class="form-control"  formControlName="description" (input)="clearErrors()"
-      [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=3
+      class="form-control"
+      formControlName="description"
+      (input)="clearErrors()"
+      [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=10
       type="text" id="description" name="description" required></textarea>
   </mat-form-field>
 
-  <mat-label>JSON Model?</mat-label>
-  <json-editor [json]="blueprint && blueprint.model" (change)="onJsonChange($event)" ></json-editor>
+  <ng-container *ngIf="(blueprint$ | async) as blueprint; else emptyJsonModel">
+    <json-editor [json]="blueprint.model" (change)="onJsonChange($event)" ></json-editor>
+  </ng-container>
+  <ng-template #emptyJsonModel>
+    <json-editor [json]="{}" (change)="onJsonChange($event)" ></json-editor>
+  </ng-template>
 
   <div class="actions">
     <a mat-raised-button [routerLink]="['/blueprints']">Close</a>

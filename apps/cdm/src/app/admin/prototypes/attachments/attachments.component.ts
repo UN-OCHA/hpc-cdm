@@ -1,33 +1,33 @@
 import { Component, OnInit } from '@angular/core';
-import { ModeService } from '@hpc/core';
+import { AppService, ModeService } from '@hpc/core';
 import { Operation } from '@hpc/data';
-import { OperationService } from '@cdm/core';
-
-const TITLES = {
-  'add': 'New Attachment Prototype',
-  'edit': 'Edit Attachment Prototype',
-  'list': 'Attachment Prototypes'
-}
 
 @Component({
   selector: 'attachment-prototypes',
   templateUrl: './attachments.component.html'
 })
 export class AttachmentsComponent implements OnInit {
-  title: string;
-  op: Operation;
+  mode;
+  operation;
+  titles = {
+    'add': 'New Attachment Prototype',
+    'edit': 'Edit Attachment Prototype',
+    'list': 'Attachment Prototypes'
+  };
 
   constructor(
-    private modeService: ModeService,
-    private operationService: OperationService){}
+    private appService: AppService,
+    private modeService: ModeService) {
+  }
 
   ngOnInit() {
-    this.modeService.mode$.subscribe(mode => {
-      console.log(mode)
-      this.title = TITLES[mode];
+    this.appService.operation$.subscribe(operation => {
+      this.operation = operation;
     });
-    this.operationService.operation$.subscribe(operation => {
-      this.op = operation;
-    })
+
+    this.modeService.mode$.subscribe(mode => {
+      this.mode = mode;
+    });
   }
+
 }

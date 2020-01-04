@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { AppService, OperationService } from '@cdm/core';
-import { Operation } from '@hpc/data';
-import { AuthService } from '@hpc/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { AppService } from '@hpc/core';
 
 @Component({
   selector: 'reporting-window-menu',
@@ -9,8 +8,12 @@ import { AuthService } from '@hpc/core';
   styleUrls: ['./reporting-window-menu.component.scss']
 })
 export class ReportingWindowMenuComponent implements OnInit {
+  @Input() reportingWindow;
 
-  constructor() {}
+  constructor(
+    activatedRoute: ActivatedRoute,
+    appService: AppService) {
+  }
 
   ngOnInit() {
   }

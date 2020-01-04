@@ -1,8 +1,10 @@
-<div class="cdm-title">
-  <h1>Edit Operation</h1>
+<div class="operation-stepper">
+  <div class="cdm-title">
+    <h1>Edit Operation</h1>
+  </div>
+  <custom-stepper [allSteps]="steps" (change)="onSelectionChange($event)">
+    <cdk-step *ngFor="let step of steps; let i = index;">
+      <router-outlet *ngIf="i === selectedStepIndex"></router-outlet>
+    </cdk-step>
+  </custom-stepper>
 </div>
-<custom-stepper [allSteps]="steps" (change)="onSelectionChange($event)">
-  <cdk-step *ngFor="let step of steps; let i = index;">
-    <router-outlet *ngIf="i === selectedStepIndex"></router-outlet>
-  </cdk-step>
-</custom-stepper>

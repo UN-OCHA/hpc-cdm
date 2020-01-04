@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { ApiService, ModeService } from '@hpc/core';
+import { AppService, ModeService } from '@hpc/core';
 
 @Component({
   selector: 'entity-prototype-form',
@@ -14,8 +14,8 @@ export class EntityFormComponent implements OnInit {
   form: FormGroup;
   submitted = false;
   title: String;
-  prototype: any;
-  operationId: any;
+  prototype$ = this.appService.entityPrototype$;
+  operation$ = this.appService.operation$;
   jsonModel: any;
 
   constructor(
@@ -24,8 +24,8 @@ export class EntityFormComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     private router: Router,
-    private modeService: ModeService,
-    private api: ApiService) {
+    private appService: AppService,
+    private modeService: ModeService) {
     this.form = this.fb.group({
       refCode: ['', Validators.required],
       refType: ['', Validators.required]
@@ -33,40 +33,39 @@ export class EntityFormComponent implements OnInit {
   }
 
   setMode(proto:any) {
-    this.title = proto ? 'Edit Entity Prototpe' : 'New Entity Prototype';
-    if(proto) {
-      this.prototype = proto;
-      this.form.reset({
-        refCode: proto.opEntityPrototypeVersion.refCode,
-        refType: proto.opEntityPrototypeVersion.type
-      });
-    } else {
-      this.prototype = {
-        operationId: this.operationId,
-        opEntityPrototypeVersion: {
-          value: {},
-          refCode:'',
-          refType:''
-        }
-      };
-    }
+    // this.title = proto ? 'Edit Entity Prototpe' : 'New Entity Prototype';
+    // if(proto) {
+    // } else {
+    //   this.prototype = {
+    //     operationId: this.operationId,
+    //     opEntityPrototypeVersion: {
+    //       value: {},
+    //       refCode:'',
+    //       refType:''
+    //     }
+    //   };
+    // }
   }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
-      if(params.operationId) {
-        this.operationId = params.operationId;
-      }
+    //   if(params.operationId) {
+    //     this.operationId = params.operationId;
+    //   }
       if(params.id) {
         this.modeService.mode = 'edit';
-        this.api.getEntityPrototype(params.id).subscribe(proto => {
-          this.setMode(proto);
-        })
+        this.appService.loadEntityPrototype(params.id);
+        this.appService.entityPrototype$.subscribe(ep => {
+          this.form.reset({
+            refCode: ep.refCode,
+            refType: ep.type
+          });
+        });
       } else {
         this.modeService.mode = 'add';
-        this.setMode(this.injector.get('prototype', null));
+    //     this.setMode(this.injector.get('prototype', null));
       }
-    })
+    });
   }
 
   get f() { return this.form.controls; }
@@ -84,22 +83,23 @@ export class EntityFormComponent implements OnInit {
   }
 
   onSubmit() {
-    this.submitted = true;
-    if(!this.form.invalid) {
-      const formData = this.form.value;
-      const id = this.prototype && this.prototype.id;
-      // TODO: add operation id
-      this.prototype.opEntityPrototypeVersion = {
-        id: this.prototype.opEntityPrototypeVersion.id,
-        opEntityPrototypeId: this.prototype.id,
-        refCode: formData.refCode,
-        type: formData.refType,
-        value: this.jsonModel || this.prototype.opEntityPrototypeVersion.value
-      };
-      this.api.saveEntityPrototype(this.prototype, id).subscribe((result) => {
-        this.router.navigate(['/operations', result.operationId, 'eprototypes']);
-      });
-    }
+    // this.submitted = true;
+    // if(!this.form.invalid) {
+    //   const formData = this.form.value;
+    //   const id = this.prototype && this.prototype.id;
+    //   // TODO: add operation id
+    //   this.prototype.opEntityPrototypeVersion = {
+    //     id: this.prototype.opEntityPrototypeVersion.id,
+    //     opEntityPrototypeId: this.prototype.id,
+    //     refCode: formData.refCode,
+    //     type: formData.refType,
+    //     value: this.jsonModel || this.prototype.opEntityPrototypeVersion.value
+    //   };
+    //   // TODO vimago what service?
+    //   // this.api.saveEntityPrototype(this.prototype, id).subscribe((result) => {
+    //   //   this.router.navigate(['/operations', result.operationId, 'eprototypes']);
+    //   // });
+    // }
   }
 }
 

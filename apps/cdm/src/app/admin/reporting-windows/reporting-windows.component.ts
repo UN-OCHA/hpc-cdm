@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService, ModeService } from '@hpc/core';
-
+import { AppService, ModeService } from '@hpc/core';
 
 const TITLES = {
   'add': 'New Reporting Window',
@@ -13,14 +12,18 @@ const TITLES = {
   templateUrl: './reporting-windows.component.html'
 })
 export class ReportingWindowsComponent implements OnInit {
-  title: string;
+  titles;
+  mode;
 
   constructor(
-    private modeService: ModeService){}
+    private appService: AppService,
+    private modeService: ModeService){
+    this.titles = TITLES;
+  }
 
   ngOnInit() {
     this.modeService.mode$.subscribe(mode => {
-      this.title =  TITLES[mode];
+      this.mode = mode;
     });
   }
 }

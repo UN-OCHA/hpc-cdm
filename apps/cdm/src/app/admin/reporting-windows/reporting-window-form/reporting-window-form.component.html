@@ -1,9 +1,9 @@
 <form class="edit" (ngSubmit)="onSubmit()">
-  <mat-radio-group>
-    <mat-radio-button color="primary" [value]="1">Global</mat-radio-button>
-    <mat-radio-button color="primary" [value]="3">Operation</mat-radio-button>
-    <mat-radio-button color="primary" [value]="2">Plan</mat-radio-button>
-  </mat-radio-group>
+  <mat-button-toggle-group>
+    <mat-button-toggle value="1" checked="true">Global</mat-button-toggle>
+    <mat-button-toggle value="2">Operation</mat-button-toggle>
+    <mat-button-toggle value="3">Plan</mat-button-toggle>
+  </mat-button-toggle-group>
 
   <mat-form-field appearance="outline">
     <mat-label>Context</mat-label>

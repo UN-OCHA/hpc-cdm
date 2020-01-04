@@ -1,5 +1,7 @@
-<table-selectable-rows
-  [dataSource]="prototypes"
-  [columns]="tableColumns"
-  [route]="['/operations', operationService.id, 'participants']">
-</table-selectable-rows>
+<ng-container *ngIf="(operation$ | async) as operation">
+  <table-selectable-rows
+    [dataSource]="participants$"
+    [columns]="tableColumns"
+    [route]="['/operations', operation.id, 'participants']">
+  </table-selectable-rows>
+</ng-container>

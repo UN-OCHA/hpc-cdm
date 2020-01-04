@@ -1,24 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ApiService } from '@hpc/core';
-import { OperationService } from '@cdm/core';
+import { AppService, ModeService } from '@hpc/core';
 
 @Component({
   selector: 'operation-form',
   templateUrl: './operation-form.component.html',
   styleUrls: ['./operation-form.component.scss'],
 })
-export class OperationFormComponent implements OnInit {
+export class OperationFormComponent implements OnInit, OnDestroy {
   form: FormGroup;
-  blueprints = [];
-  editMode = false;
+  mode;
+  blueprints$ = this.appService.blueprints$;
+  emergencies$ = this.appService.emergencies$;
+  locations$ = this.appService.locations$;
+  maxChars = 400;
+  charsUsed = 0;
 
   constructor(
-    private operationService: OperationService,
+    private appService: AppService,
+    private modeService: ModeService,
     private fb: FormBuilder,
-    private activatedRoute: ActivatedRoute,
-    private api: ApiService) {
+    private activatedRoute: ActivatedRoute) {
     this.form = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
@@ -27,18 +30,19 @@ export class OperationFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.activatedRoute.params.subscribe(params => {
-      // console.log(params)
-      if(this.operationService.id) {
-        this.operationService.mode = 'edit';
-        this.editMode = true;
+    this.activatedRoute.params.subscribe(params => {
+      this.appService.loadEmergenciesAndLocations();
+      if(params.id) {
+        this.mode = 'edit';
       } else {
-        this.operationService.mode = 'add';
-        this.api.getBlueprints().subscribe(blueprints => {
-          this.blueprints = blueprints;
-        });
+        this.mode = 'add';
+        this.appService.loadBlueprints();
       }
-    // });
+    });
+  }
+
+  ngOnDestroy() {
+    // this.activatedRoute.params.unsubscribe();
   }
 
   clearErrors() {
@@ -47,5 +51,9 @@ export class OperationFormComponent implements OnInit {
 
   onSubmit() {
     console.log(this.form.value)
+  }
+
+  summaryChange(value) {
+    this.charsUsed = value.length;
   }
 }

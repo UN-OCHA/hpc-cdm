@@ -9,26 +9,35 @@
 
   <mat-form-field appearance="outline">
     <mat-label for="description">Summary</mat-label>
-    <textarea matInput
-      class="form-control"  formControlName="description" (input)="clearErrors()"
+    <textarea matInput maxlength="400"
+      #summary
+      (input)='summaryChange(summary.value)'
+      class="form-control"  formControlName="description"
       [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=3
       type="text" id="description" name="description" required></textarea>
   </mat-form-field>
+  <div class="maxlength">Max length: {{charsUsed}}/{{maxChars}}</div>
 
-  <emergency-select></emergency-select>
-  <location-select></location-select>
+  <div *ngIf="emergencies$ | async as emergencies">
+    <autocomplete-select label="Emergencies" [options]="emergencies"></autocomplete-select>
+  </div>
+  <div *ngIf="locations$ | async as locations">
+    <autocomplete-select label="Locations" [options]="locations"></autocomplete-select>
+  </div>
 
-  <mat-form-field *ngIf="!editMode" appearance="outline">
-    <mat-label>Blueprint</mat-label>
-    <mat-select required formControlName="blueprint">
-      <mat-option *ngFor="let bp of blueprints" [value]="bp">
-        {{bp.name}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  <div>
+    <mat-form-field *ngIf="mode === 'add'" appearance="outline">
+      <mat-label>Blueprint</mat-label>
+      <mat-select required formControlName="blueprint">
+        <mat-option *ngFor="let bp of blueprints$ | async" [value]="bp">
+          {{bp.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <div *ngIf="!editMode" class="actions">
-    <a mat-raised-button [routerLink]="['/operations']">Close</a>
-    <a mat-raised-button color="primary" type="submit" [disabled]="!form.valid">Save & Next</a>
+    <div *ngIf="mode === 'add'" class="actions">
+      <a mat-raised-button [routerLink]="['/operations']">Close</a>
+      <a mat-raised-button color="primary" type="submit" [disabled]="!form.valid">Save & Next</a>
+    </div>
   </div>
 </form>

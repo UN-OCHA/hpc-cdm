@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-// import * as _ from 'lodash';
-// import { PageChangedEvent } from 'ngx-bootstrap/pagination';
-
-import { ApiService, ModeService } from '@hpc/core';
+import { AppService, ModeService } from '@hpc/core';
 
 
 @Component({
@@ -21,53 +18,27 @@ import { ApiService, ModeService } from '@hpc/core';
 export class ReportingWindowListComponent implements OnInit {
   expandedElement: any | null;
   columnsToDisplay = ['name', 'actions'];
-  public loading = false;
-
-  public currentPage = 1;
-  public page = [];
-
   public options: any;
   public searchOptions: any;
-
   public results: any;
-
   typeaheadNoResults = false;
   working = false;
+  
+  reportingWindows$ = this.appService.reportingWindows$;
 
   constructor(
     private modeService: ModeService,
-    private api: ApiService) {}
+    private appService: AppService) {
+  }
 
   ngOnInit() {
     this.modeService.mode = 'list';
-
-    this.results = [];
-    this.working = true;
-
-    let options = { };//scopes: 'entityPrototypes,operationVersion'};
-    //let options = { scopes: 'entityPrototypes,planVersion'};
-
-    this.searchOptions = options;
-
-    this.loading = true;
-
-    this.api.getAllReportingWindows()
-      .subscribe(results => {
-        this.results = results;
-        this.loading = false;
-        this.page = this.results.slice(0,10);
-        this.working = false;
-      });
+    this.appService.loadReportingWindows();
   }
-
-  // pageChanged(event: PageChangedEvent): void {
-  //   const startItem = (event.page - 1) * event.itemsPerPage;
-  //   const endItem = event.page * event.itemsPerPage;
-  //   this.page = this.results.slice(startItem, endItem);
-  // }
-
 }
+// let options = { };//scopes: 'entityPrototypes,operationVersion'};
+// this.searchOptions = options;
 
-// <div *ngIf="loading" class="project-page-loader">
-//   <i class="fa fa-circle-o-notch fa-spin"></i>
+// <div *ngIf="page.length <= 0">
+//   <p>You currently have no reporting windows.</p>
 // </div>

@@ -12,8 +12,7 @@
       [ngClass]="{ 'is-invalid': submitted && f.refType.errors }"
       type="text" id="refType" name="refType" required/>
   </mat-form-field>
-
-  <label for="description" translate="">JSON Model?</label>
+  
   <json-editor
     [json]="prototype && prototype.opAttachmentPrototypeVersion.value"
     (change)="onJsonChange($event)"></json-editor>

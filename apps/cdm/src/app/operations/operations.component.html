@@ -1,10 +1,11 @@
-<div *ngIf="authService.user" class="content">
+<div class="content">
   <div class="cdm-title">
     <h1>{{title}}</h1>
-    <div *ngIf="authService.user.isAdmin" class="cdm-title-icons">
-      <a mat-button matTooltip="Add New Operation"
+    <div *ngIf="user$ | async as user" class="cdm-title-icons">
+      <a *ngIf="user.isAdmin" mat-button matTooltip="Add New Operation"
         [routerLink]="['/operations/new']"><mat-icon>add_box</mat-icon></a>
       <a mat-button matTooltip="Operations"
+        [disabled]="mode === 'list'"
         [routerLink]="['/operations']"><mat-icon>format_align_justify</mat-icon></a>
     </div>
   </div>

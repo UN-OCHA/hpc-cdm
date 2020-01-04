@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { IconSpriteModule } from 'ng-svg-icon-sprite';
 import { MaterialModule } from '@hpc/material';
+import { ModeService } from '@hpc/core';
 import { CdmUIModule } from '@cdm/ui';
 import { UIModule } from '@hpc/ui';
 
@@ -26,6 +27,9 @@ import { EntityEntryModule } from '../entity-entry/entity-entry.module';
   exports: [
     OperationEntitiesComponent,
     OperationEntitiesHeaderComponent,
+  ],
+  providers: [
+    ModeService
   ]
 })
 export class OperationEntitiesModule { }

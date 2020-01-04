@@ -25,6 +25,12 @@
     },
     "core": {
       "tags": []
+    },
+    "example-e2e": {
+      "tags": []
+    },
+    "example": {
+      "tags": []
     }
   }
 }

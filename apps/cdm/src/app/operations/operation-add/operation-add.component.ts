@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from '@hpc/core';
 
 @Component({
   selector: 'operation-add',

@@ -1,5 +1,10 @@
-<table-selectable-rows
-  [dataSource]="prototypes"
-  [columns]="tableColumns"
-  [route]="['/operations', operationService.id, 'eprototypes']">
-</table-selectable-rows>
+<ng-container *ngIf="(operation$ | async) as operation; else loading">
+  <table-selectable-rows
+    [dataSource]="prototypes$"
+    [columns]="tableColumns"
+    [route]="['/operations', operation.id, 'eprototypes']">
+  </table-selectable-rows>
+</ng-container>
+<ng-template #loading>
+  Loading...
+</ng-template>

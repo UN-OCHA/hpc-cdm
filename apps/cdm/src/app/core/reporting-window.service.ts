@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import { ApiService } from '@hpc/core';
+// import { ApiService } from '@hpc/core';
 // import { RWindow } from '@hpc/data';
 
 
@@ -19,7 +19,7 @@ export class ReportingWindowService {
   // rwindowLoadedSource = new Subject<boolean>();
   // rwindowHasLoaded$ = this.rwindowLoadedSource.asObservable();
 
-  constructor(private api: ApiService) {}
+  // constructor(private api: ApiService) {}
 
   // fetchRWindow(id: number, version = 'latest') {
   //   let subscription = this.api.getReportingWindow(id, version);

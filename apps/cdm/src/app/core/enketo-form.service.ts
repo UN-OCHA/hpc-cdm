@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { IEnketoFormService } from 'ng-enketo-form';
-import { ApiService } from '@hpc/core';
+// import { ApiService } from '@hpc/core';
 import { SubmissionsService } from './submissions.service';
 import fileManager from 'enketo-core/src/js/file-manager';
 
@@ -9,23 +9,26 @@ import fileManager from 'enketo-core/src/js/file-manager';
 export class EnketoFormService implements IEnketoFormService {
 
   constructor(
-    private api: ApiService,
+    // private api: ApiService,
     private submissions: SubmissionsService) {
     fileManager.getFileUrl = async (file) => {
       if(typeof file === 'string') {
-        return await this.api.getFormFileUrl(file);
+        // TODO vimago
+        // return await this.api.getFormFileUrl(file);
       } else if(file && file.name) {
         var timestamp = new Date().valueOf();
         // This is a temporary url to preview files
         const name = `${timestamp}${file.name}`;
-        await this.api.saveFormFile(file, name);
-        return await this.api.getFormFileUrl(name);
+        // TODO vimago
+        // await this.api.saveFormFile(file, name);
+        // return await this.api.getFormFileUrl(name);
       }
     }
   }
 
   getForm(formUrl: any): Observable<any> {
-    return this.api.getFile(formUrl);
+    // return this.api.getFile(formUrl);
+    return null;
   }
 
   getSubmission(formUrl: any, submissionId: any): Observable<any> {
@@ -42,7 +45,8 @@ export class EnketoFormService implements IEnketoFormService {
     this.submissions.tempSubmission = data;
     const files = fileManager.getCurrentFiles();
     files.map(blob => {
-      this.api.saveFormFile(new File([blob], blob.name));
+      // TODO vimago
+      // this.api.saveFormFile(new File([blob], blob.name));
     });
     return null;
   }
@@ -51,7 +55,8 @@ export class EnketoFormService implements IEnketoFormService {
     this.submissions.tempSubmission = data;
     const files = fileManager.getCurrentFiles();
     files.map(blob => {
-      this.api.saveFormFile(new File([blob], blob.name));
+      // TODO vimago
+      // this.api.saveFormFile(new File([blob], blob.name));
     });
     return null;
   }

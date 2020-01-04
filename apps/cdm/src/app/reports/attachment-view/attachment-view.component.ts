@@ -95,18 +95,19 @@ export class AttachmentViewComponent implements OnInit {
   saveAndFinalize(finalize) {
     this.editable = false;
     const formData = this.registerForm.value;
-    this.reports.saveReport(
-      this.entry.id,
-      this.submissions.tempSubmission,
-      formData.comments, finalize)
-    .subscribe(response => {
-      this.operation.report = response;
-
-      if(this.router.url.indexOf('entityreports') > 0) {
-        this.operation.loadEntityAttachments(this.operation.selectedEntity.id);
-      } else {
-        this.operation.loadAttachments(this.operation.id);
-      }
-    });
+    // TODO vimago
+    // this.reports.saveReport(
+    //   this.entry.id,
+    //   this.submissions.tempSubmission,
+    //   formData.comments, finalize)
+    // .subscribe(response => {
+    //   this.operation.report = response;
+    //
+    //   if(this.router.url.indexOf('entityreports') > 0) {
+    //     this.operation.loadEntityAttachments(this.operation.selectedEntity.id);
+    //   } else {
+    //     this.operation.loadAttachments(this.operation.id);
+    //   }
+    // });
   }
 }

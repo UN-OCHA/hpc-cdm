@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OperationService } from '@cdm/core';
+import { AppService, ModeService } from '@hpc/core';
 
 @Component({
   selector: 'operation-entities',
@@ -8,36 +8,41 @@ import { OperationService } from '@cdm/core';
   styleUrls: ['./operation-entities.component.scss']
 })
 export class OperationEntitiesComponent implements OnInit {
+  entities$ = this.appService.entities$;
+  entityPrototype$ = this.appService.entityPrototype$;
+  mode$ = this.modeService.mode$;
 
   constructor(
-    private operation: OperationService,
+    private modeService: ModeService,
+    private appService: AppService,
     private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe(params => {
-      if(params.entityId) {
-        this.operation.loadEntities(params.entityId, this.operation.id);
-      }
-    });
-    this.operation.entities$.subscribe(entities => {
+    this.activatedRoute.parent.params.subscribe(parentParams => {
+      this.activatedRoute.params.subscribe(params => {
+        this.appService.loadEntities(parentParams.id, params.entityId);
+      });
+    })
+    this.entities$.subscribe(entities => {
       if(entities.length === 0) {
         this.addEntity();
       } else {
-        if(!this.operation.mode) {
-          this.operation.selectedEntity = entities[entities.length-1];
-        } else {
-          this.operation.selectedEntity = entities[0];
-        }
+        // if(this.modeService.mode === 'edit') {
+        //   this.operation.selectedEntity = entities[entities.length-1];
+        // } else {
+        //   this.operation.selectedEntity = entities[0];
+        // }
       }
     })
   }
 
   addEntity() {
-    this.operation.mode = 'ADD_ENTITY'
+    this.modeService.mode = 'add';
   }
 
   isAddButtonEnabled() {
-    return this.operation.mode !== 'ADD_ENTITY' ||
-      this.operation.selectedEntity;
+    // return this.modeService.mode !== 'add' ||
+    //   this.appService.selectedEntity;
+    return true;
   }
 }

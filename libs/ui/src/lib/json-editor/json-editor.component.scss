@@ -1,9 +1,17 @@
 :host {
   .json-editor-component {
+    border: 1px solid #ddd;
+    padding: 1em;
+    border-radius: .5em;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     div {
       flex-grow: 1;
+    }
+    .panels {
+      margin-top: 1em;
+      display: flex;
+      flex-direction: row;
     }
   }
 }

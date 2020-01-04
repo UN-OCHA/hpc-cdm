@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { OperationService } from '@cdm/core';
-import { ModeService } from '@hpc/core';
+import { AppService, ModeService } from '@hpc/core';
 import { Operation, AttachmentPrototype } from '@hpc/data';
 import { ActivatedRoute } from '@angular/router';
 
@@ -11,30 +10,30 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: [ './attachment-list.component.scss' ]
 })
 export class AttachmentListComponent implements OnInit {
-  operation: Operation;
-  prototypes: AttachmentPrototype[] = [];
   tableColumns = [
     {columnDef: 'refCode', header: 'Refcode', cell: (row) => `${row.refCode}`},
     {columnDef: 'type', header: 'Type', cell: (row) => `${row.type}`}
   ];
+  operation$ = this.appService.operation$;
+  prototypes$ = this.appService.attachmentPrototypes$;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private modeService: ModeService,
-    private operationService: OperationService) {}
+    private appService: AppService) {}
 
   ngOnInit() {
-    this.modeService.mode = 'list';
+    this.activatedRoute.data.subscribe(data => {
+      this.modeService.mode = data.mode;
+    });
+
+    this.activatedRoute.parent.params.subscribe(params => {
+      console.log(params)
+      this.appService.loadAttachmentPrototypes(params.id);
+    });
     this.activatedRoute.params.subscribe(params => {
-      this.operationService.loadAttachmentPrototypes(params.id);
-    });
-
-    this.operationService.attachmentPrototypes$.subscribe(protos => {
-      this.prototypes = protos;
-    });
-
-    this.operationService.operation$.subscribe(operation => {
-      this.operation = operation;
+      console.log(params)
+      // this.appService.loadAttachmentPrototypes(params.id);
     });
   }
 }

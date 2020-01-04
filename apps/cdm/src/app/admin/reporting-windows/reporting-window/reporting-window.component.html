@@ -1,0 +1,16 @@
+<div *ngIf="(reportingWindow$ | async) as reportingWindow">
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h1>{{reportingWindow.name}}</h1>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <reporting-window-menu [reportingWindow]="reportingWindow"></reporting-window-menu>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
+</div>

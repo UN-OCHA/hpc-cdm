@@ -4,6 +4,12 @@ export interface User {
   isAdmin: boolean;
 }
 
+export interface Participant {
+  id: number;
+  email: string;
+  name: string;
+}
+
 export interface Operation {
   id?: number;
   version?: string;
@@ -14,6 +20,22 @@ export interface Operation {
   attachmentPrototype?: AttachmentPrototype;
   updatedAt?: any;
   starred: boolean;
+}
+
+export interface Blueprint {
+  id: number;
+  name: string;
+  description: string;
+  status: string;
+  type: string;
+  model: any;
+  createdAt: any;
+  updatedAt: any;
+}
+
+export interface Location {
+  id: number;
+  name: string;
 }
 
 export interface Attachment {
@@ -58,19 +80,20 @@ export interface EntityPrototype {
 }
 
 export interface ReportingWindow {
-    exists: boolean;
-    id: number;
-    value: any;
-    creatorParticipantId: number;
-    operationId: number;
-    planId: number;
-    status: string;
-    context: any;
-    startDate: Date;
-    endDate: Date;
-    createdAt: Date;
-    updatedAt: Date;
-    editableByUser: boolean;
+  id: number;
+  name: string;
+  description: string;
+  status: string;
+  startDate: Date;
+  endDate: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  value: any;
+  // creatorParticipantId: number;
+  // operationId: number;
+  // planId: number;
+  // context: any;
+  // editableByUser: boolean;
 }
 // this.createdAt = moment(options.createdAt).toDate();
 // this.updatedAt = moment(options.updatedAt).toDate();

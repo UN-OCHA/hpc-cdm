@@ -4,10 +4,10 @@ $light-grey: #dddddd;
 $orange: #ee7325;
 
 :host {
-  max-height: 4.75em;
+  max-height: 4em;
   .content {
-    border-bottom: 1px solid #ddd;
-    background-color: #f9f9f9;
+    border-bottom: .5em solid #DEE3E7;
+    background-color: #fff;
     .container {
       padding: 1em 0;
       display: flex;
@@ -15,18 +15,20 @@ $orange: #ee7325;
 
       .app-name {
         font-weight: bold;
-        line-height: 2.7em;
         flex-grow: 1;
-
+        margin-top: -.5em;
+        color: #212529;
         a {
           border: 1px solid #222;
           border-radius: 2px;
           text-transform: uppercase;
           text-decoration: none;
           background: $light-grey;
-          padding: .75em;
+          padding: 0 1em;
           text-align: none;
-          color: #444;
+          color: #212529;
+          font-weight: bold;
+          font-size: 1em;
         }
       }
 

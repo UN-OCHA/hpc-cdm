@@ -7,6 +7,7 @@
  * - increase code testability
  */
 import { User, Operation, Entity, EntityPrototype,
+  Blueprint, Location, ReportingWindow,
   Attachment, AttachmentPrototype } from './data';
 import * as moment from 'moment';
 
@@ -66,6 +67,13 @@ export function buildAttachment(att: any, report?: any): Attachment {
   };
 }
 
+export function buildLocation(l: any): Location {
+  return {
+    id: l.id,
+    name: l.name
+  }
+}
+
 const ENTITY_NAME_LIMIT = 10;
 export function buildEntity(ge, v): Entity {
   const ta = v.technicalArea;
@@ -109,5 +117,32 @@ export function buildAttachmentPrototype(ep: any): AttachmentPrototype {
     value: version.value,
     entities: version.value.entities,
     name: version.value.name
+  }
+}
+
+export function buildBlueprint(bp: any): Blueprint {
+  return {
+    id: bp.id,
+    name: bp.name,
+    description: bp.description,
+    model: bp.model,
+    type: bp.type,
+    status: bp.status,
+    createdAt: bp.createdAt,
+    updatedAt: bp.updatedAt
+  }
+}
+
+export function buildReportingWindow(rw: any): ReportingWindow {
+  return {
+    id: rw.id,
+    name: 'xxx',//rw.value.name,
+    description: 'yyy',//rw.value.description,
+    status: 'zzz', //rw.status,
+    startDate: rw.startDate,
+    endDate: rw.endDate,
+    createdAt: rw.createdAt,
+    updatedAt: rw.updatedAt,
+    value: rw.value
   }
 }

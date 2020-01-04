@@ -30,3 +30,10 @@ const ROUTES = [];
   bootstrap: [AppComponent]
 })
 export class AppModule {}
+
+// import { ToastrModule } from 'ngx-toastr';
+// ToastrModule.forRoot({
+//   positionClass: 'toast-top-center',
+//   closeButton: true,
+//   preventDuplicates: true
+// }),

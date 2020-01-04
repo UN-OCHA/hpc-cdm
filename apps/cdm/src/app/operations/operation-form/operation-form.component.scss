@@ -1,2 +1,9 @@
 :host {
+  .mat-form-field {
+    width: 100%;
+  }
+  .maxlength {
+    margin: -1em 0 1em .5em;
+    color: #aaa;
+  }
 }

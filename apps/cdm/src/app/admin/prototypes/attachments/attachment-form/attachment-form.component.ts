@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { ApiService, ModeService } from '@hpc/core';
+import { AppService, ModeService } from '@hpc/core';
 
 @Component({
   selector: 'attachment-prototype-form',
@@ -23,7 +23,7 @@ export class AttachmentFormComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     private router: Router,
-    private api: ApiService,
+    private appService: AppService,
     private modeService: ModeService) {
     this.form = this.fb.group({
       refCode: ['', Validators.required],
@@ -34,10 +34,6 @@ export class AttachmentFormComponent implements OnInit {
   setMode(proto) {
     if(proto) {
       this.prototype = proto;
-      this.form.reset({
-        refCode: proto.opAttachmentPrototypeVersion.refCode,
-        refType: proto.opAttachmentPrototypeVersion.type
-      });
     } else {
       this.prototype = {
         operationId: this.operationId,
@@ -51,17 +47,21 @@ export class AttachmentFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.activatedRoute.data.subscribe(data => {
+      this.modeService.mode = data.mode;
+    });
+
     this.activatedRoute.params.subscribe(params => {
-      // if(params.operationId) {
-      this.operationId = params.operationId;
-      // }
       if(params.id) {
-        this.modeService.mode = 'edit';
-        this.api.getAttachmentPrototype(params.id).subscribe(proto => {
-          this.setMode(proto);
-        })
+        this.appService.loadAttachmentPrototype(params.id);
+        this.appService.attachmentPrototype$.subscribe(ap => {
+          this.prototype = ap;
+          this.form.reset({
+            refCode: ap.refCode,
+            refType: ap.type
+          });
+        });
       } else {
-        this.modeService.mode = 'add';
         this.setMode(this.injector.get('prototype', null));
       }
     })
@@ -93,10 +93,11 @@ export class AttachmentFormComponent implements OnInit {
         type: formData.refType,
         value: this.jsonModel || this.prototype.opAttachmentPrototypeVersion.value
       };
-      this.api.saveAttachmentPrototype(this.prototype, id).subscribe((result) => {
-
-        this.router.navigate(['/operations',result.operationId,'aprototypes']);
-      });
+      // TODO vimago what service?
+      // this.api.saveAttachmentPrototype(this.prototype, id).subscribe((result) => {
+      //
+      //   this.router.navigate(['/operations',result.operationId,'aprototypes']);
+      // });
     }
   }
 }

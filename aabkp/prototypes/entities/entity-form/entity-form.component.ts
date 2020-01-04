@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { ApiService } from '@hpc/core';
 
 @Component({
   selector: 'entity-prototype-form',
@@ -23,8 +22,7 @@ export class EntityFormComponent implements OnInit {
     private injector: Injector,
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
-    private router: Router,
-    private api: ApiService) {
+    private router: Router) {
     this.form = this.fb.group({
       refCode: ['', Validators.required],
       refType: ['', Validators.required]
@@ -35,19 +33,21 @@ export class EntityFormComponent implements OnInit {
     this.title = proto ? 'Edit Entity Prototpe' : 'New Entity Prototype';
     if(proto) {
       this.prototype = proto;
-      this.form.reset({
-        refCode: proto.opEntityPrototypeVersion.refCode,
-        refType: proto.opEntityPrototypeVersion.type
-      });
+      // TODO vimago
+      // this.form.reset({
+      //   refCode: proto.opEntityPrototypeVersion.refCode,
+      //   refType: proto.opEntityPrototypeVersion.type
+      // });
     } else {
-      this.prototype = {
-        operationId: this.operationId,
-        opEntityPrototypeVersion: {
-          value: {},
-          refCode:'',
-          refType:''
-        }
-      };
+      // TODO vimago
+      // this.prototype = {
+      //   operationId: this.operationId,
+      //   opEntityPrototypeVersion: {
+      //     value: {},
+      //     refCode:'',
+      //     refType:''
+      //   }
+      // };
     }
   }
 
@@ -57,9 +57,10 @@ export class EntityFormComponent implements OnInit {
         this.operationId = params.operationId;
       }
       if(params.id) {
-        this.api.getEntityPrototype(params.id).subscribe(proto => {
-          this.setMode(proto);
-        })
+        // TODO vimago entity service?
+        // this.appService.getEntityPrototype(params.id).subscribe(proto => {
+        //   this.setMode(proto);
+        // })
       } else {
         this.setMode(this.injector.get('prototype', null));
       }

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ModeService } from '@hpc/core';
+import { AppService, ModeService } from '@hpc/core';
 import { EntityPrototype } from '@hpc/data';
-import { OperationService } from '@cdm/core';
+
 
 @Component({
   selector: 'entity-prototypes',
@@ -10,25 +10,22 @@ import { OperationService } from '@cdm/core';
   styleUrls: [ './entity-list.component.scss' ]
 })
 export class EntityListComponent implements OnInit {
-  prototypes: EntityPrototype[] = [];
   tableColumns = [
     {columnDef: 'refCode', header: 'Refcode', cell: (row) => `${row.refCode}`},
     {columnDef: 'type', header: 'Type', cell: (row) => `${row.type}`}
   ];
+  operation$ = this.appService.operation$;
+  prototypes$ = this.appService.entityPrototypes$;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private modeService: ModeService,
-    private operationService: OperationService) {}
+    private appService: AppService) {}
 
   ngOnInit() {
     this.modeService.mode = 'list';
     this.activatedRoute.params.subscribe(params => {
-      this.operationService.loadEntityPrototypes(params.id);
-    });
-
-    this.operationService.entityPrototypes$.subscribe(protos => {
-      this.prototypes = protos;
+      this.appService.loadEntityPrototypes(params.id);
     });
   }
 }

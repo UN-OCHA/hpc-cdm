@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OperationService } from '@cdm/core';
+import { AppService, ModeService } from '@hpc/core';
 
 @Component({
   selector: 'entity-attachments',
@@ -8,20 +8,25 @@ import { OperationService } from '@cdm/core';
   styleUrls: ['./entity-attachments.component.scss']
 })
 export class EntityAttachmentsComponent implements OnInit {
+  entities$ = this.appService.entities$;
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private operation: OperationService){}
+    private modeService: ModeService,
+    private appService: AppService){}
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe(params => {
-      this.operation.route = 'EDIT_ENTITY_ATTACHMENTS';
-      this.operation.loadEntities(params.entityId, this.operation.id);
+    this.activatedRoute.parent.params.subscribe(parentParams => {
+      this.activatedRoute.params.subscribe(params => {
+        this.modeService.mode = 'edit';
+        this.appService.loadEntities(parentParams.id, params.entityId);
+      });
     });
-    this.operation.entities$.subscribe(entities => {
-      if(entities.length) {
-        this.operation.selectedEntity = entities[0];
-      }
-    })
+    // TODO vimago
+    // this.operation.entities$.subscribe(entities => {
+    //   if(entities.length) {
+    //     this.operation.selectedEntity = entities[0];
+    //   }
+    // })
   }
 }

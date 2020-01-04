@@ -1,9 +1,9 @@
-<div *ngIf="op" class="content operation-page">
+<div *ngIf="(operation$ | async) as operation" class="content">
   <mat-accordion>
     <mat-expansion-panel [expanded]="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h1>Operation: {{op.name}}</h1>
+          <h1>Operation: {{operation.name}}</h1>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <operation-menu></operation-menu>

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -35,6 +36,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatChipsModule,
     MatDatepickerModule,
     MatDialogModule,
@@ -59,6 +61,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatChipsModule,
     MatDatepickerModule,
     MatExpansionModule,

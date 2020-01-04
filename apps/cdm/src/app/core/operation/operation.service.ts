@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, from, forkJoin } from 'rxjs';
-import { ApiService } from '@hpc/core';
+// import { ApiService } from '@hpc/core';
 import { SubmissionsService } from './submissions.service';
 // import { ToastrService } from 'ngx-toastr';
 import { OperationState, EntityState, AttachmentState, RouteState } from './operation.state';
@@ -18,7 +18,7 @@ function updatedFile(entity, oldEntity, fieldName): boolean {
 
 @Injectable({providedIn: 'root'})
 export class OperationService {
-  private api: ApiService;
+  // private api: ApiService;
   private submissions: SubmissionsService;
   // private toastr: ToastrService;
   private operationState: OperationState;
@@ -32,7 +32,7 @@ export class OperationService {
 
   constructor(
     submissions: SubmissionsService,
-    api: ApiService,
+    // api: ApiService,
     formatter: Formatter,
     operationState: OperationState,
     entityState: EntityState,
@@ -40,7 +40,7 @@ export class OperationService {
     routeState: RouteState,
     // toastr: ToastrService
   ) {
-    this.api = api;
+    // this.api = api;
     this.submissions = submissions;
     // this.toastr = toastr;
     this.operationState = operationState;
@@ -50,7 +50,7 @@ export class OperationService {
   }
 
   // State related exposed functions
-  get id(): number { return this.operationState.operation.id; }
+  get id(): number { return this.operationState.operation && this.operationState.operation.id; }
   get operation$(): Observable<Operation> { return this.operationState.operation$; }
   get operation(): Operation { return this.operationState.operation; }
   set operation(op: Operation) { this.operationState.operation = op; }
@@ -68,22 +68,25 @@ export class OperationService {
   get selectedEntity$(): Observable<Entity> { return this.entityState.entity$; };
   set selectedAttachment(val: Attachment) {
     if(val && this.routeState.mode === 'REPORTS_VIEW') {
-      this.api.getReport(val.id, this.reportingWindow.id)
-      .subscribe(report => {
-        this.report = report;
-        if(report) {
-          this.report.finalized =
-            report.dataReportVersion &&
-            report.dataReportVersion.value &&
-            report.dataReportVersion.value.finalized;
-          this.submissions.tempSubmission =
-            report.dataReportVersion &&
-            report.dataReportVersion.value &&
-            report.dataReportVersion.value.submission;
-        } else {
-          this.submissions.tempSubmission = {};
-        }
-      });
+
+      // TODO vimago what service?
+      // this.api.getReport(val.id, this.reportingWindow.id)
+      // .subscribe(report => {
+      //   this.report = report;
+      //   if(report) {
+      //     this.report.finalized =
+      //       report.dataReportVersion &&
+      //       report.dataReportVersion.value &&
+      //       report.dataReportVersion.value.finalized;
+      //     this.submissions.tempSubmission =
+      //       report.dataReportVersion &&
+      //       report.dataReportVersion.value &&
+      //       report.dataReportVersion.value.submission;
+      //   } else {
+      //     this.submissions.tempSubmission = {};
+      //   }
+      // });
+
     }
     this.attachmentState.attachment = val;
   }
@@ -113,26 +116,27 @@ export class OperationService {
 
   _saveOperationAttachment(attachment: Attachment) {
     try {
-      this.api.saveOperationAttachment(this.formatter.formatAttachment(attachment))
-      .subscribe(response => {
-        // if(attachment.id) {
-        //   this.toastr.success('Attachment save.', 'Attachment updated');
-        // } else {
-        //   this.toastr.success('Attachment save.', 'Attachment created');
-        // }
-        const idx = this.operationState.attachments.indexOf(this.operationState.attachments.find(a => !a.id));
-        attachment.id = response.id;
-        this.operationState.attachments[idx] = {...attachment};
-        this.operationState.attachments = [...this.operationState.attachments];
-        if(this.routeState.route === 'EDIT_ENTITY_ATTACHMENTS') {
-          this.loadEntityAttachments(this.entityState.entity.id);
-        } else {
-          this.loadAttachments(this.operationState.operation.id);
-        }
-        this.attachmentState.attachment = attachment;
-        this.routeState.mode = null;
-        this.routeState.saving = false;
-      });
+      // TODO vimago what service?
+      // this.api.saveOperationAttachment(this.formatter.formatAttachment(attachment))
+      // .subscribe(response => {
+      //   // if(attachment.id) {
+      //   //   this.toastr.success('Attachment save.', 'Attachment updated');
+      //   // } else {
+      //   //   this.toastr.success('Attachment save.', 'Attachment created');
+      //   // }
+      //   const idx = this.operationState.attachments.indexOf(this.operationState.attachments.find(a => !a.id));
+      //   attachment.id = response.id;
+      //   this.operationState.attachments[idx] = {...attachment};
+      //   this.operationState.attachments = [...this.operationState.attachments];
+      //   if(this.routeState.route === 'EDIT_ENTITY_ATTACHMENTS') {
+      //     this.loadEntityAttachments(this.entityState.entity.id);
+      //   } else {
+      //     this.loadAttachments(this.operationState.operation.id);
+      //   }
+      //   this.attachmentState.attachment = attachment;
+      //   this.routeState.mode = null;
+      //   this.routeState.saving = false;
+      // });
     } catch (e) {
       this.routeState.saving = false;
       console.error(e);
@@ -143,14 +147,15 @@ export class OperationService {
     if(!attachment.formFile.id) {//file has not been uploaded or has been updated
       this.routeState.saving = true;
       const originalName = attachment.formFile.name;
-      this.api.saveOperationAttachmentFile(attachment.formFile).subscribe(file => {
-        attachment.formFile = {
-          id: file.id,
-          name: originalName,
-          filepath: file.file
-        };
-        this._saveOperationAttachment(attachment);
-      })
+      // TODO vimago what service?
+      // this.api.saveOperationAttachmentFile(attachment.formFile).subscribe(file => {
+      //   attachment.formFile = {
+      //     id: file.id,
+      //     name: originalName,
+      //     filepath: file.file
+      //   };
+      //   this._saveOperationAttachment(attachment);
+      // })
     } else {
       this._saveOperationAttachment(attachment);
     }
@@ -161,12 +166,13 @@ export class OperationService {
     const attachment = this.operationState.attachments.find(a => a.id === id);
     this.operationState.attachments = this.operationState.attachments.filter(a => a.id !== id);
     try {
-      this.api.deleteOperationAttachment(id).subscribe(response => {
-        if(response.status !== 'ok') {
-          throw new Error('Unable to delete attachment');
-        }
-        // this.toastr.success('Attachment remove.', 'Attachment removed');
-      });
+      //TODO vimago what service?
+      // this.api.deleteOperationAttachment(id).subscribe(response => {
+      //   if(response.status !== 'ok') {
+      //     throw new Error('Unable to delete attachment');
+      //   }
+      //   // this.toastr.success('Attachment remove.', 'Attachment removed');
+      // });
     } catch (e) {
       console.error(e);
       this.operationState.attachments = [...this.operationState.attachments, attachment];
@@ -178,43 +184,45 @@ export class OperationService {
     if(route) { this.routeState.route = route; }
     this.operationState.attachments = [];
     this._loadOperation(operationId).subscribe(() => {
-      this.api.getOperationAttachments(operationId).subscribe(response => {
-        const opas = response.opAttachments;
-        if(opas.length) {
-          forkJoin(opas.map(a => this.api.getReport(a.id, this.reportingWindow.id)))
-          .subscribe(reports => {
-            this.routeState.processing = false;
-            this.operationState.attachments = reports.map((r, i) => {
-              return buildAttachment(opas[i], r);
-            }).sort((a, b) => (a.id > b.id) ? 1 : -1);
-            this.routeState.processing = false;
-          });
-        } else {
-          this.routeState.processing = false;
-        }
-      });
+      // TODO vimago what service?
+      // this.api.getOperationAttachments(operationId).subscribe(response => {
+      //   const opas = response.opAttachments;
+      //   if(opas.length) {
+      //     forkJoin(opas.map(a => this.api.getReport(a.id, this.reportingWindow.id)))
+      //     .subscribe(reports => {
+      //       this.routeState.processing = false;
+      //       this.operationState.attachments = reports.map((r, i) => {
+      //         return buildAttachment(opas[i], r);
+      //       }).sort((a, b) => (a.id > b.id) ? 1 : -1);
+      //       this.routeState.processing = false;
+      //     });
+      //   } else {
+      //     this.routeState.processing = false;
+      //   }
+      // });
     })
   }
 
   loadEntityAttachments(entityId: number, includeReports: boolean = true) {
     this.routeState.processing = true;
     this.entityState.attachments = [];
-    this.api.getGoverningEntity(entityId, ['opAttachments'])
-    .subscribe(response => {
-      const opas = response.opAttachments;
-      if(includeReports) {
-        forkJoin(opas.map(a => this.api.getReport(a.id, this.reportingWindow.id)))
-        .subscribe(reports => {
-          this.entityState.attachments = reports.map((r, i) => {
-            return buildAttachment(opas[i], r);
-          });
-          this.routeState.processing = false;
-        });
-      } else {
-        this.entityState.attachments = opas.map(opa => buildAttachment(opa));
-        this.routeState.processing = false;
-      }
-    });
+    // TODO vimago what service?
+    // this.api.getGoverningEntity(entityId, ['opAttachments'])
+    // .subscribe(response => {
+    //   const opas = response.opAttachments;
+    //   if(includeReports) {
+    //     forkJoin(opas.map(a => this.api.getReport(a.id, this.reportingWindow.id)))
+    //     .subscribe(reports => {
+    //       this.entityState.attachments = reports.map((r, i) => {
+    //         return buildAttachment(opas[i], r);
+    //       });
+    //       this.routeState.processing = false;
+    //     });
+    //   } else {
+    //     this.entityState.attachments = opas.map(opa => buildAttachment(opa));
+    //     this.routeState.processing = false;
+    //   }
+    // });
   }
 
   loadEntities(entityPrototypeId: number, operationId?: number) {
@@ -264,15 +272,16 @@ export class OperationService {
 
   _saveEntity(entity, activationFile, deactivationFile) {
     const xentity = this.formatter.formatDbEntity(entity, activationFile, deactivationFile);
-    this.api.saveGoverningEntity(xentity).subscribe(() => {
-      // if(entity.id) {
-      //   this.toastr.success('Governing entity updated.', 'Governing entity updated');
-      // } else {
-      //   this.toastr.success('Governing entity create.', 'Governing entity created');
-      // }
-      this.loadEntities(this.entityState.prototype.id);
-      this.routeState.mode = null;
-    });
+    // TODO what service?
+    // this.api.saveGoverningEntity(xentity).subscribe(() => {
+    //   // if(entity.id) {
+    //   //   this.toastr.success('Governing entity updated.', 'Governing entity updated');
+    //   // } else {
+    //   //   this.toastr.success('Governing entity create.', 'Governing entity created');
+    //   // }
+    //   this.loadEntities(this.entityState.prototype.id);
+    //   this.routeState.mode = null;
+    // });
   }
 
   addEntity(entity, oldEntity, operationId?: number) {
@@ -280,22 +289,24 @@ export class OperationService {
     const refCode = this.entityState.prototype.refCode;
     if(updatedFile(entity, oldEntity, 'activationLetter')) {
       let uid = `${refCode}A${token}${entity.activationLetter.name}`;
-      this.api.saveFile(entity.activationLetter, uid).subscribe(activationFile=> {
-        if(entity.deactivationLetter && entity.deactivationLetter.name && !entity.deactivationLetter.id) {
-          uid = `${refCode}D${token}${entity.deactivationLetter.name}`;
-          this.api.saveFile(entity.deactivationLetter, uid).subscribe(deactivationFile=> {
-            this._saveEntity(entity, activationFile, deactivationFile);
-          });
-        } else {
-          this._saveEntity(entity, entity.activationLetter, entity.deactivationLetter);
-        }
-      });
+      // TODO vimago what service?
+      // this.api.saveFile(entity.activationLetter, uid).subscribe(activationFile=> {
+      //   if(entity.deactivationLetter && entity.deactivationLetter.name && !entity.deactivationLetter.id) {
+      //     uid = `${refCode}D${token}${entity.deactivationLetter.name}`;
+      //     this.api.saveFile(entity.deactivationLetter, uid).subscribe(deactivationFile=> {
+      //       this._saveEntity(entity, activationFile, deactivationFile);
+      //     });
+      //   } else {
+      //     this._saveEntity(entity, entity.activationLetter, entity.deactivationLetter);
+      //   }
+      // });
     } else {
       if(updatedFile(entity, oldEntity, 'deactivationLetter')) {
         const uid = `${refCode}${token}${entity.deactivationLetter.name}`;
-        this.api.saveFile(entity.deactivationLetter, uid).subscribe(deactivationFile=> {
-          this._saveEntity(entity, entity.activationLetter, deactivationFile);
-        });
+        // TODO vimago what service?
+        // this.api.saveFile(entity.deactivationLetter, uid).subscribe(deactivationFile=> {
+        //   this._saveEntity(entity, entity.activationLetter, deactivationFile);
+        // });
       } else {
         this._saveEntity(entity, entity.activationLetter, entity.deactivationLetter);
       }
@@ -303,20 +314,22 @@ export class OperationService {
   }
 
   removeEntity(entityId: number) {
-    this.api.deleteOperationGve(entityId).subscribe(() => {
-      // this.toastr.success('Governing entity remove.', 'Governing entity removed');
-      this.loadEntities(this.entityState.prototype.id, this.operationState.operation.id);
-      this.entityState.entity = null;
-    })
+    // TODO vimago what service?
+    // this.api.deleteOperationGve(entityId).subscribe(() => {
+    //   // this.toastr.success('Governing entity remove.', 'Governing entity removed');
+    //   this.loadEntities(this.entityState.prototype.id, this.operationState.operation.id);
+    //   this.entityState.entity = null;
+    // })
   }
 
   _loadOperation(operationId: number): any {
     return from(new Promise(resolve => {
       this.ensureReportingWindowExists(operationId).subscribe(() => {
-        this.api.getOperation(operationId).subscribe(response => {
-          this.operationState.operation = buildOperation(response);
-          resolve(response);
-        });
+        // TODO vimago what service?
+        // this.api.getOperation(operationId).subscribe(response => {
+        //   this.operationState.operation = buildOperation(response);
+        //   resolve(response);
+        // });
       });
     }));
   }
@@ -325,10 +338,11 @@ export class OperationService {
     return from(new Promise(resolve => {
       // this.id = operationId;
       this.ensureReportingWindowExists(operationId).subscribe(() => {
-        this.api.getOperation(operationId).subscribe(response => {
-          this.operationState.operation = buildOperation(response);
-          resolve(this.operationState.operation);
-        });
+        // TODO vimago what service?
+        // this.api.getOperation(operationId).subscribe(response => {
+        //   this.operationState.operation = buildOperation(response);
+        //   resolve(this.operationState.operation);
+        // });
       });
     }));
   }
@@ -336,23 +350,24 @@ export class OperationService {
   // TODO temporary hack to get around having a reporting window
   private ensureReportingWindowExists(operationId) {
     const p = new Promise(resolve => {
-      this.api.getReportingWindows(operationId).subscribe(rws => {
-        const reportingWindow = rws.filter(rw => rw.operationId == operationId);
-        if(reportingWindow.length > 0) {
-          this.reportingWindow = reportingWindow[0];
-          resolve();
-        } else {
-          this.api.saveReportingWindow({
-            operationId,
-            startDate: new Date(new Date().getFullYear(), 0, 1),
-            endDate: new Date(new Date().getFullYear(), 11, 31),
-            status: 'active'
-          }).subscribe(response => {
-            this.reportingWindow = response;
-            resolve();
-          })
-        }
-      });
+      // TODO vimago what service?
+      // this.api.getReportingWindows(operationId).subscribe(rws => {
+      //   const reportingWindow = rws.filter(rw => rw.operationId == operationId);
+      //   if(reportingWindow.length > 0) {
+      //     this.reportingWindow = reportingWindow[0];
+      //     resolve();
+      //   } else {
+      //     this.api.saveReportingWindow({
+      //       operationId,
+      //       startDate: new Date(new Date().getFullYear(), 0, 1),
+      //       endDate: new Date(new Date().getFullYear(), 11, 31),
+      //       status: 'active'
+      //     }).subscribe(response => {
+      //       this.reportingWindow = response;
+      //       resolve();
+      //     })
+      //   }
+      // });
     });
     return from(p);
   }

@@ -7,5 +7,5 @@ export {
   AdminGuard,
   AuthenticatedGuard,
   NotAuthenticatedGuard } from './lib/auth/guards.service';
-export { ApiService } from './lib/api/api.service';
+export { AppService } from './lib/app.service';
 export { environment } from './lib/environments/environment';
