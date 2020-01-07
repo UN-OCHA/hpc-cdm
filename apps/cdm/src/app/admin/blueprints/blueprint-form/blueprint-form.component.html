@@ -5,24 +5,20 @@
     <mat-button-toggle value="plan">Plan Blueprint</mat-button-toggle>
   </mat-button-toggle-group>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Name</mat-label>
-    <input matInput
-      formControlName="name"
-      (input)="clearErrors()"
-      [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
-      required>
-  </mat-form-field>
+  <hpc-input
+    label="Name"
+    [formControl]="form.controls['name']"
+    (input)="clearErrors()"
+    [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
+    required></hpc-input>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Description</mat-label>
-    <textarea matInput
-      class="form-control"
-      formControlName="description"
+  <hpc-textarea
+      label="Description"
+      [formControl]="form.controls['description']"
       (input)="clearErrors()"
-      [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=10
-      type="text" id="description" name="description" required></textarea>
-  </mat-form-field>
+      [ngClass]="{ 'is-invalid': submitted && f.description.errors }"
+      rows=10
+      required></hpc-textarea>
 
   <ng-container *ngIf="(blueprint$ | async) as blueprint; else emptyJsonModel">
     <json-editor [json]="blueprint.model" (change)="onJsonChange($event)" ></json-editor>

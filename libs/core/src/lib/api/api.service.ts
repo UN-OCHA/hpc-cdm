@@ -427,6 +427,10 @@ export class ApiService {
     return this.getUrlWrapper('v2/location', {cache: true});
   }
 
+  public getEmergencies(): Observable<any> {
+    return this.getUrlWrapper('v2/emergencies', {cache: true});
+  }
+
   public autocompleteLocation(search: string, adminLevel?: number): Observable<any> {
     let url = `v1/location/autocomplete/${search}`;
     if (adminLevel) {

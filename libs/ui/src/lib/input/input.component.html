@@ -2,5 +2,9 @@
   <mat-label>{{label}}</mat-label>
   <input matInput
     name="{{formControlName}}"
-    required>
+    (input)="handleChange($event.target.value)"
+    (change)="handleChange($event.target.value)"
+    (blur)="onTouched($event.target.value)"
+    [value]="value"
+    [required]="required">
 </mat-form-field>

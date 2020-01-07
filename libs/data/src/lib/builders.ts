@@ -74,6 +74,13 @@ export function buildLocation(l: any): Location {
   }
 }
 
+export function buildEmergency(e: any): Location {
+  return {
+    id: e.id,
+    name: e.name
+  }
+}
+
 const ENTITY_NAME_LIMIT = 10;
 export function buildEntity(ge, v): Entity {
   const ta = v.technicalArea;

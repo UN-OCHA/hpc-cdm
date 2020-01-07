@@ -5,7 +5,7 @@ import { OperationsComponent } from './operations.component';
 import { OperationComponent } from './operation/operation.component';
 import { OperationListComponent } from './operation-list/operation-list.component';
 import { OperationAddComponent } from './operation-add/operation-add.component';
-import { OperationFormComponent } from './operation-form/operation-form.component';
+// import { OperationFormComponent } from './operation-form/operation-form.component';
 
 import { AuthenticatedGuard, AdminGuard } from '@hpc/core';
 
@@ -15,7 +15,7 @@ const routes: Routes = [
     component: OperationsComponent,
     children: [
       { path: '', component: OperationListComponent, canActivate: [AuthenticatedGuard] },
-      { path: 'new', component: OperationFormComponent, canActivate: [AdminGuard] },
+      { path: 'new', component: OperationAddComponent, canActivate: [AdminGuard] },
     ]
   },
   {

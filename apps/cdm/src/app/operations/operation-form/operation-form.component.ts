@@ -14,8 +14,6 @@ export class OperationFormComponent implements OnInit, OnDestroy {
   blueprints$ = this.appService.blueprints$;
   emergencies$ = this.appService.emergencies$;
   locations$ = this.appService.locations$;
-  maxChars = 400;
-  charsUsed = 0;
 
   constructor(
     private appService: AppService,
@@ -25,6 +23,8 @@ export class OperationFormComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
+      emergencies: ['', Validators.required],
+      locations: ['', Validators.required],
       blueprint: ['', Validators.required]
     });
   }
@@ -46,14 +46,22 @@ export class OperationFormComponent implements OnInit, OnDestroy {
   }
 
   clearErrors() {
+  }
 
+  onEmergenciesChange(emergencies) {
+    this.form.patchValue({emergencies});
+  }
+
+  onLocationsChange(locations) {
+    this.form.patchValue({locations});
+  }
+
+  onBlueprintChange(blueprint) {
+    this.form.patchValue({blueprint});
   }
 
   onSubmit() {
-    console.log(this.form.value)
-  }
-
-  summaryChange(value) {
-    this.charsUsed = value.length;
+    console.log('======================================');
+    console.log(this.form.value);
   }
 }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ModeService } from '@hpc/core';
 
 @Component({
   selector: 'operation-add',
@@ -7,8 +8,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OperationAddComponent implements OnInit {
 
-  constructor() {}
+  constructor(private modeService: ModeService) {}
 
   ngOnInit() {
+    this.modeService.mode = 'add';
   }
 }

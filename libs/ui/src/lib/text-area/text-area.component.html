@@ -3,9 +3,13 @@
   <textarea
     matInput
     [disabled]="disabled"
-    [ngClass]="disabled ? '' : required && control.valid ? 'ng-valid' : required ? 'ng-invalid' : ''"
+    [required]="required"
+    [ngClass]="disabled ? '' : required && control?.valid ? 'ng-valid' : required ? 'ng-invalid' : ''"
     (input)="handleChange($event.target.value)"
     (change)="handleChange($event.target.value)"
     (blur)="onTouched($event.target.value)"
-    class="form-control" type="text" [value]="value"></textarea>
+    [rows]="rows"
+    type="text"
+    [value]="value"></textarea>
+  <mat-hint>Max length: {{totalChars}}/4000</mat-hint>
 </mat-form-field>

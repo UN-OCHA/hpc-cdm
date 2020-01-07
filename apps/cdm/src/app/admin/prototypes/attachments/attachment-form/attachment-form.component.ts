@@ -55,10 +55,12 @@ export class AttachmentFormComponent implements OnInit {
       if(params.id) {
         this.appService.loadAttachmentPrototype(params.id);
         this.appService.attachmentPrototype$.subscribe(ap => {
+          console.log(ap)
           this.prototype = ap;
-          this.form.reset({
+          this.form.patchValue({
             refCode: ap.refCode,
-            refType: ap.type
+            refType: ap.type,
+            value: ap.value
           });
         });
       } else {
@@ -91,7 +93,7 @@ export class AttachmentFormComponent implements OnInit {
         opAttachmentPrototypeId: this.prototype.id,
         refCode: formData.refCode,
         type: formData.refType,
-        value: this.jsonModel || this.prototype.opAttachmentPrototypeVersion.value
+        value: this.jsonModel || this.prototype.value
       };
       // TODO vimago what service?
       // this.api.saveAttachmentPrototype(this.prototype, id).subscribe((result) => {

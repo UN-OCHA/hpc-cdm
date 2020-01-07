@@ -40,6 +40,7 @@ export class BlueprintFormComponent implements OnInit, OnDestroy {
         this.loading = true;
         this.appService.loadBlueprint(params.id);
         this.appService.blueprint$.subscribe(bp => {
+          // this.form.patchValue({name: bp.name, description: bp.description});
           this.form.patchValue(bp);
           this.loading = false;
         });

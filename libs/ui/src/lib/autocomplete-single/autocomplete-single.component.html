@@ -1,0 +1,16 @@
+<mat-form-field appearance="outline" fxFlex="grow">
+  <mat-label>{{label}}</mat-label>
+  <input
+    matInput
+    type="text"
+    (input)="handleChange($event.target.value)"
+    (change)="handleChange($event.target.value)"
+    (blur)="onTouched($event.target.value)"
+    [matAutocomplete]="auto"
+    [required]="required">
+  <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+    <mat-option *ngFor="let option of filteredOptions | async" [value]="option.name">
+      {{option.name}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

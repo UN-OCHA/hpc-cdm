@@ -1,5 +1,5 @@
 <mat-form-field appearance="outline" fxFlex="grow">
-  <mat-label>{{label}}</mat-label>
+  <mat-label>{{label}} <span *ngIf="required">*</span></mat-label>
   <mat-chip-list #chipList aria-label="Value selection">
     <mat-chip
       *ngFor="let value of values"
@@ -11,8 +11,9 @@
     </mat-chip>
     <input
       matInput
-      required
+      [required]="required"
       #valueInput
+      (blur)="checkOption()"
       [formControl]="optionCtrl"
       [matAutocomplete]="auto"
       [matChipInputFor]="chipList"
@@ -25,4 +26,5 @@
       {{option.name}}
     </mat-option>
   </mat-autocomplete>
+  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
 </mat-form-field>

@@ -9,6 +9,7 @@ import { ParticipantsComponent } from './participants.component';
 import { ParticipantListComponent } from './participant-list/participant-list.component';
 import { ParticipantFormComponent } from './participant-form/participant-form.component';
 import { ModeService } from '@hpc/core';
+import { UserService } from './participant-list/user.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ModeService } from '@hpc/core';
   //   ParticipantFormComponent
   // ],
   providers: [
-    ModeService
+    ModeService,
+    UserService
   ]
 })
 export class ParticipantsModule { }

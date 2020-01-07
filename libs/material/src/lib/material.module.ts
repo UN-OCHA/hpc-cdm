@@ -24,6 +24,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+// import { MAT_PLACEHOLDER_GLOBAL_OPTIONS }from '@angular/material';
 
 // MatChipInputEvent
 // import {MatAutocompleteSelectedEvent, MatAutocomplete} from '@angular/material/autocomplete';
@@ -82,7 +83,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTooltipModule,
    ],
    providers: [
-      // MatDatepickerModule,
+    // {
+    //   provide: MAT_PLACEHOLDER_GLOBAL_OPTIONS,
+    //   userValue: { float: 'always' }
+    // }
    ]
 })
 

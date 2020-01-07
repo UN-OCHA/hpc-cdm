@@ -1,43 +1,43 @@
-<form class="edit" (ngSubmit)="onSubmit()" [formGroup]="form" fxLayout="column">
-  <mat-form-field appearance="outline">
-    <mat-label for="name">Name</mat-label>
-    <input matInput
-      formControlName="name"
-      (input)="clearErrors()" [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
-      id="name" name="name" required>
-  </mat-form-field>
+<form class="edit" [formGroup]="form" fxLayout="column">
+  <hpc-input
+    label="Name"
+    [formControl]="form.controls['name']"
+    (input)="clearErrors()"
+    [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
+    required></hpc-input>
 
-  <mat-form-field appearance="outline">
-    <mat-label for="description">Summary</mat-label>
-    <textarea matInput maxlength="400"
-      #summary
-      (input)='summaryChange(summary.value)'
-      class="form-control"  formControlName="description"
-      [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=3
-      type="text" id="description" name="description" required></textarea>
-  </mat-form-field>
-  <div class="maxlength">Max length: {{charsUsed}}/{{maxChars}}</div>
+  <hpc-textarea
+    label="Summary"
+    [formControl]="form.controls['description']"
+    [ngClass]="{ 'is-invalid': submitted && f.description.errors }"
+    rows=3
+    maxlength="400"
+    required></hpc-textarea>
 
-  <div *ngIf="emergencies$ | async as emergencies">
-    <autocomplete-select label="Emergencies" [options]="emergencies"></autocomplete-select>
-  </div>
-  <div *ngIf="locations$ | async as locations">
-    <autocomplete-select label="Locations" [options]="locations"></autocomplete-select>
-  </div>
+  <hpc-autocomplete-select
+    label="Emergencies"
+    hint="Enter/Select one or multiple emergencies."
+    [options$]="emergencies$"
+    (change)="onEmergenciesChange($event)"
+    required></hpc-autocomplete-select>
 
-  <div>
-    <mat-form-field *ngIf="mode === 'add'" appearance="outline">
-      <mat-label>Blueprint</mat-label>
-      <mat-select required formControlName="blueprint">
-        <mat-option *ngFor="let bp of blueprints$ | async" [value]="bp">
-          {{bp.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <hpc-autocomplete-select
+    label="Locations"
+    hint="Enter/Select one or multiple locations."
+    [options$]="locations$"
+    (change)="onLocationsChange($event)"
+    required></hpc-autocomplete-select>
 
-    <div *ngIf="mode === 'add'" class="actions">
-      <a mat-raised-button [routerLink]="['/operations']">Close</a>
-      <a mat-raised-button color="primary" type="submit" [disabled]="!form.valid">Save & Next</a>
-    </div>
+  <hpc-autocomplete-select
+    label="Blueprint"
+    hint="Enter/Select single blueprint."
+    singleSelect=true
+    [options$]="blueprints$"
+    (change)="onBlueprintChange($event)"
+    required></hpc-autocomplete-select>
+
+  <div *ngIf="mode === 'add'" class="actions">
+    <a mat-raised-button [routerLink]="['/operations']">Close</a>
+    <a (click)="onSubmit()" mat-raised-button color="primary" [disabled]="!form.valid">Save & Next</a>
   </div>
 </form>

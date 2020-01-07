@@ -49,21 +49,18 @@ export class EntityFormComponent implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
-    //   if(params.operationId) {
-    //     this.operationId = params.operationId;
-    //   }
       if(params.id) {
         this.modeService.mode = 'edit';
         this.appService.loadEntityPrototype(params.id);
         this.appService.entityPrototype$.subscribe(ep => {
           this.form.reset({
             refCode: ep.refCode,
-            refType: ep.type
+            refType: ep.type,
+            value: ep.value
           });
         });
       } else {
         this.modeService.mode = 'add';
-    //     this.setMode(this.injector.get('prototype', null));
       }
     });
   }

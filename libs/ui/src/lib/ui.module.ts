@@ -20,15 +20,22 @@ import { LanguagesModule, LanguagesComponent } from './languages';
 import { FeedModule, FeedComponent } from './feed';
 import { ScrollContainerModule, ScrollContainerComponent } from './scroll-container';
 import { SpinnerModule, SpinnerComponent } from './spinner';
-
+import { AutocompleteModule, AutocompleteComponent,
+  AutocompleteDirective, AutocompleteContentDirective,
+  OptionComponent } from './autocomplete';
+import { AutocompleteSingleModule, AutocompleteSingleComponent } from './autocomplete-single';
+import { FilterPipe } from './filter.pipe';
 
 @NgModule({
   declarations: [
     ScrollContainerComponent,
     ToolbarComponent,
+    FilterPipe,
   ],
   imports: [
     CommonModule, RouterModule,
+    AutocompleteSingleModule,
+    AutocompleteModule,
     AutocompleteSelectModule,
     CustomStepperModule,
     DateInputModule,
@@ -47,12 +54,18 @@ import { SpinnerModule, SpinnerComponent } from './spinner';
     SpinnerModule
   ],
   exports: [
+    AutocompleteSingleComponent,
+    AutocompleteComponent,
+    AutocompleteContentDirective,
+    AutocompleteDirective,
+    OptionComponent,
     AutocompleteSelectComponent,
     FeedComponent,
     CustomStepperComponent,
     DateInputComponent, FileUploadComponent,
     InputComponent, TextAreaComponent,
     JsonEditorComponent,
+    FilterPipe,
     TableExpandableRowsComponent, TableSelectableRowsComponent,
     ToolbarComponent, NavComponent,
     LogoComponent, LanguagesComponent,

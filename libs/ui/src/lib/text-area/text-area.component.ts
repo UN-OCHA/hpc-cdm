@@ -20,9 +20,11 @@ import { ControlContainer, AbstractControl, ControlValueAccessor, NG_VALUE_ACCES
 })
 export class TextAreaComponent implements ControlValueAccessor, OnInit {
   @Input() label: string;
-  @Input() required?: boolean;
-  @Input() disabled?: boolean;
-  @Input() formControlName: string;
+  @Input() required?;
+  @Input() disabled?;
+  @Input() maxlength?;
+  @Input() rows?;
+  // @Input() formControlName: string;
 
   onTouched: any = () => {};
   onChange: any = () => {};
@@ -30,16 +32,18 @@ export class TextAreaComponent implements ControlValueAccessor, OnInit {
   value: string;
   // valid: boolean;
 
-  control: AbstractControl;
+  totalChars = 0;
 
-  constructor(
-    @Optional() @Host() @SkipSelf()
-    private controlContainer: ControlContainer
-  ){}
+  // control: AbstractControl;
+
+  constructor(@Optional() @Host() @SkipSelf()
+    private controlContainer: ControlContainer){
+  }
 
   ngOnInit(): void {
     this.required = typeof this.required !== 'undefined';
-    this.control = this.controlContainer.control.get(this.formControlName);
+    this.disabled = typeof this.disabled !== 'undefined';
+    // this.control = this.controlContainer.control.get(this.formControlName);
   }
 
   writeValue(value: string): void {
@@ -50,9 +54,50 @@ export class TextAreaComponent implements ControlValueAccessor, OnInit {
   registerOnTouched(fn: any): void { this.onTouched = fn; }
 
   handleChange(value): void {
+    this.totalChars = value.length;
     this.onChange(value);
   }
 }
+
+
+
+
+
+
+// <mat-form-field appearance="outline">
+//   <mat-label for="description">Summary</mat-label>
+//   <textarea matInput maxlength="400"
+//     #summary
+//     (input)='summaryChange(summary.value)'
+//     class="form-control"  formControlName="description"
+//     [ngClass]="{ 'is-invalid': submitted && f.description.errors }"
+//     rows=3
+//     type="text" id="description" name="description" required></textarea>
+// </mat-form-field>
+// <div class="maxlength">Max length: {{charsUsed}}/{{maxChars}}</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // <div style="display:none"
@@ -62,3 +107,11 @@ export class TextAreaComponent implements ControlValueAccessor, OnInit {
 
 
 // <label class="label-control" translate>{{label}}</label> <i *ngIf="required && !disabled" class="text-danger">*</i>
+
+
+
+
+
+// <div [hidden]="f.description.valid || f.description.pristine" class="alert alert-danger">
+//     Description is required
+// </div>

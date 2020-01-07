@@ -7,6 +7,7 @@ import {
   User, Operation, Blueprint, AttachmentPrototype, EntityPrototype,
   Attachment, Participant, Entity, ReportingWindow,
   buildEntityPrototype, buildAttachmentPrototype, buildLocation,
+  buildEmergency,
   buildAttachment, buildEntity, buildReportingWindow,
   buildOperation, buildBlueprint, buildUser } from '@hpc/data';
 
@@ -188,8 +189,8 @@ export class AppService {
     this.api.getLocations().subscribe(locations => {
       this._locations.next(locations.map(l => buildLocation(l)));
     });
-    this.api.getLocations().subscribe(emergencies => {
-      this._emergencies.next(emergencies.map(e => buildLocation(e)));
+    this.api.getEmergencies().subscribe(emergencies => {
+      this._emergencies.next(emergencies.map(e => buildEmergency(e)));
     })
   }
 
