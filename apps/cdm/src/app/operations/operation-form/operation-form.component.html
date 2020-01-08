@@ -1,3 +1,7 @@
+<div class="content-header--tools no-float operationDetails">
+  <button mat-raised-button >Operation Details</button>
+ 
+</div>
 <form class="edit" (ngSubmit)="onSubmit()" [formGroup]="form" fxLayout="column">
   <mat-form-field appearance="outline">
     <mat-label for="name">Name</mat-label>
@@ -8,7 +12,7 @@
   </mat-form-field>
 
   <mat-form-field appearance="outline">
-    <mat-label for="description">Summary</mat-label>
+    <mat-label for="description">Description</mat-label>
     <textarea matInput
       class="form-control"  formControlName="description" (input)="clearErrors()"
       [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=3
@@ -16,10 +20,13 @@
   </mat-form-field>
 
   <emergency-select></emergency-select>
-  <location-select></location-select>
+  <div *ngFor="let item of Locations; index as i" class="locationField" appearance="outline">
+  <location-select [index]="i" (messageEvent)="removeCountry($event)" ></location-select>
+</div>
+<button  mat-raised-button color="blue" type="button" (click)="addCountry()">+ Add Another Country</button>
 
   <mat-form-field *ngIf="!editMode" appearance="outline">
-    <mat-label>Blueprint</mat-label>
+    <mat-label>Operation Template</mat-label>
     <mat-select required formControlName="blueprint">
       <mat-option *ngFor="let bp of blueprints" [value]="bp">
         {{bp.name}}
@@ -29,6 +36,6 @@
 
   <div *ngIf="!editMode" class="actions">
     <a mat-raised-button [routerLink]="['/operations']">Close</a>
-    <a mat-raised-button color="primary" type="submit" [disabled]="!form.valid">Save & Next</a>
+    <button mat-raised-button color="primary" [disabled]="!form.valid">Save & Next</button>
   </div>
 </form>

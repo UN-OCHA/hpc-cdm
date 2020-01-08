@@ -1,2 +1,37 @@
 :host {
 }
+.mat-raised-button.mat-blue, .mat-flat-button.mat-blue{
+    background-color:#2c89aa;
+    color:#fff;
+    font-family: Merriweather Sans, sans-serif;
+    font-size: 16px;
+  }
+  .mat-raised-button{margin: 10px;}
+  .mat-raised-button.active{background-color:#c75a23}
+.locationField{
+  background-color: rgba(242, 242, 242, 0.5);
+  width:75%;
+  margin-bottom: 20px;
+}
+.locationField ~ .mat-raised-button{
+   width:16%;
+}
+ .operationDetails button{
+  position: relative;
+  padding: 10px 5px;
+  background-color: #e8e8e8;
+}
+ .operationDetails button:after{
+ position: absolute;
+ content:'';
+ width: 0;
+ height: 0;
+ border-left: 31px solid transparent;
+ border-right: 31px solid transparent;
+ border-top: 31px solid #e8e8e8;
+ clear: both;   
+  transform: rotate(-89deg);
+  left: 99px;
+    top: 13px;
+
+}

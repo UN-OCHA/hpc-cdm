@@ -10,7 +10,7 @@ import { User, Operation, Entity, EntityPrototype,
   Attachment, AttachmentPrototype } from './data';
 import * as moment from 'moment';
 
-const ADMIN_ROLES = ['rpmadmin', 'hpcadmin'];
+const ADMIN_ROLES = ['rpmadmin', 'operationLead'];
 
 
 export function buildUser(participant: any): User {

@@ -1,10 +1,10 @@
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {Component, OnInit, ElementRef, ViewChild} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {Component, OnInit, ElementRef, ViewChild, Input, EventEmitter, Output} from '@angular/core';
+import {FormControl, Validators} from '@angular/forms';
 import {MatAutocompleteSelectedEvent, MatAutocomplete} from '@angular/material/autocomplete';
 import {MatChipInputEvent} from '@angular/material/chips';
-import {Observable} from 'rxjs';
-import {map, startWith, mergeMap} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {startWith, mergeMap} from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiService } from '@hpc/core';
 
@@ -15,6 +15,8 @@ import { ApiService } from '@hpc/core';
   styleUrls: ['location-select.component.scss']
 })
 export class LocationSelectComponent implements OnInit {
+  @Input() index: number;
+  @Output() messageEvent = new EventEmitter<string>();
   selectedLocationName = '';
 
   visible = true;
@@ -23,29 +25,40 @@ export class LocationSelectComponent implements OnInit {
   addOnBlur = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
   optionCtrl = new FormControl();
-  filteredOptions: Observable<string[]>;
-  values: string[] = ['Lemon'];
+  
+  optionSubLocationCtrl = new FormControl();
+  filteredOptions: Observable<any>;
+  filteredSubLocationOptions: Observable<any>;
+  displayValues: any[] = [];
+  selectedValues: any[] = [];
   options: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
+  enableSubLocations = false;
+  subLocations: any[];
 
   @ViewChild('locationInput', {static: false}) locationInput: ElementRef<HTMLInputElement>;
+  
+  @ViewChild('subLocationInput', {static: false}) subLocationInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
 
   constructor(
     private api: ApiService,
-    private translate: TranslateService) {
-    this.filteredOptions = this.optionCtrl.valueChanges.pipe(
-      startWith(null),
-      map((value: string | null) =>
-        value ? this._filter(value) : this.options.slice()));
+    private translate: TranslateService) {    
   }
 
   ngOnInit() {
-  }
+    // if(this.index == 0) {
+    // this.optionCtrl.setValidators([Validators.required]);
+    // }
+    this.filteredOptions = this.optionCtrl.valueChanges.pipe(
+      startWith(null),
+      mergeMap((value: string | null) =>
+        value && value.length > 2 ? this.api.autocompleteLocation(value) : []));
 
-  changeTypeaheadNoResults(e: boolean) {
-    // this.typeaheadNoResults = e;
+      this.filteredSubLocationOptions = this.optionSubLocationCtrl.valueChanges.pipe(
+          startWith(''),
+          mergeMap((value: string | null) => this._filter(value)));          
   }
-
+  
   onDeleteLocation(idx:any) {
   }
 
@@ -61,48 +74,37 @@ export class LocationSelectComponent implements OnInit {
     // }
   }
 
-  add(event: MatChipInputEvent): void {
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-add')
-    // Add location only when MatAutocomplete is not open
-    // To make sure this does not conflict with OptionSelected Event
-    if (!this.matAutocomplete.isOpen) {
-      const input = event.input;
-      const value = event.value;
-
-      // Add location
-      if ((value || '').trim()) {
-        this.values.push(value.trim());
-      }
-
-      // Reset the input value
-      if (input) {
-        input.value = '';
-      }
-
-      this.optionCtrl.setValue(null);
-    }
-  }
+ 
 
   remove(value: string): void {
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-remove')
-    const index = this.values.indexOf(value);
-
+    const index = this.displayValues.indexOf(value);
     if (index >= 0) {
-      this.values.splice(index, 1);
+      this.displayValues.splice(index, 1);
+      this.selectedValues.splice(index, 1);
     }
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-selected')
-    this.values.push(event.option.viewValue);
-    this.locationInput.nativeElement.value = '';
-    this.optionCtrl.setValue(null);
+    this.enableSubLocations = event.option.value.children.length > 0 ? true : false;
+    this.subLocations = event.option.value.children;  
+  }
+  selectedSubLocation(event: MatAutocompleteSelectedEvent) : void {
+     this.displayValues.push(event.option.viewValue);
+     this.selectedValues.push(event.option.value.id);
+    this.subLocationInput.nativeElement.value = '';
+    this.optionSubLocationCtrl.setValue(null);
+  }
+  displayFn(location?: any): string | undefined {
+    return location ? location.name : undefined;
+  }
+  private _filter(value: string):  Observable<any> {
+    //const filterValue = value.toLowerCase();
+    if (value === '') return of(this.subLocations);
+    return of(this.subLocations
+    .filter(l => l.name.toLowerCase().indexOf(value) === 0));
+  }
+  removeCountry(index) {
+    this.messageEvent.emit(index);
   }
 
-  private _filter(value: string): string[] {
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-filter:'+value.length)
-    const filterValue = value.toLowerCase();
-    return this.options
-      .filter(option => option.toLowerCase().indexOf(filterValue) === 0);
-  }
 }
