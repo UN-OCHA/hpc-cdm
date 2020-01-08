@@ -19,6 +19,12 @@ $orange: #ee7325;
     padding-bottom: 2em;
   }
   .mat-stroked-button {
-    background-color: #fff;
+    background-color: #ffa500;
   }
+  .main-content {
+    overflow-y: scroll;
+    height: 100%;
+    padding-bottom: 2em;
+    }
+
 }

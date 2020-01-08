@@ -1,11 +1,11 @@
-<app-toolbar></app-toolbar>
-<app-nav [name]="name" [version]="ver">
+<hpc-toolbar></hpc-toolbar>
+<hpc-nav [name]="name" [version]="ver">
   <div *ngIf="auth.user?.isAdmin" class="links">
     <a mat-button routerLink="/operations">{{ 'Operations' }}</a>
     <a mat-button routerLink="/blueprints" id="blueprint">{{ 'Blueprints' }}</a>
     <a mat-button routerLink="/rwindows">{{ 'Reporting Windows' }}</a>
   </div>
-</app-nav>
+</hpc-nav>
 <div class="main-content">
   <router-outlet></router-outlet>
 </div>

@@ -1,4 +1,4 @@
-<form class="blueprint-form" (ngSubmit)="onSubmit()" [formGroup]="form">
+<form class="edit" (ngSubmit)="onSubmit()" [formGroup]="form">
 
 
   <table cellspacing="0" width="100%">
@@ -44,9 +44,18 @@
   </tr>
   </table>
 
+<<<<<<< HEAD
   <div class="buttons" style="float: right;margin-top: 10px">
     <button mat-raised-button color="primary" [routerLink]="['/blueprints']">Close</button> &nbsp;
     <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
+=======
+  <mat-label>JSON Model?</mat-label>
+  <json-editor [json]="blueprint && blueprint.model" (change)="onJsonChange($event)" ></json-editor>
+
+  <div class="actions">
+    <a mat-raised-button [routerLink]="['/blueprints']">Close</a>
+    <a mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</a>
+>>>>>>> aaf37ce6276ddaa394bd27f27f9a29c6f9a9cc8a
   </div>
   <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px', fullScreenBackdrop: true, primaryColour: '#ed7325', tertiaryColour: 'rgb(237, 37, 92)' }" [template]="customLoadingTemplate"></ngx-loading>
 
