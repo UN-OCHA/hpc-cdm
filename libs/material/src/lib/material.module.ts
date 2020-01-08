@@ -23,6 +23,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSortModule } from '@angular/material/sort';
 
 // MatChipInputEvent
 // import {MatAutocompleteSelectedEvent, MatAutocomplete} from '@angular/material/autocomplete';
@@ -54,6 +55,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
+    MatSortModule
   ],
   exports: [
     MatAutocompleteModule,
@@ -77,6 +79,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
+    MatSortModule
    ],
    providers: [
       // MatDatepickerModule,

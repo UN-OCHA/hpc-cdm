@@ -1,10 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild,  } from '@angular/core';
 import { Router } from '@angular/router';
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ApiService, ModeService } from '@hpc/core';
-// import { ToastrService } from 'ngx-toastr';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { ToastrService } from 'ngx-toastr';
+import Swal from 'sweetalert2';
 
 const MAX_LENGTH = 280;
+export interface BluePrintData {
+  name: string;
+  description: string;
+  status: string;
+  type: string;
+}
 
 @Component({
   selector: 'blueprints',
@@ -19,22 +29,24 @@ const MAX_LENGTH = 280;
   ]
 })
 export class BlueprintListComponent implements OnInit {
+  public loading = false;
   blueprints: any[];
   columnsToDisplay = ['name', 'description', 'status', 'type', 'actions'];
-  expandedElement: any | null;
+  dataSource: MatTableDataSource<BluePrintData>;
 
-  limit: number = 10;
-  full: boolean = false;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
     private service: ModeService,
     public apiService: ApiService,
-    private router: Router
-    // private toastr: ToastrService
+    private router: Router,
+    private toastr: ToastrService
   ) {
   }
 
   ngOnInit() {
+    this.loading = true;
     this.service.mode = 'list';
     this.apiService.getBlueprints().subscribe(blueprints => {
       this.blueprints = blueprints.map(bp => {
@@ -43,55 +55,45 @@ export class BlueprintListComponent implements OnInit {
         }
         return bp;
       });
+      this.setBlueprintData();
+      this.loading = false;
     });
   }
-
-  capitalized(s) {
-    return s.substr(0, 1).toUpperCase() + s.substr(1).toLowerCase();
-  }
-
   deleteBlueprint(blueprint: any) {
-    return this.apiService.deleteBlueprint(blueprint.id)
-      .subscribe(response => {
-        if (response.status === 'ok') {
-          this.blueprints.splice(this.blueprints.indexOf(blueprint), 1);
-          // return this.toastr.success('Blueprint removed.', 'Blueprint removed');
-        }
-      });
+    Swal.fire({
+      title: 'Are you sure want to delete?',
+      text: 'You will not be able to recover once delete this blueprint!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.value) {
+        this.loading = true;
+        return this.apiService.deleteBlueprint(blueprint.id)
+        .subscribe(response => {
+          if (response.status === 'ok') {
+            this.blueprints.splice(this.blueprints.indexOf(blueprint), 1);
+            this.setBlueprintData();
+            this.toastr.success('Blueprint removed');
+            this.loading = false;
+          }
+        });
+      }
+    })
   }
+  applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-  handleScroll = (scrolled: boolean) => {
-    console.timeEnd('lastScrolled');
-    // scrolled ? this.getData() : _noop();
-    console.time('lastScrolled');
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
-
-  hasMore = () => {
-    // !this.dataSource || this.dataSource.data.length < this.limit;
-    return false;
+  private setBlueprintData() {
+    this.blueprints.sort((originalData, sortingData)=> {return sortingData.id - originalData.id});
+    this.dataSource = new MatTableDataSource(this.blueprints);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
-
 }
 
-
-// <td align="center">
-//   <a href class="editIcon" title="Edit"
-//     [routerLink]="['/blueprints',blueprint.id]"><i class="material-icons">edit</i>
-//   </a>
-//   <a class="editIcon clickable" title="Edit" (click)="deleteBlueprint(blueprint)"><i class="material-icons">delete</i>
-//   </a>
-// </td>
-
-
-
-// <table *ngIf="blueprints" mat-table [dataSource]="blueprints" multiTemplateDataRows class="mat-elevation-z8">
-//   <ng-container matColumnDef="name">
-//     <th mat-header-cell *matHeaderCellDef>
-//       <cdm-page title="Blueprints">
-//         <div actions>
-//           <button mat-raised-button color="warn" routerLink="/blueprint">Add Blueprint</button>
-//         </div>
-//       </cdm-page>
-//     </th>
-//   </ng-container>
-// </table>

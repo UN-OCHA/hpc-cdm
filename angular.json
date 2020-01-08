@@ -22,7 +22,7 @@
             "tsConfig": "apps/cdm/tsconfig.app.json",
             "aot": false,
             "assets": ["apps/cdm/src/favicon.ico", "apps/cdm/src/assets"],
-            "styles": ["apps/cdm/src/styles.scss"],
+            "styles": ["apps/cdm/src/styles.scss", "node_modules/ngx-toastr/toastr.css"],
             "scripts": []
           },
           "configurations": {
@@ -165,29 +165,25 @@
         }
       }
     },
-    "cdm-e2e": {
-      "root": "apps/cdm-e2e",
-      "sourceRoot": "apps/cdm-e2e/src",
+    "ngShell-e2e": {
+      "root": "e2e",
+      "sourceRoot": "e2e",
       "projectType": "application",
       "architect": {
         "e2e": {
-          "builder": "@nrwl/cypress:cypress",
+          "builder": "@angular-devkit/build-angular:protractor",
           "options": {
-            "cypressConfig": "apps/cdm-e2e/cypress.json",
-            "tsConfig": "apps/cdm-e2e/tsconfig.e2e.json",
+            "protractorConfig": "./protractor.conf.js",
             "devServerTarget": "cdm:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "cdm:serve:production"
-            }
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["apps/cdm-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/cdm-e2e/**"]
+            "tsConfig": [
+              "e2e/tsconfig.e2e.json"
+            ],
+            "exclude": []
           }
         }
       }
@@ -363,12 +359,12 @@
     "defaultCollection": "@nrwl/angular"
   },
   "schematics": {
-    "@nrwl/angular:application": {
-      "unitTestRunner": "jest",
-      "e2eTestRunner": "cypress"
+    "@schematics/angular:component": {
+      "prefix": "app",
+      "styleext": "scss"
     },
-    "@nrwl/angular:library": {
-      "unitTestRunner": "jest"
+    "@schematics/angular:directive": {
+      "prefix": "app"
     }
   },
   "defaultProject": "cdm"

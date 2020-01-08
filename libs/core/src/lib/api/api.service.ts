@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse, HttpParams, HttpHeaders } from '@angular/common/http';
 import { OAuthService } from 'angular-oauth2-oidc';
 
-// import { ToastrService } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -26,7 +26,7 @@ export class ApiService {
 
   constructor (
     private http: HttpClient,
-    // private toastr: ToastrService,
+    private toastr: ToastrService,
     private oauthService: OAuthService,
   ) {}
 
@@ -47,18 +47,18 @@ export class ApiService {
       case 0:
         title = 'Failed to reach HPC API';
         this.apiUp = false;
-        // this.toastr.error('Please try again in a couple of moments', title);
+        this.toastr.error('Please try again in a couple of moments', title);
         break;
       case 401:
         if (errorJson.message === 'Client or key not accepted') {
           this.oauthService.logOut();
         }
         title = 'Login Required';
-        // this.toastr.error('You\'ll need to log in again to continue.', title);
+        this.toastr.error('You\'ll need to log in again to continue.', title);
         break;
       case 405:
         title = 'Endpoint doesn\'t exist';
-        // this.toastr.error('We had an issue accessing one of our endpoints', title);
+        this.toastr.error('We had an issue accessing one of our endpoints', title);
         break;
       case 500:
         this.displayMessage(errorJson);

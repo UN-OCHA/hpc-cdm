@@ -2,7 +2,7 @@
 <app-nav [name]="name" [version]="ver">
   <div *ngIf="auth.user?.isAdmin" class="links">
     <a mat-button routerLink="/operations">{{ 'Operations' }}</a>
-    <a mat-button routerLink="/blueprints">{{ 'Blueprints' }}</a>
+    <a mat-button routerLink="/blueprints" id="blueprint">{{ 'Blueprints' }}</a>
     <a mat-button routerLink="/rwindows">{{ 'Reporting Windows' }}</a>
   </div>
 </app-nav>

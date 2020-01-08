@@ -1,9 +1,0 @@
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">{{entry.formName}}{{entry.id}}</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <enketo-form formId="{{entry.formFile.filepath}}" submissionId="{{entry.id}}" editable="{{!(operation.report && operation.report.finalized)}}"></enketo-form>
-  </div>

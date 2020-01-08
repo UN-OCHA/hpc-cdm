@@ -48,7 +48,6 @@ export class ScrollContainerComponent implements OnInit, OnChanges {
   getListener = () => this.elRef.nativeElement.clientHeight === this.elRef.nativeElement.scrollHeight
     ? ScrollListener.WINDOW
     : ScrollListener.HOST
-
   roundTo = (from: number, to: number = this.scrollOffset) => Math.floor(from / to) * to;
   getScrollDirection = (st: number) => this.scrollTop <= st ? ScrollDirection.DOWN : ScrollDirection.UP;
 

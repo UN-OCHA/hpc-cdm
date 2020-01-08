@@ -4,8 +4,6 @@ import { CommonModule } from '@angular/common';
 // import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '@hpc/material';
-// import { ToastrModule } from 'ngx-toastr';
-
 import { ModeService } from '@hpc/core';
 import { BlueprintsComponent } from './blueprints.component';
 import { BlueprintFormComponent } from './blueprint-form/blueprint-form.component';
@@ -14,6 +12,7 @@ import { BlueprintListComponent } from './blueprint-list/blueprint-list.componen
 import { BlueprintsRoutingModule } from './blueprints-routing.module';
 import { UIModule } from '@hpc/ui';
 import { CdmUIModule } from '@cdm/ui';
+import { NgxLoadingModule } from 'ngx-loading';
 
 @NgModule({
   declarations: [
@@ -27,16 +26,14 @@ import { CdmUIModule } from '@cdm/ui';
     FormsModule, ReactiveFormsModule,
     MaterialModule,
     BlueprintsRoutingModule,
-    // ToastrModule.forRoot({
-    //   positionClass: 'toast-top-center',
-    //   closeButton: true,
-    //   preventDuplicates: true
-    // }),
+    NgxLoadingModule
+
   ],
   exports: [
     BlueprintsComponent,
     BlueprintFormComponent,
-    BlueprintListComponent
+    BlueprintListComponent,
+
   ],
   providers: [
     ModeService

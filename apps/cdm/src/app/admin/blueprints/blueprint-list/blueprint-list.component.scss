@@ -4,21 +4,24 @@
     .mat-row {
       border: 10px solid blue;
     }
-    
+    .mat-icon-button {
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+
+  }
     .mat-column-name {
       width: 28%!important;
     }
     .mat-column-description {
-      width: 60%!important;
+      width: 50%!important;
       padding: 1em 0;
     }
     .mat-column-type {
       width: 6%!important;
-      text-align: center;
     }
     .mat-column-status {
       width: 6%!important;
-      text-align: center;
       .mat-icon {
         color:#888;
       }
@@ -26,5 +29,30 @@
         color: #ee7325;
       }
     }
+    .mat-column-action {
+      width: 15%!important;
+      padding: 1em 0;
+
+    }
   }
+  .parent {
+    display: flex;
+    justify-content: center;
+    // align-items: center;
+    flex-direction: column;
+    width: 213px;
+    margin-left: 485px;
+  }
+  .centre {
+    text-align: center
+  }
+  .mat-header-cell {
+    text-align: center;
+  }
+  .mat-header-cell {
+    font-size: 17px;
+  }
+
+
 }
+

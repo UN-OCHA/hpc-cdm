@@ -8,7 +8,7 @@ import { AuthService } from '@hpc/core';
 import { MaterialModule } from  '@hpc/material';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-
+import { ToastrModule } from 'ngx-toastr';
 
 
 import 'font-awesome/css/font-awesome.css';
@@ -24,7 +24,12 @@ const ROUTES = [];
     IconSpriteModule.forRoot({ path: '../assets/sprites/sprite.svg' }),
     UIModule,
     MaterialModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ToastrModule.forRoot({
+      timeOut: 10000,
+      positionClass: 'toast-top-center',
+      preventDuplicates: true,
+    })
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

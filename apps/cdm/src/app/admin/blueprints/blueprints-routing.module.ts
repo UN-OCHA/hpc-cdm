@@ -13,6 +13,7 @@ const routes: Routes = [
     children: [
       { path: '', component: BlueprintListComponent, canActivate: [AdminGuard] },
       { path: 'new', component: BlueprintFormComponent, canActivate: [AdminGuard] },
+      { path: ':copy/:id', component: BlueprintFormComponent, canActivate: [AdminGuard] },
       { path: ':id', component: BlueprintFormComponent, canActivate: [AdminGuard] }
     ]}
 ];

@@ -12,9 +12,14 @@ import { ApiService, ModeService } from '@hpc/core';
 export class BlueprintFormComponent implements OnInit {
   form: FormGroup;
   submitted = false;
+  loading = false;
   title: String;
   blueprint: any;
   jsonModel: any;
+  blueprintTypeOptions: any = [
+    { label: 'Operation Blueprint', value: '1', checked: false },
+    { label: 'Plan Blueprint', value: '2', checked: false }
+  ];
 
   constructor(
     private service: ModeService,
@@ -24,26 +29,20 @@ export class BlueprintFormComponent implements OnInit {
     private router: Router,
     private api: ApiService) {
     this.form = this.fb.group({
-      name: ['', Validators.required],
-      description: ['', Validators.required]
+      type: ['', Validators.required],
+      name: ['', [Validators.required, Validators.maxLength(255)]],
+      description: ['', [Validators.required, Validators.maxLength(1024)]]
     });
   }
-
-  setMode(bp) {
-    this.title = bp ? 'Edit Blueprint' : 'New Blueprint';
-    if(bp) {
-      this.blueprint = bp;
-      this.form.reset({
-        name: bp.name,
-        description: bp.description
-      });
-    }
-  }
-
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
-      if(params.id) {
+      if(params.id && !params.copy) {
         this.service.mode = 'edit';
+        this.api.getBlueprint(params.id).subscribe(bp => {
+          this.setMode(bp);
+        });
+      } else if(params.id && params.copy) {
+        this.service.mode = 'copy';
         this.api.getBlueprint(params.id).subscribe(bp => {
           this.setMode(bp);
         });
@@ -52,6 +51,16 @@ export class BlueprintFormComponent implements OnInit {
         this.setMode(this.injector.get('blueprint', null));
       }
     });
+  }
+  setMode(bp) {
+    if(bp) {
+      this.blueprint = bp;
+      this.form.reset({
+        type: bp.type,
+        name: bp.name,
+        description: bp.description
+      });
+    }
   }
 
   get f() { return this.form.controls; }
@@ -66,13 +75,16 @@ export class BlueprintFormComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
+    this.loading = true;
     if(!this.form.invalid) {
       const formData = this.form.value;
       formData.model = this.jsonModel;
       // add a checkbox to set active / disabled
       formData.status = 'active';
-      const bpId = this.blueprint && this.blueprint.id;
+
+      const bpId = this.service.mode !== 'copy' && this.blueprint && this.blueprint.id;
       this.api.saveBlueprint(formData, bpId).subscribe(() => {
+        this.loading = false;
         this.router.navigate(['/blueprints']);
       });
     }
