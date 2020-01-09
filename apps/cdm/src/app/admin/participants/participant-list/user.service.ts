@@ -1,4 +1,4 @@
-import { PageRequest, Page } from "./page";
+import { PageRequest, Page } from "@hpc/core";
 import { Observable, of } from "rxjs";
 import { delay } from "rxjs/operators";
 import { User } from "./user";

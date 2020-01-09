@@ -14,10 +14,12 @@ $orange: #ee7325;
     }
   }
   .main-content {
-    // overflow-y: scroll;
-    // height: 100%;
+    flex-grow: 1;
     background-color: #EFF5F9;
-    padding-bottom: 2em;
+    padding-bottom: .25em;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   .mat-stroked-button {
     background-color: #fff;

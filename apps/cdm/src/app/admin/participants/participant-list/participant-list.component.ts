@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 // import { Participant } from '@hpc/data';
-import { AppService, ModeService } from '@hpc/core';
-
+import { AppService, ModeService, PaginatedDataSource } from '@hpc/core';
 import { UserService, UserQuery } from './user.service';
-import { PaginatedDataSource } from './paginated-datasource';
 import { User } from './user';
 
 @Component({
@@ -12,25 +10,25 @@ import { User } from './user';
   templateUrl: './participant-list.component.html',
   styleUrls: [ './participant-list.component.scss' ]
 })
-export class ParticipantListComponent {//implements OnInit {
+export class ParticipantListComponent implements OnInit {
   // tableColumns = [];
   // operation$ = this.appService.operation$;
   // participants$ = this.appService.participants$;
   //
-  // constructor(
-  //   private modeService: ModeService,
+  constructor(
+    private modeService: ModeService,
+    private users: UserService
   //   private appService: AppService,
   //   private activatedRoute: ActivatedRoute){
-  // }
-  //
-  // ngOnInit() {
-  //   this.modeService.mode = 'list';
-  //   this.activatedRoute.params.subscribe(params => {
-  //     this.appService.loadParticipants(params.id);
-  //   });
-  // }
+  ){}
 
-  displayedColumns = ['id', 'name', 'email', 'registration']
+  tableColumns = [
+    {columnDef: 'id', header: 'No.', cell: (row) => `${row.id}`},
+    {columnDef: 'name', header: 'Username', cell: (row) => `${row.username}`},
+    {columnDef: 'email', header: 'Email', cell: (row) => `${row.email}`},
+    {columnDef: 'registration', header: 'Registration', cell: (row) => `${row.registrationDate}`}
+    // | date
+  ];
 
   data = new PaginatedDataSource<User, UserQuery> (
     (request, query) => this.users.page(request, query),
@@ -39,10 +37,11 @@ export class ParticipantListComponent {//implements OnInit {
     5
   );
 
-  // constructor(private users: UserService) {}
-  constructor(private users: UserService) {
-    console.log(users)
-    // this.users = users;
+  ngOnInit() {
+    this.modeService.mode = 'list';
+    // this.activatedRoute.params.subscribe(params => {
+    //   this.appService.loadParticipants(params.id);
+    // });
   }
 }
 

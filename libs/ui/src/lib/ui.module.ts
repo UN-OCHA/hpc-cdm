@@ -24,6 +24,7 @@ import { AutocompleteModule, AutocompleteComponent,
   AutocompleteDirective, AutocompleteContentDirective,
   OptionComponent } from './autocomplete';
 import { AutocompleteSingleModule, AutocompleteSingleComponent } from './autocomplete-single';
+import { PaginatedTableModule, PaginatedTableComponent } from './paginated-table';
 import { FilterPipe } from './filter.pipe';
 
 @NgModule({
@@ -50,6 +51,7 @@ import { FilterPipe } from './filter.pipe';
     LogoModule,
     LanguagesModule,
     NavModule,
+    PaginatedTableModule,
     FeedModule,
     SpinnerModule
   ],
@@ -65,12 +67,13 @@ import { FilterPipe } from './filter.pipe';
     DateInputComponent, FileUploadComponent,
     InputComponent, TextAreaComponent,
     JsonEditorComponent,
+    PaginatedTableComponent,
     FilterPipe,
-    TableExpandableRowsComponent, TableSelectableRowsComponent,
-    ToolbarComponent, NavComponent,
     LogoComponent, LanguagesComponent,
     ScrollContainerComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    TableExpandableRowsComponent, TableSelectableRowsComponent,
+    ToolbarComponent, NavComponent
   ]
 })
 export class UIModule {}

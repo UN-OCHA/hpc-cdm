@@ -9,3 +9,4 @@ export {
   NotAuthenticatedGuard } from './lib/auth/guards.service';
 export { AppService } from './lib/app.service';
 export { environment } from './lib/environments/environment';
+export { PaginatedDataSource, PageRequest, Page } from './lib/paginated';

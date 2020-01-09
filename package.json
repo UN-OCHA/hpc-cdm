@@ -80,6 +80,7 @@
     "@types/jest": "24.0.9",
     "@types/lodash-es": "^4.17.3",
     "@types/node": "~8.9.4",
+    "auth0-js": "^9.12.1",
     "codelyzer": "^5.0.1",
     "cypress": "3.4.1",
     "dotenv": "6.2.0",

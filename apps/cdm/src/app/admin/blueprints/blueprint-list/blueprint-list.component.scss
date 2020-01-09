@@ -1,10 +1,16 @@
 :host {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: scroll;
   .mat-table {
-
     .mat-row {
-      border: 10px solid blue;
+      border-color: red;
     }
-    
+    .mat-cell {
+      color: #757575;
+    }
     .mat-column-name {
       width: 28%!important;
     }
@@ -20,10 +26,13 @@
       width: 6%!important;
       text-align: center;
       .mat-icon {
-        color:#888;
+        font-size: .75em;
+        color:#ffc107;
+        color:#f44336;
       }
       .active {
         color: #ee7325;
+        color: #43a047;
       }
     }
   }

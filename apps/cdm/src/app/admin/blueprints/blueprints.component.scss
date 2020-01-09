@@ -1,0 +1,27 @@
+:host {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  // width: 100%;
+  // border: 4px solid red;
+  .content {
+    h1 {
+      color: #333333;
+    }
+    width: 100%;
+    // height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    .container {
+      display: flex;
+      overflow: hidden;
+      flex-direction: column;
+      flex-grow: 1;
+      width: 100%;
+      // border: 10px solid red;
+    }
+  }
+}

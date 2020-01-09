@@ -9,11 +9,11 @@
   </div>
 
   <div *ngIf="!auth.user" class="login">
-    <a mat-button (click)="login()">
+    <a class="toolbar-login-button" mat-button (click)="login()">
       <mat-icon>perm_identity</mat-icon> Login
     </a>
   </div>
 </div>
 <div *ngIf="renderType=== 'simplelink'" class="simplelink">
-  <a (click)="login()">login</a>
+  <a class="login-link" (click)="login()">login</a>
 </div>

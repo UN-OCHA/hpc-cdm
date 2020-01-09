@@ -1,12 +1,23 @@
 :host {
   .content {
     margin-top: 1em;
+    h1 {
+      font-size: 1.75em;
+      margin-left: 0;
+      padding-left: 0;
+    }
+    .mat-expansion-panel {
+      box-shadow: none;
+      border: 1px solid #cadeeb;
+    }
+    .mat-accordion {
+      // border: 10px solid red;
+      box-shadow: none;
+      border: none;
+    }
 
   }
   .container {
     margin-top: 1em;
-    .mat-accordion {
-
-    }
   }
 }

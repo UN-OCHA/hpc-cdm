@@ -1,3 +1,10 @@
 :host {
-
+  display: flex;
+  flex-direction: row;
+  // border: 10px solid red;
+  // width: 100%;
+  form {
+    flex-grow: 1;
+    // width: 100%;
+  }
 }
