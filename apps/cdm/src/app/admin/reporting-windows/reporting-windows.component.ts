@@ -7,13 +7,12 @@ const TITLES = {
   'edit': 'Edit Reporting Window',
   'list': 'Reporting Windows'
 }
-
 @Component({
   selector: 'reporting-windows',
   templateUrl: './reporting-windows.component.html'
 })
 export class ReportingWindowsComponent implements OnInit {
-  title: string;
+  title: string;  
 
   constructor(
     private modeService: ModeService){}
