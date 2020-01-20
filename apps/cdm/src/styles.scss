@@ -42,11 +42,15 @@ body {
 
 
 .content {
-  max-width: 1290px;
+  // max-width: 1290px;
   margin: 0 auto;
   padding:0 1em;
   display: flex;
   flex-direction: column;
+
+  flex-grow: 1;
+  // border: 2px solid red;
+  // background-color: #fff;
 
   .content-header {
     // border: 1px solid red;
