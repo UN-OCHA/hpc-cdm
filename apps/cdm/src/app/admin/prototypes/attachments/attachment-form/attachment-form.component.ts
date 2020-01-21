@@ -2,6 +2,8 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { OperationService } from '@cdm/core';
+import { ToastrService } from 'ngx-toastr';
 
 import { ApiService, ModeService } from '@hpc/core';
 
@@ -24,6 +26,8 @@ export class AttachmentFormComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private api: ApiService,
+    private toastr: ToastrService,
+    private operationService: OperationService,
     private modeService: ModeService) {
     this.form = this.fb.group({
       refCode: ['', Validators.required],
@@ -40,7 +44,7 @@ export class AttachmentFormComponent implements OnInit {
       });
     } else {
       this.prototype = {
-        operationId: this.operationId,
+        operationId: this.operationService.id,
         opAttachmentPrototypeVersion: {
           value: {},
           refCode:'',
@@ -94,7 +98,7 @@ export class AttachmentFormComponent implements OnInit {
         value: this.jsonModel || this.prototype.opAttachmentPrototypeVersion.value
       };
       this.api.saveAttachmentPrototype(this.prototype, id).subscribe((result) => {
-
+        this.toastr.success('Attachment Prototypes is updated');
         this.router.navigate(['/operations',result.operationId,'aprototypes']);
       });
     }

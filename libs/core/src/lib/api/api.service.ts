@@ -274,6 +274,19 @@ export class ApiService {
         return res;
       }), catchError((error: any) => this.processError(error)));
   }
+  public deleteOperationPrototypeAttachment(id: number): Observable<any> {
+
+    const params = this.setParams();
+    const headers = this.setHeaders();
+
+    const url = environment.serviceBaseUrl + 'v2/operation/attachmentPrototype/' + id;
+    this.processStart(url, {}, '');
+    return this.http.delete(url, { params, headers }).pipe(
+      map((res: HttpResponse<any>) => {
+        this.processSuccess(url, res);
+        return res;
+      }), catchError((error: any) => this.processError(error)));
+  }
 
   public saveFormFile(file: any, name?: string): any {
     return new Promise(resolve => {

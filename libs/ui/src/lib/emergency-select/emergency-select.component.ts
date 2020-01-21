@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
@@ -15,7 +15,6 @@ import { ApiService } from '@hpc/core';
   styleUrls: ['emergency-select.component.scss']
 })
 export class EmergencySelectComponent implements OnInit {
-
   visible = true;
   selectable = true;
   removable = true;
@@ -60,7 +59,7 @@ export class EmergencySelectComponent implements OnInit {
     //   this.isValid = false;
     // }
   }
- 
+
 
   remove(value: string): void {
     let index = this.displayValues.indexOf(value);

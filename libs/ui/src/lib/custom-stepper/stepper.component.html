@@ -22,13 +22,13 @@
           <ng-container [ngTemplateOutlet]="selected.content">
           </ng-container>
         </div>
-        <div class="main-actions">
+        <!-- <div class="main-actions">
           <a mat-raised-button *ngIf="selectedIndex > 0"
             (click)="navigateTo(selectedIndex - 1)">Prev</a>
           <a mat-raised-button *ngIf="selectedIndex < (steps.length-1)"
             color="primary"
             (click)="navigateTo(selectedIndex + 1)">Next</a>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

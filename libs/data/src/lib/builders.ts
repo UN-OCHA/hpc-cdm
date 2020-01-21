@@ -43,6 +43,8 @@ export function buildOperation(op: any): Operation {
     entityPrototypes,
     attachmentPrototypes,
     attachmentPrototype, // Operation Attachment
+    emergencies: op.emergencies,
+    locations: op.locations,
     updatedAt: op.updatedAt,
     starred: true
   }

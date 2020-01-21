@@ -12,6 +12,8 @@ export interface Operation {
   entityPrototypes: EntityPrototype[];
   attachmentPrototypes: AttachmentPrototype[];
   attachmentPrototype?: AttachmentPrototype;
+  emergencies: any,
+  locations: any;
   updatedAt?: any;
   starred: boolean;
 }

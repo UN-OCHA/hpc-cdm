@@ -26,7 +26,7 @@ export class OperationStepperComponent implements OnInit {
       this.operationService.loadOperation(params.id).subscribe(op=> {
         this.steps = [];
         this.steps.push({name: 'Operation Details', type: 'OP',
-          route: ['/operations', op.id, 'details']});
+          route: ['/operations', op.id]});
         if(op.attachmentPrototype) {
           this.steps.push({
             name: 'Operation Attachments',
