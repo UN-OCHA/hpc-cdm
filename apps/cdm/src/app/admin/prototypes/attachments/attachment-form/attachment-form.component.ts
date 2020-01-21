@@ -78,7 +78,13 @@ export class AttachmentFormComponent implements OnInit {
   }
 
   onJsonChange(event) {
-    this.jsonModel = event;
+    if(!event || !event.type || event.type !== 'change') {
+      this.jsonModel = event;
+    }
+  }
+
+  validEntry() {
+    return this.form.valid && this.jsonModel;
   }
 
   close() {
@@ -95,7 +101,7 @@ export class AttachmentFormComponent implements OnInit {
         opAttachmentPrototypeId: this.prototype.id,
         refCode: formData.refCode,
         type: formData.refType,
-        value: this.jsonModel || this.prototype.opAttachmentPrototypeVersion.value
+        value: this.jsonModel
       };
       this.api.saveAttachmentPrototype(this.prototype, id).subscribe((result) => {
         this.toastr.success('Attachment Prototypes is updated');
