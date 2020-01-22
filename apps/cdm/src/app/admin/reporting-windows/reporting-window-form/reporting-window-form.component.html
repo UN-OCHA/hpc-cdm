@@ -1,6 +1,6 @@
-<form class="edit" (ngSubmit)="onSubmit()" [formGroup]="form" fxLayout="column">
-  <mat-radio-group formControlName="contextType">
-    <mat-radio-button *ngFor="let option of contextTypeOptions" (change)="contextTypeChange($event)"
+<form class="edit" (ngSubmit)="onSubmit()" [formGroup]="form" fxLayout="column" autocomplete="off">
+  <mat-radio-group formControlName="contextType" >
+    <mat-radio-button id="contextType" *ngFor="let option of contextTypeOptions" (change)="contextTypeChange($event)"
                        [checked]="option.checked" value="{{option.value}}" >{{option.label}}
              </mat-radio-button>
   </mat-radio-group>
@@ -22,28 +22,28 @@
         [formControl]="optionCtrl"
         [matAutocomplete]="auto"
         [matChipInputFor]="chipList"
-        [matChipInputSeparatorKeyCodes]="separatorKeysCodes">
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes" id="contextInput">
     </mat-chip-list>
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event);chipInput.value = ''">    
+    <mat-autocomplete #auto="matAutocomplete" autocomplete- (optionSelected)="selected($event)">    
       <mat-option *ngFor="let option of filteredOptions | async" [value]="option.id">
         {{option.operationVersion ? option.operationVersion.name : option.name}}
       </mat-option>
-      <mat-option *ngIf="(filteredOptions | async)?.length == 0" disabled>
+      <!-- <mat-option *ngIf="(filteredOptions | async)?.length == 0" disabled>
         <span>No Results Found.</span>
-        </mat-option>
+        </mat-option> -->
     </mat-autocomplete>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
     <mat-label>Name</mat-label>
     <input matInput formControlName="name"      
-      required name="name">
+      required name="name" id="name">
   </mat-form-field>
 
   <mat-form-field appearance="outline">
     <mat-label>Description</mat-label>
     <textarea matInput formControlName="description"      
-      required name="description"></textarea>
+      required name="description" id="description"></textarea>
   </mat-form-field>
   <div class="reportingPeriod">
     <h4>Reporting Period</h4>

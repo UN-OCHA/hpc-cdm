@@ -7,18 +7,14 @@ import { ApiService, AuthService, ModeService } from '@hpc/core';
 import { ReportingWindow } from '@hpc/data';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material';
-import { MdRadioChange } from '@angular/material';
 import { ToastrService } from 'ngx-toastr';
-
-// import { ToastrService } from 'ngx-toastr';
-// import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'reporting-window-form',
   templateUrl: './reporting-window-form.component.html',
   styleUrls: ['./reporting-window-form.component.scss']
 })
-export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDeactivate {
+export class ReportingWindowFormComponent implements OnInit {
   form: FormGroup;
   editMode: boolean = false;
   title: string;
@@ -33,10 +29,6 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
     { label: 'Operations', value: '3', checked: false },
     { label: 'Global', value: '1', checked: false }
   ];
-  //contextType:string;
-  // processing = true;
-  // editable = true;
-  // canSubmitReportingWindow = false;
   @ViewChild('optionInput', { static: false }) optionInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
 
@@ -53,7 +45,6 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
       id:[''],
       name: ['', Validators.required],
       description: ['', Validators.required],
-      // context: ['', Validators.required],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       contextType: ['', Validators.required],
@@ -65,10 +56,6 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
     });
   }
 
-  // displayNull(value) {
-  //   return null;
-  // }
-
   ngOnInit() {
     this.filteredOptions = this.optionCtrl.valueChanges.pipe(
       startWith(null),
@@ -79,7 +66,6 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
         this.modeService.mode = 'edit';
         this.editMode = true;
         this.api.getReportingWindow(params.id).subscribe(rw => {
-         /// rw.name = 'RW Name';
           this.form.patchValue({
             name: rw.name,
             description: rw.description,
@@ -124,7 +110,7 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
       from = new Date(new Date().getFullYear(), 0, 1, 0, 0, 0);
       to = new Date(new Date().getFullYear(), 11, 31, 0, 0, 0);
       this.form.patchValue({
-        startDate: new Date(from),//new Date(new Date().getFullYear(), 0, 1,0,0,0).toLocaleDateString(),
+        startDate: new Date(from),
         endDate: new Date(to)
       });
     } else if (type === 'previousyear') {
@@ -163,7 +149,7 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
     }
   }
 
-  selected(event: MatAutocompleteSelectedEvent): void { // private _filter(value: string): Observable<any[]> {
+  selected(event: MatAutocompleteSelectedEvent): void { 
     this.displayValues.push(event.option.viewValue);
     this.selectedValues.push(event.option.value);
     this.optionInput.nativeElement.value = '';
@@ -186,11 +172,10 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
     }
   }
 
-  contextTypeChange(event: MdRadioChange) {
-   // this.filteredOptions = this.displayValues.length === 0 ? this.filteredOptions :of([]);
- // this.displayValues =[];
- // this.selectedValues=[];  
-  //this.filteredOptions = null;
+  contextTypeChange() {
+  this.displayValues =[];
+  this.selectedValues=[]; 
+ 
   }
 
   // public loadForExistingReportingWindow (id: number, version = 'latest') {
