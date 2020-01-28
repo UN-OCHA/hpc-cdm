@@ -63,7 +63,6 @@ export class AttachmentListComponent implements OnInit {
         this.api.deleteOperationPrototypeAttachment(prototype.id).subscribe(response => {
         if(response.status !== 'ok') {
           this.toastr.error('Unable to delete attachment');
-          throw new Error('Unable to delete attachment');
         } else {
           this.activatedRoute.params.subscribe(params => {
             this.operationService.loadAttachmentPrototypes(params.id);

@@ -16,7 +16,6 @@
         </a>
         <h2 *ngIf="allSteps[selectedIndex]">{{allSteps[selectedIndex].name}}</h2>
       </div>
-
       <div class="main-content" *ngIf="selected">
         <div class="content-content">
           <ng-container [ngTemplateOutlet]="selected.content">

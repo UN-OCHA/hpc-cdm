@@ -53,6 +53,9 @@ export class OperationStepperComponent implements OnInit {
   }
 
   onSelectionChange(event: any) {
-    this.selectedStepIndex= event;
+    if(Number.isInteger(event)){
+      this.selectedStepIndex= event;
+    }
+
   }
 }

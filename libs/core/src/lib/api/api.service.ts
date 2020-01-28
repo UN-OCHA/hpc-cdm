@@ -42,12 +42,15 @@ export class ApiService {
     } else {
       errorJson = error;
     }
-
     switch (error.status) {
       case 0:
         title = 'Failed to reach HPC API';
         this.apiUp = false;
         this.toastr.error('Please try again in a couple of moments', title);
+        break;
+      case 400:
+        title = errorJson.error.message.details;
+        this.toastr.error('We had an issue accessing one of our endpoints', title);
         break;
       case 401:
         if (errorJson.message === 'Client or key not accepted') {
@@ -58,6 +61,10 @@ export class ApiService {
         break;
       case 405:
         title = 'Endpoint doesn\'t exist';
+        this.toastr.error('We had an issue accessing one of our endpoints', title);
+        break;
+      case 409:
+        title = errorJson.error.message.details;
         this.toastr.error('We had an issue accessing one of our endpoints', title);
         break;
       case 500:
@@ -274,6 +281,19 @@ export class ApiService {
         return res;
       }), catchError((error: any) => this.processError(error)));
   }
+  public deleteOperationEntity(id: number): Observable<any> {
+
+    const params = this.setParams();
+    const headers = this.setHeaders();
+
+    const url = environment.serviceBaseUrl + 'v2/operation/entityPrototype/' + id;
+    this.processStart(url, {}, '');
+    return this.http.delete(url, { params, headers }).pipe(
+      map((res: HttpResponse<any>) => {
+        this.processSuccess(url, res);
+        return res;
+      }), catchError((error: any) => this.processError(error)));
+  }
   public deleteOperationPrototypeAttachment(id: number): Observable<any> {
 
     const params = this.setParams();
@@ -348,7 +368,7 @@ export class ApiService {
   }
 
   public saveAttachmentPrototype(data: any, id: number): Observable<any> {
-    if (!id) {
+     if (!id) {
       return this.postToEndpoint(`v2/operation/${data.operationId}/attachmentPrototype`, {
         data: {opAttachmentPrototype:data}
       });

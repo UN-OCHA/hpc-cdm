@@ -1,5 +1,23 @@
-<table-selectable-rows
-  [dataSource]="prototypes"
-  [columns]="tableColumns"
-  [route]="['/operations', operationService.id, 'eprototypes']">
-</table-selectable-rows>
+<div class="container">
+
+  <table mat-table [dataSource]="prototypes" multiTemplateDataRows class="mat-elevation-z8">
+
+    <ng-container *ngFor="let column of tableColumns" [matColumnDef]="column.columnDef">
+      <th mat-header-cell *matHeaderCellDef>{{column.header}}</th>
+      <td mat-cell *matCellDef="let row">
+        <div *ngIf="column.columnDef !='action'">{{column.cell(row)}}</div>
+        <div *ngIf="column.columnDef ==='action'">
+          <a mat-button mat-icon-button color="primary" [routerLink]="['/operations', operationService.id, 'eprototypes', column.cell(row)]"><mat-icon aria-hidden="false">edit</mat-icon></a>
+          <a mat-button mat-icon-button color="warn" (click)="deleteEntity(row)"><mat-icon aria-hidden="false">delete</mat-icon></a>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+
+    <tr mat-row *matRowDef="let element; columns: columnsToDisplay;"
+        class="example-element-row">
+    </tr>
+  </table>
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px', fullScreenBackdrop: true, primaryColour: '#ed7325', tertiaryColour: 'rgb(237, 37, 92)' }" [template]="customLoadingTemplate"></ngx-loading>
+</div>

@@ -18,6 +18,7 @@ export class AttachmentFormComponent implements OnInit {
   prototype: any;
   jsonModel: any;
   operationId: any;
+  public loading = false;
 
   constructor(
     private location: Location,
@@ -51,6 +52,7 @@ export class AttachmentFormComponent implements OnInit {
           refType:''
         }
       };
+      console.log(this.prototype);
     }
   }
 
@@ -61,6 +63,7 @@ export class AttachmentFormComponent implements OnInit {
       // }
       if(params.id) {
         this.modeService.mode = 'edit';
+        this.jsonModel = true;
         this.api.getAttachmentPrototype(params.id).subscribe(proto => {
           this.setMode(proto);
         })
@@ -84,7 +87,8 @@ export class AttachmentFormComponent implements OnInit {
   }
 
   validEntry() {
-    return this.form.valid && this.jsonModel;
+
+    return this.form.valid && this.jsonModel ;
   }
 
   close() {
@@ -93,6 +97,7 @@ export class AttachmentFormComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
+    this.loading = true;
     if(!this.form.invalid) {
       const formData = this.form.value;
       const id = this.prototype && this.prototype.id;
@@ -104,9 +109,12 @@ export class AttachmentFormComponent implements OnInit {
         value: this.jsonModel
       };
       this.api.saveAttachmentPrototype(this.prototype, id).subscribe((result) => {
+
         this.toastr.success('Attachment Prototypes is updated');
+        this.loading = false;
         this.router.navigate(['/operations',result.operationId,'aprototypes']);
-      });
+      },
+      err => this.loading = false);
     }
   }
 }
