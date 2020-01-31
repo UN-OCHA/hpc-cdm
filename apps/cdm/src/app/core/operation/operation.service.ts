@@ -244,10 +244,6 @@ export class OperationService {
     this._loadOperation(operationId || this.operationState.operation.id).subscribe(response => {
       const opep = response.opEntityPrototypes
         .find(p => p.id == entityPrototypeId);
-
-      console.log(response)
-      console.log(entityPrototypeId)
-      console.log(opep)
       const x = buildEntityPrototype(opep);
       if (!this.entityState.prototype || this.entityState.prototype.id !== x.id) {
         this.entityState.prototype = x;
@@ -266,6 +262,7 @@ export class OperationService {
           .map(ap => buildAttachmentPrototype(ap));
       });
   }
+
 
   loadEntityPrototypes(operationId?: number) {
     this._loadOperation(operationId || this.operationState.operation.id)

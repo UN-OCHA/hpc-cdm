@@ -17,8 +17,8 @@
         <a mat-menu-item [routerLink]="['/operations', op.id]" routerLinkActive="router-link-active">Operation Details</a>
         <a mat-menu-item [routerLink]="['/operations', op.id,'attachments']" routerLinkActive="router-link-active">Operation Attachments</a>
         <span *ngFor="let ep of op.entityPrototypes">
-          <a mat-menu-item [routerLink]="['/operations', op.id, 'entities', ep.id]">{{ ep.name.en.plural }}</a>
-          <a mat-menu-item [routerLink]="['/operations', op.id, 'entities', ep.id]">{{ ep.name.en.singular }} Details</a>
+          <a *ngIf="ep.name && ep.name.en.plural" mat-menu-item [routerLink]="['/operations', op.id, 'entities', ep.id]">{{ ep.name.en.plural }}</a>
+          <a *ngIf="ep.name && ep.name.en.singular" mat-menu-item [routerLink]="['/operations', op.id, 'entities', ep.id]">{{ ep.name.en.singular }} Details</a>
         </span>
         <a mat-menu-item [routerLink]="['/operations', op.id, 'plans']">Plans</a>
       </span>

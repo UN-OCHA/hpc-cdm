@@ -7,6 +7,7 @@ import { EntitiesRoutingModule } from './entities-routing.module';
 import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
+import { NgxLoadingModule } from 'ngx-loading';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { EntityFormComponent } from './entity-form/entity-form.component';
     CommonModule,
     FormsModule, ReactiveFormsModule,
     CdmUIModule, MaterialModule,
+    NgxLoadingModule,
     EntitiesRoutingModule
   ],
   exports: [

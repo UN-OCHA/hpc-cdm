@@ -33,7 +33,7 @@ export function buildOperation(op: any): Operation {
     attachmentPrototypes =
       op.opAttachmentPrototypes.map(p => buildAttachmentPrototype(p));
     attachmentPrototype =
-      attachmentPrototypes.find(p => p.entities.includes('OP'));
+      attachmentPrototypes.find(p => p.entities && p.entities.includes('OP'));
   }
   const entityPrototypes =
     op.opEntityPrototypes.map(p => buildEntityPrototype(p, attachmentPrototypes));
@@ -100,7 +100,7 @@ export function buildEntity(ge, v): Entity {
 
 export function buildEntityPrototype(ep: any, aprototypes = []): EntityPrototype {
   const version = ep.opEntityPrototypeVersion;
-  const attachmentPrototype = aprototypes.find(p => p.entities.includes(version.refCode));
+  const attachmentPrototype = aprototypes.find(p => p.entities && p.entities.includes(version.refCode));
   return {
     id: ep.id,
     type: version.type,
