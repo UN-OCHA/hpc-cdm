@@ -19,7 +19,7 @@
     (change)="onJsonChange($event)"></json-editor>
 
   <div class="actions">
-    <a mat-raised-button [routerLink]="['/operations', operationId, 'aprototypes']">Close</a>
-    <a mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</a>
+    <a mat-raised-button [routerLink]="['/operations', operationId, 'aprototypes']">Close</a>&nbsp;
+    <button mat-raised-button color="warn" type="submit" [disabled]="!validEntry()">Save</button>
   </div>
 </form>

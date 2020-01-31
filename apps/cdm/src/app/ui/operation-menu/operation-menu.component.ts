@@ -32,7 +32,7 @@ export class OperationMenuComponent implements OnInit {
     })
   }
   menuEnter() {
-    this.isMatMenuOpen = true; 
+    this.isMatMenuOpen = true;
   }
 
   menuLeave(trigger, button) {
@@ -47,7 +47,7 @@ export class OperationMenuComponent implements OnInit {
       }
     }, 80)
   }
-  
+
   buttonEnter(trigger) {
     setTimeout(() => {
       if (!this.isMatMenuOpen) {
@@ -62,7 +62,7 @@ export class OperationMenuComponent implements OnInit {
     })
   }
 
-  buttonLeave(trigger, button) {    
+  buttonLeave(trigger, button) {
     setTimeout(() => {
       if (this.enteredButton && !this.isMatMenuOpen) {
         trigger.closeMenu();

@@ -16,6 +16,7 @@ import { ApiService } from '@hpc/core';
 })
 export class LocationSelectComponent implements OnInit {
   @Input() index: number;
+  @Input() selectedLocations: any
   @Output() messageEvent = new EventEmitter<string>();
   selectedLocationName = '';
 
@@ -25,7 +26,7 @@ export class LocationSelectComponent implements OnInit {
   addOnBlur = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
   optionCtrl = new FormControl();
-  
+
   optionSubLocationCtrl = new FormControl();
   filteredOptions: Observable<any>;
   filteredSubLocationOptions: Observable<any>;
@@ -36,19 +37,16 @@ export class LocationSelectComponent implements OnInit {
   subLocations: any[];
 
   @ViewChild('locationInput', {static: false}) locationInput: ElementRef<HTMLInputElement>;
-  
+
   @ViewChild('subLocationInput', {static: false}) subLocationInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
 
   constructor(
     private api: ApiService,
-    private translate: TranslateService) {    
+    private translate: TranslateService) {
   }
 
   ngOnInit() {
-    // if(this.index == 0) {
-    // this.optionCtrl.setValidators([Validators.required]);
-    // }
     this.filteredOptions = this.optionCtrl.valueChanges.pipe(
       startWith(null),
       mergeMap((value: string | null) =>
@@ -56,9 +54,17 @@ export class LocationSelectComponent implements OnInit {
 
       this.filteredSubLocationOptions = this.optionSubLocationCtrl.valueChanges.pipe(
           startWith(''),
-          mergeMap((value: string | null) => this._filter(value)));          
+          mergeMap((value: string | null) => this._filter(value)));
+      this.optionCtrl.setValue(this.selectedLocations);
+      if(this.selectedLocations.sublocations) {
+        this.enableSubLocations = true;
+        this.selectedLocations.sublocations.forEach(subLoc => {
+          this.displayValues.push(subLoc.name);
+          this.selectedValues.push(subLoc.id);
+        });
+      }
   }
-  
+
   onDeleteLocation(idx:any) {
   }
 
@@ -74,7 +80,7 @@ export class LocationSelectComponent implements OnInit {
     // }
   }
 
- 
+
 
   remove(value: string): void {
     const index = this.displayValues.indexOf(value);
@@ -86,11 +92,11 @@ export class LocationSelectComponent implements OnInit {
 
   selected(event: MatAutocompleteSelectedEvent): void {
     this.enableSubLocations = event.option.value.children.length > 0 ? true : false;
-    this.subLocations = event.option.value.children;  
+    this.subLocations = event.option.value.children;
   }
   selectedSubLocation(event: MatAutocompleteSelectedEvent) : void {
-     this.displayValues.push(event.option.viewValue);
-     this.selectedValues.push(event.option.value.id);
+    this.displayValues.push(event.option.viewValue);
+    this.selectedValues.push(event.option.value.id);
     this.subLocationInput.nativeElement.value = '';
     this.optionSubLocationCtrl.setValue(null);
   }

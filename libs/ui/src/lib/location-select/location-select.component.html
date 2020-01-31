@@ -1,9 +1,9 @@
 <div>
   <fieldset>
-    <h4>Location {{index+1}}</h4> 
+    <h4>Location {{index+1}}</h4>
   <div>
 <mat-form-field appearance="outline" fxFlex="grow">
-  <mat-label>Locations</mat-label>  
+  <mat-label>Locations</mat-label>
   <input
   matInput
   [required]="index === 0"
@@ -40,7 +40,7 @@
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
       [matChipInputAddOnBlur]="addOnBlur">
-  </mat-chip-list>  
+  </mat-chip-list>
   <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="selectedSubLocation($event)">
     <mat-option *ngFor="let option of filteredSubLocationOptions | async" [value]="option">
       {{option.name}}

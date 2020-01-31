@@ -15,10 +15,10 @@ export class OperationAttachmentsComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.loading = true;
-    console.log(this.operation.id)
     // this.activatedRoute.params.subscribe(params => {
       // console.log(params)
       this.operation.loadAttachments(this.operation.id, 'EDIT_OPERATION_ATTACHMENTS');
+      this.loading = false;
     // });
   }
 

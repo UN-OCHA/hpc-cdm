@@ -23,11 +23,16 @@ export class JsonEditorComponent implements OnInit {
       code : {
         mode: 'code',
         onChange: () => {
-          const json = this.jsonEditorCode.get();
-          if (json) {
-            this.jsonCode = json;
-            this.validateJSON('Tree');
-            this.change.emit(this.jsonCode);
+          const valid = this.hasValidJson();
+          if(valid) {
+            const json = this.jsonEditorCode.get();
+            if (json) {
+              this.jsonCode = json;
+              this.validateJSON('Tree');
+              this.change.emit(this.jsonCode);
+            }
+          } else {
+            this.change.emit(null);
           }
         }
       },
@@ -70,6 +75,15 @@ export class JsonEditorComponent implements OnInit {
     this.validateJSON('Code');
     if (this.autoConvert) {
       this.validateJSON('Tree');
+    }
+  }
+
+  hasValidJson() {
+    try {
+      JSON.parse(this.jsonEditorCode.getText());
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }
