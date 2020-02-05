@@ -1,7 +1,7 @@
 <div class="file-upload">
   <div class="form-group">
     <input [id]="uid" type="file" #file style="display: none"
-      (change)="handleFileInput($event.target.files)"/>
+      (change)="handleFileInput($event.target.files)" accept=".xlsx, .xls"/>
   </div>
   <div fxLayout="row" fxLayoutAlign="space-between center">
     <mat-form-field appearance="outline" fxFlex="grow">

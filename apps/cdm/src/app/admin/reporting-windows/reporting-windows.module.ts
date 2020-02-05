@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { MaterialModule } from '@hpc/material';
 import { ModeService } from '@hpc/core';
 import { CdmUIModule } from '@cdm/ui';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { DataQueueModule } from './data-queue/data-queue.module';
 import { ReportingWindowsComponent } from './reporting-windows.component';
@@ -23,13 +24,15 @@ import { ReportingWindowsRoutingModule } from './reporting-windows-routing.modul
     CommonModule,
     CdmUIModule, MaterialModule,
     DataQueueModule,
-    ReportingWindowsRoutingModule
+    ReportingWindowsRoutingModule,
+    FormsModule, ReactiveFormsModule
   ],
   exports: [
     ReportingWindowListComponent
   ],
   providers: [
-    ModeService
+    ModeService,
+    DatePipe
   ]
 })
 export class ReportingWindowsModule { }

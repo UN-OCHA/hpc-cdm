@@ -1,33 +1,73 @@
-<form class="edit" (ngSubmit)="onSubmit()">
-  <mat-radio-group>
-    <mat-radio-button color="primary" [value]="1">Global</mat-radio-button>
-    <mat-radio-button color="primary" [value]="3">Operation</mat-radio-button>
-    <mat-radio-button color="primary" [value]="2">Plan</mat-radio-button>
+<form class="edit" (ngSubmit)="onSubmit()" [formGroup]="form" fxLayout="column" autocomplete="off">
+  <mat-radio-group formControlName="contextType" >
+    <mat-radio-button id="contextType" *ngFor="let option of contextTypeOptions" (change)="contextTypeChange($event)"
+                       [checked]="option.checked" value="{{option.value}}" >{{option.label}}
+             </mat-radio-button>
   </mat-radio-group>
-
-  <mat-form-field appearance="outline">
+  <mat-form-field appearance="outline" fxFlex="grow">
     <mat-label>Context</mat-label>
-    <input matInput formControlName="context"
-      (input)="clearErrors()"
-      required>
+    <mat-chip-list #chipList aria-label="Context selection">
+      <mat-chip
+        *ngFor="let value of displayValues"
+        [selectable]="selectable"
+        [removable]="removable"
+        (removed)="remove(value)">
+        {{value}}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+      <input
+        matInput
+        required
+        #optionInput
+        [formControl]="optionCtrl"
+        [matAutocomplete]="auto"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes" id="contextInput">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" autocomplete- (optionSelected)="selected($event)">    
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option.id">
+        {{option.operationVersion ? option.operationVersion.name : option.name}}
+      </mat-option>
+      <!-- <mat-option *ngIf="(filteredOptions | async)?.length == 0" disabled>
+        <span>No Results Found.</span>
+        </mat-option> -->
+    </mat-autocomplete>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
     <mat-label>Name</mat-label>
-    <input matInput formControlName="name"
-      (input)="clearErrors()"
-      required>
+    <input matInput formControlName="name"      
+      required name="name" id="name">
   </mat-form-field>
 
   <mat-form-field appearance="outline">
     <mat-label>Description</mat-label>
-    <textarea matInput formControlName="description"
-      (input)="clearErrors()"
-      required></textarea>
+    <textarea matInput formControlName="description"      
+      required name="description" id="description"></textarea>
   </mat-form-field>
+  <div class="reportingPeriod">
+    <h4>Reporting Period</h4>
+    <button type="button" (click)="populateDates('currentyear')">Current Year</button>
+    <button type="button" (click)="populateDates('previousyear')">Previous Year</button>
+    <button type="button" (click)="populateDates('currentquarter')">Current Quarter</button>
+    <button type="button" (click)="populateDates('previousquarter')">Previous Quarter</button>
+   </div>
+  <div class="dates">
+    <mat-form-field appearance="outline"> <mat-label>From</mat-label>  
+      <input matInput [matDatepicker]="dp3"
+    formControlName="startDate" name="startDate" >
+    <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+    <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+  </mat-form-field>  
+  <mat-form-field appearance="outline"><mat-label>To</mat-label>
+    <input matInput required [matDatepicker]="dp4" formControlName="endDate" name="endDate">
+    <mat-datepicker-toggle matSuffix [for]="dp4"></mat-datepicker-toggle>
+    <mat-datepicker #dp4 disabled="false"></mat-datepicker>
+  </mat-form-field>
+  </div>
 
   <div class="actions">
     <a mat-raised-button [routerLink]="['/rwindows']">Close</a>
-    <a mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</a>
+    <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
   </div>
 </form>

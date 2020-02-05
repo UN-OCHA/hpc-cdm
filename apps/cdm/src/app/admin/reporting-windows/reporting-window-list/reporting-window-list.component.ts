@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import { Router } from '@angular/router';
 // import * as _ from 'lodash';
 // import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 
@@ -24,19 +25,30 @@ export class ReportingWindowListComponent implements OnInit {
   public loading = false;
 
   public currentPage = 1;
-  public page = [];
+  public page =[];
+  public originalPage = [] ;
 
   public options: any;
   public searchOptions: any;
 
   public results: any;
+  filterOptions: any = [
+    { label: 'Select', value: '' },
+    { label: 'Open', value: 'open' },
+    { label: 'Closed', value: 'closed'},
+    { label: 'Completed', value: 'completed'},
+    { label: 'Not yet Opened', value: 'notYetOpen'}
+  ];
 
   typeaheadNoResults = false;
   working = false;
 
   constructor(
     private modeService: ModeService,
-    private api: ApiService) {}
+    private api: ApiService,
+    private router: Router) {
+    //  console.log(this.router.getCurrentNavigation().extras.state.searchText);
+    }
 
   ngOnInit() {
     this.modeService.mode = 'list';
@@ -53,11 +65,17 @@ export class ReportingWindowListComponent implements OnInit {
 
     this.api.getAllReportingWindows()
       .subscribe(results => {
-        this.results = results;
+        this.page = results;
+        this.originalPage = results;
         this.loading = false;
-        this.page = this.results.slice(0,10);
+        //this.page = this.results.slice(0,10);
         this.working = false;
       });
+  }
+
+  filterChange(status:string) {
+    this.page = this.originalPage;
+    this.page = this.page.filter(p => p.status === status);
   }
 
   // pageChanged(event: PageChangedEvent): void {

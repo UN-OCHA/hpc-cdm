@@ -6,8 +6,10 @@
  * - make obvious/transparent/traceable the data being used from each response
  * - increase code testability
  */
-import { User, Operation, Entity, EntityPrototype,
-  Attachment, AttachmentPrototype } from './data';
+import {
+  User, Operation, Entity, EntityPrototype,
+  Attachment, AttachmentPrototype
+} from './data';
 import * as moment from 'moment';
 
 const ADMIN_ROLES = ['rpmadmin', 'operationLead'];
@@ -27,7 +29,7 @@ export function buildOperation(op: any): Operation {
   const v = op.operationVersion;
   let attachmentPrototypes = [];
   let attachmentPrototype = null;
-  if(op.opAttachmentPrototypes) {
+  if (op.opAttachmentPrototypes) {
     attachmentPrototypes =
       op.opAttachmentPrototypes.map(p => buildAttachmentPrototype(p));
     attachmentPrototype =
@@ -64,7 +66,14 @@ export function buildAttachment(att: any, report?: any): Attachment {
     formId: v.customReference,
     formName: v.value.name,
     formFile: v.value.file,
-    comments
+    comments,
+    collection: 'forms',
+    opAttachmentPrototypeId: att.opAttachmentPrototypeId,
+    operationId: att.operationId,
+    opAttachmentVersion: v,
+    objectId: att.objectId,
+    objectType: att.objectType
+
   };
 }
 
@@ -73,7 +82,7 @@ export function buildEntity(ge, v): Entity {
   const ta = v.technicalArea;
   const limit = ENTITY_NAME_LIMIT;
   const tooLong = ta.length > limit;
-  let name = ta.slice(0,  tooLong ? limit : ta.length);
+  let name = ta.slice(0, tooLong ? limit : ta.length);
   name += tooLong ? '...' : '';
   return {
     id: ge.id,
@@ -89,7 +98,7 @@ export function buildEntity(ge, v): Entity {
   };
 }
 
-export function buildEntityPrototype(ep: any, aprototypes=[]): EntityPrototype {
+export function buildEntityPrototype(ep: any, aprototypes = []): EntityPrototype {
   const version = ep.opEntityPrototypeVersion;
   const attachmentPrototype = aprototypes.find(p => p.entities && p.entities.includes(version.refCode));
   return {

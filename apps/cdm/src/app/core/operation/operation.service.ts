@@ -5,9 +5,11 @@ import { SubmissionsService } from './submissions.service';
 // import { ToastrService } from 'ngx-toastr';
 import { OperationState, EntityState, AttachmentState, RouteState } from './operation.state';
 
-import { Operation, Entity, EntityPrototype, Attachment, AttachmentPrototype,
+import {
+  Operation, Entity, EntityPrototype, Attachment, AttachmentPrototype,
   buildOperation, buildEntity, buildEntityPrototype,
-  buildAttachmentPrototype, buildAttachment } from '@hpc/data';
+  buildAttachmentPrototype, buildAttachment
+} from '@hpc/data';
 
 import { Formatter } from './operation.formatter';
 
@@ -28,7 +30,8 @@ export class OperationService {
   private formatter: Formatter;
   public reportingWindow: any;
   public report: any;
-  newAttachment = {id: null, formId: '', formName: '', formFile: null};
+  newAttachment = { id: null, formId: '', formName: '', formFile: null,collection:null,
+  opAttachmentPrototypeId:null,operationId:null,opAttachmentVersion:null,objectId:null, objectType:null };
 
   constructor(
     submissions: SubmissionsService,
@@ -69,27 +72,27 @@ export class OperationService {
   set selectedAttachment(val: Attachment) {
     if(val && this.routeState.mode === 'REPORTS_VIEW') {
       this.api.getReport(val.id, this.reportingWindow.id)
-      .subscribe(report => {
-        this.report = report;
-        if(report) {
-          this.report.finalized =
-            report.dataReportVersion &&
-            report.dataReportVersion.value &&
-            report.dataReportVersion.value.finalized;
-          this.submissions.tempSubmission =
-            report.dataReportVersion &&
-            report.dataReportVersion.value &&
-            report.dataReportVersion.value.submission;
-        } else {
-          this.submissions.tempSubmission = {};
-        }
-      });
+        .subscribe(report => {
+          this.report = report;
+          if (report) {
+            this.report.finalized =
+              report.dataReportVersion &&
+              report.dataReportVersion.value &&
+              report.dataReportVersion.value.finalized;
+            this.submissions.tempSubmission =
+              report.dataReportVersion &&
+              report.dataReportVersion.value &&
+              report.dataReportVersion.value.submission;
+          } else {
+            this.submissions.tempSubmission = {};
+          }
+        });
     }
     this.attachmentState.attachment = val;
   }
   set selectedEntity(val: Entity) {
     this.entityState.entity = val;
-    if(val && this.routeState.route === 'EDIT_ENTITY_ATTACHMENTS') {
+    if (val && this.routeState.route === 'EDIT_ENTITY_ATTACHMENTS') {
       this.routeState.mode = null;
       this.loadEntityAttachments(val.id, false);
     }
@@ -102,45 +105,57 @@ export class OperationService {
   get mode$(): Observable<string> { return this.routeState.mode$; }
   set mode(mode: string) {
     this.routeState.mode = mode;
-    if(mode === 'ADD_ENTITY') {
+    if (mode === 'ADD_ENTITY') {
       this.entityState.entity = null;
-    } else if(mode === 'ADD_OPERATION_ATTACHMENT') {
+    } else if (mode === 'ADD_OPERATION_ATTACHMENT') {
       this.attachmentState.attachment = this.newAttachment;
-    } else if(mode === 'ADD_ENTITY_ATTACHMENT') {
+    } else if (mode === 'ADD_ENTITY_ATTACHMENT') {
       this.attachmentState.attachment = this.newAttachment;
     }
   }
 
   _saveOperationAttachment(attachment: Attachment) {
     try {
-      this.api.saveOperationAttachment(this.formatter.formatAttachment(attachment))
-      .subscribe(response => {
-        // if(attachment.id) {
-        //   this.toastr.success('Attachment save.', 'Attachment updated');
-        // } else {
-        //   this.toastr.success('Attachment save.', 'Attachment created');
-        // }
-        const idx = this.operationState.attachments.indexOf(this.operationState.attachments.find(a => !a.id));
-        attachment.id = response.id;
-        this.operationState.attachments[idx] = {...attachment};
-        this.operationState.attachments = [...this.operationState.attachments];
-        if(this.routeState.route === 'EDIT_ENTITY_ATTACHMENTS') {
-          this.loadEntityAttachments(this.entityState.entity.id);
-        } else {
-          this.loadAttachments(this.operationState.operation.id);
-        }
-        this.attachmentState.attachment = attachment;
-        this.routeState.mode = null;
-        this.routeState.saving = false;
-      });
-    } catch (e) {
+      this.api.saveOperationAttachment(attachment)
+        .subscribe(response => {
+          // if(attachment.id) {
+          //   this.toastr.success('Attachment save.', 'Attachment updated');
+          // } else {
+          //   this.toastr.success('Attachment save.', 'Attachment created');
+          // }
+          const idx = this.operationState.attachments.indexOf(this.operationState.attachments.find(a => !a.id));
+          attachment.id = response.id;
+          this.operationState.attachments[idx] = { ...attachment };
+          this.operationState.attachments = [...this.operationState.attachments];
+          if (this.routeState.route === 'EDIT_ENTITY_ATTACHMENTS') {
+            this.loadEntityAttachments(this.entityState.entity.id);
+          } else {
+            this.loadAttachments(this.operationState.operation.id);
+          }
+          this.attachmentState.attachment = attachment;
+          this.routeState.mode = null;
+          this.routeState.saving = false;
+        });
+    } catch (e) {      
       this.routeState.saving = false;
       console.error(e);
     }
   }
 
-  async saveAttachment(attachment: Attachment, oldAttachment?: Attachment) {
-    if(!attachment.formFile.id) {//file has not been uploaded or has been updated
+  async saveAttachment(attachment: Attachment, oldAttachment?: Attachment) {  
+    attachment.collection = "forms";
+        attachment.opAttachmentPrototypeId = this.operation.attachmentPrototype.id;
+        attachment.operationId = this.operation.id,
+          attachment.opAttachmentVersion = {
+            "customReference": attachment.formId.indexOf('X') == -1 ? `X${attachment.formId}` : attachment.formId,
+            "value": {
+              "name": attachment.formName,
+              "file": {}
+            }
+          },
+        attachment.objectId = this.operation.id;
+        attachment.objectType = "operation";
+    if (!attachment.formFile.id) {//file has not been uploaded or has been updated
       this.routeState.saving = true;
       const originalName = attachment.formFile.name;
       this.api.saveOperationAttachmentFile(attachment.formFile).subscribe(file => {
@@ -149,10 +164,16 @@ export class OperationService {
           name: originalName,
           filepath: file.file
         };
+        attachment.opAttachmentVersion.value.file = attachment.formFile
         this._saveOperationAttachment(attachment);
+        return true;
       })
     } else {
-      this._saveOperationAttachment(attachment);
+      this.api.getOperationAttachmentById(attachment.id).subscribe(res =>{
+        attachment.opAttachmentVersion.value.file = res.opAttachmentVersion.value.file;
+        this._saveOperationAttachment(attachment);
+        return true;
+      });     
     }
   }
 
@@ -162,7 +183,7 @@ export class OperationService {
     this.operationState.attachments = this.operationState.attachments.filter(a => a.id !== id);
     try {
       this.api.deleteOperationAttachment(id).subscribe(response => {
-        if(response.status !== 'ok') {
+        if (response.status !== 'ok') {
           throw new Error('Unable to delete attachment');
         }
         // this.toastr.success('Attachment remove.', 'Attachment removed');
@@ -175,20 +196,20 @@ export class OperationService {
 
   loadAttachments(operationId: number, route?: string) {
     this.routeState.processing = true;
-    if(route) { this.routeState.route = route; }
+    if (route) { this.routeState.route = route; }
     this.operationState.attachments = [];
     this._loadOperation(operationId).subscribe(() => {
       this.api.getOperationAttachments(operationId).subscribe(response => {
         const opas = response.opAttachments;
-        if(opas.length) {
+        if (opas.length) {
           forkJoin(opas.map(a => this.api.getReport(a.id, this.reportingWindow.id)))
-          .subscribe(reports => {
-            this.routeState.processing = false;
-            this.operationState.attachments = reports.map((r, i) => {
-              return buildAttachment(opas[i], r);
-            }).sort((a, b) => (a.id > b.id) ? 1 : -1);
-            this.routeState.processing = false;
-          });
+            .subscribe(reports => {
+              this.routeState.processing = false;
+              this.operationState.attachments = reports.map((r, i) => {
+                return buildAttachment(opas[i], r);
+              }).sort((a, b) => (a.id > b.id) ? 1 : -1);
+              this.routeState.processing = false;
+            });
         } else {
           this.routeState.processing = false;
         }
@@ -200,21 +221,21 @@ export class OperationService {
     this.routeState.processing = true;
     this.entityState.attachments = [];
     this.api.getGoverningEntity(entityId, ['opAttachments'])
-    .subscribe(response => {
-      const opas = response.opAttachments;
-      if(includeReports) {
-        forkJoin(opas.map(a => this.api.getReport(a.id, this.reportingWindow.id)))
-        .subscribe(reports => {
-          this.entityState.attachments = reports.map((r, i) => {
-            return buildAttachment(opas[i], r);
-          });
+      .subscribe(response => {
+        const opas = response.opAttachments;
+        if (includeReports) {
+          forkJoin(opas.map(a => this.api.getReport(a.id, this.reportingWindow.id)))
+            .subscribe(reports => {
+              this.entityState.attachments = reports.map((r, i) => {
+                return buildAttachment(opas[i], r);
+              });
+              this.routeState.processing = false;
+            });
+        } else {
+          this.entityState.attachments = opas.map(opa => buildAttachment(opa));
           this.routeState.processing = false;
-        });
-      } else {
-        this.entityState.attachments = opas.map(opa => buildAttachment(opa));
-        this.routeState.processing = false;
-      }
-    });
+        }
+      });
   }
 
   loadEntities(entityPrototypeId: number, operationId?: number) {
@@ -224,7 +245,7 @@ export class OperationService {
       const opep = response.opEntityPrototypes
         .find(p => p.id == entityPrototypeId);
       const x = buildEntityPrototype(opep);
-      if(!this.entityState.prototype || this.entityState.prototype.id !== x.id) {
+      if (!this.entityState.prototype || this.entityState.prototype.id !== x.id) {
         this.entityState.prototype = x;
       }
       this.operationState.entities = response.opGoverningEntities
@@ -236,19 +257,19 @@ export class OperationService {
 
   loadAttachmentPrototypes(operationId?: number) {
     this._loadOperation(operationId || this.operationState.operation.id)
-    .subscribe(response => {
-      this.operationState.attachmentPrototypes = response.opAttachmentPrototypes
-        .map(ap => buildAttachmentPrototype(ap));
-    });
+      .subscribe(response => {
+        this.operationState.attachmentPrototypes = response.opAttachmentPrototypes
+          .map(ap => buildAttachmentPrototype(ap));
+      });
   }
 
 
   loadEntityPrototypes(operationId?: number) {
     this._loadOperation(operationId || this.operationState.operation.id)
-    .subscribe(response => {
-      this.operationState.entityPrototypes = response.opEntityPrototypes
-        .map(ep => buildEntityPrototype(ep));
-    });
+      .subscribe(response => {
+        this.operationState.entityPrototypes = response.opEntityPrototypes
+          .map(ep => buildEntityPrototype(ep));
+      });
   }
 
   loadEntityPrototype(operationId: number, id: number) {
@@ -275,12 +296,12 @@ export class OperationService {
   addEntity(entity, oldEntity, operationId?: number) {
     const token = new Date().valueOf();
     const refCode = this.entityState.prototype.refCode;
-    if(updatedFile(entity, oldEntity, 'activationLetter')) {
+    if (updatedFile(entity, oldEntity, 'activationLetter')) {
       let uid = `${refCode}A${token}${entity.activationLetter.name}`;
-      this.api.saveFile(entity.activationLetter, uid).subscribe(activationFile=> {
-        if(entity.deactivationLetter && entity.deactivationLetter.name && !entity.deactivationLetter.id) {
+      this.api.saveFile(entity.activationLetter, uid).subscribe(activationFile => {
+        if (entity.deactivationLetter && entity.deactivationLetter.name && !entity.deactivationLetter.id) {
           uid = `${refCode}D${token}${entity.deactivationLetter.name}`;
-          this.api.saveFile(entity.deactivationLetter, uid).subscribe(deactivationFile=> {
+          this.api.saveFile(entity.deactivationLetter, uid).subscribe(deactivationFile => {
             this._saveEntity(entity, activationFile, deactivationFile);
           });
         } else {
@@ -288,9 +309,9 @@ export class OperationService {
         }
       });
     } else {
-      if(updatedFile(entity, oldEntity, 'deactivationLetter')) {
+      if (updatedFile(entity, oldEntity, 'deactivationLetter')) {
         const uid = `${refCode}${token}${entity.deactivationLetter.name}`;
-        this.api.saveFile(entity.deactivationLetter, uid).subscribe(deactivationFile=> {
+        this.api.saveFile(entity.deactivationLetter, uid).subscribe(deactivationFile => {
           this._saveEntity(entity, entity.activationLetter, deactivationFile);
         });
       } else {
@@ -335,7 +356,7 @@ export class OperationService {
     const p = new Promise(resolve => {
       this.api.getReportingWindows(operationId).subscribe(rws => {
         const reportingWindow = rws.filter(rw => rw.operationId == operationId);
-        if(reportingWindow.length > 0) {
+        if (reportingWindow.length > 0) {
           this.reportingWindow = reportingWindow[0];
           resolve();
         } else {

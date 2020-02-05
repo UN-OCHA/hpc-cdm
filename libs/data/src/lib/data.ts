@@ -26,6 +26,12 @@ export interface Attachment {
   formName: any;
   formFile: any;
   comments?: any;
+  collection:any;
+  opAttachmentPrototypeId:any;
+  operationId:any;
+  opAttachmentVersion:any;
+  objectId:any;
+  objectType:any;
 }
 
 export interface AttachmentPrototype {

@@ -23,7 +23,7 @@
 
       <div fxLayout="row">
         <div fxLayout="row" fxFlex="grow" *ngIf="!operation.saving" class="form-actions">
-          <a [disabled]="form.invalid || form.pristine" color="warn"
+          <a [disabled]="form.invalid" color="warn"
             mat-raised-button (click)="save()">{{ 'Save' }}</a>
           <a *ngIf="entry && entry.id" class="btn btn-info"
             mat-raised-button (click)="remove()">{{ 'Remove Form' }}</a>
