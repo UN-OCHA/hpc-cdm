@@ -13,9 +13,12 @@ if [ "$SOURCE_BRANCH" == "stage" ]; then
 elif [ "$SOURCE_BRANCH" == "dev" ]; then
     TARGET=development
     ENVIRONMENT=devServer
+elif [ "$SOURCE_BRANCH" == "cdm-dev" ]; then
+    TARGET=development
+    ENVIRONMENT=devServer
 elif [ "$SOURCE_BRANCH" == "demo" ]; then
     TARGET=production
-    ENVIRONMENT=demo    
+    ENVIRONMENT=demo
 fi
 
 docker build \
