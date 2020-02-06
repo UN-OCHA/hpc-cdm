@@ -21,6 +21,7 @@ export class OperationFormComponent implements OnInit {
   blueprints = [];
   editMode = false;
   Locations = [];
+  submitted;
 
   constructor(
     private router: Router,
@@ -130,11 +131,10 @@ export class OperationFormComponent implements OnInit {
         }
       })
     }
-
-
-//console.log(operation);
-
   }
+
+  get f() { return this.form.controls; }
+
   getLocations() : any[] {
     let locations = [];
      this.location.forEach(element => {

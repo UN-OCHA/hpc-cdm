@@ -9,8 +9,11 @@ import { environment, AuthService } from '@hpc/core';
 export class NavComponent implements OnInit {
   @Input() name: string;
   @Input() version: string;
+  user;
 
-  constructor (private auth: AuthService) {}
+  constructor (private auth: AuthService) {
+    this.user = this.auth.user;
+  }
 
   ngOnInit() {}
 }

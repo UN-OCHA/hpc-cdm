@@ -1,5 +1,5 @@
 <div class="operation-entities-header">
-  <div *ngFor="let entity of operation.entities$ | async;" class="form-check-inline">
+  <div *ngFor="let entity of entities$ | async;" class="form-check-inline">
     <entity-box [entity]="entity"></entity-box>
   </div>
 </div>

@@ -8,9 +8,12 @@ import { DataQueueService } from '../../services/data-queue.service';
 })
 export class QueueTableComponent implements OnInit {
   selectedAll: boolean = false;
+  entries$;
 
   constructor(
-    private queue: DataQueueService) {}
+    private queue: DataQueueService) {
+    this.entries$ = this.queue.entries$;
+  }
 
   ngOnInit() {
     this.queue.selectionState$.subscribe(value => {

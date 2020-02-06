@@ -281,6 +281,10 @@ export class ApiService {
         return res;
       }), catchError((error: any) => this.processError(error)));
   }
+  public getOperationAttachmentById(id: any,): Observable<any> {
+    return this.getUrlWrapper(`v2/operation/attachment/${id}`, {});
+  }
+
   public deleteOperationEntity(id: number): Observable<any> {
 
     const params = this.setParams();
@@ -469,6 +473,11 @@ export class ApiService {
       map((res: any) => res.data))
   }
 
+
+  public autocompletePlan(search: string): Observable<any> {
+    return this.autocomplete('plan', search);
+  }
+
   public getLocation(locationId, maxLevel?): Observable<any> {
     const params = {maxLevel: null};
     if (maxLevel) {
@@ -605,6 +614,11 @@ export class ApiService {
     return defer(() => new Promise(resolve => {
       resolve([1,2,3,4,5]);
     }));
+  }
+
+  public getPlan(id): Observable<any> {
+    let url = `v2/plan/ ${id}?scopes=planVersion`;    
+    return this.getUrlWrapper(url, { cache: true });
   }
 
   public setParams(options?: any): HttpParams {

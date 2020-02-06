@@ -5,7 +5,7 @@
     </div>
 
     <div class="app-links">
-      <mat-divider *ngIf="auth.user" [vertical]="true"></mat-divider>
+      <mat-divider *ngIf="user" [vertical]="true"></mat-divider>
       <ng-content></ng-content>
       <div class="app-status-links">
         <mat-divider [vertical]="true"></mat-divider>

@@ -12,7 +12,7 @@ import { OperationService } from '@cdm/core';
 export class ParticipantListComponent implements OnInit {
   participants = [];
   tableColumns = [];
-  operationId: number;
+  id: number;
 
   constructor(
     private modeService: ModeService,
@@ -23,7 +23,7 @@ export class ParticipantListComponent implements OnInit {
   ngOnInit() {
     this.modeService.mode = 'list';
     this.activatedRoute.params.subscribe(params => {
-      this.operationId = params.operationId;
+      this.id = params.operationId;
     });
   }
 }

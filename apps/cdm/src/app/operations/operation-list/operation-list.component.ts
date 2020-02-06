@@ -27,12 +27,15 @@ export class OperationListComponent implements OnInit {
     // {columnDef: 'type', header: 'Type', cell: (row) => `${row.type}`}
   ];
   starred = [];
+  operations;
 
 
   constructor(
     private auth: AuthService,
     private app: AppService,
-    private service: OperationService) {}
+    private service: OperationService) {
+    this.operations = this.app.operations;
+  }
 
   ngOnInit() {
     this.service.mode = 'list';

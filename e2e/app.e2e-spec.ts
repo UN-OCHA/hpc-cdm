@@ -2,9 +2,13 @@ import { BlueprintPAge } from './blueprint.po';
 import { PrototypePage } from './prototypes.po';
 import { SessionPage } from './session.po';
 import { browser, ExpectedConditions as EC } from 'protractor';
+import { ReportingWindowPage } from './reportingwindow.po';
+import { OperationAttachmentPage } from './operationattachment.po';
 
 describe('CDM Project Start', () => {
   let blueprint: BlueprintPAge;
+  let reportingWindow: ReportingWindowPage;
+  let operationAttachment: OperationAttachmentPage;
   let prototype: PrototypePage;
   let session: SessionPage;
   const cdmData = {
@@ -17,6 +21,19 @@ describe('CDM Project Start', () => {
       buleprintType: 2,
       name: 'Test blueprint edit',
       description: 'e2e test blueprint edit',
+    },
+    reportingWindowInfo: {
+      name: "test report2",
+      description: "test report e2e",
+    },
+    reportingWindowEditInfo: {
+      name: "test report modified",
+      description: "test report e2e modified",
+    },
+    operationAttachmentInfo: {
+      formId: "7",
+      formName: "Test Form 7",
+      formFile:"sample.xlsx"
     },
     OperationAttachmentPrototypeInfo: {
       refCode: 'IN',
@@ -43,6 +60,8 @@ describe('CDM Project Start', () => {
 
   beforeAll(() => {
     blueprint = new BlueprintPAge();
+    reportingWindow = new ReportingWindowPage();
+    operationAttachment = new OperationAttachmentPage();
     prototype = new PrototypePage();
     session = new SessionPage();
     session.navigateTo();
@@ -115,6 +134,33 @@ describe('CDM Project Start', () => {
       browser.driver.sleep(5000);
     });
 
+  });
+  describe('Reporting Window Module Start', () => {
+    it('Creating reporting window', () => {
+        reportingWindow.getCreateReportingWindowButton();
+        reportingWindow.fillInReportingWindowSection(cdmData.reportingWindowInfo).then(async result => {
+            browser.wait(EC.urlContains('rwindows'), 5000, 'Should redirect to reporting window list');
+            browser.driver.sleep(15000);
+        });
+    });
+
+    it('Edit reporting window', () => {
+      reportingWindow.getEditReportingWindowButton();
+      reportingWindow.getEditReportingWindowLink();
+      reportingWindow.fillInReportingWindowEditSection(cdmData.reportingWindowEditInfo).then(async result => {
+        browser.wait(EC.urlContains('rwindows'), 5000, 'Should redirect to reporting window list');
+          browser.driver.sleep(5000);
+      });
+    });
+  });
+  describe('Operation Attachment Module Start', () => {
+    it('Creating operation attachment', () => {
+      operationAttachment.getAddOperationAttachmentPage();
+      operationAttachment.fillOperationAttachmentSection(cdmData.operationAttachmentInfo).then(async result => {
+        browser.wait(EC.urlContains('attachments'), 5000, 'Should redirect to operation Attachment list');
+        browser.driver.sleep(200);
+      });
+    });
   });
   afterAll(() => {
     session.logUserOut();

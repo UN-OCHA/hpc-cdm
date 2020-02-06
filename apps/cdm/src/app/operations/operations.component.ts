@@ -20,11 +20,14 @@ export class OperationsComponent implements OnInit {
   title: string;
   enteredButton = false;
   isMatMenuOpen = false;
+  user;
 
   constructor(
     private authService: AuthService,
     private operationService: OperationService,
-    private ren: Renderer2){}
+    private ren: Renderer2){
+    this.user = this.authService.user;
+  }
 
   ngOnInit() {
     this.operationService.mode$.subscribe(mode => {
@@ -38,7 +41,7 @@ export class OperationsComponent implements OnInit {
   //   this.clickHoverMenuTrigger.closeMenu();
   // }
   menuEnter() {
-    this.isMatMenuOpen = true; 
+    this.isMatMenuOpen = true;
   }
 
   menuLeave(trigger, button) {
@@ -53,7 +56,7 @@ export class OperationsComponent implements OnInit {
       }
     }, 80)
   }
-  
+
   buttonEnter(trigger) {
     console.log('buttonEnter');
     setTimeout(() => {
@@ -69,7 +72,7 @@ export class OperationsComponent implements OnInit {
     })
   }
 
-  buttonLeave(trigger, button) {    
+  buttonLeave(trigger, button) {
     setTimeout(() => {
       if (this.enteredButton && !this.isMatMenuOpen) {
         trigger.closeMenu();

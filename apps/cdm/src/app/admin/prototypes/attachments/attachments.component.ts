@@ -16,18 +16,21 @@ const TITLES = {
 export class AttachmentsComponent implements OnInit {
   title: string;
   op: Operation;
+  id;
 
   constructor(
     private modeService: ModeService,
-    private operationService: OperationService){}
+    private operationService: OperationService){
+    this.id = this.operationService.id;
+  }
 
   ngOnInit() {
     this.modeService.mode$.subscribe(mode => {
-      console.log(mode)
       this.title = TITLES[mode];
     });
     this.operationService.operation$.subscribe(operation => {
       this.op = operation;
+      this.id = operation.id;
     })
   }
 }

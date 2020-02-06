@@ -15,11 +15,14 @@ const TITLES = {
   styleUrls: ['./plans.component.scss']
 })
 export class PlansComponent implements OnInit {
+  id;
   title: string;
 
   constructor(
     private modeService: ModeService,
-    private operationService: OperationService){}
+    private operationService: OperationService){
+    this.id = operationService.id;
+  }
 
   ngOnInit() {
     this.modeService.mode$.subscribe(mode => {

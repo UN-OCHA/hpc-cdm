@@ -13,11 +13,14 @@ const TITLES = {
   templateUrl: './participants.component.html'
 })
 export class ParticipantsComponent implements OnInit {
+  id;
   title: string;
 
   constructor(
     private modeService: ModeService,
-    private operationService: OperationService){}
+    private operationService: OperationService){
+    this.id = this.operationService.id;
+  }
 
   ngOnInit() {
     this.modeService.mode$.subscribe(mode => {

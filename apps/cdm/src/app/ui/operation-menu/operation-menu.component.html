@@ -1,6 +1,6 @@
-<div *ngIf="op && auth.user" class="menu">
+<div *ngIf="op && user" class="menu">
 
-  <div *ngIf="auth.user.isAdmin" class="section">
+  <div *ngIf="user.isAdmin" class="section">
     <!-- <label><mat-icon>edit</mat-icon>Edit</label>
     <a mat-button [routerLink]="['/operations', op.id]">Operation</a>
     <span *ngFor="let ep of op.entityPrototypes">
@@ -15,6 +15,7 @@
       <div style="max-height: 250px;">
       <span (mouseenter)="menuEnter()" (mouseleave)="menuLeave(clickHoverMenuTrigger1, button)">
         <a mat-menu-item [routerLink]="['/operations', op.id]" routerLinkActive="router-link-active">Operation Details</a>
+        <a mat-menu-item [routerLink]="['/operations', op.id,'attachments']" routerLinkActive="router-link-active">Operation Attachments</a>
         <span *ngFor="let ep of op.entityPrototypes">
           <a *ngIf="ep.name && ep.name.en.plural" mat-menu-item [routerLink]="['/operations', op.id, 'entities', ep.id]">{{ ep.name.en.plural }}</a>
           <a *ngIf="ep.name && ep.name.en.singular" mat-menu-item [routerLink]="['/operations', op.id, 'entities', ep.id]">{{ ep.name.en.singular }} Details</a>
@@ -40,7 +41,7 @@
     </mat-menu>
   </div>
 
-  <div *ngIf="auth.user.isAdmin" class="section">
+  <div *ngIf="user.isAdmin" class="section">
     <!-- <label><mat-icon>build</mat-icon>Configure123</label>
     <a mat-button [routerLink]="['/operations', op.id, 'aprototypes']">Attachment Prototypes</a>
     <a mat-button [routerLink]="['/operations', op.id, 'eprototypes']">Entity Prototypes</a>
@@ -58,7 +59,7 @@
     </mat-menu>
   </div>
 
-  <div *ngIf="auth.user.isAdmin" class="section">
+  <div *ngIf="user.isAdmin" class="section">
     <!-- <label>
       <mat-icon>dynamic_feed</mat-icon>States
     </label>
@@ -74,7 +75,7 @@
       </span>
     </mat-menu>
   </div>
-  <div *ngIf="auth.user.isAdmin" class="section">
+  <div *ngIf="user.isAdmin" class="section">
     <!-- <label><mat-icon>build</mat-icon>Configure123</label>
     <a mat-button [routerLink]="['/operations', op.id, 'aprototypes']">Attachment Prototypes</a>
     <a mat-button [routerLink]="['/operations', op.id, 'eprototypes']">Entity Prototypes</a>

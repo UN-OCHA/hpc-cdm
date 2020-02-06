@@ -56,6 +56,5 @@ export class OperationStepperComponent implements OnInit {
     if(Number.isInteger(event)){
       this.selectedStepIndex= event;
     }
-
   }
 }

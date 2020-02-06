@@ -6,12 +6,9 @@ import { AuthenticatedGuard } from '@hpc/core';
 
 import { DashboardComponent } from './dashboard.component';
 
-const route = (path, component) => {
-  return {path, component, canActivate: [AuthenticatedGuard]}
-}
 
 const routes: Routes = [
-  route('', DashboardComponent),
+  {path: '', component: DashboardComponent, canActivate: [AuthenticatedGuard]}
 ];
 
 @NgModule({

@@ -7,8 +7,11 @@ import { OperationService } from '@cdm/core';
   styleUrls: ['./entity-attachments-header.component.scss']
 })
 export class EntityAttachmentsHeaderComponent implements OnInit {
-
-  constructor(private operation: OperationService) {}
+  entities$;
+  
+  constructor(private operation: OperationService) {
+    this.entities$ = this.operation.entities$;
+  }
 
   ngOnInit() {
   }
