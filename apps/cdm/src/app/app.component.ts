@@ -12,7 +12,6 @@ const { version } = require('package.json')
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  // hello$ = this.http.get<Message>('/api/hello');
   name: string;
   ver: string;
   user;
@@ -21,13 +20,15 @@ export class AppComponent implements OnInit {
     private auth: AuthService,
     private http: HttpClient,
     private router: Router) {
-    this.user = this.auth.user;
     this.auth.tryLogin();
   }
 
   ngOnInit() {
     this.name = environment.title;
     this.ver = version;
+    this.auth.user$.subscribe(user => {
+      this.user = user;
+    })
   }
 }
 
