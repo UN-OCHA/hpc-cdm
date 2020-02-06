@@ -26,8 +26,6 @@ export class OperationMenuComponent implements OnInit {
   ngOnInit() {
     this.operation.operation$.subscribe(op => {
       this.op = op;
-      console.log(this.op);
-
     });
     this.auth.user$.subscribe(user => {
       this.user = user;

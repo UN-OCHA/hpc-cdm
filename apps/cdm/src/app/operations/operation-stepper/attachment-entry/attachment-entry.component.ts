@@ -14,6 +14,7 @@ export class AttachmentEntryComponent implements OnInit {
   @Input() entry: Attachment;
 
   title: string;
+  hide: boolean;
   expanded = false;
   submitted = false;
 
@@ -47,7 +48,7 @@ export class AttachmentEntryComponent implements OnInit {
   }
 
   save() {
-   
+
      this.operation.saveAttachment(this.form.value, this.entry).then(res =>{
       if (this.form.value.id) {
         this.toastr.success('Operation attachment updated');
@@ -57,7 +58,6 @@ export class AttachmentEntryComponent implements OnInit {
      }).catch(err =>{
        this.toastr.error("Error Occured.")
      });
-    
+
   }
 }
-

@@ -6,7 +6,7 @@
   <div fxLayout="row" fxLayoutAlign="space-between center">
     <mat-form-field appearance="outline" fxFlex="grow">
       <mat-label>{{label}}</mat-label>
-      <input matInput [disabled]="readOnly"
+      <input matInput [disabled]="disabled"
         [ngClass]="required && control.valid ? 'ng-valid' : required ? 'ng-invalid' : ''"
         value="{{value.name || 'No file uploaded'}}"
         readonly/>

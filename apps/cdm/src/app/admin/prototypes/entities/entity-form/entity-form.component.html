@@ -22,5 +22,5 @@
     <a mat-raised-button [routerLink]="['/operations', operationId, 'eprototypes']">Close</a>
     <button mat-raised-button color="warn" type="submit" [disabled]="!validEntry()">Save</button>
   </div>
-  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px', fullScreenBackdrop: true, primaryColour: '#ed7325', tertiaryColour: 'rgb(237, 37, 92)' }" [template]="customLoadingTemplate"></ngx-loading>
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px', fullScreenBackdrop: true, primaryColour: '#ed7325', tertiaryColour: 'rgb(237, 37, 92)' }"></ngx-loading>
 </form>

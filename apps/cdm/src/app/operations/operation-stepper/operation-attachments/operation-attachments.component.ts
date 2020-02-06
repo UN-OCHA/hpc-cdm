@@ -9,9 +9,17 @@ import { OperationService } from '@cdm/core';
 })
 export class OperationAttachmentsComponent implements AfterViewInit, OnInit {
   loading = false;
+  attachments$;
+  newAttachment;
+  mode;
+
   constructor(
     private operation: OperationService,
-    private activatedRoute: ActivatedRoute) {}
+    private activatedRoute: ActivatedRoute) {
+    this.attachments$ = operation.attachments$;
+    this.newAttachment = operation.newAttachment;
+    this.mode = operation.mode;
+  }
 
   ngOnInit() {
     this.loading = true;

@@ -26,14 +26,14 @@
             <label for="file" translate>Data</label>
             <input class="form-control" type="text" id="file" disabled
               formControlName="filename"/>
-            <button *ngIf="!(operation.report && operation.report.finalized) && !submissions.tempSubmission && !submissions.submission"
+            <button *ngIf="!(report && report.finalized) && !tempSubmission"
               (click)="openForm(templateCreate)" mat-raised-button>
                 {{ 'Open Form' }}
             </button>
-            <button *ngIf="!(operation.report && operation.report.finalized) && submissions.tempSubmission" (click)="openForm(templateEdit)" mat-raised-button>
+            <button *ngIf="!(report && report.finalized) && tempSubmission" (click)="openForm(templateEdit)" mat-raised-button>
                 {{ 'Edit Form' }}
             </button>
-            <button *ngIf="operation.report && operation.report.finalized" (click)="openForm(templateEdit)" mat-raised-button>
+            <button *ngIf="report && report.finalized" (click)="openForm(templateEdit)" mat-raised-button>
                 {{ 'View Form' }}
             </button>
           </div>
@@ -41,28 +41,28 @@
         <div fxLayout="row">
           <mat-form-field appearance="outline">
             <mat-label>Comments</mat-label>
-            <textarea matInput disabled *ngIf="operation.report && operation.report.finalized" formControlName="comments"
+            <textarea matInput disabled *ngIf="report && report.finalized" formControlName="comments"
               type="text" id="comments" name="comments"></textarea>
-            <textarea matInput *ngIf="!(operation.report && operation.report.finalized)" class="form-control"  formControlName="comments"
+            <textarea matInput *ngIf="!(report && report.finalized)" class="form-control"  formControlName="comments"
               type="text" id="comments" name="comments"></textarea>
           </mat-form-field>
         </div>
         <div fxLayout="column">
-          <div *ngIf="!(operation.report && operation.report.finalized)">
+          <div *ngIf="!(report && report.finalized)">
             Click "Save" to save your changes. Until finalised, you can return to the form at any time to make further edits. Click "Save and Finalise" to submit your data. Once you click finalise, you will no longer be able to make further changes.
           </div>
-          <div *ngIf="operation.report && operation.report.finalized">
+          <div *ngIf="report && report.finalized">
             The form has been finalised. No further changes are possible.
           </div>
         </div>
     </form>
 
-  <div *ngIf="!(operation.report && operation.report.finalized)" class="form-actions">
-    <button [disabled]="!submissions.tempSubmission" mat-raised-button
+  <div *ngIf="!(report && report.finalized)" class="form-actions">
+    <button [disabled]="!tempSubmission" mat-raised-button
         (click)="saveAndFinalize(false)">
       {{ 'Save' }}
     </button>
-    <button [disabled]="!submissions.tempSubmission" mat-raised-button
+    <button [disabled]="!tempSubmission" mat-raised-button
         (click)="saveAndFinalize(true)">
       {{ 'Save and Finalise' }}
     </button>

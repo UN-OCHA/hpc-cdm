@@ -11,7 +11,8 @@ import { DataQueueService } from '../services/data-queue.service';
 })
 export class DataQueueComponent implements OnInit {
   reportingWindow: ReportingWindow;
-  
+  loading;
+
   constructor(
     private api: ApiService,
     private queue: DataQueueService,

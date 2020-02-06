@@ -12,7 +12,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let v of queueEntry.versions$ | async">
+      <tr *ngFor="let v of versions$ | async">
         <td>{{v.version}}</td>
         <td>{{v.name}}</td>
         <td>{{v.lastEdit}}</td>

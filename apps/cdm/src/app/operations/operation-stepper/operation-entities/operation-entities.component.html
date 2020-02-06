@@ -1,13 +1,13 @@
-<div class="panel" *ngIf="operation.selectedEntityPrototype">
+<div class="panel" *ngIf="selectedEntityPrototype">
   <div class="panel-header">
     <operation-entities-header></operation-entities-header>
   </div>
   <div>
-    <div *ngFor="let governingEntity of operation.entities$ | async; let idx = index;" class="form-check form-check-inline">
+    <div *ngFor="let governingEntity of entities$ | async; let idx = index;" class="form-check form-check-inline">
       <div *ngIf="governingEntity.selected">
         <input class="form-check-input"
           type="radio"
-          [(ngModel)]="operation.viewingGoverningEntityIdx"
+          [(ngModel)]="viewingGoverningEntityIdx"
           [value]="idx"
           (change)="selectNewGoverningEntity(operation, idx)"
           name="operationClusterVisible"
@@ -29,13 +29,13 @@
   <div class="panel-body">
     <form>
       <div class="panel-entities">
-        <entity-entry *ngIf="operation.selectedEntity"></entity-entry>
-        <entity-entry *ngIf="!operation.selectedEntity && operation.mode === 'ADD_ENTITY'"></entity-entry>
+        <entity-entry *ngIf="selectedEntity"></entity-entry>
+        <entity-entry *ngIf="!selectedEntity && mode === 'ADD_ENTITY'"></entity-entry>
       </div>
       <div class="panel-actions">
         <button [disabled]="!isAddButtonEnabled()"
             mat-raised-button (click)="addEntity()">
-          {{ 'Add ' + operation.selectedEntityPrototype.value.name.en.singular }}
+          {{ 'Add ' + selectedEntityPrototype.value.name.en.singular }}
         </button>
       </div>
     </form>

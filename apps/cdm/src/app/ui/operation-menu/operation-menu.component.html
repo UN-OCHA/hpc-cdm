@@ -1,6 +1,6 @@
-<div *ngIf="op && auth.user" class="menu">
+<div *ngIf="op && user" class="menu">
 
-  <div *ngIf="auth.user.isAdmin" class="section">
+  <div *ngIf="user.isAdmin" class="section">
     <!-- <label><mat-icon>edit</mat-icon>Edit</label>
     <a mat-button [routerLink]="['/operations', op.id]">Operation</a>
     <span *ngFor="let ep of op.entityPrototypes">
@@ -41,7 +41,7 @@
     </mat-menu>
   </div>
 
-  <div *ngIf="auth.user.isAdmin" class="section">
+  <div *ngIf="user.isAdmin" class="section">
     <!-- <label><mat-icon>build</mat-icon>Configure123</label>
     <a mat-button [routerLink]="['/operations', op.id, 'aprototypes']">Attachment Prototypes</a>
     <a mat-button [routerLink]="['/operations', op.id, 'eprototypes']">Entity Prototypes</a>
@@ -59,7 +59,7 @@
     </mat-menu>
   </div>
 
-  <div *ngIf="auth.user.isAdmin" class="section">
+  <div *ngIf="user.isAdmin" class="section">
     <!-- <label>
       <mat-icon>dynamic_feed</mat-icon>States
     </label>
@@ -75,7 +75,7 @@
       </span>
     </mat-menu>
   </div>
-  <div *ngIf="auth.user.isAdmin" class="section">
+  <div *ngIf="user.isAdmin" class="section">
     <!-- <label><mat-icon>build</mat-icon>Configure123</label>
     <a mat-button [routerLink]="['/operations', op.id, 'aprototypes']">Attachment Prototypes</a>
     <a mat-button [routerLink]="['/operations', op.id, 'eprototypes']">Entity Prototypes</a>

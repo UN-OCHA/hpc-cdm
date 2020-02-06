@@ -10,8 +10,14 @@ import { OperationService } from '@cdm/core';
   styleUrls: ['./operation-entities-header.component.scss']
 })
 export class OperationEntitiesHeaderComponent implements OnInit {
+  entities;
+  entities$;
+  list;
 
-  constructor(private operation: OperationService){}
+  constructor(private operation: OperationService){
+    this.entities = operation.entities;
+    this.entities$ = operation.entities$;
+  }
 
   ngOnInit() {
   }

@@ -13,13 +13,15 @@ const { version } = require('package.json')
 })
 export class AppComponent implements OnInit {
   // hello$ = this.http.get<Message>('/api/hello');
-  name: string ;
+  name: string;
   ver: string;
+  user;
 
   constructor(
     private auth: AuthService,
     private http: HttpClient,
     private router: Router) {
+    this.user = this.auth.user;
     this.auth.tryLogin();
   }
 
