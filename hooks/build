@@ -4,16 +4,13 @@ set -e
 
 echo "Starting the build..."
 
-TARGET=production
-ENVIRONMENT=prod
+TARGET=development
+ENVIRONMENT=devServer
 
 if [ "$SOURCE_BRANCH" == "stage" ]; then
     TARGET=production
     ENVIRONMENT=stage
 elif [ "$SOURCE_BRANCH" == "dev" ]; then
-    TARGET=development
-    ENVIRONMENT=devServer
-elif [ "$SOURCE_BRANCH" == "cdm-dev" ]; then
     TARGET=development
     ENVIRONMENT=devServer
 elif [ "$SOURCE_BRANCH" == "demo" ]; then
