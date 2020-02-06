@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { JwksValidationHandler } from 'angular-oauth2-oidc';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { Router, ActivatedRouteSnapshot } from '@angular/router';
 import { HttpClient, HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, pipe, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, pipe, throwError, ReplaySubject } from 'rxjs';
 import { filter, map, retry, take, catchError } from 'rxjs/operators';
 import { User, buildUser } from '@hpc/data';
 import { authConfig } from './auth.config';
@@ -19,8 +20,10 @@ const authHeaders = (token: string): HttpHeaders => {
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
+  public verifiedUser;
   readonly _user = new BehaviorSubject<User>(null);
   readonly user$ = this._user.asObservable();
+  private _updatedVerifiedUser = new ReplaySubject<any>();
 
   constructor(
     private api: ApiService,
@@ -60,7 +63,7 @@ export class AuthService {
   }
 
   // isAuthenticated(route: ActivatedRouteSnapshot): Observable<boolean> {
-  isAuthenticated(): boolean {
+  isLogin(): boolean {
     const url = `${environment.authBaseUrl}account.json`;
     const token = this.oauth.getAccessToken();
     if(token) {
@@ -82,6 +85,35 @@ export class AuthService {
       this.user = null;
       return false;
     }
+  }
+  public isAuthenticated(route: ActivatedRouteSnapshot): Observable<boolean> {
+    const url = environment.authBaseUrl + 'account.json';
+    let headers = new HttpHeaders();
+
+    this.api.processStart(url, {}, '');
+
+    headers = headers.append('Authorization', 'Bearer ' + this.oauth.getAccessToken());
+    headers = headers.append('Accept', 'application/json');
+
+    return this.http.get(url, {headers}).pipe(
+      map((res: HttpResponse<any>) => this.api.processSuccess(url, res)),
+      map(res => {
+        if (res.email) {
+          if (!(route.routeConfig.path === 'user/profile')) {
+            this._verifyUserProfile(res.email);
+          }
+          return true;
+        } else {
+          this.verifiedUser = false;
+          this._updatedVerifiedUser.next(this.verifiedUser);
+          return false;
+        }
+      }),
+      catchError(() => {
+        this.verifiedUser = false;
+        this._updatedVerifiedUser.next(this.verifiedUser);
+        return of(false);
+      }));
   }
 
   _handleUser(response: any): boolean {

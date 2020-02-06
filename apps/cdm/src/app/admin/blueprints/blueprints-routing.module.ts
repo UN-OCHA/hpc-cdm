@@ -15,7 +15,9 @@ const routes: Routes = [
       { path: 'new', component: BlueprintFormComponent, canActivate: [AdminGuard] },
       { path: ':copy/:id', component: BlueprintFormComponent, canActivate: [AdminGuard] },
       { path: ':id', component: BlueprintFormComponent, canActivate: [AdminGuard] }
-    ]}
+    ],
+    data: { roles: ['hpcadmin'], }
+  }
 ];
 
 @NgModule({
