@@ -4,7 +4,7 @@ set -e
 
 echo "Starting the build..."
 
-TARGET=development
+TARGET=production
 ENVIRONMENT=devServer
 
 if [ "$SOURCE_BRANCH" == "stage" ]; then
