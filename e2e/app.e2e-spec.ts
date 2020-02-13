@@ -160,7 +160,7 @@ describe('CDM Project Start', () => {
         browser.wait(EC.urlContains('attachments'), 5000, 'Should redirect to operation Attachment list');
         browser.driver.sleep(200);
       });
-    });   
+    });
   });
   afterAll(() => {
     session.logUserOut();
