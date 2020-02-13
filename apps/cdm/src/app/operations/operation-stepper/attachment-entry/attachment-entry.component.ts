@@ -55,6 +55,7 @@ export class AttachmentEntryComponent implements OnInit {
       } else {
         this.toastr.success('Operation attachment created');
       }
+      this.form.reset();
      }).catch(err =>{
        this.toastr.error("Error Occured.")
      });

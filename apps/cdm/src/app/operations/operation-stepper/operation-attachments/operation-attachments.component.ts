@@ -42,6 +42,6 @@ export class OperationAttachmentsComponent implements AfterViewInit, OnInit {
   }
 
   addForm() {
-    this.operation.mode = 'ADD_OPERATION_ATTACHMENT';
+    this.mode = 'ADD_OPERATION_ATTACHMENT';
   }
 }

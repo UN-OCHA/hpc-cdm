@@ -1,6 +1,6 @@
 <form class="edit" (ngSubmit)="onSubmit()" [formGroup]="form" fxLayout="column" autocomplete="off">
   <mat-radio-group formControlName="contextType" >
-    <mat-radio-button id="contextType" *ngFor="let option of contextTypeOptions" (change)="contextTypeChange($event)"
+    <mat-radio-button *ngFor="let option of contextTypeOptions" (change)="contextTypeChange($event)"
                        [checked]="option.checked" value="{{option.value}}" >{{option.label}}
              </mat-radio-button>
   </mat-radio-group>

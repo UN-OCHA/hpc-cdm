@@ -161,9 +161,12 @@ export class ReportingWindowFormComponent implements OnInit {
       let reportingWindow = this.form.value;
       if (this.form.value.contextType === "3") {
         reportingWindow.operationId = this.selectedValues.join(',');
+        reportingWindow.planId = null;
       } else  if(this.form.value.contextType === "2") {
         reportingWindow.planId = this.selectedValues.join(',');
+        reportingWindow.operationId = null;
       }
+      reportingWindow.status = reportingWindow.id ? reportingWindow.status : 'notYetOpen';
       let message = reportingWindow.id ? "Reporting window updated" : "Reporting window created"
       this.api.saveReportingWindow(reportingWindow).subscribe(res => {
         this.toastr.success(message);
