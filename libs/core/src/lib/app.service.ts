@@ -114,7 +114,9 @@ export class AppService {
   loadOperations(): void {
     const options = { scopes: 'entityPrototypes,operationVersion' };
     this.api.getOperations(options).subscribe(operations => {
-      this.operations = operations.map(o => buildOperation(o));
+      this.operations = operations
+        .filter(o => o.operationVersion)
+        .map(o => buildOperation(o));
     });
   }
 
