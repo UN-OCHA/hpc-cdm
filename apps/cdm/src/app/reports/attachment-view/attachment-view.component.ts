@@ -25,6 +25,8 @@ export class AttachmentViewComponent implements OnInit {
   formId = null;
   submissionId = null;
   editable = true;
+  report: any;
+  tempSubmission;
 
   constructor(
     private fb: FormBuilder,
@@ -40,6 +42,8 @@ export class AttachmentViewComponent implements OnInit {
       reportTo: [''],
       comments: ['']
     });
+    this.report = this.operation.report;
+    this.tempSubmission = this.submissions.tempSubmission;
   }
 
   ngOnInit() {

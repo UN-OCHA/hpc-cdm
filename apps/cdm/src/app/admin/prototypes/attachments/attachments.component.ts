@@ -7,6 +7,7 @@ import { Operation } from '@hpc/data';
   templateUrl: './attachments.component.html'
 })
 export class AttachmentsComponent implements OnInit {
+<<<<<<< HEAD
   mode;
   operation;
   titles = {
@@ -18,6 +19,16 @@ export class AttachmentsComponent implements OnInit {
   constructor(
     private appService: AppService,
     private modeService: ModeService) {
+=======
+  title: string;
+  op: Operation;
+  id;
+
+  constructor(
+    private modeService: ModeService,
+    private operationService: OperationService){
+    this.id = this.operationService.id;
+>>>>>>> cdm-dev
   }
 
   ngOnInit() {
@@ -26,8 +37,17 @@ export class AttachmentsComponent implements OnInit {
     });
 
     this.modeService.mode$.subscribe(mode => {
+<<<<<<< HEAD
       this.mode = mode;
     });
+=======
+      this.title = TITLES[mode];
+    });
+    this.operationService.operation$.subscribe(operation => {
+      this.op = operation;
+      this.id = operation.id;
+    })
+>>>>>>> cdm-dev
   }
 
 }

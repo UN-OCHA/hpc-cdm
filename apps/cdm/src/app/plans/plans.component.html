@@ -1,10 +1,21 @@
 <div class="cdm-title">
+<<<<<<< HEAD
   <h1 *ngIf="(mode$ | async) as mode">{{titles[mode]}}</h1>
   <div *ngIf="(operation$ | async) as operation" class="cdm-title-icons">
     <a mat-button [routerLink]="['/operations', operation.id, 'plans', 'new']">
       <mat-icon>add_box</mat-icon>
     </a>
     <a mat-button [routerLink]="['/operations', operation.id, 'plans']">
+=======
+  <h1>{{title}}</h1>
+  <div class="cdm-title-icons">
+    <a mat-button
+      [routerLink]="['/operations', id, 'plans', 'new']">
+      <mat-icon>add_box</mat-icon>
+    </a>
+    <a mat-button
+      [routerLink]="['/operations', id, 'plans']">
+>>>>>>> cdm-dev
       <mat-icon>format_align_justify</mat-icon>
     </a>
   </div>

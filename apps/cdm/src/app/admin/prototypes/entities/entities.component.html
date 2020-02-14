@@ -2,11 +2,19 @@
   <h1>{{title}}</h1>
   <div *ngIf="(operation$ | async) as operation" class="cdm-title-icons">
     <a mat-button matTooltip="Add New Entity Prototype"
+<<<<<<< HEAD
       [routerLink]="['/operations', operation.id, 'eprototypes', 'new']">
       <mat-icon>add_box</mat-icon>
     </a>
     <a mat-button matTooltip="Entity Prototypes"
       [routerLink]="['/operations', operation.id, 'eprototypes']">
+=======
+      [routerLink]="['/operations', id, 'eprototypes', 'new']">
+      <mat-icon>add_box</mat-icon>
+    </a>
+    <a mat-button matTooltip="Entity Prototypes"
+      [routerLink]="['/operations', id, 'eprototypes']">
+>>>>>>> cdm-dev
       <mat-icon>format_align_justify</mat-icon>
     </a>
   </div>

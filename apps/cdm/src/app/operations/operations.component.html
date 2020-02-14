@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div class="content">
   <div class="cdm-title">
     <h1>{{title}}</h1>
@@ -6,6 +7,29 @@
         [routerLink]="['/operations/new']"><mat-icon>add_box</mat-icon></a>
       <a mat-button matTooltip="Operations"        
         [routerLink]="['/operations']"><mat-icon>format_align_justify</mat-icon></a>
+=======
+<div *ngIf="user" class="content">
+  <div>
+    <button  mat-raised-button color="blue" class="active" matTooltip="Operations" [routerLink]="['/operations']">Operations</button>
+    <button #button  mat-raised-button color="blue" style="z-index:1050"
+    (mouseenter)="buttonEnter(clickHoverMenuTrigger)" (mouseleave)="buttonLeave(clickHoverMenuTrigger, button)"
+     #clickHoverMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu">Templates<mat-icon>arrow_drop_down</mat-icon></button>
+    <mat-menu #menu="matMenu" direction="down" yPosition="below">
+      <span (mouseenter)="menuEnter()" (mouseleave)="menuLeave(clickHoverMenuTrigger, button)">
+      <button mat-menu-item [routerLink]="['//blueprints']" routerLinkActive="router-link-active" >Operations</button>
+      </span>
+    </mat-menu>
+  </div>
+  <div class="cdm-title">
+    <h1>{{title}}</h1>
+    <div *ngIf="user.isAdmin" class="cdm-title-icons">
+      <a mat-button matTooltip="Add New Operation" [routerLink]="['/operations/new']">
+        <mat-icon>add_box</mat-icon>
+      </a>
+      <a mat-button matTooltip="Operations" [routerLink]="['/operations']">
+        <mat-icon>format_align_justify</mat-icon>
+      </a>
+>>>>>>> cdm-dev
     </div>
   </div>
   <div class="container">

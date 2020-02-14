@@ -2,6 +2,8 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { OperationService } from '@cdm/core';
+import { ToastrService } from 'ngx-toastr';
 
 import { AppService, ModeService } from '@hpc/core';
 
@@ -16,6 +18,7 @@ export class AttachmentFormComponent implements OnInit {
   prototype: any;
   jsonModel: any;
   operationId: any;
+  public loading = false;
 
   constructor(
     private location: Location,
@@ -23,7 +26,13 @@ export class AttachmentFormComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     private router: Router,
+<<<<<<< HEAD
     private appService: AppService,
+=======
+    private api: ApiService,
+    private toastr: ToastrService,
+    private operationService: OperationService,
+>>>>>>> cdm-dev
     private modeService: ModeService) {
     this.form = this.fb.group({
       refCode: ['', Validators.required],
@@ -36,13 +45,14 @@ export class AttachmentFormComponent implements OnInit {
       this.prototype = proto;
     } else {
       this.prototype = {
-        operationId: this.operationId,
+        operationId: this.operationService.id,
         opAttachmentPrototypeVersion: {
           value: {},
           refCode:'',
           refType:''
         }
       };
+      console.log(this.prototype);
     }
   }
 
@@ -53,6 +63,7 @@ export class AttachmentFormComponent implements OnInit {
 
     this.activatedRoute.params.subscribe(params => {
       if(params.id) {
+<<<<<<< HEAD
         this.appService.loadAttachmentPrototype(params.id);
         this.appService.attachmentPrototype$.subscribe(ap => {
           console.log(ap)
@@ -63,6 +74,13 @@ export class AttachmentFormComponent implements OnInit {
             value: ap.value
           });
         });
+=======
+        this.modeService.mode = 'edit';
+        this.jsonModel = true;
+        this.api.getAttachmentPrototype(params.id).subscribe(proto => {
+          this.setMode(proto);
+        })
+>>>>>>> cdm-dev
       } else {
         this.setMode(this.injector.get('prototype', null));
       }
@@ -76,7 +94,14 @@ export class AttachmentFormComponent implements OnInit {
   }
 
   onJsonChange(event) {
-    this.jsonModel = event;
+    if(!event || !event.type || event.type !== 'change') {
+      this.jsonModel = event;
+    }
+  }
+
+  validEntry() {
+
+    return this.form.valid && this.jsonModel ;
   }
 
   close() {
@@ -85,6 +110,7 @@ export class AttachmentFormComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
+    this.loading = true;
     if(!this.form.invalid) {
       const formData = this.form.value;
       const id = this.prototype && this.prototype.id;
@@ -93,6 +119,7 @@ export class AttachmentFormComponent implements OnInit {
         opAttachmentPrototypeId: this.prototype.id,
         refCode: formData.refCode,
         type: formData.refType,
+<<<<<<< HEAD
         value: this.jsonModel || this.prototype.value
       };
       // TODO vimago what service?
@@ -100,6 +127,17 @@ export class AttachmentFormComponent implements OnInit {
       //
       //   this.router.navigate(['/operations',result.operationId,'aprototypes']);
       // });
+=======
+        value: this.jsonModel
+      };
+      this.api.saveAttachmentPrototype(this.prototype, id).subscribe((result) => {
+
+        this.toastr.success('Attachment Prototypes is updated');
+        this.loading = false;
+        this.router.navigate(['/operations',result.operationId,'aprototypes']);
+      },
+      err => this.loading = false);
+>>>>>>> cdm-dev
     }
   }
 }

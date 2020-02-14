@@ -1,6 +1,6 @@
 <form class="edit" (ngSubmit)="onSubmit()" [formGroup]="form">
   <div class="actions">
-    <a mat-raised-button [routerLink]="['/operations', operationId, 'participants']">Close</a>
+    <a mat-raised-button [routerLink]="['/operations', id, 'participants']">Close</a>
     <a mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</a>
   </div>
 </form>

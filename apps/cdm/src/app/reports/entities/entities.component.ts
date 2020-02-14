@@ -8,10 +8,21 @@ import { OperationService } from '@cdm/core';
   styleUrls: ['./entities.component.scss']
 })
 export class EntitiesComponent implements OnInit {
+  entities;
+  entities$;
+  entityAttachments;
+  entityAttachments$;
+  selectedEntity;
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private operationService: OperationService) {}
+    private operationService: OperationService) {
+    this.entities = operationService.entities;
+    this.entities$ = operationService.entities$;
+    this.entityAttachments = operationService.entityAttachments;
+    this.entityAttachments$ = operationService.entityAttachments$;
+    this.selectedEntity = operationService.selectedEntity;
+  }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {

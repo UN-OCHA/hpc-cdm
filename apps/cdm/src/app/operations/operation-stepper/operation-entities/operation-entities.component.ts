@@ -8,6 +8,7 @@ import { AppService, ModeService } from '@hpc/core';
   styleUrls: ['./operation-entities.component.scss']
 })
 export class OperationEntitiesComponent implements OnInit {
+<<<<<<< HEAD
   entities$ = this.appService.entities$;
   entityPrototype$ = this.appService.entityPrototype$;
   mode$ = this.modeService.mode$;
@@ -16,6 +17,18 @@ export class OperationEntitiesComponent implements OnInit {
     private modeService: ModeService,
     private appService: AppService,
     private activatedRoute: ActivatedRoute) {}
+=======
+  selectedEntityPrototype;
+  entities$;
+  viewingGoverningEntityIdx;
+
+  constructor(
+    private operation: OperationService,
+    private activatedRoute: ActivatedRoute) {
+    this.selectedEntityPrototype = this.operation.selectedEntityPrototype;
+    this.entities$ = this.operation;
+  }
+>>>>>>> cdm-dev
 
   ngOnInit() {
     this.activatedRoute.parent.params.subscribe(parentParams => {

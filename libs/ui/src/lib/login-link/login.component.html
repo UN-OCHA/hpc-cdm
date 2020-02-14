@@ -1,10 +1,10 @@
 <div *ngIf="!renderType">
-  <div *ngIf="auth.user" class="login">
+  <div *ngIf="auth.user" class="login signin">
     <a mat-button [matMenuTriggerFor]="menu">
       <mat-icon>perm_identity</mat-icon> {{auth.user.email}}
     </a>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="logout()">Logout</button>
+      <button mat-menu-item (click)="logout()" id="logout">Logout</button>
     </mat-menu>
   </div>
 

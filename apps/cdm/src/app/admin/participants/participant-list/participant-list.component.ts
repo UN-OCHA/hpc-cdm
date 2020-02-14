@@ -11,10 +11,17 @@ import { User } from './user';
   styleUrls: [ './participant-list.component.scss' ]
 })
 export class ParticipantListComponent implements OnInit {
+<<<<<<< HEAD
   // tableColumns = [];
   // operation$ = this.appService.operation$;
   // participants$ = this.appService.participants$;
   //
+=======
+  participants = [];
+  tableColumns = [];
+  id: number;
+
+>>>>>>> cdm-dev
   constructor(
     private modeService: ModeService,
     private users: UserService
@@ -39,9 +46,15 @@ export class ParticipantListComponent implements OnInit {
 
   ngOnInit() {
     this.modeService.mode = 'list';
+<<<<<<< HEAD
     // this.activatedRoute.params.subscribe(params => {
     //   this.appService.loadParticipants(params.id);
     // });
+=======
+    this.activatedRoute.params.subscribe(params => {
+      this.id = params.operationId;
+    });
+>>>>>>> cdm-dev
   }
 }
 

@@ -1,11 +1,15 @@
 <div class="content">
   <div class="container">
     <div class="app-name">
+<<<<<<< HEAD
       <a mat-button routerLink="/dashboard">{{name}} <span class="text-sm">{{ version }}</span></a>
+=======
+      <button mat-raised-button routerLink="/dashboard">{{name}} <span class="text-sm p-4">{{ version }}</span></button>
+>>>>>>> cdm-dev
     </div>
 
     <div class="app-links">
-      <mat-divider *ngIf="auth.user" [vertical]="true"></mat-divider>
+      <mat-divider *ngIf="user" [vertical]="true"></mat-divider>
       <ng-content></ng-content>
       <div class="app-status-links">
         <mat-divider [vertical]="true"></mat-divider>

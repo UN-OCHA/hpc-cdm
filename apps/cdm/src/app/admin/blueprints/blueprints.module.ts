@@ -10,6 +10,7 @@ import { BlueprintListComponent } from './blueprint-list/blueprint-list.componen
 import { BlueprintsRoutingModule } from './blueprints-routing.module';
 import { UIModule } from '@hpc/ui';
 import { CdmUIModule } from '@cdm/ui';
+import { NgxLoadingModule } from 'ngx-loading';
 
 @NgModule({
   declarations: [
@@ -23,11 +24,17 @@ import { CdmUIModule } from '@cdm/ui';
     FormsModule, ReactiveFormsModule,
     MaterialModule,
     BlueprintsRoutingModule,
+<<<<<<< HEAD
+=======
+    NgxLoadingModule
+
+>>>>>>> cdm-dev
   ],
   exports: [
     BlueprintsComponent,
     BlueprintFormComponent,
-    BlueprintListComponent
+    BlueprintListComponent,
+
   ],
   providers: [
     ModeService

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <form class="edit" [formGroup]="form" fxLayout="column">
   <hpc-input
     label="Name"
@@ -39,5 +40,47 @@
   <div *ngIf="mode === 'add'" class="actions">
     <a mat-raised-button [routerLink]="['/operations']">Close</a>
     <a (click)="onSubmit()" mat-raised-button color="primary" [disabled]="!form.valid">Save & Next</a>
+=======
+<div class="content-header--tools no-float operationDetails">
+  <button mat-raised-button >Operation Details</button>
+
+</div>
+<form class="edit" (ngSubmit)="onSubmit()" [formGroup]="form" fxLayout="column">
+  <mat-form-field appearance="outline">
+    <mat-label for="name">Name</mat-label>
+    <input matInput
+      formControlName="name"
+      (input)="clearErrors()" [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
+      id="name" name="name" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label for="description">Description</mat-label>
+    <textarea matInput
+      class="form-control"  formControlName="description" (input)="clearErrors()"
+      [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=3
+      type="text" id="description" name="description" required></textarea>
+  </mat-form-field>
+  <emergency-select></emergency-select>
+  <div *ngFor="let item of Locations; index as i" class="locationField" appearance="outline">
+  <location-select [index]="i" (messageEvent)="removeCountry($event)" [selectedLocations] = "item"></location-select>
+</div>
+<button  mat-raised-button color="blue" type="button" (click)="addCountry()">+ Add Another Country</button>
+
+  <mat-form-field *ngIf="!editMode" appearance="outline">
+    <mat-label>Operation Template</mat-label>
+    <mat-select required formControlName="blueprint">
+      <mat-option *ngFor="let bp of blueprints" [value]="bp">
+        {{bp.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="actions">
+    <a mat-raised-button [routerLink]="['/operations']">Close</a>
+    <button mat-raised-button type="button" (click)="onSubmit(false)" color="primary" [disabled]="!form.valid">Save</button>
+    <button mat-raised-button color="primary" [disabled]="!form.valid">Save & Next</button>
+>>>>>>> cdm-dev
   </div>
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px', fullScreenBackdrop: true, primaryColour: '#ed7325', tertiaryColour: 'rgb(237, 37, 92)' }"></ngx-loading>
+
 </form>

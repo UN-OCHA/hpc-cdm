@@ -16,7 +16,7 @@
       <div class="col"></div>
     </div>
     <div class="panel-body">
-      <div *ngFor="let entry of queue.entries$ | async">
+      <div *ngFor="let entry of entries$ | async">
         <queue-entry [entry]="entry"></queue-entry>
       </div>
     </div>

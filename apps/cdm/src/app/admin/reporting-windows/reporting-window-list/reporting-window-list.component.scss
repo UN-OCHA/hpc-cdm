@@ -22,4 +22,24 @@
       }
     }
   }
+  .parent {
+    display: flex;
+    justify-content: center;
+    // align-items: center;
+    flex-direction: column;
+    width: 300px;
+    margin:auto;
+  }
+}
+.description {
+  select{
+    padding:7px;
+    margin:10px;
+  }
+  span{
+    float: right;
+  }
+  a{
+    padding: 0px 5px;
+  }
 }

@@ -9,6 +9,7 @@ import { AppService, ModeService } from '@hpc/core';
 })
 export class OperationAttachmentsComponent implements AfterViewInit, OnInit {
   loading = false;
+<<<<<<< HEAD
   attachments$ = this.appService.operationAttachments$;
   mode$ = this.modeService.mode$;
 
@@ -23,6 +24,27 @@ export class OperationAttachmentsComponent implements AfterViewInit, OnInit {
       this.modeService.mode = 'edit';
       this.appService.loadAttachments(params.id);
     });
+=======
+  attachments$;
+  newAttachment;
+  mode;
+
+  constructor(
+    private operation: OperationService,
+    private activatedRoute: ActivatedRoute) {
+    this.attachments$ = operation.attachments$;
+    this.newAttachment = operation.newAttachment;
+    this.mode = operation.mode;
+  }
+
+  ngOnInit() {
+    this.loading = true;
+    // this.activatedRoute.params.subscribe(params => {
+      // console.log(params)
+      this.operation.loadAttachments(this.operation.id, 'EDIT_OPERATION_ATTACHMENTS');
+      this.loading = false;
+    // });
+>>>>>>> cdm-dev
   }
 
   ngAfterViewInit() {
@@ -37,7 +59,11 @@ export class OperationAttachmentsComponent implements AfterViewInit, OnInit {
   }
 
   addForm() {
+<<<<<<< HEAD
     // this.operation.mode = 'ADD_OPERATION_ATTACHMENT';
     this.modeService.mode = 'add';
+=======
+    this.mode = 'ADD_OPERATION_ATTACHMENT';
+>>>>>>> cdm-dev
   }
 }

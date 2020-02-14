@@ -1,4 +1,12 @@
+<<<<<<< HEAD
 <table mat-table [dataSource]="operations$" multiTemplateDataRows>
+=======
+<div *ngIf="!loading && (!operations || !operations.length)">
+  <p>You currently have no operations.
+</div>
+
+<table *ngIf="operations" mat-table [dataSource]="operations" multiTemplateDataRows class="mat-elevation-z8">
+>>>>>>> cdm-dev
   <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let operation">

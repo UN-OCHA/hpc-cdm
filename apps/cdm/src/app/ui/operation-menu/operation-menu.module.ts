@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule, MatButtonModule } from '@angular/material';
+import { MaterialModule } from '@hpc/material';
+
 
 import { OperationMenuComponent } from './operation-menu.component';
 
@@ -13,6 +15,7 @@ import { OperationMenuComponent } from './operation-menu.component';
   imports: [
     CommonModule, RouterModule,
     MatIconModule, MatButtonModule,
+    MaterialModule
   ],
   exports: [
     OperationMenuComponent

@@ -1,8 +1,30 @@
+<div>
+  <fieldset>
+    <h4>Location {{index+1}}</h4>
+  <div>
 <mat-form-field appearance="outline" fxFlex="grow">
   <mat-label>Locations</mat-label>
+  <input
+  matInput
+  [required]="index === 0"
+  #locationInput
+  [formControl]="optionCtrl"  [matAutocomplete]="auto">
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="selected($event)">
+    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+      {{option.name}}
+    </mat-option>
+    <mat-option *ngIf="(filteredOptions | async)?.length == 0" disabled>
+      <span>No Results Found.</span>
+      </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
+</div>
+<div>
+<mat-form-field appearance="outline" fxFlex="grow" *ngIf="enableSubLocations">
+  <mat-label>Sub Locations</mat-label>
   <mat-chip-list #chipList aria-label="Location selection">
     <mat-chip
-      *ngFor="let value of values"
+      *ngFor="let value of displayValues"
       [selectable]="selectable"
       [removable]="removable"
       (removed)="remove(value)">
@@ -12,17 +34,23 @@
     <input
       matInput
       required
-      #locationInput
-      [formControl]="optionCtrl"
+      #subLocationInput
+      [formControl]="optionSubLocationCtrl"
       [matAutocomplete]="auto"
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-      [matChipInputAddOnBlur]="addOnBlur"
-      (matChipInputTokenEnd)="add($event)">
+      [matChipInputAddOnBlur]="addOnBlur">
   </mat-chip-list>
-  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-      {{option}}
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="selectedSubLocation($event)">
+    <mat-option *ngFor="let option of filteredSubLocationOptions | async" [value]="option">
+      {{option.name}}
     </mat-option>
+    <mat-option *ngIf="(filteredSubLocationOptions | async)?.length == 0" disabled>
+      <span>No Results Found.</span>
+      </mat-option>
   </mat-autocomplete>
 </mat-form-field>
+</div>
+<div > <button mat-raised-button color="blue" [disabled] = "index == 0" type="button" (click)="removeCountry(index)">Remove Country</button></div>
+</fieldset>
+</div>

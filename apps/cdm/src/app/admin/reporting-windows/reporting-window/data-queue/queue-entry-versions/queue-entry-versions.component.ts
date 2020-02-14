@@ -7,8 +7,11 @@ import { QueueEntryService } from '../queue-entry/queue-entry.service';
   styleUrls: ['./queue-entry-versions.component.scss']
 })
 export class QueueEntryVersionsComponent implements OnInit {
+  versions$;
 
-  constructor(private queueEntry: QueueEntryService) {}
+  constructor(private queueEntry: QueueEntryService) {
+    this.versions$ = this.queueEntry.versions$;
+  }
 
   ngOnInit() {
     this.queueEntry.dummy();

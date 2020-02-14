@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OperationService } from '@cdm/core';
 import { Attachment } from '@hpc/data';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'attachment-entry',
@@ -13,12 +14,15 @@ export class AttachmentEntryComponent implements OnInit {
   @Input() entry: Attachment;
 
   title: string;
+  hide: boolean;
   expanded = false;
   submitted = false;
 
   constructor(
     private operation: OperationService,
-    private fb: FormBuilder) {
+    private fb: FormBuilder,
+    private toastr: ToastrService
+    ) {
     this.form = this.fb.group({
       id: [''],
       formId: ['', Validators.required],
@@ -44,8 +48,17 @@ export class AttachmentEntryComponent implements OnInit {
   }
 
   save() {
-    this.operation.saveAttachment(this.form.value, this.entry);
+
+     this.operation.saveAttachment(this.form.value, this.entry).then(res =>{
+      if (this.form.value.id) {
+        this.toastr.success('Operation attachment updated');
+      } else {
+        this.toastr.success('Operation attachment created');
+      }
+      this.form.reset();
+     }).catch(err =>{
+       this.toastr.error("Error Occured.")
+     });
+
   }
 }
-
-// <label class="attachment-type">CF</label>

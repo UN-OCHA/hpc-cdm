@@ -6,6 +6,7 @@ import { MaterialModule } from '@hpc/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 // import { CdmUIModule } from '@cdm/ui';
 import { UIModule } from '@hpc/ui';
+import { NgxLoadingModule } from 'ngx-loading';
 
 import { OperationFormComponent } from './operation-form.component';
 
@@ -17,6 +18,7 @@ import { OperationFormComponent } from './operation-form.component';
     CommonModule, RouterModule,
     FormsModule, ReactiveFormsModule,
     MaterialModule, FlexLayoutModule,
+    NgxLoadingModule,
     UIModule
   ],
   exports: [

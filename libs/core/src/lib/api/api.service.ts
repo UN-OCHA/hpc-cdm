@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse, HttpParams, HttpHeaders } from '@angular/common/http';
 import { OAuthService } from 'angular-oauth2-oidc';
 
-// import { ToastrService } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -26,7 +26,7 @@ export class ApiService {
 
   constructor (
     private http: HttpClient,
-    // private toastr: ToastrService,
+    private toastr: ToastrService,
     private oauthService: OAuthService,
   ) {}
 
@@ -42,23 +42,30 @@ export class ApiService {
     } else {
       errorJson = error;
     }
-
     switch (error.status) {
       case 0:
         title = 'Failed to reach HPC API';
         this.apiUp = false;
-        // this.toastr.error('Please try again in a couple of moments', title);
+        this.toastr.error('Please try again in a couple of moments', title);
+        break;
+      case 400:
+        title = errorJson.error.message.details;
+        this.toastr.error('We had an issue accessing one of our endpoints', title);
         break;
       case 401:
         if (errorJson.message === 'Client or key not accepted') {
           this.oauthService.logOut();
         }
         title = 'Login Required';
-        // this.toastr.error('You\'ll need to log in again to continue.', title);
+        this.toastr.error('You\'ll need to log in again to continue.', title);
         break;
       case 405:
         title = 'Endpoint doesn\'t exist';
-        // this.toastr.error('We had an issue accessing one of our endpoints', title);
+        this.toastr.error('We had an issue accessing one of our endpoints', title);
+        break;
+      case 409:
+        title = errorJson.error.message.details;
+        this.toastr.error('We had an issue accessing one of our endpoints', title);
         break;
       case 500:
         this.displayMessage(errorJson);
@@ -274,6 +281,36 @@ export class ApiService {
         return res;
       }), catchError((error: any) => this.processError(error)));
   }
+  public getOperationAttachmentById(id: any,): Observable<any> {
+    return this.getUrlWrapper(`v2/operation/attachment/${id}`, {});
+  }
+
+  public deleteOperationEntity(id: number): Observable<any> {
+
+    const params = this.setParams();
+    const headers = this.setHeaders();
+
+    const url = environment.serviceBaseUrl + 'v2/operation/entityPrototype/' + id;
+    this.processStart(url, {}, '');
+    return this.http.delete(url, { params, headers }).pipe(
+      map((res: HttpResponse<any>) => {
+        this.processSuccess(url, res);
+        return res;
+      }), catchError((error: any) => this.processError(error)));
+  }
+  public deleteOperationPrototypeAttachment(id: number): Observable<any> {
+
+    const params = this.setParams();
+    const headers = this.setHeaders();
+
+    const url = environment.serviceBaseUrl + 'v2/operation/attachmentPrototype/' + id;
+    this.processStart(url, {}, '');
+    return this.http.delete(url, { params, headers }).pipe(
+      map((res: HttpResponse<any>) => {
+        this.processSuccess(url, res);
+        return res;
+      }), catchError((error: any) => this.processError(error)));
+  }
 
   public saveFormFile(file: any, name?: string): any {
     return new Promise(resolve => {
@@ -335,7 +372,7 @@ export class ApiService {
   }
 
   public saveAttachmentPrototype(data: any, id: number): Observable<any> {
-    if (!id) {
+     if (!id) {
       return this.postToEndpoint(`v2/operation/${data.operationId}/attachmentPrototype`, {
         data: {opAttachmentPrototype:data}
       });
@@ -438,6 +475,11 @@ export class ApiService {
     }
     return this.fetchEndpoint(url).pipe(
       map((res: any) => res.data))
+  }
+
+
+  public autocompletePlan(search: string): Observable<any> {
+    return this.autocomplete('plan', search);
   }
 
   public getLocation(locationId, maxLevel?): Observable<any> {
@@ -576,6 +618,11 @@ export class ApiService {
     return defer(() => new Promise(resolve => {
       resolve([1,2,3,4,5]);
     }));
+  }
+
+  public getPlan(id): Observable<any> {
+    let url = `v2/plan/ ${id}?scopes=planVersion`;    
+    return this.getUrlWrapper(url, { cache: true });
   }
 
   public setParams(options?: any): HttpParams {

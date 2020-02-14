@@ -14,6 +14,7 @@ const routes: Routes = [
     canActivate: [AdminGuard],
     // canActivateChildren: [AdminGuard],
     children: [
+<<<<<<< HEAD
       { path: '', component: BlueprintListComponent },
       {
         path: 'new',
@@ -26,6 +27,15 @@ const routes: Routes = [
         data: { mode: 'edit' }
       }
     ]}
+=======
+      { path: '', component: BlueprintListComponent, canActivate: [AdminGuard] },
+      { path: 'new', component: BlueprintFormComponent, canActivate: [AdminGuard] },
+      { path: ':copy/:id', component: BlueprintFormComponent, canActivate: [AdminGuard] },
+      { path: ':id', component: BlueprintFormComponent, canActivate: [AdminGuard] }
+    ],
+    data: { roles: ['hpcadmin'], }
+  }
+>>>>>>> cdm-dev
 ];
 
 @NgModule({

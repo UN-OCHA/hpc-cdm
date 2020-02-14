@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div *ngIf="user$ | async as user" class="menu">
   <section *ngIf="user.isAdmin">
     <label><mat-icon>edit</mat-icon>Edit</label>
@@ -30,4 +31,91 @@
     <label><mat-icon>dynamic_feed</mat-icon>States</label>
     <a mat-button [routerLink]="['/operations', operation.id, 'versions']">Publishing & Versions</a>
   </section>
+=======
+<div *ngIf="op && user" class="menu">
+
+  <div *ngIf="user.isAdmin" class="section">
+    <!-- <label><mat-icon>edit</mat-icon>Edit</label>
+    <a mat-button [routerLink]="['/operations', op.id]">Operation</a>
+    <span *ngFor="let ep of op.entityPrototypes">
+      <a mat-button [routerLink]="['/operations', op.id, 'entities', ep.id]">{{ ep.name.en.plural }}</a>
+    </span>
+    <a mat-button [routerLink]="['/operations', op.id, 'plans']">Plans</a> -->
+    <button #button mat-raised-button color="orange" style="z-index:1050"
+      (mouseenter)="buttonEnter(clickHoverMenuTrigger1)" (mouseleave)="buttonLeave(clickHoverMenuTrigger1, button)"
+      #clickHoverMenuTrigger1="matMenuTrigger" [matMenuTriggerFor]="editMenu">Edit<mat-icon>arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #editMenu="matMenu" direction="down" yPosition="below">
+      <div style="max-height: 250px;">
+      <span (mouseenter)="menuEnter()" (mouseleave)="menuLeave(clickHoverMenuTrigger1, button)">
+        <a mat-menu-item [routerLink]="['/operations', op.id]" routerLinkActive="router-link-active">Operation Details</a>
+        <a mat-menu-item [routerLink]="['/operations', op.id,'attachments']" routerLinkActive="router-link-active">Operation Attachments</a>
+        <span *ngFor="let ep of op.entityPrototypes">
+          <a *ngIf="ep.name && ep.name.en.plural" mat-menu-item [routerLink]="['/operations', op.id, 'entities', ep.id]">{{ ep.name.en.plural }}</a>
+          <a *ngIf="ep.name && ep.name.en.singular" mat-menu-item [routerLink]="['/operations', op.id, 'entities', ep.id]">{{ ep.name.en.singular }} Details</a>
+        </span>
+        <a mat-menu-item [routerLink]="['/operations', op.id, 'plans']">Plans</a>
+      </span>
+    </div>
+    </mat-menu>
+  </div>
+
+  <div class="section">
+    <!-- <label><mat-icon>publish</mat-icon>Submit Data</label>
+    <a mat-button [routerLink]="['/operations', op.id, 'reports']">New reporting window</a> -->
+    <button #button mat-raised-button color="orange" style="z-index:1050"
+      (mouseenter)="buttonEnter(clickHoverMenuTrigger1)" (mouseleave)="buttonLeave(clickHoverMenuTrigger1, button)"
+      #clickHoverMenuTrigger1="matMenuTrigger" [matMenuTriggerFor]="submitDataMenu">Submit Data<mat-icon>arrow_drop_down
+      </mat-icon></button>
+    <mat-menu #submitDataMenu="matMenu" direction="down" yPosition="below">
+      <span (mouseenter)="menuEnter()" (mouseleave)="menuLeave(clickHoverMenuTrigger1, button)">
+        <a mat-menu-item [routerLink]="['/operations', op.id, 'reports']" routerLinkActive="router-link-active">New
+          reporting window</a>
+      </span>
+    </mat-menu>
+  </div>
+
+  <div *ngIf="user.isAdmin" class="section">
+    <!-- <label><mat-icon>build</mat-icon>Configure123</label>
+    <a mat-button [routerLink]="['/operations', op.id, 'aprototypes']">Attachment Prototypes</a>
+    <a mat-button [routerLink]="['/operations', op.id, 'eprototypes']">Entity Prototypes</a>
+    <a mat-button [routerLink]="['/operations', op.id, 'participants']">Participants</a> -->
+    <button #button mat-raised-button color="orange" style="z-index:1050"
+      (mouseenter)="buttonEnter(clickHoverMenuTrigger1)" (mouseleave)="buttonLeave(clickHoverMenuTrigger1, button)"
+      #clickHoverMenuTrigger1="matMenuTrigger" [matMenuTriggerFor]="configureMenu">Configure<mat-icon>arrow_drop_down
+      </mat-icon></button>
+    <mat-menu #configureMenu="matMenu" direction="down" yPosition="below">
+      <span (mouseenter)="menuEnter()" (mouseleave)="menuLeave(clickHoverMenuTrigger1, button)">
+        <a mat-menu-item [routerLink]="['/operations', op.id, 'aprototypes']">Attachment Prototypes</a>
+        <a mat-menu-item [routerLink]="['/operations', op.id, 'eprototypes']">Entity Prototypes</a>
+        <a mat-menu-item [routerLink]="['/operations', op.id, 'participants']">Participants</a>
+      </span>
+    </mat-menu>
+  </div>
+
+  <div *ngIf="user.isAdmin" class="section">
+    <!-- <label>
+      <mat-icon>dynamic_feed</mat-icon>States
+    </label>
+    <a mat-button [routerLink]="['/operations', op.id, 'versions']">Publishing & Versions</a> -->
+    <button #button mat-raised-button color="orange" style="z-index:1050"
+      (mouseenter)="buttonEnter(clickHoverMenuTrigger1)" (mouseleave)="buttonLeave(clickHoverMenuTrigger1, button)"
+      #clickHoverMenuTrigger1="matMenuTrigger" [matMenuTriggerFor]="publishMenu">States<mat-icon>
+        arrow_drop_down
+      </mat-icon></button>
+    <mat-menu #publishMenu="matMenu" direction="down" yPosition="below">
+      <span (mouseenter)="menuEnter()" (mouseleave)="menuLeave(clickHoverMenuTrigger1, button)">
+        <a mat-menu-item [routerLink]="['/operations', op.id, 'versions']">Publishing & Versions</a>
+      </span>
+    </mat-menu>
+  </div>
+  <div *ngIf="user.isAdmin" class="section">
+    <!-- <label><mat-icon>build</mat-icon>Configure123</label>
+    <a mat-button [routerLink]="['/operations', op.id, 'aprototypes']">Attachment Prototypes</a>
+    <a mat-button [routerLink]="['/operations', op.id, 'eprototypes']">Entity Prototypes</a>
+    <a mat-button [routerLink]="['/operations', op.id, 'participants']">Participants</a> -->
+    <button #button mat-raised-button color="orange" style="z-index:1050" [routerLink]="['/operations/', op.id, 'remove']">Remove</button>
+
+  </div>
+>>>>>>> cdm-dev
 </div>

@@ -13,6 +13,7 @@ const TITLES = {
   styleUrls: ['./plans.component.scss']
 })
 export class PlansComponent implements OnInit {
+<<<<<<< HEAD
   titles;
   mode$ = this.modeService.mode$;
   operation$ = this.appService.operation$;
@@ -21,6 +22,15 @@ export class PlansComponent implements OnInit {
     private modeService: ModeService,
     private appService: AppService){
     this.titles = TITLES;
+=======
+  id;
+  title: string;
+
+  constructor(
+    private modeService: ModeService,
+    private operationService: OperationService){
+    this.id = operationService.id;
+>>>>>>> cdm-dev
   }
 
   ngOnInit() {

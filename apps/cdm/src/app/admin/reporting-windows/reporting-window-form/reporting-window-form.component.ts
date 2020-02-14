@@ -1,22 +1,51 @@
+<<<<<<< HEAD
 import { Component, OnInit, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+=======
+import { zip as observableZip, Observable, of } from 'rxjs';
+import { filter, startWith, mergeMap } from 'rxjs/operators';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+>>>>>>> cdm-dev
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import {zip as observableZip,  Observable } from 'rxjs';
 import {filter} from 'rxjs/operators';
 import { AppService, AuthService, ModeService } from '@hpc/core';
 import { ReportingWindow } from '@hpc/data';
+<<<<<<< HEAD
+=======
+import { ENTER, COMMA } from '@angular/cdk/keycodes';
+import { MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material';
+import { ToastrService } from 'ngx-toastr';
+>>>>>>> cdm-dev
 
 @Component({
   selector: 'reporting-window-form',
   templateUrl: './reporting-window-form.component.html',
   styleUrls: ['./reporting-window-form.component.scss']
 })
-export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDeactivate {
+export class ReportingWindowFormComponent implements OnInit {
   form: FormGroup;
   title: string;
+<<<<<<< HEAD
   reportingWindow$ = this.appService.reportingWindow$;
   // processing = true;
   // canSubmitReportingWindow = false;
+=======
+  reportingWindow: ReportingWindow;
+  separatorKeysCodes: number[] = [ENTER, COMMA]; optionCtrl = new FormControl();
+  filteredOptions: Observable<any>;
+  displayValues: any[] = [];
+  selectedValues: any[] = [];
+  operations: any[];
+  contextTypeOptions: any = [
+    { label: 'Plan', value: '2', checked: false },
+    { label: 'Operations', value: '3', checked: false },
+    { label: 'Global', value: '1', checked: false }
+  ];
+  @ViewChild('optionInput', { static: false }) optionInput: ElementRef<HTMLInputElement>;
+  @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
+>>>>>>> cdm-dev
 
   constructor(
     private router: Router,
@@ -25,45 +54,157 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
     private auth: AuthService,
     private appService: AppService,
     private modeService: ModeService,
+<<<<<<< HEAD
     // private rw: ReportingWindowService,
     // private toastr: ToastrService
+=======
+    private toastr: ToastrService
+>>>>>>> cdm-dev
   ) {
     this.form = this.fb.group({
+      id:[''],
       name: ['', Validators.required],
       description: ['', Validators.required],
-      context: ['', Validators.required]
+      startDate: ['', Validators.required],
+      endDate: ['', Validators.required],
+      contextType: ['', Validators.required],
+      status:['']
+    });
+
+    this.api.getOperations().subscribe(res => {
+      this.operations = res;
     });
   }
 
   ngOnInit() {
+    this.filteredOptions = this.optionCtrl.valueChanges.pipe(
+      startWith(null),
+      mergeMap((value: string | null) =>
+        value && value.length > 2 ? this._filter(value, this.form.value.contextType) : []));
     this.activatedRoute.params.subscribe(params => {
-      if(params.id) {
+      if (params.id) {
         this.modeService.mode = 'edit';
+<<<<<<< HEAD
         this.appService.loadReportingWindow(params.id);
         // this.form.reset({
         // });
+=======
+        this.editMode = true;
+        this.api.getReportingWindow(params.id).subscribe(rw => {
+          this.form.patchValue({
+            name: rw.name,
+            description: rw.description,
+            startDate: rw.startDate,
+            endDate: rw.endDate,
+            contextType: rw.planId ? "2" : "3",    
+            id: params.id  ,
+            status: rw.status     
+                      });
+          if(rw.planId) {
+            this.api.getPlan(rw.planId).subscribe(plan => {
+              if(plan) {
+                this.displayValues.push(plan.planVersion.name);
+                this.selectedValues.push(plan.id);
+              }
+            });
+          } else {
+            this.api.getOperation(rw.operationId).subscribe(operation => {
+              if(operation) {
+             this.displayValues.push(operation.operationVersion.name);
+             this.selectedValues.push(operation.id);
+            }
+            });
+          }
+        });
+>>>>>>> cdm-dev
       } else {
         this.modeService.mode = 'add';
       }
     });
+  }
+  remove(value: string): void {
+    let index = this.displayValues.indexOf(value);
+    if (index >= 0) {
+      this.displayValues.splice(index, 1);
+      this.selectedValues.splice(index, 1);
+    }
+  }
 
-    // observableZip(
-    //   this.route.params,
-    //   this.route.queryParamMap,
-    //   this.route.data
-    // ).subscribe(results => {
-    //   const id = +results[0]['id'];
-    //   const version = results[1].get('version');
-    //   const data = results[2];
-    //   if (id && id !== NaN) {
-    //     if (data && data.title === 'View ReportingWindow') {
-    //       this.rw.editMode = false;
-    //     }
-    //     this.loadForExistingReportingWindow(id, version);
-    //   } else {
-    //     this.loadNewReportingWindow();
-    //   }
-    // });
+  populateDates(type) {
+    let from, to;
+    if (type === 'currentyear') {
+      from = new Date(new Date().getFullYear(), 0, 1, 0, 0, 0);
+      to = new Date(new Date().getFullYear(), 11, 31, 0, 0, 0);
+      this.form.patchValue({
+        startDate: new Date(from),
+        endDate: new Date(to)
+      });
+    } else if (type === 'previousyear') {
+      from = new Date(new Date().getFullYear() - 1, 0, 1, 0, 0, 0);
+      to = new Date(new Date().getFullYear() - 1, 11, 31, 0, 0, 0);
+      this.form.patchValue({
+        startDate: new Date(from),
+        endDate: new Date(to)
+      });
+    } else if (type === 'currentquarter') {
+      from = new Date(new Date().getFullYear(), new Date().getMonth(), 1, 0, 0, 0);
+      to = this.getLastdateOfTheMonth(new Date().getMonth() + 3);
+      this.form.patchValue({
+        startDate: new Date(from),
+        endDate: new Date(to)
+      });
+    } else if (type === 'previousquarter') {
+      from = new Date(new Date().getFullYear(), new Date().getMonth() - 3, 1, 0, 0, 0);
+      to = this.getLastdateOfTheMonth(new Date().getMonth());
+      this.form.patchValue({
+        startDate: new Date(from),
+        endDate: new Date(to)
+      });
+    }
+  }
+  getLastdateOfTheMonth(month) {
+    return new Date(new Date().getFullYear(), month, 0);
+  }
+
+  private _filter(value: string, contextType: string): Observable<any> {
+    const filterValue = value.toLowerCase();
+    if (contextType === "3") {
+    return of(this.operations.filter(option => option.operationVersion.name.toLowerCase().includes(filterValue)));
+    } else {
+     return this.api.autocompletePlan(filterValue);
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void { 
+    this.displayValues.push(event.option.viewValue);
+    this.selectedValues.push(event.option.value);
+    this.optionInput.nativeElement.value = '';
+    this.optionCtrl.setValue(null);
+  }
+
+  onSubmit() {
+    if (this.form.valid) {
+      let reportingWindow = this.form.value;
+      if (this.form.value.contextType === "3") {
+        reportingWindow.operationId = this.selectedValues.join(',');
+        reportingWindow.planId = null;
+      } else  if(this.form.value.contextType === "2") {
+        reportingWindow.planId = this.selectedValues.join(',');
+        reportingWindow.operationId = null;
+      }
+      reportingWindow.status = reportingWindow.id ? reportingWindow.status : 'notYetOpen';
+      let message = reportingWindow.id ? "Reporting window updated" : "Reporting window created"
+      this.api.saveReportingWindow(reportingWindow).subscribe(res => {
+        this.toastr.success(message);
+        this.router.navigate(['/rwindows']);
+      });
+    }
+  }
+
+  contextTypeChange() {
+  this.displayValues =[];
+  this.selectedValues=[]; 
+ 
   }
 
   // public loadForExistingReportingWindow (id: number, version = 'latest') {
@@ -132,7 +273,7 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
   //   title: 'Edit the basic information of the operation'
   // }
 
-  public save (nextOrPrevious:any) {
+  public save(nextOrPrevious: any) {
     // if (this.currentChildComponent.registerForm) {
     //   const invalidKeys = [];
     //   const minMax = []; // will keep the list of fields failing min / max value validation
@@ -187,13 +328,7 @@ export class ReportingWindowFormComponent implements OnInit {//}, ComponentCanDe
     //       this.toastr.warning(err);
     //       console.error('err', err);
     //
-    //         this.apiService.getOperation(this.createReportingWindowService.reportingWindow.id).subscribe(notSavedReportingWindow => {
-    //           this.createReportingWindowService.reportingWindowDoneLoading(notSavedReportingWindow);
-    //           this.processing = false;
-    //         });
-    //       this.processing = false;
-    //     });
-    // } else {
+    //         this.apiService.getOperapopulateDates
     //   this.apiService.saveOperation(this.createReportingWindowService.reportingWindow)
     //     .subscribe(updatedReportingWindow => {
     //       this.createReportingWindowService.reportingWindowDoneLoading(updatedReportingWindow);

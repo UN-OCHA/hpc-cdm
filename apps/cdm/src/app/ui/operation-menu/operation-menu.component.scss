@@ -8,11 +8,19 @@ $orange: #ee7325;
     color: #fff;
     display: flex;
     flex-direction: row;
+<<<<<<< HEAD
     cursor: normal;
     .mat-icon {
       display: none;
       font-size: 1em;
     }
+=======
+    cursor: normal;    
+    // .mat-icon {
+    //   display: none;
+    //   font-size: 1em;
+    // }
+>>>>>>> cdm-dev
 
     section {
       display: flex;
@@ -27,6 +35,7 @@ $orange: #ee7325;
         padding: .35em 0 0 0;
         border-radius: 3px;
       }
+<<<<<<< HEAD
       a {
         font-size: 1.15em;
         display:block;
@@ -44,6 +53,34 @@ $orange: #ee7325;
         line-height: 1.25em;
         text-align: left;
       }
+=======
+      // a {
+      //   font-size: 1.15em;
+      //   display:block;
+      //   color: $orange;
+      //   color: #026CB6;
+      //   text-decoration: underline;
+      //   margin-bottom: .25em;
+      //   cursor: pointer;
+      // }
+      // .mat-button {
+      //   margin: 0;
+      //   padding: 0;
+      //   line-height: 1.25em;
+      //   text-align: left;
+      // }
+>>>>>>> cdm-dev
     }
+  }
+  .mat-raised-button.mat-orange, .mat-flat-button.mat-orange{
+    background-color:#ee7325;
+    color:#fff;
+    font-family: Merriweather Sans, sans-serif;
+    font-size: 16px;
+    width: 160px;
+  }
+  .mat-raised-button{margin: 10px;}
+  .mat-menu-content:not(:empty) {
+    width: 160px !important;
   }
 }

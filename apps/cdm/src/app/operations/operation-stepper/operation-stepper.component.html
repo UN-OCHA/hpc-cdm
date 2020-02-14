@@ -8,3 +8,11 @@
     </cdk-step>
   </custom-stepper>
 </div>
+<<<<<<< HEAD
+=======
+<custom-stepper [allSteps]="steps"  (change)="onSelectionChange($event)">
+  <cdk-step *ngFor="let step of steps; let i = index;">
+    <router-outlet *ngIf="i === selectedStepIndex"></router-outlet>
+  </cdk-step>
+</custom-stepper>
+>>>>>>> cdm-dev

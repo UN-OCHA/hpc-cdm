@@ -5,6 +5,7 @@ import { ModeService } from '@hpc/core';
 const TITLES = {
   'add': 'New Blueprint',
   'edit': 'Edit Blueprint',
+  'copy': 'Copy Blueprint',
   'list': 'Blueprints'
 }
 

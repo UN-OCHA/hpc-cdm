@@ -6,12 +6,19 @@
  * - make obvious/transparent/traceable the data being used from each response
  * - increase code testability
  */
+<<<<<<< HEAD
 import { User, Operation, Entity, EntityPrototype,
   Blueprint, Location, ReportingWindow,
   Attachment, AttachmentPrototype } from './data';
+=======
+import {
+  User, Operation, Entity, EntityPrototype,
+  Attachment, AttachmentPrototype
+} from './data';
+>>>>>>> cdm-dev
 import * as moment from 'moment';
 
-const ADMIN_ROLES = ['rpmadmin', 'hpcadmin'];
+const ADMIN_ROLES = ['rpmadmin', 'operationLead'];
 
 
 export function buildUser(participant: any): User {
@@ -28,11 +35,11 @@ export function buildOperation(op: any): Operation {
   const v = op.operationVersion;
   let attachmentPrototypes = [];
   let attachmentPrototype = null;
-  if(op.opAttachmentPrototypes) {
+  if (op.opAttachmentPrototypes) {
     attachmentPrototypes =
       op.opAttachmentPrototypes.map(p => buildAttachmentPrototype(p));
     attachmentPrototype =
-      attachmentPrototypes.find(p => p.entities.includes('OP'));
+      attachmentPrototypes.find(p => p.entities && p.entities.includes('OP'));
   }
   const entityPrototypes =
     op.opEntityPrototypes.map(p => buildEntityPrototype(p, attachmentPrototypes));
@@ -44,6 +51,8 @@ export function buildOperation(op: any): Operation {
     entityPrototypes,
     attachmentPrototypes,
     attachmentPrototype, // Operation Attachment
+    emergencies: op.emergencies,
+    locations: op.locations,
     updatedAt: op.updatedAt,
     starred: true
   }
@@ -63,7 +72,14 @@ export function buildAttachment(att: any, report?: any): Attachment {
     formId: v.customReference,
     formName: v.value.name,
     formFile: v.value.file,
-    comments
+    comments,
+    collection: 'forms',
+    opAttachmentPrototypeId: att.opAttachmentPrototypeId,
+    operationId: att.operationId,
+    opAttachmentVersion: v,
+    objectId: att.objectId,
+    objectType: att.objectType
+
   };
 }
 
@@ -86,7 +102,7 @@ export function buildEntity(ge, v): Entity {
   const ta = v.technicalArea;
   const limit = ENTITY_NAME_LIMIT;
   const tooLong = ta.length > limit;
-  let name = ta.slice(0,  tooLong ? limit : ta.length);
+  let name = ta.slice(0, tooLong ? limit : ta.length);
   name += tooLong ? '...' : '';
   return {
     id: ge.id,
@@ -102,9 +118,9 @@ export function buildEntity(ge, v): Entity {
   };
 }
 
-export function buildEntityPrototype(ep: any, aprototypes=[]): EntityPrototype {
+export function buildEntityPrototype(ep: any, aprototypes = []): EntityPrototype {
   const version = ep.opEntityPrototypeVersion;
-  const attachmentPrototype = aprototypes.find(p => p.entities.includes(version.refCode));
+  const attachmentPrototype = aprototypes.find(p => p.entities && p.entities.includes(version.refCode));
   return {
     id: ep.id,
     type: version.type,

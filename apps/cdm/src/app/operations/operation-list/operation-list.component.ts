@@ -24,11 +24,23 @@ export class OperationListComponent implements OnInit {
     {columnDef: 'name', header: '', cell: (row) => `${row.name}`},
   ];
   starred = [];
+<<<<<<< HEAD
   readonly operations$ = this.appService.operations$;
 
   constructor(
     private appService: AppService,
     private modeService: ModeService) {}
+=======
+  operations;
+
+
+  constructor(
+    private auth: AuthService,
+    private app: AppService,
+    private service: OperationService) {
+    this.operations = this.app.operations;
+  }
+>>>>>>> cdm-dev
 
   ngOnInit() {
     this.modeService.mode = 'list';

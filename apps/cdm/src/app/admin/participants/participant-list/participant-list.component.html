@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 <h2>Users</h2>
 <paginated-table
   [dataSource]="data"
   [columns]="tableColumns">
 </paginated-table>
+=======
+<table-selectable-rows
+  [dataSource]="participants"
+  [columns]="tableColumns"
+  [route]="['/operations', id, 'participants']">
+</table-selectable-rows>
+>>>>>>> cdm-dev

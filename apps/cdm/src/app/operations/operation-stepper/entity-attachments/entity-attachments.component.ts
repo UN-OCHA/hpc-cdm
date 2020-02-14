@@ -8,12 +8,26 @@ import { AppService, ModeService } from '@hpc/core';
   styleUrls: ['./entity-attachments.component.scss']
 })
 export class EntityAttachmentsComponent implements OnInit {
+<<<<<<< HEAD
   entities$ = this.appService.entities$;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private modeService: ModeService,
     private appService: AppService){}
+=======
+  entities;
+  selectedEntity;
+  entityAttachments$;
+
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private operation: OperationService){
+    this.entities = this.operation.entities;
+    this.selectedEntity = this.operation.selectedEntity;
+    this.entityAttachments$ = this.operation.entityAttachments$;
+  }
+>>>>>>> cdm-dev
 
   ngOnInit() {
     this.activatedRoute.parent.params.subscribe(parentParams => {

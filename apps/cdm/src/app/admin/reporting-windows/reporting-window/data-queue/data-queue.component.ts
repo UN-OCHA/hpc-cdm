@@ -11,6 +11,10 @@ import { DataQueueService } from './data-queue.service';
 })
 export class DataQueueComponent implements OnInit {
   reportingWindow: ReportingWindow;
+<<<<<<< HEAD:apps/cdm/src/app/admin/reporting-windows/reporting-window/data-queue/data-queue.component.ts
+=======
+  loading;
+>>>>>>> cdm-dev:apps/cdm/src/app/admin/reporting-windows/data-queue/data-queue.component.ts
 
   constructor(
     private queue: DataQueueService,

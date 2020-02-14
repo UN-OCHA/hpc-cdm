@@ -9,6 +9,7 @@ import { AttachmentsRoutingModule } from './attachments-routing.module';
 import { AttachmentsComponent } from './attachments.component';
 import { AttachmentListComponent } from './attachment-list/attachment-list.component';
 import { AttachmentFormComponent } from './attachment-form/attachment-form.component';
+import { NgxLoadingModule } from 'ngx-loading';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { AttachmentFormComponent } from './attachment-form/attachment-form.compo
     CommonModule,
     FlexLayoutModule, FormsModule, ReactiveFormsModule,
     CdmUIModule, MaterialModule,
+    NgxLoadingModule,
     AttachmentsRoutingModule
   ],
   exports: [

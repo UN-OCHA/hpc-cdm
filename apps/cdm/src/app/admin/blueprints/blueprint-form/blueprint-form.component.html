@@ -1,5 +1,6 @@
 <form *ngIf="!loading" class="edit" (ngSubmit)="onSubmit()" [formGroup]="form">
 
+<<<<<<< HEAD
   <mat-button-toggle-group name="bptype" aria-label="Blueprint Type">
     <mat-button-toggle value="operation" checked="true">Operation Blueprint</mat-button-toggle>
     <mat-button-toggle value="plan">Plan Blueprint</mat-button-toggle>
@@ -30,5 +31,56 @@
   <div class="actions">
     <a mat-raised-button [routerLink]="['/blueprints']">Close</a>
     <a mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</a>
+=======
+
+  <table cellspacing="0" width="100%">
+    <tr>
+      <td>
+        <div class="operation-type">
+          <div>
+            <mat-radio-group  formControlName="type" id="blueprintTypeOptions">
+              <mat-radio-button *ngFor="let option of blueprintTypeOptions"
+                       [checked]="option.checked" value="{{option.value}}" >{{option.label}}
+             </mat-radio-button>
+           </mat-radio-group>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td  width="50%">
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput
+            formControlName="name"
+            id="name"
+            (input)="clearErrors()" [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
+            required>
+        </mat-form-field>
+      </td>
+      <td  width="50%">
+        <mat-form-field appearance="outline">
+          <mat-label>Description</mat-label>
+          <textarea matInput
+            class="form-control"  formControlName="description" (input)="clearErrors()"
+            [ngClass]="{ 'is-invalid': submitted && f.description.errors }" rows=1
+            type="text" id="description" name="description" required></textarea>
+        </mat-form-field>
+      </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <mat-label><p style="margin-top: 0px;">JSON Model?</p></mat-label>
+      <json-editor [json]="blueprint && blueprint.model" (change)="onJsonChange($event)" ></json-editor>
+    </td>
+  </tr>
+  </table>
+
+  <div class="buttons" style="float: right;margin-top: 10px">
+    <button mat-raised-button color="primary" [routerLink]="['/blueprints']">Close</button> &nbsp;
+    <button mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</button>
+>>>>>>> cdm-dev
   </div>
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px', fullScreenBackdrop: true, primaryColour: '#ed7325', tertiaryColour: 'rgb(237, 37, 92)' }"></ngx-loading>
+
 </form>

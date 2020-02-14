@@ -1,0 +1,30 @@
+<mat-form-field appearance="outline" fxFlex="grow">
+  <mat-label>Emergencies</mat-label>
+  <mat-chip-list #chipList aria-label="Emergency selection">
+    <mat-chip
+      *ngFor="let value of displayValues"
+      [selectable]="selectable"
+      [removable]="removable"
+      (removed)="remove(value)">
+      {{value}}
+      <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+    </mat-chip>
+    <input
+      matInput
+      required
+      #optionInput
+      [formControl]="optionCtrl"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      [matChipInputAddOnBlur]="addOnBlur">
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">    
+    <mat-option *ngFor="let option of filteredOptions | async" [value]="option.id">
+      {{option.name}}
+    </mat-option>
+    <mat-option *ngIf="(filteredOptions | async)?.length == 0" disabled>
+      <span>No Results Found.</span>
+      </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

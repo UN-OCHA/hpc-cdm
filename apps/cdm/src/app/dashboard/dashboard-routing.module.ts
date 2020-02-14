@@ -6,6 +6,10 @@ import { AuthenticatedGuard } from '@hpc/core';
 
 import { DashboardComponent } from './dashboard.component';
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> cdm-dev
 const routes: Routes = [
   {path: '', component: DashboardComponent, canActivate: [AuthenticatedGuard]}
 ];

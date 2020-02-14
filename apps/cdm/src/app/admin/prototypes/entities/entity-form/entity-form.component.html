@@ -13,6 +13,7 @@
     [ngClass]="{ 'is-invalid': submitted && f.refType.errors }"
     required></hpc-input>
 
+<<<<<<< HEAD
   <ng-container *ngIf="(prototype$ | async) as prototype; else emptyjson">
     <json-editor
       [json]="prototype.value"
@@ -25,5 +26,11 @@
   <div *ngIf="(operation$ | async) as operation" class="actions">
     <a mat-raised-button [routerLink]="['/operations', operation.id, 'eprototypes']">Close</a>
     <a mat-raised-button color="warn" type="submit" [disabled]="!form.valid">Save</a>
+=======
+  <div class="actions">
+    <a mat-raised-button [routerLink]="['/operations', operationId, 'eprototypes']">Close</a>
+    <button mat-raised-button color="warn" type="submit" [disabled]="!validEntry()">Save</button>
+>>>>>>> cdm-dev
   </div>
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px', fullScreenBackdrop: true, primaryColour: '#ed7325', tertiaryColour: 'rgb(237, 37, 92)' }"></ngx-loading>
 </form>

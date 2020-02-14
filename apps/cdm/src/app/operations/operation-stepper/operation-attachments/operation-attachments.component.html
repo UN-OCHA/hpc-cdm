@@ -1,18 +1,33 @@
+<<<<<<< HEAD
 <div *ngIf="!loading" class="op-attachments">
   <div *ngIf="(mode$ | async) as mode" class="panel-body">
+=======
+<div  class="op-attachments">
+  <div class="panel-body">
+>>>>>>> cdm-dev
     <div class="panel-attachments">
       <mat-accordion>
         <div *ngFor="let entry of attachments$ | async">
           <attachment-entry [entry]="entry"></attachment-entry>
         </div>
 
+<<<<<<< HEAD
         <attachment-entry *ngIf="mode === 'ADD'"
           [entry]="operation.newAttachment"></attachment-entry>
+=======
+        <attachment-entry
+          *ngIf="mode === 'ADD_OPERATION_ATTACHMENT'"
+          [entry]="newAttachment"></attachment-entry>
+>>>>>>> cdm-dev
       </mat-accordion>
     </div>
     <div class="panel-actions">
       <a mat-raised-button color="warn"
+<<<<<<< HEAD
         [disabled]="mode === 'ADD'"
+=======
+        [disabled]="mode === 'ADD_OPERATION_ATTACHMENT'"
+>>>>>>> cdm-dev
         (click)="addForm()">
         {{ 'Add Form' }}
       </a>

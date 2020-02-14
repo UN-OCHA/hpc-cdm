@@ -6,14 +6,17 @@ const TITLES = {
   'edit': 'Edit Reporting Window',
   'list': 'Reporting Windows'
 }
-
 @Component({
   selector: 'reporting-windows',
   templateUrl: './reporting-windows.component.html'
 })
 export class ReportingWindowsComponent implements OnInit {
+<<<<<<< HEAD
   titles;
   mode;
+=======
+  title: string;  
+>>>>>>> cdm-dev
 
   constructor(
     private appService: AppService,

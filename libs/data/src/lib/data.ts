@@ -18,6 +18,8 @@ export interface Operation {
   entityPrototypes: EntityPrototype[];
   attachmentPrototypes: AttachmentPrototype[];
   attachmentPrototype?: AttachmentPrototype;
+  emergencies: any,
+  locations: any;
   updatedAt?: any;
   starred: boolean;
 }
@@ -46,6 +48,12 @@ export interface Attachment {
   formName: any;
   formFile: any;
   comments?: any;
+  collection:any;
+  opAttachmentPrototypeId:any;
+  operationId:any;
+  opAttachmentVersion:any;
+  objectId:any;
+  objectType:any;
 }
 
 export interface AttachmentPrototype {
