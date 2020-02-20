@@ -15,7 +15,7 @@ elif [ "$SOURCE_BRANCH" == "dev" ]; then
     ENVIRONMENT=devServer
 elif [ "$SOURCE_BRANCH" == "demo" ]; then
     TARGET=production
-    ENVIRONMENT=demo
+    ENVIRONMENT=demo    
 fi
 
 docker build \

@@ -1,4 +1,4 @@
-FROM unocha/nodejs-builder:10 AS builder
+FROM unocha/nodejs-builder:10.14.2 AS builder
 WORKDIR /srv/src
 COPY . .
 ARG ENVIRONMENT=dev
