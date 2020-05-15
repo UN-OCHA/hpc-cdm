@@ -10,7 +10,7 @@ ARG ENVIRONMENT=dev
 # see the whole internet :-)
 RUN npm install && \
   npm run build -- --output-path=/srv/src/dist --configuration=$ENVIRONMENT
-FROM unocha/nginx:1.14
+FROM unocha/nginx:1.16
 COPY  --from=builder /srv/src/dist/ /var/www/
 COPY  --from=builder /srv/src/env/etc/nginx/conf.d/default.conf /etc/nginx/conf.d/
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
