@@ -8,7 +8,7 @@ export const environment = {
   envName: 'stage',
   title: 'Coordination Data Module',
   shortTitle: 'CDM',
-  authClientId: 'cdm-stage',
-  serviceBaseUrl: 'https://api.stage.test.hpc.tools/',
-  authBaseUrl: 'https://auth.staging.humanitarian.id/'
+  authClientId: 'ocha-plan2-hpc-tools-dev',
+  serviceBaseUrl: 'https://stage.api-hpc-tools.ahconu.org/',
+  authBaseUrl: 'https://auth.humanitarian.id/'
 };
