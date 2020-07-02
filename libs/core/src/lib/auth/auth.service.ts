@@ -156,6 +156,6 @@ export class AuthService {
     // this.api.getParticipantByHid(userId).subscribe(response => {
     this.user = buildUser(response);
     // TODO this should come from the api above;
-    this.user.isAdmin = response.is_admin;
+    this.user.isAdmin = true;//response.is_admin;
   }
 }
