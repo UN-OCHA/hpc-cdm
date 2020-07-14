@@ -21,5 +21,13 @@
       }
     }
   },
-  "projects": {}
+  "projects": {
+    "hpc-cdm": {
+      "tags": []
+    },
+    "hpc-cdm-e2e": {
+      "tags": [],
+      "implicitDependencies": ["hpc-cdm"]
+    }
+  }
 }
