@@ -15,7 +15,12 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@unocha/hpc-core": ["libs/hpc-core/src/index.ts"],
+      "@unocha/hpc-data": ["libs/hpc-data/src/index.ts"],
+      "@unocha/hpc-data-dummy": ["libs/hpc-data-dummy/src/index.ts"],
+      "@unocha/hpc-ui": ["libs/hpc-ui/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

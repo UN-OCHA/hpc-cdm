@@ -107,6 +107,114 @@
           }
         }
       }
+    },
+    "hpc-core": {
+      "root": "libs/hpc-core",
+      "sourceRoot": "libs/hpc-core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/hpc-core/tsconfig.lib.json",
+              "libs/hpc-core/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/hpc-core/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/hpc-core/jest.config.js",
+            "tsConfig": "libs/hpc-core/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "hpc-data": {
+      "root": "libs/hpc-data",
+      "sourceRoot": "libs/hpc-data/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/hpc-data/tsconfig.lib.json",
+              "libs/hpc-data/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/hpc-data/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/hpc-data/jest.config.js",
+            "tsConfig": "libs/hpc-data/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "hpc-data-dummy": {
+      "root": "libs/hpc-data-dummy",
+      "sourceRoot": "libs/hpc-data-dummy/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/hpc-data-dummy/tsconfig.lib.json",
+              "libs/hpc-data-dummy/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/hpc-data-dummy/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/hpc-data-dummy/jest.config.js",
+            "tsConfig": "libs/hpc-data-dummy/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "hpc-ui": {
+      "root": "libs/hpc-ui",
+      "sourceRoot": "libs/hpc-ui/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/hpc-ui/tsconfig.lib.json",
+              "libs/hpc-ui/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/hpc-ui/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/hpc-ui/jest.config.js",
+            "tsConfig": "libs/hpc-ui/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

@@ -28,6 +28,18 @@
     "hpc-cdm-e2e": {
       "tags": [],
       "implicitDependencies": ["hpc-cdm"]
+    },
+    "hpc-core": {
+      "tags": []
+    },
+    "hpc-data": {
+      "tags": []
+    },
+    "hpc-data-dummy": {
+      "tags": []
+    },
+    "hpc-ui": {
+      "tags": []
     }
   }
 }
