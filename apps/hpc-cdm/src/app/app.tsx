@@ -1,6 +1,7 @@
 import React from 'react';
-
 import { BaseStyling, Header } from '@unocha/hpc-ui';
+
+import env from '../environments/environment';
 
 import { Route, Link } from 'react-router-dom';
 
@@ -8,7 +9,7 @@ export const App = () => {
   return (
     <div>
       <BaseStyling />
-      <Header />
+      <Header session={env.session} />
       <div role="navigation">
         <ul>
           <li>

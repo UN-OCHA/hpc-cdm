@@ -162,9 +162,9 @@
         }
       }
     },
-    "hpc-data-dummy": {
-      "root": "libs/hpc-data-dummy",
-      "sourceRoot": "libs/hpc-data-dummy/src",
+    "hpc-dummy": {
+      "root": "libs/hpc-dummy",
+      "sourceRoot": "libs/hpc-dummy/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -173,17 +173,17 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/hpc-data-dummy/tsconfig.lib.json",
-              "libs/hpc-data-dummy/tsconfig.spec.json"
+              "libs/hpc-dummy/tsconfig.lib.json",
+              "libs/hpc-dummy/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/hpc-data-dummy/**/*"]
+            "exclude": ["**/node_modules/**", "!libs/hpc-dummy/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/hpc-data-dummy/jest.config.js",
-            "tsConfig": "libs/hpc-data-dummy/tsconfig.spec.json",
+            "jestConfig": "libs/hpc-dummy/jest.config.js",
+            "tsConfig": "libs/hpc-dummy/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }

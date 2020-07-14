@@ -1,9 +1,9 @@
 module.exports = {
-  name: 'hpc-data-dummy',
+  name: 'hpc-dummy',
   preset: '../../jest.config.js',
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '../../coverage/libs/hpc-data-dummy',
+  coverageDirectory: '../../coverage/libs/hpc-dummy',
 };
