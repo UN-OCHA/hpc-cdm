@@ -1,1 +1,3 @@
-export * from './lib/hpc-ui';
+import Header from './lib/header';
+
+export { Header };

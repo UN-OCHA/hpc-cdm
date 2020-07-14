@@ -1,9 +1,12 @@
 module.exports = {
-  name: 'hpc-ui',
+  name: 'ui',
   preset: '../../jest.config.js',
   transform: {
-    '^.+\\.[tj]sx?$': 'ts-jest',
+    '^.+\\.[tj]sx?$': [
+      'babel-jest',
+      { cwd: __dirname, configFile: './babel-jest.config.json' },
+    ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '../../coverage/libs/hpc-ui',
+  coverageDirectory: '../../coverage/libs/ui',
 };
