@@ -39,8 +39,11 @@ export const buttonWithIcon = css`
   padding-left: 9px;
   padding-right: 9px;
 
-  span,
   svg {
+    margin: -20px 3px;
+  }
+
+  span {
     margin: 0 3px;
   }
 `;

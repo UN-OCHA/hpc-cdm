@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
+import {
+  MenuItem,
+  Popper,
+  ClickAwayListener,
+  MenuList,
+  Paper,
+  Grow,
+} from '@material-ui/core';
 
 import { CLASSES, combineClasses } from './classes';
 import UNOCHA from './icons/logos/unocha';
+import Caret from './icons/caret';
 import { Session } from '@unocha/hpc-core';
 import { MdPermIdentity } from 'react-icons/md';
 
@@ -18,6 +27,8 @@ interface Props {
 
 const Header = (props: Props) => {
   const { className, session } = props;
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuAnchor = useRef<HTMLButtonElement>(null);
 
   const user = () => {
     const u = session.getUser();
@@ -25,15 +36,36 @@ const Header = (props: Props) => {
       return (
         <div className={CLS.USER_CONTROLS}>
           <button
+            ref={userMenuAnchor}
             className={combineClasses(
               CLASSES.BUTTON.CLEAR,
               CLASSES.BUTTON.WITH_ICON
             )}
-            onClick={session.logOut}
+            onClick={() => setUserMenuOpen(true)}
           >
-            <MdPermIdentity />
+            <MdPermIdentity size={18} />
             <span>{u.name}</span>
+            <Caret direction={userMenuOpen ? 'up' : 'down'} />
           </button>
+          <Popper
+            open={userMenuOpen}
+            anchorEl={userMenuAnchor.current}
+            role={undefined}
+            transition
+            disablePortal
+          >
+            {({ TransitionProps }) => (
+              <Grow {...TransitionProps}>
+                <Paper>
+                  <ClickAwayListener onClickAway={() => setUserMenuOpen(false)}>
+                    <MenuList autoFocusItem={userMenuOpen}>
+                      <MenuItem onClick={session.logOut}>Logout</MenuItem>
+                    </MenuList>
+                  </ClickAwayListener>
+                </Paper>
+              </Grow>
+            )}
+          </Popper>
         </div>
       );
     } else {
