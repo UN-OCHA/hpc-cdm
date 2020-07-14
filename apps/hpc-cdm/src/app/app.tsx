@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { Header } from '@unocha/hpc-ui';
+import { BaseStyling, Header } from '@unocha/hpc-ui';
 
 import { Route, Link } from 'react-router-dom';
 
 export const App = () => {
   return (
     <div>
+      <BaseStyling />
       <Header />
       <div role="navigation">
         <ul>

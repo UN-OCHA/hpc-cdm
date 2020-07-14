@@ -1,1 +1,3 @@
-export * from './lib/hpc-core';
+import * as util from './lib/util';
+
+export { util };
