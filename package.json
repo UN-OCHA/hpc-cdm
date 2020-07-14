@@ -8,14 +8,14 @@
     "build": "nx build",
     "test": "nx test",
     "lint": "nx workspace-lint && nx lint && prettier --check '**/*.{ts,tsx,js}'",
-    "lint:fix": "nx workspace-lint && nx lint --fix && prettier --write '**/*.{ts,tsx,js}'",
+    "lint:fix": "nx workspace-lint && nx lint --fix && prettier --write '**/*.{js,ts,tsx,md,json}'",
     "e2e": "nx e2e",
     "affected:apps": "nx affected:apps",
     "affected:libs": "nx affected:libs",
     "affected:build": "nx affected:build",
     "affected:e2e": "nx affected:e2e",
     "affected:test": "nx affected:test",
-    "affected:lint": "nx affected:lint",
+    "affected:lint": "nx affected:lint && lint-staged",
     "affected:dep-graph": "nx affected:dep-graph",
     "affected": "nx affected",
     "format": "nx format:write",
@@ -25,6 +25,16 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run affected:lint"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,md,json}": [
+      "prettier --check"
+    ]
   },
   "private": true,
   "dependencies": {
@@ -68,7 +78,9 @@
     "eslint-plugin-jsx-a11y": "6.3.1",
     "eslint-plugin-react": "7.20.0",
     "eslint-plugin-react-hooks": "4.0.4",
+    "husky": "^4.2.5",
     "jest": "25.2.3",
+    "lint-staged": "^10.2.11",
     "prettier": "2.0.4",
     "ts-jest": "25.2.1",
     "ts-node": "~7.0.0",
