@@ -10,6 +10,7 @@ const CLASS_PREFIX = 'hpc-';
  */
 export const CLASSES = {
   CONTAINER: {
+    CENTERED: CLASS_PREFIX + 'container',
     /**
      * A container that always takes up the full width of its parent
      */
@@ -18,6 +19,11 @@ export const CLASSES = {
   FLEX: {
     CONTAINER: CLASS_PREFIX + 'flex-container',
     GROW: CLASS_PREFIX + 'flex-grow',
+  },
+  BUTTON: {
+    CLEAR: CLASS_PREFIX + 'button-primary',
+    PRIMARY: CLASS_PREFIX + 'button-clear',
+    WITH_ICON: CLASS_PREFIX + 'with-icon',
   },
 } as const;
 

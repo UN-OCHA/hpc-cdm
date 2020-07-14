@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import { CLASSES, combineClasses } from './classes';
 import UNOCHA from './icons/logos/unocha';
 import { Session } from '@unocha/hpc-core';
+import { MdPermIdentity } from 'react-icons/md';
 
 const CLS = {
   LOGO: 'logo',
   USER_CONTROLS: 'user-controls',
-  USER_CONTROLS_BUTTON: 'user-controls-button',
 } as const;
 
 interface Props {
@@ -24,16 +24,30 @@ const Header = (props: Props) => {
     if (u) {
       return (
         <div className={CLS.USER_CONTROLS}>
-          <button className={CLS.USER_CONTROLS_BUTTON} onClick={session.logOut}>
-            {u.name}
+          <button
+            className={combineClasses(
+              CLASSES.BUTTON.CLEAR,
+              CLASSES.BUTTON.WITH_ICON
+            )}
+            onClick={session.logOut}
+          >
+            <MdPermIdentity />
+            <span>{u.name}</span>
           </button>
         </div>
       );
     } else {
       return (
         <div className={CLS.USER_CONTROLS}>
-          <button className={CLS.USER_CONTROLS_BUTTON} onClick={session.logIn}>
-            Login
+          <button
+            className={combineClasses(
+              CLASSES.BUTTON.CLEAR,
+              CLASSES.BUTTON.WITH_ICON
+            )}
+            onClick={session.logIn}
+          >
+            <MdPermIdentity />
+            <span>Login</span>
           </button>
         </div>
       );
@@ -65,16 +79,5 @@ export default styled(Header)`
   }
 
   .${CLS.USER_CONTROLS} {
-    .${CLS.USER_CONTROLS_BUTTON} {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #fff;
-      outline: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
   }
 `;
