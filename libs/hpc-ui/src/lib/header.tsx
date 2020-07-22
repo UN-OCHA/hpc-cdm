@@ -14,6 +14,9 @@ import UNOCHA from './icons/logos/unocha';
 import Caret from './icons/caret';
 import { Session } from '@unocha/hpc-core';
 import { MdPermIdentity } from 'react-icons/md';
+import { i18n } from '@unocha/hpc-core';
+
+import LanguagePicker from './components/language-picker';
 
 const CLS = {
   LOGO: 'logo',
@@ -23,10 +26,12 @@ const CLS = {
 interface Props {
   className?: string;
   session: Session;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  language: i18n.LanguageChoice<any>;
 }
 
 const Header = (props: Props) => {
-  const { className, session } = props;
+  const { className, session, language } = props;
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuAnchor = useRef<HTMLButtonElement>(null);
 
@@ -96,6 +101,7 @@ const Header = (props: Props) => {
     >
       <UNOCHA className={CLS.LOGO} />
       <div className={CLASSES.FLEX.GROW} />
+      <LanguagePicker choice={language} />
       {user()}
     </nav>
   );

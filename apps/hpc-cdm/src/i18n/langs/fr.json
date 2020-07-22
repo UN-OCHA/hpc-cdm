@@ -1,0 +1,8 @@
+{
+  "title": "HPC CDM",
+  "components": {
+    "acceptableUseNotification": {
+      "login": "Cliquez ici pour vous identifier"
+    }
+  }
+}
