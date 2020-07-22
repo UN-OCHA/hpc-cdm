@@ -3,7 +3,7 @@ import { BaseStyling } from './lib/styling';
 import { css, styled, THEME, Theme } from './lib/theme';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
-import Header from './lib/header';
+import Header from './lib/components/header';
 import Tabs from './lib/components/tabs';
 
 const COMPONENTS = {

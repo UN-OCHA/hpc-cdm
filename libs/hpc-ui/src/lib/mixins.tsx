@@ -1,4 +1,4 @@
-import { styled, css } from './theme';
+import { css } from './theme';
 
 export const button = css`
   display: inline-flex;

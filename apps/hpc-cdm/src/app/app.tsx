@@ -6,7 +6,7 @@ import { BaseStyling, C, styled } from '@unocha/hpc-ui';
 import env from '../environments/environment';
 import PageNotLoggedIn from './pages/not-logged-in';
 import { AppContext } from './context';
-import { LANGUAGE_CHOICE, LanguageKey } from '../i18n';
+import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
 
 import MainNavigation from './components/main-navigation';
@@ -53,6 +53,13 @@ export class App extends React.Component<Props, State> {
             className={CLS.HEADER}
             session={env.session}
             language={LANGUAGE_CHOICE}
+            strings={t.get(lang, (s) => s.user)}
+            userMenu={[
+              {
+                label: t.t(lang, (s) => s.user.logout),
+                onClick: env.session.logOut,
+              },
+            ]}
           />
           <main>
             {env.session.getUser() ? (

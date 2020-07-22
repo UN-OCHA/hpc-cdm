@@ -9,14 +9,14 @@ import {
   Grow,
 } from '@material-ui/core';
 
-import { CLASSES, combineClasses } from './classes';
-import UNOCHA from './icons/logos/unocha';
-import Caret from './icons/caret';
 import { Session } from '@unocha/hpc-core';
 import { MdPermIdentity } from 'react-icons/md';
 import { i18n } from '@unocha/hpc-core';
 
-import LanguagePicker from './components/language-picker';
+import { CLASSES, combineClasses } from '../classes';
+import UNOCHA from '../icons/logos/unocha';
+import Caret from '../icons/caret';
+import LanguagePicker from '../components/language-picker';
 
 const CLS = {
   LOGO: 'logo',
@@ -28,10 +28,17 @@ interface Props {
   session: Session;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   language: i18n.LanguageChoice<any>;
+  strings: {
+    login: string;
+  };
+  userMenu: Array<{
+    label: string;
+    onClick: () => void;
+  }>;
 }
 
 const Header = (props: Props) => {
-  const { className, session, language } = props;
+  const { className, session, language, strings, userMenu } = props;
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuAnchor = useRef<HTMLButtonElement>(null);
 
@@ -64,7 +71,17 @@ const Header = (props: Props) => {
                 <Paper>
                   <ClickAwayListener onClickAway={() => setUserMenuOpen(false)}>
                     <MenuList autoFocusItem={userMenuOpen}>
-                      <MenuItem onClick={session.logOut}>Logout</MenuItem>
+                      {userMenu.map((item, i) => (
+                        <MenuItem
+                          key={i}
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            item.onClick();
+                          }}
+                        >
+                          {item.label}
+                        </MenuItem>
+                      ))}
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>
@@ -84,7 +101,7 @@ const Header = (props: Props) => {
             onClick={session.logIn}
           >
             <MdPermIdentity />
-            <span>Login</span>
+            <span>{strings.login}</span>
           </button>
         </div>
       );

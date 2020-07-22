@@ -1,5 +1,9 @@
 {
   "title": "HPC Coordination Description Mapping",
+  "user": {
+    "login": "Login",
+    "logout": "Logout"
+  },
   "components": {
     "acceptableUseNotification": {
       "login": "Click here to login",
