@@ -1,6 +1,6 @@
 import { mapValues } from 'lodash';
 
-import { RecursivePartial } from '../util';
+import { RecursivePartial, hasKey } from '../util';
 
 export interface Language<Strings> {
   meta: {
@@ -17,6 +17,8 @@ export interface Language<Strings> {
 }
 
 export type PartialLanguage<Strings> = Language<RecursivePartial<Strings>>;
+
+const STORAGE_KEY = 'hpc-lang';
 
 /**
  * Class that manages the user's choice of language to display,
@@ -36,16 +38,37 @@ export class LanguageChoice<LanguageKey extends string> {
     defaultLang: LanguageKey
   ) {
     this.languages = mapValues(languages, (l) => l.meta);
-    // TODO: detect initial language based on local storage / browser prefs
-    this.language = defaultLang;
+    const detectedLang = this.detectLanguage();
+    if (detectedLang) {
+      this.language = detectedLang;
+    } else {
+      this.language = defaultLang;
+    }
     this.applyLanguage();
   }
+
+  private detectLanguage = () => {
+    const pref = localStorage.getItem(STORAGE_KEY);
+    const isLanguageKey = (key: string): key is LanguageKey =>
+      hasKey(this.languages, key);
+    if (isLanguageKey(pref)) {
+      return pref;
+    }
+    const supportedBrowserLanguages = window.navigator.languages
+      .map((l) => l.split('-')[0])
+      .filter(isLanguageKey);
+    if (supportedBrowserLanguages.length > 0) {
+      return supportedBrowserLanguages[0];
+    }
+    return null;
+  };
 
   public getLanguage = () => this.language;
 
   public setLanguage = (lang: LanguageKey) => {
     this.language = lang;
     this.listeners.forEach((l) => l(lang));
+    localStorage.setItem(STORAGE_KEY, lang);
     this.applyLanguage();
   };
 
@@ -64,8 +87,7 @@ export class LanguageChoice<LanguageKey extends string> {
     );
 
   /**
-   * Apply the current language to the root html element,
-   * and store language in local storage
+   * Apply the current language to the root html element
    */
   private applyLanguage = () => {
     document.documentElement.lang = this.language;
@@ -75,7 +97,6 @@ export class LanguageChoice<LanguageKey extends string> {
     } else {
       document.documentElement.setAttribute('dir', meta.direction);
     }
-    // TODO: store language
   };
 }
 

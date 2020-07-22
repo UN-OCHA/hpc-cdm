@@ -4,6 +4,7 @@
     "jsx": "react",
     "allowJs": true,
     "esModuleInterop": true,
+    "strict": true,
     "types": ["node", "jest"]
   },
   "files": [
