@@ -2,8 +2,9 @@ import { createGlobalStyle } from 'styled-components';
 
 import { CLASSES } from './classes';
 import * as mixins from './mixins';
+import { Theme } from './theme';
 
-export const BaseStyling = createGlobalStyle`
+export const BaseStyling = createGlobalStyle<{ theme: Theme }>`
 body, html {
   margin: 0;
   padding: 0;
@@ -11,20 +12,20 @@ body, html {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #4a4a4a;
+  color: ${(p) => p.theme.colors.text};
 }
 
 .${CLASSES.CONTAINER.CENTERED} {
-  padding-left: 15px;
-  padding-right: 15px;
+  padding-left: ${(p) => p.theme.marginPx.md}px;
+  padding-right: ${(p) => p.theme.marginPx.md}px;
   margin-left: auto;
   margin-right: auto;
-  max-width: 1240px;
+  max-width: ${(p) => p.theme.sizing.containerWidthPx}px;
 }
 
 .${CLASSES.CONTAINER.FLUID} {
-  padding-left: 15px;
-  padding-right: 15px;
+  padding-left: ${(p) => p.theme.marginPx.md}px;
+  padding-right: ${(p) => p.theme.marginPx.md}px;
   margin-left: 0;
   margin-right: 0;
 }

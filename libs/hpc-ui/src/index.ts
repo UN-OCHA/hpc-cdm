@@ -1,12 +1,24 @@
 import { CLASSES, combineClasses } from './lib/classes';
+import { BaseStyling } from './lib/styling';
+import { css, styled, THEME, Theme } from './lib/theme';
+
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
 import Header from './lib/header';
-import { BaseStyling } from './lib/styling';
+import Tabs from './lib/components/tabs';
+
+const COMPONENTS = {
+  AcceptableUseNotification,
+  Header,
+  Tabs,
+};
 
 export {
-  AcceptableUseNotification,
   BaseStyling,
   CLASSES,
   combineClasses,
-  Header,
+  COMPONENTS as C,
+  css,
+  styled,
+  THEME,
+  Theme,
 };
