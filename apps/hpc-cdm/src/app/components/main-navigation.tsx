@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
 
@@ -35,7 +35,9 @@ const Component = (props: Props) => {
             },
           ]}
         >
-          <h2 className={CLS.HEADER}>{t.t(lang, (s) => s.title)}</h2>
+          <Link to={paths.HOME} className={CLS.HEADER}>
+            {t.t(lang, (s) => s.title)}
+          </Link>
         </C.Tabs>
       )}
     </AppContext.Consumer>

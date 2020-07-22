@@ -1,14 +1,37 @@
 import { Session, SessionUser } from '@unocha/hpc-core';
+import { Model, Operations } from '@unocha/hpc-data';
 
 interface DummyData {
-  currentUser: SessionUser | null;
+  currentUser: {
+    user: SessionUser;
+    permissions: string[];
+  } | null;
+  operations: Operations.Operation[];
 }
 
 const INITIAL_DATA: DummyData = {
   currentUser: null,
+  operations: [
+    {
+      id: 0,
+      name: 'Operation 1',
+    },
+    {
+      id: 1,
+      name: 'Operation 2',
+    },
+  ],
 };
 
 const STORAGE_KEY = 'hpc-dummy';
+
+/**
+ * Simulate a positive API response with a bit of a delay
+ */
+const simulateResponse = <T>(value: T | Promise<T>) =>
+  new Promise<T>((resolve) => {
+    setTimeout(() => resolve(value), 300);
+  });
 
 export class Dummy {
   private data: DummyData;
@@ -40,10 +63,13 @@ export class Dummy {
       getCurrentLanguage: () => {
         throw new Error('Not Implemented');
       },
-      getUser: () => this.data.currentUser,
+      getUser: () => this.data.currentUser?.user,
       logIn: () => {
         this.data.currentUser = {
-          name: 'Dummy User',
+          user: {
+            name: 'Dummy User',
+          },
+          permissions: [],
         };
         this.store();
         window.location.reload();
@@ -52,6 +78,20 @@ export class Dummy {
         this.data.currentUser = null;
         this.store();
         window.location.reload();
+      },
+    };
+  };
+
+  public getModel = (): Model => {
+    return {
+      operations: {
+        getOperations: () =>
+          simulateResponse({
+            data: this.data.operations,
+            permissions: {
+              canAddOperation: true,
+            },
+          }),
       },
     };
   };

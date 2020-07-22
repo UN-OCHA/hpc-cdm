@@ -28,7 +28,8 @@
           { "sourceTag": "*", "onlyDependOnLibsWithTags": ["*"] }
         ]
       }
-    ]
+    ],
+    "@typescript-eslint/no-namespace": "off"
   },
   "overrides": [
     {

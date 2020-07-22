@@ -76,7 +76,7 @@ export default styled(Component)`
           border-top-right-radius: ${(p) => p.theme.sizing.borderRadiusMd};
           text-decoration: none;
           cursor: pointer;
-          color: ${(p) => p.theme.colors.primary.dark2};
+          color: ${(p) => p.theme.colors.textLink};
 
           &:hover {
             text-decoration: underline;

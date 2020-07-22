@@ -1,15 +1,18 @@
 import React from 'react';
-import { Route, Link } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 import { BaseStyling, C, styled } from '@unocha/hpc-ui';
 
 import env from '../environments/environment';
-import PageNotLoggedIn from './pages/not-logged-in';
 import { AppContext } from './context';
 import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
+import * as paths from './paths';
 
 import MainNavigation from './components/main-navigation';
+
+import PageNotLoggedIn from './pages/not-logged-in';
+import PageOperationsList from './pages/operations-list';
 
 const CLS = {
   HEADER: 'header',
@@ -66,23 +69,14 @@ export class App extends React.Component<Props, State> {
               <>
                 <MainNavigation />
                 <Route
-                  path="/"
+                  path={paths.HOME}
                   exact
-                  render={() => (
-                    <div>
-                      This is the generated root route.{' '}
-                      <Link to="/page-2">Click here for page 2.</Link>
-                    </div>
-                  )}
+                  render={() => <div>HOMEPAGE</div>}
                 />
                 <Route
-                  path="/page-2"
+                  path={paths.OPERATIONS}
                   exact
-                  render={() => (
-                    <div>
-                      <Link to="/">Click here to go back to root page.</Link>
-                    </div>
-                  )}
+                  render={() => <PageOperationsList />}
                 />
               </>
             ) : (

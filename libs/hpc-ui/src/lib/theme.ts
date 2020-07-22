@@ -22,6 +22,7 @@ export const THEME = {
     pallete: COLOR_PALETTE,
     primary: COLOR_PALETTE.orange,
     text: COLOR_PALETTE.gray.normal,
+    textLink: COLOR_PALETTE.orange.dark2,
     panel: {
       border: COLOR_PALETTE.gray.light1,
       bg: COLOR_PALETTE.gray.light2,

@@ -53,6 +53,15 @@ body, html {
   ${mixins.buttonWithIcon}
 }
 
+a {
+  color: ${(p) => p.theme.colors.textLink};
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 
 
 `;
