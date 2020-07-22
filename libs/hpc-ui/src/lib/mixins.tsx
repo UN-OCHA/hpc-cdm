@@ -1,4 +1,4 @@
-import { css } from 'styled-components';
+import { css } from './theme';
 
 export const button = css`
   display: inline-flex;
@@ -6,7 +6,7 @@ export const button = css`
   border: none;
   outline: none;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: ${(p) => p.theme.sizing.borderRadiusSm};
   padding: 6px 12px;
   font-weight: 700;
   border: 1px solid #000;
@@ -14,13 +14,13 @@ export const button = css`
 `;
 
 export const buttonPrimary = css`
-  background-color: #ee7325;
-  border-color: #ee7325;
+  background-color: ${(p) => p.theme.colors.primary.normal};
+  border-color: ${(p) => p.theme.colors.primary.normal};
   color: #fff;
 
   &:hover {
-    background-color: #dc6011;
-    border-color: #d05b10;
+    background-color: ${(p) => p.theme.colors.primary.dark1};
+    border-color: ${(p) => p.theme.colors.primary.dark2};
   }
 `;
 

@@ -1,11 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
 
-import {
-  AcceptableUseNotification,
-  CLASSES,
-  combineClasses,
-} from '@unocha/hpc-ui';
+import { C, CLASSES, combineClasses, styled } from '@unocha/hpc-ui';
 
 import env from '../../environments/environment';
 import { t } from '../../i18n';
@@ -21,7 +16,7 @@ const PageNotLoggedIn = (props: Props) => (
       <div
         className={combineClasses(CLASSES.CONTAINER.CENTERED, props.className)}
       >
-        <AcceptableUseNotification
+        <C.AcceptableUseNotification
           session={env.session}
           strings={t.get(lang, (s) => s.components.acceptableUseNotification)}
         />

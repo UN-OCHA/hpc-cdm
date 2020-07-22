@@ -2,6 +2,7 @@
 // When building for production, this file is replaced with `environment.prod.ts`.
 
 import { Session } from '@unocha/hpc-core';
+import { Model } from '@unocha/hpc-data';
 import { Dummy } from '@unocha/hpc-dummy';
 
 const dummy = new Dummy();
@@ -9,6 +10,9 @@ const dummy = new Dummy();
 export const ENVIRONMENT = {
   get session(): Session {
     return dummy.getSession();
+  },
+  get model(): Model {
+    return dummy.getModel();
   },
 };
 

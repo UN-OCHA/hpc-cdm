@@ -1,5 +1,9 @@
 {
-  "title": "HPC CDM",
+  "title": "HPC Coordination Description Mapping",
+  "user": {
+    "login": "Login",
+    "logout": "Logout"
+  },
   "components": {
     "acceptableUseNotification": {
       "login": "Click here to login",
@@ -9,5 +13,9 @@
       "p3": "All use of ICT resources and ICT data is subject to monitoring and investigation as set forth in ST/SGB/2004/15",
       "p4": "Use of this system by any user, authorized or unauthorized, constitutes consent to the applicable UN regulations and rules"
     }
+  },
+  "navigation": {
+    "admin": "Admin",
+    "operations": "Operations"
   }
 }
