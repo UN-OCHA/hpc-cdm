@@ -8,15 +8,26 @@ import {
 } from '@unocha/hpc-ui';
 
 import env from '../../environments/environment';
+import { t } from '../../i18n';
+import { AppContext } from '../context';
 
 interface Props {
   className?: string;
 }
 
 const PageNotLoggedIn = (props: Props) => (
-  <div className={combineClasses(CLASSES.CONTAINER.CENTERED, props.className)}>
-    <AcceptableUseNotification session={env.session} />
-  </div>
+  <AppContext.Consumer>
+    {({ lang }) => (
+      <div
+        className={combineClasses(CLASSES.CONTAINER.CENTERED, props.className)}
+      >
+        <AcceptableUseNotification
+          session={env.session}
+          strings={t.get(lang, (s) => s.components.acceptableUseNotification)}
+        />
+      </div>
+    )}
+  </AppContext.Consumer>
 );
 
 export default styled(PageNotLoggedIn)`

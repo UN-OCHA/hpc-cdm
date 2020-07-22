@@ -9,6 +9,14 @@ import { CLASSES, combineClasses } from '../classes';
 interface Props {
   className?: string;
   session: Session;
+  strings: {
+    login: string;
+    title: string;
+    p1: string;
+    p2: string;
+    p3: string;
+    p4: string;
+  };
 }
 
 const AcceptableUseNotification = (props: Props) => (
@@ -22,29 +30,14 @@ const AcceptableUseNotification = (props: Props) => (
         onClick={props.session.logIn}
       >
         <MdPermIdentity />
-        <span>Click here to login</span>
+        <span>{props.strings.login}</span>
       </button>
     </div>
-    <h2>Acceptable Use Notification</h2>
-    <p>
-      Unauthorized access to this United Nations Computer System is prohibited
-      by ST/SGB/2004/15 (''Use of information and communication technology
-      resources and data" of 29 November 2004).
-    </p>
-    <p>
-      Authorized users shall ensure that their use of Information and
-      Communication Technology (ICT) resources and ICT data is consistent with
-      their obligations as staff members or such other obligations as may apply
-      to them.
-    </p>
-    <p>
-      All use of ICT resources and ICT data is subject to monitoring and
-      investigation as set forth in ST/SGB/2004/15.
-    </p>
-    <p>
-      Use of this system by any user, authorized or unauthorized, constitutes
-      consent to the applicable UN regulations and rules.
-    </p>
+    <h2>{props.strings.title}</h2>
+    <p>{props.strings.p1}</p>
+    <p>{props.strings.p2}</p>
+    <p>{props.strings.p3}</p>
+    <p>{props.strings.p4}</p>
   </div>
 );
 
