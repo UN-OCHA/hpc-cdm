@@ -1,6 +1,6 @@
 import { CLASSES, combineClasses } from './lib/classes';
 import { BaseStyling } from './lib/styling';
-import { css, styled, THEME, Theme } from './lib/theme';
+import { css, styled, THEME, Theme, ThemeProvider } from './lib/theme';
 import { DataLoaderState, dataLoader, simpleDataLoader } from './lib/util';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
@@ -27,4 +27,5 @@ export {
   styled,
   THEME,
   Theme,
+  ThemeProvider,
 };
