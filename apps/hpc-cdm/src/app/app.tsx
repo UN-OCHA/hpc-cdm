@@ -12,7 +12,8 @@ import * as paths from './paths';
 import MainNavigation from './components/main-navigation';
 
 import PageNotLoggedIn from './pages/not-logged-in';
-import PageOperationsList from './pages/operations-list';
+
+import OperationsRoutes from './routes/operations';
 
 const CLS = {
   HEADER: 'header',
@@ -73,11 +74,7 @@ export class App extends React.Component<Props, State> {
                   exact
                   render={() => <div>HOMEPAGE</div>}
                 />
-                <Route
-                  path={paths.OPERATIONS}
-                  exact
-                  render={() => <PageOperationsList />}
-                />
+                <OperationsRoutes />
               </>
             ) : (
               <PageNotLoggedIn />

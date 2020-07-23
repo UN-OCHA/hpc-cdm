@@ -96,6 +96,17 @@ export class Dummy {
               canAddOperation: true,
             },
           }),
+        getOperation: (id) => {
+          const op = this.data.operations.filter((op) => op.id === id);
+          return simulateResponse(
+            op.length === 1
+              ? {
+                  data: op[0],
+                  permissions: {},
+                }
+              : Promise.reject(new Error('not found'))
+          );
+        },
       },
     };
   };

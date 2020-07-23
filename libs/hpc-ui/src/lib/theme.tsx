@@ -23,7 +23,8 @@ const COLOR_PALETTE = {
   gray: {
     normal: '#4a4a4a',
     light1: '#d1d1d1',
-    light2: '#efefef',
+    light2: '#e6e6e6',
+    light3: '#efefef',
   },
 };
 
@@ -36,7 +37,8 @@ export const THEME = {
     textLink: COLOR_PALETTE.orange.dark2,
     panel: {
       border: COLOR_PALETTE.gray.light1,
-      bg: COLOR_PALETTE.gray.light2,
+      bg: COLOR_PALETTE.gray.light3,
+      bgHover: COLOR_PALETTE.gray.light2,
     },
   },
   marginPx: {
