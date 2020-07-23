@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-import { CLASSES, combineClasses, styled } from '@unocha/hpc-ui';
-import { Operations } from '@unocha/hpc-data';
+import {
+  CLASSES,
+  C,
+  combineClasses,
+  styled,
+  simpleDataLoader,
+} from '@unocha/hpc-ui';
 
 import env from '../../environments/environment';
 import { t } from '../../i18n';
@@ -12,16 +17,7 @@ interface Props {
 }
 
 const Page = (props: Props) => {
-  const [
-    operations,
-    setOperations,
-  ] = useState<null | Operations.GetOperationsResult>(null);
-
-  useEffect(() => {
-    env.model.operations.getOperations().then(setOperations);
-  }, []);
-
-  console.log(operations);
+  const loader = simpleDataLoader(env.model.operations.getOperations);
 
   return (
     <AppContext.Consumer>
@@ -32,18 +28,21 @@ const Page = (props: Props) => {
             props.className
           )}
         >
-          {operations ? (
-            <>
-              <h1>{t.t(lang, (s) => s.navigation.operations)}</h1>
-              <ul>
-                {operations.data.map((o, i) => (
-                  <li key={i}>{o.name}</li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <h1>Loading</h1>
-          )}
+          <C.Loader
+            loader={loader}
+            strings={t.get(lang, (s) => s.components.loader)}
+          >
+            {(data) => (
+              <>
+                <h1>{t.t(lang, (s) => s.navigation.operations)}</h1>
+                <ul>
+                  {data.data.map((o, i) => (
+                    <li key={i}>{o.name}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </C.Loader>
         </div>
       )}
     </AppContext.Consumer>

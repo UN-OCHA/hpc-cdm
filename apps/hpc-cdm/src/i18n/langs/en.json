@@ -12,6 +12,10 @@
       "p2": "Authorized users shall ensure that their use of Information and Communication Technology (ICT) resources and ICT data is consistent with their obligations as staff members or such other obligations as may apply to them",
       "p3": "All use of ICT resources and ICT data is subject to monitoring and investigation as set forth in ST/SGB/2004/15",
       "p4": "Use of this system by any user, authorized or unauthorized, constitutes consent to the applicable UN regulations and rules"
+    },
+    "loader": {
+      "loading": "Loading...",
+      "error": "Error:"
     }
   },
   "navigation": {

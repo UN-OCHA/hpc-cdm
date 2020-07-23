@@ -29,8 +29,12 @@ const STORAGE_KEY = 'hpc-dummy';
  * Simulate a positive API response with a bit of a delay
  */
 const simulateResponse = <T>(value: T | Promise<T>) =>
-  new Promise<T>((resolve) => {
-    setTimeout(() => resolve(value), 300);
+  new Promise<T>((resolve, reject) => {
+    if (Math.random() > 0.5) {
+      setTimeout(() => resolve(value), 300);
+    } else {
+      setTimeout(() => reject(new Error('A random error ocurred!')), 300);
+    }
   });
 
 export class Dummy {
