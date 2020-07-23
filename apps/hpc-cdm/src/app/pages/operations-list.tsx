@@ -1,27 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-import { CLASSES, combineClasses, styled } from '@unocha/hpc-ui';
-import { Operations } from '@unocha/hpc-data';
+import {
+  CLASSES,
+  C,
+  combineClasses,
+  styled,
+  simpleDataLoader,
+} from '@unocha/hpc-ui';
 
 import env from '../../environments/environment';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
+import * as paths from '../paths';
+
+const CLS = {
+  OPERATIONS: 'operations',
+};
 
 interface Props {
   className?: string;
 }
 
 const Page = (props: Props) => {
-  const [
-    operations,
-    setOperations,
-  ] = useState<null | Operations.GetOperationsResult>(null);
-
-  useEffect(() => {
-    env.model.operations.getOperations().then(setOperations);
-  }, []);
-
-  console.log(operations);
+  const loader = simpleDataLoader(env.model.operations.getOperations);
 
   return (
     <AppContext.Consumer>
@@ -32,22 +34,53 @@ const Page = (props: Props) => {
             props.className
           )}
         >
-          {operations ? (
-            <>
-              <h1>{t.t(lang, (s) => s.navigation.operations)}</h1>
-              <ul>
-                {operations.data.map((o, i) => (
-                  <li key={i}>{o.name}</li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <h1>Loading</h1>
-          )}
+          <C.Loader
+            loader={loader}
+            strings={t.get(lang, (s) => s.components.loader)}
+          >
+            {(data) => (
+              <>
+                <h1>{t.t(lang, (s) => s.navigation.operations)}</h1>
+                <ul className={CLS.OPERATIONS}>
+                  {data.data.map((o, i) => (
+                    <li key={i}>
+                      <Link to={paths.operation(o.id)}>{o.name}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </C.Loader>
         </div>
       )}
     </AppContext.Consumer>
   );
 };
 
-export default styled(Page)``;
+export default styled(Page)`
+  .${CLS.OPERATIONS} {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: block;
+      margin: ${(p) => p.theme.marginPx.sm}px 0;
+
+      a {
+        display: block;
+        padding: ${(p) => p.theme.marginPx.md}px;
+        border: 1px solid ${(p) => p.theme.colors.panel.border};
+        border-radius: ${(p) => p.theme.sizing.borderRadiusSm};
+        background: ${(p) => p.theme.colors.panel.bg};
+        font-size: 1.2rem;
+
+        &:hover {
+          background: ${(p) => p.theme.colors.panel.bgHover};
+        }
+      }
+    }
+  }
+`;

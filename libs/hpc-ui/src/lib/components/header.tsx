@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
 import {
   MenuItem,
   Popper,
@@ -17,6 +16,7 @@ import { CLASSES, combineClasses } from '../classes';
 import UNOCHA from '../icons/logos/unocha';
 import Caret from '../icons/caret';
 import LanguagePicker from '../components/language-picker';
+import { styled } from '../theme';
 
 const CLS = {
   LOGO: 'logo',
@@ -125,8 +125,12 @@ const Header = (props: Props) => {
 };
 
 export default styled(Header)`
-  background: #026cb6;
-  background-image: linear-gradient(-180deg, #026cb6 67%, #025995 97%);
+  background: ${(p) => p.theme.colors.secondary.dark1};
+  background-image: linear-gradient(
+    -180deg,
+    ${(p) => p.theme.colors.secondary.dark1} 67%,
+    ${(p) => p.theme.colors.secondary.dark2} 97%
+  );
   min-height: 40px;
 
   .${CLS.LOGO} {

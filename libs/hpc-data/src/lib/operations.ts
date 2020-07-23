@@ -11,7 +11,10 @@ export namespace Operations {
     'canAddOperation'
   >;
 
+  export type GetOperationResult = ResultWithPermissions<Operation, never>;
+
   export interface Model {
     getOperations(): Promise<GetOperationsResult>;
+    getOperation(id: number): Promise<GetOperationResult>;
   }
 }
