@@ -21,7 +21,7 @@ const Page = (props: Props) => {
     // TODO: improve this
     return <>Not Found</>;
   }
-  const loader = dataLoader([id], env.model.operations.getOperation);
+  const loader = dataLoader([{ id }], env.model.operations.getOperation);
 
   return (
     <AppContext.Consumer>

@@ -43,7 +43,7 @@ function dummyEndpoint<Args extends [unknown, ...unknown[]], Data>(
 ): (...args: Args) => Promise<Data> {
   return (...args: Args) =>
     new Promise<Data>((resolve, reject) => {
-      console.log('Endpoint Called: ', name, args);
+      console.log('Endpoint Called: ', name, ...args);
       if (Math.random() > 0.5) {
         setTimeout(() => resolve(fn(...args)), 300);
       } else {
@@ -112,7 +112,7 @@ export class Dummy {
         })),
         getOperation: dummyEndpoint(
           'operations.getOperation',
-          async (id: number) => {
+          async ({ id }: Operations.GetOperationParams) => {
             const op = this.data.operations.filter((op) => op.id === id);
             if (op.length === 1) {
               return {
