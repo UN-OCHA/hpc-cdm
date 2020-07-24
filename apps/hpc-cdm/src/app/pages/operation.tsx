@@ -5,6 +5,7 @@ import { CLASSES, C, combineClasses, styled, dataLoader } from '@unocha/hpc-ui';
 import env from '../../environments/environment';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
+import * as paths from '../paths';
 
 interface Props {
   match: {
@@ -37,10 +38,20 @@ const Page = (props: Props) => {
             strings={t.get(lang, (s) => s.components.loader)}
           >
             {(data) => (
-              <h1>
-                {t.t(lang, (s) => s.navigation.operations)} &gt;{' '}
-                {data.data.name}
-              </h1>
+              <C.Toolbar>
+                <C.Breadcrumbs
+                  links={[
+                    {
+                      label: t.t(lang, (s) => s.navigation.operations),
+                      to: paths.OPERATIONS,
+                    },
+                    {
+                      label: data.data.name,
+                      to: paths.operation(id),
+                    },
+                  ]}
+                />
+              </C.Toolbar>
             )}
           </C.Loader>
         </div>

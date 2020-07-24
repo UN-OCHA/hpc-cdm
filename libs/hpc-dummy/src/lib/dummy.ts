@@ -44,7 +44,7 @@ function dummyEndpoint<Args extends [unknown, ...unknown[]], Data>(
   return (...args: Args) =>
     new Promise<Data>((resolve, reject) => {
       console.log('Endpoint Called: ', name, ...args);
-      if (Math.random() > 0.5) {
+      if (Math.random() > 0.1) {
         setTimeout(() => resolve(fn(...args)), 300);
       } else {
         setTimeout(() => reject(new Error('A random error ocurred!')), 300);

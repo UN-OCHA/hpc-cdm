@@ -34,7 +34,16 @@ const Page = (props: Props) => {
           >
             {(data) => (
               <>
-                <h1>{t.t(lang, (s) => s.navigation.operations)}</h1>
+                <C.Toolbar>
+                  <C.Breadcrumbs
+                    links={[
+                      {
+                        label: t.t(lang, (s) => s.navigation.operations),
+                        to: paths.OPERATIONS,
+                      },
+                    ]}
+                  />
+                </C.Toolbar>
                 <ul className={CLS.OPERATIONS}>
                   {data.data.map((o, i) => (
                     <li key={i}>
