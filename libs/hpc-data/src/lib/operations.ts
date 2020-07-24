@@ -1,8 +1,16 @@
+import { ReportingWindow } from './reporting-windows';
 import { ResultWithPermissions } from './util';
 
 export interface Operation {
   id: number;
   name: string;
+}
+
+export interface DetailedOperation extends Operation {
+  /**
+   * The list of reporting windows that are associated with the current operation.
+   */
+  reportingWindows: ReportingWindow[];
 }
 
 export type GetOperationsResult = ResultWithPermissions<
@@ -13,7 +21,10 @@ export type GetOperationsResult = ResultWithPermissions<
 export type GetOperationParams = {
   id: number;
 };
-export type GetOperationResult = ResultWithPermissions<Operation, never>;
+export type GetOperationResult = ResultWithPermissions<
+  DetailedOperation,
+  never
+>;
 
 export interface Model {
   getOperations(): Promise<GetOperationsResult>;

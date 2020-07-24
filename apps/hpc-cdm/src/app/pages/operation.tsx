@@ -8,6 +8,8 @@ import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
+import OperationForms from './operation-forms';
+
 interface Props {
   match: {
     params: {
@@ -83,7 +85,9 @@ const Page = (props: Props) => {
                   <Route exact path={paths.operation(id)}>
                     <Redirect to={paths.operationForms(id)} />
                   </Route>
-                  <Route path={paths.operationForms(id)}>Forms</Route>
+                  <Route path={paths.operationForms(id)}>
+                    <OperationForms operation={data.data} />
+                  </Route>
                   <Route path={paths.operationClusters(id)}>Clusters</Route>
                   <Route path={paths.operationSettings(id)}>Settings</Route>
                   <Route>

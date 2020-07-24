@@ -1,5 +1,12 @@
 import { Session, SessionUser } from '@unocha/hpc-core';
-import { Model, operations, errors } from '@unocha/hpc-data';
+import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
+
+interface ReportingWindow extends reportingWindows.ReportingWindow {
+  associations: {
+    operations: number[];
+  };
+  assignments: [];
+}
 
 interface DummyData {
   currentUser: {
@@ -7,6 +14,7 @@ interface DummyData {
     permissions: string[];
   } | null;
   operations: operations.Operation[];
+  reportingWindows: ReportingWindow[];
 }
 
 const INITIAL_DATA: DummyData = {
@@ -14,11 +22,35 @@ const INITIAL_DATA: DummyData = {
   operations: [
     {
       id: 0,
-      name: 'Operation 1',
+      name: 'Operation with no reporting window',
     },
     {
       id: 1,
-      name: 'Operation 2',
+      name: 'Operation with a reporting window',
+    },
+    {
+      id: 2,
+      name: 'Operation with multiple reporting windows',
+    },
+  ],
+  reportingWindows: [
+    {
+      id: 0,
+      name: 'Some Reporting Window',
+      state: 'open',
+      associations: {
+        operations: [1, 2],
+      },
+      assignments: [],
+    },
+    {
+      id: 0,
+      name: 'Another Reporting Window',
+      state: 'pending',
+      associations: {
+        operations: [2],
+      },
+      assignments: [],
     },
   ],
 };
@@ -31,11 +63,11 @@ const STORAGE_KEY = 'hpc-dummy';
  */
 function dummyEndpoint<Data>(
   name: string,
-  fn: () => Data | Promise<Data>
+  fn: () => Promise<Data>
 ): () => Promise<Data>;
 function dummyEndpoint<Args extends [unknown, ...unknown[]], Data>(
   name: string,
-  fn: (...data: Args) => Data | Promise<Data>
+  fn: (...data: Args) => Promise<Data>
 ): (...args: Args) => Promise<Data>;
 function dummyEndpoint<Args extends [unknown, ...unknown[]], Data>(
   name: string,
@@ -43,9 +75,23 @@ function dummyEndpoint<Args extends [unknown, ...unknown[]], Data>(
 ): (...args: Args) => Promise<Data> {
   return (...args: Args) =>
     new Promise<Data>((resolve, reject) => {
-      console.log('Endpoint Called: ', name, ...args);
+      console.log('[DUMMY] Endpoint Called: ', name, ...args);
       if (Math.random() > 0.1) {
-        setTimeout(() => resolve(fn(...args)), 300);
+        setTimeout(
+          () =>
+            resolve(
+              fn(...args).then((data) => {
+                console.log(
+                  '[DUMMY] Endpoint Resolving: ',
+                  name,
+                  ...args,
+                  data
+                );
+                return data;
+              })
+            ),
+          300
+        );
       } else {
         setTimeout(() => reject(new Error('A random error ocurred!')), 300);
       }
@@ -67,6 +113,8 @@ export class Dummy {
     if (s) {
       try {
         this.data = JSON.parse(s);
+        // TODO: add more robust handling of missing data
+        // using io-ts with ability to reset to dummy
       } catch (err) {
         console.error(err);
       }
@@ -104,7 +152,7 @@ export class Dummy {
   public getModel = (): Model => {
     return {
       operations: {
-        getOperations: dummyEndpoint('operations.getOperations', () => ({
+        getOperations: dummyEndpoint('operations.getOperations', async () => ({
           data: this.data.operations,
           permissions: {
             canAddOperation: true,
@@ -115,10 +163,16 @@ export class Dummy {
           async ({ id }: operations.GetOperationParams) => {
             const op = this.data.operations.filter((op) => op.id === id);
             if (op.length === 1) {
-              return {
-                data: op[0],
+              const r: operations.GetOperationResult = {
+                data: {
+                  ...op[0],
+                  reportingWindows: this.data.reportingWindows.filter(
+                    (w) => w.associations.operations.indexOf(id) > -1
+                  ),
+                },
                 permissions: {},
               };
+              return r;
             }
             throw new errors.NotFoundError();
           }

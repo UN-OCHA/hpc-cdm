@@ -5,8 +5,9 @@ import { DataLoaderState, dataLoader } from './lib/util';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
 import Breadcrumbs from './lib/components/breadcrumbs';
-import Loader from './lib/components/loader';
+import ErrorMessage from './lib/components/error-message';
 import Header from './lib/components/header';
+import Loader from './lib/components/loader';
 import NotFound from './lib/components/not-found';
 import Tabs from './lib/components/tabs';
 import Toolbar from './lib/components/toolbar';
@@ -14,8 +15,9 @@ import Toolbar from './lib/components/toolbar';
 const COMPONENTS = {
   AcceptableUseNotification,
   Breadcrumbs,
-  Loader,
+  ErrorMessage,
   Header,
+  Loader,
   NotFound,
   Tabs,
   Toolbar,
