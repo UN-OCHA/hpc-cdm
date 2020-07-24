@@ -1,11 +1,29 @@
 import { Session, SessionUser } from '@unocha/hpc-core';
-import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
+import {
+  Model,
+  forms,
+  operations,
+  reportingWindows,
+  errors,
+} from '@unocha/hpc-data';
+
+type Assignee = { type: 'operation'; operationId: number };
+
+interface FormAssignment {
+  id: number;
+  type: 'form';
+  formId: number;
+  assignee: Assignee;
+  state: reportingWindows.AssignmentState;
+}
+
+type Assignment = FormAssignment;
 
 interface ReportingWindow extends reportingWindows.ReportingWindow {
   associations: {
     operations: number[];
   };
-  assignments: [];
+  assignments: Array<Assignment>;
 }
 
 interface DummyData {
@@ -15,6 +33,7 @@ interface DummyData {
   } | null;
   operations: operations.Operation[];
   reportingWindows: ReportingWindow[];
+  forms: forms.FormMeta[];
 }
 
 const INITIAL_DATA: DummyData = {
@@ -41,7 +60,28 @@ const INITIAL_DATA: DummyData = {
       associations: {
         operations: [1, 2],
       },
-      assignments: [],
+      assignments: [
+        {
+          id: 9932,
+          type: 'form',
+          formId: 123,
+          assignee: {
+            type: 'operation',
+            operationId: 1,
+          },
+          state: 'not-entered',
+        },
+        {
+          id: 5925,
+          type: 'form',
+          formId: 321,
+          assignee: {
+            type: 'operation',
+            operationId: 1,
+          },
+          state: 'raw:entered',
+        },
+      ],
     },
     {
       id: 0,
@@ -51,6 +91,16 @@ const INITIAL_DATA: DummyData = {
         operations: [2],
       },
       assignments: [],
+    },
+  ],
+  forms: [
+    {
+      id: 123,
+      name: 'A Form',
+    },
+    {
+      id: 321,
+      name: 'Another form',
     },
   ],
 };
@@ -149,6 +199,15 @@ export class Dummy {
     };
   };
 
+  private getFormMeta(formId: number) {
+    const forms = this.data.forms.filter((f) => f.id === formId);
+    if (forms.length === 1) {
+      return forms[0];
+    } else {
+      throw new Error('Unexpected result when getting forms for ID:' + formId);
+    }
+  }
+
   public getModel = (): Model => {
     return {
       operations: {
@@ -175,6 +234,37 @@ export class Dummy {
               return r;
             }
             throw new errors.NotFoundError();
+          }
+        ),
+      },
+      reportingWindows: {
+        getAssignmentsForOperation: dummyEndpoint(
+          'reportingWindows.getAssignmentsForOperation',
+          async (params: reportingWindows.GetAssignmentsForOperationParams) => {
+            const { operationId, reportingWindowId } = params;
+            const window = this.data.reportingWindows.filter(
+              (w) => w.id === reportingWindowId
+            );
+            if (window.length === 0) {
+              throw new errors.NotFoundError();
+            }
+            const r: reportingWindows.GetAssignmentsForOperationResult = {
+              directAssignments: {
+                forms: window[0].assignments
+                  .filter(
+                    (a) =>
+                      a.type === 'form' &&
+                      a.assignee.type === 'operation' &&
+                      a.assignee.operationId === operationId
+                  )
+                  .map((a) => ({
+                    assignmentId: a.id,
+                    state: a.state,
+                    form: this.getFormMeta(a.formId),
+                  })),
+              },
+            };
+            return r;
           }
         ),
       },

@@ -5,6 +5,7 @@ import { CLASSES, C, combineClasses, styled, dataLoader } from '@unocha/hpc-ui';
 import { operations, reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
+import OperationFormAssignments from './operation-form-assignments';
 
 interface Props {
   className?: string;
@@ -24,7 +25,10 @@ const Page = (props: Props) => {
           )}
         >
           {operation.reportingWindows.length === 1 ? (
-            <>Window: {operation.reportingWindows[0].name}</>
+            <OperationFormAssignments
+              operation={operation}
+              window={operation.reportingWindows[0]}
+            />
           ) : operation.reportingWindows.length === 0 ? (
             <C.ErrorMessage
               strings={{
