@@ -1,8 +1,7 @@
 import React from 'react';
-import { Switch, Redirect, Route } from 'react-router-dom';
 
-import { CLASSES, C, combineClasses, styled, dataLoader } from '@unocha/hpc-ui';
-import { operations, reportingWindows } from '@unocha/hpc-data';
+import { CLASSES, C, combineClasses, styled } from '@unocha/hpc-ui';
+import { operations } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
 import OperationFormAssignments from './operation-form-assignments';

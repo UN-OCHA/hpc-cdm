@@ -1,109 +1,8 @@
-import { Session, SessionUser } from '@unocha/hpc-core';
-import {
-  Model,
-  forms,
-  operations,
-  reportingWindows,
-  errors,
-} from '@unocha/hpc-data';
+import { Session } from '@unocha/hpc-core';
+import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
 
-type Assignee = { type: 'operation'; operationId: number };
-
-interface FormAssignment {
-  id: number;
-  type: 'form';
-  formId: number;
-  assignee: Assignee;
-  state: reportingWindows.AssignmentState;
-}
-
-type Assignment = FormAssignment;
-
-interface ReportingWindow extends reportingWindows.ReportingWindow {
-  associations: {
-    operations: number[];
-  };
-  assignments: Array<Assignment>;
-}
-
-interface DummyData {
-  currentUser: {
-    user: SessionUser;
-    permissions: string[];
-  } | null;
-  operations: operations.Operation[];
-  reportingWindows: ReportingWindow[];
-  forms: forms.FormMeta[];
-}
-
-const INITIAL_DATA: DummyData = {
-  currentUser: null,
-  operations: [
-    {
-      id: 0,
-      name: 'Operation with no reporting window',
-    },
-    {
-      id: 1,
-      name: 'Operation with a reporting window',
-    },
-    {
-      id: 2,
-      name: 'Operation with multiple reporting windows',
-    },
-  ],
-  reportingWindows: [
-    {
-      id: 0,
-      name: 'Some Reporting Window',
-      state: 'open',
-      associations: {
-        operations: [1, 2],
-      },
-      assignments: [
-        {
-          id: 9932,
-          type: 'form',
-          formId: 123,
-          assignee: {
-            type: 'operation',
-            operationId: 1,
-          },
-          state: 'not-entered',
-        },
-        {
-          id: 5925,
-          type: 'form',
-          formId: 321,
-          assignee: {
-            type: 'operation',
-            operationId: 1,
-          },
-          state: 'raw:entered',
-        },
-      ],
-    },
-    {
-      id: 0,
-      name: 'Another Reporting Window',
-      state: 'pending',
-      associations: {
-        operations: [2],
-      },
-      assignments: [],
-    },
-  ],
-  forms: [
-    {
-      id: 123,
-      name: 'A Form',
-    },
-    {
-      id: 321,
-      name: 'Another form',
-    },
-  ],
-};
+import { DummyData, DUMMY_DATA } from './data-types';
+import { INITIAL_DATA } from './data';
 
 const STORAGE_KEY = 'hpc-dummy';
 
@@ -163,8 +62,17 @@ export class Dummy {
     if (s) {
       try {
         this.data = JSON.parse(s);
-        // TODO: add more robust handling of missing data
-        // using io-ts with ability to reset to dummy
+        if (!DUMMY_DATA.is(this.data)) {
+          if (
+            window.confirm(
+              `The stored dummy data doesn't match the current type definitions, ` +
+                `do you want to reset it to the default?`
+            )
+          ) {
+            this.data = INITIAL_DATA;
+            this.store();
+          }
+        }
       } catch (err) {
         console.error(err);
       }
