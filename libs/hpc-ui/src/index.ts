@@ -1,7 +1,7 @@
 import { CLASSES, combineClasses } from './lib/classes';
 import { BaseStyling } from './lib/styling';
 import { css, styled, THEME, Theme, ThemeProvider } from './lib/theme';
-import { DataLoaderState, dataLoader, simpleDataLoader } from './lib/util';
+import { DataLoaderState, dataLoader } from './lib/util';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
 import Loader from './lib/components/loader';
@@ -23,7 +23,6 @@ export {
   css,
   DataLoaderState,
   dataLoader,
-  simpleDataLoader,
   styled,
   THEME,
   Theme,

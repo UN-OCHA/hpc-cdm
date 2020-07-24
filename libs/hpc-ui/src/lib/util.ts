@@ -16,7 +16,15 @@ export type DataLoaderState<T> =
  * This loader will allow a load to be retried when it fails, and includes
  * an error message when this happens.
  */
-export const dataLoader = <Deps extends [unknown, ...unknown[]], Data>(
+export function dataLoader<Data>(
+  dependencies: [],
+  get: () => Promise<Data>
+): DataLoaderState<Data>;
+export function dataLoader<Deps extends [unknown, ...unknown[]], Data>(
+  dependencies: Deps,
+  get: (...data: Deps) => Promise<Data>
+): DataLoaderState<Data>;
+export function dataLoader<Deps extends [unknown, ...unknown[]], Data>(
   /**
    * What data is this request dependant on? I.E what arguments do you need to
    * send to the given function to complete the request?
@@ -33,7 +41,7 @@ export const dataLoader = <Deps extends [unknown, ...unknown[]], Data>(
    * to avoid forgetting to update dependencies.
    */
   get: (...data: Deps) => Promise<Data>
-) => {
+) {
   const [state, setState] = useState<DataLoaderState<Data>>({
     type: 'loading',
   });
@@ -60,11 +68,5 @@ export const dataLoader = <Deps extends [unknown, ...unknown[]], Data>(
   useEffect(load, dependencies);
 
   return state;
-};
+}
 /* eslint-enable react-hooks/rules-of-hooks, react-hooks/exhaustive-deps */
-
-/**
- * A data loader for something that doesn't require any arguments.
- */
-export const simpleDataLoader = <Data>(get: () => Promise<Data>) =>
-  dataLoader([null], get);

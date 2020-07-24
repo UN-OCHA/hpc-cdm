@@ -1,13 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import {
-  CLASSES,
-  C,
-  combineClasses,
-  styled,
-  simpleDataLoader,
-} from '@unocha/hpc-ui';
+import { CLASSES, C, combineClasses, styled, dataLoader } from '@unocha/hpc-ui';
 
 import env from '../../environments/environment';
 import { t } from '../../i18n';
@@ -23,7 +17,7 @@ interface Props {
 }
 
 const Page = (props: Props) => {
-  const loader = simpleDataLoader(env.model.operations.getOperations);
+  const loader = dataLoader([], env.model.operations.getOperations);
 
   return (
     <AppContext.Consumer>
