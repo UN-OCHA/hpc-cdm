@@ -26,16 +26,31 @@ const INITIAL_DATA: DummyData = {
 const STORAGE_KEY = 'hpc-dummy';
 
 /**
- * Simulate a positive API response with a bit of a delay
+ * Create a dummy endpoint that simulates a bit of a delay,
+ * and logs the call to the console.
  */
-const simulateResponse = <T>(value: T | Promise<T>) =>
-  new Promise<T>((resolve, reject) => {
-    if (Math.random() > 0.5) {
-      setTimeout(() => resolve(value), 300);
-    } else {
-      setTimeout(() => reject(new Error('A random error ocurred!')), 300);
-    }
-  });
+function dummyEndpoint<Data>(
+  name: string,
+  fn: () => Data | Promise<Data>
+): () => Promise<Data>;
+function dummyEndpoint<Args extends [unknown, ...unknown[]], Data>(
+  name: string,
+  fn: (...data: Args) => Data | Promise<Data>
+): (...args: Args) => Promise<Data>;
+function dummyEndpoint<Args extends [unknown, ...unknown[]], Data>(
+  name: string,
+  fn: (...data: Args) => Promise<Data>
+): (...args: Args) => Promise<Data> {
+  return (...args: Args) =>
+    new Promise<Data>((resolve, reject) => {
+      console.log('Endpoint Called: ', name, args);
+      if (Math.random() > 0.5) {
+        setTimeout(() => resolve(fn(...args)), 300);
+      } else {
+        setTimeout(() => reject(new Error('A random error ocurred!')), 300);
+      }
+    });
+}
 
 export class Dummy {
   private data: DummyData;
@@ -89,24 +104,22 @@ export class Dummy {
   public getModel = (): Model => {
     return {
       operations: {
-        getOperations: () =>
-          simulateResponse({
-            data: this.data.operations,
-            permissions: {
-              canAddOperation: true,
-            },
-          }),
-        getOperation: (id) => {
+        getOperations: dummyEndpoint('operations.getOperations', () => ({
+          data: this.data.operations,
+          permissions: {
+            canAddOperation: true,
+          },
+        })),
+        getOperation: dummyEndpoint('operations.getOperation', async (id) => {
           const op = this.data.operations.filter((op) => op.id === id);
-          return simulateResponse(
-            op.length === 1
-              ? {
-                  data: op[0],
-                  permissions: {},
-                }
-              : Promise.reject(new Error('not found'))
-          );
-        },
+          if (op.length === 1) {
+            return {
+              data: op[0],
+              permissions: {},
+            };
+          }
+          throw new Error('not found');
+        }),
       },
     };
   };
