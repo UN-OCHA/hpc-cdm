@@ -30,7 +30,10 @@ const Page = (props: Props) => {
         >
           <C.Loader
             loader={loader}
-            strings={t.get(lang, (s) => s.components.loader)}
+            strings={{
+              ...t.get(lang, (s) => s.components.loader),
+              notFound: t.get(lang, (s) => s.components.notFound),
+            }}
           >
             {(data) => (
               <>

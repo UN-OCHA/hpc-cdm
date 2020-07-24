@@ -1,12 +1,12 @@
 import { Session, SessionUser } from '@unocha/hpc-core';
-import { Model, Operations } from '@unocha/hpc-data';
+import { Model, operations, errors } from '@unocha/hpc-data';
 
 interface DummyData {
   currentUser: {
     user: SessionUser;
     permissions: string[];
   } | null;
-  operations: Operations.Operation[];
+  operations: operations.Operation[];
 }
 
 const INITIAL_DATA: DummyData = {
@@ -112,7 +112,7 @@ export class Dummy {
         })),
         getOperation: dummyEndpoint(
           'operations.getOperation',
-          async ({ id }: Operations.GetOperationParams) => {
+          async ({ id }: operations.GetOperationParams) => {
             const op = this.data.operations.filter((op) => op.id === id);
             if (op.length === 1) {
               return {
@@ -120,7 +120,7 @@ export class Dummy {
                 permissions: {},
               };
             }
-            throw new Error('not found');
+            throw new errors.NotFoundError();
           }
         ),
       },

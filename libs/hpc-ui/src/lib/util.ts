@@ -1,7 +1,9 @@
+import { errors } from '@unocha/hpc-data';
 import { useState, useEffect } from 'react';
 
 export type DataLoaderState<T> =
   | { type: 'loading' }
+  | { type: 'not-found' }
   | {
       type: 'error';
       error: string;
@@ -71,13 +73,19 @@ export function dataLoader<Deps extends DepsBaseType, Data>(
   const load = () => {
     get(...dependencies)
       .then((data) => setState({ type: 'success', data }))
-      .catch((err: Error) =>
-        setState({
-          type: 'error',
-          error: err.message || err.toString(),
-          retry,
-        })
-      );
+      .catch((err: Error) => {
+        if (errors.isNotFoundError(err)) {
+          setState({
+            type: 'not-found',
+          });
+        } else {
+          setState({
+            type: 'error',
+            error: err.message || err.toString(),
+            retry,
+          });
+        }
+      });
   };
 
   const retry = () => {

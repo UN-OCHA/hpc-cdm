@@ -1,7 +1,8 @@
-import { Operations } from './lib/operations';
+import * as operations from './lib/operations';
+import * as errors from './lib/errors';
 
 export interface Model {
-  operations: Operations.Model;
+  operations: operations.Model;
 }
 
-export { Operations };
+export { operations, errors };

@@ -1,9 +1,11 @@
 import React, { ReactElement } from 'react';
+import { CircularProgress } from '@material-ui/core';
 
 import { DataLoaderState } from '../util';
-import { CircularProgress } from '@material-ui/core';
 import { styled } from '../theme';
 import { button, buttonPrimary } from '../mixins';
+
+import NotFound from './not-found';
 
 interface Props<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,6 +15,11 @@ interface Props<T> {
   strings: {
     loading: string;
     error: string;
+    notFound: {
+      title: string;
+      info: string;
+      back: string;
+    };
   };
 }
 
@@ -41,6 +48,8 @@ export default function Component<T>(props: Props<T>) {
       </h3>
       <button onClick={loader.retry}>Retry</button>
     </StyledDiv>
+  ) : loader.type === 'not-found' ? (
+    <NotFound strings={strings.notFound} />
   ) : (
     <StyledDiv className={className}>
       <h3>{strings.loading}</h3>

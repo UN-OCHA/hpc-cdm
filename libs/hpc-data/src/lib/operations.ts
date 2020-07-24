@@ -1,23 +1,21 @@
 import { ResultWithPermissions } from './util';
 
-export namespace Operations {
-  export interface Operation {
-    id: number;
-    name: string;
-  }
+export interface Operation {
+  id: number;
+  name: string;
+}
 
-  export type GetOperationsResult = ResultWithPermissions<
-    Operation[],
-    'canAddOperation'
-  >;
+export type GetOperationsResult = ResultWithPermissions<
+  Operation[],
+  'canAddOperation'
+>;
 
-  export type GetOperationParams = {
-    id: number;
-  };
-  export type GetOperationResult = ResultWithPermissions<Operation, never>;
+export type GetOperationParams = {
+  id: number;
+};
+export type GetOperationResult = ResultWithPermissions<Operation, never>;
 
-  export interface Model {
-    getOperations(): Promise<GetOperationsResult>;
-    getOperation(params: GetOperationParams): Promise<GetOperationResult>;
-  }
+export interface Model {
+  getOperations(): Promise<GetOperationsResult>;
+  getOperation(params: GetOperationParams): Promise<GetOperationResult>;
 }

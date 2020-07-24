@@ -6,7 +6,6 @@ import { button, buttonPrimary } from '../mixins';
 
 interface Props {
   className?: string;
-  session: Session;
   strings: {
     title: string;
     info: string;
