@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { styled } from '../theme';
 import { CLASSES, combineClasses } from '../classes';
@@ -8,43 +8,70 @@ const CLS = {
   CHILDREN: 'children',
   INNER: 'inner',
   SELECTED: 'selected',
+  MODE: {
+    main: 'style-main',
+    section: 'style-section',
+  },
 };
 
 interface Props {
   className?: string;
+  mode: 'main' | 'section';
+  align: 'start' | 'end';
   tabs: Array<{
     path: string;
     label: string;
-    selected: boolean;
+    selected?: boolean;
   }>;
-  children: JSX.Element[] | JSX.Element;
+  children?: JSX.Element[] | JSX.Element;
 }
 
-const Component = (props: Props) => (
-  <div
-    role="navigation"
-    className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
-  >
-    <div className={combineClasses(CLS.INNER)}>
-      <div className={combineClasses(CLS.CHILDREN, CLASSES.FLEX.GROW)}>
-        {props.children}
-      </div>
-      <ul>
-        {props.tabs.map((tab, i) => (
-          <li key={i} className={tab.selected ? CLS.SELECTED : ''}>
+const Component = (props: Props) => {
+  const { className, mode, align, tabs, children } = props;
+  const loc = useLocation();
+  const tabElements = (
+    <ul>
+      {tabs.map((tab, i) => {
+        const selected =
+          tab.selected === undefined
+            ? loc.pathname === tab.path ||
+              loc.pathname.startsWith(tab.path + '/')
+            : tab.selected;
+        return (
+          <li key={i} className={selected ? CLS.SELECTED : ''}>
             <Link to={tab.path}>
               <span>{tab.label}</span>
             </Link>
           </li>
-        ))}
-      </ul>
+        );
+      })}
+    </ul>
+  );
+
+  return (
+    <div
+      role="navigation"
+      className={combineClasses(CLS.MODE[mode], className)}
+    >
+      {align === 'end' ? (
+        <div className={combineClasses(CLS.INNER)}>
+          <div className={CLS.CHILDREN}>{children}</div>
+          <span className={CLASSES.FLEX.GROW} />
+          {tabElements}
+        </div>
+      ) : (
+        <div className={combineClasses(CLS.INNER)}>
+          {tabElements}
+          <span className={CLASSES.FLEX.GROW} />
+          <div className={CLS.CHILDREN}>{children}</div>
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 export default styled(Component)`
   border-bottom: 1px solid ${(p) => p.theme.colors.panel.border};
-  background: ${(p) => p.theme.colors.panel.bg};
 
   > .${CLS.INNER} {
     max-width: ${(p) => p.theme.sizing.containerWidthPx}px;
@@ -58,6 +85,7 @@ export default styled(Component)`
 
     ul {
       margin: 0;
+      padding: 0;
       display: flex;
 
       li {
@@ -92,5 +120,14 @@ export default styled(Component)`
         }
       }
     }
+  }
+
+  &.${CLS.MODE.main} {
+    background: ${(p) => p.theme.colors.panel.bg};
+    padding: 0 ${(p) => p.theme.marginPx.md}px;
+  }
+
+  &.${CLS.MODE.section} {
+    padding: 0 ${(p) => p.theme.marginPx.md}px;
   }
 `;

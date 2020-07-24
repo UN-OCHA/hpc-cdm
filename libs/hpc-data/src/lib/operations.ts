@@ -1,20 +1,32 @@
+import { ReportingWindow } from './reporting-windows';
 import { ResultWithPermissions } from './util';
 
-export namespace Operations {
-  export interface Operation {
-    id: number;
-    name: string;
-  }
+export interface Operation {
+  id: number;
+  name: string;
+}
 
-  export type GetOperationsResult = ResultWithPermissions<
-    Operation[],
-    'canAddOperation'
-  >;
+export interface DetailedOperation extends Operation {
+  /**
+   * The list of reporting windows that are associated with the current operation.
+   */
+  reportingWindows: ReportingWindow[];
+}
 
-  export type GetOperationResult = ResultWithPermissions<Operation, never>;
+export type GetOperationsResult = ResultWithPermissions<
+  Operation[],
+  'canAddOperation'
+>;
 
-  export interface Model {
-    getOperations(): Promise<GetOperationsResult>;
-    getOperation(id: number): Promise<GetOperationResult>;
-  }
+export type GetOperationParams = {
+  id: number;
+};
+export type GetOperationResult = ResultWithPermissions<
+  DetailedOperation,
+  never
+>;
+
+export interface Model {
+  getOperations(): Promise<GetOperationsResult>;
+  getOperation(params: GetOperationParams): Promise<GetOperationResult>;
 }

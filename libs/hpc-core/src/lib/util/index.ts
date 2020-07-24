@@ -8,7 +8,7 @@ export const isDefined = <T>(v: T | null | undefined): v is T =>
 export const hasKey = <K extends string>(
   o: { [k in K]: unknown },
   k: string | undefined | null
-): k is K => Object.keys(o).indexOf(k) > -1;
+): k is K => !!k && Object.keys(o).indexOf(k) > -1;
 
 export type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;

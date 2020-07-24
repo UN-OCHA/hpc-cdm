@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import { BaseStyling, C, styled } from '@unocha/hpc-ui';
 
@@ -12,8 +12,9 @@ import * as paths from './paths';
 import MainNavigation from './components/main-navigation';
 
 import PageNotLoggedIn from './pages/not-logged-in';
-
-import OperationsRoutes from './routes/operations';
+import PageNotFound from './pages/not-found';
+import PageOperationsList from './pages/operations-list';
+import PageOperation from './pages/operation';
 
 const CLS = {
   HEADER: 'header',
@@ -69,12 +70,20 @@ export class App extends React.Component<Props, State> {
             {env.session.getUser() ? (
               <>
                 <MainNavigation />
-                <Route
-                  path={paths.HOME}
-                  exact
-                  render={() => <div>HOMEPAGE</div>}
-                />
-                <OperationsRoutes />
+                <Switch>
+                  <Route
+                    path={paths.HOME}
+                    exact
+                    render={() => <div>HOMEPAGE</div>}
+                  />
+                  <Route
+                    path={paths.OPERATIONS}
+                    exact
+                    component={PageOperationsList}
+                  />
+                  <Route path={paths.OPERATION} component={PageOperation} />
+                  <Route component={PageNotFound} />
+                </Switch>
               </>
             ) : (
               <PageNotLoggedIn />

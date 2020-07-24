@@ -22,9 +22,10 @@ const COLOR_PALETTE = {
   },
   gray: {
     normal: '#4a4a4a',
-    light1: '#d1d1d1',
-    light2: '#e6e6e6',
-    light3: '#efefef',
+    light1: '#999999',
+    light2: '#d1d1d1',
+    light3: '#e6e6e6',
+    light4: '#efefef',
   },
 };
 
@@ -34,11 +35,12 @@ export const THEME = {
     primary: COLOR_PALETTE.orange,
     secondary: COLOR_PALETTE.blue,
     text: COLOR_PALETTE.gray.normal,
+    textLight: COLOR_PALETTE.gray.light1,
     textLink: COLOR_PALETTE.orange.dark2,
     panel: {
-      border: COLOR_PALETTE.gray.light1,
-      bg: COLOR_PALETTE.gray.light3,
-      bgHover: COLOR_PALETTE.gray.light2,
+      border: COLOR_PALETTE.gray.light2,
+      bg: COLOR_PALETTE.gray.light4,
+      bgHover: COLOR_PALETTE.gray.light3,
     },
   },
   marginPx: {

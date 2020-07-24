@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
 
@@ -16,22 +16,21 @@ interface Props {
 }
 
 const Component = (props: Props) => {
-  const location = useLocation();
   return (
     <AppContext.Consumer>
       {({ lang }) => (
         <C.Tabs
           className={props.className}
+          mode="main"
+          align="end"
           tabs={[
             {
               label: t.t(lang, (s) => s.navigation.operations),
               path: paths.OPERATIONS,
-              selected: location.pathname.startsWith(paths.OPERATIONS),
             },
             {
               label: t.t(lang, (s) => s.navigation.admin),
               path: paths.ADMIN,
-              selected: location.pathname.startsWith(paths.ADMIN),
             },
           ]}
         >

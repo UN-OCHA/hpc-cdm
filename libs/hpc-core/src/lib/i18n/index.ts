@@ -49,7 +49,7 @@ export class LanguageChoice<LanguageKey extends string> {
 
   private detectLanguage = () => {
     const pref = localStorage.getItem(STORAGE_KEY);
-    const isLanguageKey = (key: string): key is LanguageKey =>
+    const isLanguageKey = (key: string | null): key is LanguageKey =>
       hasKey(this.languages, key);
     if (isLanguageKey(pref)) {
       return pref;
@@ -79,9 +79,9 @@ export class LanguageChoice<LanguageKey extends string> {
     this.listeners.delete(l);
 
   public getLanguages = () =>
-    Object.entries(this.languages).map(
-      ([key, value]: [LanguageKey, Language<unknown>['meta']]) => ({
-        key,
+    Object.entries<Language<unknown>['meta']>(this.languages).map(
+      ([key, value]) => ({
+        key: key as LanguageKey,
         ...value,
       })
     );

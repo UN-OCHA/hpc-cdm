@@ -1,13 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import {
-  CLASSES,
-  C,
-  combineClasses,
-  styled,
-  simpleDataLoader,
-} from '@unocha/hpc-ui';
+import { CLASSES, C, combineClasses, styled, dataLoader } from '@unocha/hpc-ui';
 
 import env from '../../environments/environment';
 import { t } from '../../i18n';
@@ -23,7 +17,7 @@ interface Props {
 }
 
 const Page = (props: Props) => {
-  const loader = simpleDataLoader(env.model.operations.getOperations);
+  const loader = dataLoader([], env.model.operations.getOperations);
 
   return (
     <AppContext.Consumer>
@@ -36,11 +30,23 @@ const Page = (props: Props) => {
         >
           <C.Loader
             loader={loader}
-            strings={t.get(lang, (s) => s.components.loader)}
+            strings={{
+              ...t.get(lang, (s) => s.components.loader),
+              notFound: t.get(lang, (s) => s.components.notFound),
+            }}
           >
             {(data) => (
               <>
-                <h1>{t.t(lang, (s) => s.navigation.operations)}</h1>
+                <C.Toolbar>
+                  <C.Breadcrumbs
+                    links={[
+                      {
+                        label: t.t(lang, (s) => s.navigation.operations),
+                        to: paths.OPERATIONS,
+                      },
+                    ]}
+                  />
+                </C.Toolbar>
                 <ul className={CLS.OPERATIONS}>
                   {data.data.map((o, i) => (
                     <li key={i}>

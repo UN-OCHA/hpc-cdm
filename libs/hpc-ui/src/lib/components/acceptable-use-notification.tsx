@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import { styled } from '../theme';
 import { Session } from '@unocha/hpc-core';
 
 import { MdPermIdentity } from 'react-icons/md';
