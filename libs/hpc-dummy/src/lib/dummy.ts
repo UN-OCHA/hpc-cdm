@@ -82,7 +82,7 @@ export class Dummy {
       getCurrentLanguage: () => {
         throw new Error('Not Implemented');
       },
-      getUser: () => this.data.currentUser?.user,
+      getUser: () => this.data.currentUser?.user || null,
       logIn: () => {
         this.data.currentUser = {
           user: {
@@ -110,16 +110,19 @@ export class Dummy {
             canAddOperation: true,
           },
         })),
-        getOperation: dummyEndpoint('operations.getOperation', async (id) => {
-          const op = this.data.operations.filter((op) => op.id === id);
-          if (op.length === 1) {
-            return {
-              data: op[0],
-              permissions: {},
-            };
+        getOperation: dummyEndpoint(
+          'operations.getOperation',
+          async (id: number) => {
+            const op = this.data.operations.filter((op) => op.id === id);
+            if (op.length === 1) {
+              return {
+                data: op[0],
+                permissions: {},
+              };
+            }
+            throw new Error('not found');
           }
-          throw new Error('not found');
-        }),
+        ),
       },
     };
   };

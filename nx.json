@@ -1,7 +1,7 @@
 {
   "npmScope": "unocha",
   "affected": {
-    "defaultBase": "develop"
+    "defaultBase": "HEAD"
   },
   "implicitDependencies": {
     "workspace.json": "*",
