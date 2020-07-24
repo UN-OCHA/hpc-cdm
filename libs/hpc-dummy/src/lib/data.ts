@@ -34,6 +34,7 @@ export const INITIAL_DATA: DummyData = {
             operationId: 1,
           },
           state: 'not-entered',
+          currentData: 'this is some data',
         },
         {
           id: 5925,
@@ -44,6 +45,7 @@ export const INITIAL_DATA: DummyData = {
             operationId: 1,
           },
           state: 'raw:entered',
+          currentData: 'this is some data',
         },
       ],
     },
@@ -61,10 +63,12 @@ export const INITIAL_DATA: DummyData = {
     {
       id: 123,
       name: 'A Form',
+      definition: 'This is the form definition',
     },
     {
       id: 321,
       name: 'Another form',
+      definition: 'This is the form definition',
     },
   ],
 };

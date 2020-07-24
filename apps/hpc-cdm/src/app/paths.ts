@@ -23,19 +23,24 @@ export const operation = (id: number) => replacePlaceholders(OPERATION, { id });
 export const operationForms = (id: number) =>
   replacePlaceholders(OPERATION_FORMS, { id });
 
-export const operationFormAssignmentsMatch = (params: {
-  operationId: number;
-}) => replacePlaceholders(OPERATION_FORM_ASSIGNMENTS, params);
-
 export const operationFormAssignments = (params: {
   operationId: number;
   windowId: number;
+}) => replacePlaceholders(OPERATION_FORM_ASSIGNMENTS, params);
+
+export const operationFormAssignmentsMatch = (params: {
+  operationId: number;
 }) => replacePlaceholders(OPERATION_FORM_ASSIGNMENTS, params);
 
 export const operationFormAssignmentData = (params: {
   operationId: number;
   windowId: number;
   assignmentId: number;
+}) => replacePlaceholders(OPERATION_FORM_ASSIGNMENT_DATA, params);
+
+export const operationFormAssignmentDataMatch = (params: {
+  operationId: number;
+  windowId: number;
 }) => replacePlaceholders(OPERATION_FORM_ASSIGNMENT_DATA, params);
 
 export const operationClusters = (id: number) =>

@@ -22,12 +22,15 @@ const FORM_ASSIGNMENT = t.type({
   formId: t.number,
   assignee: ASSIGNEE,
   state: ASSIGNMENT_STATE,
+  currentData: t.string,
 });
 
 /**
  * TODO: make into union of different assignment types
  */
 const ASSIGNMENT = FORM_ASSIGNMENT;
+
+export type Assignment = t.TypeOf<typeof ASSIGNMENT>;
 
 const REPORTING_WINDOW = t.type({
   id: t.number,
@@ -52,9 +55,10 @@ const OPERATION = t.type({
   name: t.string,
 });
 
-const FORM_META = t.type({
+const FORM = t.type({
   id: t.number,
   name: t.string,
+  definition: t.string,
 });
 
 export const DUMMY_DATA = t.type({
@@ -67,7 +71,7 @@ export const DUMMY_DATA = t.type({
   ]),
   operations: t.array(OPERATION),
   reportingWindows: t.array(REPORTING_WINDOW),
-  forms: t.array(FORM_META),
+  forms: t.array(FORM),
 });
 
 export type DummyData = t.TypeOf<typeof DUMMY_DATA>;

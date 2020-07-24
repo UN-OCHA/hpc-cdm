@@ -1,7 +1,7 @@
 import { Session } from '@unocha/hpc-core';
 import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
 
-import { DummyData, DUMMY_DATA } from './data-types';
+import { Assignment, DummyData, DUMMY_DATA } from './data-types';
 import { INITIAL_DATA } from './data';
 
 const STORAGE_KEY = 'hpc-dummy';
@@ -171,6 +171,49 @@ export class Dummy {
                     form: this.getFormMeta(a.formId),
                   })),
               },
+            };
+            return r;
+          }
+        ),
+        getAssignment: dummyEndpoint(
+          'reportingWindows.getAssignment',
+          async (params: reportingWindows.GetAssignmentParams) => {
+            const { reportingWindowId, assignmentId } = params;
+            const window = this.data.reportingWindows.filter(
+              (w) => w.id === reportingWindowId
+            );
+            if (window.length === 0) {
+              throw new errors.NotFoundError();
+            }
+            const assignment = window[0].assignments.filter(
+              (a) => a.id === assignmentId
+            );
+            if (assignment.length === 0) {
+              throw new errors.NotFoundError();
+            }
+            const a = assignment[0];
+
+            const getAssignmentTask = (a: Assignment) => {
+              if (a.type === 'form') {
+                const form = this.data.forms.filter((f) => f.id === a.formId);
+                if (form.length === 0) {
+                  throw new Error('missing form');
+                }
+                return {
+                  type: 'form' as 'form',
+                  form: form[0],
+                  currentData: a.currentData,
+                };
+              } else {
+                throw new Error('Unknown type');
+              }
+            };
+
+            const r: reportingWindows.GetAssignmentResult = {
+              id: a.id,
+              state: a.state,
+              task: getAssignmentTask(a),
+              assignee: a.assignee,
             };
             return r;
           }

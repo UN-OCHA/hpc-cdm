@@ -1,4 +1,4 @@
-import { FormMeta } from './forms';
+import { FormMeta, Form } from './forms';
 
 export interface ReportingWindow {
   id: number;
@@ -36,8 +36,34 @@ export interface GetAssignmentsForOperationResult {
   };
 }
 
+export interface GetAssignmentParams {
+  reportingWindowId: number;
+  assignmentId: number;
+}
+
+export interface GetAssignmentResult {
+  id: number;
+  state: AssignmentState;
+  /**
+   * TODO: add additional tasks, such as indicators
+   */
+  task: {
+    type: 'form';
+    form: Form;
+    /**
+     * TODO: flesh this out with enketo data types
+     */
+    currentData: string;
+  };
+  assignee: {
+    type: 'operation';
+    operationId: number;
+  };
+}
+
 export interface Model {
   getAssignmentsForOperation(
     params: GetAssignmentsForOperationParams
   ): Promise<GetAssignmentsForOperationResult>;
+  getAssignment(params: GetAssignmentParams): Promise<GetAssignmentResult>;
 }
