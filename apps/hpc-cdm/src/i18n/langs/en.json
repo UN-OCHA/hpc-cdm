@@ -13,6 +13,11 @@
       "p3": "All use of ICT resources and ICT data is subject to monitoring and investigation as set forth in ST/SGB/2004/15",
       "p4": "Use of this system by any user, authorized or unauthorized, constitutes consent to the applicable UN regulations and rules"
     },
+    "notFound": {
+      "title": "Page not found",
+      "info": "We were unable to find the page you were looking for",
+      "back": "Go back"
+    },
     "loader": {
       "loading": "Loading...",
       "error": "Error:"
@@ -20,6 +25,17 @@
   },
   "navigation": {
     "admin": "Admin",
-    "operations": "Operations"
+    "operations": "Operations",
+    "clusters": "Clusters",
+    "forms": "Forms",
+    "settings": "Settings"
+  },
+  "routes": {
+    "operations": {
+      "notFound": {
+        "title": "Operation not found",
+        "info": "We were unable to find the operation you were looking for"
+      }
+    }
   }
 }

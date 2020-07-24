@@ -1,4 +1,5 @@
 import React from 'react';
+import { Switch, Redirect, Route } from 'react-router-dom';
 
 import { CLASSES, C, combineClasses, styled, dataLoader } from '@unocha/hpc-ui';
 
@@ -38,20 +39,54 @@ const Page = (props: Props) => {
             strings={t.get(lang, (s) => s.components.loader)}
           >
             {(data) => (
-              <C.Toolbar>
-                <C.Breadcrumbs
-                  links={[
+              <>
+                <C.Toolbar>
+                  <C.Breadcrumbs
+                    links={[
+                      {
+                        label: t.t(lang, (s) => s.navigation.operations),
+                        to: paths.OPERATIONS,
+                      },
+                      {
+                        label: data.data.name,
+                        to: paths.operation(id),
+                      },
+                    ]}
+                  />
+                </C.Toolbar>
+                <C.Tabs
+                  className={props.className}
+                  mode="section"
+                  align="start"
+                  tabs={[
                     {
-                      label: t.t(lang, (s) => s.navigation.operations),
-                      to: paths.OPERATIONS,
+                      label: t.t(lang, (s) => s.navigation.forms),
+                      path: paths.operationForms(id),
                     },
                     {
-                      label: data.data.name,
-                      to: paths.operation(id),
+                      label: t.t(lang, (s) => s.navigation.clusters),
+                      path: paths.operationClusters(id),
+                    },
+                    {
+                      label: t.t(lang, (s) => s.navigation.settings),
+                      path: paths.operationSettings(id),
                     },
                   ]}
                 />
-              </C.Toolbar>
+                <Switch>
+                  <Route exact path={paths.operation(id)}>
+                    <Redirect to={paths.operationForms(id)} />
+                  </Route>
+                  <Route path={paths.operationForms(id)}>Forms</Route>
+                  <Route path={paths.operationClusters(id)}>Clusters</Route>
+                  <Route path={paths.operationSettings(id)}>Settings</Route>
+                  <Route>
+                    <C.NotFound
+                      strings={t.get(lang, (s) => s.components.notFound)}
+                    />
+                  </Route>
+                </Switch>
+              </>
             )}
           </C.Loader>
         </div>

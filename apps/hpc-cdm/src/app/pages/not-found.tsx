@@ -2,9 +2,8 @@ import React from 'react';
 
 import { C, CLASSES, combineClasses, styled } from '@unocha/hpc-ui';
 
-import env from '../../environments/environment';
-import { t } from '../../i18n';
 import { AppContext } from '../context';
+import { t } from '../../i18n';
 
 interface Props {
   className?: string;
@@ -16,16 +15,12 @@ const Page = (props: Props) => (
       <div
         className={combineClasses(CLASSES.CONTAINER.CENTERED, props.className)}
       >
-        <C.AcceptableUseNotification
-          session={env.session}
-          strings={t.get(lang, (s) => s.components.acceptableUseNotification)}
-        />
+        <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
       </div>
     )}
   </AppContext.Consumer>
 );
 
 export default styled(Page)`
-  padding-top: 40px;
   padding-bottom: 40px;
 `;
