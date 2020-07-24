@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import env from '../../environments/environment';
 import { t } from '../../i18n';
@@ -6,6 +7,7 @@ import { C, styled, dataLoader } from '@unocha/hpc-ui';
 import { operations, reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
+import * as paths from '../paths';
 
 interface Props {
   className?: string;
@@ -39,7 +41,17 @@ const Page = (props: Props) => {
           {(data) => (
             <ul>
               {data.directAssignments.forms.map((a, i) => (
-                <li key={i}>{a.form.name}</li>
+                <li key={i}>
+                  <Link
+                    to={paths.operationFormAssignmentData({
+                      operationId: operation.id,
+                      windowId: window.id,
+                      assignmentId: a.assignmentId,
+                    })}
+                  >
+                    {a.form.name}
+                  </Link>
+                </li>
               ))}
             </ul>
           )}
