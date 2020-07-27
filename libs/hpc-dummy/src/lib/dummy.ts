@@ -189,6 +189,24 @@ export class Dummy {
                     form: this.getFormMeta(a.formId),
                   })),
               },
+              clusterAssignments: this.data.operationClusters
+                .filter((cl) => cl.operationId === operationId)
+                .map((cluster) => ({
+                  clusterId: cluster.id,
+                  cl: cluster,
+                  forms: window[0].assignments
+                    .filter(
+                      (a) =>
+                        a.type === 'form' &&
+                        a.assignee.type === 'operationCluster' &&
+                        a.assignee.clusterId === cluster.id
+                    )
+                    .map((a) => ({
+                      assignmentId: a.id,
+                      state: a.state,
+                      form: this.getFormMeta(a.formId),
+                    })),
+                })),
             };
             return r;
           }

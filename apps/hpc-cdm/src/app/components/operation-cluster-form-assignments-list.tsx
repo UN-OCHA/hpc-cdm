@@ -13,11 +13,12 @@ import FormAssignmentsList from './form-assignments-list';
 interface Props {
   className?: string;
   operation: operations.DetailedOperation;
+  cluster: operations.OperationCluster;
   window: reportingWindows.ReportingWindow;
 }
 
-const OperationFormAssignmentsList = (props: Props) => {
-  const { operation, window } = props;
+const OperationClusterFormAssignmentsList = (props: Props) => {
+  const { operation, window, cluster } = props;
 
   const loader = dataLoader(
     [
@@ -39,22 +40,29 @@ const OperationFormAssignmentsList = (props: Props) => {
             notFound: t.get(lang, (s) => s.components.notFound),
           }}
         >
-          {(data) => (
-            <FormAssignmentsList
-              assignments={data.directAssignments.forms}
-              assignmentLink={(a) =>
-                paths.operationFormAssignmentData({
-                  operationId: operation.id,
-                  windowId: window.id,
-                  assignmentId: a.assignmentId,
-                })
-              }
-            />
-          )}
+          {(data) => {
+            const forms =
+              data.clusterAssignments.filter(
+                (ca) => ca.clusterId === cluster.id
+              )[0]?.forms || [];
+            return (
+              <FormAssignmentsList
+                assignments={forms}
+                assignmentLink={(a) =>
+                  paths.operationClusterFormAssignmentData({
+                    operationId: operation.id,
+                    clusterId: cluster.id,
+                    windowId: window.id,
+                    assignmentId: a.assignmentId,
+                  })
+                }
+              />
+            );
+          }}
         </C.Loader>
       )}
     </AppContext.Consumer>
   );
 };
 
-export default styled(OperationFormAssignmentsList)``;
+export default styled(OperationClusterFormAssignmentsList)``;

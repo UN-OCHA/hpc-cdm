@@ -34,6 +34,10 @@ export interface GetAssignmentsForOperationResult {
   directAssignments: {
     forms: FormAssignment[];
   };
+  clusterAssignments: Array<{
+    clusterId: number;
+    forms: FormAssignment[];
+  }>;
 }
 
 export interface GetAssignmentParams {
@@ -55,10 +59,15 @@ export interface GetAssignmentResult {
      */
     currentData: string;
   };
-  assignee: {
-    type: 'operation';
-    operationId: number;
-  };
+  assignee:
+    | {
+        type: 'operation';
+        operationId: number;
+      }
+    | {
+        type: 'operationCluster';
+        clusterId: number;
+      };
 }
 
 export interface Model {

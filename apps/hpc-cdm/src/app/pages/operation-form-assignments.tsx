@@ -9,7 +9,7 @@ import { AppContext } from '../context';
 import * as paths from '../paths';
 
 import OperationFormAssignmentsList from '../components/operation-form-assignments-list';
-import OperationFormAssignmentData from './operation-form-assignment-data';
+import FormAssignmentData from '../components/form-assignment-data';
 
 interface Props {
   className?: string;
@@ -34,9 +34,6 @@ const PageOperationFormAssignments = (props: Props) => {
             <OperationFormAssignmentsList {...{ operation, window }} />
           </Route>
           <Route
-            // TODO: remove exact when we have further nested paths
-            // for history of an assignment
-            exact
             path={paths.operationFormAssignmentDataMatch({
               operationId: operation.id,
               windowId: window.id,
@@ -46,11 +43,7 @@ const PageOperationFormAssignments = (props: Props) => {
             }) => {
               const assignmentId = parseInt(props.match.params.assignmentId);
               if (!isNaN(assignmentId)) {
-                return (
-                  <OperationFormAssignmentData
-                    {...{ operation, window, assignmentId }}
-                  />
-                );
+                return <FormAssignmentData {...{ window, assignmentId }} />;
               } else {
                 return (
                   <C.NotFound

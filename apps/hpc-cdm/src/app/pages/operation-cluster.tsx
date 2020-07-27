@@ -8,6 +8,8 @@ import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
+import PageOperationClusterForms from './operation-cluster-forms';
+
 interface Props {
   className?: string;
   operation: operations.DetailedOperation;
@@ -80,7 +82,7 @@ const PageOperationCluster = (props: Props) => {
                 clusterId: cluster.id,
               })}
             >
-              Forms
+              <PageOperationClusterForms {...{ operation, cluster }} />
             </Route>
             <Route
               path={paths.operationClusterSettings({

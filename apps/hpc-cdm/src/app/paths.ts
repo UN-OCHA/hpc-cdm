@@ -7,6 +7,8 @@ const OPERATION_FORM_ASSIGNMENT_DATA = `${OPERATIONS}/:operationId/forms/w/:wind
 const OPERATION_CLUSTERS = `${OPERATIONS}/:id/clusters`;
 const OPERATION_CLUSTER = `${OPERATIONS}/:operationId/clusters/:clusterId`;
 const OPERATION_CLUSTER_FORMS = `${OPERATIONS}/:operationId/clusters/:clusterId/forms`;
+const OPERATION_CLUSTER_FORM_ASSIGNMENTS = `${OPERATIONS}/:operationId/clusters/:clusterId/forms/w/:windowId`;
+const OPERATION_CLUSTER_FORM_ASSIGNMENT_DATA = `${OPERATIONS}/:operationId/clusters/:clusterId/forms/w/:windowId/data/:assignmentId`;
 const OPERATION_CLUSTER_SETTINGS = `${OPERATIONS}/:operationId/clusters/:clusterId/settings`;
 const OPERATION_SETTINGS = `${OPERATIONS}/:id/settings`;
 const ADMIN = '/admin';
@@ -67,6 +69,30 @@ export const operationClusterForms = (params: {
   operationId: number;
   clusterId: number;
 }) => replacePlaceholders(OPERATION_CLUSTER_FORMS, params);
+
+export const operationClusterFormAssignments = (params: {
+  operationId: number;
+  clusterId: number;
+  windowId: number;
+}) => replacePlaceholders(OPERATION_CLUSTER_FORM_ASSIGNMENTS, params);
+
+export const operationClusterFormAssignmentsMatch = (params: {
+  operationId: number;
+  clusterId: number;
+}) => replacePlaceholders(OPERATION_CLUSTER_FORM_ASSIGNMENTS, params);
+
+export const operationClusterFormAssignmentData = (params: {
+  operationId: number;
+  clusterId: number;
+  windowId: number;
+  assignmentId: number;
+}) => replacePlaceholders(OPERATION_CLUSTER_FORM_ASSIGNMENT_DATA, params);
+
+export const operationClusterFormAssignmentDataMatch = (params: {
+  operationId: number;
+  clusterId: number;
+  windowId: number;
+}) => replacePlaceholders(OPERATION_CLUSTER_FORM_ASSIGNMENT_DATA, params);
 
 export const operationClusterSettings = (params: {
   operationId: number;

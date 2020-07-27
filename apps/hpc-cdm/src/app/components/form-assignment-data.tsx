@@ -3,18 +3,17 @@ import React from 'react';
 import env from '../../environments/environment';
 import { t } from '../../i18n';
 import { C, styled, dataLoader } from '@unocha/hpc-ui';
-import { operations, reportingWindows } from '@unocha/hpc-data';
+import { reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
 
 interface Props {
   className?: string;
-  operation: operations.DetailedOperation;
   window: reportingWindows.ReportingWindow;
   assignmentId: number;
 }
 
-const PageOperationFormAssignmentData = (props: Props) => {
+const FormAssignmentData = (props: Props) => {
   const { window, assignmentId } = props;
 
   const loader = dataLoader(
@@ -59,4 +58,4 @@ const PageOperationFormAssignmentData = (props: Props) => {
   );
 };
 
-export default styled(PageOperationFormAssignmentData)``;
+export default styled(FormAssignmentData)``;

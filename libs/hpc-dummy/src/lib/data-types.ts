@@ -3,10 +3,16 @@ import * as t from 'io-ts';
 /**
  * TODO: make into union of different assignee types
  */
-const ASSIGNEE = t.type({
-  type: t.literal('operation'),
-  operationId: t.number,
-});
+const ASSIGNEE = t.union([
+  t.type({
+    type: t.literal('operation'),
+    operationId: t.number,
+  }),
+  t.type({
+    type: t.literal('operationCluster'),
+    clusterId: t.number,
+  }),
+]);
 
 const ASSIGNMENT_STATE = t.keyof({
   'not-entered': null,

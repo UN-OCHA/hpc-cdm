@@ -73,6 +73,17 @@ export const INITIAL_DATA: DummyData = {
           state: 'raw:entered',
           currentData: 'this is some data',
         },
+        {
+          id: 5926,
+          type: 'form',
+          formId: 321,
+          assignee: {
+            type: 'operationCluster',
+            clusterId: 11,
+          },
+          state: 'raw:entered',
+          currentData: 'this is some data',
+        },
       ],
     },
     {
