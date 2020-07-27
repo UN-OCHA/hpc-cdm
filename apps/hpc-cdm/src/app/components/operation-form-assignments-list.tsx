@@ -2,7 +2,7 @@ import React from 'react';
 
 import env from '../../environments/environment';
 import { t } from '../../i18n';
-import { C, styled, dataLoader } from '@unocha/hpc-ui';
+import { C, dataLoader } from '@unocha/hpc-ui';
 import { operations, reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
@@ -26,7 +26,14 @@ const OperationFormAssignmentsList = (props: Props) => {
         operationId: operation.id,
       },
     ],
-    env.model.reportingWindows.getAssignmentsForOperation
+    ({ reportingWindowId, operationId }) =>
+      Promise.all([
+        env.model.reportingWindows.getAssignmentsForOperation({
+          reportingWindowId,
+          operationId,
+        }),
+        env.model.operations.getClusters({ operationId }),
+      ])
   );
 
   return (
@@ -39,22 +46,51 @@ const OperationFormAssignmentsList = (props: Props) => {
             notFound: t.get(lang, (s) => s.components.notFound),
           }}
         >
-          {(data) => (
-            <FormAssignmentsList
-              assignments={data.directAssignments.forms}
-              assignmentLink={(a) =>
-                paths.operationFormAssignmentData({
-                  operationId: operation.id,
-                  windowId: window.id,
-                  assignmentId: a.assignmentId,
-                })
-              }
-            />
-          )}
+          {([assignments, clusters]) => {
+            const operationAssignments = assignments.directAssignments.forms;
+            const clusterPrefixes = new Map<number, string>();
+            for (const cluster of clusters.data) {
+              clusterPrefixes.set(cluster.id, cluster.name);
+            }
+            const clusterAssignments = assignments.clusterAssignments
+              .map((cluster) =>
+                cluster.forms.map((assignment) => ({
+                  ...assignment,
+                  prefix: clusterPrefixes.get(cluster.clusterId),
+                }))
+              )
+              .reduce((acc, val) => acc.concat(val), []);
+            return (
+              <div>
+                <h3>Operation-Wide Forms</h3>
+                <FormAssignmentsList
+                  assignments={operationAssignments}
+                  assignmentLink={(a) =>
+                    paths.operationFormAssignmentData({
+                      operationId: operation.id,
+                      windowId: window.id,
+                      assignmentId: a.assignmentId,
+                    })
+                  }
+                />
+                <h3>Cluster Forms</h3>
+                <FormAssignmentsList
+                  assignments={clusterAssignments}
+                  assignmentLink={(a) =>
+                    paths.operationFormAssignmentData({
+                      operationId: operation.id,
+                      windowId: window.id,
+                      assignmentId: a.assignmentId,
+                    })
+                  }
+                />
+              </div>
+            );
+          }}
         </C.Loader>
       )}
     </AppContext.Consumer>
   );
 };
 
-export default styled(OperationFormAssignmentsList)``;
+export default OperationFormAssignmentsList;

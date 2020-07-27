@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
 import { operations, reportingWindows } from '@unocha/hpc-data';
