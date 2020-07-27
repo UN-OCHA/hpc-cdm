@@ -42,7 +42,7 @@ const PageOperationsList = (props: Props) => {
                     links={[
                       {
                         label: t.t(lang, (s) => s.navigation.operations),
-                        to: paths.OPERATIONS,
+                        to: paths.operations(),
                       },
                     ]}
                   />

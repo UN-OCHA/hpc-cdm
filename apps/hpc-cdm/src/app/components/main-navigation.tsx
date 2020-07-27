@@ -26,15 +26,15 @@ const MainNavigation = (props: Props) => {
           tabs={[
             {
               label: t.t(lang, (s) => s.navigation.operations),
-              path: paths.OPERATIONS,
+              path: paths.operations(),
             },
             {
               label: t.t(lang, (s) => s.navigation.admin),
-              path: paths.ADMIN,
+              path: paths.admin(),
             },
           ]}
         >
-          <Link to={paths.HOME} className={CLS.HEADER}>
+          <Link to={paths.home()} className={CLS.HEADER}>
             {t.t(lang, (s) => s.title)}
           </Link>
         </C.Tabs>
