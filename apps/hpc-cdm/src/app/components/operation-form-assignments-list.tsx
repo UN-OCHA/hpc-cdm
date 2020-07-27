@@ -62,7 +62,9 @@ const OperationFormAssignmentsList = (props: Props) => {
               .reduce((acc, val) => acc.concat(val), []);
             return (
               <div>
-                <h3>Operation-Wide Forms</h3>
+                <h3>
+                  {t.t(lang, (s) => s.routes.operations.forms.forOperations)}
+                </h3>
                 <FormAssignmentsList
                   assignments={operationAssignments}
                   assignmentLink={(a) =>
@@ -73,7 +75,9 @@ const OperationFormAssignmentsList = (props: Props) => {
                     })
                   }
                 />
-                <h3>Cluster Forms</h3>
+                <h3>
+                  {t.t(lang, (s) => s.routes.operations.forms.forClusters)}
+                </h3>
                 <FormAssignmentsList
                   assignments={clusterAssignments}
                   assignmentLink={(a) =>

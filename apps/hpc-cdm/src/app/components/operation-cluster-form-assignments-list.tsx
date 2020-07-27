@@ -1,4 +1,5 @@
 import React from 'react';
+import { MdCheckCircle } from 'react-icons/md';
 
 import env from '../../environments/environment';
 import { t } from '../../i18n';
@@ -45,7 +46,15 @@ const OperationClusterFormAssignmentsList = (props: Props) => {
               data.clusterAssignments.filter(
                 (ca) => ca.clusterId === cluster.id
               )[0]?.forms || [];
-            return (
+            return forms.length === 0 ? (
+              <C.ErrorMessage
+                icon={MdCheckCircle}
+                strings={t.get(
+                  lang,
+                  (s) => s.routes.operations.clusters.forms.none
+                )}
+              />
+            ) : (
               <FormAssignmentsList
                 assignments={forms}
                 assignmentLink={(a) =>
