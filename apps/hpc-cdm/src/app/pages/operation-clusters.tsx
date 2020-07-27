@@ -21,7 +21,7 @@ interface Props {
   operation: operations.DetailedOperation;
 }
 
-const Page = (props: Props) => {
+const PageOperationClusters = (props: Props) => {
   const { operation } = props;
 
   const loader = dataLoader(
@@ -114,7 +114,7 @@ const Page = (props: Props) => {
   );
 };
 
-export default styled(Page)`
+export default styled(PageOperationClusters)`
   .${CLS.CLUSTERS} {
     list-style: none;
     display: flex;

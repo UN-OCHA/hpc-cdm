@@ -18,7 +18,7 @@ interface Props {
   icon?: IconType | false;
   buttons?: JSX.Element[] | JSX.Element;
 }
-const Component = ({
+const ErrorMessage = ({
   className,
   strings,
   buttons,
@@ -32,7 +32,7 @@ const Component = ({
   </div>
 );
 
-export default styled(Component)`
+export default styled(ErrorMessage)`
   text-align: center;
   padding: ${(p) => p.theme.marginPx.md}px;
 

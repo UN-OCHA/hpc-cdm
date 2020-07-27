@@ -15,7 +15,7 @@ interface Props {
   window: reportingWindows.ReportingWindow;
 }
 
-const Components = (props: Props) => {
+const OperationFormAssignmentsList = (props: Props) => {
   const { operation, window } = props;
 
   const loader = dataLoader(
@@ -61,4 +61,4 @@ const Components = (props: Props) => {
   );
 };
 
-export default styled(Components)``;
+export default styled(OperationFormAssignmentsList)``;

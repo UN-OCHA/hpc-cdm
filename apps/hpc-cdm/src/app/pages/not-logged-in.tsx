@@ -10,7 +10,7 @@ interface Props {
   className?: string;
 }
 
-const Page = (props: Props) => (
+const PageNotLoggedIn = (props: Props) => (
   <AppContext.Consumer>
     {({ lang }) => (
       <div
@@ -25,7 +25,7 @@ const Page = (props: Props) => (
   </AppContext.Consumer>
 );
 
-export default styled(Page)`
+export default styled(PageNotLoggedIn)`
   padding-top: 40px;
   padding-bottom: 40px;
 `;

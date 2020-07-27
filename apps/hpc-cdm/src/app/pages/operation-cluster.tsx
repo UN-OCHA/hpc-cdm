@@ -19,7 +19,7 @@ interface Props {
   cluster: operations.OperationCluster;
 }
 
-const Page = (props: Props) => {
+const PageOperationCluster = (props: Props) => {
   const { operation, cluster } = props;
 
   return (
@@ -105,4 +105,4 @@ const Page = (props: Props) => {
   );
 };
 
-export default styled(Page)``;
+export default styled(PageOperationCluster)``;

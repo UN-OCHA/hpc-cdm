@@ -20,7 +20,7 @@ interface Props {
   className?: string;
 }
 
-const Page = (props: Props) => {
+const PageOperation = (props: Props) => {
   const id = parseInt(props.match.params.id);
   if (isNaN(id)) {
     // TODO: improve this
@@ -108,4 +108,4 @@ const Page = (props: Props) => {
   );
 };
 
-export default styled(Page)``;
+export default styled(PageOperation)``;

@@ -15,7 +15,7 @@ interface Props {
   className?: string;
 }
 
-const Component = (props: Props) => {
+const MainNavigation = (props: Props) => {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -43,7 +43,7 @@ const Component = (props: Props) => {
   );
 };
 
-export default styled(Component)`
+export default styled(MainNavigation)`
   .${CLS.HEADER} {
     line-height: 50px;
     margin: 0;

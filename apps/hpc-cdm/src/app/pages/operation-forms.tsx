@@ -14,7 +14,7 @@ interface Props {
   operation: operations.DetailedOperation;
 }
 
-const Page = (props: Props) => {
+const PageOperationForms = (props: Props) => {
   const { operation } = props;
   // Get the single reporting window we will be displaying for now
   return (
@@ -87,4 +87,4 @@ const Page = (props: Props) => {
   );
 };
 
-export default styled(Page)``;
+export default styled(PageOperationForms)``;

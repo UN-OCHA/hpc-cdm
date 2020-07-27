@@ -15,7 +15,7 @@ interface Props {
   assignmentId: number;
 }
 
-const Page = (props: Props) => {
+const PageOperationFormAssignmentData = (props: Props) => {
   const { operation, window, assignmentId } = props;
 
   const loader = dataLoader(
@@ -60,4 +60,4 @@ const Page = (props: Props) => {
   );
 };
 
-export default styled(Page)``;
+export default styled(PageOperationFormAssignmentData)``;

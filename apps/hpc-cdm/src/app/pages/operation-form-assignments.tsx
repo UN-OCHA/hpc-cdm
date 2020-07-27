@@ -18,7 +18,7 @@ interface Props {
   window: reportingWindows.ReportingWindow;
 }
 
-const Page = (props: Props) => {
+const PageOperationFormAssignments = (props: Props) => {
   const { operation, window } = props;
 
   return (
@@ -70,4 +70,4 @@ const Page = (props: Props) => {
   );
 };
 
-export default styled(Page)``;
+export default styled(PageOperationFormAssignments)``;
