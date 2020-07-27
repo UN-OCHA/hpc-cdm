@@ -16,6 +16,32 @@ export const INITIAL_DATA: DummyData = {
       name: 'Operation with multiple reporting windows',
     },
   ],
+  operationClusters: [
+    {
+      id: 10,
+      operationId: 1,
+      abbreviation: 'CCM',
+      name: 'Camp Coordination & Management',
+    },
+    {
+      id: 11,
+      operationId: 1,
+      abbreviation: 'EDU',
+      name: 'Education',
+    },
+    {
+      id: 12,
+      operationId: 1,
+      abbreviation: 'HEA',
+      name: 'Health',
+    },
+    {
+      id: 13,
+      operationId: 1,
+      abbreviation: 'PRO',
+      name: 'Protection',
+    },
+  ],
   reportingWindows: [
     {
       id: 0,

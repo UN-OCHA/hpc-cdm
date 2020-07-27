@@ -5,6 +5,7 @@ export const OPERATION_FORMS = `${OPERATIONS}/:id/forms`;
 export const OPERATION_FORM_ASSIGNMENTS = `${OPERATIONS}/:operationId/forms/:windowId`;
 export const OPERATION_FORM_ASSIGNMENT_DATA = `${OPERATIONS}/:operationId/forms/:windowId/data/:assignmentId`;
 export const OPERATION_CLUSTERS = `${OPERATIONS}/:id/clusters`;
+export const OPERATION_CLUSTER = `${OPERATIONS}/:operationId/clusters/:clusterId`;
 export const OPERATION_SETTINGS = `${OPERATIONS}/:id/settings`;
 export const ADMIN = '/admin';
 
@@ -45,6 +46,14 @@ export const operationFormAssignmentDataMatch = (params: {
 
 export const operationClusters = (id: number) =>
   replacePlaceholders(OPERATION_CLUSTERS, { id });
+
+export const operationCluster = (params: {
+  operationId: number;
+  clusterId: number;
+}) => replacePlaceholders(OPERATION_CLUSTER, params);
+
+export const operationClusterMatch = (params: { operationId: number }) =>
+  replacePlaceholders(OPERATION_CLUSTER, params);
 
 export const operationSettings = (id: number) =>
   replacePlaceholders(OPERATION_SETTINGS, { id });

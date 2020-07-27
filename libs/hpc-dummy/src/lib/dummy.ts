@@ -144,6 +144,24 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
+        getClusters: dummyEndpoint(
+          'operations.getClusters',
+          async ({ operationId }: operations.GetClustersParams) => {
+            const op = this.data.operations.filter(
+              (op) => op.id === operationId
+            );
+            if (op.length !== 1) {
+              throw new errors.NotFoundError();
+            }
+            const r: operations.GetClustersResult = {
+              data: this.data.operationClusters.filter(
+                (cl) => cl.operationId === operationId
+              ),
+              permissions: {},
+            };
+            return r;
+          }
+        ),
       },
       reportingWindows: {
         getAssignmentsForOperation: dummyEndpoint(

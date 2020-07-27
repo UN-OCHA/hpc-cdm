@@ -9,6 +9,7 @@ import { AppContext } from '../context';
 import * as paths from '../paths';
 
 import OperationForms from './operation-forms';
+import OperationClusters from './operation-clusters';
 
 interface Props {
   match: {
@@ -88,7 +89,9 @@ const Page = (props: Props) => {
                   <Route path={paths.operationForms(id)}>
                     <OperationForms operation={data.data} />
                   </Route>
-                  <Route path={paths.operationClusters(id)}>Clusters</Route>
+                  <Route path={paths.operationClusters(id)}>
+                    <OperationClusters operation={data.data} />
+                  </Route>
                   <Route path={paths.operationSettings(id)}>Settings</Route>
                   <Route>
                     <C.NotFound

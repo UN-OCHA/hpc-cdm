@@ -55,6 +55,13 @@ const OPERATION = t.type({
   name: t.string,
 });
 
+const OPERATION_CLUSTER = t.type({
+  id: t.number,
+  operationId: t.number,
+  abbreviation: t.string,
+  name: t.string,
+});
+
 const FORM = t.type({
   id: t.number,
   name: t.string,
@@ -70,6 +77,7 @@ export const DUMMY_DATA = t.type({
     }),
   ]),
   operations: t.array(OPERATION),
+  operationClusters: t.array(OPERATION_CLUSTER),
   reportingWindows: t.array(REPORTING_WINDOW),
   forms: t.array(FORM),
 });
