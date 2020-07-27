@@ -1,9 +1,8 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import env from '../../environments/environment';
 import { t } from '../../i18n';
-import { C, styled, dataLoader } from '@unocha/hpc-ui';
+import { C, styled } from '@unocha/hpc-ui';
 import { operations, reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';

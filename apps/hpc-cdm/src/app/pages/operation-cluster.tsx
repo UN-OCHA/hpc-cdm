@@ -8,11 +8,6 @@ import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
-const CLS = {
-  CLUSTERS: 'clusters',
-  ABBREVIATION: 'abbrv',
-};
-
 interface Props {
   className?: string;
   operation: operations.DetailedOperation;

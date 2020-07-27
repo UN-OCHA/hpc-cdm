@@ -1,5 +1,4 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
 
 import env from '../../environments/environment';
 import { t } from '../../i18n';
@@ -16,7 +15,7 @@ interface Props {
 }
 
 const PageOperationFormAssignmentData = (props: Props) => {
-  const { operation, window, assignmentId } = props;
+  const { window, assignmentId } = props;
 
   const loader = dataLoader(
     [
