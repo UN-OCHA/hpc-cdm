@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { CLASSES, C, combineClasses, styled, dataLoader } from '@unocha/hpc-ui';
 
-import env from '../../environments/environment';
 import { t } from '../../i18n';
-import { AppContext } from '../context';
+import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
 
 const CLS = {
@@ -17,7 +16,7 @@ interface Props {
 }
 
 const PageOperationsList = (props: Props) => {
-  const loader = dataLoader([], env.model.operations.getOperations);
+  const loader = dataLoader([], getEnv().model.operations.getOperations);
 
   return (
     <AppContext.Consumer>

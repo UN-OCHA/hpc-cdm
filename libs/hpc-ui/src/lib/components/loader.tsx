@@ -15,6 +15,7 @@ interface Props<T> {
   strings: {
     loading: string;
     error: string;
+    retry: string;
     notFound: {
       title: string;
       info: string;
@@ -46,7 +47,7 @@ export default function Loader<T>(props: Props<T>) {
       <h3>
         {strings.error} {loader.error}
       </h3>
-      <button onClick={loader.retry}>Retry</button>
+      <button onClick={loader.retry}>{strings.retry}</button>
     </StyledDiv>
   ) : loader.type === 'not-found' ? (
     <NotFound strings={strings.notFound} />

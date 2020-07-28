@@ -1,11 +1,10 @@
 import React from 'react';
 
-import env from '../../environments/environment';
 import { t } from '../../i18n';
 import { C, styled, dataLoader } from '@unocha/hpc-ui';
 import { reportingWindows } from '@unocha/hpc-data';
 
-import { AppContext } from '../context';
+import { AppContext, getEnv } from '../context';
 
 interface Props {
   className?: string;
@@ -23,7 +22,7 @@ const FormAssignmentData = (props: Props) => {
         reportingWindowId: window.id,
       },
     ],
-    env.model.reportingWindows.getAssignment
+    getEnv().model.reportingWindows.getAssignment
   );
 
   return (

@@ -1,12 +1,11 @@
 import React from 'react';
 import { MdCheckCircle } from 'react-icons/md';
 
-import env from '../../environments/environment';
 import { t } from '../../i18n';
 import { C, styled, dataLoader } from '@unocha/hpc-ui';
 import { operations, reportingWindows } from '@unocha/hpc-data';
 
-import { AppContext } from '../context';
+import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
 
 import FormAssignmentsList from './form-assignments-list';
@@ -28,7 +27,7 @@ const OperationClusterFormAssignmentsList = (props: Props) => {
         operationId: operation.id,
       },
     ],
-    env.model.reportingWindows.getAssignmentsForOperation
+    getEnv().model.reportingWindows.getAssignmentsForOperation
   );
 
   return (
