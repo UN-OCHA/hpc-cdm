@@ -1,11 +1,10 @@
 import React from 'react';
 
-import env from '../../environments/environment';
 import { t } from '../../i18n';
 import { C, dataLoader } from '@unocha/hpc-ui';
 import { operations, reportingWindows } from '@unocha/hpc-data';
 
-import { AppContext } from '../context';
+import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
 
 import FormAssignmentsList from './form-assignments-list';
@@ -18,6 +17,7 @@ interface Props {
 
 const OperationFormAssignmentsList = (props: Props) => {
   const { operation, window } = props;
+  const env = getEnv();
 
   const loader = dataLoader(
     [

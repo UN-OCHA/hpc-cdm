@@ -4,9 +4,8 @@ import { Switch, Route, Link } from 'react-router-dom';
 import { C, styled, dataLoader } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
 
-import env from '../../environments/environment';
 import { t } from '../../i18n';
-import { AppContext } from '../context';
+import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
 
 import OperationCluster from './operation-cluster';
@@ -30,7 +29,7 @@ const PageOperationClusters = (props: Props) => {
         operationId: operation.id,
       },
     ],
-    env.model.operations.getClusters
+    getEnv().model.operations.getClusters
   );
 
   return (

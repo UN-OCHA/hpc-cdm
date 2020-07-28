@@ -3,9 +3,8 @@ import { Switch, Redirect, Route } from 'react-router-dom';
 
 import { CLASSES, C, combineClasses, styled, dataLoader } from '@unocha/hpc-ui';
 
-import env from '../../environments/environment';
 import { t } from '../../i18n';
-import { AppContext } from '../context';
+import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
 
 import OperationForms from './operation-forms';
@@ -26,7 +25,7 @@ const PageOperation = (props: Props) => {
     // TODO: improve this
     return <>Not Found</>;
   }
-  const loader = dataLoader([{ id }], env.model.operations.getOperation);
+  const loader = dataLoader([{ id }], getEnv().model.operations.getOperation);
 
   return (
     <AppContext.Consumer>

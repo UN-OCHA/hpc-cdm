@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import { BaseStyling, C, styled } from '@unocha/hpc-ui';
+import { BaseStyling, C, styled, dataLoader } from '@unocha/hpc-ui';
 
 import env from '../environments/environment';
 import { AppContext } from './context';
@@ -28,75 +28,85 @@ interface State {
   lang: LanguageKey;
 }
 
-export class App extends React.Component<Props, State> {
-  public constructor(props: {}) {
-    super(props);
-    this.state = {
-      lang: LANGUAGE_CHOICE.getLanguage(),
+export const App = (props: Props) => {
+  const { className } = props;
+
+  const [lang, setLang] = useState(LANGUAGE_CHOICE.getLanguage());
+
+  useEffect(() => {
+    LANGUAGE_CHOICE.addListener(setLang);
+    return () => {
+      LANGUAGE_CHOICE.removeListener(setLang);
     };
-  }
+  }, []);
 
-  private languageChanged = (lang: LanguageKey) => {
-    this.setState({ lang });
-  };
-
-  public componentDidMount() {
-    LANGUAGE_CHOICE.addListener(this.languageChanged);
-  }
-
-  public componentWillUnmount() {
-    LANGUAGE_CHOICE.removeListener(this.languageChanged);
-  }
-
-  public render = () => {
-    const { lang } = this.state;
-    return (
-      <AppContext.Provider value={{ lang }}>
-        <BaseStyling />
-        <div className={this.props.className}>
-          <C.Header
-            className={CLS.HEADER}
-            session={env.session}
-            language={LANGUAGE_CHOICE}
-            strings={t.get(lang, (s) => s.user)}
-            userMenu={[
-              {
-                label: t.t(lang, (s) => s.user.logout),
-                onClick: env.session.logOut,
-              },
-            ]}
-          />
-          <main>
-            {env.session.getUser() ? (
-              <>
-                <MainNavigation />
-                <Switch>
-                  <Route
-                    path={paths.home()}
-                    exact
-                    render={() => <div>HOMEPAGE</div>}
-                  />
-                  <Route
-                    path={paths.operations()}
-                    exact
-                    component={PageOperationsList}
-                  />
-                  <Route
-                    path={paths.operationMatch()}
-                    component={PageOperation}
-                  />
-                  <Route component={PageNotFound} />
-                </Switch>
-              </>
-            ) : (
-              <PageNotLoggedIn />
-            )}
-          </main>
-        </div>
-      </AppContext.Provider>
-    );
-  };
-}
+  const loadEnv = dataLoader([], () =>
+    env().catch((err) => {
+      console.error(err);
+      throw new Error(t.t(lang, (s) => s.errors.unableToLoadCDM));
+    })
+  );
+  return (
+    <>
+      <BaseStyling />
+      <C.Loader
+        loader={loadEnv}
+        strings={{
+          ...t.get(lang, (s) => s.components.loader),
+          notFound: {
+            ...t.get(lang, (s) => s.components.notFound),
+            ...t.get(lang, (s) => s.routes.operations.notFound),
+          },
+        }}
+      >
+        {(env) => (
+          <AppContext.Provider value={{ lang, env: () => env }}>
+            <div className={className}>
+              <C.Header
+                className={CLS.HEADER}
+                session={env.session}
+                language={LANGUAGE_CHOICE}
+                strings={t.get(lang, (s) => s.user)}
+                userMenu={[
+                  {
+                    label: t.t(lang, (s) => s.user.logout),
+                    onClick: env.session.logOut,
+                  },
+                ]}
+              />
+              <main>
+                {env.session.getUser() ? (
+                  <>
+                    <MainNavigation />
+                    <Switch>
+                      <Route
+                        path={paths.home()}
+                        exact
+                        render={() => <div>HOMEPAGE</div>}
+                      />
+                      <Route
+                        path={paths.operations()}
+                        exact
+                        component={PageOperationsList}
+                      />
+                      <Route
+                        path={paths.operationMatch()}
+                        component={PageOperation}
+                      />
+                      <Route component={PageNotFound} />
+                    </Switch>
+                  </>
+                ) : (
+                  <PageNotLoggedIn />
+                )}
+              </main>
+            </div>
+          </AppContext.Provider>
+        )}
+      </C.Loader>
+    </>
+  );
+};
 
 export default styled(App)`
   > .${CLS.HEADER} {

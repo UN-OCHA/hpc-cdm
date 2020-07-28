@@ -4,6 +4,9 @@
     "login": "Login",
     "logout": "Logout"
   },
+  "errors": {
+    "unableToLoadCDM": "Unable to load CDM"
+  },
   "components": {
     "acceptableUseNotification": {
       "login": "Click here to login",
@@ -20,7 +23,8 @@
     },
     "loader": {
       "loading": "Loading...",
-      "error": "Error:"
+      "error": "Error:",
+      "retry": "Retry"
     }
   },
   "navigation": {

@@ -1,0 +1,20 @@
+version: '3.5'
+services:
+  hpc_cdm:
+    image: hpc-cdm
+    env_file:
+      - ./.env
+    hostname: cdm
+    networks:
+      service:
+        aliases:
+          - cdm
+          - cdm.hpc.vm
+    expose:
+      - "80"
+    ports:
+      - "127.0.0.1:4200:80"
+
+networks:
+  service:
+    name: cdm_docker_local

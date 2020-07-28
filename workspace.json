@@ -24,6 +24,14 @@
             "webpackConfig": "@nrwl/react/plugins/webpack"
           },
           "configurations": {
+            "dev-live": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/hpc-cdm/src/environments/environment.ts",
+                  "with": "apps/hpc-cdm/src/environments/environment.dev-live.ts"
+                }
+              ]
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -54,6 +62,9 @@
             "buildTarget": "hpc-cdm:build"
           },
           "configurations": {
+            "dev-live": {
+              "buildTarget": "hpc-cdm:build:dev-live"
+            },
             "production": {
               "buildTarget": "hpc-cdm:build:production"
             }
@@ -211,6 +222,55 @@
           "options": {
             "jestConfig": "libs/hpc-ui/jest.config.js",
             "tsConfig": "libs/hpc-ui/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "hpc-cdm-serve": {
+      "root": "apps/hpc-cdm-serve",
+      "sourceRoot": "apps/hpc-cdm-serve/src",
+      "projectType": "application",
+      "prefix": "hpc-cdm-serve",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/hpc-cdm-serve",
+            "main": "apps/hpc-cdm-serve/src/main.ts",
+            "tsConfig": "apps/hpc-cdm-serve/tsconfig.app.json"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "hpc-cdm-serve:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/hpc-cdm-serve/tsconfig.app.json",
+              "apps/hpc-cdm-serve/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/hpc-cdm-serve/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/hpc-cdm-serve/jest.config.js",
+            "tsConfig": "apps/hpc-cdm-serve/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }

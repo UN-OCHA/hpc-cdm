@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv sh
+
+# /usr/bin/with-contenv is used to expose the container's environment variables
+# to the script.
+# See: https://github.com/just-containers/s6-overlay#container-environment
+
+cd /srv/src
+
+npm run start-cdm-prod

@@ -4,10 +4,13 @@
 import { Session } from '@unocha/hpc-core';
 import { Model } from '@unocha/hpc-data';
 import { Dummy } from '@unocha/hpc-dummy';
+import { Environment } from './interface';
+
+export { Environment };
 
 const dummy = new Dummy();
 
-export const ENVIRONMENT = {
+export const ENVIRONMENT: Environment = {
   get session(): Session {
     return dummy.getSession();
   },
@@ -16,6 +19,4 @@ export const ENVIRONMENT = {
   },
 };
 
-export type Environment = typeof ENVIRONMENT;
-
-export default ENVIRONMENT;
+export default () => Promise.resolve(ENVIRONMENT);

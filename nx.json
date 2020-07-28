@@ -40,6 +40,9 @@
     },
     "hpc-ui": {
       "tags": []
+    },
+    "hpc-cdm-serve": {
+      "tags": []
     }
   }
 }
