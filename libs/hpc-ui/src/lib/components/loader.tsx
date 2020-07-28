@@ -36,7 +36,7 @@ const StyledDiv = styled.div`
   }
 `;
 
-export default function Component<T>(props: Props<T>) {
+export default function Loader<T>(props: Props<T>) {
   const { children, className, loader, strings } = props;
   return loader.type === 'success' ? (
     children(loader.data)

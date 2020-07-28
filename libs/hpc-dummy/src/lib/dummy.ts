@@ -144,6 +144,24 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
+        getClusters: dummyEndpoint(
+          'operations.getClusters',
+          async ({ operationId }: operations.GetClustersParams) => {
+            const op = this.data.operations.filter(
+              (op) => op.id === operationId
+            );
+            if (op.length !== 1) {
+              throw new errors.NotFoundError();
+            }
+            const r: operations.GetClustersResult = {
+              data: this.data.operationClusters.filter(
+                (cl) => cl.operationId === operationId
+              ),
+              permissions: {},
+            };
+            return r;
+          }
+        ),
       },
       reportingWindows: {
         getAssignmentsForOperation: dummyEndpoint(
@@ -171,6 +189,24 @@ export class Dummy {
                     form: this.getFormMeta(a.formId),
                   })),
               },
+              clusterAssignments: this.data.operationClusters
+                .filter((cl) => cl.operationId === operationId)
+                .map((cluster) => ({
+                  clusterId: cluster.id,
+                  cl: cluster,
+                  forms: window[0].assignments
+                    .filter(
+                      (a) =>
+                        a.type === 'form' &&
+                        a.assignee.type === 'operationCluster' &&
+                        a.assignee.clusterId === cluster.id
+                    )
+                    .map((a) => ({
+                      assignmentId: a.id,
+                      state: a.state,
+                      form: this.getFormMeta(a.formId),
+                    })),
+                })),
             };
             return r;
           }

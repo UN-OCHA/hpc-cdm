@@ -9,6 +9,7 @@ import { AppContext } from '../context';
 import * as paths from '../paths';
 
 import OperationForms from './operation-forms';
+import OperationClusters from './operation-clusters';
 
 interface Props {
   match: {
@@ -19,7 +20,7 @@ interface Props {
   className?: string;
 }
 
-const Page = (props: Props) => {
+const PageOperation = (props: Props) => {
   const id = parseInt(props.match.params.id);
   if (isNaN(id)) {
     // TODO: improve this
@@ -53,7 +54,7 @@ const Page = (props: Props) => {
                     links={[
                       {
                         label: t.t(lang, (s) => s.navigation.operations),
-                        to: paths.OPERATIONS,
+                        to: paths.operations(),
                       },
                       {
                         label: data.data.name,
@@ -88,7 +89,9 @@ const Page = (props: Props) => {
                   <Route path={paths.operationForms(id)}>
                     <OperationForms operation={data.data} />
                   </Route>
-                  <Route path={paths.operationClusters(id)}>Clusters</Route>
+                  <Route path={paths.operationClusters(id)}>
+                    <OperationClusters operation={data.data} />
+                  </Route>
                   <Route path={paths.operationSettings(id)}>Settings</Route>
                   <Route>
                     <C.NotFound
@@ -105,4 +108,4 @@ const Page = (props: Props) => {
   );
 };
 
-export default styled(Page)``;
+export default styled(PageOperation)``;

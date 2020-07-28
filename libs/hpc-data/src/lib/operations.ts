@@ -6,6 +6,12 @@ export interface Operation {
   name: string;
 }
 
+export interface OperationCluster {
+  id: number;
+  abbreviation: string;
+  name: string;
+}
+
 export interface DetailedOperation extends Operation {
   /**
    * The list of reporting windows that are associated with the current operation.
@@ -21,12 +27,23 @@ export type GetOperationsResult = ResultWithPermissions<
 export type GetOperationParams = {
   id: number;
 };
+
 export type GetOperationResult = ResultWithPermissions<
   DetailedOperation,
+  never
+>;
+
+export type GetClustersParams = {
+  operationId: number;
+};
+
+export type GetClustersResult = ResultWithPermissions<
+  OperationCluster[],
   never
 >;
 
 export interface Model {
   getOperations(): Promise<GetOperationsResult>;
   getOperation(params: GetOperationParams): Promise<GetOperationResult>;
+  getClusters(params: GetClustersParams): Promise<GetClustersResult>;
 }

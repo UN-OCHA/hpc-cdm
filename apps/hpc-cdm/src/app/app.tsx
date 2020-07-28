@@ -72,16 +72,19 @@ export class App extends React.Component<Props, State> {
                 <MainNavigation />
                 <Switch>
                   <Route
-                    path={paths.HOME}
+                    path={paths.home()}
                     exact
                     render={() => <div>HOMEPAGE</div>}
                   />
                   <Route
-                    path={paths.OPERATIONS}
+                    path={paths.operations()}
                     exact
                     component={PageOperationsList}
                   />
-                  <Route path={paths.OPERATION} component={PageOperation} />
+                  <Route
+                    path={paths.operationMatch()}
+                    component={PageOperation}
+                  />
                   <Route component={PageNotFound} />
                 </Switch>
               </>

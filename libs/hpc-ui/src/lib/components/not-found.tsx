@@ -11,7 +11,7 @@ interface Props {
   };
 }
 
-export default (props: Props) => (
+const NotFound = (props: Props) => (
   <ErrorMessage
     strings={props.strings}
     icon={false}
@@ -22,3 +22,5 @@ export default (props: Props) => (
     }
   />
 );
+
+export default NotFound;

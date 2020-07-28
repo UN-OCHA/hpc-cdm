@@ -1,16 +1,15 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import env from '../../environments/environment';
 import { t } from '../../i18n';
-import { C, styled, dataLoader } from '@unocha/hpc-ui';
+import { C, styled } from '@unocha/hpc-ui';
 import { operations, reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
 import OperationFormAssignmentsList from '../components/operation-form-assignments-list';
-import OperationFormAssignmentData from './operation-form-assignment-data';
+import FormAssignmentData from '../components/form-assignment-data';
 
 interface Props {
   className?: string;
@@ -18,7 +17,7 @@ interface Props {
   window: reportingWindows.ReportingWindow;
 }
 
-const Page = (props: Props) => {
+const PageOperationFormAssignments = (props: Props) => {
   const { operation, window } = props;
 
   return (
@@ -35,9 +34,6 @@ const Page = (props: Props) => {
             <OperationFormAssignmentsList {...{ operation, window }} />
           </Route>
           <Route
-            // TODO: remove exact when we have further nested paths
-            // for history of an assignment
-            exact
             path={paths.operationFormAssignmentDataMatch({
               operationId: operation.id,
               windowId: window.id,
@@ -47,11 +43,7 @@ const Page = (props: Props) => {
             }) => {
               const assignmentId = parseInt(props.match.params.assignmentId);
               if (!isNaN(assignmentId)) {
-                return (
-                  <OperationFormAssignmentData
-                    {...{ operation, window, assignmentId }}
-                  />
-                );
+                return <FormAssignmentData {...{ window, assignmentId }} />;
               } else {
                 return (
                   <C.NotFound
@@ -70,4 +62,4 @@ const Page = (props: Props) => {
   );
 };
 
-export default styled(Page)``;
+export default styled(PageOperationFormAssignments)``;

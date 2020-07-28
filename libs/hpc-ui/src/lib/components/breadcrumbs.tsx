@@ -15,7 +15,7 @@ interface Props {
   }>;
 }
 
-const Component = (props: Props) => (
+const Breadcrumbs = (props: Props) => (
   <div className={props.className}>
     {props.links.map((link, i, links) => {
       const last = i === links.length - 1;
@@ -33,7 +33,7 @@ const Component = (props: Props) => (
   </div>
 );
 
-export default styled(Component)`
+export default styled(Breadcrumbs)`
   display: flex;
   font-size: 1.3rem;
   font-weight: 600;

@@ -9,7 +9,7 @@ interface Props {
   className?: string;
 }
 
-const Page = (props: Props) => (
+const PageNotFound = (props: Props) => (
   <AppContext.Consumer>
     {({ lang }) => (
       <div
@@ -21,6 +21,6 @@ const Page = (props: Props) => (
   </AppContext.Consumer>
 );
 
-export default styled(Page)`
+export default styled(PageNotFound)`
   padding-bottom: 40px;
 `;

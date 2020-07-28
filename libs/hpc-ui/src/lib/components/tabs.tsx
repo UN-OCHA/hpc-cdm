@@ -26,7 +26,7 @@ interface Props {
   children?: JSX.Element[] | JSX.Element;
 }
 
-const Component = (props: Props) => {
+const Tabs = (props: Props) => {
   const { className, mode, align, tabs, children } = props;
   const loc = useLocation();
   const tabElements = (
@@ -70,7 +70,7 @@ const Component = (props: Props) => {
   );
 };
 
-export default styled(Component)`
+export default styled(Tabs)`
   border-bottom: 1px solid ${(p) => p.theme.colors.panel.border};
 
   > .${CLS.INNER} {

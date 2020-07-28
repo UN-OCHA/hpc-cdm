@@ -16,7 +16,7 @@ interface Props {
   className?: string;
 }
 
-const Page = (props: Props) => {
+const PageOperationsList = (props: Props) => {
   const loader = dataLoader([], env.model.operations.getOperations);
 
   return (
@@ -42,7 +42,7 @@ const Page = (props: Props) => {
                     links={[
                       {
                         label: t.t(lang, (s) => s.navigation.operations),
-                        to: paths.OPERATIONS,
+                        to: paths.operations(),
                       },
                     ]}
                   />
@@ -63,7 +63,7 @@ const Page = (props: Props) => {
   );
 };
 
-export default styled(Page)`
+export default styled(PageOperationsList)`
   .${CLS.OPERATIONS} {
     list-style: none;
     display: flex;

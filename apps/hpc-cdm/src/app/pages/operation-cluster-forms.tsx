@@ -1,35 +1,33 @@
 import React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 
-import { CLASSES, C, combineClasses, styled } from '@unocha/hpc-ui';
+import { C, styled } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
 
-import { AppContext } from '../context';
 import { t } from '../../i18n';
-import OperationFormAssignments from './operation-form-assignments';
+import { AppContext } from '../context';
 import * as paths from '../paths';
+
+import PageOperationClusterFormAssignments from './operation-cluster-form-assignments';
 
 interface Props {
   className?: string;
   operation: operations.DetailedOperation;
+  cluster: operations.OperationCluster;
 }
 
-const PageOperationForms = (props: Props) => {
-  const { operation } = props;
-  // Get the single reporting window we will be displaying for now
+const PageOperationClusterForms = (props: Props) => {
+  const { operation, cluster } = props;
+
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <div
-          className={combineClasses(
-            CLASSES.CONTAINER.CENTERED,
-            props.className
-          )}
-        >
+        <div className={props.className}>
           <Switch>
             <Route
-              path={paths.operationFormAssignmentsMatch({
+              path={paths.operationClusterFormAssignmentsMatch({
                 operationId: operation.id,
+                clusterId: cluster.id,
               })}
               render={(props: { match: { params: { windowId: string } } }) => {
                 const id = parseInt(props.match.params.windowId);
@@ -40,9 +38,9 @@ const PageOperationForms = (props: Props) => {
                   if (windows.length === 1) {
                     console.log(props);
                     return (
-                      <OperationFormAssignments
-                        operation={operation}
+                      <PageOperationClusterFormAssignments
                         window={windows[0]}
+                        {...{ operation, cluster }}
                       />
                     );
                   }
@@ -57,8 +55,9 @@ const PageOperationForms = (props: Props) => {
             <Route>
               {operation.reportingWindows.length === 1 ? (
                 <Redirect
-                  to={paths.operationFormAssignments({
+                  to={paths.operationClusterFormAssignments({
                     operationId: operation.id,
+                    clusterId: cluster.id,
                     windowId: operation.reportingWindows[0].id,
                   })}
                 />
@@ -87,4 +86,4 @@ const PageOperationForms = (props: Props) => {
   );
 };
 
-export default styled(PageOperationForms)``;
+export default styled(PageOperationClusterForms)``;
