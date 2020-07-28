@@ -56,6 +56,14 @@ const SESSION_USER = t.type({
   name: t.string,
 });
 
+const USER = t.type({
+  id: t.number,
+  user: SESSION_USER,
+  permissions: t.array(t.string),
+});
+
+export type User = t.TypeOf<typeof USER>;
+
 const OPERATION = t.type({
   id: t.number,
   name: t.string,
@@ -75,13 +83,8 @@ const FORM = t.type({
 });
 
 export const DUMMY_DATA = t.type({
-  currentUser: t.union([
-    t.null,
-    t.type({
-      user: SESSION_USER,
-      permissions: t.array(t.string),
-    }),
-  ]),
+  users: t.array(USER),
+  currentUser: t.union([t.null, t.number]),
   operations: t.array(OPERATION),
   operationClusters: t.array(OPERATION_CLUSTER),
   reportingWindows: t.array(REPORTING_WINDOW),

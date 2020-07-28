@@ -31,8 +31,10 @@ export const CLASSES = {
  * Combine a number of (potentially undefined) classes into a single
  * class string.
  */
-export const combineClasses = (...args: (string | undefined | null)[]) =>
+export const combineClasses = (
+  ...args: (string | undefined | null | false)[]
+) =>
   args
-    .filter(util.isDefined)
+    .filter(util.isString)
     .map((s) => s.trim())
     .join(' ');

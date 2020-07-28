@@ -1,6 +1,8 @@
 export const isDefined = <T>(v: T | null | undefined): v is T =>
   v !== null && v !== undefined;
 
+export const isString = (v: any): v is string => typeof v === 'string';
+
 /**
  * return true if the given object has the given key,
  * can be used as a type guard.

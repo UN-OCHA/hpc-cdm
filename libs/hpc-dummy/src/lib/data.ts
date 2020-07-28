@@ -1,6 +1,29 @@
 import { DummyData } from './data-types';
 
 export const INITIAL_DATA: DummyData = {
+  users: [
+    {
+      id: 0,
+      user: {
+        name: 'Admin User',
+      },
+      permissions: [],
+    },
+    {
+      id: 1,
+      user: {
+        name: 'Operation Lead',
+      },
+      permissions: [],
+    },
+    {
+      id: 2,
+      user: {
+        name: 'Cluster Lead',
+      },
+      permissions: [],
+    },
+  ],
   currentUser: null,
   operations: [
     {
