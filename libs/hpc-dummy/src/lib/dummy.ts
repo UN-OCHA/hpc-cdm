@@ -3,6 +3,7 @@ import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
 
 import { Assignment, DummyData, DUMMY_DATA } from './data-types';
 import { INITIAL_DATA } from './data';
+import { Users } from './users';
 
 const STORAGE_KEY = 'hpc-dummy';
 
@@ -49,12 +50,23 @@ function dummyEndpoint<Args extends [unknown, ...unknown[]], Data>(
 
 export class Dummy {
   private data: DummyData;
+  private readonly users: Users;
 
   constructor() {
     this.data = INITIAL_DATA;
+    this.users = new Users();
+    this.users.attach();
 
     window.addEventListener('storage', this.load);
     this.load();
+
+    this.users.addListener({
+      loginAsUser: (user) => {
+        this.data.currentUser = user.id;
+        this.store();
+        window.location.reload();
+      },
+    });
   }
 
   private load = () => {
@@ -72,6 +84,8 @@ export class Dummy {
             this.data = INITIAL_DATA;
             this.store();
           }
+        } else {
+          this.users.setUsers(this.data.users);
         }
       } catch (err) {
         console.error(err);
@@ -81,6 +95,7 @@ export class Dummy {
 
   private store = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+    this.users.setUsers(this.data.users);
   };
 
   public getSession = (): Session => {
@@ -88,16 +103,12 @@ export class Dummy {
       getCurrentLanguage: () => {
         throw new Error('Not Implemented');
       },
-      getUser: () => this.data.currentUser?.user || null,
+      getUser: () => {
+        const u = this.data.users.filter((u) => u.id === this.data.currentUser);
+        return u.length === 1 ? u[0].user : null;
+      },
       logIn: () => {
-        this.data.currentUser = {
-          user: {
-            name: 'Dummy User',
-          },
-          permissions: [],
-        };
-        this.store();
-        window.location.reload();
+        this.users.login();
       },
       logOut: () => {
         this.data.currentUser = null;
