@@ -4,6 +4,7 @@ import * as reportingWindows from './lib/reporting-windows';
 import * as errors from './lib/errors';
 
 export interface Model {
+  forms: forms.Model;
   operations: operations.Model;
   reportingWindows: reportingWindows.Model;
 }

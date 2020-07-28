@@ -118,6 +118,15 @@ export class Dummy {
 
   public getModel = (): Model => {
     return {
+      forms: {
+        getForm: dummyEndpoint('forms.getForm', async (formId: number) => {
+          const fd = this.data.formDefinitions.filter((fd) => fd.id === formId);
+          if (fd.length === 1) {
+            return fd[0];
+          }
+          throw new errors.NotFoundError();
+        }),
+      },
       operations: {
         getOperations: dummyEndpoint('operations.getOperations', async () => ({
           data: this.data.operations,

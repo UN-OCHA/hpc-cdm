@@ -9,3 +9,12 @@ export interface Form extends FormMeta {
    */
   definition: string;
 }
+
+export interface GetFormResult extends FormMeta {
+  form: any;
+  model: any;
+}
+
+export interface Model {
+  getForm(id: number): Promise<GetFormResult>;
+}

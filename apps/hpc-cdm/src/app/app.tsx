@@ -10,6 +10,7 @@ import { Z_INDEX } from './layout';
 import * as paths from './paths';
 
 import MainNavigation from './components/main-navigation';
+import Form from './components/form';
 
 import PageNotLoggedIn from './pages/not-logged-in';
 import PageNotFound from './pages/not-found';
@@ -74,7 +75,11 @@ export class App extends React.Component<Props, State> {
                   <Route
                     path={paths.home()}
                     exact
-                    render={() => <div>HOMEPAGE</div>}
+                    render={() => (
+                      <div>
+                        <Form id="123" />
+                      </div>
+                    )}
                   />
                   <Route
                     path={paths.operations()}

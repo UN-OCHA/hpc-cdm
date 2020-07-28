@@ -1,0 +1,85 @@
+{
+  "start": "2020-07-16T07:29:08.752-06:00",
+  "end": "2020-07-16T07:29:08.754-06:00",
+  "today": "2020-07-15",
+  "deviceid": "deviceid not found",
+  "Group_BC": {
+    "BC_Browser": "FF"
+  },
+  "Group_IN": {
+    "IN_Note1": "",
+    "Group_INContact": {
+      "IN_ContactLabel": "",
+      "IN_Name": "fdsf",
+      "IN_Function": "ddd",
+      "IN_Email": "fdsf@fssd.com",
+      "IN_Operation": "BFA"
+    }
+  },
+  "Group_OPE": {
+    "Group_OPEAWG": {
+      "OPE_AWG": "N"
+    },
+    "Group_OPEAccStrat": {
+      "OPE_AccStrat": "N"
+    }
+  },
+  "Group_ACC": {
+    "ACC_IntroNote": "",
+    "Group_ACCMatrix": {
+      "ACC_Matrix1Note": "",
+      "ACC_Matrix1Label": "",
+      "ACC_Matrix1Desc": "",
+      "ACC_Matrix1Present": "N",
+      "ACC_Matrix2Note": "",
+      "ACC_Matrix2Label": "",
+      "ACC_Matrix2Desc": "",
+      "ACC_Matrix2Present": "N",
+      "ACC_Matrix3Note": "",
+      "ACC_Matrix3Label": "",
+      "ACC_Matrix3Desc": "",
+      "ACC_Matrix3Present": "N",
+      "ACC_Matrix4Note": "",
+      "ACC_Matrix4Label": "",
+      "ACC_Matrix4Desc": "",
+      "ACC_Matrix4Present": "N",
+      "ACC_Matrix5Note": "",
+      "ACC_Matrix5Label": "",
+      "ACC_Matrix5Desc": "",
+      "ACC_Matrix5Present": "N",
+      "ACC_Matrix6Note": "",
+      "ACC_Matrix6Label": "",
+      "ACC_Matrix6Desc": "",
+      "ACC_Matrix6Present": "N",
+      "ACC_Matrix7Note": "",
+      "ACC_Matrix7Label": "",
+      "ACC_Matrix7Desc": "",
+      "ACC_Matrix7Present": "N",
+      "ACC_Matrix8Note": "",
+      "ACC_Matrix8Label": "",
+      "ACC_Matrix8Desc": "",
+      "ACC_Matrix8Present": "N",
+      "ACC_Matrix9Note": "",
+      "ACC_Matrix9Label": "",
+      "ACC_Matrix9Desc": "",
+      "ACC_Matrix9Present": "N",
+      "ACC_Matrix10Note": "",
+      "ACC_Matrix10Label": "",
+      "ACC_Matrix10Desc": "",
+      "ACC_Matrix10Present": "N"
+    }
+  },
+  "Group_CMC": {
+    "CMC_Present": "N",
+    "CMC_Comments": "ddd"
+  },
+  "Group_NTS": {
+    "NTS_ACCLabel": "",
+    "NTS_Notes": "ddd"
+  },
+  "__version__": "vQaS3S6ptLvYNYanjqHu6e",
+  "meta": {
+    "instanceID": "uuid:e3b4bf71-c4d2-47d8-a74d-13581f3365d6",
+    "deprecatedID": ""
+  }
+}

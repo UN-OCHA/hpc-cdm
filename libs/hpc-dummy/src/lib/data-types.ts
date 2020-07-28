@@ -74,6 +74,13 @@ const FORM = t.type({
   definition: t.string,
 });
 
+const FORM_DEFINITION = t.type({
+  id: t.number,
+  name: t.string,
+  form: t.any,
+  model: t.any,
+});
+
 export const DUMMY_DATA = t.type({
   currentUser: t.union([
     t.null,
@@ -86,6 +93,7 @@ export const DUMMY_DATA = t.type({
   operationClusters: t.array(OPERATION_CLUSTER),
   reportingWindows: t.array(REPORTING_WINDOW),
   forms: t.array(FORM),
+  formDefinitions: t.array(FORM_DEFINITION),
 });
 
 export type DummyData = t.TypeOf<typeof DUMMY_DATA>;
