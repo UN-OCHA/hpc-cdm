@@ -100,9 +100,6 @@ export class Dummy {
 
   public getSession = (): Session => {
     return {
-      getCurrentLanguage: () => {
-        throw new Error('Not Implemented');
-      },
       getUser: () => {
         const u = this.data.users.filter((u) => u.id === this.data.currentUser);
         return u.length === 1 ? u[0].user : null;

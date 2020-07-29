@@ -12,6 +12,8 @@ To run the app using the in-browser dummy model, run the following command:
 npm run start hpc-cdm
 ```
 
+Then navigate to to <http://localhost:4200/>
+
 ### Autoloading dev server with live API
 
 To run the app and connect to an API server
@@ -26,6 +28,8 @@ To run the app and connect to an API server
   # Server (loads .env file)
   npm run start hpc-cdm-serve
   ```
+
+Then navigate to to <http://localhost:4200/>
 
 ### Production server with live API
 
@@ -59,3 +63,20 @@ Docker-compose will run the image and map port `80` of the image to `4200` of
 the host, to match the ports when running using the other methods above.
 
 So visit to <http://localhost:4200/> test the image is running correctly.
+
+### Adding a client to HID
+
+To be able to test login locally,
+you need to have a client ID that matches `HPC_AUTH_CLIENT_ID` in your `.env`
+file stored in the HID database. It doesn't matter what the secret is as we use
+the [OAuth Implicit Flow / Simple Authentication Process](https://github.com/UN-OCHA/hid_api/wiki/Integrating-with-HID-via-OAuth#simple-authentication-process).
+You can insert an entry into the database by running the following:
+
+```bash
+# launch the MongoDB Shell
+docker exec -it hid_api_db_1 mongo
+# Run these in the shell
+> use local;
+> db.client.insert({"id": "cdm-local", "name": "CDM", "url": "http://localhost:4200", "redirectUri": "http://localhost:4200/", "loginUri": "http://localhost:4200", "secret": "<something>"})
+> exit;
+```

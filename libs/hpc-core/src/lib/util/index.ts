@@ -1,6 +1,7 @@
 export const isDefined = <T>(v: T | null | undefined): v is T =>
   v !== null && v !== undefined;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isString = (v: any): v is string => typeof v === 'string';
 
 /**

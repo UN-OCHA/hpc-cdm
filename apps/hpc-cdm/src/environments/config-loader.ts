@@ -1,6 +1,5 @@
-import { Environment } from './interface';
-import { Session, config } from '@unocha/hpc-core';
-import { Model } from '@unocha/hpc-data';
+import { config } from '@unocha/hpc-core';
+import { LiveBrowser } from '@unocha/hpc-live';
 
 export const loadEnvForConfig = (url: string) =>
   fetch(url)
@@ -17,14 +16,6 @@ export const loadEnvForConfig = (url: string) =>
       }
     })
     .then((config) => {
-      console.log('config', config);
-      const env: Environment = {
-        get session(): Session {
-          throw new Error('Production environment not implemented');
-        },
-        get model(): Model {
-          throw new Error('Production environment not implemented');
-        },
-      };
-      return env;
+      const live = new LiveBrowser(config);
+      return live.init();
     });
