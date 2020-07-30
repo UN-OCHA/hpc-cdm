@@ -1,13 +1,37 @@
-import { UserManager, User } from 'oidc-client';
+import { UserManager, User, OidcMetadata } from 'oidc-client';
 
 import { config, Session } from '@unocha/hpc-core';
 import { Model } from '@unocha/hpc-data';
 
 import { LiveModel } from './model';
 
+/**
+ * Construct the OIDC Metadata for HID,
+ * this is neccesary because HID doesn't include information about the
+ * logout endpoint in its metadata, and we need to add it manually.
+ */
+const getOpenIDMetadata = async (authUrl: string): Promise<OidcMetadata> => {
+  const metadataEndpoint = new URL(
+    '/.well-known/openid-configuration',
+    authUrl
+  );
+  const logoutEndpoint = new URL('/logout', authUrl);
+  logoutEndpoint.searchParams.set('redirect', location.origin);
+
+  const req = await fetch(metadataEndpoint.href);
+  if (!req.ok) {
+    throw new Error('Unable to get HID metadata');
+  }
+  const metadata: OidcMetadata = await req.json();
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  metadata.end_session_endpoint = logoutEndpoint.href;
+  console.log(metadata);
+  return metadata;
+};
+
 export class LiveBrowserClient {
   private readonly config: config.Config;
-  private readonly user: UserManager;
+  private readonly userManager: Promise<UserManager>;
 
   public constructor(config: config.Config) {
     console.log('initializing live', config);
@@ -18,15 +42,20 @@ export class LiveBrowserClient {
     redirectUri.pathname = '/';
     redirectUri.hash = '';
 
-    /* eslint-disable @typescript-eslint/camelcase */
-    this.user = new UserManager({
-      client_id: config.HPC_AUTH_CLIENT_ID,
-      authority: config.HPC_AUTH_URL,
-      redirect_uri: redirectUri.href,
-      response_type: 'token',
-      scope: 'profile',
-    });
-    /* eslint-enable @typescript-eslint/camelcase */
+    this.userManager = getOpenIDMetadata(config.HPC_AUTH_URL).then(
+      (metadata) =>
+        new UserManager({
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          client_id: config.HPC_AUTH_CLIENT_ID,
+          authority: config.HPC_AUTH_URL,
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          redirect_uri: redirectUri.href,
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          response_type: 'token',
+          scope: 'profile',
+          metadata,
+        })
+    );
   }
 
   private getSessionUser = async (
@@ -35,8 +64,7 @@ export class LiveBrowserClient {
     if (!user) {
       return () => null;
     } else {
-      const accountUrl = new URL(this.config.HPC_AUTH_URL);
-      accountUrl.pathname = '/account.json';
+      const accountUrl = new URL('/account.json', this.config.HPC_AUTH_URL);
       const res = await fetch(accountUrl.href, {
         headers: {
           Authorization: `Bearer ${user.access_token}`,
@@ -56,8 +84,9 @@ export class LiveBrowserClient {
   };
 
   public init = async () => {
+    const userManager = await this.userManager;
     // Attempt to load
-    await this.user
+    await userManager
       .signinRedirectCallback()
       .then((user) => {
         const redirectTo = user.state || document.location.pathname;
@@ -73,14 +102,14 @@ export class LiveBrowserClient {
       .catch(() => {
         // No sign in response, that's fine
       });
-    const user = await this.user.getUser();
+    const user = await userManager.getUser();
     const session: Session = {
       getUser: await this.getSessionUser(user),
       logIn: () =>
-        this.user.signinRedirect({
+        userManager.signinRedirect({
           state: window.location.href,
         }),
-      logOut: () => this.user.signoutRedirect(),
+      logOut: () => userManager.signoutRedirect(),
     };
     if (user) {
       const result = {
