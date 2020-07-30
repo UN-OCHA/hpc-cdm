@@ -3,7 +3,9 @@ import { UserManager, User } from 'oidc-client';
 import { config, Session } from '@unocha/hpc-core';
 import { Model } from '@unocha/hpc-data';
 
-export class LiveBrowser {
+import { LiveModel } from './model';
+
+export class LiveBrowserClient {
   private readonly config: config.Config;
   private readonly user: UserManager;
 
@@ -21,20 +23,37 @@ export class LiveBrowser {
       client_id: config.HPC_AUTH_CLIENT_ID,
       authority: config.HPC_AUTH_URL,
       redirect_uri: redirectUri.href,
+      response_type: 'token',
       scope: 'profile',
     });
     /* eslint-enable @typescript-eslint/camelcase */
   }
 
-  private getSessionUser(user: User | null): Session['getUser'] {
+  private getSessionUser = async (
+    user: User | null
+  ): Promise<Session['getUser']> => {
     if (!user) {
       return () => null;
     } else {
-      return () => ({
-        name: user.profile.name || 'unknown',
+      const accountUrl = new URL(this.config.HPC_AUTH_URL);
+      accountUrl.pathname = '/account.json';
+      const res = await fetch(accountUrl.href, {
+        headers: {
+          Authorization: `Bearer ${user.access_token}`,
+        },
       });
+      if (!res.ok) {
+        return () => ({
+          name: 'unknown',
+        });
+      } else {
+        const info = await res.json();
+        return () => ({
+          name: info.name || 'unknown',
+        });
+      }
     }
-  }
+  };
 
   public init = async () => {
     // Attempt to load
@@ -55,21 +74,31 @@ export class LiveBrowser {
         // No sign in response, that's fine
       });
     const user = await this.user.getUser();
-    console.log(user);
     const session: Session = {
-      getUser: this.getSessionUser(user),
+      getUser: await this.getSessionUser(user),
       logIn: () =>
         this.user.signinRedirect({
           state: window.location.href,
         }),
       logOut: () => this.user.signoutRedirect(),
     };
-    const result = {
-      session,
-      get model(): Model {
-        throw new Error('Production environment not implemented');
-      },
-    };
-    return result;
+    if (user) {
+      const result = {
+        session,
+        model: new LiveModel({
+          baseUrl: this.config.HPC_API_URL,
+          hidToken: user.access_token,
+        }),
+      };
+      return result;
+    } else {
+      const result = {
+        session,
+        get model(): Model {
+          throw new Error('Not logged in!');
+        },
+      };
+      return result;
+    }
   };
 }
