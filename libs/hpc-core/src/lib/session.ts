@@ -22,8 +22,4 @@ export interface Session {
    * Log the user out of the system.
    */
   logOut(): void;
-  /**
-   * Get the code for the current language
-   */
-  getCurrentLanguage(): string;
 }

@@ -275,6 +275,33 @@
           }
         }
       }
+    },
+    "hpc-live": {
+      "root": "libs/hpc-live",
+      "sourceRoot": "libs/hpc-live/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/hpc-live/tsconfig.lib.json",
+              "libs/hpc-live/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/hpc-live/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/hpc-live/jest.config.js",
+            "tsConfig": "libs/hpc-live/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

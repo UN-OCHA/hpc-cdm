@@ -43,6 +43,9 @@
     },
     "hpc-cdm-serve": {
       "tags": []
+    },
+    "hpc-live": {
+      "tags": []
     }
   }
 }
