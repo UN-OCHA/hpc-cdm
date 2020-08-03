@@ -1,6 +1,6 @@
 FROM unocha/nodejs:12
 
-ENV PORT 3000
+ENV PORT 3333
 
 WORKDIR /srv/src
 
@@ -10,4 +10,4 @@ RUN npm install && \
     npm run build-cdm-prod && \
     cp env/etc/services.d/node/run /etc/services.d/node/run
 
-EXPOSE 3000
+EXPOSE 3333
