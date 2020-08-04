@@ -44,7 +44,7 @@ Then navigate to to <http://localhost:4200/>
   npm run start-cdm-prod
   ```
 
-Then navigate to to <http://localhost:3333/>
+Then navigate to to <http://localhost:3000/>
 
 ### Production server within docker
 
@@ -59,10 +59,10 @@ Then navigate to to <http://localhost:3333/>
   docker-compose up -d
   ```
 
-Docker-compose will run the image and map port `80` of the image to `4200` of
+Docker-compose will run the image and map port `3000` of the image to `3000` of
 the host, to match the ports when running using the other methods above.
 
-So visit to <http://localhost:4200/> test the image is running correctly.
+So visit to <http://localhost:3000/> test the image is running correctly.
 
 ### Adding a client to HID
 
@@ -77,6 +77,6 @@ You can insert an entry into the database by running the following:
 docker exec -it hid_api_db_1 mongo
 # Run these in the shell
 > use local;
-> db.client.insert({"id": "cdm-local", "name": "CDM", "url": "http://localhost:4200", "redirectUri": "http://localhost:4200/", "loginUri": "http://localhost:4200", "secret": "<something>"})
+> db.client.insert({"id": "cdm-local", "name": "CDM", "url": "http://localhost:3000", "redirectUri": "http://localhost:3000/", "loginUri": "http://localhost:3000", "secret": "<something>"})
 > exit;
 ```
