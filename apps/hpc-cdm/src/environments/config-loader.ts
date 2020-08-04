@@ -1,5 +1,5 @@
 import { config } from '@unocha/hpc-core';
-import { LiveBrowser } from '@unocha/hpc-live';
+import { LiveBrowserClient } from '@unocha/hpc-live';
 
 export const loadEnvForConfig = (url: string) =>
   fetch(url)
@@ -16,6 +16,6 @@ export const loadEnvForConfig = (url: string) =>
       }
     })
     .then((config) => {
-      const live = new LiveBrowser(config);
+      const live = new LiveBrowserClient(config);
       return live.init();
     });
