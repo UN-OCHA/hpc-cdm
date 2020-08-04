@@ -3,4 +3,4 @@ import { loadEnvForConfig } from './config-loader';
 
 export { Environment };
 
-export default () => loadEnvForConfig('http://localhost:3333/config.json');
+export default () => loadEnvForConfig('http://localhost:3000/config.json');
