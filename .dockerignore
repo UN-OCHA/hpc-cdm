@@ -2,5 +2,4 @@ node_modules/
 dist/
 tmp/
 .env
-# it looks like we need .git - it is used by husky
-# .git/
+.git/
