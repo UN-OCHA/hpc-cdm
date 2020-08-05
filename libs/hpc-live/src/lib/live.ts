@@ -42,12 +42,12 @@ export class LiveBrowserClient {
     redirectUri.pathname = '/';
     redirectUri.hash = '';
 
-    this.userManager = getOpenIDMetadata(config.HPC_AUTH_URL).then(
+    this.userManager = getOpenIDMetadata(config.hpcAuthUrl).then(
       (metadata) =>
         new UserManager({
           // eslint-disable-next-line @typescript-eslint/camelcase
-          client_id: config.HPC_AUTH_CLIENT_ID,
-          authority: config.HPC_AUTH_URL,
+          client_id: config.hpcAuthClientId,
+          authority: config.hpcAuthUrl,
           // eslint-disable-next-line @typescript-eslint/camelcase
           redirect_uri: redirectUri.href,
           // eslint-disable-next-line @typescript-eslint/camelcase
@@ -64,7 +64,7 @@ export class LiveBrowserClient {
     if (!user) {
       return () => null;
     } else {
-      const accountUrl = new URL('/account.json', this.config.HPC_AUTH_URL);
+      const accountUrl = new URL('/account.json', this.config.hpcAuthUrl);
       const res = await fetch(accountUrl.href, {
         headers: {
           Authorization: `Bearer ${user.access_token}`,
@@ -115,7 +115,7 @@ export class LiveBrowserClient {
       const result = {
         session,
         model: new LiveModel({
-          baseUrl: this.config.HPC_API_URL,
+          baseUrl: this.config.hpcApiUrl,
           hidToken: user.access_token,
         }),
       };

@@ -19,32 +19,14 @@ Then navigate to to <http://localhost:4200/>
 To run the app and connect to an API server
 (either the local dev server or a real live server):
 
-- Configure the file `.env` with appropriate values for the API you will be
+- Configure the file `.env.json` with appropriate values for the API you will be
   interacting with
-- Run the following commands at the same time in 2 different terminals:
+- Run the following command:
   ```bash
-  # Frontend
   npm run start hpc-cdm -- --configuration=dev-live
-  # Server (loads .env file)
-  npm run start hpc-cdm-serve
   ```
 
 Then navigate to to <http://localhost:4200/>
-
-### Production server with live API
-
-- Build the hpc-cdm and hpc-cdm-serve apps:
-  ```bash
-  npm run build-cdm-prod # (this is what's used in the docker image)
-  ```
-- Configure the file `.env` with appropriate values for the API you will be
-  interacting with
-- Run the server
-  ```bash
-  npm run start-cdm-prod
-  ```
-
-Then navigate to to <http://localhost:3333/>
 
 ### Production server within docker
 
@@ -52,7 +34,7 @@ Then navigate to to <http://localhost:3333/>
   ```bash
   docker build -t hpc-cdm .
   ```
-- Configure the file `.env` with appropriate values for the API you will be
+- Configure the file `.env.json` with appropriate values for the API you will be
   interacting with
 - Run the docker container:
   ```
@@ -67,7 +49,7 @@ So visit to <http://localhost:4200/> test the image is running correctly.
 ### Adding a client to HID
 
 To be able to test login locally,
-you need to have a client ID that matches `HPC_AUTH_CLIENT_ID` in your `.env`
+you need to have a client ID that matches `hpcAuthClientId` in your `.env.json`
 file stored in the HID database. It doesn't matter what the secret is as we use
 the [OAuth Implicit Flow / Simple Authentication Process](https://github.com/UN-OCHA/hid_api/wiki/Integrating-with-HID-via-OAuth#simple-authentication-process).
 You can insert an entry into the database by running the following:
@@ -77,6 +59,6 @@ You can insert an entry into the database by running the following:
 docker exec -it hid_api_db_1 mongo
 # Run these in the shell
 > use local;
-> db.client.insert({"id": "cdm-local", "name": "CDM", "url": "http://localhost:4200", "redirectUri": "http://localhost:4200/", "loginUri": "http://localhost:4200", "secret": "<something>"})
+> db.client.insert({"id": "cdm-local", "name": "CDM", "url": "http://localhost:3000", "redirectUri": "http://localhost:3000/", "loginUri": "http://localhost:3000", "secret": "<something>"})
 > exit;
 ```

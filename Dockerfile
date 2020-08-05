@@ -1,22 +1,13 @@
-FROM unocha/nodejs:12 AS builder
-
-# Install Core Packages
-RUN apk add -U nginx
-
+FROM unocha/nodejs-builder:10.14.2 AS builder
 WORKDIR /srv/src
+COPY . .
+ARG ENVIRONMENT=production
+RUN npm run remove-unneeded-deps && \
+    npm install && \
+    npm run build hpc-cdm -- --output-path=/srv/src/dist --configuration=$ENVIRONMENT
 
-# Copy package-json separately so that we only need to reinstall npm packages
-# when the packages change.
-COPY ./package.json ./
-COPY ./package-lock.json ./
-RUN npm install
-
-# Copy remaining files and run build
-COPY ./ ./
-RUN npm run build-cdm-prod
-COPY env/etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
-COPY env/etc/services.d/ /etc/services.d/
-
-# Fix missing directory
-# https://github.com/gliderlabs/docker-alpine/issues/185
-RUN mkdir -p /run/nginx
+FROM unocha/nginx:1.16
+COPY  --from=builder /srv/src/dist/ /var/www/
+COPY  --from=builder /srv/src/env/etc/nginx/conf.d/ /etc/nginx/conf.d/
+COPY  --from=builder /srv/src/env/etc/services.d/ /etc/services.d/
+EXPOSE 80
