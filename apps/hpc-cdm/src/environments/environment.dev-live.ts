@@ -1,6 +1,15 @@
 import { Environment } from './interface';
-import { loadEnvForConfig } from './config-loader';
+import { config } from '@unocha/hpc-core';
+import { LiveBrowserClient } from '@unocha/hpc-live';
+import env from './env.json';
 
 export { Environment };
 
-export default () => loadEnvForConfig('http://localhost:3000/config.json');
+export default async () => {
+  if (!config.isValid(env)) {
+    throw new Error('Invalid config');
+  }
+
+  const live = new LiveBrowserClient(env);
+  return live.init();
+};

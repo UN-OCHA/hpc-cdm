@@ -2,18 +2,16 @@ version: '3.5'
 services:
   hpc_cdm:
     image: hpc-cdm
-    env_file:
-      - ./.env
     hostname: cdm
+    volumes:
+      - .env.json:/var/www/config.json
     networks:
       service:
         aliases:
           - cdm
           - cdm.hpc.vm
-    expose:
-      - "3000"
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:4200:80"
 
 networks:
   service:

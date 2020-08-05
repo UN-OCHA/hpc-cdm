@@ -8,7 +8,6 @@
     "start": "nx serve",
     "start-cdm-prod": "pm2 start dist/apps/hpc-cdm-serve/main.js --no-daemon",
     "build": "nx build",
-    "build-cdm-prod": "nx build hpc-cdm --configuration=production && nx build hpc-cdm-serve --configuration=production",
     "test": "nx test",
     "lint": "nx workspace-lint && nx affected:lint && nx lint && prettier --check '**/*.{ts,tsx,js}'",
     "lint:fix": "nx workspace-lint && nx affected:lint --fix && nx lint --fix && prettier --write '**/*.{js,ts,tsx,md,json}'",
