@@ -12,7 +12,7 @@ interface Result {
   [key: string]: any[] | Result | string[] | string | null;
 }
 
-const nodesToJs = (data: object, repeatPaths: string[], path: string) => {
+const enketoXMLDataToJson = (data: NodeListOf<ChildNode>, repeatPaths: string[], path: string) => {
   repeatPaths = repeatPaths || [];
   path = path || '';
   const result: Result = {};
