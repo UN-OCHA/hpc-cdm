@@ -1,0 +1,20 @@
+{
+  "stagingEnvironmentBranch": "env/stage",
+  "repoType": "node",
+  "developmentEnvironmentBranches": ["env/dev", "env/demo", "env/demodev"],
+  "docker": {
+    "path": ".",
+    "args": {
+      "commitSha": "COMMIT_SHA",
+      "treeSha": "TREE_SHA"
+    },
+    "environmentVariables": {
+      "commitSha": "HPC_ACTIONS_COMMIT_SHA",
+      "treeSha": "HPC_ACTIONS_TREE_SHA"
+    },
+    "repository": "unocha/hpc-cdm",
+    "skipLogin": true
+  },
+  "ci": ["./.github/ci.sh"],
+  "mergebackLabels": ["mergeback"]
+}
