@@ -2,10 +2,40 @@ import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Model, operations, reportingWindows } from '@unocha/hpc-data';
+interface URLInterface {
+  new (url: string): {
+    pathname: string;
+    href: string;
+  };
+}
+
+interface RequestInit {
+  headers: {
+    Authorization: string;
+  };
+}
+
+interface Response {
+  readonly ok: boolean;
+  readonly statusText: string;
+  json(): Promise<any>;
+}
+
+interface FetchInterface {
+  (input: string, init?: RequestInit): Promise<Response>;
+}
 
 interface Config {
   baseUrl: string;
   hidToken: string;
+  /**
+   * Optionally provide interfaces for implicit browser globals when running
+   * in a Node.js environment.
+   */
+  interfaces?: {
+    URL?: URLInterface;
+    fetch?: FetchInterface;
+  };
 }
 
 interface Res<T> {
@@ -15,9 +45,13 @@ interface Res<T> {
 
 export class LiveModel implements Model {
   private readonly config: Config;
+  private readonly URL: URLInterface;
+  private readonly fetch: FetchInterface;
 
   public constructor(config: Config) {
     this.config = config;
+    this.URL = config.interfaces?.URL || URL;
+    this.fetch = config.interfaces?.fetch || fetch.bind(window);
   }
 
   private call = async <T>({
@@ -27,14 +61,14 @@ export class LiveModel implements Model {
     pathname: string;
     resultType: t.Type<T>;
   }) => {
-    const url = new URL(this.config.baseUrl);
+    const url = new this.URL(this.config.baseUrl);
     url.pathname = pathname;
     const init: RequestInit = {
       headers: {
         Authorization: `Credentials ${this.config.hidToken}`,
       },
     };
-    const res = await fetch(url.href, init);
+    const res = await this.fetch(url.href, init);
     if (res.ok) {
       const json: Res<T> = await res.json();
       const decode = resultType.decode(json.data);
