@@ -27,13 +27,13 @@ type FormPayload = {
 
 type FormActions = ActionMap<FormPayload>[keyof ActionMap<FormPayload>];
 
-type InitialStateType = {
+type StateType = {
   form: forms.Form | undefined;
   data: any | undefined;
   // files: Array<any> | undefined;
 };
 
-const formReducer = (state: InitialStateType, action: FormActions) => {
+const formReducer = (state: StateType, action: FormActions): StateType => {
   switch (action.type) {
     case Types.UpdateData: {
       const { data } = action.payload;
