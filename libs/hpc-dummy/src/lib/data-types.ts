@@ -78,8 +78,15 @@ const OPERATION_CLUSTER = t.type({
 
 const FORM = t.type({
   id: t.number,
+  version: t.string,
   name: t.string,
-  definition: t.string,
+  definition: t.any,
+});
+
+const FORM_SUBMISSION = t.type({
+  id: t.number,
+  version: t.string,
+  data: t.any,
 });
 
 export const DUMMY_DATA = t.type({
@@ -89,6 +96,7 @@ export const DUMMY_DATA = t.type({
   operationClusters: t.array(OPERATION_CLUSTER),
   reportingWindows: t.array(REPORTING_WINDOW),
   forms: t.array(FORM),
+  formSubmissions: t.record(t.string, FORM_SUBMISSION),
 });
 
 export type DummyData = t.TypeOf<typeof DUMMY_DATA>;

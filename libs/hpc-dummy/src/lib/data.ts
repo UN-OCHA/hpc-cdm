@@ -1,4 +1,6 @@
 import { DummyData } from './data-types';
+import * as formA from './forms/form-a.json';
+import * as formC from './forms/form-c.json';
 
 export const INITIAL_DATA: DummyData = {
   users: [
@@ -122,13 +124,16 @@ export const INITIAL_DATA: DummyData = {
   forms: [
     {
       id: 123,
+      version: '1.0',
       name: 'A Form',
-      definition: 'This is the form definition',
+      definition: formA,
     },
     {
       id: 321,
+      version: '1.0',
       name: 'Another form',
-      definition: 'This is the form definition',
+      definition: formC,
     },
   ],
+  formSubmissions: {},
 };

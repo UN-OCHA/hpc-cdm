@@ -82,7 +82,7 @@ export const GET_ASSIGNMENT_RESULT = t.type({
     /**
      * TODO: flesh this out with enketo data types
      */
-    currentData: t.string,
+    currentData: t.any,
   }),
   assignee: t.union([
     t.type({

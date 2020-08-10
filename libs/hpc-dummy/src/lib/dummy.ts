@@ -1,5 +1,11 @@
 import { Session } from '@unocha/hpc-core';
-import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
+import {
+  Model,
+  forms,
+  operations,
+  reportingWindows,
+  errors,
+} from '@unocha/hpc-data';
 
 import { Assignment, DummyData, DUMMY_DATA } from './data-types';
 import { INITIAL_DATA } from './data';
@@ -90,6 +96,10 @@ export class Dummy {
       } catch (err) {
         console.error(err);
       }
+    } else {
+      this.users.setUsers(this.data.users);
+      this.data = INITIAL_DATA;
+      this.store();
     }
   };
 
@@ -126,6 +136,26 @@ export class Dummy {
 
   public getModel = (): Model => {
     return {
+      forms: {
+        addFormSubmission: dummyEndpoint(
+          'forms.addFormSubmission',
+          async (
+            submission: forms.FormSubmission
+          ): Promise<forms.FormSubmission> => {
+            const { id } = submission;
+            this.data.formSubmissions[id] = submission;
+            return submission;
+          }
+        ),
+        getFormSubmission: dummyEndpoint(
+          'forms.getFormSubmission',
+          async ({
+            id,
+          }: forms.GetFormSubmissionParams): Promise<forms.FormSubmission> => {
+            return this.data.formSubmissions[id];
+          }
+        ),
+      },
       operations: {
         getOperations: dummyEndpoint('operations.getOperations', async () => ({
           data: this.data.operations,
@@ -246,7 +276,7 @@ export class Dummy {
                 return {
                   type: 'form' as 'form',
                   form: form[0],
-                  currentData: a.currentData,
+                  currentData: this.data.formSubmissions[form[0].id],
                 };
               } else {
                 throw new Error('Unknown type');
