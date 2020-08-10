@@ -80,7 +80,7 @@ const bindDataToModel = (model: string, data: any) => {
   return new XMLSerializer().serializeToString(root[0]);
 };
 
-const markedHtml = (form: {}): object => {
+const markedHtml = (form: string): => {
   const html = $(form);
   for (const selector of ['.question-label', '.question > .or-hint']) {
     $(selector, html).each(function () {
