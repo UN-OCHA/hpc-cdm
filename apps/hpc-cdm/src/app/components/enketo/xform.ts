@@ -48,11 +48,11 @@ const nodesToJs = (data: object, repeatPaths: string[], path: string) => {
   return result;
 };
 
-const findCurrentElement = (elem: JQuery, name: string, childMatcher: any) => {
+const findCurrentElement = (elem: JQuery, name: string, childMatcher: ((name: string) => string) | null) => {
   return childMatcher ? elem.find(childMatcher(name)) : elem.children(name);
 };
 
-const bindJsonToXml = (elem: JQuery, data: any, childMatcher: any) => {
+const bindJsonToXml = (elem: JQuery, data: any, childMatcher: ((name: string) => string) | null) => {
   Object.keys(data)
     .map((key) => [key, data[key]])
     .forEach(([id, value]) => {
