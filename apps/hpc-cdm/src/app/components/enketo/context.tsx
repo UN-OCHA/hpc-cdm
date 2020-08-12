@@ -1,15 +1,14 @@
 import React, { createContext, useReducer, Dispatch } from 'react';
-import { InitialStateType, FormActions, formReducer } from './reducer';
-import { forms } from '@unocha/hpc-data';
+import { StateType, FormActions, formReducer } from './reducer';
+import { reportingWindows } from '@unocha/hpc-data';
 
 const initialState = {
-  form: undefined,
-  data: {},
-  // files: []
+  reportingWindowId: undefined,
+  assignment: undefined,
 };
 
-const EnketoFormContext = createContext<{
-  state: InitialStateType;
+export const EnketoFormContext = createContext<{
+  state: StateType;
   dispatch: Dispatch<FormActions>;
 }>({
   state: initialState,
@@ -17,21 +16,21 @@ const EnketoFormContext = createContext<{
 });
 
 interface Props {
-  form: forms.Form;
-  submission: forms.FormSubmission | null;
+  reportingWindowId: number;
+  assignment: reportingWindows.GetAssignmentResult;
   children: JSX.Element | JSX.Element[];
 }
 
-const EnketoFormContextProvider = (props: Props) => {
-  const { form } = props;
-  const data = props.submission ? props.submission.data : {};
-  const [state, dispatch] = useReducer(formReducer, { form, data });
+export const EnketoFormContextProvider = (props: Props) => {
+  const { reportingWindowId, assignment, children } = props;
+  const [state, dispatch] = useReducer(formReducer, {
+    reportingWindowId,
+    assignment,
+  });
 
   return (
     <EnketoFormContext.Provider value={{ state, dispatch }}>
-      {props.children}
+      {children}
     </EnketoFormContext.Provider>
   );
 };
-
-export { EnketoFormContextProvider, EnketoFormContext };

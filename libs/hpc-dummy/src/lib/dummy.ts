@@ -1,11 +1,5 @@
 import { Session } from '@unocha/hpc-core';
-import {
-  Model,
-  forms,
-  operations,
-  reportingWindows,
-  errors,
-} from '@unocha/hpc-data';
+import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
 
 import { Assignment, DummyData, DUMMY_DATA } from './data-types';
 import { INITIAL_DATA } from './data';
@@ -134,28 +128,52 @@ export class Dummy {
     }
   }
 
+  private getAssignmentResult(
+    reportingWindowId: number,
+    assignmentId: number
+  ): [reportingWindows.GetAssignmentResult, Assignment] {
+    const window = this.data.reportingWindows.filter(
+      (w) => w.id === reportingWindowId
+    );
+    if (window.length === 0) {
+      throw new errors.NotFoundError();
+    }
+    const assignment = window[0].assignments.filter(
+      (a) => a.id === assignmentId
+    );
+    if (assignment.length === 0) {
+      throw new errors.NotFoundError();
+    }
+    const a = assignment[0];
+
+    const getAssignmentTask = (a: Assignment) => {
+      if (a.type === 'form') {
+        const form = this.data.forms.filter((f) => f.id === a.formId);
+        if (form.length === 0) {
+          throw new Error('missing form');
+        }
+        return {
+          type: 'form' as 'form',
+          form: form[0],
+          currentData: a.currentData,
+          currentFiles: a.currentFiles,
+        };
+      } else {
+        throw new Error('Unknown type');
+      }
+    };
+
+    const r: reportingWindows.GetAssignmentResult = {
+      id: a.id,
+      state: a.state,
+      task: getAssignmentTask(a),
+      assignee: a.assignee,
+    };
+    return [r, a];
+  }
+
   public getModel = (): Model => {
     return {
-      forms: {
-        addFormSubmission: dummyEndpoint(
-          'forms.addFormSubmission',
-          async (
-            submission: forms.FormSubmission
-          ): Promise<forms.FormSubmission> => {
-            const { id } = submission;
-            this.data.formSubmissions[id] = submission;
-            return submission;
-          }
-        ),
-        getFormSubmission: dummyEndpoint(
-          'forms.getFormSubmission',
-          async ({
-            id,
-          }: forms.GetFormSubmissionParams): Promise<forms.FormSubmission> => {
-            return this.data.formSubmissions[id];
-          }
-        ),
-      },
       operations: {
         getOperations: dummyEndpoint('operations.getOperations', async () => ({
           data: this.data.operations,
@@ -251,45 +269,48 @@ export class Dummy {
         ),
         getAssignment: dummyEndpoint(
           'reportingWindows.getAssignment',
-          async (params: reportingWindows.GetAssignmentParams) => {
+          async (
+            params: reportingWindows.GetAssignmentParams
+          ): Promise<reportingWindows.GetAssignmentResult> => {
             const { reportingWindowId, assignmentId } = params;
-            const window = this.data.reportingWindows.filter(
-              (w) => w.id === reportingWindowId
-            );
-            if (window.length === 0) {
-              throw new errors.NotFoundError();
-            }
-            const assignment = window[0].assignments.filter(
-              (a) => a.id === assignmentId
-            );
-            if (assignment.length === 0) {
-              throw new errors.NotFoundError();
-            }
-            const a = assignment[0];
+            return this.getAssignmentResult(reportingWindowId, assignmentId)[0];
+          }
+        ),
+        updateAssignment: dummyEndpoint(
+          'reportingWindows.updateAssignment',
+          async (
+            params: reportingWindows.UpdateAssignmentParams
+          ): Promise<reportingWindows.GetAssignmentResult> => {
+            const {
+              reportingWindowId,
+              assignmentId,
+              form: { id, data, blobs },
+            } = params;
 
-            const getAssignmentTask = (a: Assignment) => {
-              if (a.type === 'form') {
-                const form = this.data.forms.filter((f) => f.id === a.formId);
-                if (form.length === 0) {
-                  throw new Error('missing form');
-                }
+            // Mimics the upload/store of files
+            const files = await Promise.all(
+              blobs.map((blob) => {
                 return {
-                  type: 'form' as 'form',
-                  form: form[0],
-                  currentData: this.data.formSubmissions[form[0].id],
+                  name: blob.name,
+                  url: window.URL.createObjectURL(blob),
                 };
-              } else {
-                throw new Error('Unknown type');
-              }
-            };
+              })
+            );
 
-            const r: reportingWindows.GetAssignmentResult = {
-              id: a.id,
-              state: a.state,
-              task: getAssignmentTask(a),
-              assignee: a.assignee,
-            };
-            return r;
+            this.data.reportingWindows
+              .filter((rw) => rw.id === reportingWindowId)
+              .filter((rw) => {
+                rw.assignments.forEach((a, i) => {
+                  if (a.id === assignmentId && a.formId === id) {
+                    a.currentData = data;
+                    rw.assignments[i].currentData = data;
+                    rw.assignments[i].currentFiles = files;
+                    return;
+                  }
+                });
+              });
+
+            return this.getAssignmentResult(reportingWindowId, assignmentId)[0];
           }
         ),
       },

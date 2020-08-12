@@ -1,7 +1,21 @@
-import * as t from 'io-ts';
-
 declare module 'enketo-core' {
-  import { Form } from 'enketo-core';
+  export class Form {
+    constructor(
+      form: HTMLFormElement,
+      options: {
+        modelStr: string;
+        instanceStr: string;
+        external: undefined;
+      }
+    );
 
-  export type Form = t.TypeOf<typeof Form>;
+    init(): string[];
+
+    getDataStr(opts: { irrelevant: boolean }): string;
+  }
+}
+
+declare module 'enketo-core/src/js/file-manager' {
+  export function getCurrentFiles(): Blob[];
+  export function getFileUrl(subject: File | string): Promise<string>;
 }

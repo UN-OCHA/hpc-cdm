@@ -1,40 +1,51 @@
 import * as t from 'io-ts';
 
-export const FORM_META = t.type({
+const FORM_BASE = t.type({
   id: t.number,
   version: t.string,
 });
+
+export const FORM_META = t.intersection([
+  FORM_BASE,
+  t.type({
+    name: t.string,
+  }),
+]);
 
 export type FormMeta = t.TypeOf<typeof FORM_META>;
 
 export const FORM = t.intersection([
   FORM_META,
   t.type({
-    name: t.string,
     definition: t.any,
   }),
 ]);
 
 export type Form = t.TypeOf<typeof FORM>;
 
-export const FORM_SUBMISSION = t.intersection([
-  FORM_META,
+export const FORM_FILE = t.type({
+  name: t.string,
+  url: t.string,
+});
+
+export type FormFile = t.TypeOf<typeof FORM_FILE>;
+
+export const FORM_DATA = t.intersection([
+  FORM_BASE,
   t.type({
     data: t.any,
+    files: t.array(FORM_FILE),
   }),
 ]);
 
-export type FormSubmission = t.TypeOf<typeof FORM_SUBMISSION>;
+export type FormData = t.TypeOf<typeof FORM_DATA>;
 
-export const GET_FORM_SUBMISSION_PARAMS = t.type({
-  id: t.number,
-});
+export const FORM_UPDATE_DATA = t.intersection([
+  FORM_BASE,
+  t.type({
+    data: t.any,
+    blobs: t.array(t.any),
+  }),
+]);
 
-export type GetFormSubmissionParams = t.TypeOf<
-  typeof GET_FORM_SUBMISSION_PARAMS
->;
-
-export interface Model {
-  addFormSubmission(submission: FormSubmission): Promise<FormSubmission>;
-  getFormSubmission(params: GetFormSubmissionParams): Promise<FormSubmission>;
-}
+export type FormUpdateData = t.TypeOf<typeof FORM_UPDATE_DATA>;

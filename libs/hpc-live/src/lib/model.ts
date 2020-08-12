@@ -71,6 +71,8 @@ export class LiveModel implements Model {
       getAssignment: () => Promise.reject(new Error('not implemented')),
       getAssignmentsForOperation: () =>
         Promise.reject(new Error('not implemented')),
+      updateAssignment: (params: reportingWindows.UpdateAssignmentParams) =>
+        Promise.reject(new Error('not implemented')),
     };
   }
 }

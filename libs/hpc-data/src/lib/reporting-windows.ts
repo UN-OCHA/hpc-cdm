@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { FORM_META, FORM } from './forms';
+import { FORM_DATA, FORM_META, FORM, FORM_UPDATE_DATA } from './forms';
 
 export const REPORTING_WINDOW = t.type({
   // TODO
@@ -37,6 +37,14 @@ const FORM_ASSIGNMENT = t.type({
 });
 
 export type FormAssignment = t.TypeOf<typeof FORM_ASSIGNMENT>;
+
+const FORM_ASSIGNMENT_DATA = t.type({
+  assignmentId: t.number,
+  state: ASSIGNMENT_STATE,
+  form: FORM_DATA,
+});
+
+export type FormAssignmentData = t.TypeOf<typeof FORM_ASSIGNMENT_DATA>;
 
 export const GET_ASSIGNMENTS_FOR_OPERATION_PARAMS = t.type({
   reportingWindowId: t.number,
@@ -79,10 +87,8 @@ export const GET_ASSIGNMENT_RESULT = t.type({
   task: t.type({
     type: t.literal('form'),
     form: FORM,
-    /**
-     * TODO: flesh this out with enketo data types
-     */
     currentData: t.any,
+    currentFiles: t.array(t.any),
   }),
   assignee: t.union([
     t.type({
@@ -98,9 +104,20 @@ export const GET_ASSIGNMENT_RESULT = t.type({
 
 export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT>;
 
+export const UPDATE_ASSIGNMENT_PARAMS = t.type({
+  reportingWindowId: t.number,
+  assignmentId: t.number,
+  form: FORM_UPDATE_DATA,
+});
+
+export type UpdateAssignmentParams = t.TypeOf<typeof UPDATE_ASSIGNMENT_PARAMS>;
+
 export interface Model {
   getAssignmentsForOperation(
     params: GetAssignmentsForOperationParams
   ): Promise<GetAssignmentsForOperationResult>;
   getAssignment(params: GetAssignmentParams): Promise<GetAssignmentResult>;
+  updateAssignment(
+    params: UpdateAssignmentParams
+  ): Promise<GetAssignmentResult>;
 }

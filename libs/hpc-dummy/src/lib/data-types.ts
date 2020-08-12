@@ -28,7 +28,8 @@ const FORM_ASSIGNMENT = t.type({
   formId: t.number,
   assignee: ASSIGNEE,
   state: ASSIGNMENT_STATE,
-  currentData: t.string,
+  currentData: t.any,
+  currentFiles: t.array(t.any),
 });
 
 /**
@@ -83,12 +84,6 @@ const FORM = t.type({
   definition: t.any,
 });
 
-const FORM_SUBMISSION = t.type({
-  id: t.number,
-  version: t.string,
-  data: t.any,
-});
-
 export const DUMMY_DATA = t.type({
   users: t.array(USER),
   currentUser: t.union([t.null, t.number]),
@@ -96,7 +91,6 @@ export const DUMMY_DATA = t.type({
   operationClusters: t.array(OPERATION_CLUSTER),
   reportingWindows: t.array(REPORTING_WINDOW),
   forms: t.array(FORM),
-  formSubmissions: t.record(t.string, FORM_SUBMISSION),
 });
 
 export type DummyData = t.TypeOf<typeof DUMMY_DATA>;

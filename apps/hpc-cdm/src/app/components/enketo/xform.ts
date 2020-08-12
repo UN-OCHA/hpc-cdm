@@ -1,22 +1,29 @@
 import { Form } from 'enketo-core';
+import fileManager from 'enketo-core/src/js/file-manager';
 import $ from 'jquery';
 import marked from 'marked';
-//TODO replace with lodash or something else
-import _ from 'underscore';
+import lodash from 'lodash';
+import { forms } from '@unocha/hpc-data';
 
-const withElements = (nodes: object) => {
-  return _.chain(nodes).filter((n) => n.nodeType === Node.ELEMENT_NODE);
+const withElements = (nodes: NodeListOf<ChildNode>) => {
+  return lodash(nodes).filter(
+    (n: ChildNode) => n.nodeType === Node.ELEMENT_NODE
+  );
 };
 
 interface Result {
-  [key: string]: any[] | Result | string[] | string | null;
+  [key: string]: (string | any)[] | string;
 }
 
-const enketoXMLDataToJson = (data: NodeListOf<ChildNode>, repeatPaths: string[], path: string) => {
+const enketoXMLDataToJson = (
+  data: NodeListOf<ChildNode>,
+  repeatPaths: string[],
+  path: string
+) => {
   repeatPaths = repeatPaths || [];
   path = path || '';
   const result: Result = {};
-  withElements(data).each((n: Element) => {
+  withElements(data).each((n: any) => {
     const dbDocAttribute = n.attributes.getNamedItem('db-doc');
     if (dbDocAttribute && dbDocAttribute.value === 'true') {
       return;
@@ -25,10 +32,10 @@ const enketoXMLDataToJson = (data: NodeListOf<ChildNode>, repeatPaths: string[],
     const typeAttribute = n.attributes.getNamedItem('type');
     const updatedPath = `${path}/${n.nodeName}`;
 
-    const hasChildren = withElements(n.childNodes).size().value();
+    const hasChildren = withElements(n.childNodes).size();
     let value;
     if (hasChildren) {
-      value = nodesToJs(n.childNodes, repeatPaths, updatedPath);
+      value = enketoXMLDataToJson(n.childNodes, repeatPaths, updatedPath);
     } else if (typeAttribute && typeAttribute.value === 'binary') {
       // this is attached to the doc instead of inlined
       value = '';
@@ -40,7 +47,9 @@ const enketoXMLDataToJson = (data: NodeListOf<ChildNode>, repeatPaths: string[],
       if (!result[n.nodeName]) {
         result[n.nodeName] = [];
       }
-      // result[n.nodeName].push(value);
+      // if (Array.isArray(n.nodeName)) {
+      //   result[n.nodeName].push(value);
+      // }
     } else {
       result[n.nodeName] = value;
     }
@@ -48,11 +57,19 @@ const enketoXMLDataToJson = (data: NodeListOf<ChildNode>, repeatPaths: string[],
   return result;
 };
 
-const findCurrentElement = (elem: JQuery, name: string, childMatcher: ((name: string) => string) | null) => {
+const findCurrentElement = (
+  elem: JQuery,
+  name: string,
+  childMatcher: ((name: string) => string) | null
+) => {
   return childMatcher ? elem.find(childMatcher(name)) : elem.children(name);
 };
 
-const bindJsonToXml = (elem: JQuery, data: any, childMatcher: ((name: string) => string) | null) => {
+const bindJsonToXml = (
+  elem: JQuery,
+  data: any,
+  childMatcher: ((name: string) => string) | null
+) => {
   Object.keys(data)
     .map((key) => [key, data[key]])
     .forEach(([id, value]) => {
@@ -69,7 +86,7 @@ const bindJsonToXml = (elem: JQuery, data: any, childMatcher: ((name: string) =>
     });
 };
 
-const bindDataToModel = (model: string, data: any) => {
+const bindDataToModel = (model: string, data: object) => {
   const xml = $($.parseXML(model));
   const root = xml.find('model instance').children().first();
   if (data) {
@@ -80,7 +97,7 @@ const bindDataToModel = (model: string, data: any) => {
   return new XMLSerializer().serializeToString(root[0]);
 };
 
-const markedHtml = (form: string): => {
+const markedHtml = (form: string): JQuery<HTMLElement> => {
   const html = $(form);
   for (const selector of ['.question-label', '.question > .or-hint']) {
     $(selector, html).each(function () {
@@ -91,12 +108,26 @@ const markedHtml = (form: string): => {
   return html;
 };
 
-class XForm {
+export default class XForm {
   private form: Form;
 
-  constructor(html = {}, modelStr: any, content: any) {
-    // TODO initialize file manager
-    // enketoFiles.init();
+  constructor(
+    html: string,
+    modelStr: any,
+    content: any,
+    files: forms.FormFile[]
+  ) {
+    fileManager.getFileUrl = async (subject: File | string) => {
+      if (typeof subject === 'string') {
+        console.log(files);
+        const file = files.filter((f) => f.name === subject);
+        if (file) {
+          return file[0].url;
+        }
+      }
+      return window.URL.createObjectURL(subject);
+    };
+
     $('.container').replaceWith(markedHtml(html));
     const formElement = $('#form').find('form').first()[0];
     this.form = new Form(formElement, {
@@ -121,10 +152,12 @@ class XForm {
       .get();
     if (root) {
       const { childNodes, nodeName } = root;
-      return nodesToJs(childNodes, repeatPaths, `/${nodeName}`);
+      return enketoXMLDataToJson(childNodes, repeatPaths, `/${nodeName}`);
     }
     return null;
   }
-}
 
-export default XForm;
+  getCurrentFiles(): Blob[] {
+    return fileManager.getCurrentFiles();
+  }
+}

@@ -1,50 +1,45 @@
-import { forms } from '@unocha/hpc-data';
-
-type ActionMap<M extends { [index: string]: any }> = {
-  [Key in keyof M]: M[Key] extends undefined
-    ? {
-        type: Key;
-      }
-    : {
-        type: Key;
-        payload: M[Key];
-      };
-};
+import { reportingWindows } from '@unocha/hpc-data';
+import { ActionMap } from '../../utils/types';
+import merge from 'lodash/merge';
 
 export enum Types {
   UpdateData = 'UPDATE_DATA',
-  UploadFile = 'UPLOAD_FILE',
+  // UploadFile = 'UPLOAD_FILE',
 }
 
 type FormPayload = {
   [Types.UpdateData]: {
     data: any;
   };
-  [Types.UploadFile]: {
-    file: any;
-  };
+  // [Types.UploadFile]: {
+  //   file: any;
+  // };
 };
 
-type FormActions = ActionMap<FormPayload>[keyof ActionMap<FormPayload>];
+export type FormActions = ActionMap<FormPayload>[keyof ActionMap<FormPayload>];
 
-type StateType = {
-  form: forms.Form | undefined;
-  data: any | undefined;
+export type StateType = {
+  reportingWindowId: number | undefined;
+  assignment: reportingWindows.GetAssignmentResult | undefined;
   // files: Array<any> | undefined;
 };
 
-const formReducer = (state: StateType, action: FormActions): StateType => {
+export const formReducer = (
+  state: StateType,
+  action: FormActions
+): StateType => {
   switch (action.type) {
     case Types.UpdateData: {
       const { data } = action.payload;
-      return { ...state, data };
+      const assignment = { task: { currentData: data } };
+      return merge(state, assignment);
     }
-    // TODO
-    case Types.UploadFile:
-      return { ...state, files: action.payload.file };
+    // case Types.UploadFile: {
+    //   const { file } = action.payload;
+    //   const files = state.files?.concat(file);
+    //   return { ...state, files };
+    // }
     default:
       return state;
   }
 };
-
-export { InitialStateType, FormActions, formReducer };

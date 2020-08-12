@@ -25,7 +25,6 @@ const FormAssignmentData = (props: Props) => {
     ],
     getEnv().model.reportingWindows.getAssignment
   );
-
   return (
     <C.Loader
       loader={loader}
@@ -34,8 +33,11 @@ const FormAssignmentData = (props: Props) => {
         notFound: t.get(lang, (s) => s.components.notFound),
       }}
     >
-      {({ task: { form, currentData } }) => (
-        <EnketoFormContextProvider form={form} submission={currentData}>
+      {(assignment) => (
+        <EnketoFormContextProvider
+          reportingWindowId={window.id}
+          assignment={assignment}
+        >
           <EnketoEditableForm />
         </EnketoFormContextProvider>
       )}

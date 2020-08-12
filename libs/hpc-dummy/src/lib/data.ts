@@ -85,7 +85,8 @@ export const INITIAL_DATA: DummyData = {
             operationId: 1,
           },
           state: 'not-entered',
-          currentData: 'this is some data',
+          currentData: {},
+          currentFiles: [],
         },
         {
           id: 5925,
@@ -96,7 +97,8 @@ export const INITIAL_DATA: DummyData = {
             operationId: 1,
           },
           state: 'raw:entered',
-          currentData: 'this is some data',
+          currentData: {},
+          currentFiles: [],
         },
         {
           id: 5926,
@@ -107,7 +109,8 @@ export const INITIAL_DATA: DummyData = {
             clusterId: 11,
           },
           state: 'raw:entered',
-          currentData: 'this is some data',
+          currentData: {},
+          currentFiles: [],
         },
       ],
     },
@@ -135,5 +138,4 @@ export const INITIAL_DATA: DummyData = {
       definition: formC,
     },
   ],
-  formSubmissions: {},
 };
