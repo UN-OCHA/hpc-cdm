@@ -5,7 +5,21 @@ import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
 import { Assignment, DummyData, DUMMY_DATA } from './data-types';
 import { INITIAL_DATA } from './data';
 import { Users } from './users';
-import unionBy from 'lodash/unionBy';
+
+const uriToBlob = (uri: string) => fetch(uri).then((res) => res.blob());
+
+const blobToBase64URI = (blob: Blob) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        reject('Unexpected error when converting blob to base64 dataUrl');
+      }
+    };
+  });
 
 const STORAGE_KEY = 'hpc-dummy';
 
@@ -132,10 +146,10 @@ export class Dummy {
     }
   }
 
-  private getAssignmentResult(
+  private async getAssignmentResult(
     reportingWindowId: number,
     assignmentId: number
-  ): [reportingWindows.GetAssignmentResult, Assignment] {
+  ): Promise<reportingWindows.GetAssignmentResult> {
     const window = this.data.reportingWindows.filter(
       (w) => w.id === reportingWindowId
     );
@@ -150,18 +164,24 @@ export class Dummy {
     }
     const a = assignment[0];
 
-    const getAssignmentTask = (a: Assignment) => {
+    const getAssignmentTask = async (a: Assignment) => {
       if (a.type === 'form') {
         const form = this.data.forms.filter((f) => f.id === a.formId);
         if (form.length === 0) {
           throw new Error('missing form');
         }
-        return {
+        const r: reportingWindows.GetAssignmentResult['task'] = {
           type: 'form' as 'form',
           form: form[0],
           currentData: a.currentData,
-          currentFiles: a.currentFiles,
+          currentFiles: await Promise.all(
+            a.currentFiles.map(async (f) => ({
+              name: f.name,
+              data: await uriToBlob(f.base64Data),
+            }))
+          ),
         };
+        return r;
       } else {
         throw new Error('Unknown type');
       }
@@ -170,10 +190,10 @@ export class Dummy {
     const r: reportingWindows.GetAssignmentResult = {
       id: a.id,
       state: a.state,
-      task: getAssignmentTask(a),
+      task: await getAssignmentTask(a),
       assignee: a.assignee,
     };
-    return [r, a];
+    return r;
   }
 
   public getModel = (): Model => {
@@ -277,7 +297,7 @@ export class Dummy {
             params: reportingWindows.GetAssignmentParams
           ): Promise<reportingWindows.GetAssignmentResult> => {
             const { reportingWindowId, assignmentId } = params;
-            return this.getAssignmentResult(reportingWindowId, assignmentId)[0];
+            return this.getAssignmentResult(reportingWindowId, assignmentId);
           }
         ),
         updateAssignment: dummyEndpoint(
@@ -288,38 +308,27 @@ export class Dummy {
             const {
               reportingWindowId,
               assignmentId,
-              form: { id, data, files, blobs },
+              form: { id, data, files },
             } = params;
 
-            // Mimics the upload/store of files
-            let formFiles = await Promise.all(
-              blobs.map((blob) => {
-                return {
-                  name: blob.name,
-                  url: window.URL.createObjectURL(blob),
-                };
-              })
-            );
-
-            if (formFiles) {
-              formFiles = unionBy(formFiles, files || [], 'name');
-            }
-
-            this.data.reportingWindows
-              .filter((rw) => rw.id === reportingWindowId)
-              .filter((rw) => {
-                rw.assignments.forEach((a, i) => {
+            for (const rw of this.data.reportingWindows) {
+              if (rw.id === reportingWindowId) {
+                for (const a of rw.assignments) {
                   if (a.id === assignmentId && a.formId === id) {
                     a.currentData = data;
-                    rw.assignments[i].currentData = data;
-                    rw.assignments[i].currentFiles = formFiles;
-                    return;
+                    a.currentFiles = await Promise.all(
+                      files.map(async (f) => ({
+                        name: f.name,
+                        base64Data: await blobToBase64URI(f.data),
+                      }))
+                    );
                   }
-                });
-              });
+                }
+              }
+            }
 
             this.store();
-            return this.getAssignmentResult(reportingWindowId, assignmentId)[0];
+            return this.getAssignmentResult(reportingWindowId, assignmentId);
           }
         ),
       },

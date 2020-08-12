@@ -41,7 +41,7 @@ export const EnketoEditableForm = () => {
   const saveForm = (redirect = false) => {
     const { reportingWindowId, assignment, xform } = state;
     if (reportingWindowId !== undefined && assignment && xform) {
-      const data = xform.getData();
+      const { data, files } = xform.getData();
       if (data && dataUpdated(data)) {
         const {
           id,
@@ -55,8 +55,7 @@ export const EnketoEditableForm = () => {
               id: form.id,
               version: form.version,
               data,
-              files: xform.getFiles(),
-              blobs: xform.getBlobs(),
+              files,
             },
           })
           .then(({ task: { currentData } }) => {

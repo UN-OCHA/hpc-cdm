@@ -1,5 +1,7 @@
 import * as t from 'io-ts';
 
+import { BLOB } from './util';
+
 const FORM_BASE = t.type({
   id: t.number,
   version: t.string,
@@ -35,7 +37,7 @@ export type Form = t.TypeOf<typeof FORM>;
 
 export const FORM_FILE = t.type({
   name: t.string,
-  url: t.string,
+  data: BLOB,
 });
 
 export type FormFile = t.TypeOf<typeof FORM_FILE>;
@@ -45,7 +47,6 @@ export const FORM_UPDATE_DATA = t.intersection([
   t.type({
     data: t.string,
     files: t.array(FORM_FILE),
-    blobs: t.array(t.any),
   }),
 ]);
 

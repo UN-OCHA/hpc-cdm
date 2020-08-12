@@ -16,6 +16,6 @@ declare module 'enketo-core' {
 }
 
 declare module 'enketo-core/src/js/file-manager' {
-  export function getCurrentFiles(): Blob[];
-  export function getFileUrl(subject: File | string): Promise<string>;
+  export function getFileUrl(subject?: File | string): Promise<string>;
+  export function getCurrentFiles(): File[];
 }

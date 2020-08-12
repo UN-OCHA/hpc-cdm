@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { FORM_META, FORM, FORM_UPDATE_DATA } from './forms';
+import { FORM_META, FORM, FORM_UPDATE_DATA, FORM_FILE } from './forms';
 
 export const REPORTING_WINDOW = t.type({
   // TODO
@@ -80,7 +80,7 @@ export const GET_ASSIGNMENT_RESULT = t.type({
     type: t.literal('form'),
     form: FORM,
     currentData: t.union([t.string, t.null]),
-    currentFiles: t.array(t.any),
+    currentFiles: t.array(FORM_FILE),
   }),
   assignee: t.union([
     t.type({

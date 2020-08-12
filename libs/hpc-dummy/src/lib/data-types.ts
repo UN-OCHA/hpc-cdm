@@ -31,7 +31,13 @@ const FORM_ASSIGNMENT = t.type({
   assignee: ASSIGNEE,
   state: ASSIGNMENT_STATE,
   currentData: t.union([t.string, t.null]),
-  currentFiles: t.array(t.any),
+  currentFiles: t.array(
+    t.type({
+      name: t.string,
+      // TODO: shall we store files in a different local storage?
+      base64Data: t.string,
+    })
+  ),
 });
 
 /**
