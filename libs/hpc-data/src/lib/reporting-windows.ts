@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { FORM_DATA, FORM_META, FORM, FORM_UPDATE_DATA } from './forms';
+import { FORM_META, FORM, FORM_UPDATE_DATA } from './forms';
 
 export const REPORTING_WINDOW = t.type({
   // TODO
@@ -37,14 +37,6 @@ const FORM_ASSIGNMENT = t.type({
 });
 
 export type FormAssignment = t.TypeOf<typeof FORM_ASSIGNMENT>;
-
-const FORM_ASSIGNMENT_DATA = t.type({
-  assignmentId: t.number,
-  state: ASSIGNMENT_STATE,
-  form: FORM_DATA,
-});
-
-export type FormAssignmentData = t.TypeOf<typeof FORM_ASSIGNMENT_DATA>;
 
 export const GET_ASSIGNMENTS_FOR_OPERATION_PARAMS = t.type({
   reportingWindowId: t.number,
@@ -87,7 +79,7 @@ export const GET_ASSIGNMENT_RESULT = t.type({
   task: t.type({
     type: t.literal('form'),
     form: FORM,
-    currentData: t.any,
+    currentData: t.union([t.string, t.null]),
     currentFiles: t.array(t.any),
   }),
   assignee: t.union([

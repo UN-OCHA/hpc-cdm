@@ -33,7 +33,7 @@ export const BLOB = new t.Type<Blob, Blob>(
   (v): v is Blob => v instanceof Blob,
   (v, c) => {
     if (v instanceof Blob) {
-      return  t.success(v);
+      return t.success(v);
     } else {
       return t.failure(v, c);
     }

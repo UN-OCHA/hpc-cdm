@@ -1,6 +1,20 @@
 import { DummyData } from './data-types';
-import * as formA from './forms/form-a.json';
-import * as formC from './forms/form-c.json';
+
+/**
+ * TODO: Something weird is going on with these json imports, it's importing
+ * them with default rather than importing them directly... this is definitely
+ * not what's supposed to happen and we should look into that...
+ */
+import * as formAImport from './forms/form-a.json';
+import * as formCImport from './forms/form-c.json';
+let formA = formAImport;
+let formC = formCImport;
+if ((formA as any).default) {
+  formA = (formA as any).default;
+}
+if ((formC as any).default) {
+  formC = (formC as any).default;
+}
 
 export const INITIAL_DATA: DummyData = {
   users: [
@@ -85,7 +99,7 @@ export const INITIAL_DATA: DummyData = {
             operationId: 1,
           },
           state: 'not-entered',
-          currentData: {},
+          currentData: null,
           currentFiles: [],
         },
         {
@@ -97,7 +111,7 @@ export const INITIAL_DATA: DummyData = {
             operationId: 1,
           },
           state: 'raw:entered',
-          currentData: {},
+          currentData: null,
           currentFiles: [],
         },
         {
@@ -109,7 +123,7 @@ export const INITIAL_DATA: DummyData = {
             clusterId: 11,
           },
           state: 'raw:entered',
-          currentData: {},
+          currentData: null,
           currentFiles: [],
         },
       ],

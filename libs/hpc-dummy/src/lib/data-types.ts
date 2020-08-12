@@ -1,5 +1,7 @@
 import * as t from 'io-ts';
 
+import { forms } from '@unocha/hpc-data';
+
 /**
  * TODO: make into union of different assignee types
  */
@@ -28,7 +30,7 @@ const FORM_ASSIGNMENT = t.type({
   formId: t.number,
   assignee: ASSIGNEE,
   state: ASSIGNMENT_STATE,
-  currentData: t.any,
+  currentData: t.union([t.string, t.null]),
   currentFiles: t.array(t.any),
 });
 
@@ -77,20 +79,26 @@ const OPERATION_CLUSTER = t.type({
   name: t.string,
 });
 
-const FORM = t.type({
-  id: t.number,
-  version: t.string,
-  name: t.string,
-  definition: t.any,
-});
+const FORM = t.type(
+  {
+    id: t.number,
+    version: t.string,
+    name: t.string,
+    definition: forms.FORM_DEFINITION,
+  },
+  'FORM'
+);
 
-export const DUMMY_DATA = t.type({
-  users: t.array(USER),
-  currentUser: t.union([t.null, t.number]),
-  operations: t.array(OPERATION),
-  operationClusters: t.array(OPERATION_CLUSTER),
-  reportingWindows: t.array(REPORTING_WINDOW),
-  forms: t.array(FORM),
-});
+export const DUMMY_DATA = t.type(
+  {
+    users: t.array(USER),
+    currentUser: t.union([t.null, t.number]),
+    operations: t.array(OPERATION),
+    operationClusters: t.array(OPERATION_CLUSTER),
+    reportingWindows: t.array(REPORTING_WINDOW),
+    forms: t.array(FORM),
+  },
+  'DUMMY_DATA'
+);
 
 export type DummyData = t.TypeOf<typeof DUMMY_DATA>;

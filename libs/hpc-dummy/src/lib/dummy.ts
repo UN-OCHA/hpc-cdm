@@ -1,3 +1,4 @@
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Session } from '@unocha/hpc-core';
 import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
 
@@ -76,6 +77,8 @@ export class Dummy {
       try {
         this.data = JSON.parse(s);
         if (!DUMMY_DATA.is(this.data)) {
+          // Print discrepancy in console
+          console.error(PathReporter.report(DUMMY_DATA.decode(this.data)));
           if (
             window.confirm(
               `The stored dummy data doesn't match the current type definitions, ` +
@@ -315,6 +318,7 @@ export class Dummy {
                 });
               });
 
+            this.store();
             return this.getAssignmentResult(reportingWindowId, assignmentId)[0];
           }
         ),

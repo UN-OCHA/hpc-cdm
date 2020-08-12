@@ -14,10 +14,20 @@ export const FORM_META = t.intersection([
 
 export type FormMeta = t.TypeOf<typeof FORM_META>;
 
+export const FORM_DEFINITION = t.type(
+  {
+    languageMap: t.unknown,
+    form: t.string,
+    model: t.string,
+    transformerVersion: t.string,
+  },
+  'FORM_DEFINITION'
+);
+
 export const FORM = t.intersection([
   FORM_META,
   t.type({
-    definition: t.any,
+    definition: FORM_DEFINITION,
   }),
 ]);
 
@@ -30,19 +40,11 @@ export const FORM_FILE = t.type({
 
 export type FormFile = t.TypeOf<typeof FORM_FILE>;
 
-export const FORM_DATA = t.intersection([
+export const FORM_UPDATE_DATA = t.intersection([
   FORM_BASE,
   t.type({
-    data: t.any,
+    data: t.string,
     files: t.array(FORM_FILE),
-  }),
-]);
-
-export type FormData = t.TypeOf<typeof FORM_DATA>;
-
-export const FORM_UPDATE_DATA = t.intersection([
-  FORM_DATA,
-  t.type({
     blobs: t.array(t.any),
   }),
 ]);

@@ -27,15 +27,13 @@ export const EnketoEditableForm = () => {
       const {
         task: {
           form: {
-            definition: {
-              default: { form, model },
-            },
+            definition: { form, model },
           },
           currentData,
           currentFiles,
         },
       } = state.assignment;
-      const xform = new XForm(form, model, currentData || {}, currentFiles);
+      const xform = new XForm(form, model, currentData, currentFiles);
       dispatch({ type: Types.UpdateXForm, payload: { xform } });
     }
   }, [state.assignment]);

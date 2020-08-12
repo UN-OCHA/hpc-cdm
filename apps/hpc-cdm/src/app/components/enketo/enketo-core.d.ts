@@ -4,7 +4,7 @@ declare module 'enketo-core' {
       form: HTMLFormElement,
       options: {
         modelStr: string;
-        instanceStr: string;
+        instanceStr?: string;
         external: undefined;
       }
     );
