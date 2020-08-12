@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import XForm from './xform';
 import { Types } from './reducer';
@@ -9,7 +9,6 @@ import isEqual from 'lodash/isEqual';
 export const EnketoEditableForm = () => {
   const env = getEnv();
   const { state, dispatch } = useContext(EnketoFormContext);
-  const [xform, setXForm] = useState<XForm | undefined>(undefined);
   const history = useHistory();
   const dataUpdated = (data: any) => {
     if (state.assignment) {
@@ -36,21 +35,20 @@ export const EnketoEditableForm = () => {
           currentFiles,
         },
       } = state.assignment;
-      setXForm(new XForm(form, model, currentData || {}, currentFiles));
+      const xform = new XForm(form, model, currentData || {}, currentFiles);
+      dispatch({ type: Types.UpdateXForm, payload: { xform } });
     }
   }, [state.assignment]);
 
   const saveForm = (redirect = false) => {
-    if (state.reportingWindowId !== undefined && state.assignment && xform) {
+    const { reportingWindowId, assignment, xform } = state;
+    if (reportingWindowId !== undefined && assignment && xform) {
       const data = xform.getData();
       if (data && dataUpdated(data)) {
         const {
-          reportingWindowId,
-          assignment: {
-            id,
-            task: { form },
-          },
-        } = state;
+          id,
+          task: { form },
+        } = assignment;
         return env.model.reportingWindows
           .updateAssignment({
             reportingWindowId,
@@ -59,7 +57,8 @@ export const EnketoEditableForm = () => {
               id: form.id,
               version: form.version,
               data,
-              blobs: xform.getCurrentFiles(),
+              files: xform.getFiles(),
+              blobs: xform.getBlobs(),
             },
           })
           .then(({ task: { currentData } }) => {

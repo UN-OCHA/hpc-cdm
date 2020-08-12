@@ -5,6 +5,7 @@ import { reportingWindows } from '@unocha/hpc-data';
 const initialState = {
   reportingWindowId: undefined,
   assignment: undefined,
+  xform: undefined,
 };
 
 export const EnketoFormContext = createContext<{
@@ -26,6 +27,7 @@ export const EnketoFormContextProvider = (props: Props) => {
   const [state, dispatch] = useReducer(formReducer, {
     reportingWindowId,
     assignment,
+    xform: undefined,
   });
 
   return (

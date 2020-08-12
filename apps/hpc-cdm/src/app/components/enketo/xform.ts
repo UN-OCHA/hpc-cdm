@@ -110,16 +110,18 @@ const markedHtml = (form: string): JQuery<HTMLElement> => {
 
 export default class XForm {
   private form: Form;
+  private files: forms.FormFile[];
 
   constructor(
     html: string,
     modelStr: any,
     content: any,
-    files: forms.FormFile[]
+    files: forms.FormFile[],
+    editable = true
   ) {
+    this.files = files;
     fileManager.getFileUrl = async (subject: File | string) => {
       if (typeof subject === 'string') {
-        console.log(files);
         const file = files.filter((f) => f.name === subject);
         if (file) {
           return file[0].url;
@@ -139,6 +141,12 @@ export default class XForm {
     if (errors && errors.length) {
       console.error('Form Errors', JSON.stringify(errors));
     }
+
+    if (!editable) {
+      $('#form :input:not(:button)').each(function (x) {
+        $(this).prop('disabled', true);
+      });
+    }
   }
 
   getData() {
@@ -157,7 +165,11 @@ export default class XForm {
     return null;
   }
 
-  getCurrentFiles(): Blob[] {
+  getBlobs(): Blob[] {
     return fileManager.getCurrentFiles();
+  }
+
+  getFiles(): forms.FormFile[] {
+    return this.files;
   }
 }

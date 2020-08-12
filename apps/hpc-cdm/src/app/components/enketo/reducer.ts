@@ -1,19 +1,20 @@
 import { reportingWindows } from '@unocha/hpc-data';
 import { ActionMap } from '../../utils/types';
 import merge from 'lodash/merge';
+import XForm from './xform';
 
 export enum Types {
   UpdateData = 'UPDATE_DATA',
-  // UploadFile = 'UPLOAD_FILE',
+  UpdateXForm = 'UPLOAD_XFORM',
 }
 
 type FormPayload = {
   [Types.UpdateData]: {
     data: any;
   };
-  // [Types.UploadFile]: {
-  //   file: any;
-  // };
+  [Types.UpdateXForm]: {
+    xform: XForm;
+  };
 };
 
 export type FormActions = ActionMap<FormPayload>[keyof ActionMap<FormPayload>];
@@ -21,7 +22,7 @@ export type FormActions = ActionMap<FormPayload>[keyof ActionMap<FormPayload>];
 export type StateType = {
   reportingWindowId: number | undefined;
   assignment: reportingWindows.GetAssignmentResult | undefined;
-  // files: Array<any> | undefined;
+  xform: XForm | undefined;
 };
 
 export const formReducer = (
@@ -34,11 +35,10 @@ export const formReducer = (
       const assignment = { task: { currentData: data } };
       return merge(state, assignment);
     }
-    // case Types.UploadFile: {
-    //   const { file } = action.payload;
-    //   const files = state.files?.concat(file);
-    //   return { ...state, files };
-    // }
+    case Types.UpdateXForm: {
+      const { xform } = action.payload;
+      return { ...state, xform };
+    }
     default:
       return state;
   }

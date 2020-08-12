@@ -4,6 +4,7 @@ import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
 import { Assignment, DummyData, DUMMY_DATA } from './data-types';
 import { INITIAL_DATA } from './data';
 import { Users } from './users';
+import unionBy from 'lodash/unionBy';
 
 const STORAGE_KEY = 'hpc-dummy';
 
@@ -284,11 +285,11 @@ export class Dummy {
             const {
               reportingWindowId,
               assignmentId,
-              form: { id, data, blobs },
+              form: { id, data, files, blobs },
             } = params;
 
             // Mimics the upload/store of files
-            const files = await Promise.all(
+            let formFiles = await Promise.all(
               blobs.map((blob) => {
                 return {
                   name: blob.name,
@@ -297,6 +298,10 @@ export class Dummy {
               })
             );
 
+            if (formFiles) {
+              formFiles = unionBy(formFiles, files || [], 'name');
+            }
+
             this.data.reportingWindows
               .filter((rw) => rw.id === reportingWindowId)
               .filter((rw) => {
@@ -304,7 +309,7 @@ export class Dummy {
                   if (a.id === assignmentId && a.formId === id) {
                     a.currentData = data;
                     rw.assignments[i].currentData = data;
-                    rw.assignments[i].currentFiles = files;
+                    rw.assignments[i].currentFiles = formFiles;
                     return;
                   }
                 });

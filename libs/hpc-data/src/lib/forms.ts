@@ -41,9 +41,8 @@ export const FORM_DATA = t.intersection([
 export type FormData = t.TypeOf<typeof FORM_DATA>;
 
 export const FORM_UPDATE_DATA = t.intersection([
-  FORM_BASE,
+  FORM_DATA,
   t.type({
-    data: t.any,
     blobs: t.array(t.any),
   }),
 ]);
