@@ -24,3 +24,19 @@ export const INTEGER_FROM_STRING = new t.Type<number, number>(
   },
   t.identity
 );
+
+/**
+ * A file BLOB
+ */
+export const BLOB = new t.Type<Blob, Blob>(
+  'BLOB',
+  (v): v is Blob => v instanceof Blob,
+  (v, c) => {
+    if (v instanceof Blob) {
+      return  t.success(v);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
