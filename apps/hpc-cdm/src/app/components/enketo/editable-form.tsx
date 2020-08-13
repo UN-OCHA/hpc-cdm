@@ -1,55 +1,48 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import XForm from './xform';
-import { Types } from './reducer';
-import { EnketoFormContext } from './context';
-import { getEnv } from '../../context';
-import isEqual from 'lodash/isEqual';
+import { reportingWindows } from '@unocha/hpc-data';
 
-export const EnketoEditableForm = () => {
+import XForm from './xform';
+import { getEnv } from '../../context';
+
+interface Props {
+  reportingWindow: reportingWindows.ReportingWindow;
+  assignment: reportingWindows.GetAssignmentResult;
+}
+
+export const EnketoEditableForm = (props: Props) => {
+  const { reportingWindow, assignment } = props;
   const env = getEnv();
-  const { state, dispatch } = useContext(EnketoFormContext);
+  const [xform, setXform] = useState<XForm | null>(null);
+  const [lastSavedData, setLastSavedData] = useState<string | null>(null);
   const history = useHistory();
-  const dataUpdated = (data: any) => {
-    if (state.assignment) {
-      const {
-        assignment: {
-          task: { currentData },
-        },
-      } = state;
-      return !isEqual(currentData, data);
-    }
-    return false;
-  };
 
   useEffect(() => {
-    if (state.assignment) {
-      const {
-        task: {
-          form: {
-            definition: { form, model },
-          },
-          currentData,
-          currentFiles,
+    const {
+      task: {
+        form: {
+          definition: { form, model },
         },
-      } = state.assignment;
-      const xform = new XForm(form, model, currentData, currentFiles);
-      dispatch({ type: Types.UpdateXForm, payload: { xform } });
-    }
-  }, [state.assignment]);
+        currentData,
+        currentFiles,
+      },
+    } = assignment;
+    const xform = new XForm(form, model, currentData, currentFiles);
+    setXform(xform);
+    setLastSavedData(currentData);
+  }, [assignment]);
 
   const saveForm = (redirect = false) => {
-    const { reportingWindowId, assignment, xform } = state;
-    if (reportingWindowId !== undefined && assignment && xform) {
+    if (xform) {
       const { data, files } = xform.getData();
-      if (data && dataUpdated(data)) {
+      if (data && lastSavedData !== data) {
         const {
           id,
           task: { form },
         } = assignment;
         return env.model.reportingWindows
           .updateAssignment({
-            reportingWindowId,
+            reportingWindowId: reportingWindow.id,
             assignmentId: id,
             form: {
               id: form.id,
@@ -59,10 +52,7 @@ export const EnketoEditableForm = () => {
             },
           })
           .then(({ task: { currentData } }) => {
-            dispatch({
-              type: Types.UpdateData,
-              payload: { data: currentData },
-            });
+            setLastSavedData(currentData);
             if (redirect) {
               history.goBack();
             }

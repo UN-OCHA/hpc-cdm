@@ -5,7 +5,7 @@ import { C, styled, dataLoader } from '@unocha/hpc-ui';
 import { reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext, getEnv } from '../context';
-import { EnketoFormContextProvider, EnketoEditableForm } from './enketo';
+import { EnketoEditableForm } from './enketo';
 
 interface Props {
   className?: string;
@@ -34,12 +34,7 @@ const FormAssignmentData = (props: Props) => {
       }}
     >
       {(assignment) => (
-        <EnketoFormContextProvider
-          reportingWindowId={window.id}
-          assignment={assignment}
-        >
-          <EnketoEditableForm />
-        </EnketoFormContextProvider>
+        <EnketoEditableForm reportingWindow={window} assignment={assignment} />
       )}
     </C.Loader>
   );
