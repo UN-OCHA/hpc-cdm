@@ -204,6 +204,9 @@ export class Dummy {
 
     const r: reportingWindows.GetAssignmentResult = {
       id: a.id,
+      version: a.version,
+      lastUpdatedAt: a.lastUpdatedAt,
+      lastUpdatedBy: a.lastUpdatedBy,
       state: a.state,
       task: await getAssignmentTask(a),
       assignee,
@@ -330,6 +333,12 @@ export class Dummy {
               if (rw.id === reportingWindowId) {
                 for (const a of rw.assignments) {
                   if (a.id === assignmentId && a.formId === id) {
+                    const u = this.data.users.filter(
+                      (u) => u.id === this.data.currentUser
+                    );
+                    a.version++;
+                    a.lastUpdatedAt = Date.now();
+                    a.lastUpdatedBy = u[0]?.user.name || 'Unknown';
                     a.currentData = data;
                     a.currentFiles = await Promise.all(
                       files.map(async (f) => ({

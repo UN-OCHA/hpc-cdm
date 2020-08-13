@@ -72,6 +72,11 @@ export type GetAssignmentParams = t.TypeOf<typeof GET_ASSIGNMENT_PARAMS>;
 
 export const GET_ASSIGNMENT_RESULT = t.type({
   id: t.number,
+  version: t.number,
+  /** UNIX Timestamp */
+  lastUpdatedAt: t.number,
+  /** Name of user that last updated this assignment */
+  lastUpdatedBy: t.string,
   state: ASSIGNMENT_STATE,
   /**
    * TODO: add additional tasks, such as indicators

@@ -26,7 +26,7 @@ export default class XForm {
     files: forms.FormFile[],
     opts?: {
       editable?: boolean;
-      onDataUpdate?: () => void;
+      onDataUpdate?: (event: { xform: XForm }) => void;
     }
   ) {
     const { editable = true, onDataUpdate } = opts || {};
@@ -46,7 +46,11 @@ export default class XForm {
     $('.container').replaceWith(markedHtml(html));
     const formElement = $('#form').find('form').first()[0];
     if (onDataUpdate) {
-      formElement.addEventListener('dataupdate', onDataUpdate);
+      formElement.addEventListener('dataupdate', () =>
+        onDataUpdate({
+          xform: this,
+        })
+      );
     }
     this.form = new Form(formElement, {
       modelStr,

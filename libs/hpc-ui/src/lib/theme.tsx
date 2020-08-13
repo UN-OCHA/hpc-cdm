@@ -11,6 +11,10 @@ import {
 } from '@material-ui/core';
 
 const COLOR_PALETTE = {
+  red: {
+    dark: '#990000',
+    light: '#ffb3b3',
+  },
   orange: {
     dark2: '#d05b10',
     dark1: '#dc6011',
@@ -37,6 +41,8 @@ export const THEME = {
     text: COLOR_PALETTE.gray.normal,
     textLight: COLOR_PALETTE.gray.light1,
     textLink: COLOR_PALETTE.orange.dark2,
+    textError: COLOR_PALETTE.red.dark,
+    textErrorLight: COLOR_PALETTE.red.light,
     panel: {
       border: COLOR_PALETTE.gray.light2,
       bg: COLOR_PALETTE.gray.light4,

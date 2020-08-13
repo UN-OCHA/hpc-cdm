@@ -7,6 +7,9 @@
   "errors": {
     "unableToLoadCDM": "Unable to load CDM"
   },
+  "common": {
+    "updatedAtBy": "Updated {timeAgo} by {person}"
+  },
   "components": {
     "acceptableUseNotification": {
       "login": "Click here to login",
@@ -49,6 +52,12 @@
           "save": "Save",
           "next": "Next",
           "submit": "Submit"
+        },
+        "status": {
+          "idle": "All changes saved",
+          "unsavedChanges": "Unsaved Changes",
+          "saving": "Saving...",
+          "error": "Error saving form!"
         }
       },
       "clusters": {
