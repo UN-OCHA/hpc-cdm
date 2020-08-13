@@ -42,7 +42,14 @@
       },
       "forms": {
         "forOperations": "Operation-Wide Forms",
-        "forClusters": "Cluster Forms"
+        "forClusters": "Cluster Forms",
+        "unsavedChangesPrompt": "Are you sure you want to navigate away? You have unsaved changes.",
+        "nav": {
+          "prev": "Prev",
+          "save": "Save",
+          "next": "Next",
+          "submit": "Submit"
+        }
       },
       "clusters": {
         "forms": {
