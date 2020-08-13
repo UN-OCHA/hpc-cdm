@@ -1,9 +1,25 @@
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Session } from '@unocha/hpc-core';
 import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
 
 import { Assignment, DummyData, DUMMY_DATA } from './data-types';
 import { INITIAL_DATA } from './data';
 import { Users } from './users';
+
+const uriToBlob = (uri: string) => fetch(uri).then((res) => res.blob());
+
+const blobToBase64URI = (blob: Blob) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        reject('Unexpected error when converting blob to base64 dataUrl');
+      }
+    };
+  });
 
 const STORAGE_KEY = 'hpc-dummy';
 
@@ -75,6 +91,8 @@ export class Dummy {
       try {
         this.data = JSON.parse(s);
         if (!DUMMY_DATA.is(this.data)) {
+          // Print discrepancy in console
+          console.error(PathReporter.report(DUMMY_DATA.decode(this.data)));
           if (
             window.confirm(
               `The stored dummy data doesn't match the current type definitions, ` +
@@ -90,6 +108,10 @@ export class Dummy {
       } catch (err) {
         console.error(err);
       }
+    } else {
+      this.users.setUsers(this.data.users);
+      this.data = INITIAL_DATA;
+      this.store();
     }
   };
 
@@ -122,6 +144,56 @@ export class Dummy {
     } else {
       throw new Error('Unexpected result when getting forms for ID:' + formId);
     }
+  }
+
+  private async getAssignmentResult(
+    reportingWindowId: number,
+    assignmentId: number
+  ): Promise<reportingWindows.GetAssignmentResult> {
+    const window = this.data.reportingWindows.filter(
+      (w) => w.id === reportingWindowId
+    );
+    if (window.length === 0) {
+      throw new errors.NotFoundError();
+    }
+    const assignment = window[0].assignments.filter(
+      (a) => a.id === assignmentId
+    );
+    if (assignment.length === 0) {
+      throw new errors.NotFoundError();
+    }
+    const a = assignment[0];
+
+    const getAssignmentTask = async (a: Assignment) => {
+      if (a.type === 'form') {
+        const form = this.data.forms.filter((f) => f.id === a.formId);
+        if (form.length === 0) {
+          throw new Error('missing form');
+        }
+        const r: reportingWindows.GetAssignmentResult['task'] = {
+          type: 'form' as 'form',
+          form: form[0],
+          currentData: a.currentData,
+          currentFiles: await Promise.all(
+            a.currentFiles.map(async (f) => ({
+              name: f.name,
+              data: await uriToBlob(f.base64Data),
+            }))
+          ),
+        };
+        return r;
+      } else {
+        throw new Error('Unknown type');
+      }
+    };
+
+    const r: reportingWindows.GetAssignmentResult = {
+      id: a.id,
+      state: a.state,
+      task: await getAssignmentTask(a),
+      assignee: a.assignee,
+    };
+    return r;
   }
 
   public getModel = (): Model => {
@@ -221,45 +293,42 @@ export class Dummy {
         ),
         getAssignment: dummyEndpoint(
           'reportingWindows.getAssignment',
-          async (params: reportingWindows.GetAssignmentParams) => {
+          async (
+            params: reportingWindows.GetAssignmentParams
+          ): Promise<reportingWindows.GetAssignmentResult> => {
             const { reportingWindowId, assignmentId } = params;
-            const window = this.data.reportingWindows.filter(
-              (w) => w.id === reportingWindowId
-            );
-            if (window.length === 0) {
-              throw new errors.NotFoundError();
-            }
-            const assignment = window[0].assignments.filter(
-              (a) => a.id === assignmentId
-            );
-            if (assignment.length === 0) {
-              throw new errors.NotFoundError();
-            }
-            const a = assignment[0];
+            return this.getAssignmentResult(reportingWindowId, assignmentId);
+          }
+        ),
+        updateAssignment: dummyEndpoint(
+          'reportingWindows.updateAssignment',
+          async (
+            params: reportingWindows.UpdateAssignmentParams
+          ): Promise<reportingWindows.GetAssignmentResult> => {
+            const {
+              reportingWindowId,
+              assignmentId,
+              form: { id, data, files },
+            } = params;
 
-            const getAssignmentTask = (a: Assignment) => {
-              if (a.type === 'form') {
-                const form = this.data.forms.filter((f) => f.id === a.formId);
-                if (form.length === 0) {
-                  throw new Error('missing form');
+            for (const rw of this.data.reportingWindows) {
+              if (rw.id === reportingWindowId) {
+                for (const a of rw.assignments) {
+                  if (a.id === assignmentId && a.formId === id) {
+                    a.currentData = data;
+                    a.currentFiles = await Promise.all(
+                      files.map(async (f) => ({
+                        name: f.name,
+                        base64Data: await blobToBase64URI(f.data),
+                      }))
+                    );
+                  }
                 }
-                return {
-                  type: 'form' as 'form',
-                  form: form[0],
-                  currentData: a.currentData,
-                };
-              } else {
-                throw new Error('Unknown type');
               }
-            };
+            }
 
-            const r: reportingWindows.GetAssignmentResult = {
-              id: a.id,
-              state: a.state,
-              task: getAssignmentTask(a),
-              assignee: a.assignee,
-            };
-            return r;
+            this.store();
+            return this.getAssignmentResult(reportingWindowId, assignmentId);
           }
         ),
       },

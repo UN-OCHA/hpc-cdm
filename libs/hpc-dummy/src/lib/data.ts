@@ -1,5 +1,21 @@
 import { DummyData } from './data-types';
 
+/**
+ * TODO: Something weird is going on with these json imports, it's importing
+ * them with default rather than importing them directly... this is definitely
+ * not what's supposed to happen and we should look into that...
+ */
+import * as formAImport from './forms/form-a.json';
+import * as formCImport from './forms/form-c.json';
+let formA = formAImport;
+let formC = formCImport;
+if ((formA as any).default) {
+  formA = (formA as any).default;
+}
+if ((formC as any).default) {
+  formC = (formC as any).default;
+}
+
 export const INITIAL_DATA: DummyData = {
   users: [
     {
@@ -83,7 +99,8 @@ export const INITIAL_DATA: DummyData = {
             operationId: 1,
           },
           state: 'not-entered',
-          currentData: 'this is some data',
+          currentData: null,
+          currentFiles: [],
         },
         {
           id: 5925,
@@ -94,7 +111,8 @@ export const INITIAL_DATA: DummyData = {
             operationId: 1,
           },
           state: 'raw:entered',
-          currentData: 'this is some data',
+          currentData: null,
+          currentFiles: [],
         },
         {
           id: 5926,
@@ -105,7 +123,8 @@ export const INITIAL_DATA: DummyData = {
             clusterId: 11,
           },
           state: 'raw:entered',
-          currentData: 'this is some data',
+          currentData: null,
+          currentFiles: [],
         },
       ],
     },
@@ -122,13 +141,15 @@ export const INITIAL_DATA: DummyData = {
   forms: [
     {
       id: 123,
+      version: '1.0',
       name: 'A Form',
-      definition: 'This is the form definition',
+      definition: formA,
     },
     {
       id: 321,
+      version: '1.0',
       name: 'Another form',
-      definition: 'This is the form definition',
+      definition: formC,
     },
   ],
 };

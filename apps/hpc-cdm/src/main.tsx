@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from '@unocha/hpc-ui';
 
 import App from './app/app';
+import './assets/styles/enketo.css';
 
 ReactDOM.render(
   <BrowserRouter>

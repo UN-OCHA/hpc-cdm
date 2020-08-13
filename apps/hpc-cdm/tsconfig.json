@@ -9,6 +9,7 @@
     "types": ["node", "jest"]
   },
   "files": [
+    "./src/app/components/enketo-form/enketo-core.d.ts",
     "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
     "../../node_modules/@nrwl/react/typings/image.d.ts"
   ],

@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { FORM_META, FORM } from './forms';
+import { FORM_META, FORM, FORM_UPDATE_DATA, FORM_FILE } from './forms';
 
 export const REPORTING_WINDOW = t.type({
   // TODO
@@ -79,10 +79,8 @@ export const GET_ASSIGNMENT_RESULT = t.type({
   task: t.type({
     type: t.literal('form'),
     form: FORM,
-    /**
-     * TODO: flesh this out with enketo data types
-     */
-    currentData: t.string,
+    currentData: t.union([t.string, t.null]),
+    currentFiles: t.array(FORM_FILE),
   }),
   assignee: t.union([
     t.type({
@@ -98,9 +96,20 @@ export const GET_ASSIGNMENT_RESULT = t.type({
 
 export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT>;
 
+export const UPDATE_ASSIGNMENT_PARAMS = t.type({
+  reportingWindowId: t.number,
+  assignmentId: t.number,
+  form: FORM_UPDATE_DATA,
+});
+
+export type UpdateAssignmentParams = t.TypeOf<typeof UPDATE_ASSIGNMENT_PARAMS>;
+
 export interface Model {
   getAssignmentsForOperation(
     params: GetAssignmentsForOperationParams
   ): Promise<GetAssignmentsForOperationResult>;
   getAssignment(params: GetAssignmentParams): Promise<GetAssignmentResult>;
+  updateAssignment(
+    params: UpdateAssignmentParams
+  ): Promise<GetAssignmentResult>;
 }
