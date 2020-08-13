@@ -57,7 +57,11 @@
           "idle": "All changes saved",
           "unsavedChanges": "Unsaved Changes",
           "saving": "Saving...",
-          "error": "Error saving form!"
+          "error": "Error saving form!",
+          "conflict": "Form has been modified by another person, please refresh."
+        },
+        "errors": {
+          "conflict": "This form was modified by {person} {timeAgo} (after you loaded the page), so we can't save your changes. Please refresh your page and try again."
         }
       },
       "clusters": {

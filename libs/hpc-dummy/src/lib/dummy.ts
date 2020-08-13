@@ -327,12 +327,19 @@ export class Dummy {
               reportingWindowId,
               assignmentId,
               form: { id, data, files },
+              previousVersion,
             } = params;
 
             for (const rw of this.data.reportingWindows) {
               if (rw.id === reportingWindowId) {
                 for (const a of rw.assignments) {
                   if (a.id === assignmentId && a.formId === id) {
+                    if (a.version !== previousVersion) {
+                      throw new errors.ConflictError(
+                        new Date(a.lastUpdatedAt),
+                        a.lastUpdatedBy
+                      );
+                    }
                     const u = this.data.users.filter(
                       (u) => u.id === this.data.currentUser
                     );

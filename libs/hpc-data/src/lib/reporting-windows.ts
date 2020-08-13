@@ -105,6 +105,13 @@ export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT>;
 export const UPDATE_ASSIGNMENT_PARAMS = t.type({
   reportingWindowId: t.number,
   assignmentId: t.number,
+  /**
+   * Supply the last-known version number of the assignment.
+   *
+   * This is used to determine whether the assignment has already changed since
+   * the user started editing data.
+   */
+  previousVersion: t.number,
   form: FORM_UPDATE_DATA,
 });
 

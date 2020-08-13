@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { reportingWindows } from '@unocha/hpc-data';
+import { reportingWindows, errors } from '@unocha/hpc-data';
 import { BreadcrumbLinks, C, CLASSES, styled } from '@unocha/hpc-ui';
 import { Tooltip, CircularProgress } from '@material-ui/core';
 import { MdWarning } from 'react-icons/md';
@@ -43,6 +43,11 @@ type Status =
   | {
       type: 'error';
       message: string;
+    }
+  | {
+      type: 'conflict';
+      otherPerson: string;
+      timestamp: Date;
     };
 
 interface Props {
@@ -71,8 +76,12 @@ export const EnketoEditableForm = (props: Props) => {
 
   const assignment = updatedAssignment || originalAssignment;
 
-  const lastUpdatedAt = moment(assignment.lastUpdatedAt);
+  const lastUpdatedAt = moment(
+    status.type === 'conflict' ? status.timestamp : assignment.lastUpdatedAt
+  );
   lastUpdatedAt.locale(lang);
+  const lastUpdatedBy =
+    status.type === 'conflict' ? status.otherPerson : assignment.lastUpdatedBy;
 
   useEffect(() => {
     const {
@@ -129,14 +138,14 @@ export const EnketoEditableForm = (props: Props) => {
       const { data, files } = xform.getData();
       if (lastSavedData !== data) {
         const {
-          id,
           task: { form },
         } = assignment;
         setStatus({ type: 'saving' });
         return env.model.reportingWindows
           .updateAssignment({
             reportingWindowId: reportingWindow.id,
-            assignmentId: id,
+            assignmentId: assignment.id,
+            previousVersion: assignment.version,
             form: {
               id: form.id,
               version: form.version,
@@ -153,10 +162,26 @@ export const EnketoEditableForm = (props: Props) => {
             }
           })
           .catch((err) => {
-            setStatus({
-              type: 'error',
-              message: err.message || err.toString(),
-            });
+            if (errors.isConflictError(err)) {
+              const timeAgo = moment(err.timestamp);
+              timeAgo.locale(lang);
+              alert(
+                t
+                  .t(lang, (s) => s.routes.operations.forms.errors.conflict)
+                  .replace('{timeAgo}', timeAgo.fromNow())
+                  .replace('{person}', err.otherUser)
+              );
+              setStatus({
+                type: 'conflict',
+                timestamp: err.timestamp,
+                otherPerson: err.otherUser,
+              });
+            } else {
+              setStatus({
+                type: 'error',
+                message: err.message || err.toString(),
+              });
+            }
           });
       }
     }
@@ -172,7 +197,7 @@ export const EnketoEditableForm = (props: Props) => {
             {t
               .t(lang, (s) => s.common.updatedAtBy)
               .replace('{timeAgo}', lastUpdatedAt.fromNow())
-              .replace('{person}', assignment.lastUpdatedBy)}
+              .replace('{person}', lastUpdatedBy)}
           </p>
         </StatusDetails>
       }
@@ -196,7 +221,7 @@ export const EnketoEditableForm = (props: Props) => {
         ) : (
           <>
             <span>
-              {t.t(lang, (s) => s.routes.operations.forms.status.error)}
+              {t.t(lang, (s) => s.routes.operations.forms.status[status.type])}
             </span>
             <MdWarning className="error" size={20} />
           </>
