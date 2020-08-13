@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { reportingWindows } from '@unocha/hpc-data';
+import { BreadcrumbLinks, C } from '@unocha/hpc-ui';
 
 import XForm from './xform';
 import { getEnv, AppContext } from '../../context';
@@ -9,10 +10,11 @@ import { t } from '../../../i18n';
 interface Props {
   reportingWindow: reportingWindows.ReportingWindow;
   assignment: reportingWindows.GetAssignmentResult;
+  breadcrumbs: BreadcrumbLinks;
 }
 
 export const EnketoEditableForm = (props: Props) => {
-  const { reportingWindow, assignment } = props;
+  const { breadcrumbs, reportingWindow, assignment } = props;
   const env = getEnv();
   const [xform, setXform] = useState<XForm | null>(null);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
@@ -67,7 +69,7 @@ export const EnketoEditableForm = (props: Props) => {
       window.removeEventListener('beforeunload', unloadListener);
       unblock();
     };
-  }, [xform, lastSavedData]);
+  }, [xform, lastSavedData, history, lang]);
 
   const saveForm = (redirect = false) => {
     if (xform) {
@@ -99,39 +101,44 @@ export const EnketoEditableForm = (props: Props) => {
   };
 
   return (
-    <div className="enketo" id="form">
-      <div className="main">
-        <div className="container pages"></div>
-        <section className="form-footer end">
-          <div className="form-footer__content">
-            <div className="form-footer__content__main-controls">
-              <button className="btn btn-default previous-page disabled">
-                {t.t(lang, (s) => s.routes.operations.forms.nav.prev)}
-              </button>
-              <button
-                onClick={() => saveForm()}
-                className="btn btn-default"
-                style={{ display: 'inline-block' }}
-              >
-                {t.t(lang, (s) => s.routes.operations.forms.nav.save)}
-              </button>
-              <button
-                onMouseDown={() => saveForm()}
-                className="btn btn-primary next-page disabled"
-              >
-                {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
-              </button>
-              <button
-                onClick={() => saveForm(true)}
-                className="btn btn-primary"
-                id="submit-form"
-              >
-                <i className="icon icon-check"> </i>
-                {t.t(lang, (s) => s.routes.operations.forms.nav.submit)}
-              </button>
+    <div>
+      <C.Toolbar>
+        <C.Breadcrumbs links={breadcrumbs} />
+      </C.Toolbar>
+      <div className="enketo" id="form">
+        <div className="main">
+          <div className="container pages"></div>
+          <section className="form-footer end">
+            <div className="form-footer__content">
+              <div className="form-footer__content__main-controls">
+                <button className="btn btn-default previous-page disabled">
+                  {t.t(lang, (s) => s.routes.operations.forms.nav.prev)}
+                </button>
+                <button
+                  onClick={() => saveForm()}
+                  className="btn btn-default"
+                  style={{ display: 'inline-block' }}
+                >
+                  {t.t(lang, (s) => s.routes.operations.forms.nav.save)}
+                </button>
+                <button
+                  onMouseDown={() => saveForm()}
+                  className="btn btn-primary next-page disabled"
+                >
+                  {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
+                </button>
+                <button
+                  onClick={() => saveForm(true)}
+                  className="btn btn-primary"
+                  id="submit-form"
+                >
+                  <i className="icon icon-check"> </i>
+                  {t.t(lang, (s) => s.routes.operations.forms.nav.submit)}
+                </button>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </div>
   );

@@ -187,11 +187,26 @@ export class Dummy {
       }
     };
 
+    let assignee: reportingWindows.GetAssignmentResult['assignee'];
+    if (a.assignee.type === 'operationCluster') {
+      const clusterId = a.assignee.clusterId;
+      const cluster = this.data.operationClusters.filter(
+        (c) => c.id === clusterId
+      );
+      assignee = {
+        type: 'operationCluster',
+        clusterId,
+        clusterName: cluster[0]?.name,
+      };
+    } else {
+      assignee = a.assignee;
+    }
+
     const r: reportingWindows.GetAssignmentResult = {
       id: a.id,
       state: a.state,
       task: await getAssignmentTask(a),
-      assignee: a.assignee,
+      assignee,
     };
     return r;
   }

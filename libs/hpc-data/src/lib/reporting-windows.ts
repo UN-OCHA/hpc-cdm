@@ -90,6 +90,7 @@ export const GET_ASSIGNMENT_RESULT = t.type({
     t.type({
       type: t.literal('operationCluster'),
       clusterId: t.number,
+      clusterName: t.string,
     }),
   ]),
 });

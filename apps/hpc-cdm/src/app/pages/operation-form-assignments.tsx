@@ -43,7 +43,31 @@ const PageOperationFormAssignments = (props: Props) => {
             }) => {
               const assignmentId = parseInt(props.match.params.assignmentId);
               if (!isNaN(assignmentId)) {
-                return <FormAssignmentData {...{ window, assignmentId }} />;
+                return (
+                  <FormAssignmentData
+                    breadcrumbs={(assignment) => [
+                      {
+                        to: paths.operationFormAssignments({
+                          operationId: operation.id,
+                          windowId: window.id,
+                        }),
+                        label: t.t(lang, (s) => s.navigation.forms),
+                      },
+                      {
+                        to: paths.operationFormAssignmentData({
+                          operationId: operation.id,
+                          windowId: window.id,
+                          assignmentId,
+                        }),
+                        label:
+                          assignment.assignee.type === 'operation'
+                            ? assignment.task.form.name
+                            : `${assignment.assignee.clusterName}: ${assignment.task.form.name}`,
+                      },
+                    ]}
+                    {...{ window, assignmentId }}
+                  />
+                );
               } else {
                 return (
                   <C.NotFound
