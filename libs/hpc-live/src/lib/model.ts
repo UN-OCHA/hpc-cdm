@@ -10,9 +10,11 @@ interface URLInterface {
 }
 
 interface RequestInit {
+  method?: string;
   headers: {
     Authorization: string;
   };
+  body?: string;
 }
 
 interface Response {
@@ -67,6 +69,8 @@ export class LiveModel implements Model {
       headers: {
         Authorization: `Credentials ${this.config.hidToken}`,
       },
+      // method: method || 'GET',
+      // body: body || undefined
     };
     const res = await this.fetch(url.href, init);
     if (res.ok) {
