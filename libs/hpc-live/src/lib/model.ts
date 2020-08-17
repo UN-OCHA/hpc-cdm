@@ -86,7 +86,11 @@ export class LiveModel implements Model {
 
   get operations(): operations.Model {
     return {
-      getClusters: () => Promise.reject(new Error('not implemented')),
+      getClusters: (params) =>
+        this.call({
+          pathname: `/v2/operations/${params.operationId}/clusters`,
+          resultType: operations.GET_CLUSTERS_RESULT,
+        }),
       getOperations: () =>
         this.call({
           pathname: `/v2/operations`,
