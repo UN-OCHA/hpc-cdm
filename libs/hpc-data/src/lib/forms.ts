@@ -2,7 +2,7 @@ import * as t from 'io-ts';
 
 import { BLOB } from './util';
 
-const FORM_BASE = t.type({
+export const FORM_BASE = t.type({
   id: t.number,
   version: t.string,
 });

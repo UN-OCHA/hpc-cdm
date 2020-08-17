@@ -102,11 +102,31 @@ export class LiveModel implements Model {
 
   get reportingWindows(): reportingWindows.Model {
     return {
-      getAssignment: () => Promise.reject(new Error('not implemented')),
-      getAssignmentsForOperation: () =>
-        Promise.reject(new Error('not implemented')),
-      updateAssignment: (params: reportingWindows.UpdateAssignmentParams) =>
-        Promise.reject(new Error('not implemented')),
+      getAssignment: (params) => {
+        const {reportingWindowId: rwId, assignmentId: aId} = params;
+        return this.call({
+          pathname: `/v2/reportingwindows/${rwId}/assignments/${aId}`,
+          resultType: reportingWindows.GET_ASSIGNMENT_RESULT,
+        });
+      },
+      getAssignmentsForOperation: (params) => {
+        const {reportingWindowId: rwId, operationId: opId} = params;
+        return this.call({
+          pathname: `/v2/reportingwindows/${rwId}/operations/${opId}/assignments`,
+          resultType: reportingWindows.GET_ASSIGNMENTS_FOR_OPERATION_RESULT,
+        });
+      },
+      updateAssignment: (params) => {
+        const {reportingWindowId: rwId, assignmentId: aId} = params;
+        // TODO -help- how to pass the form files?
+        // const body = JSON.stringify(param.form)
+        return this.call({
+          // method: 'put',
+          // body,
+          pathname: `/v2/reportingwindows/${rwId}/assignments/${aId}`,
+          resultType: reportingWindows.GET_ASSIGNMENT_RESULT,
+        });
+      },
     };
   }
 }
