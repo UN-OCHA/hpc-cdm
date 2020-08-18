@@ -34,10 +34,14 @@
       "addPerson": "Add Person",
       "activePeople": "Active People",
       "pendingInvites": "Pending Invites",
+      "auditLog": "Audit log",
       "roles": {
         "operationLead": "Operation Lead"
       },
-      "confirmRoleUpdate": "Are you sure you want to change {name}'s role to {role}?"
+      "invitedBy": "Invited by {name}",
+      "confirmRoleUpdate": "Are you sure you want to change {name}'s role to {role}?",
+      "auditLogRoleChange": "{actor} changed {grantee}'s role to {role}",
+      "auditLogRoleRemoval": "{actor} removed {grantee}'s access"
     }
   },
   "navigation": {

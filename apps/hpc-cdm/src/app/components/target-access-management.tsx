@@ -1,15 +1,17 @@
 import React from 'react';
 
-import { t } from '../../i18n';
+import moment from 'moment';
 import { C, dataLoader, styled, CLASSES } from '@unocha/hpc-ui';
 import { access } from '@unocha/hpc-data';
 
+import { t } from '../../i18n';
 import { getContext } from '../context';
 import { DropdownActionable } from './dropdown';
 
 const CLS = {
   LIST: 'access-list',
-  DROPDOWN: 'dropdown',
+  DETAILS: 'details',
+  DATE: 'date',
 };
 
 interface Props {
@@ -30,8 +32,21 @@ const Wrapper = styled.div`
       display: flex;
       align-items: center;
       padding: ${(p) => p.theme.marginPx.sm * 1.5}px;
-      padding-left: ${(p) => p.theme.marginPx.md}px;
       border-bottom: 1px solid ${(p) => p.theme.colors.panel.border};
+
+      > span {
+        margin: 0 ${(p) => p.theme.marginPx.sm}px;
+      }
+
+      > .${CLS.DETAILS} {
+        flex-grow: 1;
+        color: ${(p) => p.theme.colors.textLight};
+        font-size: ${(p) => p.theme.sizing.fontSizeSm};
+      }
+
+      > .${CLS.DATE} {
+        color: ${(p) => p.theme.colors.textLight};
+      }
 
       &:last-child {
         border-bottom: none;
@@ -111,7 +126,14 @@ export const TargetAccessManagement = (props: Props) => {
           <ul className={CLS.LIST}>
             {invites.map((item, i) => (
               <li key={i}>
-                <span className={CLASSES.FLEX.GROW}>{item.email}</span>
+                <span>{item.email}</span>
+                <span className={CLS.DETAILS}>
+                  (
+                  {t
+                    .t(lang, (s) => s.components.accessControl.invitedBy)
+                    .replace('{name}', item.lastModifiedBy.name)}
+                  )
+                </span>
                 <DropdownActionable
                   colors="gray"
                   loadingLabel={t.t(lang, (s) => s.common.saving)}
@@ -140,6 +162,40 @@ export const TargetAccessManagement = (props: Props) => {
                 />
               </li>
             ))}
+          </ul>
+          <h3>{t.t(lang, (s) => s.components.accessControl.auditLog)}</h3>
+          <ul className={CLS.LIST}>
+            {auditLog.map((item, i) => {
+              const m = moment(item.date);
+              m.locale(lang);
+              return (
+                <li key={i}>
+                  <span className={CLS.DATE}>{m.fromNow()}:</span>
+                  <span>
+                    {item.roles.length === 0
+                      ? t
+                          .t(
+                            lang,
+                            (s) =>
+                              s.components.accessControl.auditLogRoleRemoval
+                          )
+                          .replace('{actor}', item.actor.name)
+                          .replace('{grantee}', item.grantee.name)
+                      : t
+                          .t(
+                            lang,
+                            (s) => s.components.accessControl.auditLogRoleChange
+                          )
+                          .replace('{actor}', item.actor.name)
+                          .replace('{grantee}', item.grantee.name)
+                          .replace(
+                            '{role}',
+                            item.roles.map(getRoleName).join(', ')
+                          )}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </Wrapper>
       )}

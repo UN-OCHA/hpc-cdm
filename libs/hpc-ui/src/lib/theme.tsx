@@ -59,6 +59,7 @@ export const THEME = {
     borderRadiusSm: '3px',
     borderRadiusMd: '6px',
     containerWidthPx: 1240,
+    fontSizeSm: '0.8rem',
   },
 } as const;
 

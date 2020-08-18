@@ -285,7 +285,7 @@ export class Dummy {
           grantee: getFullGrantee(i.grantee),
           date: i.date,
         }))
-        .sort((a, b) => a.date - b.date),
+        .sort((a, b) => b.date - a.date),
     };
   };
 
