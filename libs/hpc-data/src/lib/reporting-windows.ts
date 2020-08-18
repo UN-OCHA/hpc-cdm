@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { FORM_BASE, FORM, FORM_UPDATE_DATA, FORM_FILE } from './forms';
+import { FORM_META, FORM, FORM_UPDATE_DATA, FORM_FILE } from './forms';
 import { INTEGER_FROM_STRING } from './util';
 
 export const REPORTING_WINDOW = t.type({
@@ -34,7 +34,7 @@ export type AssignmentState = t.TypeOf<typeof ASSIGNMENT_STATE>;
 const FORM_ASSIGNMENT = t.type({
   assignmentId: t.number,
   state: ASSIGNMENT_STATE,
-  form: FORM_BASE,
+  form: FORM_META,
 });
 
 export type FormAssignment = t.TypeOf<typeof FORM_ASSIGNMENT>;
@@ -65,11 +65,24 @@ export type GetAssignmentsForOperationResult = t.TypeOf<
 >;
 
 export const GET_ASSIGNMENT_PARAMS = t.type({
-  reportingWindowId: t.number,
-  assignmentId: t.number,
+  reportingWindowId: t.union([t.number, t.undefined]),
+  assignmentId: INTEGER_FROM_STRING,
 });
 
 export type GetAssignmentParams = t.TypeOf<typeof GET_ASSIGNMENT_PARAMS>;
+
+export const ASSIGNMENT_ASSIGNEE = t.union([
+  t.type({
+    type: t.literal('operation'),
+    operationId: t.number,
+  }),
+  t.type({
+    type: t.literal('operationCluster'),
+    clusterId: t.number,
+  }),
+]);
+
+export type AssignmentAssignee = t.TypeOf<typeof ASSIGNMENT_ASSIGNEE>;
 
 export const GET_ASSIGNMENT_RESULT = t.type({
   id: t.number,
@@ -83,22 +96,13 @@ export const GET_ASSIGNMENT_RESULT = t.type({
     currentData: t.union([t.string, t.null]),
     currentFiles: t.array(FORM_FILE),
   }),
-  assignee: t.union([
-    t.type({
-      type: t.literal('operation'),
-      operationId: t.number,
-    }),
-    t.type({
-      type: t.literal('operationCluster'),
-      clusterId: t.number,
-    }),
-  ]),
+  assignee: ASSIGNMENT_ASSIGNEE,
 });
 
 export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT>;
 
 export const UPDATE_ASSIGNMENT_PARAMS = t.type({
-  reportingWindowId: t.number,
+  reportingWindowId: t.union([t.undefined, t.number]),
   assignmentId: t.number,
   form: FORM_UPDATE_DATA,
 });

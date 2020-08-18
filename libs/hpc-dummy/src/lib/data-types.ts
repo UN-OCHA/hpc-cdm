@@ -88,7 +88,7 @@ const OPERATION_CLUSTER = t.type({
 const FORM = t.type(
   {
     id: t.number,
-    version: t.string,
+    version: t.number,
     name: t.string,
     definition: forms.FORM_DEFINITION,
   },

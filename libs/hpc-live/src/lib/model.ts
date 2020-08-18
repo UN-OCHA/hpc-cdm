@@ -59,9 +59,13 @@ export class LiveModel implements Model {
   private call = async <T>({
     pathname,
     resultType,
+    method,
+    body,
   }: {
     pathname: string;
     resultType: t.Type<T>;
+    method?: string;
+    body?: string;
   }) => {
     const url = new this.URL(this.config.baseUrl);
     url.pathname = pathname;
@@ -69,8 +73,8 @@ export class LiveModel implements Model {
       headers: {
         Authorization: `Credentials ${this.config.hidToken}`,
       },
-      // method: method || 'GET',
-      // body: body || undefined
+      method: method || 'GET',
+      body: body || undefined
     };
     const res = await this.fetch(url.href, init);
     if (res.ok) {
@@ -106,13 +110,6 @@ export class LiveModel implements Model {
 
   get reportingWindows(): reportingWindows.Model {
     return {
-      getAssignment: (params) => {
-        const {reportingWindowId: rwId, assignmentId: aId} = params;
-        return this.call({
-          pathname: `/v2/reportingwindows/${rwId}/assignments/${aId}`,
-          resultType: reportingWindows.GET_ASSIGNMENT_RESULT,
-        });
-      },
       getAssignmentsForOperation: (params) => {
         const {reportingWindowId: rwId, operationId: opId} = params;
         return this.call({
@@ -120,14 +117,21 @@ export class LiveModel implements Model {
           resultType: reportingWindows.GET_ASSIGNMENTS_FOR_OPERATION_RESULT,
         });
       },
+      getAssignment: (params) => {
+        const {assignmentId: aId} = params;
+        return this.call({
+          pathname: `/v2/reportingwindows/assignments/${aId}`,
+          resultType: reportingWindows.GET_ASSIGNMENT_RESULT,
+        });
+      },
       updateAssignment: (params) => {
-        const {reportingWindowId: rwId, assignmentId: aId} = params;
+        const {assignmentId: aId} = params;
         // TODO -help- how to pass the form files?
         // const body = JSON.stringify(param.form)
         return this.call({
-          // method: 'put',
-          // body,
-          pathname: `/v2/reportingwindows/${rwId}/assignments/${aId}`,
+          method: 'put',
+          body: '',
+          pathname: `/v2/reportingwindows/assignments/${aId}`,
           resultType: reportingWindows.GET_ASSIGNMENT_RESULT,
         });
       },

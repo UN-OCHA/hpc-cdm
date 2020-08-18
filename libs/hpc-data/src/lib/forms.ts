@@ -2,9 +2,9 @@ import * as t from 'io-ts';
 
 import { BLOB } from './util';
 
-export const FORM_BASE = t.type({
+const FORM_BASE = t.type({
   id: t.number,
-  version: t.string,
+  version: t.number,
 });
 
 export const FORM_META = t.intersection([

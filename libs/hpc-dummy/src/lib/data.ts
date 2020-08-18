@@ -141,13 +141,13 @@ export const INITIAL_DATA: DummyData = {
   forms: [
     {
       id: 123,
-      version: '1.0',
+      version: 1,
       name: 'A Form',
       definition: formA,
     },
     {
       id: 321,
-      version: '1.0',
+      version: 1,
       name: 'Another form',
       definition: formC,
     },
