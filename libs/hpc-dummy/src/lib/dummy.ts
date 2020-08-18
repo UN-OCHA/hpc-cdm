@@ -232,9 +232,7 @@ export class Dummy {
     invites = invites.filter(
       (i) => isEqual(i.target, target) && i.roles.length > 0
     );
-    auditLog = auditLog.filter(
-      (i) => isEqual(i.target, target) && i.roles.length > 0
-    );
+    auditLog = auditLog.filter((i) => isEqual(i.target, target));
 
     const getFullGrantee = (g: access.Grantee): access.GranteeWithMeta => {
       if (g.type === 'user') {

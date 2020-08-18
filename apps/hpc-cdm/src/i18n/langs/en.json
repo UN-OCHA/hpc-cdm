@@ -40,6 +40,7 @@
       },
       "invitedBy": "Invited by {name}",
       "confirmRoleUpdate": "Are you sure you want to change {name}'s role to {role}?",
+      "confirmRoleRemoval": "Are you sure you want to remove access for {name}?",
       "auditLogRoleChange": "{actor} changed {grantee}'s role to {role}",
       "auditLogRoleRemoval": "{actor} removed {grantee}'s access"
     }

@@ -9,7 +9,7 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 
-import { styled, ICONS, mixins } from '@unocha/hpc-ui';
+import { styled, ICONS, mixins, combineClasses } from '@unocha/hpc-ui';
 import { MdWarning } from 'react-icons/md';
 
 const CLS = {
@@ -18,6 +18,7 @@ const CLS = {
 };
 
 interface Props {
+  className?: string;
   label: string;
   loadingLabel: string;
   options: Array<{
@@ -54,14 +55,14 @@ type InternalState = 'idle' | 'loading' | 'error';
  * A drop-down component that is designed to perform an "action" when a user
  * selects a new option, and display a loading indicator.
  */
-export const DropdownActionable = (props: Props) => {
-  const { colors, label, loadingLabel, options, onSelect } = props;
+export const ActionableDropdown = (props: Props) => {
+  const { className, colors, label, loadingLabel, options, onSelect } = props;
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<InternalState>('idle');
 
   return (
-    <Wrapper className={`colors-${colors}`}>
+    <Wrapper className={combineClasses(className, `colors-${colors}`)}>
       <button
         ref={buttonRef}
         className={CLS.BUTTON}

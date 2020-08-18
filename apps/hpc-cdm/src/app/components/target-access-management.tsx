@@ -6,7 +6,9 @@ import { access } from '@unocha/hpc-data';
 
 import { t } from '../../i18n';
 import { getContext } from '../context';
-import { DropdownActionable } from './dropdown';
+import { ActionableIconButton } from './button';
+import { ActionableDropdown } from './dropdown';
+import { MdDelete } from 'react-icons/md';
 
 const CLS = {
   LIST: 'access-list',
@@ -31,11 +33,11 @@ const Wrapper = styled.div`
     > li {
       display: flex;
       align-items: center;
-      padding: ${(p) => p.theme.marginPx.sm * 1.5}px;
+      padding: ${(p) => p.theme.marginPx.sm * 1.5}px 0;
       border-bottom: 1px solid ${(p) => p.theme.colors.panel.border};
 
       > span {
-        margin: 0 ${(p) => p.theme.marginPx.sm}px;
+        margin: 0 ${(p) => p.theme.marginPx.md}px;
       }
 
       > .${CLS.DETAILS} {
@@ -90,7 +92,7 @@ export const TargetAccessManagement = (props: Props) => {
             {active.map((item, i) => (
               <li key={i}>
                 <span className={CLASSES.FLEX.GROW}>{item.grantee.name}</span>
-                <DropdownActionable
+                <ActionableDropdown
                   colors="gray"
                   loadingLabel={t.t(lang, (s) => s.common.saving)}
                   label={getRoleName(item.role)}
@@ -119,6 +121,28 @@ export const TargetAccessManagement = (props: Props) => {
                     }
                   }}
                 />
+                <ActionableIconButton
+                  icon={MdDelete}
+                  onClick={async () => {
+                    if (
+                      window.confirm(
+                        t
+                          .t(
+                            lang,
+                            (s) => s.components.accessControl.confirmRoleRemoval
+                          )
+                          .replace('{name}', item.grantee.name)
+                      )
+                    ) {
+                      const data = await env().model.access.updateTargetAccess({
+                        target,
+                        grantee: item.grantee,
+                        roles: [],
+                      });
+                      updateLoadedData(data);
+                    }
+                  }}
+                />
               </li>
             ))}
           </ul>
@@ -134,7 +158,7 @@ export const TargetAccessManagement = (props: Props) => {
                     .replace('{name}', item.lastModifiedBy.name)}
                   )
                 </span>
-                <DropdownActionable
+                <ActionableDropdown
                   colors="gray"
                   loadingLabel={t.t(lang, (s) => s.common.saving)}
                   label={getRoleName(item.role)}
@@ -142,7 +166,7 @@ export const TargetAccessManagement = (props: Props) => {
                     key: role,
                     label: getRoleName(role),
                   }))}
-                  onSelect={(key) => {
+                  onSelect={async (key) => {
                     if (
                       window.confirm(
                         t
@@ -155,8 +179,23 @@ export const TargetAccessManagement = (props: Props) => {
                       )
                     ) {
                       return Promise.reject('err');
-                    } else {
-                      return Promise.resolve();
+                    }
+                  }}
+                />
+                <ActionableIconButton
+                  icon={MdDelete}
+                  onClick={async () => {
+                    if (
+                      window.confirm(
+                        t
+                          .t(
+                            lang,
+                            (s) => s.components.accessControl.confirmRoleRemoval
+                          )
+                          .replace('{name}', item.email)
+                      )
+                    ) {
+                      return Promise.reject('err');
                     }
                   }}
                 />
