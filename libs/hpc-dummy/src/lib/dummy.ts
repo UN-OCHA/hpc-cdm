@@ -1,6 +1,13 @@
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Session } from '@unocha/hpc-core';
-import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
+import {
+  Model,
+  access,
+  operations,
+  reportingWindows,
+  errors,
+} from '@unocha/hpc-data';
+import isEqual from 'lodash/isEqual';
 
 import { Assignment, DummyData, DUMMY_DATA } from './data-types';
 import { INITIAL_DATA } from './data';
@@ -214,8 +221,116 @@ export class Dummy {
     return r;
   }
 
+  public getAccessForTarget = (
+    target: access.AccessTarget
+  ): access.GetTargetAccessResult => {
+    let { active, invites, auditLog } = this.data.access;
+
+    active = active.filter(
+      (i) => isEqual(i.target, target) && i.roles.length > 0
+    );
+    invites = invites.filter(
+      (i) => isEqual(i.target, target) && i.roles.length > 0
+    );
+    auditLog = auditLog.filter(
+      (i) => isEqual(i.target, target) && i.roles.length > 0
+    );
+
+    const getFullGrantee = (g: access.Grantee): access.GranteeWithMeta => {
+      if (g.type === 'user') {
+        const u = this.data.users.filter((u) => u.id === g.id)[0];
+        if (!u) {
+          throw new Error('Unknown User');
+        }
+        return {
+          ...g,
+          name: u.user.name,
+        };
+      } else {
+        throw new Error('Unexpected access grantee type');
+      }
+    };
+
+    const getAllowedRoles = (target: access.AccessTarget) => {
+      if (target.type === 'operation') {
+        return ['operationLead', 'testRole1', 'testRole2'];
+      } else if (target.type === 'operationCluster') {
+        return ['clusterLead'];
+      } else {
+        throw new Error('Unexpected access target type');
+      }
+    };
+
+    return {
+      roles: getAllowedRoles(target),
+      active: active.map((i) => ({
+        role: i.roles[0],
+        grantee: getFullGrantee(i.grantee),
+      })),
+      invites: invites.map((i) => ({
+        email: i.email,
+        lastModifiedBy: getFullGrantee({
+          type: 'user',
+          id: i.lastModifiedBy,
+        }),
+        role: i.roles[0],
+      })),
+      auditLog: auditLog
+        .map((i) => ({
+          roles: i.roles,
+          actor: getFullGrantee({
+            type: 'user',
+            id: i.actor,
+          }),
+          grantee: getFullGrantee(i.grantee),
+          date: i.date,
+        }))
+        .sort((a, b) => a.date - b.date),
+    };
+  };
+
   public getModel = (): Model => {
     return {
+      access: {
+        getAccessForTarget: dummyEndpoint(
+          'access.getAccessForTarget',
+          async ({ target }: access.GetTargetAccessParams) => {
+            return this.getAccessForTarget(target);
+          }
+        ),
+        updateTargetAccess: dummyEndpoint(
+          'access.getAccessForTarget',
+          async ({
+            target,
+            grantee,
+            roles,
+          }: access.UpdateTargetAccessParams) => {
+            if (this.data.currentUser === null) {
+              throw new Error(' not logged in');
+            }
+            const existing = this.data.access.active.filter(
+              (i) =>
+                isEqual(i.target, target) &&
+                i.grantee.type === grantee.type &&
+                i.grantee.id === grantee.id
+            );
+            if (existing.length === 1) {
+              existing[0].roles = roles;
+            } else {
+              this.data.access.active.push({ target, grantee, roles });
+            }
+            this.data.access.auditLog.push({
+              target,
+              grantee,
+              roles,
+              date: Date.now(),
+              actor: this.data.currentUser,
+            });
+            this.store();
+            return this.getAccessForTarget(target);
+          }
+        ),
+      },
       operations: {
         getOperations: dummyEndpoint('operations.getOperations', async () => ({
           data: this.data.operations,

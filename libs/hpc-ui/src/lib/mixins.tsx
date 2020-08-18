@@ -35,6 +35,16 @@ export const buttonClear = css`
   }
 `;
 
+export const buttonGray = css`
+  background-color: ${(p) => p.theme.colors.pallete.gray.light4};
+  border-color: ${(p) => p.theme.colors.pallete.gray.light2};
+  color: ${(p) => p.theme.colors.pallete.gray.normal};
+
+  &:hover {
+    background-color: ${(p) => p.theme.colors.pallete.gray.light3};
+  }
+`;
+
 export const buttonWithIcon = css`
   padding-left: 9px;
   padding-right: 9px;

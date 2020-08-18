@@ -8,7 +8,8 @@
     "unableToLoadCDM": "Unable to load CDM"
   },
   "common": {
-    "updatedAtBy": "Updated {timeAgo} by {person}"
+    "updatedAtBy": "Updated {timeAgo} by {person}",
+    "saving": "Saving..."
   },
   "components": {
     "acceptableUseNotification": {
@@ -28,6 +29,15 @@
       "loading": "Loading...",
       "error": "Error:",
       "retry": "Retry"
+    },
+    "accessControl": {
+      "addPerson": "Add Person",
+      "activePeople": "Active People",
+      "pendingInvites": "Pending Invites",
+      "roles": {
+        "operationLead": "Operation Lead"
+      },
+      "confirmRoleUpdate": "Are you sure you want to change {name}'s role to {role}?"
     }
   },
   "navigation": {
@@ -35,7 +45,8 @@
     "operations": "Operations",
     "clusters": "Clusters",
     "forms": "Forms",
-    "settings": "Settings"
+    "settings": "Settings",
+    "manageAccess": "Manage access"
   },
   "routes": {
     "operations": {

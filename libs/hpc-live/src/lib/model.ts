@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { Model, operations, reportingWindows } from '@unocha/hpc-data';
+import { Model, operations, reportingWindows, access } from '@unocha/hpc-data';
 interface URLInterface {
   new (url: string): {
     pathname: string;
@@ -83,6 +83,13 @@ export class LiveModel implements Model {
       throw new Error(res.statusText);
     }
   };
+
+  get access(): access.Model {
+    return {
+      getAccessForTarget: () => Promise.reject(new Error('not implemented')),
+      updateTargetAccess: () => Promise.reject(new Error('not implemented')),
+    };
+  }
 
   get operations(): operations.Model {
     return {
