@@ -290,7 +290,7 @@ export class Dummy {
   public getModel = (): Model => {
     return {
       access: {
-        getAccessForTarget: dummyEndpoint(
+        getTargetAccess: dummyEndpoint(
           'access.getAccessForTarget',
           async ({ target }: access.GetTargetAccessParams) => {
             return this.getAccessForTarget(target);

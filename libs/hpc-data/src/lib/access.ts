@@ -124,7 +124,7 @@ export type UpdateTargetAccessParams = t.TypeOf<
 >;
 
 export interface Model {
-  getAccessForTarget(
+  getTargetAccess(
     params: GetTargetAccessParams
   ): Promise<GetTargetAccessResult>;
   /**

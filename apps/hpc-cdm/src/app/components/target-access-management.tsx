@@ -66,7 +66,7 @@ export const TargetAccessManagement = (props: Props) => {
   const { lang, env } = getContext();
 
   const loader = dataLoader([target.type, target.targetId], () =>
-    env().model.access.getAccessForTarget({ target })
+    env().model.access.getTargetAccess({ target })
   );
 
   const getRoleName = (key: string) =>
