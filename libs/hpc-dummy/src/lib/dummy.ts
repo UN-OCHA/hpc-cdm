@@ -339,9 +339,7 @@ export class Dummy {
               throw new Error(' not logged in');
             }
             const existing = this.data.access.invites.filter(
-              (i) =>
-                isEqual(i.target, target) &&
-                i.email === email
+              (i) => isEqual(i.target, target) && i.email === email
             );
             if (existing.length === 1) {
               existing[0].roles = roles;

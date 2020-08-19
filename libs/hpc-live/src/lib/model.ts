@@ -88,7 +88,8 @@ export class LiveModel implements Model {
     return {
       getTargetAccess: () => Promise.reject(new Error('not implemented')),
       updateTargetAccess: () => Promise.reject(new Error('not implemented')),
-      updateTargetAccessInvite: () => Promise.reject(new Error('not implemented')),
+      updateTargetAccessInvite: () =>
+        Promise.reject(new Error('not implemented')),
     };
   }
 

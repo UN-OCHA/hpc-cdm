@@ -32,7 +32,7 @@
     },
     "accessControl": {
       "addPerson": "Add Person",
-      "activePeople": "Active People",
+      "activePeople": "Active Users",
       "pendingInvites": "Pending Invites",
       "auditLog": "Audit log",
       "roles": {
@@ -42,7 +42,13 @@
       "confirmRoleUpdate": "Are you sure you want to change {name}'s role to {role}?",
       "confirmRoleRemoval": "Are you sure you want to remove access for {name}?",
       "auditLogRoleChange": "{actor} changed {grantee}'s role to {role}",
-      "auditLogRoleRemoval": "{actor} removed {grantee}'s access"
+      "auditLogRoleRemoval": "{actor} removed {grantee}'s access",
+      "noPendingInvites": "No pending invitations",
+      "noUsers": {
+        "title": "No assigned users",
+        "info": "No one has been granted access"
+      },
+      "auditLogEmpty": "The audit log is empty"
     }
   },
   "navigation": {
