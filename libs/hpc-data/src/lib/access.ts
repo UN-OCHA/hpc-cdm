@@ -123,6 +123,19 @@ export type UpdateTargetAccessParams = t.TypeOf<
   typeof UPDATE_TARGET_ACCESS_PARAMS
 >;
 
+export const UPDATE_TARGET_ACCESS_INVITE_PARAMS = t.type(
+  {
+    target: ACCESS_TARGET,
+    email: t.string,
+    roles: t.array(t.string),
+  },
+  'UPDATE_TARGET_ACCESS_INVITE_PARAMS'
+);
+
+export type UpdateTargetAccessInviteParams = t.TypeOf<
+  typeof UPDATE_TARGET_ACCESS_INVITE_PARAMS
+>;
+
 export interface Model {
   getTargetAccess(
     params: GetTargetAccessParams
@@ -133,5 +146,8 @@ export interface Model {
    */
   updateTargetAccess(
     params: UpdateTargetAccessParams
+  ): Promise<GetTargetAccessResult>;
+  updateTargetAccessInvite(
+    params: UpdateTargetAccessInviteParams
   ): Promise<GetTargetAccessResult>;
 }

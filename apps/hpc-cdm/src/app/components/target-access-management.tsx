@@ -178,7 +178,12 @@ export const TargetAccessManagement = (props: Props) => {
                           .replace('{role}', getRoleName(key))
                       )
                     ) {
-                      return Promise.reject('err');
+                      const data = await env().model.access.updateTargetAccessInvite({
+                        target,
+                        email: item.email,
+                        roles: [key],
+                      });
+                      updateLoadedData(data);
                     }
                   }}
                 />
@@ -195,7 +200,12 @@ export const TargetAccessManagement = (props: Props) => {
                           .replace('{name}', item.email)
                       )
                     ) {
-                      return Promise.reject('err');
+                      const data = await env().model.access.updateTargetAccessInvite({
+                        target,
+                        email: item.email,
+                        roles: [],
+                      });
+                      updateLoadedData(data);
                     }
                   }}
                 />

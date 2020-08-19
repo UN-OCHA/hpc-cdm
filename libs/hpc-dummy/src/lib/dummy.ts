@@ -328,6 +328,36 @@ export class Dummy {
             return this.getAccessForTarget(target);
           }
         ),
+        updateTargetAccessInvite: dummyEndpoint(
+          'access.getAccessForTarget',
+          async ({
+            target,
+            email,
+            roles,
+          }: access.UpdateTargetAccessInviteParams) => {
+            if (this.data.currentUser === null) {
+              throw new Error(' not logged in');
+            }
+            const existing = this.data.access.invites.filter(
+              (i) =>
+                isEqual(i.target, target) &&
+                i.email === email
+            );
+            if (existing.length === 1) {
+              existing[0].roles = roles;
+              existing[0].lastModifiedBy = this.data.currentUser;
+            } else {
+              this.data.access.invites.push({
+                target,
+                email,
+                roles,
+                lastModifiedBy: this.data.currentUser,
+              });
+            }
+            this.store();
+            return this.getAccessForTarget(target);
+          }
+        ),
       },
       operations: {
         getOperations: dummyEndpoint('operations.getOperations', async () => ({
