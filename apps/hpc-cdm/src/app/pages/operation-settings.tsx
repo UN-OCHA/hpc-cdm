@@ -22,7 +22,7 @@ const PageOperationSettings = (props: Props) => {
       {({ lang }) => (
         <C.SidebarNavigation
           menu={[
-            {
+            operation.permissions.canModifyAccess && {
               label: t.t(lang, (s) => s.navigation.manageAccess),
               path: paths.operationSettingsAccess(operation.id),
             },
@@ -32,14 +32,16 @@ const PageOperationSettings = (props: Props) => {
             <Route exact path={paths.operationSettings(operation.id)}>
               <Redirect to={paths.operationSettingsAccess(operation.id)} />
             </Route>
-            <Route exact path={paths.operationSettingsAccess(operation.id)}>
-              <TargetAccessManagement
-                target={{
-                  type: 'operation',
-                  targetId: operation.id,
-                }}
-              />
-            </Route>
+            {operation.permissions.canModifyAccess && (
+              <Route exact path={paths.operationSettingsAccess(operation.id)}>
+                <TargetAccessManagement
+                  target={{
+                    type: 'operation',
+                    targetId: operation.id,
+                  }}
+                />
+              </Route>
+            )}
           </Switch>
         </C.SidebarNavigation>
       )}

@@ -14,6 +14,9 @@ export const OPERATION_CLUSTER = t.type({
   id: t.number,
   abbreviation: t.string,
   name: t.string,
+  permissions: t.type({
+    canModifyAccess: t.boolean,
+  }),
 });
 
 export type OperationCluster = t.TypeOf<typeof OPERATION_CLUSTER>;
@@ -25,6 +28,9 @@ export const DETAILED_OPERATION = t.intersection([
      * The list of reporting windows that are associated with the current operation.
      */
     reportingWindows: t.array(REPORTING_WINDOW),
+    permissions: t.type({
+      canModifyAccess: t.boolean,
+    }),
   }),
 ]);
 

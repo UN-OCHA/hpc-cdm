@@ -3,6 +3,9 @@ import * as t from 'io-ts';
 export const ACCESS_TARGET = t.union(
   [
     t.type({
+      type: t.literal('global'),
+    }),
+    t.type({
       type: t.literal('operation'),
       targetId: t.number,
     }),

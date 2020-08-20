@@ -20,6 +20,8 @@ interface Props {
 const PageOperationCluster = (props: Props) => {
   const { operation, cluster } = props;
 
+  const displaySettings = cluster.permissions.canModifyAccess;
+
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -53,7 +55,7 @@ const PageOperationCluster = (props: Props) => {
                   clusterId: cluster.id,
                 }),
               },
-              {
+              displaySettings && {
                 label: t.t(lang, (s) => s.navigation.settings),
                 path: paths.operationClusterSettings({
                   operationId: operation.id,
@@ -85,14 +87,16 @@ const PageOperationCluster = (props: Props) => {
             >
               <PageOperationClusterForms {...{ operation, cluster }} />
             </Route>
-            <Route
-              path={paths.operationClusterSettings({
-                operationId: operation.id,
-                clusterId: cluster.id,
-              })}
-            >
-              <PageOperationClusterSettings {...{ operation, cluster }} />
-            </Route>
+            {displaySettings && (
+              <Route
+                path={paths.operationClusterSettings({
+                  operationId: operation.id,
+                  clusterId: cluster.id,
+                })}
+              >
+                <PageOperationClusterSettings {...{ operation, cluster }} />
+              </Route>
+            )}
             <Route>
               <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
             </Route>

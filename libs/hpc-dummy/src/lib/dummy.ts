@@ -221,6 +221,34 @@ export class Dummy {
     return r;
   }
 
+  public userHasAccess = (
+    options: Array<{
+      target: access.AccessTarget;
+      role: string;
+    }>
+  ): boolean => {
+    if (this.data.currentUser === null) {
+      return false;
+    }
+
+    const userAccess = this.data.access.active.filter(
+      (a) => a.grantee.type === 'user' && a.grantee.id === this.data.currentUser
+    );
+
+    for (const a of userAccess) {
+      for (const option of options) {
+        if (
+          isEqual(a.target, option.target) &&
+          a.roles.indexOf(option.role) > -1
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
   public getAccessForTarget = (
     target: access.AccessTarget
   ): access.GetTargetAccessResult => {
@@ -441,6 +469,14 @@ export class Dummy {
                   reportingWindows: this.data.reportingWindows.filter(
                     (w) => w.associations.operations.indexOf(id) > -1
                   ),
+                  permissions: {
+                    canModifyAccess: this.userHasAccess([
+                      {
+                        target: { type: 'global' },
+                        role: 'hpcadmin',
+                      },
+                    ]),
+                  },
                 },
                 permissions: {},
               };
@@ -459,9 +495,26 @@ export class Dummy {
               throw new errors.NotFoundError();
             }
             const r: operations.GetClustersResult = {
-              data: this.data.operationClusters.filter(
-                (cl) => cl.operationId === operationId
-              ),
+              data: this.data.operationClusters
+                .filter((cl) => cl.operationId === operationId)
+                .map((cluster) => ({
+                  ...cluster,
+                  permissions: {
+                    canModifyAccess: this.userHasAccess([
+                      {
+                        target: { type: 'global' },
+                        role: 'hpcadmin',
+                      },
+                      {
+                        target: {
+                          type: 'operation',
+                          targetId: cluster.operationId,
+                        },
+                        role: 'operationLead',
+                      },
+                    ]),
+                  },
+                })),
               permissions: {},
             };
             return r;

@@ -18,7 +18,16 @@ if ((formC as any).default) {
 
 export const INITIAL_DATA: DummyData = {
   access: {
-    active: [],
+    active: [
+      {
+        target: { type: 'global' },
+        grantee: {
+          type: 'user',
+          id: 0,
+        },
+        roles: ['hpcadmin'],
+      },
+    ],
     invites: [],
     auditLog: [],
   },

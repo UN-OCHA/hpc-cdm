@@ -24,7 +24,7 @@ const PageOperationClusterSettings = (props: Props) => {
       {({ lang }) => (
         <C.SidebarNavigation
           menu={[
-            {
+            cluster.permissions.canModifyAccess && {
               label: t.t(lang, (s) => s.navigation.manageAccess),
               path: paths.operationClusterSettingsAccess({
                 operationId: operation.id,
@@ -48,20 +48,22 @@ const PageOperationClusterSettings = (props: Props) => {
                 })}
               />
             </Route>
-            <Route
-              exact
-              path={paths.operationClusterSettingsAccess({
-                operationId: operation.id,
-                clusterId: cluster.id,
-              })}
-            >
-              <TargetAccessManagement
-                target={{
-                  type: 'operationCluster',
-                  targetId: cluster.id,
-                }}
-              />
-            </Route>
+            {cluster.permissions.canModifyAccess && (
+              <Route
+                exact
+                path={paths.operationClusterSettingsAccess({
+                  operationId: operation.id,
+                  clusterId: cluster.id,
+                })}
+              >
+                <TargetAccessManagement
+                  target={{
+                    type: 'operationCluster',
+                    targetId: cluster.id,
+                  }}
+                />
+              </Route>
+            )}
           </Switch>
         </C.SidebarNavigation>
       )}

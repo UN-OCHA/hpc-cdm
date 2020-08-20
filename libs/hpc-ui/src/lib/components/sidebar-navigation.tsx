@@ -8,10 +8,15 @@ const CLS = {
 };
 
 interface Props {
-  menu: Array<{
-    label: string;
-    path: string;
-  }>;
+  menu: Array<
+    | {
+        label: string;
+        path: string;
+      }
+    | undefined
+    | null
+    | false
+  >;
   children?: JSX.Element | JSX.Element[];
 }
 
@@ -70,11 +75,14 @@ const SidebarNavigation = (props: Props) => {
   return (
     <Wrapper>
       <ul className={CLS.MENU}>
-        {menu.map((m, i) => (
-          <li key={i} className={loc.pathname === m.path ? 'selected' : ''}>
-            <Link to={m.path}>{m.label}</Link>
-          </li>
-        ))}
+        {menu.map(
+          (m, i) =>
+            m && (
+              <li key={i} className={loc.pathname === m.path ? 'selected' : ''}>
+                <Link to={m.path}>{m.label}</Link>
+              </li>
+            )
+        )}
       </ul>
       <div className={CLS.CONTENT}>{children}</div>
     </Wrapper>

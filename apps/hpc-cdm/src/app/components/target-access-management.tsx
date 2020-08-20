@@ -19,7 +19,12 @@ const CLS = {
 };
 
 interface Props {
-  target: access.AccessTarget;
+  target: access.AccessTarget & {
+    /**
+     * TODO: Only non-global access is supported atm
+     */
+    targetId: number;
+  };
 }
 
 const Wrapper = styled.div`
