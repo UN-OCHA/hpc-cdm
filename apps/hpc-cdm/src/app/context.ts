@@ -15,4 +15,7 @@ export const AppContext = createContext<Context>({
 });
 
 /* eslint-disable react-hooks/rules-of-hooks */
+export const getContext = () => useContext(AppContext);
+
+/* eslint-disable react-hooks/rules-of-hooks */
 export const getEnv = () => useContext(AppContext).env();

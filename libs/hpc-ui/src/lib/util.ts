@@ -9,7 +9,11 @@ export type DataLoaderState<T> =
       error: string;
       retry: () => void;
     }
-  | { type: 'success'; data: T };
+  | {
+      type: 'success';
+      data: T;
+      update: (data: T) => void;
+    };
 
 type Primitive = string | boolean | number | symbol | null | undefined;
 
@@ -70,9 +74,16 @@ export function dataLoader<Deps extends DepsBaseType, Data>(
     type: 'loading',
   });
 
+  const setData = (data: Data) =>
+    setState({
+      type: 'success',
+      data,
+      update: setData,
+    });
+
   const load = () => {
     get(...dependencies)
-      .then((data) => setState({ type: 'success', data }))
+      .then(setData)
       .catch((err: Error) => {
         if (errors.isNotFoundError(err)) {
           setState({

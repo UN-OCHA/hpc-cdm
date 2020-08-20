@@ -14,6 +14,9 @@ export const OPERATION_CLUSTER = t.type({
   id: t.number,
   abbreviation: t.string,
   name: t.string,
+  permissions: t.type({
+    canModifyAccess: t.boolean,
+  }),
 });
 
 export type OperationCluster = t.TypeOf<typeof OPERATION_CLUSTER>;
@@ -25,6 +28,9 @@ export const DETAILED_OPERATION = t.intersection([
      * The list of reporting windows that are associated with the current operation.
      */
     reportingWindows: t.array(REPORTING_WINDOW),
+    permissions: t.type({
+      canModifyAccess: t.boolean,
+    }),
   }),
 ]);
 
@@ -45,10 +51,9 @@ export const GET_OPERATION_PARAMS = t.type({
 
 export type GetOperationParams = t.TypeOf<typeof GET_OPERATION_PARAMS>;
 
-export const GET_OPERATION_RESULT = resultWithPermissions(
-  DETAILED_OPERATION,
-  t.type({})
-);
+export const GET_OPERATION_RESULT = t.type({
+  data: DETAILED_OPERATION,
+});
 
 export type GetOperationResult = t.TypeOf<typeof GET_OPERATION_RESULT>;
 
@@ -58,10 +63,9 @@ export const GET_CLUSTERS_PARAMS = t.type({
 
 export type GetClustersParams = t.TypeOf<typeof GET_CLUSTERS_PARAMS>;
 
-export const GET_CLUSTERS_RESULT = resultWithPermissions(
-  t.array(OPERATION_CLUSTER),
-  t.type({})
-);
+export const GET_CLUSTERS_RESULT = t.type({
+  data: t.array(OPERATION_CLUSTER),
+});
 
 export type GetClustersResult = t.TypeOf<typeof GET_CLUSTERS_RESULT>;
 

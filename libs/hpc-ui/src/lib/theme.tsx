@@ -16,8 +16,8 @@ const COLOR_PALETTE = {
     light: '#ffb3b3',
   },
   orange: {
-    dark2: '#d05b10',
-    dark1: '#dc6011',
+    dark2: '#b44d0e',
+    dark1: '#d05b10',
     normal: '#ee7325',
   },
   blue: {
@@ -28,8 +28,9 @@ const COLOR_PALETTE = {
     normal: '#4a4a4a',
     light1: '#999999',
     light2: '#d1d1d1',
-    light3: '#e6e6e6',
-    light4: '#efefef',
+    light3: '#dadada',
+    light4: '#e6e6e6',
+    light5: '#efefef',
   },
 };
 
@@ -45,8 +46,9 @@ export const THEME = {
     textErrorLight: COLOR_PALETTE.red.light,
     panel: {
       border: COLOR_PALETTE.gray.light2,
-      bg: COLOR_PALETTE.gray.light4,
-      bgHover: COLOR_PALETTE.gray.light3,
+      bg: COLOR_PALETTE.gray.light5,
+      bgSelected: COLOR_PALETTE.gray.light3,
+      bgHover: COLOR_PALETTE.gray.light4,
     },
   },
   marginPx: {
@@ -57,6 +59,7 @@ export const THEME = {
     borderRadiusSm: '3px',
     borderRadiusMd: '6px',
     containerWidthPx: 1240,
+    fontSizeSm: '0.8rem',
   },
 } as const;
 

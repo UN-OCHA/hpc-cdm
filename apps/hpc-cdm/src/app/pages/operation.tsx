@@ -9,6 +9,7 @@ import * as paths from '../paths';
 
 import OperationForms from './operation-forms';
 import OperationClusters from './operation-clusters';
+import OperationSettings from './operation-settings';
 
 interface Props {
   match: {
@@ -46,60 +47,68 @@ const PageOperation = (props: Props) => {
               },
             }}
           >
-            {(data) => (
-              <>
-                <C.Toolbar>
-                  <C.Breadcrumbs
-                    links={[
+            {({ data: operation }) => {
+              const displaySettings = operation.permissions.canModifyAccess;
+
+              return (
+                <>
+                  <C.Toolbar>
+                    <C.Breadcrumbs
+                      links={[
+                        {
+                          label: t.t(lang, (s) => s.navigation.operations),
+                          to: paths.operations(),
+                        },
+                        {
+                          label: operation.name,
+                          to: paths.operation(id),
+                        },
+                      ]}
+                    />
+                  </C.Toolbar>
+                  <C.Tabs
+                    className={props.className}
+                    mode="section"
+                    align="start"
+                    tabs={[
                       {
-                        label: t.t(lang, (s) => s.navigation.operations),
-                        to: paths.operations(),
+                        label: t.t(lang, (s) => s.navigation.forms),
+                        path: paths.operationForms(id),
                       },
                       {
-                        label: data.data.name,
-                        to: paths.operation(id),
+                        label: t.t(lang, (s) => s.navigation.clusters),
+                        path: paths.operationClusters(id),
+                      },
+                      displaySettings && {
+                        label: t.t(lang, (s) => s.navigation.settings),
+                        path: paths.operationSettings(id),
                       },
                     ]}
                   />
-                </C.Toolbar>
-                <C.Tabs
-                  className={props.className}
-                  mode="section"
-                  align="start"
-                  tabs={[
-                    {
-                      label: t.t(lang, (s) => s.navigation.forms),
-                      path: paths.operationForms(id),
-                    },
-                    {
-                      label: t.t(lang, (s) => s.navigation.clusters),
-                      path: paths.operationClusters(id),
-                    },
-                    {
-                      label: t.t(lang, (s) => s.navigation.settings),
-                      path: paths.operationSettings(id),
-                    },
-                  ]}
-                />
-                <Switch>
-                  <Route exact path={paths.operation(id)}>
-                    <Redirect to={paths.operationForms(id)} />
-                  </Route>
-                  <Route path={paths.operationForms(id)}>
-                    <OperationForms operation={data.data} />
-                  </Route>
-                  <Route path={paths.operationClusters(id)}>
-                    <OperationClusters operation={data.data} />
-                  </Route>
-                  <Route path={paths.operationSettings(id)}>Settings</Route>
-                  <Route>
-                    <C.NotFound
-                      strings={t.get(lang, (s) => s.components.notFound)}
-                    />
-                  </Route>
-                </Switch>
-              </>
-            )}
+                  <Switch>
+                    <Route exact path={paths.operation(id)}>
+                      <Redirect to={paths.operationForms(id)} />
+                    </Route>
+                    <Route path={paths.operationForms(id)}>
+                      <OperationForms operation={operation} />
+                    </Route>
+                    <Route path={paths.operationClusters(id)}>
+                      <OperationClusters operation={operation} />
+                    </Route>
+                    {displaySettings && (
+                      <Route path={paths.operationSettings(id)}>
+                        <OperationSettings operation={operation} />
+                      </Route>
+                    )}
+                    <Route>
+                      <C.NotFound
+                        strings={t.get(lang, (s) => s.components.notFound)}
+                      />
+                    </Route>
+                  </Switch>
+                </>
+              );
+            }}
           </C.Loader>
         </div>
       )}

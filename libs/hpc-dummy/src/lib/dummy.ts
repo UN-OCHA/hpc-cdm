@@ -1,8 +1,15 @@
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Session } from '@unocha/hpc-core';
-import { Model, operations, reportingWindows, errors } from '@unocha/hpc-data';
+import {
+  Model,
+  access,
+  operations,
+  reportingWindows,
+  errors,
+} from '@unocha/hpc-data';
+import isEqual from 'lodash/isEqual';
 
-import { Assignment, DummyData, DUMMY_DATA } from './data-types';
+import { Assignment, DummyData, DUMMY_DATA, User } from './data-types';
 import { INITIAL_DATA } from './data';
 import { Users } from './users';
 
@@ -214,8 +221,236 @@ export class Dummy {
     return r;
   }
 
+  public userHasAccess = (
+    options: Array<{
+      target: access.AccessTarget;
+      role: string;
+    }>
+  ): boolean => {
+    if (this.data.currentUser === null) {
+      return false;
+    }
+
+    const userAccess = this.data.access.active.filter(
+      (a) => a.grantee.type === 'user' && a.grantee.id === this.data.currentUser
+    );
+
+    for (const a of userAccess) {
+      for (const option of options) {
+        if (
+          isEqual(a.target, option.target) &&
+          a.roles.indexOf(option.role) > -1
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  public getAccessForTarget = (
+    target: access.AccessTarget
+  ): access.GetTargetAccessResult => {
+    let { active, invites, auditLog } = this.data.access;
+
+    active = active.filter(
+      (i) => isEqual(i.target, target) && i.roles.length > 0
+    );
+    invites = invites.filter(
+      (i) => isEqual(i.target, target) && i.roles.length > 0
+    );
+    auditLog = auditLog.filter((i) => isEqual(i.target, target));
+
+    const getFullGrantee = (g: access.Grantee): access.GranteeWithMeta => {
+      if (g.type === 'user') {
+        const u = this.data.users.filter((u) => u.id === g.id)[0];
+        if (!u) {
+          throw new Error('Unknown User');
+        }
+        return {
+          ...g,
+          name: u.user.name,
+        };
+      } else {
+        throw new Error('Unexpected access grantee type');
+      }
+    };
+
+    const getAllowedRoles = (target: access.AccessTarget) => {
+      if (target.type === 'operation') {
+        return ['operationLead', 'testRole1', 'testRole2'];
+      } else if (target.type === 'operationCluster') {
+        return ['clusterLead'];
+      } else {
+        throw new Error('Unexpected access target type');
+      }
+    };
+
+    return {
+      roles: getAllowedRoles(target),
+      active: active.map((i) => ({
+        role: i.roles[0],
+        grantee: getFullGrantee(i.grantee),
+      })),
+      invites: invites.map((i) => ({
+        email: i.email,
+        lastModifiedBy: getFullGrantee({
+          type: 'user',
+          id: i.lastModifiedBy,
+        }),
+        role: i.roles[0],
+      })),
+      auditLog: auditLog
+        .map((i) => ({
+          roles: i.roles,
+          actor: getFullGrantee({
+            type: 'user',
+            id: i.actor,
+          }),
+          grantee: getFullGrantee(i.grantee),
+          date: i.date,
+        }))
+        .sort((a, b) => b.date - a.date),
+    };
+  };
+
   public getModel = (): Model => {
     return {
+      access: {
+        getTargetAccess: dummyEndpoint(
+          'access.getTargetAccess',
+          async ({ target }: access.GetTargetAccessParams) => {
+            return this.getAccessForTarget(target);
+          }
+        ),
+        updateTargetAccess: dummyEndpoint(
+          'access.updateTargetAccess',
+          async ({
+            target,
+            grantee,
+            roles,
+          }: access.UpdateTargetAccessParams) => {
+            if (this.data.currentUser === null) {
+              throw new Error('not logged in');
+            }
+            const existing = this.data.access.active.filter(
+              (i) =>
+                isEqual(i.target, target) &&
+                i.grantee.type === grantee.type &&
+                i.grantee.id === grantee.id
+            );
+            if (existing.length === 1) {
+              existing[0].roles = roles;
+            } else {
+              this.data.access.active.push({ target, grantee, roles });
+            }
+            this.data.access.auditLog.push({
+              target,
+              grantee,
+              roles,
+              date: Date.now(),
+              actor: this.data.currentUser,
+            });
+            this.store();
+            return this.getAccessForTarget(target);
+          }
+        ),
+        updateTargetAccessInvite: dummyEndpoint(
+          'access.updateTargetAccessInvite',
+          async ({
+            target,
+            email,
+            roles,
+          }: access.UpdateTargetAccessInviteParams) => {
+            if (this.data.currentUser === null) {
+              throw new Error('not logged in');
+            }
+            const existing = this.data.access.invites.filter(
+              (i) => isEqual(i.target, target) && i.email === email
+            );
+            if (existing.length === 1) {
+              existing[0].roles = roles;
+              existing[0].lastModifiedBy = this.data.currentUser;
+            } else {
+              this.data.access.invites.push({
+                target,
+                email,
+                roles,
+                lastModifiedBy: this.data.currentUser,
+              });
+            }
+            this.store();
+            return this.getAccessForTarget(target);
+          }
+        ),
+        addTargetAccess: dummyEndpoint(
+          'access.addTargetAccess',
+          async ({ target, email, role }: access.AddTargetAccessParams) => {
+            if (this.data.currentUser === null) {
+              throw new Error('not logged in');
+            }
+            const existingInvite = this.data.access.invites.filter(
+              (i) => isEqual(i.target, target) && i.email === email
+            );
+            if (existingInvite.length > 0) {
+              throw new errors.UserError('access.userAlreadyInvited');
+            }
+            const existingUser = this.data.users.filter(
+              (u) => u.email === email
+            )[0] as User | undefined;
+            const existingUserAccess = this.data.access.active.filter(
+              (i) =>
+                isEqual(i.target, target) &&
+                i.grantee.type === 'user' &&
+                i.grantee.id === existingUser?.id
+            );
+            if (existingUserAccess.length > 0) {
+              if (existingUserAccess[0].roles.length > 0) {
+                throw new errors.UserError('access.userAlreadyAdded');
+              } else {
+                existingUserAccess[0].roles = [role];
+                this.data.access.auditLog.push({
+                  target,
+                  grantee: existingUserAccess[0].grantee,
+                  roles: [role],
+                  date: Date.now(),
+                  actor: this.data.currentUser,
+                });
+              }
+            } else {
+              // Not added yet, add user
+              if (existingUser) {
+                const grantee = {
+                  type: 'user',
+                  id: existingUser.id,
+                } as const;
+                this.data.access.active.push({
+                  target,
+                  grantee,
+                  roles: [role],
+                });
+                this.data.access.auditLog.push({
+                  target,
+                  grantee,
+                  roles: [role],
+                  date: Date.now(),
+                  actor: this.data.currentUser,
+                });
+              } else {
+                this.data.access.invites.push({
+                  target,
+                  email,
+                  roles: [role],
+                  lastModifiedBy: this.data.currentUser,
+                });
+              }
+            }
+            this.store();
+            return this.getAccessForTarget(target);
+          }
+        ),
+      },
       operations: {
         getOperations: dummyEndpoint('operations.getOperations', async () => ({
           data: this.data.operations,
@@ -234,8 +469,15 @@ export class Dummy {
                   reportingWindows: this.data.reportingWindows.filter(
                     (w) => w.associations.operations.indexOf(id) > -1
                   ),
+                  permissions: {
+                    canModifyAccess: this.userHasAccess([
+                      {
+                        target: { type: 'global' },
+                        role: 'hpcadmin',
+                      },
+                    ]),
+                  },
                 },
-                permissions: {},
               };
               return r;
             }
@@ -252,10 +494,26 @@ export class Dummy {
               throw new errors.NotFoundError();
             }
             const r: operations.GetClustersResult = {
-              data: this.data.operationClusters.filter(
-                (cl) => cl.operationId === operationId
-              ),
-              permissions: {},
+              data: this.data.operationClusters
+                .filter((cl) => cl.operationId === operationId)
+                .map((cluster) => ({
+                  ...cluster,
+                  permissions: {
+                    canModifyAccess: this.userHasAccess([
+                      {
+                        target: { type: 'global' },
+                        role: 'hpcadmin',
+                      },
+                      {
+                        target: {
+                          type: 'operation',
+                          targetId: cluster.operationId,
+                        },
+                        role: 'operationLead',
+                      },
+                    ]),
+                  },
+                })),
             };
             return r;
           }

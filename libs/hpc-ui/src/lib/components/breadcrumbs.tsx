@@ -22,14 +22,14 @@ const Breadcrumbs = (props: Props) => (
     {props.links.map((link, i, links) => {
       const last = i === links.length - 1;
       return last ? (
-        <Link className={CLS.LAST} to={link.to}>
+        <Link key={i} className={CLS.LAST} to={link.to}>
           {link.label}
         </Link>
       ) : (
-        <>
+        <React.Fragment key={i}>
           <Link to={link.to}>{link.label}</Link>
           <span>&gt;</span>
-        </>
+        </React.Fragment>
       );
     })}
   </div>

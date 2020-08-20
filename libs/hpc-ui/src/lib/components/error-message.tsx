@@ -13,7 +13,7 @@ interface Props {
   className?: string;
   strings: {
     title: string;
-    info: string;
+    info?: string;
   };
   icon?: IconType | false;
   buttons?: JSX.Element[] | JSX.Element;
@@ -27,7 +27,7 @@ const ErrorMessage = ({
   <div className={className}>
     {Icon && <Icon size={60} />}
     <h3>{strings.title}</h3>
-    <p>{strings.info}</p>
+    {strings.info && <p>{strings.info}</p>}
     {buttons && <div className={CLS.BUTTONS}>{buttons}</div>}
   </div>
 );
