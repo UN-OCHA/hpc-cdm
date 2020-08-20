@@ -51,10 +51,9 @@ export const GET_OPERATION_PARAMS = t.type({
 
 export type GetOperationParams = t.TypeOf<typeof GET_OPERATION_PARAMS>;
 
-export const GET_OPERATION_RESULT = resultWithPermissions(
-  DETAILED_OPERATION,
-  t.type({})
-);
+export const GET_OPERATION_RESULT = t.type({
+  data: DETAILED_OPERATION,
+});
 
 export type GetOperationResult = t.TypeOf<typeof GET_OPERATION_RESULT>;
 
@@ -64,10 +63,9 @@ export const GET_CLUSTERS_PARAMS = t.type({
 
 export type GetClustersParams = t.TypeOf<typeof GET_CLUSTERS_PARAMS>;
 
-export const GET_CLUSTERS_RESULT = resultWithPermissions(
-  t.array(OPERATION_CLUSTER),
-  t.type({})
-);
+export const GET_CLUSTERS_RESULT = t.type({
+  data: t.array(OPERATION_CLUSTER),
+});
 
 export type GetClustersResult = t.TypeOf<typeof GET_CLUSTERS_RESULT>;
 

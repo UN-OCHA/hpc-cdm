@@ -478,7 +478,6 @@ export class Dummy {
                     ]),
                   },
                 },
-                permissions: {},
               };
               return r;
             }
@@ -515,7 +514,6 @@ export class Dummy {
                     ]),
                   },
                 })),
-              permissions: {},
             };
             return r;
           }
