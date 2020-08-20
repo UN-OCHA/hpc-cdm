@@ -65,7 +65,7 @@ export class LiveModel implements Model {
     url.pathname = pathname;
     const init: RequestInit = {
       headers: {
-        Authorization: `Credentials ${this.config.hidToken}`,
+        Authorization: `Bearer ${this.config.hidToken}`,
       },
     };
     const res = await this.fetch(url.href, init);
