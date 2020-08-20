@@ -1,19 +1,21 @@
-import React from 'react';
-
+import React, { useState } from 'react';
 import moment from 'moment';
-import { C, dataLoader, styled, CLASSES } from '@unocha/hpc-ui';
+import { MdDelete, MdAssignment, MdPersonOutline, MdAdd } from 'react-icons/md';
+
+import { C, dataLoader, styled, CLASSES, combineClasses } from '@unocha/hpc-ui';
 import { access } from '@unocha/hpc-data';
 
 import { t } from '../../i18n';
 import { getContext } from '../context';
 import { ActionableIconButton } from './button';
 import { ActionableDropdown } from './dropdown';
-import { MdDelete, MdAssignment, MdPersonOutline } from 'react-icons/md';
+import { TargetAccessManagementAddUser } from './target-access-management-add-user';
 
 const CLS = {
   LIST: 'access-list',
   DETAILS: 'details',
   DATE: 'date',
+  TOOLBAR: 'toolbar',
 };
 
 interface Props {
@@ -21,6 +23,16 @@ interface Props {
 }
 
 const Wrapper = styled.div`
+  > .${CLS.TOOLBAR} {
+    display: flex;
+    align-items: center;
+    margin-top: -${(p) => p.theme.marginPx.sm}px;
+
+    > h3 {
+      flex-grow: 1;
+    }
+  }
+
   .${CLS.LIST} {
     list-style: none;
     display: block;
@@ -65,6 +77,8 @@ export const TargetAccessManagement = (props: Props) => {
   const { target } = props;
   const { lang, env } = getContext();
 
+  const [addUserOpen, setAddUserOpen] = useState(false);
+
   const loader = dataLoader([target.type, target.targetId], () =>
     env().model.access.getTargetAccess({ target })
   );
@@ -87,7 +101,28 @@ export const TargetAccessManagement = (props: Props) => {
     >
       {({ active, auditLog, invites, roles }, { updateLoadedData }) => (
         <Wrapper>
-          <h3>{t.t(lang, (s) => s.components.accessControl.activePeople)}</h3>
+          <div className={CLS.TOOLBAR}>
+            <h3>{t.t(lang, (s) => s.components.accessControl.activePeople)}</h3>
+            <button
+              onClick={() => setAddUserOpen(true)}
+              className={combineClasses(
+                CLASSES.BUTTON.PRIMARY,
+                CLASSES.BUTTON.WITH_ICON
+              )}
+            >
+              <MdAdd />
+              <span>
+                {t.t(lang, (s) => s.components.accessControl.addPerson)}
+              </span>
+            </button>
+          </div>
+          <TargetAccessManagementAddUser
+            target={target}
+            open={addUserOpen}
+            setOpen={setAddUserOpen}
+            roles={roles}
+            updateLoadedData={updateLoadedData}
+          />
           {active.length > 0 ? (
             <ul className={CLS.LIST}>
               {active.map((item, i) => (

@@ -1,7 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { CircularProgress } from '@material-ui/core';
 
-import { styled } from '@unocha/hpc-ui';
+import { styled, CLASSES, combineClasses } from '@unocha/hpc-ui';
 import { MdWarning } from 'react-icons/md';
 import { IconType } from 'react-icons/lib';
 
@@ -9,14 +9,17 @@ const CLS = {
   ERROR: 'error',
 };
 
-interface Props {
+export type InternalState = 'idle' | 'loading' | 'error';
+
+interface ActionableIconButtonProps {
   className?: string;
   size?: number;
+  state?: InternalState;
   icon: IconType;
   onClick: () => Promise<void>;
 }
 
-const Button = styled.button`
+const IconButton = styled.button`
   border: none;
   background: none;
   outline: none;
@@ -31,35 +34,96 @@ const Button = styled.button`
   }
 `;
 
-type InternalState = 'idle' | 'loading' | 'error';
+export const ActionableIconButton = (props: ActionableIconButtonProps) => {
+  const { className, icon: Icon, onClick, size = 24, state } = props;
+  const [internalState, setInternalState] = useState<InternalState>('idle');
 
-export const ActionableIconButton = (props: Props) => {
-  const { className, icon: Icon, onClick, size = 24 } = props;
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const [open, setOpen] = useState(false);
-  const [state, setState] = useState<InternalState>('idle');
+  const effectiveState = state || internalState;
 
   return (
-    <Button
+    <IconButton
       className={className}
       onClick={() => {
-        setState('loading');
+        setInternalState('loading');
         onClick()
-          .then(() => setState('idle'))
+          .then(() => setInternalState('idle'))
           .catch((err) => {
             console.error(err);
-            setState('error');
+            setInternalState('error');
           });
       }}
     >
-      {state === 'loading' ? (
+      {effectiveState === 'loading' ? (
         <CircularProgress size={size} />
       ) : (
         <>
-          {state === 'error' && <MdWarning className={CLS.ERROR} size={size} />}
+          {effectiveState === 'error' && (
+            <MdWarning className={CLS.ERROR} size={size} />
+          )}
           <Icon size={size} />
         </>
       )}
-    </Button>
+    </IconButton>
+  );
+};
+
+interface ActionableButtonProps {
+  className?: string;
+  size?: 'normal' | 'big';
+  state?: InternalState;
+  icon?: IconType;
+  label: string;
+  loadingLabel?: string;
+  onClick: () => Promise<void>;
+}
+
+export const ActionableButton = (props: ActionableButtonProps) => {
+  const {
+    className,
+    icon: Icon,
+    onClick,
+    size = 'normal',
+    state,
+    label,
+    loadingLabel,
+  } = props;
+  const [internalState, setInternalState] = useState<InternalState>('idle');
+
+  const effectiveState = state || internalState;
+
+  return (
+    <button
+      className={combineClasses(
+        className,
+        CLASSES.BUTTON.PRIMARY,
+        size === 'big' ? CLASSES.BUTTON.WITH_ICON_BIG : CLASSES.BUTTON.WITH_ICON
+      )}
+      onClick={() => {
+        setInternalState('loading');
+        onClick()
+          .then(() => setInternalState('idle'))
+          .catch((err) => {
+            console.error(err);
+            setInternalState('error');
+          });
+      }}
+    >
+      {effectiveState === 'loading' ? (
+        <>
+          <CircularProgress size={24} color="inherit" />
+          {loadingLabel && <span>{loadingLabel}</span>}
+        </>
+      ) : effectiveState === 'error' ? (
+        <>
+          <MdWarning className={CLS.ERROR} size={20} />
+          <span>{label}</span>
+        </>
+      ) : (
+        <>
+          {Icon && <Icon size={20} />}
+          <span>{label}</span>
+        </>
+      )}
+    </button>
   );
 };

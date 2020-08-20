@@ -16,8 +16,8 @@ const COLOR_PALETTE = {
     light: '#ffb3b3',
   },
   orange: {
-    dark2: '#d05b10',
-    dark1: '#dc6011',
+    dark2: '#b44d0e',
+    dark1: '#d05b10',
     normal: '#ee7325',
   },
   blue: {

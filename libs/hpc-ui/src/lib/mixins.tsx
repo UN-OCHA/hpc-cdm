@@ -10,7 +10,13 @@ export const button = css`
   padding: 6px 12px;
   font-weight: 700;
   border: 1px solid #000;
-  transition: all 0.15s ease-in-out;
+  transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out;
+
+  &:hover,
+  &:focus {
+    border-width: 2px;
+    padding: 5px 11px;
+  }
 `;
 
 export const buttonPrimary = css`
@@ -18,7 +24,8 @@ export const buttonPrimary = css`
   border-color: ${(p) => p.theme.colors.primary.normal};
   color: #fff;
 
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: ${(p) => p.theme.colors.primary.dark1};
     border-color: ${(p) => p.theme.colors.primary.dark2};
   }
@@ -49,11 +56,37 @@ export const buttonWithIcon = css`
   padding-left: 9px;
   padding-right: 9px;
 
-  svg {
+  > svg {
     margin: -20px 3px;
   }
 
-  span {
+  > span {
     margin: 0 3px;
+  }
+
+  &:hover,
+  &:focus {
+    border-width: 2px;
+    padding: 5px 8px;
+  }
+`;
+
+export const buttonWithIconBig = css`
+  font-size: 1rem;
+  line-height: 24px;
+  padding: 5px 10px;
+
+  > svg {
+    margin: -20px 3px;
+  }
+
+  > span {
+    margin: 0 3px;
+  }
+
+  &:hover,
+  &:focus {
+    border-width: 2px;
+    padding: 4px 9px;
   }
 `;

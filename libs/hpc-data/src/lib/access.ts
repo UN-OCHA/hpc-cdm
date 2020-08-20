@@ -136,6 +136,17 @@ export type UpdateTargetAccessInviteParams = t.TypeOf<
   typeof UPDATE_TARGET_ACCESS_INVITE_PARAMS
 >;
 
+export const ADD_TARGET_ACCESS_PARAMS = t.type(
+  {
+    target: ACCESS_TARGET,
+    email: t.string,
+    role: t.string,
+  },
+  'ADD_TARGET_ACCESS_PARAMS'
+);
+
+export type AddTargetAccessParams = t.TypeOf<typeof ADD_TARGET_ACCESS_PARAMS>;
+
 export interface Model {
   getTargetAccess(
     params: GetTargetAccessParams
@@ -149,5 +160,11 @@ export interface Model {
   ): Promise<GetTargetAccessResult>;
   updateTargetAccessInvite(
     params: UpdateTargetAccessInviteParams
+  ): Promise<GetTargetAccessResult>;
+  /**
+   * Add either an existing user or the email of someone yet to log-in
+   */
+  addTargetAccess(
+    params: AddTargetAccessParams
   ): Promise<GetTargetAccessResult>;
 }

@@ -5,11 +5,20 @@
     "logout": "Logout"
   },
   "errors": {
-    "unableToLoadCDM": "Unable to load CDM"
+    "unableToLoadCDM": "Unable to load CDM",
+    "userErrors": {
+      "access.userAlreadyInvited": "That user has already been invited, they must log-in to get access",
+      "access.userAlreadyAdded": "That user has already been given access"
+    }
   },
   "common": {
     "updatedAtBy": "Updated {timeAgo} by {person}",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "add": "Add",
+    "emailAddress": "E-Mail address",
+    "validation": {
+      "missing": "Please enter {field}"
+    }
   },
   "components": {
     "acceptableUseNotification": {
@@ -31,7 +40,8 @@
       "retry": "Retry"
     },
     "accessControl": {
-      "addPerson": "Add Person",
+      "addPerson": "Add Someone",
+      "addPersonInfo": "Enter the email address of the person you'd like to give access to. If they haven't logged-in before, they will be given an invite that will become active after they log-in.",
       "activePeople": "Active Users",
       "pendingInvites": "Pending Invites",
       "auditLog": "Audit log",
@@ -48,7 +58,8 @@
         "title": "No assigned users",
         "info": "No one has been granted access"
       },
-      "auditLogEmpty": "The audit log is empty"
+      "auditLogEmpty": "The audit log is empty",
+      "role": "Role"
     }
   },
   "navigation": {

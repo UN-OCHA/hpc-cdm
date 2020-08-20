@@ -53,6 +53,10 @@ body, html {
   ${mixins.buttonWithIcon}
 }
 
+.${CLASSES.BUTTON.WITH_ICON_BIG} {
+  ${mixins.buttonWithIconBig}
+}
+
 a {
   color: ${(p) => p.theme.colors.textLink};
   text-decoration: none;

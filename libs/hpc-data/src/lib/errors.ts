@@ -1,5 +1,10 @@
 const NOT_FOUND_ERROR = 'not_found';
 const CONFLICT_ERROR = 'conflict';
+const USER_ERROR = 'user_error';
+
+export type UserErrorKey =
+  | 'access.userAlreadyInvited'
+  | 'access.userAlreadyAdded';
 
 export class NotFoundError extends Error {
   public readonly code = NOT_FOUND_ERROR;
@@ -11,6 +16,19 @@ export class NotFoundError extends Error {
 export const isNotFoundError = (error: Error): error is NotFoundError =>
   error instanceof NotFoundError ||
   (error && (error as NotFoundError).code === NOT_FOUND_ERROR);
+
+export class UserError extends Error {
+  public readonly code = USER_ERROR;
+  public readonly key: UserErrorKey;
+  public constructor(key: UserErrorKey) {
+    super(key);
+    this.key = key;
+  }
+}
+
+export const isUserError = (error: Error): error is UserError =>
+  error instanceof UserError ||
+  (error && (error as UserError).code === USER_ERROR);
 
 /**
  * An error thrown when a user tries to perform a task that fails because

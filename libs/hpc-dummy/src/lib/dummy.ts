@@ -9,7 +9,7 @@ import {
 } from '@unocha/hpc-data';
 import isEqual from 'lodash/isEqual';
 
-import { Assignment, DummyData, DUMMY_DATA } from './data-types';
+import { Assignment, DummyData, DUMMY_DATA, User } from './data-types';
 import { INITIAL_DATA } from './data';
 import { Users } from './users';
 
@@ -291,20 +291,20 @@ export class Dummy {
     return {
       access: {
         getTargetAccess: dummyEndpoint(
-          'access.getAccessForTarget',
+          'access.getTargetAccess',
           async ({ target }: access.GetTargetAccessParams) => {
             return this.getAccessForTarget(target);
           }
         ),
         updateTargetAccess: dummyEndpoint(
-          'access.getAccessForTarget',
+          'access.updateTargetAccess',
           async ({
             target,
             grantee,
             roles,
           }: access.UpdateTargetAccessParams) => {
             if (this.data.currentUser === null) {
-              throw new Error(' not logged in');
+              throw new Error('not logged in');
             }
             const existing = this.data.access.active.filter(
               (i) =>
@@ -329,14 +329,14 @@ export class Dummy {
           }
         ),
         updateTargetAccessInvite: dummyEndpoint(
-          'access.getAccessForTarget',
+          'access.updateTargetAccessInvite',
           async ({
             target,
             email,
             roles,
           }: access.UpdateTargetAccessInviteParams) => {
             if (this.data.currentUser === null) {
-              throw new Error(' not logged in');
+              throw new Error('not logged in');
             }
             const existing = this.data.access.invites.filter(
               (i) => isEqual(i.target, target) && i.email === email
@@ -351,6 +351,72 @@ export class Dummy {
                 roles,
                 lastModifiedBy: this.data.currentUser,
               });
+            }
+            this.store();
+            return this.getAccessForTarget(target);
+          }
+        ),
+        addTargetAccess: dummyEndpoint(
+          'access.addTargetAccess',
+          async ({ target, email, role }: access.AddTargetAccessParams) => {
+            if (this.data.currentUser === null) {
+              throw new Error('not logged in');
+            }
+            const existingInvite = this.data.access.invites.filter(
+              (i) => isEqual(i.target, target) && i.email === email
+            );
+            if (existingInvite.length > 0) {
+              throw new errors.UserError('access.userAlreadyInvited');
+            }
+            const existingUser = this.data.users.filter(
+              (u) => u.email === email
+            )[0] as User | undefined;
+            const existingUserAccess = this.data.access.active.filter(
+              (i) =>
+                isEqual(i.target, target) &&
+                i.grantee.type === 'user' &&
+                i.grantee.id === existingUser?.id
+            );
+            if (existingUserAccess.length > 0) {
+              if (existingUserAccess[0].roles.length > 0) {
+                throw new errors.UserError('access.userAlreadyAdded');
+              } else {
+                existingUserAccess[0].roles = [role];
+                this.data.access.auditLog.push({
+                  target,
+                  grantee: existingUserAccess[0].grantee,
+                  roles: [role],
+                  date: Date.now(),
+                  actor: this.data.currentUser,
+                });
+              }
+            } else {
+              // Not added yet, add user
+              if (existingUser) {
+                const grantee = {
+                  type: 'user',
+                  id: existingUser.id,
+                } as const;
+                this.data.access.active.push({
+                  target,
+                  grantee,
+                  roles: [role],
+                });
+                this.data.access.auditLog.push({
+                  target,
+                  grantee,
+                  roles: [role],
+                  date: Date.now(),
+                  actor: this.data.currentUser,
+                });
+              } else {
+                this.data.access.invites.push({
+                  target,
+                  email,
+                  roles: [role],
+                  lastModifiedBy: this.data.currentUser,
+                });
+              }
             }
             this.store();
             return this.getAccessForTarget(target);

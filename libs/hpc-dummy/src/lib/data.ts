@@ -28,18 +28,21 @@ export const INITIAL_DATA: DummyData = {
       user: {
         name: 'Admin User',
       },
+      email: 'admin@example.com',
     },
     {
       id: 1,
       user: {
         name: 'Operation Lead',
       },
+      email: 'oplead@example.com',
     },
     {
       id: 2,
       user: {
         name: 'Cluster Lead',
       },
+      email: 'cllead@example.com',
     },
   ],
   currentUser: null,

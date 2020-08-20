@@ -101,6 +101,7 @@ const SESSION_USER = t.type({
 const USER = t.type({
   id: t.number,
   user: SESSION_USER,
+  email: t.string,
 });
 
 export type User = t.TypeOf<typeof USER>;
