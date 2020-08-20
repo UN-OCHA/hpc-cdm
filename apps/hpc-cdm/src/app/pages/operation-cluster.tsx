@@ -9,6 +9,7 @@ import { AppContext } from '../context';
 import * as paths from '../paths';
 
 import PageOperationClusterForms from './operation-cluster-forms';
+import PageOperationClusterSettings from './operation-cluster-settings';
 
 interface Props {
   className?: string;
@@ -90,7 +91,7 @@ const PageOperationCluster = (props: Props) => {
                 clusterId: cluster.id,
               })}
             >
-              Settings
+              <PageOperationClusterSettings {...{ operation, cluster }} />
             </Route>
             <Route>
               <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />

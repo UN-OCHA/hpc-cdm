@@ -46,7 +46,8 @@
       "pendingInvites": "Pending Invites",
       "auditLog": "Audit log",
       "roles": {
-        "operationLead": "Operation Lead"
+        "operationLead": "Operation Lead",
+        "clusterLead": "Cluster Lead"
       },
       "invitedBy": "Invited by {name}",
       "confirmRoleUpdate": "Are you sure you want to change {name}'s role to {role}?",

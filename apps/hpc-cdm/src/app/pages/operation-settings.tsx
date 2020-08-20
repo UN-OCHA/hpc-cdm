@@ -26,14 +26,6 @@ const PageOperationSettings = (props: Props) => {
               label: t.t(lang, (s) => s.navigation.manageAccess),
               path: paths.operationSettingsAccess(operation.id),
             },
-            {
-              label: 'Fooooo',
-              path: '',
-            },
-            {
-              label: 'Barrrrrr',
-              path: '',
-            },
           ]}
         >
           <Switch>
