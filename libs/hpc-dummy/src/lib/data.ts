@@ -92,6 +92,9 @@ export const INITIAL_DATA: DummyData = {
       assignments: [
         {
           id: 9932,
+          version: 1,
+          lastUpdatedAt: Date.now(),
+          lastUpdatedBy: 'Some Admin',
           type: 'form',
           formId: 123,
           assignee: {
@@ -104,6 +107,9 @@ export const INITIAL_DATA: DummyData = {
         },
         {
           id: 5925,
+          version: 1,
+          lastUpdatedAt: Date.now(),
+          lastUpdatedBy: 'Some Admin',
           type: 'form',
           formId: 321,
           assignee: {
@@ -116,6 +122,9 @@ export const INITIAL_DATA: DummyData = {
         },
         {
           id: 5926,
+          version: 1,
+          lastUpdatedAt: Date.now(),
+          lastUpdatedBy: 'Some Admin',
           type: 'form',
           formId: 321,
           assignee: {

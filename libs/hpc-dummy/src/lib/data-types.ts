@@ -26,6 +26,9 @@ const ASSIGNMENT_STATE = t.keyof({
 
 const FORM_ASSIGNMENT = t.type({
   id: t.number,
+  version: t.number,
+  lastUpdatedAt: t.number,
+  lastUpdatedBy: t.string,
   type: t.literal('form'),
   formId: t.number,
   assignee: ASSIGNEE,

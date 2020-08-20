@@ -15,6 +15,8 @@ interface Props {
   }>;
 }
 
+export type BreadcrumbLinks = Props['links'];
+
 const Breadcrumbs = (props: Props) => (
   <div className={props.className}>
     {props.links.map((link, i, links) => {

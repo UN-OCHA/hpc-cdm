@@ -187,11 +187,29 @@ export class Dummy {
       }
     };
 
+    let assignee: reportingWindows.GetAssignmentResult['assignee'];
+    if (a.assignee.type === 'operationCluster') {
+      const clusterId = a.assignee.clusterId;
+      const cluster = this.data.operationClusters.filter(
+        (c) => c.id === clusterId
+      );
+      assignee = {
+        type: 'operationCluster',
+        clusterId,
+        clusterName: cluster[0]?.name,
+      };
+    } else {
+      assignee = a.assignee;
+    }
+
     const r: reportingWindows.GetAssignmentResult = {
       id: a.id,
+      version: a.version,
+      lastUpdatedAt: a.lastUpdatedAt,
+      lastUpdatedBy: a.lastUpdatedBy,
       state: a.state,
       task: await getAssignmentTask(a),
-      assignee: a.assignee,
+      assignee,
     };
     return r;
   }
@@ -309,12 +327,25 @@ export class Dummy {
               reportingWindowId,
               assignmentId,
               form: { id, data, files },
+              previousVersion,
             } = params;
 
             for (const rw of this.data.reportingWindows) {
               if (rw.id === reportingWindowId) {
                 for (const a of rw.assignments) {
                   if (a.id === assignmentId && a.formId === id) {
+                    if (a.version !== previousVersion) {
+                      throw new errors.ConflictError(
+                        new Date(a.lastUpdatedAt),
+                        a.lastUpdatedBy
+                      );
+                    }
+                    const u = this.data.users.filter(
+                      (u) => u.id === this.data.currentUser
+                    );
+                    a.version++;
+                    a.lastUpdatedAt = Date.now();
+                    a.lastUpdatedBy = u[0]?.user.name || 'Unknown';
                     a.currentData = data;
                     a.currentFiles = await Promise.all(
                       files.map(async (f) => ({

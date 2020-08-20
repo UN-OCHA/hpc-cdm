@@ -24,8 +24,12 @@ export default class XForm {
     modelStr: string,
     content: string | null,
     files: forms.FormFile[],
-    editable = true
+    opts?: {
+      editable?: boolean;
+      onDataUpdate?: (event: { xform: XForm }) => void;
+    }
   ) {
+    const { editable = true, onDataUpdate } = opts || {};
     this.files = files;
     fileManager.getFileUrl = async (subject) => {
       if (typeof subject === 'string') {
@@ -41,6 +45,13 @@ export default class XForm {
 
     $('.container').replaceWith(markedHtml(html));
     const formElement = $('#form').find('form').first()[0];
+    if (onDataUpdate) {
+      formElement.addEventListener('dataupdate', () =>
+        onDataUpdate({
+          xform: this,
+        })
+      );
+    }
     this.form = new Form(formElement, {
       modelStr,
       instanceStr: content || undefined,

@@ -4,7 +4,7 @@ import { css, styled, THEME, Theme, ThemeProvider } from './lib/theme';
 import { DataLoaderState, dataLoader } from './lib/util';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
-import Breadcrumbs from './lib/components/breadcrumbs';
+import Breadcrumbs, { BreadcrumbLinks } from './lib/components/breadcrumbs';
 import ErrorMessage from './lib/components/error-message';
 import Header from './lib/components/header';
 import Loader from './lib/components/loader';
@@ -25,6 +25,7 @@ const COMPONENTS = {
 
 export {
   BaseStyling,
+  BreadcrumbLinks,
   CLASSES,
   combineClasses,
   COMPONENTS as C,
