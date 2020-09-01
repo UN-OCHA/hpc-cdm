@@ -6,13 +6,20 @@ interface URLInterface {
   new (url: string): {
     pathname: string;
     href: string;
+    searchParams: {
+      set: (name: string, value: string) => void;
+    };
   };
 }
 
+type HttpMethod = 'POST' | 'PUT' | 'PATCH';
+
 interface RequestInit {
+  method?: HttpMethod;
   headers: {
-    Authorization: string;
+    [id: string]: string;
   };
+  body?: string;
 }
 
 interface Response {
@@ -55,19 +62,39 @@ export class LiveModel implements Model {
   }
 
   private call = async <T>({
+    method,
+    data,
     pathname,
+    queryParams,
     resultType,
   }: {
+    method?: HttpMethod;
+    data?: unknown;
     pathname: string;
+    queryParams?: {
+      [id: string]: string;
+    };
     resultType: t.Type<T>;
   }) => {
     const url = new this.URL(this.config.baseUrl);
     url.pathname = pathname;
+    if (queryParams) {
+      for (const [key, value] of Object.entries(queryParams)) {
+        url.searchParams.set(key, value);
+      }
+    }
     const init: RequestInit = {
       headers: {
         Authorization: `Bearer ${this.config.hidToken}`,
       },
     };
+    if (method) {
+      init.method = method;
+    }
+    if (data) {
+      init.body = JSON.stringify(data);
+      init.headers['Content-Type'] = 'application/json';
+    }
     const res = await this.fetch(url.href, init);
     if (res.ok) {
       const json: Res<T> = await res.json();
@@ -85,12 +112,49 @@ export class LiveModel implements Model {
   };
 
   get access(): access.Model {
+    const accessPathnameForTarget = (target: access.AccessTarget) =>
+      `/v2/access/${
+        target.type === 'global'
+          ? 'global'
+          : `${target.type}/${target.targetId}`
+      }`;
+
     return {
-      getTargetAccess: () => Promise.reject(new Error('not implemented')),
-      updateTargetAccess: () => Promise.reject(new Error('not implemented')),
-      updateTargetAccessInvite: () =>
-        Promise.reject(new Error('not implemented')),
-      addTargetAccess: () => Promise.reject(new Error('not implemented')),
+      getTargetAccess: (params) =>
+        this.call({
+          pathname: accessPathnameForTarget(params.target),
+          resultType: access.GET_TARGET_ACCESS_RESULT,
+        }),
+      updateTargetAccess: (params) =>
+        this.call({
+          method: 'PATCH',
+          pathname: accessPathnameForTarget(params.target),
+          data: {
+            grantee: params.grantee,
+            roles: params.roles,
+          },
+          resultType: access.GET_TARGET_ACCESS_RESULT,
+        }),
+      updateTargetAccessInvite: (params) =>
+        this.call({
+          method: 'PATCH',
+          pathname: `${accessPathnameForTarget(params.target)}/invites`,
+          data: {
+            email: params.email,
+            roles: params.roles,
+          },
+          resultType: access.GET_TARGET_ACCESS_RESULT,
+        }),
+      addTargetAccess: (params) =>
+        this.call({
+          method: 'POST',
+          pathname: accessPathnameForTarget(params.target),
+          data: {
+            email: params.email,
+            roles: params.roles,
+          },
+          resultType: access.GET_TARGET_ACCESS_RESULT,
+        }),
     };
   }
 
