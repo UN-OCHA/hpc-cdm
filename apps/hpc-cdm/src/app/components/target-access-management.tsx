@@ -130,68 +130,78 @@ export const TargetAccessManagement = (props: Props) => {
           />
           {active.length > 0 ? (
             <ul className={CLS.LIST}>
-              {active.map((item, i) => (
-                <li key={i}>
-                  <span className={CLASSES.FLEX.GROW}>{item.grantee.name}</span>
-                  <ActionableDropdown
-                    colors="gray"
-                    loadingLabel={t.t(lang, (s) => s.common.saving)}
-                    label={getRoleName(item.role)}
-                    options={roles.map((role) => ({
-                      key: role,
-                      label: getRoleName(role),
-                    }))}
-                    onSelect={async (key) => {
-                      if (
-                        window.confirm(
-                          t
-                            .t(
-                              lang,
-                              (s) =>
-                                s.components.accessControl.confirmRoleUpdate
-                            )
-                            .replace('{name}', item.grantee.name)
-                            .replace('{role}', getRoleName(key))
-                        )
-                      ) {
-                        const data = await env().model.access.updateTargetAccess(
-                          {
-                            target,
-                            grantee: item.grantee,
-                            roles: [key],
-                          }
-                        );
-                        updateLoadedData(data);
-                      }
-                    }}
-                  />
-                  <ActionableIconButton
-                    icon={MdDelete}
-                    onClick={async () => {
-                      if (
-                        window.confirm(
-                          t
-                            .t(
-                              lang,
-                              (s) =>
-                                s.components.accessControl.confirmRoleRemoval
-                            )
-                            .replace('{name}', item.grantee.name)
-                        )
-                      ) {
-                        const data = await env().model.access.updateTargetAccess(
-                          {
-                            target,
-                            grantee: item.grantee,
-                            roles: [],
-                          }
-                        );
-                        updateLoadedData(data);
-                      }
-                    }}
-                  />
-                </li>
-              ))}
+              {active.map((item, i) => {
+                if (item.roles.length !== 1) {
+                  //TODO: implement this (for e.g. global roles)
+                  throw new Error(
+                    'targets with multiple role assignments not supported'
+                  );
+                }
+                return (
+                  <li key={i}>
+                    <span className={CLASSES.FLEX.GROW}>
+                      {item.grantee.name}
+                    </span>
+                    <ActionableDropdown
+                      colors="gray"
+                      loadingLabel={t.t(lang, (s) => s.common.saving)}
+                      label={getRoleName(item.roles[0])}
+                      options={roles.map((role) => ({
+                        key: role,
+                        label: getRoleName(role),
+                      }))}
+                      onSelect={async (key) => {
+                        if (
+                          window.confirm(
+                            t
+                              .t(
+                                lang,
+                                (s) =>
+                                  s.components.accessControl.confirmRoleUpdate
+                              )
+                              .replace('{name}', item.grantee.name)
+                              .replace('{role}', getRoleName(key))
+                          )
+                        ) {
+                          const data = await env().model.access.updateTargetAccess(
+                            {
+                              target,
+                              grantee: item.grantee,
+                              roles: [key],
+                            }
+                          );
+                          updateLoadedData(data);
+                        }
+                      }}
+                    />
+                    <ActionableIconButton
+                      icon={MdDelete}
+                      onClick={async () => {
+                        if (
+                          window.confirm(
+                            t
+                              .t(
+                                lang,
+                                (s) =>
+                                  s.components.accessControl.confirmRoleRemoval
+                              )
+                              .replace('{name}', item.grantee.name)
+                          )
+                        ) {
+                          const data = await env().model.access.updateTargetAccess(
+                            {
+                              target,
+                              grantee: item.grantee,
+                              roles: [],
+                            }
+                          );
+                          updateLoadedData(data);
+                        }
+                      }}
+                    />
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <C.ErrorMessage
@@ -202,75 +212,83 @@ export const TargetAccessManagement = (props: Props) => {
           <h3>{t.t(lang, (s) => s.components.accessControl.pendingInvites)}</h3>
           {invites.length > 0 ? (
             <ul className={CLS.LIST}>
-              {invites.map((item, i) => (
-                <li key={i}>
-                  <span>{item.email}</span>
-                  <span className={CLS.DETAILS}>
-                    (
-                    {t
-                      .t(lang, (s) => s.components.accessControl.invitedBy)
-                      .replace('{name}', item.lastModifiedBy.name)}
-                    )
-                  </span>
-                  <ActionableDropdown
-                    colors="gray"
-                    loadingLabel={t.t(lang, (s) => s.common.saving)}
-                    label={getRoleName(item.role)}
-                    options={roles.map((role) => ({
-                      key: role,
-                      label: getRoleName(role),
-                    }))}
-                    onSelect={async (key) => {
-                      if (
-                        window.confirm(
-                          t
-                            .t(
-                              lang,
-                              (s) =>
-                                s.components.accessControl.confirmRoleUpdate
-                            )
-                            .replace('{name}', item.email)
-                            .replace('{role}', getRoleName(key))
-                        )
-                      ) {
-                        const data = await env().model.access.updateTargetAccessInvite(
-                          {
-                            target,
-                            email: item.email,
-                            roles: [key],
-                          }
-                        );
-                        updateLoadedData(data);
-                      }
-                    }}
-                  />
-                  <ActionableIconButton
-                    icon={MdDelete}
-                    onClick={async () => {
-                      if (
-                        window.confirm(
-                          t
-                            .t(
-                              lang,
-                              (s) =>
-                                s.components.accessControl.confirmRoleRemoval
-                            )
-                            .replace('{name}', item.email)
-                        )
-                      ) {
-                        const data = await env().model.access.updateTargetAccessInvite(
-                          {
-                            target,
-                            email: item.email,
-                            roles: [],
-                          }
-                        );
-                        updateLoadedData(data);
-                      }
-                    }}
-                  />
-                </li>
-              ))}
+              {invites.map((item, i) => {
+                if (item.roles.length !== 1) {
+                  //TODO: implement this (for e.g. global roles)
+                  throw new Error(
+                    'targets with multiple role assignments not supported'
+                  );
+                }
+                return (
+                  <li key={i}>
+                    <span>{item.email}</span>
+                    <span className={CLS.DETAILS}>
+                      (
+                      {t
+                        .t(lang, (s) => s.components.accessControl.invitedBy)
+                        .replace('{name}', item.lastModifiedBy.name)}
+                      )
+                    </span>
+                    <ActionableDropdown
+                      colors="gray"
+                      loadingLabel={t.t(lang, (s) => s.common.saving)}
+                      label={getRoleName(item.roles[0])}
+                      options={roles.map((role) => ({
+                        key: role,
+                        label: getRoleName(role),
+                      }))}
+                      onSelect={async (key) => {
+                        if (
+                          window.confirm(
+                            t
+                              .t(
+                                lang,
+                                (s) =>
+                                  s.components.accessControl.confirmRoleUpdate
+                              )
+                              .replace('{name}', item.email)
+                              .replace('{role}', getRoleName(key))
+                          )
+                        ) {
+                          const data = await env().model.access.updateTargetAccessInvite(
+                            {
+                              target,
+                              email: item.email,
+                              roles: [key],
+                            }
+                          );
+                          updateLoadedData(data);
+                        }
+                      }}
+                    />
+                    <ActionableIconButton
+                      icon={MdDelete}
+                      onClick={async () => {
+                        if (
+                          window.confirm(
+                            t
+                              .t(
+                                lang,
+                                (s) =>
+                                  s.components.accessControl.confirmRoleRemoval
+                              )
+                              .replace('{name}', item.email)
+                          )
+                        ) {
+                          const data = await env().model.access.updateTargetAccessInvite(
+                            {
+                              target,
+                              email: item.email,
+                              roles: [],
+                            }
+                          );
+                          updateLoadedData(data);
+                        }
+                      }}
+                    />
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <C.ErrorMessage

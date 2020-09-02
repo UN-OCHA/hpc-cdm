@@ -92,7 +92,7 @@ export const TargetAccessManagementAddUser = (props: Props) => {
       .model.access.addTargetAccess({
         target,
         email: emailInputValue,
-        role: roleInputValue,
+        roles: [roleInputValue],
       })
       .catch((err) => {
         console.log(err);
