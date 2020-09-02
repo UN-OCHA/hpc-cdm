@@ -50,6 +50,15 @@ interface Res<T> {
   status: 'ok' | unknown;
 }
 
+export class ModelError extends Error {
+  public readonly res: Response;
+
+  public constructor(message: string, res: Response) {
+    super(message);
+    this.res = res;
+  }
+}
+
 export class LiveModel implements Model {
   private readonly config: Config;
   private readonly URL: URLInterface;
@@ -104,10 +113,10 @@ export class LiveModel implements Model {
       } else {
         const report = PathReporter.report(decode);
         console.error('Received unexpected result from server', report, json);
-        throw new Error('Received unexpected result from server');
+        throw new ModelError('Received unexpected result from server', res);
       }
     } else {
-      throw new Error(res.statusText);
+      throw new ModelError(res.statusText, res);
     }
   };
 
