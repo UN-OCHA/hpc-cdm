@@ -8,6 +8,9 @@ import { Users } from './users';
 
 const uriToBlob = (uri: string) => fetch(uri).then((res) => res.blob());
 
+const uriToArrayBuffer = (uri: string) =>
+  uriToBlob(uri).then((blob) => blob.arrayBuffer());
+
 const blobToBase64URI = (blob: Blob) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -177,9 +180,7 @@ export class Dummy {
           currentFiles: await Promise.all(
             a.currentFiles.map(async (f) => ({
               name: f.name,
-              // TODO fix me
-              // data: await uriToBlob(f.base64Data),
-              data: f.base64Data,
+              data: await uriToArrayBuffer(f.base64Data),
             }))
           ),
         };
@@ -324,9 +325,7 @@ export class Dummy {
                     a.currentFiles = await Promise.all(
                       files.map(async (f) => ({
                         name: f.name,
-                        // TODO fix me
-                        // base64Data: await blobToBase64URI(f.data),
-                        base64Data: f.data,
+                        base64Data: await blobToBase64URI(new Blob([f.data])),
                       }))
                     );
                   }

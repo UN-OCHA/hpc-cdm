@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { ARRAY_BUFFER } from './util';
 
 const FORM_BASE = t.type({
   id: t.number,
@@ -37,7 +38,7 @@ export type Form = t.TypeOf<typeof FORM>;
 
 export const FORM_FILE = t.type({
   name: t.string,
-  data: t.string,
+  data: ARRAY_BUFFER,
 });
 
 export type FormFile = t.TypeOf<typeof FORM_FILE>;

@@ -16,3 +16,18 @@ export const hasKey = <K extends string>(
 export type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
 };
+
+import * as asmCrypto from 'asmcrypto.js';
+
+export const hashFile = (data: Buffer | string) => {
+  const hasher = new asmCrypto.Sha256();
+  if (typeof data === 'string') {
+    hasher.process(
+      new Uint8Array(data.length).map((_, i) => data.charCodeAt(i))
+    );
+  } else {
+    hasher.process(data);
+  }
+  hasher.finish();
+  return asmCrypto.bytes_to_hex(hasher.result as Uint8Array);
+};
