@@ -66,13 +66,14 @@ export class LiveModel implements Model {
     pathname: string;
     resultType: t.Type<T>;
     method?: string;
+    // body?: any;
     body?: string;
   }) => {
     const url = new this.URL(this.config.baseUrl);
     url.pathname = pathname;
     const init: RequestInit = {
       headers: {
-        Authorization: `Credentials ${this.config.hidToken}`,
+        Authorization: `Bearer ${this.config.hidToken}`,
         'Content-Type': 'application/json',
       },
       method: method || 'GET',

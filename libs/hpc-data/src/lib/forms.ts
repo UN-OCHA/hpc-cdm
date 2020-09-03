@@ -37,7 +37,7 @@ export type Form = t.TypeOf<typeof FORM>;
 
 export const FORM_FILE = t.type({
   name: t.string,
-  fileHash: t.string,
+  data: t.string,
 });
 
 export type FormFile = t.TypeOf<typeof FORM_FILE>;

@@ -67,7 +67,7 @@ export type GetAssignmentsForOperationResult = t.TypeOf<
 >;
 
 export const GET_ASSIGNMENT_PARAMS = t.type({
-  reportingWindowId: t.union([t.number, t.undefined]),
+  reportingWindowId: t.union([INTEGER_FROM_STRING, t.undefined]),
   assignmentId: INTEGER_FROM_STRING,
 });
 
@@ -104,8 +104,8 @@ export const GET_ASSIGNMENT_RESULT = t.type({
 export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT>;
 
 export const UPDATE_ASSIGNMENT_PARAMS = t.type({
-  reportingWindowId: t.union([t.undefined, t.number]),
-  assignmentId: t.number,
+  reportingWindowId: INTEGER_FROM_STRING,
+  assignmentId: INTEGER_FROM_STRING,
   form: FORM_UPDATE_DATA,
 });
 
