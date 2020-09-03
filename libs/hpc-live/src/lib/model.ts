@@ -1,7 +1,13 @@
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { Model, operations, reportingWindows, access } from '@unocha/hpc-data';
+import {
+  Model,
+  operations,
+  reportingWindows,
+  access,
+  errors,
+} from '@unocha/hpc-data';
 interface URLInterface {
   new (url: string): {
     pathname: string;
@@ -50,14 +56,20 @@ interface Res<T> {
   status: 'ok' | unknown;
 }
 
-export class ModelError extends Error {
-  public readonly res: Response;
+const MODEL_ERROR = Symbol('ModelError');
 
-  public constructor(message: string, res: Response) {
+export class ModelError extends Error {
+  public readonly code = MODEL_ERROR;
+  public readonly json: any;
+
+  public constructor(message: string, json: any) {
     super(message);
-    this.res = res;
+    this.json = json;
   }
 }
+
+export const isModelError = (value: unknown): value is ModelError =>
+  value instanceof Error && (value as ModelError).code === MODEL_ERROR;
 
 export class LiveModel implements Model {
   private readonly config: Config;
@@ -113,10 +125,22 @@ export class LiveModel implements Model {
       } else {
         const report = PathReporter.report(decode);
         console.error('Received unexpected result from server', report, json);
-        throw new ModelError('Received unexpected result from server', res);
+        throw new ModelError('Received unexpected result from server', json);
       }
     } else {
-      throw new ModelError(res.statusText, res);
+      const json = await res.json();
+      if (
+        json?.code === 'BadRequestError' &&
+        errors.USER_ERROR_KEYS.includes(json?.message)
+      ) {
+        throw new errors.UserError(json.message);
+      } else {
+        const message =
+          json?.code && json?.message
+            ? `${json.code}: ${json.message}`
+            : res.statusText;
+        throw new ModelError(message, json);
+      }
     }
   };
 

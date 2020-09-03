@@ -2,9 +2,12 @@ const NOT_FOUND_ERROR = 'not_found';
 const CONFLICT_ERROR = 'conflict';
 const USER_ERROR = 'user_error';
 
-export type UserErrorKey =
-  | 'access.userAlreadyInvited'
-  | 'access.userAlreadyAdded';
+export const USER_ERROR_KEYS = [
+  'access.userAlreadyInvited',
+  'access.userAlreadyAdded',
+] as const;
+
+export type UserErrorKey = typeof USER_ERROR_KEYS[number];
 
 export class NotFoundError extends Error {
   public readonly code = NOT_FOUND_ERROR;
