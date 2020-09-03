@@ -13,6 +13,7 @@ interface RequestInit {
   method?: string;
   headers: {
     Authorization: string;
+    'Content-Type': string;
   };
   body?: string;
 }
@@ -72,9 +73,10 @@ export class LiveModel implements Model {
     const init: RequestInit = {
       headers: {
         Authorization: `Credentials ${this.config.hidToken}`,
+        'Content-Type': 'application/json',
       },
       method: method || 'GET',
-      body: body || undefined
+      body: body || undefined,
     };
     const res = await this.fetch(url.href, init);
     if (res.ok) {
@@ -95,10 +97,10 @@ export class LiveModel implements Model {
   get operations(): operations.Model {
     return {
       getClusters: (params) =>
-      this.call({
-        pathname: `/v2/operations/${params.operationId}/clusters`,
-        resultType: operations.GET_CLUSTERS_RESULT,
-      }),
+        this.call({
+          pathname: `/v2/operations/${params.operationId}/clusters`,
+          resultType: operations.GET_CLUSTERS_RESULT,
+        }),
       getOperations: () =>
         this.call({
           pathname: `/v2/operations`,
@@ -114,27 +116,26 @@ export class LiveModel implements Model {
 
   get reportingWindows(): reportingWindows.Model {
     return {
+      getAssignment: (params) => {
+        const { assignmentId } = params;
+        return this.call({
+          pathname: `/v2/reportingwindows/assignments/${assignmentId}`,
+          resultType: reportingWindows.GET_ASSIGNMENT_RESULT,
+        });
+      },
       getAssignmentsForOperation: (params) => {
-        const {reportingWindowId: rwId, operationId: opId} = params;
+        const { reportingWindowId: rwId, operationId: opId } = params;
         return this.call({
           pathname: `/v2/reportingwindows/${rwId}/operations/${opId}/assignments`,
           resultType: reportingWindows.GET_ASSIGNMENTS_FOR_OPERATION_RESULT,
         });
       },
-      getAssignment: (params) => {
-        const {assignmentId: aId} = params;
-        return this.call({
-          pathname: `/v2/reportingwindows/assignments/${aId}`,
-          resultType: reportingWindows.GET_ASSIGNMENT_RESULT,
-        });
-      },
       updateAssignment: (params) => {
-        const {assignmentId: aId} = params;
-        // TODO -help- how to pass the form files?
-        // const body = JSON.stringify(param.form)
+        const { assignmentId: aId } = params;
+        const body = JSON.stringify(params);
         return this.call({
           method: 'put',
-          body: '',
+          body,
           pathname: `/v2/reportingwindows/assignments/${aId}`,
           resultType: reportingWindows.GET_ASSIGNMENT_RESULT,
         });
