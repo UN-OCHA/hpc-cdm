@@ -48,16 +48,18 @@ export type GetAssignmentsForOperationParams = t.TypeOf<
   typeof GET_ASSIGNMENTS_FOR_OPERATION_PARAMS
 >;
 
+export const CLUSTER_ASSIGNMENT = t.type({
+  clusterId: t.number,
+  forms: t.array(FORM_ASSIGNMENT),
+});
+
+export type ClusterAssignment = t.TypeOf<typeof CLUSTER_ASSIGNMENT>;
+
 export const GET_ASSIGNMENTS_FOR_OPERATION_RESULT = t.type({
   directAssignments: t.type({
     forms: t.array(FORM_ASSIGNMENT),
   }),
-  clusterAssignments: t.array(
-    t.type({
-      clusterId: t.number,
-      forms: t.array(FORM_ASSIGNMENT),
-    })
-  ),
+  clusterAssignments: t.array(CLUSTER_ASSIGNMENT),
 });
 
 export type GetAssignmentsForOperationResult = t.TypeOf<

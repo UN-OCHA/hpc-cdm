@@ -177,7 +177,8 @@ export class Dummy {
           currentFiles: await Promise.all(
             a.currentFiles.map(async (f) => ({
               name: f.name,
-              data: await uriToBlob(f.base64Data),
+              // data: await uriToBlob(f.base64Data),
+              fileHash: f.base64Data,
             }))
           ),
         };
@@ -322,7 +323,8 @@ export class Dummy {
                     a.currentFiles = await Promise.all(
                       files.map(async (f) => ({
                         name: f.name,
-                        base64Data: await blobToBase64URI(f.data),
+                        // base64Data: await blobToBase64URI(f.data),
+                        base64Data: f.fileHash,
                       }))
                     );
                   }
