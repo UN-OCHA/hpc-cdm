@@ -290,7 +290,7 @@ export class Dummy {
     return {
       roles: getAllowedRoles(target),
       active: active.map((i) => ({
-        role: i.roles[0],
+        roles: i.roles,
         grantee: getFullGrantee(i.grantee),
       })),
       invites: invites.map((i) => ({
@@ -299,7 +299,7 @@ export class Dummy {
           type: 'user',
           id: i.lastModifiedBy,
         }),
-        role: i.roles[0],
+        roles: i.roles,
       })),
       auditLog: auditLog
         .map((i) => ({
@@ -386,7 +386,7 @@ export class Dummy {
         ),
         addTargetAccess: dummyEndpoint(
           'access.addTargetAccess',
-          async ({ target, email, role }: access.AddTargetAccessParams) => {
+          async ({ target, email, roles }: access.AddTargetAccessParams) => {
             if (this.data.currentUser === null) {
               throw new Error('not logged in');
             }
@@ -409,11 +409,11 @@ export class Dummy {
               if (existingUserAccess[0].roles.length > 0) {
                 throw new errors.UserError('access.userAlreadyAdded');
               } else {
-                existingUserAccess[0].roles = [role];
+                existingUserAccess[0].roles = roles;
                 this.data.access.auditLog.push({
                   target,
                   grantee: existingUserAccess[0].grantee,
-                  roles: [role],
+                  roles,
                   date: Date.now(),
                   actor: this.data.currentUser,
                 });
@@ -428,12 +428,12 @@ export class Dummy {
                 this.data.access.active.push({
                   target,
                   grantee,
-                  roles: [role],
+                  roles,
                 });
                 this.data.access.auditLog.push({
                   target,
                   grantee,
-                  roles: [role],
+                  roles,
                   date: Date.now(),
                   actor: this.data.currentUser,
                 });
@@ -441,7 +441,7 @@ export class Dummy {
                 this.data.access.invites.push({
                   target,
                   email,
-                  roles: [role],
+                  roles,
                   lastModifiedBy: this.data.currentUser,
                 });
               }

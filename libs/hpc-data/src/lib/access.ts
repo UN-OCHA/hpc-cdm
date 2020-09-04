@@ -75,7 +75,7 @@ export const GET_TARGET_ACCESS_RESULT = t.type(
     active: t.array(
       t.type({
         grantee: GRANTEE_WITH_META,
-        role: t.string,
+        roles: t.array(t.string),
       })
     ),
     /**
@@ -85,7 +85,7 @@ export const GET_TARGET_ACCESS_RESULT = t.type(
     invites: t.array(
       t.type({
         email: t.string,
-        role: t.string,
+        roles: t.array(t.string),
         /**
          * Who was the person that last modified this invitation
          */
@@ -143,7 +143,7 @@ export const ADD_TARGET_ACCESS_PARAMS = t.type(
   {
     target: ACCESS_TARGET,
     email: t.string,
-    role: t.string,
+    roles: t.array(t.string),
   },
   'ADD_TARGET_ACCESS_PARAMS'
 );
