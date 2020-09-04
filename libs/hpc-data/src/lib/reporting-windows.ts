@@ -1,6 +1,13 @@
 import * as t from 'io-ts';
-import { FORM_META, FORM, FORM_UPDATE_DATA, FORM_FILE } from './forms';
-import { INTEGER_FROM_STRING } from './util';
+import {
+  FORM_META,
+  FORM,
+  FORM_UPDATE_DATA,
+  FORM_FILE,
+  FORM_FILE_HASH,
+  FORM_UPDATE_BODY,
+} from './forms';
+import { INTEGER_FROM_STRING, ARRAY_BUFFER } from './util';
 
 export const REPORTING_WINDOW = t.type({
   // TODO
@@ -96,7 +103,7 @@ export const GET_ASSIGNMENT_RESULT = t.type({
     type: t.literal('form'),
     form: FORM,
     currentData: t.union([t.string, t.null]),
-    currentFiles: t.array(FORM_FILE),
+    currentFiles: t.array(FORM_FILE_HASH),
   }),
   assignee: ASSIGNMENT_ASSIGNEE,
 });
@@ -110,6 +117,55 @@ export const UPDATE_ASSIGNMENT_PARAMS = t.type({
 });
 
 export type UpdateAssignmentParams = t.TypeOf<typeof UPDATE_ASSIGNMENT_PARAMS>;
+
+export const UPDATE_ASSIGNMENT_BODY = t.type({
+  reportingWindowId: INTEGER_FROM_STRING,
+  assignmentId: INTEGER_FROM_STRING,
+  form: FORM_UPDATE_BODY,
+});
+
+export type UpdateAssignmentBody = t.TypeOf<typeof UPDATE_ASSIGNMENT_BODY>;
+
+export const CHECK_FILES_PARAMS = t.type({
+  fileHashes: t.array(t.string),
+});
+
+export type CheckFilesParams = t.TypeOf<typeof CHECK_FILES_PARAMS>;
+
+export const CHECK_FILES_RESULT = t.type({
+  missingFileHashes: t.array(t.string),
+});
+
+export type CheckFilesResult = t.TypeOf<typeof CHECK_FILES_RESULT>;
+
+export const UPLOAD_ASSIGNMENT_FILE_BODY = ARRAY_BUFFER;
+
+export type UploadAssignmentFileBody = t.TypeOf<
+  typeof UPLOAD_ASSIGNMENT_FILE_BODY
+>;
+
+export const UPLOAD_ASSIGNMENT_FILE_RESULT = t.type({
+  fileHash: t.string,
+});
+
+export type UploadAssignmentFileResult = t.TypeOf<
+  typeof UPLOAD_ASSIGNMENT_FILE_RESULT
+>;
+
+export const DOWNLOAD_ASSIGNMENT_FILE_PARAMS = t.type({
+  assignmentId: INTEGER_FROM_STRING,
+  fileHash: t.string,
+});
+
+export type DownloadAssignmentFileParams = t.TypeOf<
+  typeof DOWNLOAD_ASSIGNMENT_FILE_PARAMS
+>;
+
+export const DOWNLOAD_ASSIGNMENT_FILE_RESULT = ARRAY_BUFFER;
+
+export type DownloadAssignmentFileResult = t.TypeOf<
+  typeof DOWNLOAD_ASSIGNMENT_FILE_RESULT
+>;
 
 export interface Model {
   getAssignmentsForOperation(

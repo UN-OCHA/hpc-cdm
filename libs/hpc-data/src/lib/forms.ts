@@ -36,6 +36,15 @@ export const FORM = t.intersection([
 
 export type Form = t.TypeOf<typeof FORM>;
 
+export const FORM_FILE_HASH = t.type({
+  name: t.string,
+  data: t.type({
+    fileHash: t.string,
+  }),
+});
+
+export type FormFileHash = t.TypeOf<typeof FORM_FILE_HASH>;
+
 export const FORM_FILE = t.type({
   name: t.string,
   data: ARRAY_BUFFER,
@@ -52,3 +61,20 @@ export const FORM_UPDATE_DATA = t.intersection([
 ]);
 
 export type FormUpdateData = t.TypeOf<typeof FORM_UPDATE_DATA>;
+
+export const FORM_UPDATE_BODY = t.intersection([
+  FORM_BASE,
+  t.type({
+    data: t.string,
+    files: t.array(
+      t.type({
+        name: t.string,
+        data: t.type({
+          fileHash: t.string,
+        }),
+      })
+    ),
+  }),
+]);
+
+export type FormUpdateBody = t.TypeOf<typeof FORM_UPDATE_BODY>;

@@ -1,7 +1,9 @@
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { Model, operations, reportingWindows } from '@unocha/hpc-data';
+import { Model, operations, reportingWindows, forms } from '@unocha/hpc-data';
+import { util } from '@unocha/hpc-core';
+
 interface URLInterface {
   new (url: string): {
     pathname: string;
@@ -15,7 +17,7 @@ interface RequestInit {
     Authorization: string;
     'Content-Type': string;
   };
-  body?: string;
+  body?: string | ArrayBuffer;
 }
 
 interface Response {
@@ -46,6 +48,12 @@ interface Res<T> {
   status: 'ok' | unknown;
 }
 
+interface FileInfo {
+  name: string;
+  data: ArrayBuffer;
+  fileHash: string;
+}
+
 export class LiveModel implements Model {
   private readonly config: Config;
   private readonly URL: URLInterface;
@@ -62,19 +70,20 @@ export class LiveModel implements Model {
     resultType,
     method,
     body,
+    contentType,
   }: {
     pathname: string;
     resultType: t.Type<T>;
     method?: string;
-    // body?: any;
-    body?: string;
+    body?: string | ArrayBuffer;
+    contentType?: string;
   }) => {
     const url = new this.URL(this.config.baseUrl);
     url.pathname = pathname;
     const init: RequestInit = {
       headers: {
         Authorization: `Bearer ${this.config.hidToken}`,
-        'Content-Type': 'application/json',
+        'Content-Type': contentType || 'application/json',
       },
       method: method || 'GET',
       body: body || undefined,
@@ -131,9 +140,34 @@ export class LiveModel implements Model {
           resultType: reportingWindows.GET_ASSIGNMENTS_FOR_OPERATION_RESULT,
         });
       },
-      updateAssignment: (params) => {
+      updateAssignment: async (params) => {
         const { assignmentId: aId } = params;
-        const body = JSON.stringify(params);
+
+        const files = params.form.files.map((f) => ({
+          name: f.name,
+          data: f.data,
+          fileHash: util.hashFile(f.data),
+        }));
+
+        if (files && files.length) {
+          const newFiles = await this.checkFormAssignmentFiles(aId, files);
+          if (newFiles) {
+            await this.uploadFormAssignmentFiles(aId, newFiles);
+          }
+        }
+
+        const body = JSON.stringify({
+          ...params,
+          form: {
+            id: params.form.id,
+            version: params.form.version,
+            data: params.form.data,
+            files: files.map((f) => ({
+              name: f.name,
+              data: { fileHash: f.fileHash },
+            })),
+          },
+        });
         return this.call({
           method: 'put',
           body,
@@ -142,5 +176,30 @@ export class LiveModel implements Model {
         });
       },
     };
+  }
+
+  private async checkFormAssignmentFiles(
+    assignmentId: number,
+    files: FileInfo[]
+  ) {
+    const body = JSON.stringify({ fileHashes: files.map((f) => f.fileHash) });
+
+    const response = await this.call({
+      method: 'post',
+      body,
+      pathname: `/v2/reportingwindows/assignments/${assignmentId}/checkfiles`,
+      resultType: reportingWindows.CHECK_FILES_RESULT,
+    });
+
+    const { missingFileHashes } = response;
+    return files.filter((f) => missingFileHashes.includes(f.fileHash));
+  }
+
+  private async uploadFormAssignmentFiles(
+    assignmentId: number,
+    files: FileInfo[]
+  ) {
+    // TODO
+    // FormData with string | Blob interface?
   }
 }

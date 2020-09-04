@@ -19,14 +19,25 @@ export type RecursivePartial<T> = {
 
 import * as asmCrypto from 'asmcrypto.js';
 
-export const hashFile = (data: Buffer | string) => {
+export const toBuffer = (ab: ArrayBuffer): Buffer => {
+  const buf = Buffer.alloc(ab.byteLength);
+  const view = new Uint8Array(ab);
+  for (let i = 0; i < buf.length; ++i) {
+    buf[i] = view[i];
+  }
+  return buf;
+};
+
+export const hashFile = (data: ArrayBuffer | Buffer | string): string => {
   const hasher = new asmCrypto.Sha256();
   if (typeof data === 'string') {
     hasher.process(
       new Uint8Array(data.length).map((_, i) => data.charCodeAt(i))
     );
-  } else {
+  } else if (Buffer.isBuffer(data)) {
     hasher.process(data);
+  } else {
+    hasher.process(toBuffer(data));
   }
   hasher.finish();
   return asmCrypto.bytes_to_hex(hasher.result as Uint8Array);
