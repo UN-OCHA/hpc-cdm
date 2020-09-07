@@ -1,11 +1,5 @@
 import * as t from 'io-ts';
-import {
-  FORM_META,
-  FORM,
-  FORM_UPDATE_DATA,
-  FORM_FILE,
-  FORM_UPDATE_BODY,
-} from './forms';
+import { FORM_META, FORM, FORM_UPDATE_DATA, FORM_FILE } from './forms';
 import { INTEGER_FROM_STRING, ARRAY_BUFFER } from './util';
 
 export const REPORTING_WINDOW = t.type({
@@ -93,27 +87,34 @@ export const ASSIGNMENT_ASSIGNEE = t.union([
 
 export type AssignmentAssignee = t.TypeOf<typeof ASSIGNMENT_ASSIGNEE>;
 
-export const GET_ASSIGNMENT_RESULT = t.type({
-  id: t.number,
-  version: t.number,
-  /** UNIX Timestamp */
-  lastUpdatedAt: t.number,
-  /** Name of user that last updated this assignment */
-  lastUpdatedBy: t.string,
-  state: ASSIGNMENT_STATE,
-  /**
-   * TODO: add additional tasks, such as indicators
-   */
-  task: t.type({
-    type: t.literal('form'),
-    form: FORM,
-    currentData: t.union([t.string, t.null]),
-    currentFiles: t.array(FORM_FILE),
-  }),
-  assignee: ASSIGNMENT_ASSIGNEE,
-});
+/**
+ * Generic type used for both the model and real endpoints that provide this
+ * data to allow for either a file hash of file contents to be returned
+ */
+export const GET_ASSIGNMENT_RESULT = <T>(fileType: t.Type<T>) =>
+  t.type({
+    id: t.number,
+    version: t.number,
+    /** UNIX Timestamp in milliseconds */
+    lastUpdatedAt: t.number,
+    /** Name of user that last updated this assignment */
+    lastUpdatedBy: t.string,
+    state: ASSIGNMENT_STATE,
+    /**
+     * TODO: add additional tasks, such as indicators
+     */
+    task: t.type({
+      type: t.literal('form'),
+      form: FORM,
+      currentData: t.union([t.string, t.null]),
+      currentFiles: t.array(fileType),
+    }),
+    assignee: ASSIGNMENT_ASSIGNEE,
+  });
 
-export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT>;
+export const GET_ASSIGNMENT_RESULT_MODEL = GET_ASSIGNMENT_RESULT(FORM_FILE);
+
+export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT_MODEL>;
 
 export const UPDATE_ASSIGNMENT_PARAMS = t.type({
   reportingWindowId: INTEGER_FROM_STRING,
@@ -129,14 +130,6 @@ export const UPDATE_ASSIGNMENT_PARAMS = t.type({
 });
 
 export type UpdateAssignmentParams = t.TypeOf<typeof UPDATE_ASSIGNMENT_PARAMS>;
-
-export const UPDATE_ASSIGNMENT_BODY = t.type({
-  reportingWindowId: INTEGER_FROM_STRING,
-  assignmentId: INTEGER_FROM_STRING,
-  form: FORM_UPDATE_BODY,
-});
-
-export type UpdateAssignmentBody = t.TypeOf<typeof UPDATE_ASSIGNMENT_BODY>;
 
 export const CHECK_FILES_PARAMS = t.type({
   fileHashes: t.array(t.string),

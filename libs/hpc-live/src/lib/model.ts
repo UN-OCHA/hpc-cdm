@@ -4,10 +4,12 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { util } from '@unocha/hpc-core';
 import {
   Model,
+  forms,
   operations,
   reportingWindows,
   access,
   errors,
+  util as dataUtil,
 } from '@unocha/hpc-data';
 
 interface URLInterface {
@@ -82,6 +84,77 @@ export class ModelError extends Error {
 
 export const isModelError = (value: unknown): value is ModelError =>
   value instanceof Error && (value as ModelError).code === MODEL_ERROR;
+
+/**
+ * Custom types for endpoints where endpoints aren't directly implementing
+ * functions in the model.
+ *
+ * (e.g. when it's neccesary for single model function to be backed my multiple
+ * HTTP endpoints, or where some daya is sent as params and some as body).
+ */
+export const LIVE_TYPES = {
+  ACCESS: {
+    /**
+     * Query parameters sent for every target-specific access endpoint
+     */
+    TARGET_ACCESS_PARAMS: t.intersection([
+      t.type({
+        targetType: t.keyof({
+          global: null,
+          operation: null,
+          operationCluster: null,
+        }),
+      }),
+      t.partial({
+        targetId: dataUtil.INTEGER_FROM_STRING,
+      }),
+    ]),
+    /**
+     * POST BODY for updateTargetAccess()
+     */
+    UPDATE_TARGET_ACCESS_BODY: t.type({
+      grantee: access.GRANTEE,
+      roles: t.array(t.string),
+    }),
+    /**
+     * POST BODY for updateTargetAccessInvite()
+     */
+    UPDATE_TARGET_ACCESS_INVITE_BODY: t.type({
+      email: t.string,
+      roles: t.array(t.string),
+    }),
+    /**
+     * POST BODY for addTargetAccess()
+     */
+    ADD_TARGET_ACCESS_BODY: t.type({
+      email: t.string,
+      roles: t.array(t.string),
+    }),
+  },
+  REPORTING_WINDOWS: {
+    GET_ASSIGNMENT_RESULT: reportingWindows.GET_ASSIGNMENT_RESULT(
+      forms.FORM_FILE_HASH
+    ),
+    UPDATE_ASSIGNMENT_BODY: t.type({
+      reportingWindowId: dataUtil.INTEGER_FROM_STRING,
+      assignmentId: dataUtil.INTEGER_FROM_STRING,
+      form: t.intersection([
+        forms.FORM_BASE,
+        t.type({
+          data: t.string,
+          files: t.array(
+            t.type({
+              name: t.string,
+              data: t.type({
+                fileHash: t.string,
+              }),
+            })
+          ),
+        }),
+      ]),
+    }),
+  },
+} as const;
 
 export class LiveModel implements Model {
   private readonly config: Config;
@@ -247,13 +320,31 @@ export class LiveModel implements Model {
   }
 
   get reportingWindows(): reportingWindows.Model {
+    const handleAssignmentResult = async (
+      result: t.TypeOf<
+        typeof LIVE_TYPES['REPORTING_WINDOWS']['GET_ASSIGNMENT_RESULT']
+      >
+    ): Promise<reportingWindows.GetAssignmentResult> => {
+      // TODO: download any neccesary files
+
+      const r: reportingWindows.GetAssignmentResult = {
+        ...result,
+        task: {
+          ...result.task,
+          currentFiles: [],
+        },
+      };
+      return r;
+    };
+
     return {
-      getAssignment: (params) => {
+      getAssignment: async (params) => {
         const { assignmentId } = params;
-        return this.call({
+        const result = await this.call({
           pathname: `/v2/reportingwindows/assignments/${assignmentId}`,
-          resultType: reportingWindows.GET_ASSIGNMENT_RESULT,
+          resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
         });
+        return handleAssignmentResult(result);
       },
       getAssignmentsForOperation: (params) => {
         const { reportingWindowId: rwId, operationId: opId } = params;
@@ -292,15 +383,16 @@ export class LiveModel implements Model {
             })),
           },
         };
-        return this.call({
+        const result = await this.call({
           method: 'PUT',
           body: {
             type: 'json',
             data,
           },
           pathname: `/v2/reportingwindows/assignments/${aId}`,
-          resultType: reportingWindows.GET_ASSIGNMENT_RESULT,
+          resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
         });
+        return handleAssignmentResult(result);
       },
     };
   }

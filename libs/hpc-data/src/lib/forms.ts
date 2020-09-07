@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
 import { ARRAY_BUFFER } from './util';
 
-const FORM_BASE = t.type({
+export const FORM_BASE = t.type({
   id: t.number,
   version: t.number,
 });
@@ -61,20 +61,3 @@ export const FORM_UPDATE_DATA = t.intersection([
 ]);
 
 export type FormUpdateData = t.TypeOf<typeof FORM_UPDATE_DATA>;
-
-export const FORM_UPDATE_BODY = t.intersection([
-  FORM_BASE,
-  t.type({
-    data: t.string,
-    files: t.array(
-      t.type({
-        name: t.string,
-        data: t.type({
-          fileHash: t.string,
-        }),
-      })
-    ),
-  }),
-]);
-
-export type FormUpdateBody = t.TypeOf<typeof FORM_UPDATE_BODY>;
