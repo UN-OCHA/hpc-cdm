@@ -67,7 +67,6 @@ export type GetAssignmentsForOperationResult = t.TypeOf<
 >;
 
 export const GET_ASSIGNMENT_PARAMS = t.type({
-  reportingWindowId: INTEGER_FROM_STRING,
   assignmentId: INTEGER_FROM_STRING,
 });
 
@@ -117,7 +116,6 @@ export const GET_ASSIGNMENT_RESULT_MODEL = GET_ASSIGNMENT_RESULT(FORM_FILE);
 export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT_MODEL>;
 
 export const UPDATE_ASSIGNMENT_PARAMS = t.type({
-  reportingWindowId: INTEGER_FROM_STRING,
   assignmentId: INTEGER_FROM_STRING,
   /**
    * Supply the last-known version number of the assignment.

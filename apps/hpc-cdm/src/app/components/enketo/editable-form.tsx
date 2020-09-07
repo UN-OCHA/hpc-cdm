@@ -159,7 +159,6 @@ export const EnketoEditableForm = (props: Props) => {
 
         return env.model.reportingWindows
           .updateAssignment({
-            reportingWindowId: reportingWindow.id,
             assignmentId: assignment.id,
             previousVersion: assignment.version,
             form: {
