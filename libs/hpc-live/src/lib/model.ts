@@ -36,6 +36,7 @@ interface Response {
   readonly ok: boolean;
   readonly statusText: string;
   json(): Promise<any>;
+  arrayBuffer(): Promise<ArrayBuffer>;
 }
 
 interface FetchInterface {
@@ -84,6 +85,27 @@ export class ModelError extends Error {
 
 export const isModelError = (value: unknown): value is ModelError =>
   value instanceof Error && (value as ModelError).code === MODEL_ERROR;
+
+/**
+ * Temporarily store the downloaded files in a map from sha to the binary data.
+ *
+ * We need this to ensure that we don't need to re-download files every time we
+ * save an assignment, or immediately after uploading a file.
+ *
+ * We can probably improve this by ensuring the cache control headers of the
+ * download endpoint are long (the contents should never change).
+ *
+ * TODO: either:
+ *
+ * * replace this with something more robust,
+ *   using e.g. local storage or database storage to keep the files,
+ *   ensuring that we use FIFO with a max number of files / bytes to ensure
+ *   we don't take up too much space.
+ * * never load files into memory (or pre-download files),
+ *   and replace everything with download URLs that auto-expire
+ *   after a certain amount of time.
+ */
+const fileCache = new Map<string, Promise<ArrayBuffer>>();
 
 /**
  * Custom types for endpoints where endpoints aren't directly implementing
@@ -167,6 +189,33 @@ export class LiveModel implements Model {
     this.sha256Hash = config.interfaces?.sha256Hash || util.hashFileInBrowser;
   }
 
+  private baseFetchInit = ({
+    method,
+    pathname,
+    queryParams,
+  }: {
+    method?: HttpMethod;
+    pathname: string;
+    queryParams?: {
+      [id: string]: string;
+    };
+  }) => {
+    const url = new this.URL(this.config.baseUrl);
+    url.pathname = pathname;
+    if (queryParams) {
+      for (const [key, value] of Object.entries(queryParams)) {
+        url.searchParams.set(key, value);
+      }
+    }
+    const init: RequestInit = {
+      method: method || 'GET',
+      headers: {
+        Authorization: `Bearer ${this.config.hidToken}`,
+      },
+    };
+    return { url, init };
+  };
+
   private call = async <T>({
     method,
     pathname,
@@ -191,19 +240,7 @@ export class LiveModel implements Model {
           contentType: string;
         };
   }) => {
-    const url = new this.URL(this.config.baseUrl);
-    url.pathname = pathname;
-    if (queryParams) {
-      for (const [key, value] of Object.entries(queryParams)) {
-        url.searchParams.set(key, value);
-      }
-    }
-    const init: RequestInit = {
-      method: method || 'GET',
-      headers: {
-        Authorization: `Bearer ${this.config.hidToken}`,
-      },
-    };
+    const { url, init } = this.baseFetchInit({ pathname, method, queryParams });
     if (body) {
       if (body.type === 'json') {
         init.body = JSON.stringify(body.data);
@@ -318,18 +355,54 @@ export class LiveModel implements Model {
   }
 
   get reportingWindows(): reportingWindows.Model {
+    /**
+     * Remove all the files from the map that aren't one of these.
+     *
+     * This ensures the map doesn't get too big,
+     * while allowing for quick updates when we're dealing with a single form.
+     */
+    const keepOnlyGivenFiles = (filesToKeep: string[]) => {
+      const set = new Set(filesToKeep);
+      for (const key of fileCache.keys()) {
+        if (!set.has(key)) {
+          fileCache.delete(key);
+        }
+      }
+    };
+
     const handleAssignmentResult = async (
       result: t.TypeOf<
         typeof LIVE_TYPES['REPORTING_WINDOWS']['GET_ASSIGNMENT_RESULT']
       >
     ): Promise<reportingWindows.GetAssignmentResult> => {
-      // TODO: download any neccesary files
+      // Only keep files that are used by this version of the assignment
+      keepOnlyGivenFiles(result.task.currentFiles.map((f) => f.data.fileHash));
+
+      // Download / prepare any neccesary fiels
+      const currentFiles: reportingWindows.GetAssignmentResult['task']['currentFiles'] = await Promise.all(
+        result.task.currentFiles.map(async (f) => {
+          let data = fileCache.get(f.data.fileHash);
+          if (!data) {
+            // Download file
+            const { url, init } = this.baseFetchInit({
+              pathname: `/v2/reportingwindows/assignments/${result.id}/files/${f.data.fileHash}`,
+            });
+            const res = await this.fetch(url.href);
+            data = res.arrayBuffer();
+            fileCache.set(f.data.fileHash, data);
+          }
+          return {
+            name: f.name,
+            data: await data,
+          };
+        })
+      );
 
       const r: reportingWindows.GetAssignmentResult = {
         ...result,
         task: {
           ...result.task,
-          currentFiles: [],
+          currentFiles,
         },
       };
       return r;
@@ -361,6 +434,12 @@ export class LiveModel implements Model {
             fileHash: await this.sha256Hash(f.data),
           }))
         );
+
+        keepOnlyGivenFiles(files.map((f) => f.fileHash));
+
+        for (const file of files) {
+          fileCache.set(file.fileHash, Promise.resolve(file.data));
+        }
 
         if (files && files.length) {
           const newFiles = await this.checkFormAssignmentFiles(aId, files);
@@ -421,7 +500,17 @@ export class LiveModel implements Model {
     assignmentId: number,
     files: FileInfo[]
   ) {
-    // TODO
-    // FormData with string | Blob interface?
+    for (const f of files) {
+      const res = await this.call({
+        method: 'POST',
+        body: {
+          type: 'raw',
+          data: f.data,
+          contentType: 'application/octet-stream',
+        },
+        pathname: `/v2/reportingwindows/assignments/${assignmentId}/files`,
+        resultType: reportingWindows.UPLOAD_ASSIGNMENT_FILE_RESULT,
+      });
+    }
   }
 }
