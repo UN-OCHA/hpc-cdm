@@ -34,7 +34,9 @@ export const arrayBufferToHex = (data: ArrayBuffer): string => {
   const buff = new Uint8Array(data);
   const hexOctets = new Array(buff.length);
 
-  for (let i = 0; i < buff.length; ++i) hexOctets[i](BYTE_TO_HEX[buff[i]]);
+  for (let i = 0; i < buff.length; ++i) {
+    hexOctets[i] = BYTE_TO_HEX[buff[i]];
+  }
 
   return hexOctets.join('');
 };
