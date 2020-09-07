@@ -17,27 +17,41 @@ if ((formC as any).default) {
 }
 
 export const INITIAL_DATA: DummyData = {
+  access: {
+    active: [
+      {
+        target: { type: 'global' },
+        grantee: {
+          type: 'user',
+          id: 0,
+        },
+        roles: ['hpcadmin'],
+      },
+    ],
+    invites: [],
+    auditLog: [],
+  },
   users: [
     {
       id: 0,
       user: {
         name: 'Admin User',
       },
-      permissions: [],
+      email: 'admin@example.com',
     },
     {
       id: 1,
       user: {
         name: 'Operation Lead',
       },
-      permissions: [],
+      email: 'oplead@example.com',
     },
     {
       id: 2,
       user: {
         name: 'Cluster Lead',
       },
-      permissions: [],
+      email: 'cllead@example.com',
     },
   ],
   currentUser: null,
@@ -92,6 +106,9 @@ export const INITIAL_DATA: DummyData = {
       assignments: [
         {
           id: 9932,
+          version: 1,
+          lastUpdatedAt: Date.now(),
+          lastUpdatedBy: 'Some Admin',
           type: 'form',
           formId: 123,
           assignee: {
@@ -104,6 +121,9 @@ export const INITIAL_DATA: DummyData = {
         },
         {
           id: 5925,
+          version: 1,
+          lastUpdatedAt: Date.now(),
+          lastUpdatedBy: 'Some Admin',
           type: 'form',
           formId: 321,
           assignee: {
@@ -116,6 +136,9 @@ export const INITIAL_DATA: DummyData = {
         },
         {
           id: 5926,
+          version: 1,
+          lastUpdatedAt: Date.now(),
+          lastUpdatedBy: 'Some Admin',
           type: 'form',
           formId: 321,
           assignee: {
@@ -153,3 +176,51 @@ export const INITIAL_DATA: DummyData = {
     },
   ],
 };
+
+// Add access to all things
+for (const op of INITIAL_DATA.operations) {
+  INITIAL_DATA.access.active.push({
+    target: {
+      type: 'operation',
+      targetId: op.id,
+    },
+    grantee: {
+      type: 'user',
+      id: 0,
+    },
+    roles: ['operationLead'],
+  });
+  INITIAL_DATA.access.active.push({
+    target: {
+      type: 'operation',
+      targetId: op.id,
+    },
+    grantee: {
+      type: 'user',
+      id: 1,
+    },
+    roles: ['operationLead'],
+  });
+  INITIAL_DATA.access.invites.push({
+    target: {
+      type: 'operation',
+      targetId: op.id,
+    },
+    email: 'alex@example.com',
+    roles: ['operationLead'],
+    lastModifiedBy: 1,
+  });
+  INITIAL_DATA.access.auditLog.push({
+    target: {
+      type: 'operation',
+      targetId: op.id,
+    },
+    grantee: {
+      type: 'user',
+      id: 1,
+    },
+    roles: ['operationLead'],
+    actor: 0,
+    date: Date.now(),
+  });
+}

@@ -1,21 +1,31 @@
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { Model, operations, reportingWindows, forms } from '@unocha/hpc-data';
 import { util } from '@unocha/hpc-core';
+import {
+  Model,
+  operations,
+  reportingWindows,
+  access,
+  errors,
+} from '@unocha/hpc-data';
 
 interface URLInterface {
   new (url: string): {
     pathname: string;
     href: string;
+    searchParams: {
+      set: (name: string, value: string) => void;
+    };
   };
 }
 
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH';
+
 interface RequestInit {
-  method?: string;
+  method?: HttpMethod;
   headers: {
-    Authorization: string;
-    'Content-Type': string;
+    [id: string]: string;
   };
   body?: string | ArrayBuffer;
 }
@@ -54,6 +64,21 @@ interface FileInfo {
   fileHash: string;
 }
 
+const MODEL_ERROR = Symbol('ModelError');
+
+export class ModelError extends Error {
+  public readonly code = MODEL_ERROR;
+  public readonly json: any;
+
+  public constructor(message: string, json: any) {
+    super(message);
+    this.json = json;
+  }
+}
+
+export const isModelError = (value: unknown): value is ModelError =>
+  value instanceof Error && (value as ModelError).code === MODEL_ERROR;
+
 export class LiveModel implements Model {
   private readonly config: Config;
   private readonly URL: URLInterface;
@@ -66,28 +91,51 @@ export class LiveModel implements Model {
   }
 
   private call = async <T>({
-    pathname,
-    resultType,
     method,
+    pathname,
+    queryParams,
+    resultType,
     body,
-    contentType,
   }: {
+    method?: HttpMethod;
     pathname: string;
+    queryParams?: {
+      [id: string]: string;
+    };
     resultType: t.Type<T>;
-    method?: string;
-    body?: string | ArrayBuffer;
-    contentType?: string;
+    body?:
+      | {
+          type: 'json';
+          data: unknown;
+        }
+      | {
+          type: 'raw';
+          data: string | ArrayBuffer;
+          contentType: string;
+        };
   }) => {
     const url = new this.URL(this.config.baseUrl);
     url.pathname = pathname;
+    if (queryParams) {
+      for (const [key, value] of Object.entries(queryParams)) {
+        url.searchParams.set(key, value);
+      }
+    }
     const init: RequestInit = {
+      method: method || 'GET',
       headers: {
         Authorization: `Bearer ${this.config.hidToken}`,
-        'Content-Type': contentType || 'application/json',
       },
-      method: method || 'GET',
-      body: body || undefined,
     };
+    if (body) {
+      if (body.type === 'json') {
+        init.body = JSON.stringify(body.data);
+        init.headers['Content-Type'] = 'application/json';
+      } else {
+        init.body = body.data;
+        init.headers['Content-Type'] = body.contentType;
+      }
+    }
     const res = await this.fetch(url.href, init);
     if (res.ok) {
       const json: Res<T> = await res.json();
@@ -97,12 +145,80 @@ export class LiveModel implements Model {
       } else {
         const report = PathReporter.report(decode);
         console.error('Received unexpected result from server', report, json);
-        throw new Error('Received unexpected result from server');
+        throw new ModelError('Received unexpected result from server', json);
       }
     } else {
-      throw new Error(res.statusText);
+      const json = await res.json();
+      if (
+        json?.code === 'BadRequestError' &&
+        errors.USER_ERROR_KEYS.includes(json?.message)
+      ) {
+        throw new errors.UserError(json.message);
+      } else {
+        const message =
+          json?.code && json?.message
+            ? `${json.code}: ${json.message}`
+            : res.statusText;
+        throw new ModelError(message, json);
+      }
     }
   };
+
+  get access(): access.Model {
+    const accessPathnameForTarget = (target: access.AccessTarget) =>
+      `/v2/access/${
+        target.type === 'global'
+          ? 'global'
+          : `${target.type}/${target.targetId}`
+      }`;
+
+    return {
+      getTargetAccess: (params) =>
+        this.call({
+          pathname: accessPathnameForTarget(params.target),
+          resultType: access.GET_TARGET_ACCESS_RESULT,
+        }),
+      updateTargetAccess: (params) =>
+        this.call({
+          method: 'PATCH',
+          pathname: accessPathnameForTarget(params.target),
+          body: {
+            type: 'json',
+            data: {
+              grantee: params.grantee,
+              roles: params.roles,
+            },
+          },
+          resultType: access.GET_TARGET_ACCESS_RESULT,
+        }),
+      updateTargetAccessInvite: (params) =>
+        this.call({
+          method: 'PATCH',
+          pathname: `${accessPathnameForTarget(params.target)}/invites`,
+          body: {
+            type: 'json',
+            data: {
+              email: params.email,
+              roles: params.roles,
+            },
+          },
+          resultType: access.GET_TARGET_ACCESS_RESULT,
+        }),
+      addTargetAccess: (params) =>
+        this.call({
+          method: 'POST',
+          pathname: accessPathnameForTarget(params.target),
+          body: {
+            type: 'json',
+            data: {
+              email: params.email,
+              roles: params.roles,
+            },
+          },
+          resultType: access.GET_TARGET_ACCESS_RESULT,
+        }),
+    };
+  }
 
   get operations(): operations.Model {
     return {
@@ -156,7 +272,7 @@ export class LiveModel implements Model {
           }
         }
 
-        const body = JSON.stringify({
+        const data = {
           ...params,
           form: {
             id: params.form.id,
@@ -167,10 +283,13 @@ export class LiveModel implements Model {
               data: { fileHash: f.fileHash },
             })),
           },
-        });
+        };
         return this.call({
-          method: 'put',
-          body,
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data,
+          },
           pathname: `/v2/reportingwindows/assignments/${aId}`,
           resultType: reportingWindows.GET_ASSIGNMENT_RESULT,
         });
@@ -182,11 +301,16 @@ export class LiveModel implements Model {
     assignmentId: number,
     files: FileInfo[]
   ) {
-    const body = JSON.stringify({ fileHashes: files.map((f) => f.fileHash) });
+    const data = {
+      fileHashes: files.map((f) => f.fileHash),
+    };
 
     const response = await this.call({
-      method: 'post',
-      body,
+      method: 'POST',
+      body: {
+        type: 'json',
+        data,
+      },
       pathname: `/v2/reportingwindows/assignments/${assignmentId}/checkfiles`,
       resultType: reportingWindows.CHECK_FILES_RESULT,
     });

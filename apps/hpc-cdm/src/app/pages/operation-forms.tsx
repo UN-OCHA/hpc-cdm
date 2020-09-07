@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import { CLASSES, C, combineClasses, styled } from '@unocha/hpc-ui';
+import { C, combineClasses, styled } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
@@ -20,12 +20,7 @@ const PageOperationForms = (props: Props) => {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <div
-          className={combineClasses(
-            CLASSES.CONTAINER.CENTERED,
-            props.className
-          )}
-        >
+        <div className={combineClasses(props.className)}>
           <Switch>
             <Route
               path={paths.operationFormAssignmentsMatch({

@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 
-import { forms } from '@unocha/hpc-data';
+import { access, forms } from '@unocha/hpc-data';
 
 /**
  * TODO: make into union of different assignee types
@@ -24,8 +24,41 @@ const ASSIGNMENT_STATE = t.keyof({
   'clean:finalized': null,
 });
 
+const ACCESS = t.type(
+  {
+    active: t.array(
+      t.type({
+        target: access.ACCESS_TARGET,
+        grantee: access.GRANTEE,
+        roles: t.array(t.string),
+      })
+    ),
+    invites: t.array(
+      t.type({
+        target: access.ACCESS_TARGET,
+        email: t.string,
+        roles: t.array(t.string),
+        lastModifiedBy: t.number,
+      })
+    ),
+    auditLog: t.array(
+      t.type({
+        target: access.ACCESS_TARGET,
+        grantee: access.GRANTEE,
+        actor: t.number,
+        date: t.number,
+        roles: t.array(t.string),
+      })
+    ),
+  },
+  'ACCESS'
+);
+
 const FORM_ASSIGNMENT = t.type({
   id: t.number,
+  version: t.number,
+  lastUpdatedAt: t.number,
+  lastUpdatedBy: t.string,
   type: t.literal('form'),
   formId: t.number,
   assignee: ASSIGNEE,
@@ -68,7 +101,7 @@ const SESSION_USER = t.type({
 const USER = t.type({
   id: t.number,
   user: SESSION_USER,
-  permissions: t.array(t.string),
+  email: t.string,
 });
 
 export type User = t.TypeOf<typeof USER>;
@@ -97,6 +130,7 @@ const FORM = t.type(
 
 export const DUMMY_DATA = t.type(
   {
+    access: ACCESS,
     users: t.array(USER),
     currentUser: t.union([t.null, t.number]),
     operations: t.array(OPERATION),

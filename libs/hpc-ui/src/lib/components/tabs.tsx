@@ -18,11 +18,16 @@ interface Props {
   className?: string;
   mode: 'main' | 'section';
   align: 'start' | 'end';
-  tabs: Array<{
-    path: string;
-    label: string;
-    selected?: boolean;
-  }>;
+  tabs: Array<
+    | {
+        path: string;
+        label: string;
+        selected?: boolean;
+      }
+    | null
+    | undefined
+    | false
+  >;
   children?: JSX.Element[] | JSX.Element;
 }
 
@@ -32,6 +37,9 @@ const Tabs = (props: Props) => {
   const tabElements = (
     <ul>
       {tabs.map((tab, i) => {
+        if (!tab) {
+          return null;
+        }
         const selected =
           tab.selected === undefined
             ? loc.pathname === tab.path ||

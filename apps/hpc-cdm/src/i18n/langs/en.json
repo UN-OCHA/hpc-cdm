@@ -5,7 +5,20 @@
     "logout": "Logout"
   },
   "errors": {
-    "unableToLoadCDM": "Unable to load CDM"
+    "unableToLoadCDM": "Unable to load CDM",
+    "userErrors": {
+      "access.userAlreadyInvited": "That user has already been invited, they must log-in to get access",
+      "access.userAlreadyAdded": "That user has already been given access"
+    }
+  },
+  "common": {
+    "updatedAtBy": "Updated {timeAgo} by {person}",
+    "saving": "Saving...",
+    "add": "Add",
+    "emailAddress": "E-Mail address",
+    "validation": {
+      "missing": "Please enter {field}"
+    }
   },
   "components": {
     "acceptableUseNotification": {
@@ -25,6 +38,29 @@
       "loading": "Loading...",
       "error": "Error:",
       "retry": "Retry"
+    },
+    "accessControl": {
+      "addPerson": "Add Someone",
+      "addPersonInfo": "Enter the email address of the person you'd like to give access to. If they haven't logged-in before, they will be given an invite that will become active after they log-in.",
+      "activePeople": "Active Users",
+      "pendingInvites": "Pending Invites",
+      "auditLog": "Audit log",
+      "roles": {
+        "operationLead": "Operation Lead",
+        "clusterLead": "Cluster Lead"
+      },
+      "invitedBy": "Invited by {name}",
+      "confirmRoleUpdate": "Are you sure you want to change {name}'s role to {role}?",
+      "confirmRoleRemoval": "Are you sure you want to remove access for {name}?",
+      "auditLogRoleChange": "{actor} changed {grantee}'s role to {role}",
+      "auditLogRoleRemoval": "{actor} removed {grantee}'s access",
+      "noPendingInvites": "No pending invitations",
+      "noUsers": {
+        "title": "No assigned users",
+        "info": "No one has been granted access"
+      },
+      "auditLogEmpty": "The audit log is empty",
+      "role": "Role"
     }
   },
   "navigation": {
@@ -32,7 +68,8 @@
     "operations": "Operations",
     "clusters": "Clusters",
     "forms": "Forms",
-    "settings": "Settings"
+    "settings": "Settings",
+    "manageAccess": "Manage access"
   },
   "routes": {
     "operations": {
@@ -49,6 +86,16 @@
           "save": "Save",
           "next": "Next",
           "submit": "Submit"
+        },
+        "status": {
+          "idle": "All changes saved",
+          "unsavedChanges": "Unsaved Changes",
+          "saving": "Saving...",
+          "error": "Error saving form!",
+          "conflict": "Form has been modified by another person, please refresh."
+        },
+        "errors": {
+          "conflict": "This form was modified by {person} {timeAgo} (after you loaded the page), so we can't save your changes. Please refresh your page and try again."
         }
       },
       "clusters": {

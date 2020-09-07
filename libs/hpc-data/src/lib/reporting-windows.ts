@@ -88,6 +88,7 @@ export const ASSIGNMENT_ASSIGNEE = t.union([
   t.type({
     type: t.literal('operationCluster'),
     clusterId: t.number,
+    clusterName: t.string,
   }),
 ]);
 
@@ -95,6 +96,11 @@ export type AssignmentAssignee = t.TypeOf<typeof ASSIGNMENT_ASSIGNEE>;
 
 export const GET_ASSIGNMENT_RESULT = t.type({
   id: t.number,
+  version: t.number,
+  /** UNIX Timestamp */
+  lastUpdatedAt: t.number,
+  /** Name of user that last updated this assignment */
+  lastUpdatedBy: t.string,
   state: ASSIGNMENT_STATE,
   /**
    * TODO: add additional tasks, such as indicators
@@ -113,6 +119,13 @@ export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT>;
 export const UPDATE_ASSIGNMENT_PARAMS = t.type({
   reportingWindowId: INTEGER_FROM_STRING,
   assignmentId: INTEGER_FROM_STRING,
+  /**
+   * Supply the last-known version number of the assignment.
+   *
+   * This is used to determine whether the assignment has already changed since
+   * the user started editing data.
+   */
+  previousVersion: t.number,
   form: FORM_UPDATE_DATA,
 });
 

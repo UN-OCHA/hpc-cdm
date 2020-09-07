@@ -9,7 +9,12 @@ import NotFound from './not-found';
 
 interface Props<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  children: (data: T) => ReactElement<any, any>;
+  children: (
+    data: T,
+    actions: {
+      updateLoadedData: (data: T) => void;
+    }
+  ) => ReactElement<any, any>;
   className?: string;
   loader: DataLoaderState<T>;
   strings: {
@@ -40,7 +45,7 @@ const StyledDiv = styled.div`
 export default function Loader<T>(props: Props<T>) {
   const { children, className, loader, strings } = props;
   return loader.type === 'success' ? (
-    children(loader.data)
+    children(loader.data, { updateLoadedData: loader.update })
   ) : loader.type === 'error' ? (
     <StyledDiv className={className}>
       {/* TODO: use a translation string with a placeholder instead of string concatenation */}
