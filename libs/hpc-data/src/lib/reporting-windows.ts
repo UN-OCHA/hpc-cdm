@@ -141,12 +141,6 @@ export const CHECK_FILES_RESULT = t.type({
 
 export type CheckFilesResult = t.TypeOf<typeof CHECK_FILES_RESULT>;
 
-export const UPLOAD_ASSIGNMENT_FILE_BODY = ARRAY_BUFFER;
-
-export type UploadAssignmentFileBody = t.TypeOf<
-  typeof UPLOAD_ASSIGNMENT_FILE_BODY
->;
-
 export const UPLOAD_ASSIGNMENT_FILE_RESULT = t.type({
   fileHash: t.string,
 });

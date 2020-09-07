@@ -136,7 +136,6 @@ export const LIVE_TYPES = {
       forms.FORM_FILE_HASH
     ),
     UPDATE_ASSIGNMENT_BODY: t.type({
-      assignmentId: dataUtil.INTEGER_FROM_STRING,
       form: t.intersection([
         forms.FORM_BASE,
         t.type({
