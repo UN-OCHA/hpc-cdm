@@ -576,10 +576,7 @@ export class Dummy {
             params: reportingWindows.GetAssignmentParams
           ): Promise<reportingWindows.GetAssignmentResult> => {
             const { reportingWindowId, assignmentId } = params;
-            if (reportingWindowId) {
-              return this.getAssignmentResult(reportingWindowId, assignmentId);
-            }
-            throw new errors.NotFoundError();
+            return this.getAssignmentResult(reportingWindowId, assignmentId);
           }
         ),
         updateAssignment: dummyEndpoint(
@@ -623,10 +620,7 @@ export class Dummy {
             }
 
             this.store();
-            if (reportingWindowId) {
-              return this.getAssignmentResult(reportingWindowId, assignmentId);
-            }
-            throw new errors.NotFoundError();
+            return this.getAssignmentResult(reportingWindowId, assignmentId);
           }
         ),
       },

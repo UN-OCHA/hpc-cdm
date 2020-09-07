@@ -73,7 +73,7 @@ export type GetAssignmentsForOperationResult = t.TypeOf<
 >;
 
 export const GET_ASSIGNMENT_PARAMS = t.type({
-  reportingWindowId: t.union([INTEGER_FROM_STRING, t.undefined]),
+  reportingWindowId: INTEGER_FROM_STRING,
   assignmentId: INTEGER_FROM_STRING,
 });
 
