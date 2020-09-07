@@ -187,10 +187,7 @@ export class Dummy {
           currentFiles: await Promise.all(
             a.currentFiles.map(async (f) => ({
               name: f.name,
-              // data: await uriToArrayBuffer(f.base64Data),
-              data: {
-                fileHash: f.base64Data,
-              },
+              data: await uriToArrayBuffer(f.base64Data),
             }))
           ),
         };

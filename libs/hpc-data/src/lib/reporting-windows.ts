@@ -4,7 +4,6 @@ import {
   FORM,
   FORM_UPDATE_DATA,
   FORM_FILE,
-  FORM_FILE_HASH,
   FORM_UPDATE_BODY,
 } from './forms';
 import { INTEGER_FROM_STRING, ARRAY_BUFFER } from './util';
@@ -109,7 +108,7 @@ export const GET_ASSIGNMENT_RESULT = t.type({
     type: t.literal('form'),
     form: FORM,
     currentData: t.union([t.string, t.null]),
-    currentFiles: t.array(FORM_FILE_HASH),
+    currentFiles: t.array(FORM_FILE),
   }),
   assignee: ASSIGNMENT_ASSIGNEE,
 });

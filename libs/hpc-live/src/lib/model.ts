@@ -44,12 +44,16 @@ interface Config {
   baseUrl: string;
   hidToken: string;
   /**
-   * Optionally provide interfaces for implicit browser globals when running
-   * in a Node.js environment.
+   * Optionally provide interfaces for implicit browser globals and other
+   * functionality that requires a browser, when running in Node.js.
    */
   interfaces?: {
     URL?: URLInterface;
     fetch?: FetchInterface;
+    /**
+     * Generate a sha256 hash
+     */
+    sha256Hash?: (data: ArrayBuffer) => Promise<string>;
   };
 }
 
@@ -83,11 +87,13 @@ export class LiveModel implements Model {
   private readonly config: Config;
   private readonly URL: URLInterface;
   private readonly fetch: FetchInterface;
+  private readonly sha256Hash: (data: ArrayBuffer) => Promise<string>;
 
   public constructor(config: Config) {
     this.config = config;
     this.URL = config.interfaces?.URL || URL;
     this.fetch = config.interfaces?.fetch || fetch.bind(window);
+    this.sha256Hash = config.interfaces?.sha256Hash || util.hashFileInBrowser;
   }
 
   private call = async <T>({
@@ -259,11 +265,13 @@ export class LiveModel implements Model {
       updateAssignment: async (params) => {
         const { assignmentId: aId } = params;
 
-        const files = params.form.files.map((f) => ({
-          name: f.name,
-          data: f.data,
-          fileHash: util.hashFile(f.data),
-        }));
+        const files = await Promise.all(
+          params.form.files.map(async (f) => ({
+            name: f.name,
+            data: f.data,
+            fileHash: await this.sha256Hash(f.data),
+          }))
+        );
 
         if (files && files.length) {
           const newFiles = await this.checkFormAssignmentFiles(aId, files);

@@ -17,28 +17,32 @@ export type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
 };
 
-import * as asmCrypto from 'asmcrypto.js';
+/**
+ * Precomputed mapping from byte value to hex string
+ */
+const BYTE_TO_HEX: string[] = [];
 
-export const toBuffer = (ab: ArrayBuffer): Buffer => {
-  const buf = Buffer.alloc(ab.byteLength);
-  const view = new Uint8Array(ab);
-  for (let i = 0; i < buf.length; ++i) {
-    buf[i] = view[i];
-  }
-  return buf;
+for (let n = 0; n <= 0xff; ++n) {
+  const hexOctet = n.toString(16).padStart(2, '0');
+  BYTE_TO_HEX.push(hexOctet);
+}
+
+/**
+ * Convert an array buffer to the hexadecimal string representation of its bytes
+ */
+export const arrayBufferToHex = (data: ArrayBuffer): string => {
+  const buff = new Uint8Array(data);
+  const hexOctets = new Array(buff.length);
+
+  for (let i = 0; i < buff.length; ++i) hexOctets[i](BYTE_TO_HEX[buff[i]]);
+
+  return hexOctets.join('');
 };
 
-export const hashFile = (data: ArrayBuffer | Buffer | string): string => {
-  const hasher = new asmCrypto.Sha256();
-  if (typeof data === 'string') {
-    hasher.process(
-      new Uint8Array(data.length).map((_, i) => data.charCodeAt(i))
-    );
-  } else if (Buffer.isBuffer(data)) {
-    hasher.process(data);
-  } else {
-    hasher.process(toBuffer(data));
-  }
-  hasher.finish();
-  return asmCrypto.bytes_to_hex(hasher.result as Uint8Array);
+/**
+ * Get the SHA-256 hex digest of an ArryaBuffer in the browser
+ */
+export const hashFileInBrowser = async (data: ArrayBuffer): Promise<string> => {
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return arrayBufferToHex(digest);
 };

@@ -2,7 +2,6 @@ import { Form } from 'enketo-core';
 import fileManager from 'enketo-core/src/js/file-manager';
 import $ from 'jquery';
 import marked from 'marked';
-import { forms } from '@unocha/hpc-data';
 
 const markedHtml = (form: string): JQuery<HTMLElement> => {
   const html = $(form);
@@ -15,15 +14,20 @@ const markedHtml = (form: string): JQuery<HTMLElement> => {
   return html;
 };
 
+export interface FormFile {
+  name: string;
+  data: Blob;
+}
+
 export default class XForm {
   private form: Form;
-  private files: forms.FormFile[];
+  private files: FormFile[];
 
   constructor(
     html: string,
     modelStr: string,
     content: string | null,
-    files: forms.FormFile[],
+    files: FormFile[],
     opts?: {
       editable?: boolean;
       onDataUpdate?: (event: { xform: XForm }) => void;
@@ -80,7 +84,7 @@ export default class XForm {
    */
   getData(): {
     data: string;
-    files: forms.FormFile[];
+    files: FormFile[];
   } {
     const data = this.form.getDataStr({ irrelevant: false });
 
