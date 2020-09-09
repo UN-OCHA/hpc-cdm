@@ -11,6 +11,7 @@ import * as paths from './paths';
 
 import MainNavigation from './components/main-navigation';
 
+import PageAdmin from './pages/admin';
 import PageNotLoggedIn from './pages/not-logged-in';
 import PageNotFound from './pages/not-found';
 import PageOperationsList from './pages/operations-list';
@@ -93,6 +94,7 @@ export const App = (props: Props) => {
                         path={paths.operationMatch()}
                         component={PageOperation}
                       />
+                      <Route path={paths.admin()} component={PageAdmin} />
                       <Route component={PageNotFound} />
                     </Switch>
                   </>

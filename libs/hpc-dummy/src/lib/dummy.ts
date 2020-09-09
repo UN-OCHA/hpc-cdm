@@ -278,7 +278,9 @@ export class Dummy {
     };
 
     const getAllowedRoles = (target: access.AccessTarget) => {
-      if (target.type === 'operation') {
+      if (target.type === 'global') {
+        return ['hpc_admin', 'swaps'];
+      } else if (target.type === 'operation') {
         return ['operationLead', 'testRole1', 'testRole2'];
       } else if (target.type === 'operationCluster') {
         return ['clusterLead'];
