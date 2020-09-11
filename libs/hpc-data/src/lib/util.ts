@@ -40,3 +40,19 @@ export const BLOB = new t.Type<Blob, Blob>(
   },
   t.identity
 );
+
+/**
+ * A file Buffer
+ */
+export const ARRAY_BUFFER = new t.Type<ArrayBuffer, ArrayBuffer>(
+  'ArrayBuffer',
+  (v): v is ArrayBuffer => v instanceof ArrayBuffer,
+  (v, c) => {
+    if (v instanceof ArrayBuffer) {
+      return t.success(v);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);

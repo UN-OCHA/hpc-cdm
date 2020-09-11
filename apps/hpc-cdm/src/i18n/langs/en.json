@@ -46,6 +46,8 @@
       "pendingInvites": "Pending Invites",
       "auditLog": "Audit log",
       "roles": {
+        "hpc_admin": "HPC Admin",
+        "swaps": "SWAPS Team Member",
         "operationLead": "Operation Lead",
         "clusterLead": "Cluster Lead"
       },

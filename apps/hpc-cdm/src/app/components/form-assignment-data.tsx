@@ -23,7 +23,6 @@ const FormAssignmentData = (props: Props) => {
     [
       {
         assignmentId,
-        reportingWindowId: window.id,
       },
     ],
     getEnv().model.reportingWindows.getAssignment

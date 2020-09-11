@@ -93,7 +93,14 @@ export const EnketoEditableForm = (props: Props) => {
         currentFiles,
       },
     } = originalAssignment;
-    const xform = new XForm(form, model, currentData, currentFiles, {
+
+    // Convert the ArrayBuffers to Blobs to use in the form
+    const files = currentFiles.map((f) => ({
+      name: f.name,
+      data: new Blob([new Uint8Array(f.data)]),
+    }));
+
+    const xform = new XForm(form, model, currentData, files, {
       onDataUpdate: ({ xform }) => setLastChangedData(xform.getData().data),
     });
     setXform(xform);
@@ -133,7 +140,7 @@ export const EnketoEditableForm = (props: Props) => {
     };
   }, [xform, lastSavedData, history, lang]);
 
-  const saveForm = (redirect = false) => {
+  const saveForm = async (redirect = false) => {
     if (xform) {
       const { data, files } = xform.getData();
       if (lastSavedData !== data) {
@@ -141,16 +148,24 @@ export const EnketoEditableForm = (props: Props) => {
           task: { form },
         } = assignment;
         setStatus({ type: 'saving' });
+
+        // Convert each file Blob to an ArrayBuffer
+        const convertedFiles = await Promise.all(
+          files.map(async (f) => ({
+            name: f.name,
+            data: await f.data.arrayBuffer(),
+          }))
+        );
+
         return env.model.reportingWindows
           .updateAssignment({
-            reportingWindowId: reportingWindow.id,
             assignmentId: assignment.id,
             previousVersion: assignment.version,
             form: {
               id: form.id,
               version: form.version,
               data,
-              files,
+              files: convertedFiles,
             },
           })
           .then((assignment) => {

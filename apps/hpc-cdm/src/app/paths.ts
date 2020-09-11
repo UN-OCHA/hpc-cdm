@@ -14,6 +14,7 @@ const OPERATION_CLUSTER_SETTINGS_ACCESS = `${OPERATIONS}/:operationId/clusters/:
 const OPERATION_SETTINGS = `${OPERATIONS}/:id/settings`;
 const OPERATION_SETTINGS_ACCESS = `${OPERATIONS}/:id/settings/access`;
 const ADMIN = '/admin';
+const ADMIN_ACCESS = '/admin/access';
 
 const replacePlaceholders = (
   path: string,
@@ -113,3 +114,5 @@ export const operationSettingsAccess = (id: number) =>
   replacePlaceholders(OPERATION_SETTINGS_ACCESS, { id });
 
 export const admin = () => replacePlaceholders(ADMIN, {});
+
+export const adminAccess = () => replacePlaceholders(ADMIN_ACCESS, {});

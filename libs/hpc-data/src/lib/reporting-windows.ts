@@ -1,5 +1,6 @@
 import * as t from 'io-ts';
 import { FORM_META, FORM, FORM_UPDATE_DATA, FORM_FILE } from './forms';
+import { INTEGER_FROM_STRING, ARRAY_BUFFER } from './util';
 
 export const REPORTING_WINDOW = t.type({
   // TODO
@@ -39,24 +40,26 @@ const FORM_ASSIGNMENT = t.type({
 export type FormAssignment = t.TypeOf<typeof FORM_ASSIGNMENT>;
 
 export const GET_ASSIGNMENTS_FOR_OPERATION_PARAMS = t.type({
-  reportingWindowId: t.number,
-  operationId: t.number,
+  reportingWindowId: INTEGER_FROM_STRING,
+  operationId: INTEGER_FROM_STRING,
 });
 
 export type GetAssignmentsForOperationParams = t.TypeOf<
   typeof GET_ASSIGNMENTS_FOR_OPERATION_PARAMS
 >;
 
+export const CLUSTER_ASSIGNMENT = t.type({
+  clusterId: t.number,
+  forms: t.array(FORM_ASSIGNMENT),
+});
+
+export type ClusterAssignment = t.TypeOf<typeof CLUSTER_ASSIGNMENT>;
+
 export const GET_ASSIGNMENTS_FOR_OPERATION_RESULT = t.type({
   directAssignments: t.type({
     forms: t.array(FORM_ASSIGNMENT),
   }),
-  clusterAssignments: t.array(
-    t.type({
-      clusterId: t.number,
-      forms: t.array(FORM_ASSIGNMENT),
-    })
-  ),
+  clusterAssignments: t.array(CLUSTER_ASSIGNMENT),
 });
 
 export type GetAssignmentsForOperationResult = t.TypeOf<
@@ -64,47 +67,56 @@ export type GetAssignmentsForOperationResult = t.TypeOf<
 >;
 
 export const GET_ASSIGNMENT_PARAMS = t.type({
-  reportingWindowId: t.number,
-  assignmentId: t.number,
+  assignmentId: INTEGER_FROM_STRING,
 });
 
 export type GetAssignmentParams = t.TypeOf<typeof GET_ASSIGNMENT_PARAMS>;
 
-export const GET_ASSIGNMENT_RESULT = t.type({
-  id: t.number,
-  version: t.number,
-  /** UNIX Timestamp */
-  lastUpdatedAt: t.number,
-  /** Name of user that last updated this assignment */
-  lastUpdatedBy: t.string,
-  state: ASSIGNMENT_STATE,
-  /**
-   * TODO: add additional tasks, such as indicators
-   */
-  task: t.type({
-    type: t.literal('form'),
-    form: FORM,
-    currentData: t.union([t.string, t.null]),
-    currentFiles: t.array(FORM_FILE),
+export const ASSIGNMENT_ASSIGNEE = t.union([
+  t.type({
+    type: t.literal('operation'),
+    operationId: t.number,
   }),
-  assignee: t.union([
-    t.type({
-      type: t.literal('operation'),
-      operationId: t.number,
-    }),
-    t.type({
-      type: t.literal('operationCluster'),
-      clusterId: t.number,
-      clusterName: t.string,
-    }),
-  ]),
-});
+  t.type({
+    type: t.literal('operationCluster'),
+    clusterId: t.number,
+    clusterName: t.string,
+  }),
+]);
 
-export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT>;
+export type AssignmentAssignee = t.TypeOf<typeof ASSIGNMENT_ASSIGNEE>;
+
+/**
+ * Generic type used for both the model and real endpoints that provide this
+ * data to allow for either a file hash of file contents to be returned
+ */
+export const GET_ASSIGNMENT_RESULT = <T>(fileType: t.Type<T>) =>
+  t.type({
+    id: t.number,
+    version: t.number,
+    /** UNIX Timestamp in milliseconds */
+    lastUpdatedAt: t.number,
+    /** Name of user that last updated this assignment */
+    lastUpdatedBy: t.string,
+    state: ASSIGNMENT_STATE,
+    /**
+     * TODO: add additional tasks, such as indicators
+     */
+    task: t.type({
+      type: t.literal('form'),
+      form: FORM,
+      currentData: t.union([t.string, t.null]),
+      currentFiles: t.array(fileType),
+    }),
+    assignee: ASSIGNMENT_ASSIGNEE,
+  });
+
+export const GET_ASSIGNMENT_RESULT_MODEL = GET_ASSIGNMENT_RESULT(FORM_FILE);
+
+export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT_MODEL>;
 
 export const UPDATE_ASSIGNMENT_PARAMS = t.type({
-  reportingWindowId: t.number,
-  assignmentId: t.number,
+  assignmentId: INTEGER_FROM_STRING,
   /**
    * Supply the last-known version number of the assignment.
    *
@@ -116,6 +128,41 @@ export const UPDATE_ASSIGNMENT_PARAMS = t.type({
 });
 
 export type UpdateAssignmentParams = t.TypeOf<typeof UPDATE_ASSIGNMENT_PARAMS>;
+
+export const CHECK_FILES_PARAMS = t.type({
+  fileHashes: t.array(t.string),
+});
+
+export type CheckFilesParams = t.TypeOf<typeof CHECK_FILES_PARAMS>;
+
+export const CHECK_FILES_RESULT = t.type({
+  missingFileHashes: t.array(t.string),
+});
+
+export type CheckFilesResult = t.TypeOf<typeof CHECK_FILES_RESULT>;
+
+export const UPLOAD_ASSIGNMENT_FILE_RESULT = t.type({
+  fileHash: t.string,
+});
+
+export type UploadAssignmentFileResult = t.TypeOf<
+  typeof UPLOAD_ASSIGNMENT_FILE_RESULT
+>;
+
+export const DOWNLOAD_ASSIGNMENT_FILE_PARAMS = t.type({
+  assignmentId: INTEGER_FROM_STRING,
+  fileHash: t.string,
+});
+
+export type DownloadAssignmentFileParams = t.TypeOf<
+  typeof DOWNLOAD_ASSIGNMENT_FILE_PARAMS
+>;
+
+export const DOWNLOAD_ASSIGNMENT_FILE_RESULT = ARRAY_BUFFER;
+
+export type DownloadAssignmentFileResult = t.TypeOf<
+  typeof DOWNLOAD_ASSIGNMENT_FILE_RESULT
+>;
 
 export interface Model {
   getAssignmentsForOperation(

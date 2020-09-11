@@ -19,12 +19,7 @@ const CLS = {
 };
 
 interface Props {
-  target: access.AccessTarget & {
-    /**
-     * TODO: Only non-global access is supported atm
-     */
-    targetId: number;
-  };
+  target: access.AccessTarget;
 }
 
 const Wrapper = styled.div`
@@ -84,8 +79,9 @@ export const TargetAccessManagement = (props: Props) => {
 
   const [addUserOpen, setAddUserOpen] = useState(false);
 
-  const loader = dataLoader([target.type, target.targetId], () =>
-    env().model.access.getTargetAccess({ target })
+  const loader = dataLoader(
+    [target.type, target.type === 'global' ? null : target.targetId],
+    () => env().model.access.getTargetAccess({ target })
   );
 
   const getRoleName = (key: string) =>

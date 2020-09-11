@@ -1,10 +1,9 @@
 import * as t from 'io-ts';
+import { ARRAY_BUFFER } from './util';
 
-import { BLOB } from './util';
-
-const FORM_BASE = t.type({
+export const FORM_BASE = t.type({
   id: t.number,
-  version: t.string,
+  version: t.number,
 });
 
 export const FORM_META = t.intersection([
@@ -26,6 +25,8 @@ export const FORM_DEFINITION = t.type(
   'FORM_DEFINITION'
 );
 
+export type FormDefinition = t.TypeOf<typeof FORM_DEFINITION>;
+
 export const FORM = t.intersection([
   FORM_META,
   t.type({
@@ -35,9 +36,18 @@ export const FORM = t.intersection([
 
 export type Form = t.TypeOf<typeof FORM>;
 
+export const FORM_FILE_HASH = t.type({
+  name: t.string,
+  data: t.type({
+    fileHash: t.string,
+  }),
+});
+
+export type FormFileHash = t.TypeOf<typeof FORM_FILE_HASH>;
+
 export const FORM_FILE = t.type({
   name: t.string,
-  data: BLOB,
+  data: ARRAY_BUFFER,
 });
 
 export type FormFile = t.TypeOf<typeof FORM_FILE>;
