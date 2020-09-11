@@ -387,7 +387,7 @@ export class LiveModel implements Model {
             const { url, init } = this.baseFetchInit({
               pathname: `/v2/reportingwindows/assignments/${result.id}/files/${f.data.fileHash}`,
             });
-            const res = await this.fetch(url.href);
+            const res = await this.fetch(url.href, init);
             data = res.arrayBuffer();
             fileCache.set(f.data.fileHash, data);
           }
