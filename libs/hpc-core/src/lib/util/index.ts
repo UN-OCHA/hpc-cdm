@@ -48,3 +48,10 @@ export const hashFileInBrowser = async (data: ArrayBuffer): Promise<string> => {
   const digest = await crypto.subtle.digest('SHA-256', data);
   return arrayBufferToHex(digest);
 };
+
+/**
+ * Get the type of the value resolved by a promise returned by a function
+ */
+export type AsyncReturnType<
+  T extends (...args: any[]) => Promise<any>
+> = ReturnType<T> extends Promise<infer V> ? V : never;
