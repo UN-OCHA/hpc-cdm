@@ -118,7 +118,6 @@ const Header = (props: Props) => {
     >
       <UNOCHA className={CLS.LOGO} />
       <div className={CLASSES.FLEX.GROW} />
-      <LanguagePicker choice={language} />
       {user()}
     </nav>
   );
