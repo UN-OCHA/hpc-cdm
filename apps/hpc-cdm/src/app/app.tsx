@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import { BaseStyling, C, styled, dataLoader } from '@unocha/hpc-ui';
+import { MdSchedule } from 'react-icons/md';
 
 import env from '../environments/environment';
 import { AppContext } from './context';
@@ -76,31 +77,14 @@ export const App = (props: Props) => {
                 ]}
               />
               <main>
-                {env.session.getUser() ? (
-                  <>
-                    <MainNavigation />
-                    <Switch>
-                      <Route
-                        path={paths.home()}
-                        exact
-                        render={() => <div>HOMEPAGE</div>}
-                      />
-                      <Route
-                        path={paths.operations()}
-                        exact
-                        component={PageOperationsList}
-                      />
-                      <Route
-                        path={paths.operationMatch()}
-                        component={PageOperation}
-                      />
-                      <Route path={paths.admin()} component={PageAdmin} />
-                      <Route component={PageNotFound} />
-                    </Switch>
-                  </>
-                ) : (
-                  <PageNotLoggedIn />
-                )}
+                <C.ErrorMessage
+                  strings={{
+                    title: 'Coming Soon',
+                    info:
+                      'CDM is still under development, please check back soon',
+                  }}
+                  icon={MdSchedule}
+                />
               </main>
             </div>
           </AppContext.Provider>
