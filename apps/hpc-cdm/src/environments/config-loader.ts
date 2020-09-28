@@ -1,7 +1,9 @@
 import { config } from '@unocha/hpc-core';
 import { LiveBrowserClient } from '@unocha/hpc-live';
+import { Environment } from './interface';
+import { t } from '../i18n';
 
-export const loadEnvForConfig = (url: string) =>
+export const loadEnvForConfig = (url: string): Promise<Environment> =>
   fetch(url)
     .then(async (res) => {
       if (res.ok) {
@@ -15,7 +17,24 @@ export const loadEnvForConfig = (url: string) =>
         throw Error(`Unable to get config (${res.status}): ${res.statusText}`);
       }
     })
-    .then((config) => {
-      const live = new LiveBrowserClient(config);
-      return live.init();
-    });
+    .then(initializeLiveEnvironment);
+
+export const initializeLiveEnvironment = async (config: config.Config) => {
+  const client = new LiveBrowserClient(config);
+  const live = await client.init();
+  const env: Environment = {
+    getDevHeaderWarning(lang) {
+      const hostname = new URL(config.hpcApiUrl).hostname;
+      if (hostname !== 'api.hpc.tools') {
+        return t.t(lang, (s) => s.common.devEnvironmentWarnings.dev);
+      }
+    },
+    get model() {
+      return live.model;
+    },
+    get session() {
+      return live.session;
+    },
+  };
+  return env;
+};

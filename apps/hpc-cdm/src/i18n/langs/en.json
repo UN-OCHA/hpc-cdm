@@ -18,6 +18,10 @@
     "emailAddress": "E-Mail address",
     "validation": {
       "missing": "Please enter {field}"
+    },
+    "devEnvironmentWarnings": {
+      "dummy": "This is a demo instance of CDM, information you enter here will only be stored in your browser, and will not be sent to our server",
+      "dev": "This is a test instance of CDM, information you enter here will be periodically deleted."
     }
   },
   "components": {
