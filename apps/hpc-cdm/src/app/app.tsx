@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 
 import { BaseStyling, C, styled, dataLoader } from '@unocha/hpc-ui';
 
-import env from '../environments/environment';
+import env, { Environment } from '../environments/environment';
 import { AppContext } from './context';
 import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
@@ -25,9 +25,12 @@ interface Props {
   className?: string;
 }
 
-interface State {
-  lang: LanguageKey;
-}
+const environmentWarning = (env: Environment, lang: LanguageKey) => {
+  const warning = env.getDevHeaderWarning(lang);
+  if (warning) {
+    return <C.DevEnvWarning message={warning} />;
+  }
+};
 
 export const App = (props: Props) => {
   const { className } = props;
@@ -63,6 +66,7 @@ export const App = (props: Props) => {
         {(env) => (
           <AppContext.Provider value={{ lang, env: () => env }}>
             <div className={className}>
+              {environmentWarning(env, lang)}
               <C.Header
                 className={CLS.HEADER}
                 session={env.session}
