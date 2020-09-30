@@ -12,6 +12,12 @@ declare module 'enketo-core' {
     init(): string[];
 
     getDataStr(opts: { irrelevant: boolean }): string;
+
+    pages: {
+      active: boolean;
+      activePages: string[];
+      current: string;
+    };
   }
 }
 

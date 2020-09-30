@@ -585,7 +585,7 @@ export class Dummy {
           ): Promise<reportingWindows.GetAssignmentResult> => {
             const {
               assignmentId,
-              form: { id, data, files },
+              form: { id, data, files, finalized },
               previousVersion,
             } = params;
 
@@ -602,6 +602,7 @@ export class Dummy {
                     (u) => u.id === this.data.currentUser
                   );
                   a.version++;
+                  a.state = finalized ? 'raw:finalized' : 'raw:entered';
                   a.lastUpdatedAt = Date.now();
                   a.lastUpdatedBy = u[0]?.user.name || 'Unknown';
                   a.currentData = data;

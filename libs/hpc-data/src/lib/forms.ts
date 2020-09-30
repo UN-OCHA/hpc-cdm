@@ -57,6 +57,7 @@ export const FORM_UPDATE_DATA = t.intersection([
   t.type({
     data: t.string,
     files: t.array(FORM_FILE),
+    finalized: t.boolean,
   }),
 ]);
 

@@ -6,6 +6,7 @@ import { reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext, getEnv } from '../context';
 import { EnketoEditableForm } from './enketo';
+import { supportedBrowser } from '../utils/util';
 
 interface Props {
   className?: string;
@@ -27,7 +28,11 @@ const FormAssignmentData = (props: Props) => {
     ],
     getEnv().model.reportingWindows.getAssignment
   );
-  return (
+  return !supportedBrowser() ? (
+    <C.ErrorMessage
+      strings={t.get(lang, (s) => s.components.unsupportedBrowser)}
+    />
+  ) : (
     <C.Loader
       loader={loader}
       strings={{

@@ -62,6 +62,7 @@ const OperationFormAssignmentsList = (props: Props) => {
               .reduce((acc, val) => acc.concat(val), []);
             return (
               <div>
+                <h2>{window.name}</h2>
                 <h3>
                   {t.t(lang, (s) => s.routes.operations.forms.forOperations)}
                 </h3>

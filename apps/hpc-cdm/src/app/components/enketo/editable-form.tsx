@@ -1,8 +1,19 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  createRef,
+} from 'react';
 import { useHistory } from 'react-router-dom';
 import { reportingWindows, errors } from '@unocha/hpc-data';
 import { BreadcrumbLinks, C, CLASSES, styled } from '@unocha/hpc-ui';
-import { Tooltip, CircularProgress } from '@material-ui/core';
+import {
+  Tooltip,
+  CircularProgress,
+  FormControlLabel,
+  Checkbox,
+} from '@material-ui/core';
 import { MdWarning } from 'react-icons/md';
 import moment from 'moment';
 
@@ -31,6 +42,12 @@ const StatusDetails = styled.div`
   > .error {
     color: ${(p) => p.theme.colors.textErrorLight};
   }
+`;
+
+const SubmitPanel = styled.div`
+  border: 1px solid ${(p) => p.theme.colors.text};
+  margin: 0 2.85em 2.85em 2.85em;
+  padding: 1em 1em 0 1em;
 `;
 
 type Status =
@@ -64,6 +81,7 @@ export const EnketoEditableForm = (props: Props) => {
   } = props;
   const env = getEnv();
   const [xform, setXform] = useState<XForm | null>(null);
+  const [lastPage, setLastPage] = useState(false);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
   const [lastChangedData, setLastChangedData] = useState<string | null>(null);
   const [
@@ -71,6 +89,7 @@ export const EnketoEditableForm = (props: Props) => {
     setUpdatedAssignment,
   ] = useState<reportingWindows.GetAssignmentResult | null>(null);
   const [status, setStatus] = useState<Status>({ type: 'idle' });
+  const [editable, setEditable] = useState(true);
   const history = useHistory();
   const { lang } = useContext(AppContext);
 
@@ -85,6 +104,7 @@ export const EnketoEditableForm = (props: Props) => {
 
   useEffect(() => {
     const {
+      state,
       task: {
         form: {
           definition: { form, model },
@@ -99,8 +119,9 @@ export const EnketoEditableForm = (props: Props) => {
       name: f.name,
       data: new Blob([new Uint8Array(f.data)]),
     }));
-
+    setEditable(!state.endsWith(':finalized'));
     const xform = new XForm(form, model, currentData, files, {
+      editable: !state.endsWith(':finalized'),
       onDataUpdate: ({ xform }) => setLastChangedData(xform.getData().data),
     });
     setXform(xform);
@@ -140,9 +161,10 @@ export const EnketoEditableForm = (props: Props) => {
     };
   }, [xform, lastSavedData, history, lang]);
 
-  const saveForm = async (redirect = false) => {
+  const saveForm = async (redirect = false, finalized = false) => {
     if (xform) {
       const { data, files } = xform.getData();
+
       if (lastSavedData !== data) {
         const {
           task: { form },
@@ -166,6 +188,7 @@ export const EnketoEditableForm = (props: Props) => {
               version: form.version,
               data,
               files: convertedFiles,
+              finalized,
             },
           })
           .then((assignment) => {
@@ -199,6 +222,15 @@ export const EnketoEditableForm = (props: Props) => {
             }
           });
       }
+    }
+  };
+
+  const handleNext = () => {
+    if (xform) {
+      // Allow enketo to flip the page
+      setTimeout(() => {
+        setLastPage(xform.isCurrentPageTheLastPage());
+      });
     }
   };
 
@@ -245,12 +277,43 @@ export const EnketoEditableForm = (props: Props) => {
     </StatusTooltip>
   );
 
+  const SubmitButton = () => {
+    const strings = t.get(lang, (s) => s.routes.operations.forms.nav.submit);
+    const [confirmed, setConfirmed] = useState(false);
+
+    return (
+      <SubmitPanel>
+        <p>{strings.message}</p>
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="primary"
+              onChange={(e) => setConfirmed(e.target.checked)}
+            />
+          }
+          label={strings.confirm}
+        />
+        <div>
+          <button
+            disabled={!confirmed}
+            id="submit-form"
+            onClick={() => saveForm(true, true)}
+            className="btn btn-primary"
+          >
+            <i className="icon icon-check"> </i>
+            {strings.submit}
+          </button>
+        </div>
+      </SubmitPanel>
+    );
+  };
+
   return (
     <div>
       <C.Toolbar>
         <C.Breadcrumbs links={breadcrumbs} />
         <div className={CLASSES.FLEX.GROW} />
-        {indicator()}
+        {editable ? indicator() : t.t(lang, (s) => s.common.nonEditable)}
       </C.Toolbar>
       <div className="enketo" id="form">
         <div className="main">
@@ -258,30 +321,37 @@ export const EnketoEditableForm = (props: Props) => {
           <section className="form-footer end">
             <div className="form-footer__content">
               <div className="form-footer__content__main-controls">
-                <button className="btn btn-default previous-page disabled">
+                <button
+                  onMouseDown={() => setLastPage(false)}
+                  className="btn btn-default previous-page disabled"
+                >
                   {t.t(lang, (s) => s.routes.operations.forms.nav.prev)}
                 </button>
+                {editable && (
+                  <button
+                    onClick={() => saveForm()}
+                    className="btn btn-default"
+                    style={{ display: 'inline-block' }}
+                  >
+                    {t.t(lang, (s) => s.routes.operations.forms.nav.save)}
+                  </button>
+                )}
                 <button
-                  onClick={() => saveForm()}
-                  className="btn btn-default"
-                  style={{ display: 'inline-block' }}
-                >
-                  {t.t(lang, (s) => s.routes.operations.forms.nav.save)}
-                </button>
-                <button
-                  onMouseDown={() => saveForm()}
+                  onMouseDown={() => {
+                    if (editable) {
+                      saveForm();
+                      handleNext();
+                    }
+                  }}
                   className="btn btn-primary next-page disabled"
                 >
                   {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
                 </button>
-                <button
-                  onClick={() => saveForm(true)}
-                  className="btn btn-primary"
-                  id="submit-form"
-                >
-                  <i className="icon icon-check"> </i>
-                  {t.t(lang, (s) => s.routes.operations.forms.nav.submit)}
-                </button>
+                {editable && lastPage && (
+                  <div>
+                    <SubmitButton />
+                  </div>
+                )}
               </div>
             </div>
           </section>
