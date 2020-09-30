@@ -162,6 +162,7 @@ export const LIVE_TYPES = {
         forms.FORM_BASE,
         t.type({
           data: t.string,
+          finalized: t.boolean,
           files: t.array(
             t.type({
               name: t.string,
@@ -454,6 +455,7 @@ export class LiveModel implements Model {
             id: params.form.id,
             version: params.form.version,
             data: params.form.data,
+            finalized: params.form.finalized,
             files: files.map((f) => ({
               name: f.name,
               data: { fileHash: f.fileHash },
