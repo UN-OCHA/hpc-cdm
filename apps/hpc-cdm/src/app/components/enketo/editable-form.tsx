@@ -4,7 +4,7 @@ import { reportingWindows, errors } from '@unocha/hpc-data';
 import { BreadcrumbLinks, C, CLASSES, styled } from '@unocha/hpc-ui';
 import { Tooltip, CircularProgress } from '@material-ui/core';
 import { MdWarning } from 'react-icons/md';
-import moment from 'moment';
+import dayjs from '../../../libraries/dayjs';
 
 import XForm from './xform';
 import { getEnv, AppContext } from '../../context';
@@ -76,10 +76,9 @@ export const EnketoEditableForm = (props: Props) => {
 
   const assignment = updatedAssignment || originalAssignment;
 
-  const lastUpdatedAt = moment(
+  const lastUpdatedAt = dayjs(
     status.type === 'conflict' ? status.timestamp : assignment.lastUpdatedAt
-  );
-  lastUpdatedAt.locale(lang);
+  ).locale(lang);
   const lastUpdatedBy =
     status.type === 'conflict' ? status.otherPerson : assignment.lastUpdatedBy;
 
@@ -178,8 +177,7 @@ export const EnketoEditableForm = (props: Props) => {
           })
           .catch((err) => {
             if (errors.isConflictError(err)) {
-              const timeAgo = moment(err.timestamp);
-              timeAgo.locale(lang);
+              const timeAgo = dayjs(err.timestamp).locale(lang);
               alert(
                 t
                   .t(lang, (s) => s.routes.operations.forms.errors.conflict)

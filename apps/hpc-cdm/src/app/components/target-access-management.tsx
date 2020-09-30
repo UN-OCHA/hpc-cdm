@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import moment from 'moment';
 import { MdDelete, MdAssignment, MdPersonOutline, MdAdd } from 'react-icons/md';
 
 import { C, dataLoader, styled, CLASSES, combineClasses } from '@unocha/hpc-ui';
 import { access } from '@unocha/hpc-data';
+
+import dayjs from '../../libraries/dayjs';
 
 import { t } from '../../i18n';
 import { getContext } from '../context';
@@ -301,8 +302,7 @@ export const TargetAccessManagement = (props: Props) => {
           {auditLog.length > 0 ? (
             <ul className={CLS.LIST}>
               {auditLog.map((item, i) => {
-                const m = moment(item.date);
-                m.locale(lang);
+                const m = dayjs(item.date).locale(lang);
                 return (
                   <li key={i}>
                     <span className={CLS.DATE}>{m.fromNow()}:</span>
