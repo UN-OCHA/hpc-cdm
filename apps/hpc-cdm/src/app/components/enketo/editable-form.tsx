@@ -159,7 +159,7 @@ export const EnketoEditableForm = (props: Props) => {
     if (xform) {
       const { data, files } = xform.getData();
 
-      if (lastSavedData !== data) {
+      if (lastSavedData !== data || finalized) {
         const {
           task: { form },
         } = assignment;
@@ -189,6 +189,7 @@ export const EnketoEditableForm = (props: Props) => {
             setLastSavedData(assignment.task.currentData);
             setUpdatedAssignment(assignment);
             setStatus({ type: 'idle' });
+
             if (redirect) {
               history.goBack();
             }
@@ -341,11 +342,7 @@ export const EnketoEditableForm = (props: Props) => {
                 >
                   {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
                 </button>
-                {editable && lastPage && (
-                  <div>
-                    <SubmitButton />
-                  </div>
-                )}
+                {editable && lastPage && <SubmitButton />}
               </div>
             </div>
           </section>
