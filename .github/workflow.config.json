@@ -16,5 +16,21 @@
     "skipLogin": true
   },
   "ci": ["./.github/ci.sh"],
-  "mergebackLabels": ["mergeback"]
+  "mergebackLabels": ["mergeback"],
+  "deployments": {
+    "environments": [
+      {
+        "branch": "env/dev",
+        "environment": "dev"
+      },
+      {
+        "branch": "env/demo",
+        "environment": "demo"
+      },
+      {
+        "branch": "env/demodev",
+        "environment": "demodev"
+      }
+    ]
+  }
 }
