@@ -215,6 +215,7 @@ export class Dummy {
       lastUpdatedAt: assignment.lastUpdatedAt,
       lastUpdatedBy: assignment.lastUpdatedBy,
       state: assignment.state,
+      editable: assignment.editable,
       task: await getAssignmentTask(assignment),
       assignee,
     };
@@ -603,6 +604,7 @@ export class Dummy {
                   );
                   a.version++;
                   a.state = finalized ? 'raw:finalized' : 'raw:entered';
+                  a.editable = !finalized;
                   a.lastUpdatedAt = Date.now();
                   a.lastUpdatedBy = u[0]?.user.name || 'Unknown';
                   a.currentData = data;

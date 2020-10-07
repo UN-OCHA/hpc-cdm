@@ -1,6 +1,6 @@
 import * as Bowser from 'bowser';
 
-export const supportedBrowser = (): boolean => {
+export const browserSupportedByEnketo = (): boolean => {
   const browser = Bowser.getParser(window.navigator.userAgent);
   const isValidBrowser = browser.satisfies({
     chrome: '>20',

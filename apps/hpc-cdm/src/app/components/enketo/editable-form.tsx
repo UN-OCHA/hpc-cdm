@@ -2,18 +2,14 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { reportingWindows, errors } from '@unocha/hpc-data';
 import { BreadcrumbLinks, C, CLASSES, styled } from '@unocha/hpc-ui';
-import {
-  Tooltip,
-  CircularProgress,
-  FormControlLabel,
-  Checkbox,
-} from '@material-ui/core';
+import { Tooltip, CircularProgress } from '@material-ui/core';
 import { MdWarning } from 'react-icons/md';
 import moment from 'moment';
 
 import XForm from './xform';
 import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
+import SubmitButton from './submit-button';
 
 const StatusTooltip = Tooltip;
 
@@ -36,12 +32,6 @@ const StatusDetails = styled.div`
   > .error {
     color: ${(p) => p.theme.colors.textErrorLight};
   }
-`;
-
-const SubmitPanel = styled.div`
-  border: 1px solid ${(p) => p.theme.colors.text};
-  margin: 0 2.85em 2.85em 2.85em;
-  padding: 1em 1em 0 1em;
 `;
 
 type Status =
@@ -99,6 +89,7 @@ export const EnketoEditableForm = (props: Props) => {
   useEffect(() => {
     const {
       state,
+      editable,
       task: {
         form: {
           definition: { form, model },
@@ -113,9 +104,9 @@ export const EnketoEditableForm = (props: Props) => {
       name: f.name,
       data: new Blob([new Uint8Array(f.data)]),
     }));
-    setEditable(!state.endsWith(':finalized'));
+    setEditable(editable);
     const xform = new XForm(form, model, currentData, files, {
-      editable: !state.endsWith(':finalized'),
+      editable,
       onDataUpdate: ({ xform }) => setLastChangedData(xform.getData().data),
     });
     setXform(xform);
@@ -272,37 +263,6 @@ export const EnketoEditableForm = (props: Props) => {
     </StatusTooltip>
   );
 
-  const SubmitButton = () => {
-    const strings = t.get(lang, (s) => s.routes.operations.forms.nav.submit);
-    const [confirmed, setConfirmed] = useState(false);
-
-    return (
-      <SubmitPanel>
-        <p>{strings.message}</p>
-        <FormControlLabel
-          control={
-            <Checkbox
-              color="primary"
-              onChange={(e) => setConfirmed(e.target.checked)}
-            />
-          }
-          label={strings.confirm}
-        />
-        <div>
-          <button
-            disabled={!confirmed}
-            id="submit-form"
-            onClick={() => saveForm(true, true)}
-            className="btn btn-primary"
-          >
-            <i className="icon icon-check"> </i>
-            {strings.submit}
-          </button>
-        </div>
-      </SubmitPanel>
-    );
-  };
-
   return (
     <div>
       <C.Toolbar>
@@ -342,7 +302,7 @@ export const EnketoEditableForm = (props: Props) => {
                 >
                   {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
                 </button>
-                {editable && lastPage && <SubmitButton />}
+                {editable && lastPage && <SubmitButton saveForm={saveForm} />}
               </div>
             </div>
           </section>
