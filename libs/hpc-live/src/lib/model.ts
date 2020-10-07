@@ -112,7 +112,7 @@ const fileCache = new Map<string, Promise<ArrayBuffer>>();
  * functions in the model.
  *
  * (e.g. when it's neccesary for single model function to be backed my multiple
- * HTTP endpoints, or where some daya is sent as params and some as body).
+ * HTTP endpoints, or where some data is sent as params and some as body).
  */
 export const LIVE_TYPES = {
   ACCESS: {
@@ -158,6 +158,7 @@ export const LIVE_TYPES = {
       forms.FORM_FILE_HASH
     ),
     UPDATE_ASSIGNMENT_BODY: t.type({
+      previousVersion: t.number,
       form: t.intersection([
         forms.FORM_BASE,
         t.type({
