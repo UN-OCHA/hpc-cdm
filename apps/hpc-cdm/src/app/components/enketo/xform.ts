@@ -67,7 +67,7 @@ export default class XForm {
     }
 
     if (!editable) {
-      $('#form :input:not(:button)').each(function (x) {
+      $('#form :input:not(:button)').each(function () {
         $(this).prop('disabled', true);
       });
     }
@@ -111,5 +111,10 @@ export default class XForm {
     }
 
     return { data, files };
+  }
+
+  isCurrentPageTheLastPage(): boolean {
+    const totalPages = this.form.pages.activePages.length - 1;
+    return this.form.pages.activePages[totalPages] === this.form.pages.current;
   }
 }

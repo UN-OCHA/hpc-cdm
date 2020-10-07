@@ -9,6 +9,7 @@ import dayjs from '../../../libraries/dayjs';
 import XForm from './xform';
 import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
+import SubmitButton from './submit-button';
 
 const StatusTooltip = Tooltip;
 
@@ -64,6 +65,7 @@ export const EnketoEditableForm = (props: Props) => {
   } = props;
   const env = getEnv();
   const [xform, setXform] = useState<XForm | null>(null);
+  const [lastPage, setLastPage] = useState(false);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
   const [lastChangedData, setLastChangedData] = useState<string | null>(null);
   const [
@@ -71,6 +73,7 @@ export const EnketoEditableForm = (props: Props) => {
     setUpdatedAssignment,
   ] = useState<reportingWindows.GetAssignmentResult | null>(null);
   const [status, setStatus] = useState<Status>({ type: 'idle' });
+  const [editable, setEditable] = useState(true);
   const history = useHistory();
   const { lang } = useContext(AppContext);
 
@@ -84,6 +87,8 @@ export const EnketoEditableForm = (props: Props) => {
 
   useEffect(() => {
     const {
+      state,
+      editable,
       task: {
         form: {
           definition: { form, model },
@@ -98,8 +103,9 @@ export const EnketoEditableForm = (props: Props) => {
       name: f.name,
       data: new Blob([new Uint8Array(f.data)]),
     }));
-
+    setEditable(editable);
     const xform = new XForm(form, model, currentData, files, {
+      editable,
       onDataUpdate: ({ xform }) => setLastChangedData(xform.getData().data),
     });
     setXform(xform);
@@ -139,10 +145,11 @@ export const EnketoEditableForm = (props: Props) => {
     };
   }, [xform, lastSavedData, history, lang]);
 
-  const saveForm = async (redirect = false) => {
+  const saveForm = async (redirect = false, finalized = false) => {
     if (xform) {
       const { data, files } = xform.getData();
-      if (lastSavedData !== data) {
+
+      if (lastSavedData !== data || finalized) {
         const {
           task: { form },
         } = assignment;
@@ -165,12 +172,14 @@ export const EnketoEditableForm = (props: Props) => {
               version: form.version,
               data,
               files: convertedFiles,
+              finalized,
             },
           })
           .then((assignment) => {
             setLastSavedData(assignment.task.currentData);
             setUpdatedAssignment(assignment);
             setStatus({ type: 'idle' });
+
             if (redirect) {
               history.goBack();
             }
@@ -197,6 +206,15 @@ export const EnketoEditableForm = (props: Props) => {
             }
           });
       }
+    }
+  };
+
+  const handleNext = () => {
+    if (xform) {
+      // Allow enketo to flip the page
+      setTimeout(() => {
+        setLastPage(xform.isCurrentPageTheLastPage());
+      });
     }
   };
 
@@ -248,7 +266,7 @@ export const EnketoEditableForm = (props: Props) => {
       <C.Toolbar>
         <C.Breadcrumbs links={breadcrumbs} />
         <div className={CLASSES.FLEX.GROW} />
-        {indicator()}
+        {editable ? indicator() : t.t(lang, (s) => s.common.nonEditable)}
       </C.Toolbar>
       <div className="enketo" id="form">
         <div className="main">
@@ -256,30 +274,33 @@ export const EnketoEditableForm = (props: Props) => {
           <section className="form-footer end">
             <div className="form-footer__content">
               <div className="form-footer__content__main-controls">
-                <button className="btn btn-default previous-page disabled">
+                <button
+                  onMouseDown={() => setLastPage(false)}
+                  className="btn btn-default previous-page disabled"
+                >
                   {t.t(lang, (s) => s.routes.operations.forms.nav.prev)}
                 </button>
+                {editable && (
+                  <button
+                    onClick={() => saveForm()}
+                    className="btn btn-default"
+                    style={{ display: 'inline-block' }}
+                  >
+                    {t.t(lang, (s) => s.routes.operations.forms.nav.save)}
+                  </button>
+                )}
                 <button
-                  onClick={() => saveForm()}
-                  className="btn btn-default"
-                  style={{ display: 'inline-block' }}
-                >
-                  {t.t(lang, (s) => s.routes.operations.forms.nav.save)}
-                </button>
-                <button
-                  onMouseDown={() => saveForm()}
+                  onMouseDown={() => {
+                    if (editable) {
+                      saveForm();
+                      handleNext();
+                    }
+                  }}
                   className="btn btn-primary next-page disabled"
                 >
                   {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
                 </button>
-                <button
-                  onClick={() => saveForm(true)}
-                  className="btn btn-primary"
-                  id="submit-form"
-                >
-                  <i className="icon icon-check"> </i>
-                  {t.t(lang, (s) => s.routes.operations.forms.nav.submit)}
-                </button>
+                {editable && lastPage && <SubmitButton saveForm={saveForm} />}
               </div>
             </div>
           </section>

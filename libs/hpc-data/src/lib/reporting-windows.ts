@@ -99,6 +99,7 @@ export const GET_ASSIGNMENT_RESULT = <T>(fileType: t.Type<T>) =>
     /** Name of user that last updated this assignment */
     lastUpdatedBy: t.string,
     state: ASSIGNMENT_STATE,
+    editable: t.boolean,
     /**
      * TODO: add additional tasks, such as indicators
      */

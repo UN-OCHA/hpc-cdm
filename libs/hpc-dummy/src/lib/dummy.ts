@@ -215,6 +215,7 @@ export class Dummy {
       lastUpdatedAt: assignment.lastUpdatedAt,
       lastUpdatedBy: assignment.lastUpdatedBy,
       state: assignment.state,
+      editable: assignment.editable,
       task: await getAssignmentTask(assignment),
       assignee,
     };
@@ -585,7 +586,7 @@ export class Dummy {
           ): Promise<reportingWindows.GetAssignmentResult> => {
             const {
               assignmentId,
-              form: { id, data, files },
+              form: { id, data, files, finalized },
               previousVersion,
             } = params;
 
@@ -602,6 +603,8 @@ export class Dummy {
                     (u) => u.id === this.data.currentUser
                   );
                   a.version++;
+                  a.state = finalized ? 'raw:finalized' : 'raw:entered';
+                  a.editable = !finalized;
                   a.lastUpdatedAt = Date.now();
                   a.lastUpdatedBy = u[0]?.user.name || 'Unknown';
                   a.currentData = data;
