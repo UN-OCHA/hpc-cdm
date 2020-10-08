@@ -5,6 +5,7 @@ const USER_ERROR = 'user_error';
 export const USER_ERROR_KEYS = [
   'access.userAlreadyInvited',
   'access.userAlreadyAdded',
+  'assignment.alreadyFinalized',
 ] as const;
 
 export type UserErrorKey = typeof USER_ERROR_KEYS[number];

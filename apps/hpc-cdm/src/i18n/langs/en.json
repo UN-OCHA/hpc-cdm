@@ -8,7 +8,8 @@
     "unableToLoadCDM": "Unable to load CDM",
     "userErrors": {
       "access.userAlreadyInvited": "That user has already been invited, they must log-in to get access",
-      "access.userAlreadyAdded": "That user has already been given access"
+      "access.userAlreadyAdded": "That user has already been given access",
+      "assignment.alreadyFinalized": "The assignment has been finalised"
     }
   },
   "common": {
