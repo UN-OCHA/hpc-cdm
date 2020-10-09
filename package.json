@@ -1,6 +1,6 @@
 {
   "name": "unocha",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "scripts": {
     "remove-unneeded-deps": "node tools/remove-unneeded-deps.js",
