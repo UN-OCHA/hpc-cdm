@@ -6,6 +6,7 @@ import * as mixins from './lib/mixins';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
 import Breadcrumbs, { BreadcrumbLinks } from './lib/components/breadcrumbs';
+import DevEnvWarning from './lib/components/development-environment-warning';
 import ErrorMessage from './lib/components/error-message';
 import Header from './lib/components/header';
 import Loader from './lib/components/loader';
@@ -19,6 +20,7 @@ import Caret from './lib/icons/caret';
 const COMPONENTS = {
   AcceptableUseNotification,
   Breadcrumbs,
+  DevEnvWarning,
   ErrorMessage,
   Header,
   Loader,

@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import { BaseStyling, C, styled, dataLoader } from '@unocha/hpc-ui';
-import { MdSchedule } from 'react-icons/md';
 
-import env from '../environments/environment';
+import env, { Environment } from '../environments/environment';
 import { AppContext } from './context';
 import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
@@ -26,9 +25,12 @@ interface Props {
   className?: string;
 }
 
-interface State {
-  lang: LanguageKey;
-}
+const environmentWarning = (env: Environment, lang: LanguageKey) => {
+  const warning = env.getDevHeaderWarning(lang);
+  if (warning) {
+    return <C.DevEnvWarning message={warning} />;
+  }
+};
 
 export const App = (props: Props) => {
   const { className } = props;
@@ -64,6 +66,7 @@ export const App = (props: Props) => {
         {(env) => (
           <AppContext.Provider value={{ lang, env: () => env }}>
             <div className={className}>
+              {environmentWarning(env, lang)}
               <C.Header
                 className={CLS.HEADER}
                 session={env.session}
@@ -77,14 +80,31 @@ export const App = (props: Props) => {
                 ]}
               />
               <main>
-                <C.ErrorMessage
-                  strings={{
-                    title: 'Coming Soon',
-                    info:
-                      'CDM is still under development, please check back soon',
-                  }}
-                  icon={MdSchedule}
-                />
+                {env.session.getUser() ? (
+                  <>
+                    <MainNavigation />
+                    <Switch>
+                      <Route
+                        path={paths.home()}
+                        exact
+                        render={() => <div>HOMEPAGE</div>}
+                      />
+                      <Route
+                        path={paths.operations()}
+                        exact
+                        component={PageOperationsList}
+                      />
+                      <Route
+                        path={paths.operationMatch()}
+                        component={PageOperation}
+                      />
+                      <Route path={paths.admin()} component={PageAdmin} />
+                      <Route component={PageNotFound} />
+                    </Switch>
+                  </>
+                ) : (
+                  <PageNotLoggedIn />
+                )}
               </main>
             </div>
           </AppContext.Provider>

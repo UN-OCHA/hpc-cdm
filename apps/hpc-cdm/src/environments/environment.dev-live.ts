@@ -1,15 +1,14 @@
 import { Environment } from './interface';
 import { config } from '@unocha/hpc-core';
-import { LiveBrowserClient } from '@unocha/hpc-live';
 import env from './env.json';
+import { initializeLiveEnvironment } from './config-loader';
 
 export { Environment };
 
-export default async () => {
+export default async (): Promise<Environment> => {
   if (!config.isValid(env)) {
     throw new Error('Invalid config');
   }
 
-  const live = new LiveBrowserClient(env);
-  return live.init();
+  return initializeLiveEnvironment(env);
 };
