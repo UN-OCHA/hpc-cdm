@@ -91,7 +91,9 @@
           "prev": "Précédent",
           "save": "Sauvegarder",
           "next": "Suivant",
-          "submit": "Soumettre"
+          "submit": {
+            "submit": "Soumettre"
+          }
         },
         "status": {
           "idle": "Toutes les modifications ont été enregistrées",
