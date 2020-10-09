@@ -16,8 +16,13 @@
     "saving": "Saving...",
     "add": "Add",
     "emailAddress": "E-Mail address",
+    "nonEditable": "Non Editable",
     "validation": {
       "missing": "Please enter {field}"
+    },
+    "devEnvironmentWarnings": {
+      "dummy": "This is a demo instance of CDM, information you enter here will only be stored in your browser, and will not be sent to our server",
+      "dev": "This is a test instance of CDM, information you enter here will be periodically deleted."
     }
   },
   "components": {
@@ -38,6 +43,10 @@
       "loading": "Loading...",
       "error": "Error:",
       "retry": "Retry"
+    },
+    "unsupportedBrowser": {
+      "title": "Unsupported Browser!",
+      "info": "Unfortunately your current browser is not supported. Please switch to either Firefox or Google Chrome. To do this, simply copy the form address (URL) above, then open Firefox or Chrome, and paste the address into the browser."
     },
     "accessControl": {
       "addPerson": "Add Someone",
@@ -69,7 +78,7 @@
     "admin": "Admin",
     "operations": "Operations",
     "clusters": "Clusters",
-    "forms": "Forms",
+    "forms": "Survey Forms",
     "settings": "Settings",
     "manageAccess": "Manage access"
   },
@@ -80,14 +89,18 @@
         "info": "We were unable to find the operation you were looking for"
       },
       "forms": {
-        "forOperations": "Operation-Wide Forms",
-        "forClusters": "Cluster Forms",
+        "forOperations": "Operation Survey Forms",
+        "forClusters": "Cluster Survey Forms",
         "unsavedChangesPrompt": "Are you sure you want to navigate away? You have unsaved changes.",
         "nav": {
           "prev": "Prev",
           "save": "Save",
           "next": "Next",
-          "submit": "Submit"
+          "submit": {
+            "message": "When you have completed the form, please click on the \"Submit\" button below to send it to the moderator.\nPlease note that you will not be able to edit your answers after it has been submitted, so please ensure that the form is complete and correct.",
+            "confirm": "I confirm that the form is complete and ready to be submitted",
+            "submit": "Submit"
+          }
         },
         "status": {
           "idle": "All changes saved",

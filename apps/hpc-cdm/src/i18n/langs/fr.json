@@ -1,8 +1,119 @@
 {
-  "title": "HPC CDM",
+  "title": "HPC Coordination Description Mapping",
+  "user": {
+    "login": "Connexion",
+    "logout": "Déconnexion"
+  },
+  "errors": {
+    "unableToLoadCDM": "Impossible de charger le CDM",
+    "userErrors": {
+      "access.userAlreadyInvited": "Cet utilisateur a déjà été invité, il doit se connecter pour avoir accès",
+      "access.userAlreadyAdded": "Cet utilisateur a déjà reçu l'accès"
+    }
+  },
+  "common": {
+    "updatedAtBy": "Mis à jour {timeAgo} par {person}",
+    "saving": "Sauvegarde…",
+    "add": "Ajouter",
+    "emailAddress": "Adresse e-mail",
+    "validation": {
+      "missing": "Veuillez saisir {field}"
+    },
+    "devEnvironmentWarnings": {
+      "dummy": "Ceci est une instance de démonstration de CDM, les informations que vous entrez ici ne seront stockées que dans votre navigateur et ne seront pas envoyées à notre serveur",
+      "dev": "Ceci est une instance de test de CDM, les informations que vous entrez ici seront périodiquement supprimées."
+    }
+  },
   "components": {
     "acceptableUseNotification": {
-      "login": "Cliquez ici pour vous identifier"
+      "login": "Cliquez ici pour vous connecter",
+      "title": "Notification d'utilisation acceptable",
+      "p1": "L’accès non autorisé à ce système informatique des Nations Unies est interdit par le document ST/SGB/2004/15 (\"Utilisation des moyens et des données informatiques et télématiques\" du 29 novembre 2004)",
+      "p2": "Les utilisateurs autorisés veillent à ce que leur utilisation des ressources des technologies de l'information et de la communication (TIC) et des données TIC soit conforme à leurs obligations en tant que membres du personnel ou à toutes autres obligations qui pourraient leur être applicables ",
+      "p3": "Toute utilisation des ressources TIC et des données TIC fait l’objet d’un suivi et d’une enquête comme indiqué dans le document ST/SGB/2004/15.",
+      "p4": "L'utilisation de ce système par tout utilisateur, autorisé ou non, constitue un consentement aux règlements et règles applicables de l'ONU"
+    },
+    "notFound": {
+      "title": "Page non trouvée",
+      "info": "Nous n'avons pas pu trouver la page que vous cherchiez",
+      "back": "Retour"
+    },
+    "loader": {
+      "loading": "Chargement...",
+      "error": "Erreur:",
+      "retry": "Réessayer"
+    },
+    "accessControl": {
+      "addPerson": "Ajouter quelqu'un",
+      "addPersonInfo": "Saisissez l'adresse e-mail de la personne à laquelle vous souhaitez donner accès. S'il ne s'est pas connecté auparavant, il recevra une invitation qui deviendra active après sa connexion.",
+      "activePeople": "Utilisateurs actifs",
+      "pendingInvites": "Invitations en attente",
+      "auditLog": "Journal d'audit",
+      "roles": {
+        "hpc_admin": "Administrateur HPC",
+        "swaps": "Membre de l'équipe SWAPS",
+        "operationLead": "Chef d’opération",
+        "clusterLead": "Chef de cluster"
+      },
+      "invitedBy": "Invité par {name}",
+      "confirmRoleUpdate": "Êtes-vous sûr de vouloir changer le rôle de {name} en {role}?",
+      "confirmRoleRemoval": "Êtes-vous sûr de vouloir supprimer l’accès pour {name}?",
+      "auditLogRoleChange": "{actor}  a remplacé le rôle de {grantee} par {role}",
+      "auditLogRoleRemoval": "{actor} a supprimé l'accès de {grantee}",
+      "noPendingInvites": "Aucune invitation en attente",
+      "noUsers": {
+        "title": "Pas d'utilisateurs assignés",
+        "info": "Personne n'a obtenu l'accès"
+      },
+      "auditLogEmpty": "Le journal d'audit est vide",
+      "role": "Rôle"
+    }
+  },
+  "navigation": {
+    "admin": "Admin",
+    "operations": "Opérations",
+    "clusters": "Clusters",
+    "forms": "Formulaires",
+    "settings": "Réglages",
+    "manageAccess": "Gérer l'accès"
+  },
+  "routes": {
+    "operations": {
+      "notFound": {
+        "title": "Opération introuvable",
+        "info": "Nous n'avons pas pu trouver l'opération que vous recherchiez"
+      },
+      "forms": {
+        "forOperations": "Formulaires à l'échelle de l'opération",
+        "forClusters": "Formulaires de cluster",
+        "unsavedChangesPrompt": "Êtes-vous sûr de vouloir naviguer ailleurs ? Vous avez des changements non enregistrés.",
+        "nav": {
+          "prev": "Précédent",
+          "save": "Sauvegarder",
+          "next": "Suivant",
+          "submit": {
+            "submit": "Soumettre"
+          }
+        },
+        "status": {
+          "idle": "Toutes les modifications ont été enregistrées",
+          "unsavedChanges": "Modifications non enregistrées",
+          "saving": "Sauvegarde...",
+          "error": "Erreur lors de l'enregistrement du formulaire!",
+          "conflict": "Le formulaire a été modifié par une autre personne, veuillez l'actualiser à nouveau."
+        },
+        "errors": {
+          "conflict": "Ce formulaire a été modifié par {person} {timeAgo} (après avoir chargé la page), nous ne pouvons donc pas enregistrer vos modifications. Veuillez actualiser votre page et réessayer."
+        }
+      },
+      "clusters": {
+        "forms": {
+          "none": {
+            "title": "Pas de formulaires",
+            "info": "Aucun formulaire n'a été attribué à ce cluster pour la fenêtre de rapport actuelle"
+          }
+        }
+      }
     }
   }
 }
