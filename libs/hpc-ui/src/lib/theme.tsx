@@ -18,19 +18,20 @@ const COLOR_PALETTE = {
   orange: {
     dark2: '#b44d0e',
     dark1: '#d05b10',
-    normal: '#ee7325',
+    normal: '#e16856', // from style guide
   },
   blue: {
     dark2: '#025995',
     dark1: '#026cb6',
+    normal: '#026cb6', // from style guide
   },
   gray: {
-    normal: '#4a4a4a',
+    normal: '#333333', // from style guide
     light1: '#999999',
     light2: '#d1d1d1',
     light3: '#dadada',
-    light4: '#e6e6e6',
-    light5: '#efefef',
+    light4: '#e6ecf1', // from style guide
+    light5: '#f3f5f8', // from style guide
   },
 };
 
@@ -44,6 +45,7 @@ export const THEME = {
     textLink: COLOR_PALETTE.orange.dark2,
     textError: COLOR_PALETTE.red.dark,
     textErrorLight: COLOR_PALETTE.red.light,
+    dividers: COLOR_PALETTE.gray.light4,
     panel: {
       border: COLOR_PALETTE.gray.light2,
       bg: COLOR_PALETTE.gray.light5,

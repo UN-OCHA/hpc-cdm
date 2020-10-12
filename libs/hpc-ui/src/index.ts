@@ -10,12 +10,13 @@ import DevEnvWarning from './lib/components/development-environment-warning';
 import ErrorMessage from './lib/components/error-message';
 import Header from './lib/components/header';
 import Loader from './lib/components/loader';
+import MainNavigation from './lib/components/main-navigation';
 import NotFound from './lib/components/not-found';
 import SidebarNavigation from './lib/components/sidebar-navigation';
 import Tabs from './lib/components/tabs';
 import Toolbar from './lib/components/toolbar';
 
-import Caret from './lib/icons/caret';
+import Caret from './lib/assets/icons/caret';
 
 const COMPONENTS = {
   AcceptableUseNotification,
@@ -24,6 +25,7 @@ const COMPONENTS = {
   ErrorMessage,
   Header,
   Loader,
+  MainNavigation,
   NotFound,
   SidebarNavigation,
   Tabs,

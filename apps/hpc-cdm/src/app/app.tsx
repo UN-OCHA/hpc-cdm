@@ -9,8 +9,6 @@ import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
 import * as paths from './paths';
 
-import MainNavigation from './components/main-navigation';
-
 import PageAdmin from './pages/admin';
 import PageNotLoggedIn from './pages/not-logged-in';
 import PageNotFound from './pages/not-found';
@@ -82,7 +80,19 @@ export const App = (props: Props) => {
               <main>
                 {env.session.getUser() ? (
                   <>
-                    <MainNavigation />
+                    <C.MainNavigation
+                      homeLink={paths.home()}
+                      tabs={[
+                        {
+                          label: t.t(lang, (s) => s.navigation.operations),
+                          path: paths.operations(),
+                        },
+                        {
+                          label: t.t(lang, (s) => s.navigation.admin),
+                          path: paths.admin(),
+                        },
+                      ]}
+                    />
                     <Switch>
                       <Route
                         path={paths.home()}
@@ -103,7 +113,10 @@ export const App = (props: Props) => {
                     </Switch>
                   </>
                 ) : (
-                  <PageNotLoggedIn />
+                  <>
+                    <C.MainNavigation homeLink={paths.home()} />
+                    <PageNotLoggedIn />
+                  </>
                 )}
               </main>
             </div>

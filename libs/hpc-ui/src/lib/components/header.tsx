@@ -13,8 +13,8 @@ import { MdPermIdentity } from 'react-icons/md';
 import { i18n } from '@unocha/hpc-core';
 
 import { CLASSES, combineClasses } from '../classes';
-import UNOCHA from '../icons/logos/unocha';
-import Caret from '../icons/caret';
+import UNOCHA from '../assets/logos/unocha';
+import Caret from '../assets/icons/caret';
 import LanguagePicker from '../components/language-picker';
 import { styled } from '../theme';
 
