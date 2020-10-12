@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import { BaseStyling, C, styled, dataLoader } from '@unocha/hpc-ui';
 
@@ -94,11 +94,9 @@ export const App = (props: Props) => {
                       ]}
                     />
                     <Switch>
-                      <Route
-                        path={paths.home()}
-                        exact
-                        render={() => <div>HOMEPAGE</div>}
-                      />
+                      <Route path={paths.home()} exact>
+                        <Redirect to={paths.operations()} />
+                      </Route>
                       <Route
                         path={paths.operations()}
                         exact
