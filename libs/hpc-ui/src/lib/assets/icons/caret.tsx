@@ -1,24 +1,37 @@
 import React from 'react';
 
 interface Props extends React.SVGProps<SVGSVGElement> {
-  direction?: 'down' | 'up';
+  direction?: 'down' | 'up' | 'left' | 'right';
 }
 
-export default (props: Props) => {
+const Caret = (props: Props) => {
+  props = { ...props };
+  let rotate: null | string = null;
   if (props.direction === 'up') {
+    rotate = '180deg';
+  } else if (props.direction === 'right' || props.direction === 'left') {
+    // Swap width & height
+    const { width, height } = props;
+    props.width = props.height;
+    props.height = props.width;
+    rotate = props.direction === 'right' ? '270deg' : '90deg';
+  }
+  if (rotate) {
     props = {
       ...props,
       style: {
         ...props.style,
-        transform: 'rotate(180deg)',
+        transform: `rotate(${rotate})`,
       },
     };
+  }
+  if (!props.height && !props.width) {
+    props.width = 6.6;
   }
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 1.764 1.058"
-      width={6.6}
       {...props}
     >
       <path
@@ -28,3 +41,5 @@ export default (props: Props) => {
     </svg>
   );
 };
+
+export default Caret;

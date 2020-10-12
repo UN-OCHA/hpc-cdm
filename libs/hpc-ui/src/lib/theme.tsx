@@ -27,6 +27,7 @@ const COLOR_PALETTE = {
   },
   gray: {
     normal: '#333333', // from style guide
+    light: '#6f7e94', // from style guide
     light1: '#999999',
     light2: '#d1d1d1',
     light3: '#dadada',
@@ -56,12 +57,16 @@ export const THEME = {
   marginPx: {
     sm: 5,
     md: 15,
+    lg: 30,
   },
   sizing: {
     borderRadiusSm: '3px',
     borderRadiusMd: '6px',
     containerWidthPx: 1240,
     fontSizeSm: '0.8rem',
+  },
+  animations: {
+    fast: '0.2s ease-out',
   },
 } as const;
 

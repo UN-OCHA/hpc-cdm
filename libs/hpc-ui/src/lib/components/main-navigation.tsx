@@ -87,7 +87,9 @@ const Nav = styled.nav`
           text-transform: uppercase;
           text-decoration: none;
 
-          &:hover {
+          &:hover,
+          &:focus {
+            outline: none;
             background: ${(p) => p.theme.colors.pallete.gray.light5};
           }
         }

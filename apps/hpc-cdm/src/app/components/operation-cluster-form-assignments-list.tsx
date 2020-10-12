@@ -10,6 +10,10 @@ import * as paths from '../paths';
 
 import FormAssignmentsList from './form-assignments-list';
 
+const Container = styled.div`
+  margin-top: ${(p) => p.theme.marginPx.lg}px;
+`;
+
 interface Props {
   className?: string;
   operation: operations.DetailedOperation;
@@ -54,17 +58,19 @@ const OperationClusterFormAssignmentsList = (props: Props) => {
                 )}
               />
             ) : (
-              <FormAssignmentsList
-                assignments={forms}
-                assignmentLink={(a) =>
-                  paths.operationClusterFormAssignmentData({
-                    operationId: operation.id,
-                    clusterId: cluster.id,
-                    windowId: window.id,
-                    assignmentId: a.assignmentId,
-                  })
-                }
-              />
+              <Container>
+                <FormAssignmentsList
+                  assignments={forms}
+                  assignmentLink={(a) =>
+                    paths.operationClusterFormAssignmentData({
+                      operationId: operation.id,
+                      clusterId: cluster.id,
+                      windowId: window.id,
+                      assignmentId: a.assignmentId,
+                    })
+                  }
+                />
+              </Container>
             );
           }}
         </C.Loader>
