@@ -12,8 +12,8 @@ const Caret = (props: Props) => {
   } else if (props.direction === 'right' || props.direction === 'left') {
     // Swap width & height
     const { width, height } = props;
-    props.width = props.height;
-    props.height = props.width;
+    props.width = height;
+    props.height = width;
     rotate = props.direction === 'right' ? '270deg' : '90deg';
   }
   if (rotate) {

@@ -16,6 +16,7 @@ import MainNavigation from './lib/components/main-navigation';
 import NotFound from './lib/components/not-found';
 import PageTitle from './lib/components/page-title';
 import SidebarNavigation from './lib/components/sidebar-navigation';
+import SecondaryNavigation from './lib/components/secondary-navigation';
 import Tabs from './lib/components/tabs';
 import Toolbar from './lib/components/toolbar';
 
@@ -34,6 +35,7 @@ const COMPONENTS = {
   NotFound,
   PageTitle,
   SidebarNavigation,
+  SecondaryNavigation,
   Tabs,
   Toolbar,
 };
