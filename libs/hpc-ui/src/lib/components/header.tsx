@@ -20,7 +20,7 @@ import { styled } from '../theme';
 
 const CLS = {
   LOGO: 'logo',
-  USER_CONTROLS: 'user-controls',
+  SEPARATOR: 'separator',
 } as const;
 
 interface Props {
@@ -46,7 +46,7 @@ const Header = (props: Props) => {
     const u = session.getUser();
     if (u) {
       return (
-        <div className={CLS.USER_CONTROLS}>
+        <div>
           <button
             ref={userMenuAnchor}
             className={combineClasses(
@@ -92,7 +92,7 @@ const Header = (props: Props) => {
       );
     } else {
       return (
-        <div className={CLS.USER_CONTROLS}>
+        <div>
           <button
             className={combineClasses(
               CLASSES.BUTTON.CLEAR,
@@ -118,8 +118,9 @@ const Header = (props: Props) => {
     >
       <UNOCHA className={CLS.LOGO} />
       <div className={CLASSES.FLEX.GROW} />
-      <LanguagePicker choice={language} />
       {user()}
+      <span className={CLS.SEPARATOR} />
+      <LanguagePicker choice={language} />
     </nav>
   );
 };
@@ -137,6 +138,11 @@ export default styled(Header)`
     width: 30px;
   }
 
-  .${CLS.USER_CONTROLS} {
+  .${CLS.SEPARATOR} {
+    margin: 0 4px;
+    display: block;
+    width: 0;
+    height: 12px;
+    border-left: 1px solid #fff;
   }
 `;
