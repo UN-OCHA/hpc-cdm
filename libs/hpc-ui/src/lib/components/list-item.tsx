@@ -57,7 +57,7 @@ const ListItem = (props: Props) => {
   return link ? (
     <Link to={link} className={combineClasses(className, CLS.LINK)}>
       {contents}
-      <Caret className={CLS.LINK_CARET} direction="right" height={11} />
+      <Caret className={CLS.LINK_CARET} direction="end" height={11} />
     </Link>
   ) : (
     <div className={className}>{contents}</div>

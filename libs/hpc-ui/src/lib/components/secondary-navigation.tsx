@@ -135,11 +135,7 @@ const SecondaryNavigation = (props: Props) => {
         ) : (
           <React.Fragment key={i}>
             <Link to={link.to}>{link.label}</Link>
-            <Caret
-              direction="right"
-              width={8}
-              className={CLS.BREADCRUMB_CARET}
-            />
+            <Caret direction="end" width={8} className={CLS.BREADCRUMB_CARET} />
           </React.Fragment>
         );
       })}
