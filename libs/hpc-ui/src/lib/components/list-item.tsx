@@ -77,6 +77,11 @@ export default styled(ListItem)`
     background: ${(p) => p.theme.colors.pallete.gray.light5};
     text-decoration: none;
     padding: 0 ${(p) => p.theme.marginPx.sm}px 0 ${(p) => p.theme.marginPx.md}px;
+
+    [dir='rtl'] & {
+      padding: 0 ${(p) => p.theme.marginPx.md}px 0
+        ${(p) => p.theme.marginPx.sm}px;
+    }
   }
 
   > .${CLS.LINK_CARET} {
