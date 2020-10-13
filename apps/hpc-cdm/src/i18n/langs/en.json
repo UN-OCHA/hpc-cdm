@@ -115,6 +115,8 @@
         }
       },
       "clusters": {
+        "listHeader": "Clusters in this operation",
+        "settings": "Cluster Settings",
         "forms": {
           "none": {
             "title": "No forms",
