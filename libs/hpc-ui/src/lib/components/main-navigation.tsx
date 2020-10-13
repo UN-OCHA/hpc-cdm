@@ -42,6 +42,7 @@ const Nav = styled.nav`
     > .${CLS.HEADER} {
       display: flex;
       height: 48px;
+      color: #221e1f;
 
       > .${CLS.LOGO} {
         height: 100%;
@@ -60,6 +61,7 @@ const Nav = styled.nav`
         flex-direction: column;
         align-items: flex-start;
         justify-content: space-between;
+        color: #221e1f;
       }
     }
     > .${CLS.TABS} {
