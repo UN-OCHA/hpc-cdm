@@ -8,6 +8,7 @@ import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
+import ClusterNavigation from '../components/cluster-navigation';
 import FormAssignmentData from '../components/form-assignment-data';
 import OperationClusterFormAssignmentsList from '../components/operation-cluster-form-assignments-list';
 
@@ -34,6 +35,11 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                 windowId: window.id,
               })}
             >
+              <ClusterNavigation
+                operation={operation}
+                cluster={cluster}
+                showSettingsButton
+              />
               <OperationClusterFormAssignmentsList
                 {...{ operation, cluster, window }}
               />
@@ -51,25 +57,23 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                 if (!isNaN(assignmentId)) {
                   return (
                     <FormAssignmentData
-                      breadcrumbs={(assignment) => [
-                        {
-                          to: paths.operationClusterFormAssignments({
-                            operationId: operation.id,
-                            clusterId: cluster.id,
-                            windowId: window.id,
-                          }),
-                          label: t.t(lang, (s) => s.navigation.forms),
-                        },
-                        {
-                          to: paths.operationClusterFormAssignmentData({
-                            operationId: operation.id,
-                            clusterId: cluster.id,
-                            windowId: window.id,
-                            assignmentId,
-                          }),
-                          label: assignment.task.form.name,
-                        },
-                      ]}
+                      header={(assignment) => (
+                        <ClusterNavigation
+                          breadcrumbs={[
+                            {
+                              to: paths.operationClusterFormAssignmentData({
+                                operationId: operation.id,
+                                clusterId: cluster.id,
+                                windowId: window.id,
+                                assignmentId,
+                              }),
+                              label: assignment.task.form.name,
+                            },
+                          ]}
+                          operation={operation}
+                          cluster={cluster}
+                        />
+                      )}
                       {...{ window, assignmentId }}
                     />
                   );

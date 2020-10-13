@@ -60,6 +60,10 @@ const OperationClusterFormAssignmentsList = (props: Props) => {
             ) : (
               <Container>
                 <FormAssignmentsList
+                  title={t.t(
+                    lang,
+                    (s) => s.routes.operations.forms.forClusters
+                  )}
                   assignments={forms}
                   assignmentLink={(a) =>
                     paths.operationClusterFormAssignmentData({

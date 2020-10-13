@@ -18,6 +18,7 @@ import PageTitle from './lib/components/page-title';
 import SidebarNavigation from './lib/components/sidebar-navigation';
 import SecondaryNavigation from './lib/components/secondary-navigation';
 import Tabs from './lib/components/tabs';
+import TertiaryNavigation from './lib/components/tertiary-navigation';
 import Toolbar from './lib/components/toolbar';
 
 import Caret from './lib/assets/icons/caret';
@@ -37,6 +38,7 @@ const COMPONENTS = {
   SidebarNavigation,
   SecondaryNavigation,
   Tabs,
+  TertiaryNavigation,
   Toolbar,
 };
 
