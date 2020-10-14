@@ -1,7 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 import { CLASSES } from './classes';
-import * as mixins from './mixins';
 import { Theme } from './theme';
 
 export const BaseStyling = createGlobalStyle<{ theme: Theme }>`
@@ -47,24 +46,6 @@ body {
 
 .${CLASSES.FLEX.GROW} {
   flex-grow: 1;
-}
-
-.${CLASSES.BUTTON.PRIMARY} {
-  ${mixins.button}
-  ${mixins.buttonPrimary}
-}
-
-.${CLASSES.BUTTON.CLEAR} {
-  ${mixins.button}
-  ${mixins.buttonClear}
-}
-
-.${CLASSES.BUTTON.WITH_ICON} {
-  ${mixins.buttonWithIcon}
-}
-
-.${CLASSES.BUTTON.WITH_ICON_BIG} {
-  ${mixins.buttonWithIconBig}
 }
 
 a {

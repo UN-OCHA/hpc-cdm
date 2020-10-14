@@ -2,10 +2,10 @@ import { CLASSES, combineClasses } from './lib/classes';
 import { BaseStyling } from './lib/styling';
 import { css, styled, THEME, Theme, ThemeProvider } from './lib/theme';
 import { DataLoaderState, dataLoader } from './lib/util';
-import * as mixins from './lib/mixins';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
-import Button, { ButtonLink } from './lib/components/button';
+import * as actionableButton from './lib/components/actionable-button';
+import { Button, ButtonLink } from './lib/components/button';
 import DevEnvWarning from './lib/components/development-environment-warning';
 import ErrorMessage from './lib/components/error-message';
 import Header from './lib/components/header';
@@ -25,6 +25,8 @@ import Gear from './lib/assets/icons/gear';
 
 const COMPONENTS = {
   AcceptableUseNotification,
+  ActionableButton: actionableButton.ActionableButton,
+  ActionableIconButton: actionableButton.ActionableIconButton,
   Button,
   ButtonLink,
   DevEnvWarning,
@@ -47,6 +49,10 @@ const ICONS = {
   Gear,
 };
 
+export declare namespace Types {
+  export type ActionableButtonState = actionableButton.ActionableButtonState;
+}
+
 export {
   BaseStyling,
   CLASSES,
@@ -56,7 +62,6 @@ export {
   DataLoaderState,
   dataLoader,
   ICONS,
-  mixins,
   styled,
   THEME,
   Theme,

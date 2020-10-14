@@ -8,6 +8,7 @@ import Caret from '../assets/icons/caret';
 
 const CLS = {
   ACTIVE: 'active',
+  CONDENSED: 'condensed',
 };
 
 const COLOR_CLS = {
@@ -16,9 +17,12 @@ const COLOR_CLS = {
   neutral: 'color-neutral',
 } as const;
 
+export type ButtonColor = keyof typeof COLOR_CLS;
+
 interface Props {
   className?: string;
-  color: keyof typeof COLOR_CLS;
+  children?: JSX.Element | JSX.Element[];
+  color: ButtonColor;
   behaviour:
     | {
         type: 'button';
@@ -28,7 +32,7 @@ interface Props {
         type: 'link';
         to: string;
       };
-  text: string;
+  text?: string;
   startIcon?: IconType | false;
   endIcon?: IconType | false;
   /**
@@ -40,10 +44,12 @@ interface Props {
    * similar visually to hover of focus styling.
    */
   active?: boolean;
+  condensed?: boolean;
 }
 
-const Button = (props: Props) => {
+const BaseButton = (props: Props) => {
   const {
+    children,
     color,
     behaviour,
     text,
@@ -51,18 +57,21 @@ const Button = (props: Props) => {
     endIcon: EndIcon,
     displayCaret,
     active,
+    condensed,
   } = props;
 
   const className = combineClasses(
     props.className,
     COLOR_CLS[color],
-    active && CLS.ACTIVE
+    active && CLS.ACTIVE,
+    condensed && CLS.CONDENSED
   );
 
   const contents = (
     <>
       {StartIcon && <StartIcon size={16} />}
-      <span>{text}</span>
+      {text && <span>{text}</span>}
+      {children && <span>{children}</span>}
       {EndIcon && <EndIcon size={16} />}
       {displayCaret && <Caret direction="end" size={16} />}
     </>
@@ -79,18 +88,21 @@ const Button = (props: Props) => {
   );
 };
 
-const StyledButton = styled(Button)`
-  height: 30px;
-  display: flex;
+const StyledBaseButton = styled(BaseButton)`
+  height: 3rem;
+  display: inline-flex;
   padding: 0 ${(p) => p.theme.marginPx.md}px;
   box-sizing: border-box;
+  background: none;
   border: 1px solid ${(p) => p.theme.colors.pallete.gray.light};
   color: ${(p) => p.theme.colors.pallete.gray.light};
   align-items: center;
   border-radius: 2px;
   text-transform: uppercase;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  outline: none;
 
   &:hover,
   &:focus,
@@ -100,15 +112,53 @@ const StyledButton = styled(Button)`
     color: #fff;
   }
 
+  &.${CLS.CONDENSED} {
+    padding: 0 ${(p) => p.theme.marginPx.sm * 0.5}px;
+  }
+
+  &.${COLOR_CLS.primary} {
+    border: 1px solid ${(p) => p.theme.colors.primary.normal};
+    color: ${(p) => p.theme.colors.primary.normal};
+
+    &:hover,
+    &:focus,
+    &.${CLS.ACTIVE} {
+      background-color: ${(p) => p.theme.colors.primary.normal};
+      color: #fff;
+    }
+  }
+
+  &.${COLOR_CLS.secondary} {
+    border: 1px solid ${(p) => p.theme.colors.secondary.normal};
+    color: ${(p) => p.theme.colors.secondary.normal};
+
+    &:hover,
+    &:focus,
+    &.${CLS.ACTIVE} {
+      background-color: ${(p) => p.theme.colors.secondary.normal};
+      color: #fff;
+    }
+  }
+
   > * {
     margin: 0 ${(p) => p.theme.marginPx.sm}px;
   }
 `;
 
-export default StyledButton;
-
 type ButtonLinkProps = Omit<Props, 'behaviour'> & { to: string };
 
 export const ButtonLink = (props: ButtonLinkProps) => (
-  <StyledButton behaviour={{ type: 'link', to: props.to }} {...{ ...props }} />
+  <StyledBaseButton
+    behaviour={{ type: 'link', to: props.to }}
+    {...{ ...props }}
+  />
+);
+
+type ButtonProps = Omit<Props, 'behaviour'> & { onClick: () => void };
+
+export const Button = (props: ButtonProps) => (
+  <StyledBaseButton
+    behaviour={{ type: 'button', onClick: props.onClick }}
+    {...{ ...props }}
+  />
 );

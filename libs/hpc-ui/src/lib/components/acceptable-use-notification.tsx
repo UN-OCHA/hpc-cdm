@@ -2,9 +2,8 @@ import React from 'react';
 import { styled } from '../theme';
 import { Session } from '@unocha/hpc-core';
 
-import { MdPermIdentity } from 'react-icons/md';
-
-import { CLASSES, combineClasses } from '../classes';
+import User from '../assets/icons/user';
+import { Button } from '../components/button';
 
 interface Props {
   className?: string;
@@ -19,20 +18,20 @@ interface Props {
   };
 }
 
+const Actions = styled.div`
+  text-align: center;
+`;
+
 const AcceptableUseNotification = (props: Props) => (
   <div className={props.className}>
-    <div className="title">
-      <button
-        className={combineClasses(
-          CLASSES.BUTTON.PRIMARY,
-          CLASSES.BUTTON.WITH_ICON
-        )}
+    <Actions>
+      <Button
+        startIcon={User}
         onClick={props.session.logIn}
-      >
-        <MdPermIdentity />
-        <span>{props.strings.login}</span>
-      </button>
-    </div>
+        color="secondary"
+        text={props.strings.login}
+      />
+    </Actions>
     <h2>{props.strings.title}</h2>
     <p>{props.strings.p1}</p>
     <p>{props.strings.p2}</p>
@@ -41,4 +40,4 @@ const AcceptableUseNotification = (props: Props) => (
   </div>
 );
 
-export default styled(AcceptableUseNotification)``;
+export default AcceptableUseNotification;

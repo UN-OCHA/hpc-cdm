@@ -8,7 +8,6 @@ import dayjs from '../../libraries/dayjs';
 
 import { t } from '../../i18n';
 import { getContext } from '../context';
-import { ActionableIconButton } from './button';
 import { ActionableDropdown } from './dropdown';
 import { TargetAccessManagementAddUser } from './target-access-management-add-user';
 
@@ -46,7 +45,7 @@ const Wrapper = styled.div`
     > li {
       display: flex;
       align-items: center;
-      padding: ${(p) => p.theme.marginPx.sm * 1.5}px 0;
+      padding: ${(p) => p.theme.marginPx.sm * 1.5}px;
       border-bottom: 1px solid ${(p) => p.theme.colors.panel.border};
 
       > span {
@@ -105,18 +104,12 @@ export const TargetAccessManagement = (props: Props) => {
         <Wrapper>
           <div className={CLS.TOOLBAR}>
             <h3>{t.t(lang, (s) => s.components.accessControl.activePeople)}</h3>
-            <button
+            <C.Button
+              color="secondary"
               onClick={() => setAddUserOpen(true)}
-              className={combineClasses(
-                CLASSES.BUTTON.PRIMARY,
-                CLASSES.BUTTON.WITH_ICON
-              )}
-            >
-              <MdAdd />
-              <span>
-                {t.t(lang, (s) => s.components.accessControl.addPerson)}
-              </span>
-            </button>
+              startIcon={MdAdd}
+              text={t.t(lang, (s) => s.components.accessControl.addPerson)}
+            />
           </div>
           <TargetAccessManagementAddUser
             target={target}
@@ -140,7 +133,6 @@ export const TargetAccessManagement = (props: Props) => {
                       {item.grantee.name}
                     </span>
                     <ActionableDropdown
-                      colors="gray"
                       loadingLabel={t.t(lang, (s) => s.common.saving)}
                       label={getRoleName(item.roles[0])}
                       options={roles.map((role) => ({
@@ -171,7 +163,8 @@ export const TargetAccessManagement = (props: Props) => {
                         }
                       }}
                     />
-                    <ActionableIconButton
+                    <C.ActionableIconButton
+                      color="neutral"
                       icon={MdDelete}
                       onClick={async () => {
                         if (
@@ -227,7 +220,6 @@ export const TargetAccessManagement = (props: Props) => {
                       )
                     </span>
                     <ActionableDropdown
-                      colors="gray"
                       loadingLabel={t.t(lang, (s) => s.common.saving)}
                       label={getRoleName(item.roles[0])}
                       options={roles.map((role) => ({
@@ -258,7 +250,8 @@ export const TargetAccessManagement = (props: Props) => {
                         }
                       }}
                     />
-                    <ActionableIconButton
+                    <C.ActionableIconButton
+                      color="neutral"
                       icon={MdDelete}
                       onClick={async () => {
                         if (

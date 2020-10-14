@@ -8,10 +8,12 @@ import {
   Grow,
 } from '@material-ui/core';
 
-import { CLASSES, combineClasses } from '../classes';
+import { styled } from '../theme';
 import Caret from '../assets/icons/caret';
 import { MdLanguage } from 'react-icons/md';
 import { i18n } from '@unocha/hpc-core';
+
+import HeaderButton from './header-button';
 
 const CLS = {
   LOGO: 'logo',
@@ -59,18 +61,14 @@ class LanguagePicker<LanguageKey extends string> extends React.Component<
     const { open, lang } = this.state;
     return (
       <div className={CLS.USER_CONTROLS}>
-        <button
+        <HeaderButton
           ref={(ref) => (this.menuAnchor = ref)}
-          className={combineClasses(
-            CLASSES.BUTTON.CLEAR,
-            CLASSES.BUTTON.WITH_ICON
-          )}
           onClick={() => this.setState({ open: true })}
         >
           <MdLanguage size={18} />
           <span>{lang.toLocaleUpperCase()}</span>
           <Caret direction={open ? 'up' : 'down'} />
-        </button>
+        </HeaderButton>
         <Popper
           open={open}
           anchorEl={this.menuAnchor}

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Button } from './button';
 import ErrorMessage from './error-message';
 
 interface Props {
@@ -16,9 +17,11 @@ const NotFound = (props: Props) => (
     strings={props.strings}
     icon={false}
     buttons={
-      <button onClick={() => window.history.back()}>
-        {props.strings.back}
-      </button>
+      <Button
+        color="secondary"
+        onClick={() => window.history.back()}
+        text={props.strings.back}
+      />
     }
   />
 );

@@ -14,6 +14,7 @@ import { i18n } from '@unocha/hpc-core';
 import { CLASSES, combineClasses } from '../classes';
 import UNOCHA from '../assets/logos/unocha';
 import Caret from '../assets/icons/caret';
+import HeaderButton from './header-button';
 import LanguagePicker from '../components/language-picker';
 import { styled } from '../theme';
 import User from '../assets/icons/user';
@@ -47,18 +48,14 @@ const Header = (props: Props) => {
     if (u) {
       return (
         <div>
-          <button
+          <HeaderButton
             ref={userMenuAnchor}
-            className={combineClasses(
-              CLASSES.BUTTON.CLEAR,
-              CLASSES.BUTTON.WITH_ICON
-            )}
             onClick={() => setUserMenuOpen(true)}
           >
             <User />
             <span>{u.name}</span>
             <Caret direction={userMenuOpen ? 'up' : 'down'} />
-          </button>
+          </HeaderButton>
           <Popper
             open={userMenuOpen}
             anchorEl={userMenuAnchor.current}
@@ -93,16 +90,10 @@ const Header = (props: Props) => {
     } else {
       return (
         <div>
-          <button
-            className={combineClasses(
-              CLASSES.BUTTON.CLEAR,
-              CLASSES.BUTTON.WITH_ICON
-            )}
-            onClick={session.logIn}
-          >
+          <HeaderButton onClick={session.logIn}>
             <User />
             <span>{strings.login}</span>
-          </button>
+          </HeaderButton>
         </div>
       );
     }

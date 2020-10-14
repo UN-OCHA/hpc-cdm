@@ -20,12 +20,6 @@ export const CLASSES = {
     CONTAINER: CLASS_PREFIX + 'flex-container',
     GROW: CLASS_PREFIX + 'flex-grow',
   },
-  BUTTON: {
-    CLEAR: CLASS_PREFIX + 'button-primary',
-    PRIMARY: CLASS_PREFIX + 'button-clear',
-    WITH_ICON: CLASS_PREFIX + 'with-icon',
-    WITH_ICON_BIG: CLASS_PREFIX + 'with-icon-big',
-  },
 } as const;
 
 /**

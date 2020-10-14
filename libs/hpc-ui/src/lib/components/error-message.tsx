@@ -2,7 +2,6 @@ import React from 'react';
 import { styled } from '../theme';
 import { MdWarning } from 'react-icons/md';
 
-import { button, buttonPrimary } from '../mixins';
 import { IconType } from 'react-icons/lib';
 
 const CLS = {
@@ -43,11 +42,5 @@ export default styled(ErrorMessage)`
 
   > .${CLS.BUTTONS} {
     display: inline-flex;
-
-    > button,
-    > a {
-      ${button}
-      ${buttonPrimary}
-    }
   }
 `;
