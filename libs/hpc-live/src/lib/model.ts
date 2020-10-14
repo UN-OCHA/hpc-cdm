@@ -265,7 +265,9 @@ export class LiveModel implements Model {
       }
     } else {
       const json = await res.json();
-      if (
+      if (json?.code === 'ConflictError') {
+        throw new errors.ConflictError(json.timestamp, json.otherUser);
+      } else if (
         json?.code === 'BadRequestError' &&
         errors.USER_ERROR_KEYS.includes(json?.message)
       ) {

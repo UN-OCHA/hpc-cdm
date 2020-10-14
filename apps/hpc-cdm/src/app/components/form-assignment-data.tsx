@@ -12,13 +12,11 @@ interface Props {
   className?: string;
   window: reportingWindows.ReportingWindow;
   assignmentId: number;
-  breadcrumbs: (
-    assignment: reportingWindows.GetAssignmentResult
-  ) => BreadcrumbLinks;
+  header?: (assignment: reportingWindows.GetAssignmentResult) => JSX.Element;
 }
 
 const FormAssignmentData = (props: Props) => {
-  const { window, assignmentId, breadcrumbs } = props;
+  const { window, assignmentId, header } = props;
   const { lang } = useContext(AppContext);
   const loader = dataLoader(
     [
@@ -41,11 +39,13 @@ const FormAssignmentData = (props: Props) => {
       }}
     >
       {(assignment) => (
-        <EnketoEditableForm
-          reportingWindow={window}
-          assignment={assignment}
-          breadcrumbs={breadcrumbs(assignment)}
-        />
+        <>
+          {header && header(assignment)}
+          <EnketoEditableForm
+            reportingWindow={window}
+            assignment={assignment}
+          />
+        </>
       )}
     </C.Loader>
   );

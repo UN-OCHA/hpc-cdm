@@ -54,15 +54,10 @@ type Status =
 interface Props {
   reportingWindow: reportingWindows.ReportingWindow;
   assignment: reportingWindows.GetAssignmentResult;
-  breadcrumbs: BreadcrumbLinks;
 }
 
 export const EnketoEditableForm = (props: Props) => {
-  const {
-    breadcrumbs,
-    reportingWindow,
-    assignment: originalAssignment,
-  } = props;
+  const { reportingWindow, assignment: originalAssignment } = props;
   const env = getEnv();
   const [xform, setXform] = useState<XForm | null>(null);
   const [lastPage, setLastPage] = useState(false);
@@ -264,7 +259,6 @@ export const EnketoEditableForm = (props: Props) => {
   return (
     <div>
       <C.Toolbar>
-        <C.Breadcrumbs links={breadcrumbs} />
         <div className={CLASSES.FLEX.GROW} />
         {editable ? indicator() : t.t(lang, (s) => s.common.nonEditable)}
       </C.Toolbar>

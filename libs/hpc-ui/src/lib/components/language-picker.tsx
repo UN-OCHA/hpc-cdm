@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 
 import { CLASSES, combineClasses } from '../classes';
-import Caret from '../icons/caret';
+import Caret from '../assets/icons/caret';
 import { MdLanguage } from 'react-icons/md';
 import { i18n } from '@unocha/hpc-core';
 
