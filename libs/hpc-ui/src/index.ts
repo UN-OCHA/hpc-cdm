@@ -5,7 +5,6 @@ import { DataLoaderState, dataLoader } from './lib/util';
 import * as mixins from './lib/mixins';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
-import Breadcrumbs, { BreadcrumbLinks } from './lib/components/breadcrumbs';
 import DevEnvWarning from './lib/components/development-environment-warning';
 import ErrorMessage from './lib/components/error-message';
 import Header from './lib/components/header';
@@ -17,7 +16,6 @@ import NotFound from './lib/components/not-found';
 import PageTitle from './lib/components/page-title';
 import SidebarNavigation from './lib/components/sidebar-navigation';
 import SecondaryNavigation from './lib/components/secondary-navigation';
-import Tabs from './lib/components/tabs';
 import TertiaryNavigation from './lib/components/tertiary-navigation';
 import Toolbar from './lib/components/toolbar';
 
@@ -25,7 +23,6 @@ import Caret from './lib/assets/icons/caret';
 
 const COMPONENTS = {
   AcceptableUseNotification,
-  Breadcrumbs,
   DevEnvWarning,
   ErrorMessage,
   Header,
@@ -37,7 +34,6 @@ const COMPONENTS = {
   PageTitle,
   SidebarNavigation,
   SecondaryNavigation,
-  Tabs,
   TertiaryNavigation,
   Toolbar,
 };
@@ -48,7 +44,6 @@ const ICONS = {
 
 export {
   BaseStyling,
-  BreadcrumbLinks,
   CLASSES,
   combineClasses,
   COMPONENTS as C,

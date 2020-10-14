@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import { t } from '../../i18n';
-import { BreadcrumbLinks, C, dataLoader } from '@unocha/hpc-ui';
+import { C, dataLoader } from '@unocha/hpc-ui';
 import { reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext, getEnv } from '../context';
