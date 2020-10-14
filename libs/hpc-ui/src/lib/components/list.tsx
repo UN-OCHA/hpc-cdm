@@ -1,14 +1,20 @@
 import React from 'react';
+import { CLASSES } from '../classes';
 import { styled } from '../theme';
 
 interface Props {
   className?: string;
   title?: string;
   children?: JSX.Element | JSX.Element[];
+  actions?: JSX.Element | JSX.Element[];
 }
 
-const Container = styled.div`
-  margin: ${(p) => p.theme.marginPx.md}px 0;
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid ${(p) => p.theme.colors.pallete.gray.light};
+  margin: 0;
+  padding: 0;
 `;
 
 const Title = styled.h2`
@@ -16,24 +22,31 @@ const Title = styled.h2`
   font-size: 1.2rem;
   line-height: 40px;
   color: ${(p) => p.theme.colors.pallete.gray.light};
-  border-bottom: 1px solid ${(p) => p.theme.colors.pallete.gray.light};
-  margin: 0;
-  padding: 0;
 `;
 
 const Divider = styled.div`
   border-bottom: 1px solid ${(p) => p.theme.colors.dividers};
 `;
 
-const List = styled.ul`
+const UL = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
 `;
 
-export default ({ className, title, children }: Props) => (
+export const List = ({ className, title, children, actions }: Props) => (
   <div className={className}>
-    {title ? <Title>{title}</Title> : <Divider />}
-    <List>{children}</List>
+    {title || actions ? (
+      <Header>
+        {title && <Title>{title}</Title>}
+        <div className={CLASSES.FLEX.GROW} />
+        {actions && <div>{actions}</div>}
+      </Header>
+    ) : (
+      <Divider />
+    )}
+    <UL>{children}</UL>
   </div>
 );
+
+export default List;

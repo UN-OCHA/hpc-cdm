@@ -41,7 +41,7 @@ export const THEME = {
     primary: COLOR_PALETTE.blue,
     secondary: COLOR_PALETTE.orange,
     text: COLOR_PALETTE.gray.normal,
-    textLight: COLOR_PALETTE.gray.light1,
+    textLight: COLOR_PALETTE.gray.light,
     textLink: COLOR_PALETTE.orange.dark2,
     textError: COLOR_PALETTE.red.dark,
     textErrorLight: COLOR_PALETTE.red.light,

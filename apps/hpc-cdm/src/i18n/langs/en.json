@@ -50,7 +50,9 @@
       "info": "Unfortunately your current browser is not supported. Please switch to either Firefox or Google Chrome. To do this, simply copy the form address (URL) above, then open Firefox or Chrome, and paste the address into the browser."
     },
     "accessControl": {
-      "addPerson": "Add Someone",
+      "addPerson": "Add User",
+      "deletePerson": "Remove User",
+      "cancelInvite": "Cancel Invite",
       "addPersonInfo": "Enter the email address of the person you'd like to give access to. If they haven't logged-in before, they will be given an invite that will become active after they log-in.",
       "activePeople": "Active Users",
       "pendingInvites": "Pending Invites",
@@ -67,10 +69,7 @@
       "auditLogRoleChange": "{actor} changed {grantee}'s role to {role}",
       "auditLogRoleRemoval": "{actor} removed {grantee}'s access",
       "noPendingInvites": "No pending invitations",
-      "noUsers": {
-        "title": "No assigned users",
-        "info": "No one has been granted access"
-      },
+      "noUsers": "No assigned users. No one has been granted access",
       "auditLogEmpty": "The audit log is empty",
       "role": "Role"
     }
