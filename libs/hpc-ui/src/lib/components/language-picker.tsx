@@ -17,7 +17,6 @@ import HeaderButton from './header-button';
 
 const CLS = {
   LOGO: 'logo',
-  USER_CONTROLS: 'user-controls',
 } as const;
 
 interface Props<LanguageKey extends string> {
@@ -60,7 +59,7 @@ class LanguagePicker<LanguageKey extends string> extends React.Component<
     const { choice } = this.props;
     const { open, lang } = this.state;
     return (
-      <div className={CLS.USER_CONTROLS}>
+      <>
         <HeaderButton
           ref={(ref) => (this.menuAnchor = ref)}
           onClick={() => this.setState({ open: true })}
@@ -100,7 +99,7 @@ class LanguagePicker<LanguageKey extends string> extends React.Component<
             </Grow>
           )}
         </Popper>
-      </div>
+      </>
     );
   };
 }

@@ -47,7 +47,7 @@ const Header = (props: Props) => {
     const u = session.getUser();
     if (u) {
       return (
-        <div>
+        <>
           <HeaderButton
             ref={userMenuAnchor}
             onClick={() => setUserMenuOpen(true)}
@@ -85,16 +85,16 @@ const Header = (props: Props) => {
               </Grow>
             )}
           </Popper>
-        </div>
+        </>
       );
     } else {
       return (
-        <div>
+        <>
           <HeaderButton onClick={session.logIn}>
             <User />
             <span>{strings.login}</span>
           </HeaderButton>
-        </div>
+        </>
       );
     }
   };
