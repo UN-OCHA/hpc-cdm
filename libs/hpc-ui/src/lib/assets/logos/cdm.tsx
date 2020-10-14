@@ -5,7 +5,7 @@ export default (props: React.SVGProps<SVGSVGElement>) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 19.483 6.164"
-      height={23.296}
+      height={19}
       {...props}
     >
       <path

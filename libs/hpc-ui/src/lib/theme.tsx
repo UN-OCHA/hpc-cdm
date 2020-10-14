@@ -70,6 +70,9 @@ export const THEME = {
 } as const;
 
 export const MUI_THEME = createMuiTheme({
+  typography: {
+    htmlFontSize: 10,
+  },
   palette: {
     primary: {
       main: THEME.colors.primary.normal,

@@ -13,10 +13,10 @@ const Container = styled.div`
 
 const Title = styled.h2`
   text-transform: uppercase;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   line-height: 40px;
   color: ${(p) => p.theme.colors.pallete.gray.light};
-  border-bottom: 2px solid ${(p) => p.theme.colors.pallete.gray.light};
+  border-bottom: 1px solid ${(p) => p.theme.colors.pallete.gray.light};
   margin: 0;
   padding: 0;
 `;

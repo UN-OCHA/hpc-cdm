@@ -24,7 +24,7 @@ interface Props {
 const Breadcrumbs = styled.div`
   display: flex;
   align-items: center;
-  font-size: 1.1rem;
+  font-size: 1.8rem;
   font-weight: 600;
   color: ${(p) => p.theme.colors.pallete.gray.light};
   text-transform: uppercase;
@@ -51,10 +51,10 @@ const Breadcrumbs = styled.div`
 `;
 
 const Container = styled.div`
-  padding: ${(p) => p.theme.marginPx.lg}px 0 15px;
+  padding: ${(p) => p.theme.marginPx.lg}px 0 12px;
   display: flex;
   align-items: flex-end;
-  border-bottom: 2px solid ${(p) => p.theme.colors.pallete.gray.light};
+  border-bottom: 1px solid ${(p) => p.theme.colors.pallete.gray.light};
 `;
 
 const SecondaryNavigation = (props: Props) => {

@@ -15,6 +15,16 @@ body, html {
   color: ${(p) => p.theme.colors.text};
 }
 
+html {
+  // Reset 1 rem to be 10px on most browsers
+  font-size: 62.5%;
+}
+
+body {
+  // Set default font-size to be 14px;
+  font-size: 1.4rem;
+}
+
 .${CLASSES.CONTAINER.CENTERED} {
   padding-left: ${(p) => p.theme.marginPx.md}px;
   padding-right: ${(p) => p.theme.marginPx.md}px;

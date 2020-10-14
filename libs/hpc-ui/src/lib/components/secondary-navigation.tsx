@@ -39,10 +39,10 @@ const Container = styled.div`
 `;
 
 const Breadcrumbs = styled.div`
-  padding: ${(p) => p.theme.marginPx.lg}px 0;
+  padding: 2.6rem 0;
   display: flex;
   align-items: center;
-  font-size: 1.3rem;
+  font-size: 1.8rem;
   font-weight: 600;
   color: ${(p) => p.theme.colors.pallete.gray.light};
 
@@ -77,10 +77,10 @@ const Tab = styled.li`
 
   > a {
     position: relative;
-    font-size: 1.3rem;
+    font-size: 1.8rem;
     display: block;
-    padding: 0 35px 0;
-    height: 50px;
+    padding: 0 32px;
+    height: 40px;
     border-bottom: none;
     border-top-left-radius: ${(p) => p.theme.sizing.borderRadiusMd};
     border-top-right-radius: ${(p) => p.theme.sizing.borderRadiusMd};
@@ -106,7 +106,7 @@ const Tab = styled.li`
       left: 0;
       bottom: 0;
       right: 0;
-      line-height: 50px;
+      line-height: 40px;
       text-align: center;
     }
   }

@@ -30,8 +30,8 @@ interface Props {
   >;
 }
 
-const HEADER_HEIGHT_PX = 80;
-const BORDER_BOTTOM_WIDTH = '4px';
+const HEADER_HEIGHT_PX = 60;
+const BORDER_BOTTOM_WIDTH = '3px';
 
 const Nav = styled.nav`
   border-bottom: ${BORDER_BOTTOM_WIDTH} solid ${(p) => p.theme.colors.dividers};
@@ -41,7 +41,7 @@ const Nav = styled.nav`
 
     > .${CLS.HEADER} {
       display: flex;
-      height: 48px;
+      height: 36px;
       color: #221e1f;
 
       > .${CLS.LOGO} {
@@ -49,14 +49,15 @@ const Nav = styled.nav`
       }
 
       > .${CLS.HEADER_SEPARATOR} {
-        margin: 0 25px;
+        margin: 0 18px;
         width: 1px;
         height: 100%;
         background-color: ${(p) => p.theme.colors.dividers};
       }
 
       > .${CLS.APP_LOGO} {
-        height: 100%;
+        height: 38px;
+        margin-bottom: -2px;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
