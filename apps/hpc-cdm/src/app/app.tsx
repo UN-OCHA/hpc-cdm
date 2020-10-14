@@ -43,6 +43,17 @@ const LoggedInContainer = styled.div`
   width: 100%;
 `;
 
+const TitlePrimary = styled.div`
+  line-height: 100%;
+  font-size: 1.9rem;
+  font-weight: bold;
+`;
+
+const TitleSecondary = styled.div`
+  line-height: 100%;
+  font-size: 1.7rem;
+`;
+
 export const App = () => {
   const [lang, setLang] = useState(LANGUAGE_CHOICE.getLanguage());
 
@@ -59,6 +70,18 @@ export const App = () => {
       throw new Error(t.t(lang, (s) => s.errors.unableToLoadCDM));
     })
   );
+
+  const appTitle = (
+    <>
+      <TitlePrimary>
+        {t.t(lang, (s) => s.components.appTitle.primary)}
+      </TitlePrimary>
+      <TitleSecondary>
+        {t.t(lang, (s) => s.components.appTitle.secondary)}
+      </TitleSecondary>
+    </>
+  );
+
   return (
     <>
       <BaseStyling />
@@ -92,6 +115,7 @@ export const App = () => {
                   <LoggedInContainer>
                     <C.MainNavigation
                       homeLink={paths.home()}
+                      appTitle={appTitle}
                       tabs={[
                         {
                           label: t.t(lang, (s) => s.navigation.operations),
@@ -122,7 +146,10 @@ export const App = () => {
                   </LoggedInContainer>
                 ) : (
                   <>
-                    <C.MainNavigation homeLink={paths.home()} />
+                    <C.MainNavigation
+                      homeLink={paths.home()}
+                      appTitle={appTitle}
+                    />
                     <PageNotLoggedIn />
                   </>
                 )}

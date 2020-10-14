@@ -3,8 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { CLASSES, combineClasses } from '../classes';
 import HpcLogo from '../assets/logos/hpc';
-import CdmLogo from '../assets/logos/cdm';
-import CdmName from '../assets/logos/cdm-name';
 import { styled } from '../theme';
 
 const CLS = {
@@ -18,6 +16,7 @@ const CLS = {
 
 interface Props {
   homeLink: string;
+  appTitle: JSX.Element;
   tabs?: Array<
     | {
         path: string;
@@ -63,6 +62,10 @@ const Nav = styled.nav`
         align-items: flex-start;
         justify-content: space-between;
         color: #221e1f;
+
+        &:hover {
+          text-decoration: none;
+        }
       }
     }
     > .${CLS.TABS} {
@@ -106,7 +109,7 @@ const Nav = styled.nav`
 `;
 
 export default (props: Props) => {
-  const { tabs, homeLink } = props;
+  const { tabs, appTitle, homeLink } = props;
 
   const loc = useLocation();
   const tabElements = tabs && (
@@ -143,8 +146,7 @@ export default (props: Props) => {
           <HpcLogo className={CLS.LOGO} />
           <div className={CLS.HEADER_SEPARATOR} />
           <Link className={CLS.APP_LOGO} to={homeLink}>
-            <CdmLogo />
-            <CdmName />
+            {appTitle}
           </Link>
         </div>
         <div className={CLASSES.FLEX.GROW} />
