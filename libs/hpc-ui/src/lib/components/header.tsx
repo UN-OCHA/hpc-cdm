@@ -126,11 +126,11 @@ const Header = (props: Props) => {
 };
 
 export default styled(Header)`
-  background: ${(p) => p.theme.colors.secondary.dark1};
+  background: ${(p) => p.theme.colors.primary.normal};
   background-image: linear-gradient(
     -180deg,
-    ${(p) => p.theme.colors.secondary.dark1} 67%,
-    ${(p) => p.theme.colors.secondary.dark2} 97%
+    ${(p) => p.theme.colors.primary.normal} 67%,
+    ${(p) => p.theme.colors.primary.dark2} 97%
   );
   min-height: 40px;
 

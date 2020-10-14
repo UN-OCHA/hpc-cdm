@@ -97,7 +97,7 @@ const Nav = styled.nav`
         }
 
         &.${CLS.SELECTED} > a {
-          border-bottom-color: ${(p) => p.theme.colors.primary.normal};
+          border-bottom-color: ${(p) => p.theme.colors.secondary.normal};
         }
       }
     }

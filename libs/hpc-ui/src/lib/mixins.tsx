@@ -20,14 +20,14 @@ export const button = css`
 `;
 
 export const buttonPrimary = css`
-  background-color: ${(p) => p.theme.colors.primary.normal};
-  border-color: ${(p) => p.theme.colors.primary.normal};
+  background-color: ${(p) => p.theme.colors.secondary.normal};
+  border-color: ${(p) => p.theme.colors.secondary.normal};
   color: #fff;
 
   &:hover,
   &:focus {
-    background-color: ${(p) => p.theme.colors.primary.dark1};
-    border-color: ${(p) => p.theme.colors.primary.dark2};
+    background-color: ${(p) => p.theme.colors.secondary.dark1};
+    border-color: ${(p) => p.theme.colors.secondary.dark2};
   }
 `;
 

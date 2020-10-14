@@ -85,7 +85,7 @@ export default styled(ListItem)`
   }
 
   > .${CLS.LINK_CARET} {
-    color: ${(p) => p.theme.colors.secondary.normal};
+    color: ${(p) => p.theme.colors.primary.normal};
     margin: 0 ${(p) => p.theme.marginPx.md}px;
   }
 `;

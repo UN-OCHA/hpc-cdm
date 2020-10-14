@@ -45,7 +45,7 @@ const Breadcrumbs = styled.div`
 
     &:hover,
     &:focus {
-      color: ${(p) => p.theme.colors.secondary.normal};
+      color: ${(p) => p.theme.colors.primary.normal};
       outline: none;
       text-decoration: none;
     }

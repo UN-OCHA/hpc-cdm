@@ -38,7 +38,7 @@ export default styled(ErrorMessage)`
 
   svg {
     margin-bottom: -1rem;
-    color: ${(p) => p.theme.colors.primary.normal};
+    color: ${(p) => p.theme.colors.secondary.normal};
   }
 
   > .${CLS.BUTTONS} {
