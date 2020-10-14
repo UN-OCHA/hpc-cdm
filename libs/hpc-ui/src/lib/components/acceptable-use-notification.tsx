@@ -18,12 +18,18 @@ interface Props {
   };
 }
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const Actions = styled.div`
+  flex-grow: 1;
   text-align: center;
 `;
 
 const AcceptableUseNotification = (props: Props) => (
-  <div className={props.className}>
+  <Container className={props.className}>
     <Actions>
       <Button
         startIcon={User}
@@ -37,7 +43,7 @@ const AcceptableUseNotification = (props: Props) => (
     <p>{props.strings.p2}</p>
     <p>{props.strings.p3}</p>
     <p>{props.strings.p4}</p>
-  </div>
+  </Container>
 );
 
 export default AcceptableUseNotification;

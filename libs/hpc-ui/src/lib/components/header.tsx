@@ -89,12 +89,10 @@ const Header = (props: Props) => {
       );
     } else {
       return (
-        <>
-          <HeaderButton onClick={session.logIn}>
-            <User />
-            <span>{strings.login}</span>
-          </HeaderButton>
-        </>
+        <HeaderButton onClick={session.logIn}>
+          <User />
+          <span>{strings.login}</span>
+        </HeaderButton>
       );
     }
   };
