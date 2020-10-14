@@ -10,8 +10,9 @@ const CLS_DIRECTION = {
   start: 'direction-start',
 } as const;
 
-type Props = Omit<React.SVGProps<SVGSVGElement>, 'ref'> & {
+type Props = Omit<React.SVGProps<SVGSVGElement>, 'ref' | 'width' | 'height'> & {
   direction?: keyof typeof CLS_DIRECTION;
+  size?: number;
 };
 
 const Svg = styled.svg`
@@ -39,22 +40,16 @@ const Svg = styled.svg`
 const Caret = (props: Props) => {
   props = { ...props };
   const direction = props.direction || 'down';
-  // Swap width & height if we need to rotate
-  if (direction === 'end' || direction === 'start') {
-    // Swap width & height
-    const { width, height } = props;
-    props.width = height;
-    props.height = width;
-  }
   // Set a defauly size if it isn't set
-  if (!props.height && !props.width) {
-    props.width = 6.6;
+  if (!props.size) {
+    props.size = 6.6;
   }
   props.className = combineClasses(CLS_DIRECTION[direction], props.className);
   return (
     <Svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 1.764 1.058"
+      width={props.size}
       {...props}
     >
       <path

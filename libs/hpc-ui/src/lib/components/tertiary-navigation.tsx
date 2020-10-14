@@ -5,6 +5,8 @@ import Caret from '../assets/icons/caret';
 import { CLASSES } from '../classes';
 import { styled } from '../theme';
 
+import { ButtonLink } from './button';
+
 const CLS = {
   LAST_BREADCRUMB: 'last',
   BREADCRUMB_CARET: 'caret',
@@ -16,11 +18,7 @@ interface Props {
     label: string;
     to: string;
   }>;
-  actions?: Array<{
-    label: string;
-    to: string;
-    active?: boolean;
-  }>;
+  actions?: JSX.Element | JSX.Element[];
 }
 
 const Breadcrumbs = styled.div`
@@ -52,26 +50,6 @@ const Breadcrumbs = styled.div`
   }
 `;
 
-const Action = styled(Link)`
-  height: 38px;
-  display: flex;
-  padding: 0 ${(p) => p.theme.marginPx.md * 1.5}px;
-  border: 1px solid ${(p) => p.theme.colors.pallete.gray.light};
-  color: ${(p) => p.theme.colors.pallete.gray.light};
-  align-items: center;
-  border-radius: 3px;
-  text-transform: uppercase;
-  font-weight: bold;
-
-  &:hover,
-  &:focus,
-  &.${CLS.ACTION_SELECTED} {
-    text-decoration: none;
-    background-color: ${(p) => p.theme.colors.pallete.gray.light};
-    color: #fff;
-  }
-`;
-
 const Container = styled.div`
   padding: ${(p) => p.theme.marginPx.lg}px 0 15px;
   display: flex;
@@ -93,28 +71,18 @@ const SecondaryNavigation = (props: Props) => {
         ) : (
           <React.Fragment key={i}>
             <Link to={link.to}>{link.label}</Link>
-            <Caret direction="end" width={8} className={CLS.BREADCRUMB_CARET} />
+            <Caret direction="end" size={11} className={CLS.BREADCRUMB_CARET} />
           </React.Fragment>
         );
       })}
     </Breadcrumbs>
   );
 
-  const actionElements = actions?.map((action, i) => (
-    <Action
-      key={i}
-      to={action.to}
-      className={action.active ? CLS.ACTION_SELECTED : undefined}
-    >
-      {action.label}
-    </Action>
-  ));
-
   return (
     <Container role="navigation">
       {breadcrumbElements}
       <div className={CLASSES.FLEX.GROW} />
-      {actionElements}
+      {actions}
     </Container>
   );
 };

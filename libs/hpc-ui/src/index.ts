@@ -5,6 +5,7 @@ import { DataLoaderState, dataLoader } from './lib/util';
 import * as mixins from './lib/mixins';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
+import Button, { ButtonLink } from './lib/components/button';
 import DevEnvWarning from './lib/components/development-environment-warning';
 import ErrorMessage from './lib/components/error-message';
 import Header from './lib/components/header';
@@ -20,9 +21,12 @@ import TertiaryNavigation from './lib/components/tertiary-navigation';
 import Toolbar from './lib/components/toolbar';
 
 import Caret from './lib/assets/icons/caret';
+import Gear from './lib/assets/icons/gear';
 
 const COMPONENTS = {
   AcceptableUseNotification,
+  Button,
+  ButtonLink,
   DevEnvWarning,
   ErrorMessage,
   Header,
@@ -40,6 +44,7 @@ const COMPONENTS = {
 
 const ICONS = {
   Caret,
+  Gear,
 };
 
 export {
