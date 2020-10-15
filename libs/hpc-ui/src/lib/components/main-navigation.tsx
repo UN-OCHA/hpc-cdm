@@ -3,8 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { CLASSES, combineClasses } from '../classes';
 import HpcLogo from '../assets/logos/hpc';
-import CdmLogo from '../assets/logos/cdm';
-import CdmName from '../assets/logos/cdm-name';
 import { styled } from '../theme';
 
 const CLS = {
@@ -18,6 +16,7 @@ const CLS = {
 
 interface Props {
   homeLink: string;
+  appTitle: JSX.Element;
   tabs?: Array<
     | {
         path: string;
@@ -30,8 +29,8 @@ interface Props {
   >;
 }
 
-const HEADER_HEIGHT_PX = 80;
-const BORDER_BOTTOM_WIDTH = '4px';
+const HEADER_HEIGHT_PX = 60;
+const BORDER_BOTTOM_WIDTH = '3px';
 
 const Nav = styled.nav`
   border-bottom: ${BORDER_BOTTOM_WIDTH} solid ${(p) => p.theme.colors.dividers};
@@ -41,7 +40,7 @@ const Nav = styled.nav`
 
     > .${CLS.HEADER} {
       display: flex;
-      height: 48px;
+      height: 36px;
       color: #221e1f;
 
       > .${CLS.LOGO} {
@@ -49,19 +48,24 @@ const Nav = styled.nav`
       }
 
       > .${CLS.HEADER_SEPARATOR} {
-        margin: 0 25px;
+        margin: 0 18px;
         width: 1px;
         height: 100%;
         background-color: ${(p) => p.theme.colors.dividers};
       }
 
       > .${CLS.APP_LOGO} {
-        height: 100%;
+        height: 38px;
+        margin-bottom: -2px;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         justify-content: space-between;
         color: #221e1f;
+
+        &:hover {
+          text-decoration: none;
+        }
       }
     }
     > .${CLS.TABS} {
@@ -97,7 +101,7 @@ const Nav = styled.nav`
         }
 
         &.${CLS.SELECTED} > a {
-          border-bottom-color: ${(p) => p.theme.colors.primary.normal};
+          border-bottom-color: ${(p) => p.theme.colors.secondary.normal};
         }
       }
     }
@@ -105,7 +109,7 @@ const Nav = styled.nav`
 `;
 
 export default (props: Props) => {
-  const { tabs, homeLink } = props;
+  const { tabs, appTitle, homeLink } = props;
 
   const loc = useLocation();
   const tabElements = tabs && (
@@ -142,8 +146,7 @@ export default (props: Props) => {
           <HpcLogo className={CLS.LOGO} />
           <div className={CLS.HEADER_SEPARATOR} />
           <Link className={CLS.APP_LOGO} to={homeLink}>
-            <CdmLogo />
-            <CdmName />
+            {appTitle}
           </Link>
         </div>
         <div className={CLASSES.FLEX.GROW} />

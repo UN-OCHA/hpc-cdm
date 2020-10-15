@@ -1,9 +1,9 @@
 import React, { ReactElement } from 'react';
 import { CircularProgress } from '@material-ui/core';
 
+import { Button } from './button';
 import { DataLoaderState } from '../util';
 import { styled } from '../theme';
-import { button, buttonPrimary } from '../mixins';
 
 import NotFound from './not-found';
 
@@ -35,11 +35,6 @@ const StyledDiv = styled.div`
   justify-content: center;
   align-items: center;
   padding: ${(p) => p.theme.marginPx.md}px;
-
-  button {
-    ${button}
-    ${buttonPrimary}
-  }
 `;
 
 export default function Loader<T>(props: Props<T>) {
@@ -52,7 +47,7 @@ export default function Loader<T>(props: Props<T>) {
       <h3>
         {strings.error} {loader.error}
       </h3>
-      <button onClick={loader.retry}>{strings.retry}</button>
+      <Button color="secondary" onClick={loader.retry} text={strings.retry} />
     </StyledDiv>
   ) : loader.type === 'not-found' ? (
     <NotFound strings={strings.notFound} />

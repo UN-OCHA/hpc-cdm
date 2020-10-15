@@ -9,12 +9,13 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 
-import { styled, ICONS, mixins, combineClasses } from '@unocha/hpc-ui';
+import { styled, ICONS } from '@unocha/hpc-ui';
 import { MdWarning } from 'react-icons/md';
 
 const CLS = {
   ERROR: 'error',
   BUTTON: 'dropdown-button',
+  CARET: 'caret',
 };
 
 interface Props {
@@ -26,25 +27,37 @@ interface Props {
     key: string;
   }>;
   onSelect: (key: string) => Promise<void>;
-  colors: 'gray';
 }
 
 const Wrapper = styled.div`
   > .${CLS.BUTTON} {
-    ${mixins.button};
+    height: 30px;
+    display: inline-flex;
+    padding: 0 ${(p) => p.theme.marginPx.md}px;
+    box-sizing: border-box;
+    background: none;
+    border: 1px solid ${(p) => p.theme.colors.pallete.gray.light4};
+    color: ${(p) => p.theme.colors.pallete.gray.normal};
+    align-items: center;
+    border-radius: 2px;
+    font-size: 1.4rem;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      background-color: ${(p) => p.theme.colors.pallete.gray.light4};
+    }
 
     > * {
-      margin: 0 3px;
+      margin: 0 ${(p) => p.theme.marginPx.sm}px;
+    }
+
+    > .${CLS.CARET} {
+      color: ${(p) => p.theme.colors.pallete.gray.light};
     }
 
     > .${CLS.ERROR} {
       color: ${(p) => p.theme.colors.textError};
-    }
-  }
-
-  &.colors-gray {
-    > .${CLS.BUTTON} {
-      ${mixins.buttonGray};
     }
   }
 `;
@@ -56,13 +69,13 @@ type InternalState = 'idle' | 'loading' | 'error';
  * selects a new option, and display a loading indicator.
  */
 export const ActionableDropdown = (props: Props) => {
-  const { className, colors, label, loadingLabel, options, onSelect } = props;
+  const { className, label, loadingLabel, options, onSelect } = props;
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<InternalState>('idle');
 
   return (
-    <Wrapper className={combineClasses(className, `colors-${colors}`)}>
+    <Wrapper className={className}>
       <button
         ref={buttonRef}
         className={CLS.BUTTON}
@@ -77,7 +90,11 @@ export const ActionableDropdown = (props: Props) => {
           <>
             {state === 'error' && <MdWarning className={CLS.ERROR} size={15} />}
             <span>{label}</span>
-            <ICONS.Caret direction={open ? 'up' : 'down'} />
+            <ICONS.Caret
+              className={CLS.CARET}
+              direction={open ? 'up' : 'down'}
+              size={12}
+            />
           </>
         )}
       </button>

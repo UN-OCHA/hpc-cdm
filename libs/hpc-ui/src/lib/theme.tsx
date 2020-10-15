@@ -22,7 +22,6 @@ const COLOR_PALETTE = {
   },
   blue: {
     dark2: '#025995',
-    dark1: '#026cb6',
     normal: '#026cb6', // from style guide
   },
   gray: {
@@ -39,10 +38,10 @@ const COLOR_PALETTE = {
 export const THEME = {
   colors: {
     pallete: COLOR_PALETTE,
-    primary: COLOR_PALETTE.orange,
-    secondary: COLOR_PALETTE.blue,
+    primary: COLOR_PALETTE.blue,
+    secondary: COLOR_PALETTE.orange,
     text: COLOR_PALETTE.gray.normal,
-    textLight: COLOR_PALETTE.gray.light1,
+    textLight: COLOR_PALETTE.gray.light,
     textLink: COLOR_PALETTE.orange.dark2,
     textError: COLOR_PALETTE.red.dark,
     textErrorLight: COLOR_PALETTE.red.light,
@@ -71,12 +70,15 @@ export const THEME = {
 } as const;
 
 export const MUI_THEME = createMuiTheme({
+  typography: {
+    htmlFontSize: 10,
+  },
   palette: {
     primary: {
       main: THEME.colors.primary.normal,
     },
     secondary: {
-      main: THEME.colors.secondary.dark1,
+      main: THEME.colors.secondary.normal,
     },
   },
 });
