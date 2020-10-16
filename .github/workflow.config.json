@@ -1,7 +1,7 @@
 {
   "stagingEnvironmentBranch": "env/stage",
   "repoType": "node",
-  "developmentEnvironmentBranches": ["env/dev", "env/demo", "env/demodev"],
+  "developmentEnvironmentBranches": ["env/red.dev", "env/blue.dev"],
   "docker": {
     "path": ".",
     "args": {
@@ -20,16 +20,12 @@
   "deployments": {
     "environments": [
       {
-        "branch": "env/dev",
-        "environment": "dev"
+        "branch": "env/red.dev",
+        "environment": "reddev"
       },
       {
-        "branch": "env/demo",
-        "environment": "demo"
-      },
-      {
-        "branch": "env/demodev",
-        "environment": "demodev"
+        "branch": "env/blue.dev",
+        "environment": "bluedev"
       }
     ]
   }
