@@ -2,10 +2,10 @@ import { CLASSES, combineClasses } from './lib/classes';
 import { BaseStyling } from './lib/styling';
 import { css, styled, THEME, Theme, ThemeProvider } from './lib/theme';
 import { DataLoaderState, dataLoader } from './lib/util';
-import * as mixins from './lib/mixins';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
-import Breadcrumbs, { BreadcrumbLinks } from './lib/components/breadcrumbs';
+import * as actionableButton from './lib/components/actionable-button';
+import { Button, ButtonLink } from './lib/components/button';
 import DevEnvWarning from './lib/components/development-environment-warning';
 import ErrorMessage from './lib/components/error-message';
 import Header from './lib/components/header';
@@ -17,15 +17,18 @@ import NotFound from './lib/components/not-found';
 import PageTitle from './lib/components/page-title';
 import SidebarNavigation from './lib/components/sidebar-navigation';
 import SecondaryNavigation from './lib/components/secondary-navigation';
-import Tabs from './lib/components/tabs';
 import TertiaryNavigation from './lib/components/tertiary-navigation';
 import Toolbar from './lib/components/toolbar';
 
 import Caret from './lib/assets/icons/caret';
+import Gear from './lib/assets/icons/gear';
 
 const COMPONENTS = {
   AcceptableUseNotification,
-  Breadcrumbs,
+  ActionableButton: actionableButton.ActionableButton,
+  ActionableIconButton: actionableButton.ActionableIconButton,
+  Button,
+  ButtonLink,
   DevEnvWarning,
   ErrorMessage,
   Header,
@@ -37,18 +40,21 @@ const COMPONENTS = {
   PageTitle,
   SidebarNavigation,
   SecondaryNavigation,
-  Tabs,
   TertiaryNavigation,
   Toolbar,
 };
 
 const ICONS = {
   Caret,
+  Gear,
 };
+
+export declare namespace Types {
+  export type ActionableButtonState = actionableButton.ActionableButtonState;
+}
 
 export {
   BaseStyling,
-  BreadcrumbLinks,
   CLASSES,
   combineClasses,
   COMPONENTS as C,
@@ -56,7 +62,6 @@ export {
   DataLoaderState,
   dataLoader,
   ICONS,
-  mixins,
   styled,
   THEME,
   Theme,

@@ -15,14 +15,6 @@ import PageNotFound from './pages/not-found';
 import PageOperationsList from './pages/operations-list';
 import PageOperation from './pages/operation';
 
-const CLS = {
-  HEADER: 'header',
-};
-
-interface Props {
-  className?: string;
-}
-
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
   const warning = env.getDevHeaderWarning(lang);
   if (warning) {
@@ -30,9 +22,39 @@ const environmentWarning = (env: Environment, lang: LanguageKey) => {
   }
 };
 
-export const App = (props: Props) => {
-  const { className } = props;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
 
+const Header = styled(C.Header)`
+  position: relative;
+  z-index: ${Z_INDEX.HEADER};
+`;
+
+const Main = styled.main`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+`;
+
+const LoggedInContainer = styled.div`
+  width: 100%;
+`;
+
+const TitlePrimary = styled.div`
+  line-height: 100%;
+  font-size: 1.9rem;
+  font-weight: bold;
+`;
+
+const TitleSecondary = styled.div`
+  line-height: 100%;
+  font-size: 1.7rem;
+`;
+
+export const App = () => {
   const [lang, setLang] = useState(LANGUAGE_CHOICE.getLanguage());
 
   useEffect(() => {
@@ -48,6 +70,18 @@ export const App = (props: Props) => {
       throw new Error(t.t(lang, (s) => s.errors.unableToLoadCDM));
     })
   );
+
+  const appTitle = (
+    <>
+      <TitlePrimary>
+        {t.t(lang, (s) => s.components.appTitle.primary)}
+      </TitlePrimary>
+      <TitleSecondary>
+        {t.t(lang, (s) => s.components.appTitle.secondary)}
+      </TitleSecondary>
+    </>
+  );
+
   return (
     <>
       <BaseStyling />
@@ -63,10 +97,9 @@ export const App = (props: Props) => {
       >
         {(env) => (
           <AppContext.Provider value={{ lang, env: () => env }}>
-            <div className={className}>
+            <Container>
               {environmentWarning(env, lang)}
-              <C.Header
-                className={CLS.HEADER}
+              <Header
                 session={env.session}
                 language={LANGUAGE_CHOICE}
                 strings={t.get(lang, (s) => s.user)}
@@ -77,11 +110,12 @@ export const App = (props: Props) => {
                   },
                 ]}
               />
-              <main>
+              <Main>
                 {env.session.getUser() ? (
-                  <>
+                  <LoggedInContainer>
                     <C.MainNavigation
                       homeLink={paths.home()}
+                      appTitle={appTitle}
                       tabs={[
                         {
                           label: t.t(lang, (s) => s.navigation.operations),
@@ -109,15 +143,18 @@ export const App = (props: Props) => {
                       <Route path={paths.admin()} component={PageAdmin} />
                       <Route component={PageNotFound} />
                     </Switch>
-                  </>
+                  </LoggedInContainer>
                 ) : (
                   <>
-                    <C.MainNavigation homeLink={paths.home()} />
+                    <C.MainNavigation
+                      homeLink={paths.home()}
+                      appTitle={appTitle}
+                    />
                     <PageNotLoggedIn />
                   </>
                 )}
-              </main>
-            </div>
+              </Main>
+            </Container>
           </AppContext.Provider>
         )}
       </C.Loader>
@@ -125,9 +162,4 @@ export const App = (props: Props) => {
   );
 };
 
-export default styled(App)`
-  > .${CLS.HEADER} {
-    position: relative;
-    z-index: ${Z_INDEX.HEADER};
-  }
-`;
+export default App;

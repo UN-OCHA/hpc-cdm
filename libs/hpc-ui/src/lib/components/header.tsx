@@ -9,14 +9,15 @@ import {
 } from '@material-ui/core';
 
 import { Session } from '@unocha/hpc-core';
-import { MdPermIdentity } from 'react-icons/md';
 import { i18n } from '@unocha/hpc-core';
 
 import { CLASSES, combineClasses } from '../classes';
 import UNOCHA from '../assets/logos/unocha';
 import Caret from '../assets/icons/caret';
+import HeaderButton from './header-button';
 import LanguagePicker from '../components/language-picker';
 import { styled } from '../theme';
+import User from '../assets/icons/user';
 
 const CLS = {
   LOGO: 'logo',
@@ -46,19 +47,15 @@ const Header = (props: Props) => {
     const u = session.getUser();
     if (u) {
       return (
-        <div>
-          <button
+        <>
+          <HeaderButton
             ref={userMenuAnchor}
-            className={combineClasses(
-              CLASSES.BUTTON.CLEAR,
-              CLASSES.BUTTON.WITH_ICON
-            )}
             onClick={() => setUserMenuOpen(true)}
           >
-            <MdPermIdentity size={18} />
+            <User />
             <span>{u.name}</span>
             <Caret direction={userMenuOpen ? 'up' : 'down'} />
-          </button>
+          </HeaderButton>
           <Popper
             open={userMenuOpen}
             anchorEl={userMenuAnchor.current}
@@ -88,22 +85,14 @@ const Header = (props: Props) => {
               </Grow>
             )}
           </Popper>
-        </div>
+        </>
       );
     } else {
       return (
-        <div>
-          <button
-            className={combineClasses(
-              CLASSES.BUTTON.CLEAR,
-              CLASSES.BUTTON.WITH_ICON
-            )}
-            onClick={session.logIn}
-          >
-            <MdPermIdentity />
-            <span>{strings.login}</span>
-          </button>
-        </div>
+        <HeaderButton onClick={session.logIn}>
+          <User />
+          <span>{strings.login}</span>
+        </HeaderButton>
       );
     }
   };
@@ -126,23 +115,18 @@ const Header = (props: Props) => {
 };
 
 export default styled(Header)`
-  background: ${(p) => p.theme.colors.secondary.dark1};
-  background-image: linear-gradient(
-    -180deg,
-    ${(p) => p.theme.colors.secondary.dark1} 67%,
-    ${(p) => p.theme.colors.secondary.dark2} 97%
-  );
-  min-height: 40px;
+  background: ${(p) => p.theme.colors.primary.normal};
+  min-height: 35px;
 
   .${CLS.LOGO} {
-    width: 30px;
+    width: 23px;
   }
 
   .${CLS.SEPARATOR} {
-    margin: 0 4px;
+    margin: 0 6px;
     display: block;
     width: 0;
-    height: 12px;
+    height: 8px;
     border-left: 1px solid #fff;
   }
 `;

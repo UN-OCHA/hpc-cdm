@@ -61,10 +61,7 @@
       "auditLogRoleChange": "{actor}  a remplacé le rôle de {grantee} par {role}",
       "auditLogRoleRemoval": "{actor} a supprimé l'accès de {grantee}",
       "noPendingInvites": "Aucune invitation en attente",
-      "noUsers": {
-        "title": "Pas d'utilisateurs assignés",
-        "info": "Personne n'a obtenu l'accès"
-      },
+      "noUsers": "Pas d'utilisateurs assignés. Personne n'a obtenu l'accès",
       "auditLogEmpty": "Le journal d'audit est vide",
       "role": "Rôle"
     }

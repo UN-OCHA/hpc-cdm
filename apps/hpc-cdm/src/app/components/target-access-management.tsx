@@ -1,74 +1,23 @@
 import React, { useState } from 'react';
-import { MdDelete, MdAssignment, MdPersonOutline, MdAdd } from 'react-icons/md';
+import { MdClear, MdAdd } from 'react-icons/md';
 
-import { C, dataLoader, styled, CLASSES, combineClasses } from '@unocha/hpc-ui';
+import { C, dataLoader, styled } from '@unocha/hpc-ui';
 import { access } from '@unocha/hpc-data';
 
 import dayjs from '../../libraries/dayjs';
 
 import { t } from '../../i18n';
 import { getContext } from '../context';
-import { ActionableIconButton } from './button';
 import { ActionableDropdown } from './dropdown';
 import { TargetAccessManagementAddUser } from './target-access-management-add-user';
 
-const CLS = {
-  LIST: 'access-list',
-  DETAILS: 'details',
-  DATE: 'date',
-  TOOLBAR: 'toolbar',
-};
+const CLS = {};
 
 interface Props {
   target: access.AccessTarget;
 }
 
-const Wrapper = styled.div`
-  > .${CLS.TOOLBAR} {
-    display: flex;
-    align-items: center;
-    margin-top: -${(p) => p.theme.marginPx.sm}px;
-
-    > h3 {
-      flex-grow: 1;
-    }
-  }
-
-  .${CLS.LIST} {
-    list-style: none;
-    display: block;
-    margin: 0;
-    padding: 0;
-    border: 1px solid ${(p) => p.theme.colors.panel.border};
-    border-radius: ${(p) => p.theme.sizing.borderRadiusSm};
-    background: ${(p) => p.theme.colors.panel.bg};
-
-    > li {
-      display: flex;
-      align-items: center;
-      padding: ${(p) => p.theme.marginPx.sm * 1.5}px 0;
-      border-bottom: 1px solid ${(p) => p.theme.colors.panel.border};
-
-      > span {
-        margin: 0 ${(p) => p.theme.marginPx.md}px;
-      }
-
-      > .${CLS.DETAILS} {
-        flex-grow: 1;
-        color: ${(p) => p.theme.colors.textLight};
-        font-size: ${(p) => p.theme.sizing.fontSizeSm};
-      }
-
-      > .${CLS.DATE} {
-        color: ${(p) => p.theme.colors.textLight};
-      }
-
-      &:last-child {
-        border-bottom: none;
-      }
-    }
-  }
-`;
+const Wrapper = styled.div``;
 
 /**
  * Component for managing user access for a specific "target" (i.e. non-global),
@@ -103,21 +52,6 @@ export const TargetAccessManagement = (props: Props) => {
     >
       {({ active, auditLog, invites, roles }, { updateLoadedData }) => (
         <Wrapper>
-          <div className={CLS.TOOLBAR}>
-            <h3>{t.t(lang, (s) => s.components.accessControl.activePeople)}</h3>
-            <button
-              onClick={() => setAddUserOpen(true)}
-              className={combineClasses(
-                CLASSES.BUTTON.PRIMARY,
-                CLASSES.BUTTON.WITH_ICON
-              )}
-            >
-              <MdAdd />
-              <span>
-                {t.t(lang, (s) => s.components.accessControl.addPerson)}
-              </span>
-            </button>
-          </div>
           <TargetAccessManagementAddUser
             target={target}
             open={addUserOpen}
@@ -125,9 +59,19 @@ export const TargetAccessManagement = (props: Props) => {
             roles={roles}
             updateLoadedData={updateLoadedData}
           />
-          {active.length > 0 ? (
-            <ul className={CLS.LIST}>
-              {active.map((item, i) => {
+          <C.List
+            title={t.t(lang, (s) => s.components.accessControl.activePeople)}
+            actions={
+              <C.Button
+                color="secondary"
+                onClick={() => setAddUserOpen(true)}
+                startIcon={MdAdd}
+                text={t.t(lang, (s) => s.components.accessControl.addPerson)}
+              />
+            }
+          >
+            {active.length > 0 ? (
+              active.map((item, i) => {
                 if (item.roles.length !== 1) {
                   //TODO: implement this (for e.g. global roles)
                   throw new Error(
@@ -135,81 +79,91 @@ export const TargetAccessManagement = (props: Props) => {
                   );
                 }
                 return (
-                  <li key={i}>
-                    <span className={CLASSES.FLEX.GROW}>
-                      {item.grantee.name}
-                    </span>
-                    <ActionableDropdown
-                      colors="gray"
-                      loadingLabel={t.t(lang, (s) => s.common.saving)}
-                      label={getRoleName(item.roles[0])}
-                      options={roles.map((role) => ({
-                        key: role,
-                        label: getRoleName(role),
-                      }))}
-                      onSelect={async (key) => {
-                        if (
-                          window.confirm(
-                            t
-                              .t(
-                                lang,
-                                (s) =>
-                                  s.components.accessControl.confirmRoleUpdate
+                  <C.ListItem
+                    key={i}
+                    text={item.grantee.name}
+                    actions={
+                      <>
+                        <ActionableDropdown
+                          loadingLabel={t.t(lang, (s) => s.common.saving)}
+                          label={getRoleName(item.roles[0])}
+                          options={roles.map((role) => ({
+                            key: role,
+                            label: getRoleName(role),
+                          }))}
+                          onSelect={async (key) => {
+                            if (
+                              window.confirm(
+                                t
+                                  .t(
+                                    lang,
+                                    (s) =>
+                                      s.components.accessControl
+                                        .confirmRoleUpdate
+                                  )
+                                  .replace('{name}', item.grantee.name)
+                                  .replace('{role}', getRoleName(key))
                               )
-                              .replace('{name}', item.grantee.name)
-                              .replace('{role}', getRoleName(key))
-                          )
-                        ) {
-                          const data = await env().model.access.updateTargetAccess(
-                            {
-                              target,
-                              grantee: item.grantee,
-                              roles: [key],
+                            ) {
+                              const data = await env().model.access.updateTargetAccess(
+                                {
+                                  target,
+                                  grantee: item.grantee,
+                                  roles: [key],
+                                }
+                              );
+                              updateLoadedData(data);
                             }
-                          );
-                          updateLoadedData(data);
-                        }
-                      }}
-                    />
-                    <ActionableIconButton
-                      icon={MdDelete}
-                      onClick={async () => {
-                        if (
-                          window.confirm(
-                            t
-                              .t(
-                                lang,
-                                (s) =>
-                                  s.components.accessControl.confirmRoleRemoval
+                          }}
+                        />
+                        <C.ActionableButton
+                          color="neutral"
+                          icon={MdClear}
+                          label={t.t(
+                            lang,
+                            (s) => s.components.accessControl.deletePerson
+                          )}
+                          onClick={async () => {
+                            if (
+                              window.confirm(
+                                t
+                                  .t(
+                                    lang,
+                                    (s) =>
+                                      s.components.accessControl
+                                        .confirmRoleRemoval
+                                  )
+                                  .replace('{name}', item.grantee.name)
                               )
-                              .replace('{name}', item.grantee.name)
-                          )
-                        ) {
-                          const data = await env().model.access.updateTargetAccess(
-                            {
-                              target,
-                              grantee: item.grantee,
-                              roles: [],
+                            ) {
+                              const data = await env().model.access.updateTargetAccess(
+                                {
+                                  target,
+                                  grantee: item.grantee,
+                                  roles: [],
+                                }
+                              );
+                              updateLoadedData(data);
                             }
-                          );
-                          updateLoadedData(data);
-                        }
-                      }}
-                    />
-                  </li>
+                          }}
+                        />
+                      </>
+                    }
+                  />
                 );
-              })}
-            </ul>
-          ) : (
-            <C.ErrorMessage
-              icon={MdPersonOutline}
-              strings={t.get(lang, (s) => s.components.accessControl.noUsers)}
-            />
-          )}
-          <h3>{t.t(lang, (s) => s.components.accessControl.pendingInvites)}</h3>
-          {invites.length > 0 ? (
-            <ul className={CLS.LIST}>
-              {invites.map((item, i) => {
+              })
+            ) : (
+              <C.ListItem
+                muted
+                text={t.t(lang, (s) => s.components.accessControl.noUsers)}
+              />
+            )}
+          </C.List>
+          <C.List
+            title={t.t(lang, (s) => s.components.accessControl.pendingInvites)}
+          >
+            {invites.length > 0 ? (
+              invites.map((item, i) => {
                 if (item.roles.length !== 1) {
                   //TODO: implement this (for e.g. global roles)
                   throw new Error(
@@ -217,97 +171,104 @@ export const TargetAccessManagement = (props: Props) => {
                   );
                 }
                 return (
-                  <li key={i}>
-                    <span>{item.email}</span>
-                    <span className={CLS.DETAILS}>
-                      (
-                      {t
-                        .t(lang, (s) => s.components.accessControl.invitedBy)
-                        .replace('{name}', item.lastModifiedBy.name)}
-                      )
-                    </span>
-                    <ActionableDropdown
-                      colors="gray"
-                      loadingLabel={t.t(lang, (s) => s.common.saving)}
-                      label={getRoleName(item.roles[0])}
-                      options={roles.map((role) => ({
-                        key: role,
-                        label: getRoleName(role),
-                      }))}
-                      onSelect={async (key) => {
-                        if (
-                          window.confirm(
-                            t
-                              .t(
-                                lang,
-                                (s) =>
-                                  s.components.accessControl.confirmRoleUpdate
+                  <C.ListItem
+                    text={item.email}
+                    secondary={
+                      <span>
+                        {t
+                          .t(lang, (s) => s.components.accessControl.invitedBy)
+                          .replace('{name}', item.lastModifiedBy.name)}
+                      </span>
+                    }
+                    actions={
+                      <>
+                        <ActionableDropdown
+                          loadingLabel={t.t(lang, (s) => s.common.saving)}
+                          label={getRoleName(item.roles[0])}
+                          options={roles.map((role) => ({
+                            key: role,
+                            label: getRoleName(role),
+                          }))}
+                          onSelect={async (key) => {
+                            if (
+                              window.confirm(
+                                t
+                                  .t(
+                                    lang,
+                                    (s) =>
+                                      s.components.accessControl
+                                        .confirmRoleUpdate
+                                  )
+                                  .replace('{name}', item.email)
+                                  .replace('{role}', getRoleName(key))
                               )
-                              .replace('{name}', item.email)
-                              .replace('{role}', getRoleName(key))
-                          )
-                        ) {
-                          const data = await env().model.access.updateTargetAccessInvite(
-                            {
-                              target,
-                              email: item.email,
-                              roles: [key],
+                            ) {
+                              const data = await env().model.access.updateTargetAccessInvite(
+                                {
+                                  target,
+                                  email: item.email,
+                                  roles: [key],
+                                }
+                              );
+                              updateLoadedData(data);
                             }
-                          );
-                          updateLoadedData(data);
-                        }
-                      }}
-                    />
-                    <ActionableIconButton
-                      icon={MdDelete}
-                      onClick={async () => {
-                        if (
-                          window.confirm(
-                            t
-                              .t(
-                                lang,
-                                (s) =>
-                                  s.components.accessControl.confirmRoleRemoval
+                          }}
+                        />
+                        <C.ActionableButton
+                          color="neutral"
+                          icon={MdClear}
+                          label={t.t(
+                            lang,
+                            (s) => s.components.accessControl.cancelInvite
+                          )}
+                          onClick={async () => {
+                            if (
+                              window.confirm(
+                                t
+                                  .t(
+                                    lang,
+                                    (s) =>
+                                      s.components.accessControl
+                                        .confirmRoleRemoval
+                                  )
+                                  .replace('{name}', item.email)
                               )
-                              .replace('{name}', item.email)
-                          )
-                        ) {
-                          const data = await env().model.access.updateTargetAccessInvite(
-                            {
-                              target,
-                              email: item.email,
-                              roles: [],
+                            ) {
+                              const data = await env().model.access.updateTargetAccessInvite(
+                                {
+                                  target,
+                                  email: item.email,
+                                  roles: [],
+                                }
+                              );
+                              updateLoadedData(data);
                             }
-                          );
-                          updateLoadedData(data);
-                        }
-                      }}
-                    />
-                  </li>
+                          }}
+                        />
+                      </>
+                    }
+                  />
                 );
-              })}
-            </ul>
-          ) : (
-            <C.ErrorMessage
-              icon={MdAssignment}
-              strings={{
-                title: t.t(
+              })
+            ) : (
+              <C.ListItem
+                muted
+                text={t.t(
                   lang,
                   (s) => s.components.accessControl.noPendingInvites
-                ),
-              }}
-            />
-          )}
-          <h3>{t.t(lang, (s) => s.components.accessControl.auditLog)}</h3>
-          {auditLog.length > 0 ? (
-            <ul className={CLS.LIST}>
-              {auditLog.map((item, i) => {
+                )}
+              />
+            )}
+          </C.List>
+          <C.List title={t.t(lang, (s) => s.components.accessControl.auditLog)}>
+            {auditLog.length > 0 ? (
+              auditLog.map((item, i) => {
                 const m = dayjs(item.date).locale(lang);
                 return (
-                  <li key={i}>
-                    <span className={CLS.DATE}>{m.fromNow()}:</span>
-                    <span>
-                      {item.roles.length === 0
+                  <C.ListItem
+                    prefix={m.fromNow()}
+                    text={
+                      item.roles.length === 0
                         ? t
                             .t(
                               lang,
@@ -327,23 +288,21 @@ export const TargetAccessManagement = (props: Props) => {
                             .replace(
                               '{role}',
                               item.roles.map(getRoleName).join(', ')
-                            )}
-                    </span>
-                  </li>
+                            )
+                    }
+                  />
                 );
-              })}
-            </ul>
-          ) : (
-            <C.ErrorMessage
-              icon={MdAssignment}
-              strings={{
-                title: t.t(
+              })
+            ) : (
+              <C.ListItem
+                muted
+                text={t.t(
                   lang,
                   (s) => s.components.accessControl.auditLogEmpty
-                ),
-              }}
-            />
-          )}
+                )}
+              />
+            )}
+          </C.List>
         </Wrapper>
       )}
     </C.Loader>

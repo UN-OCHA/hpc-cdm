@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import { t } from '../../i18n';
-import { C, styled } from '@unocha/hpc-ui';
+import { C, ICONS } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
 
 import * as paths from '../paths';
@@ -45,15 +45,17 @@ const ClusterNavitation = (props: Props) => {
         ...(breadcrumbs || []),
       ]}
       actions={
-        displaySettings
-          ? [
-              {
-                label: t.t(lang, (s) => s.routes.operations.clusters.settings),
-                to: settingsPath,
-                active: loc.pathname.startsWith(settingsPath),
-              },
-            ]
-          : []
+        <>
+          {displaySettings && (
+            <C.ButtonLink
+              color="neutral"
+              text={t.t(lang, (s) => s.routes.operations.clusters.settings)}
+              to={settingsPath}
+              active={loc.pathname.startsWith(settingsPath)}
+              startIcon={ICONS.Gear}
+            />
+          )}
+        </>
       }
     />
   );

@@ -1,7 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 import { CLASSES } from './classes';
-import * as mixins from './mixins';
 import { Theme } from './theme';
 
 export const BaseStyling = createGlobalStyle<{ theme: Theme }>`
@@ -13,6 +12,16 @@ body, html {
   font-weight: 400;
   line-height: 1.5;
   color: ${(p) => p.theme.colors.text};
+}
+
+html {
+  // Reset 1 rem to be 10px on most browsers
+  font-size: 62.5%;
+}
+
+body {
+  // Set default font-size to be 14px;
+  font-size: 1.4rem;
 }
 
 .${CLASSES.CONTAINER.CENTERED} {
@@ -37,24 +46,6 @@ body, html {
 
 .${CLASSES.FLEX.GROW} {
   flex-grow: 1;
-}
-
-.${CLASSES.BUTTON.PRIMARY} {
-  ${mixins.button}
-  ${mixins.buttonPrimary}
-}
-
-.${CLASSES.BUTTON.CLEAR} {
-  ${mixins.button}
-  ${mixins.buttonClear}
-}
-
-.${CLASSES.BUTTON.WITH_ICON} {
-  ${mixins.buttonWithIcon}
-}
-
-.${CLASSES.BUTTON.WITH_ICON_BIG} {
-  ${mixins.buttonWithIconBig}
 }
 
 a {

@@ -8,6 +8,7 @@ const CLS = {
   TEXT: 'text',
   LINK: 'link',
   LINK_CARET: 'link-caret',
+  MUTED: 'muted',
 };
 
 interface Props {
@@ -18,14 +19,29 @@ interface Props {
   link?: string;
   text: string;
   /**
-   * If set, display this element as secondary information after the
+   * If set, display this element as additional information before the main text
    */
-  secondary?: JSX.Element;
+  prefix?: JSX.Element | string;
+  /**
+   * If set, display this element as secondary information after the main text
+   */
+  secondary?: JSX.Element | string;
+  actions?: JSX.Element | JSX.Element[];
+  muted?: boolean;
 }
 
 const Text = styled.span`
   font-weight: bold;
   color: ${(p) => p.theme.colors.text};
+
+  &.${CLS.MUTED} {
+    color: ${(p) => p.theme.colors.textLight};
+  }
+`;
+
+const Info = styled.span`
+  color: ${(p) => p.theme.colors.pallete.gray.light};
+  font-weight: 500;
 `;
 
 const SecondaryDiv = styled.div`
@@ -34,30 +50,45 @@ const SecondaryDiv = styled.div`
   margin: 0 ${(p) => p.theme.marginPx.lg}px;
 `;
 
-const Secondary = styled.span`
-  color: ${(p) => p.theme.colors.pallete.gray.light};
-  font-weight: bold; // TODO: make semi-bold with supported font
+const PrefixDiv = styled.div`
+  width: ${(p) => p.theme.marginPx.lg}px;
+`;
+
+const Actions = styled.div`
+  display: flex;
+  margin: 0 -4px;
+
+  > * {
+    margin: 0 4px;
+  }
 `;
 
 const ListItem = (props: Props) => {
-  const { className, link, text, secondary } = props;
+  const { className, link, text, prefix, secondary, actions, muted } = props;
   const contents = (
     <>
-      <Text>{text}</Text>
+      {prefix && (
+        <>
+          <Info>{prefix}</Info>
+          <PrefixDiv />
+        </>
+      )}
+      <Text className={(muted && CLS.MUTED) || undefined}>{text}</Text>
       {secondary && (
         <>
           <SecondaryDiv />
-          <Secondary>{secondary}</Secondary>
+          <Info>{secondary}</Info>
         </>
       )}
       <div className={CLASSES.FLEX.GROW} />
+      {actions && <Actions>{actions}</Actions>}
     </>
   );
 
   return link ? (
     <Link to={link} className={combineClasses(className, CLS.LINK)}>
       {contents}
-      <Caret className={CLS.LINK_CARET} direction="end" height={11} />
+      <Caret className={CLS.LINK_CARET} direction="end" size={11} />
     </Link>
   ) : (
     <div className={className}>{contents}</div>
@@ -67,7 +98,7 @@ const ListItem = (props: Props) => {
 export default styled(ListItem)`
   display: flex;
   align-items: center;
-  height: 68px;
+  height: 54px;
   border-bottom: 1px solid ${(p) => p.theme.colors.dividers};
   padding: 0 0;
   transition: padding ${(p) => p.theme.animations.fast};
@@ -85,7 +116,7 @@ export default styled(ListItem)`
   }
 
   > .${CLS.LINK_CARET} {
-    color: ${(p) => p.theme.colors.secondary.normal};
+    color: ${(p) => p.theme.colors.primary.normal};
     margin: 0 ${(p) => p.theme.marginPx.md}px;
   }
 `;
