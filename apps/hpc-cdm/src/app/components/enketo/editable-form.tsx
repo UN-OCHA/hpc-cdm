@@ -10,6 +10,7 @@ import XForm from './xform';
 import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
 import SubmitButton from './submit-button';
+import { toast } from 'react-toastify';
 
 const StatusTooltip = Tooltip;
 
@@ -59,6 +60,7 @@ interface Props {
 export const EnketoEditableForm = (props: Props) => {
   const { reportingWindow, assignment: originalAssignment } = props;
   const env = getEnv();
+  const [loading, setLoading] = useState(true);
   const [xform, setXform] = useState<XForm | null>(null);
   const [lastPage, setLastPage] = useState(false);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
@@ -103,9 +105,12 @@ export const EnketoEditableForm = (props: Props) => {
       editable,
       onDataUpdate: ({ xform }) => setLastChangedData(xform.getData().data),
     });
-    setXform(xform);
-    setLastSavedData(xform.getData().data);
-    setUpdatedAssignment(null);
+    xform.init(editable).then(() => {
+      setXform(xform);
+      setLastSavedData(xform.getData().data);
+      setUpdatedAssignment(null);
+      setLoading(false);
+    });
   }, [originalAssignment]);
 
   useEffect(() => {
@@ -139,6 +144,28 @@ export const EnketoEditableForm = (props: Props) => {
       unblock();
     };
   }, [xform, lastSavedData, history, lang]);
+
+  useEffect(() => {
+    if (!loading && status.type !== 'saving') {
+      let msg = t.t(lang, (s) => s.routes.operations.forms.status[status.type]);
+      if (status.type === 'error') {
+        toast.error(`${msg} ${status.message}`, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      } else if (status.type === 'conflict') {
+        const timeAgo = dayjs(status.timestamp).locale(lang);
+        msg = t
+          .t(lang, (s) => s.routes.operations.forms.errors.conflict)
+          .replace('{timeAgo}', timeAgo.fromNow())
+          .replace('{person}', status.otherPerson);
+        toast.error(msg, { position: toast.POSITION.TOP_RIGHT });
+      } else {
+        if (!xform?.isCurrentPageTheFirstPage()) {
+          toast.success(msg, { position: toast.POSITION.TOP_RIGHT });
+        }
+      }
+    }
+  }, [loading, status]);
 
   const saveForm = async (redirect = false, finalized = false) => {
     if (xform) {
@@ -229,7 +256,14 @@ export const EnketoEditableForm = (props: Props) => {
       }
     >
       <StatusLabel>
-        {status.type === 'idle' ? (
+        {loading ? (
+          <>
+            <span>
+              {t.t(lang, (s) => s.routes.operations.forms.status.init)}
+            </span>
+            <CircularProgress size={20} />
+          </>
+        ) : status.type === 'idle' ? (
           t.t(
             lang,
             (s) =>
@@ -240,7 +274,7 @@ export const EnketoEditableForm = (props: Props) => {
         ) : status.type === 'saving' ? (
           <>
             <span>
-              {t.t(lang, (s) => s.routes.operations.forms.status.saving)}
+              {t.t(lang, (s) => s.routes.operations.forms.status[status.type])}
             </span>
             <CircularProgress size={20} />
           </>
@@ -263,7 +297,7 @@ export const EnketoEditableForm = (props: Props) => {
         {editable ? indicator() : t.t(lang, (s) => s.common.nonEditable)}
       </C.Toolbar>
       <div className="enketo" id="form">
-        <div className="main">
+        <div className="main" style={{ display: loading ? 'none' : 'block' }}>
           <div className="container pages"></div>
           <section className="form-footer end">
             <div className="form-footer__content">

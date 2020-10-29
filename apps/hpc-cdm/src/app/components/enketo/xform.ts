@@ -22,6 +22,7 @@ export interface FormFile {
 export default class XForm {
   private form: Form;
   private files: FormFile[];
+  private loading: boolean;
 
   constructor(
     html: string,
@@ -33,6 +34,7 @@ export default class XForm {
       onDataUpdate?: (event: { xform: XForm }) => void;
     }
   ) {
+    this.loading = true;
     const { editable = true, onDataUpdate } = opts || {};
     this.files = files;
     fileManager.getFileUrl = async (subject) => {
@@ -50,18 +52,24 @@ export default class XForm {
     $('.container').replaceWith(markedHtml(html));
     const formElement = $('#form').find('form').first()[0];
     if (onDataUpdate) {
-      formElement.addEventListener('dataupdate', () =>
-        onDataUpdate({
-          xform: this,
-        })
-      );
+      formElement.addEventListener('dataupdate', () => {
+        if (!this.loading) {
+          onDataUpdate({
+            xform: this,
+          });
+        }
+      });
     }
     this.form = new Form(formElement, {
       modelStr,
       instanceStr: content || undefined,
       external: undefined,
     });
+  }
+
+  async init(editable: boolean): Promise<void> {
     const errors = this.form.init();
+
     if (errors && errors.length) {
       console.error('Form Errors', JSON.stringify(errors));
     }
@@ -71,6 +79,7 @@ export default class XForm {
         $(this).prop('disabled', true);
       });
     }
+    this.loading = false;
   }
 
   /**
@@ -116,5 +125,9 @@ export default class XForm {
   isCurrentPageTheLastPage(): boolean {
     const totalPages = this.form.pages.activePages.length - 1;
     return this.form.pages.activePages[totalPages] === this.form.pages.current;
+  }
+
+  isCurrentPageTheFirstPage(): boolean {
+    return this.form.pages.activePages[0] === this.form.pages.current;
   }
 }

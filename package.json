@@ -58,6 +58,7 @@
     "react-dom": "16.13.1",
     "react-is": "16.13.1",
     "react-router-dom": "5.2.0",
+    "react-toastify": "^6.0.9",
     "styled-components": "5.1.1"
   },
   "devDependencies": {
