@@ -30,12 +30,11 @@ export default class XForm {
     content: string | null,
     files: FormFile[],
     opts?: {
-      editable?: boolean;
       onDataUpdate?: (event: { xform: XForm }) => void;
     }
   ) {
     this.loading = true;
-    const { editable = true, onDataUpdate } = opts || {};
+    const { onDataUpdate } = opts || {};
     this.files = files;
     fileManager.getFileUrl = async (subject) => {
       if (typeof subject === 'string') {
@@ -68,18 +67,24 @@ export default class XForm {
   }
 
   async init(editable: boolean): Promise<void> {
-    const errors = this.form.init();
+    return new Promise((resolve) => {
+      // Adding this cycle to allow enketo to initialize things
+      setTimeout(() => {
+        const errors = this.form.init();
 
-    if (errors && errors.length) {
-      console.error('Form Errors', JSON.stringify(errors));
-    }
+        if (errors && errors.length) {
+          console.error('Form Errors', JSON.stringify(errors));
+        }
 
-    if (!editable) {
-      $('#form :input:not(:button)').each(function () {
-        $(this).prop('disabled', true);
+        if (!editable) {
+          $('#form :input:not(:button)').each(function () {
+            $(this).prop('disabled', true);
+          });
+        }
+        this.loading = false;
+        resolve();
       });
-    }
-    this.loading = false;
+    });
   }
 
   /**

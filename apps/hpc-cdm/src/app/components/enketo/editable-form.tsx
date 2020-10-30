@@ -102,7 +102,6 @@ export const EnketoEditableForm = (props: Props) => {
     }));
     setEditable(editable);
     const xform = new XForm(form, model, currentData, files, {
-      editable,
       onDataUpdate: ({ xform }) => setLastChangedData(xform.getData().data),
     });
     xform.init(editable).then(() => {
@@ -115,34 +114,35 @@ export const EnketoEditableForm = (props: Props) => {
 
   useEffect(() => {
     // Setup listeners to prevent navigating away when the form has changed
-
-    const unblock = history.block(() => {
-      if (xform) {
-        if (lastSavedData !== xform.getData().data) {
-          return t.t(
-            lang,
-            (s) => s.routes.operations.forms.unsavedChangesPrompt
-          );
+    if (!loading) {
+      const unblock = history.block(() => {
+        if (xform) {
+          if (lastSavedData !== xform.getData().data) {
+            return t.t(
+              lang,
+              (s) => s.routes.operations.forms.unsavedChangesPrompt
+            );
+          }
         }
-      }
-    });
+      });
 
-    const unloadListener = (event: BeforeUnloadEvent) => {
-      if (xform) {
-        if (lastSavedData !== xform.getData().data) {
-          event.preventDefault();
-          // Chrome requires returnValue to be set.
-          event.returnValue = '';
+      const unloadListener = (event: BeforeUnloadEvent) => {
+        if (xform) {
+          if (lastSavedData !== xform.getData().data) {
+            event.preventDefault();
+            // Chrome requires returnValue to be set.
+            event.returnValue = '';
+          }
         }
-      }
-      return event;
-    };
-    window.addEventListener('beforeunload', unloadListener);
+        return event;
+      };
+      window.addEventListener('beforeunload', unloadListener);
 
-    return () => {
-      window.removeEventListener('beforeunload', unloadListener);
-      unblock();
-    };
+      return () => {
+        window.removeEventListener('beforeunload', unloadListener);
+        unblock();
+      };
+    }
   }, [xform, lastSavedData, history, lang]);
 
   useEffect(() => {
