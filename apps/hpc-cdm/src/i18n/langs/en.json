@@ -108,7 +108,7 @@
           }
         },
         "status": {
-          "init": "Initializing Form",
+          "init": "Initializing Form...",
           "idle": "All changes saved",
           "unsavedChanges": "Unsaved Changes",
           "saving": "Saving...",

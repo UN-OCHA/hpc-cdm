@@ -65,6 +65,7 @@ export const EnketoEditableForm = (props: Props) => {
   const [lastPage, setLastPage] = useState(false);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
   const [lastChangedData, setLastChangedData] = useState<string | null>(null);
+  // const [formTouched, setFormTouched] = useState(false);
   const [
     updatedAssignment,
     setUpdatedAssignment,
@@ -82,7 +83,21 @@ export const EnketoEditableForm = (props: Props) => {
   const lastUpdatedBy =
     status.type === 'conflict' ? status.otherPerson : assignment.lastUpdatedBy;
 
+  const unMount = () => {
+    // Clears enketo cache or something going on there which slows down form init/getData.
+    // Investigating IN_OPERATION related logic with our specific form
+    // which is related to these slow functions.
+    window.location.reload(true);
+  };
+
   useEffect(() => {
+    return () => {
+      unMount();
+    };
+  }, []);
+
+  useEffect(() => {
+    let isSubscribed = true; // to cancel form initialization
     const {
       state,
       editable,
@@ -100,16 +115,34 @@ export const EnketoEditableForm = (props: Props) => {
       name: f.name,
       data: new Blob([new Uint8Array(f.data)]),
     }));
-    setEditable(editable);
     const xform = new XForm(form, model, currentData, files, {
-      onDataUpdate: ({ xform }) => setLastChangedData(xform.getData().data),
+      onDataUpdate: ({ xform }) => {
+        // TODO revisit this when form logic is resolved
+        const t0 = performance.now();
+        const data = xform.getData().data;
+        const t1 = performance.now();
+        setLastChangedData(data);
+        // setFormTouched(true);
+      },
     });
-    xform.init(editable).then(() => {
-      setXform(xform);
-      setLastSavedData(xform.getData().data);
-      setUpdatedAssignment(null);
+    const timer = setTimeout(() => {
+      xform.init(editable).then(() => {
+        if (isSubscribed) {
+          // user has abandoned this page
+          setXform(xform);
+          setEditable(editable);
+          setLastSavedData(xform.getData().data);
+          // setFormTouched(false);
+          setUpdatedAssignment(null);
+          setLoading(false);
+        }
+      });
+    });
+    return () => {
+      clearTimeout(timer);
+      isSubscribed = false;
       setLoading(false);
-    });
+    };
   }, [originalAssignment]);
 
   useEffect(() => {
@@ -136,7 +169,9 @@ export const EnketoEditableForm = (props: Props) => {
         }
         return event;
       };
-      window.addEventListener('beforeunload', unloadListener);
+      window.addEventListener('beforeunload', unloadListener, {
+        capture: true,
+      });
 
       return () => {
         window.removeEventListener('beforeunload', unloadListener);
@@ -263,6 +298,8 @@ export const EnketoEditableForm = (props: Props) => {
             </span>
             <CircularProgress size={20} />
           </>
+        ) : !editable ? (
+          t.t(lang, (s) => s.common.nonEditable)
         ) : status.type === 'idle' ? (
           t.t(
             lang,
@@ -294,7 +331,7 @@ export const EnketoEditableForm = (props: Props) => {
     <div>
       <C.Toolbar>
         <div className={CLASSES.FLEX.GROW} />
-        {editable ? indicator() : t.t(lang, (s) => s.common.nonEditable)}
+        {indicator()}
       </C.Toolbar>
       <div className="enketo" id="form">
         <div className="main" style={{ display: loading ? 'none' : 'block' }}>

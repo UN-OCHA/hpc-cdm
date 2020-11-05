@@ -1,16 +1,27 @@
 import { Form } from 'enketo-core';
 import fileManager from 'enketo-core/src/js/file-manager';
+import calcModule from 'enketo-core/src/js/calculate';
+import { FormModel } from 'enketo-core/src/js/form-model';
+import preloadModule from 'enketo-core/src/js/preload';
+
 import $ from 'jquery';
 import marked from 'marked';
 
 const markedHtml = (form: string): JQuery<HTMLElement> => {
+  form = form.replace(
+    `data-relevant=' /data/Group_IN/Group_INContact/IN_Name ="show operations"'`,
+    'data-relevant="true()"'
+  );
+
   const html = $(form);
+
   for (const selector of ['.question-label', '.question > .or-hint']) {
     $(selector, html).each(function () {
       const text = $(this).text().replace(/\n/g, '<br />');
       $(this).html(marked(text));
     });
   }
+
   return html;
 };
 
@@ -23,6 +34,8 @@ export default class XForm {
   private form: Form;
   private files: FormFile[];
   private loading: boolean;
+  private modelStr: string;
+  private content: string | null;
 
   constructor(
     html: string,
@@ -36,6 +49,22 @@ export default class XForm {
     this.loading = true;
     const { onDataUpdate } = opts || {};
     this.files = files;
+    this.modelStr = modelStr;
+    this.content = content;
+
+    // Completely disable calculations in Enketo Core
+    calcModule.update = () => {
+      // console.log( 'Calculations disabled.' );
+    };
+    // Completely disable instanceID and deprecatedID population in Enketo Core
+    FormModel.prototype.setInstanceIdAndDeprecatedId = () => {
+      // console.log( 'InstanceID and deprecatedID population disabled.' );
+    };
+    // Completely disable preload items
+    preloadModule.init = () => {
+      // console.log( 'Preloaders disabled.' );
+    };
+
     fileManager.getFileUrl = async (subject) => {
       if (typeof subject === 'string') {
         const file = files.filter((f) => f.name === subject);
@@ -51,39 +80,49 @@ export default class XForm {
     $('.container').replaceWith(markedHtml(html));
     const formElement = $('#form').find('form').first()[0];
     if (onDataUpdate) {
-      formElement.addEventListener('dataupdate', () => {
-        if (!this.loading) {
-          onDataUpdate({
-            xform: this,
-          });
-        }
-      });
+      formElement.addEventListener(
+        'dataupdate',
+        () => {
+          if (!this.loading) {
+            onDataUpdate({
+              xform: this,
+            });
+          }
+        },
+        { capture: true }
+      );
     }
+
     this.form = new Form(formElement, {
       modelStr,
-      instanceStr: content || undefined,
+      instanceStr: content ? content : undefined,
       external: undefined,
     });
   }
 
   async init(editable: boolean): Promise<void> {
     return new Promise((resolve) => {
-      // Adding this cycle to allow enketo to initialize things
-      setTimeout(() => {
-        const errors = this.form.init();
+      const t0 = performance.now();
+      const errors = this.form.init();
+      const t1 = performance.now();
+      console.log('Form initialization time: ' + (t1 - t0) + ' millis');
+      if (errors && errors.length) {
+        console.error('Form Errors', JSON.stringify(errors));
+      }
 
-        if (errors && errors.length) {
-          console.error('Form Errors', JSON.stringify(errors));
+      if (!editable) {
+        $('#form :input:not(:button)').each(function () {
+          $(this).prop('disabled', true);
+        });
+      }
+      $('select[name="/data/Group_IN/Group_INContact/IN_Operation"]').each(
+        function () {
+          $(this).prop('disabled', true);
         }
+      );
 
-        if (!editable) {
-          $('#form :input:not(:button)').each(function () {
-            $(this).prop('disabled', true);
-          });
-        }
-        this.loading = false;
-        resolve();
-      });
+      this.loading = false;
+      resolve();
     });
   }
 
@@ -135,4 +174,8 @@ export default class XForm {
   isCurrentPageTheFirstPage(): boolean {
     return this.form.pages.activePages[0] === this.form.pages.current;
   }
+
+  // resetView(): HTMLFormElement {
+  //   return this.form.resetView();
+  // }
 }
