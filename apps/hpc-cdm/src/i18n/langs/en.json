@@ -64,6 +64,10 @@
       "auditLog": "Audit log",
       "roles": {
         "hpc_admin": "HPC Admin",
+        "rpmAdmin": "RPM Admin",
+        "ftsAdmin": "FTS Admin",
+        "projectsAdmin": "Projects Admin",
+        "omniscient": "Omniscient",
         "swaps": "SWAPS Team Member",
         "operationLead": "Operation Lead",
         "clusterLead": "Cluster Lead"
