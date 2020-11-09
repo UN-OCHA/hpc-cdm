@@ -5,6 +5,7 @@ import { DataLoaderState, dataLoader } from './lib/util';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
 import * as actionableButton from './lib/components/actionable-button';
+import ActionableDropdown from './lib/components/actionable-dropdown';
 import { Button, ButtonLink } from './lib/components/button';
 import DevEnvWarning from './lib/components/development-environment-warning';
 import ErrorMessage from './lib/components/error-message';
@@ -26,6 +27,7 @@ import Gear from './lib/assets/icons/gear';
 const COMPONENTS = {
   AcceptableUseNotification,
   ActionableButton: actionableButton.ActionableButton,
+  ActionableDropdown,
   ActionableIconButton: actionableButton.ActionableIconButton,
   Button,
   ButtonLink,
