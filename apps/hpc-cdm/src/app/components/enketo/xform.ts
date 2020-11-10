@@ -1,9 +1,5 @@
 import { Form } from 'enketo-core';
 import fileManager from 'enketo-core/src/js/file-manager';
-// import calcModule from 'enketo-core/src/js/calculate';
-// import { FormModel } from 'enketo-core/src/js/form-model';
-// import preloadModule from 'enketo-core/src/js/preload';
-
 import $ from 'jquery';
 import marked from 'marked';
 
@@ -17,7 +13,8 @@ const markedHtml = (form: string): JQuery<HTMLElement> => {
     });
   }
 
-  // Hardcoding to show operation selection
+  // operation selection must be visible in order for
+  // locations/sublocations to have available options
   $('[name="/data/Group_IN/Group_INContact/IN_Operation"]', html).each(
     function () {
       $(this).attr('data-relevant', 'true()');
@@ -53,19 +50,6 @@ export default class XForm {
     this.files = files;
     this.modelStr = modelStr;
     this.content = content;
-
-    // // Completely disable calculations in Enketo Core
-    // calcModule.update = () => {
-    //   // console.log( 'Calculations disabled.' );
-    // };
-    // // Completely disable instanceID and deprecatedID population in Enketo Core
-    // FormModel.prototype.setInstanceIdAndDeprecatedId = () => {
-    //   // console.log( 'InstanceID and deprecatedID population disabled.' );
-    // };
-    // // Completely disable preload items
-    // preloadModule.init = () => {
-    //   // console.log( 'Preloaders disabled.' );
-    // };
 
     fileManager.getFileUrl = async (subject) => {
       if (typeof subject === 'string') {
@@ -120,9 +104,7 @@ export default class XForm {
 
       $('select[name="/data/Group_IN/Group_INContact/IN_Operation"]').each(
         function () {
-          if ($(this).val()) {
-            $(this).prop('disabled', true);
-          }
+          $(this).prop('disabled', $(this).val() !== '');
         }
       );
 
@@ -180,7 +162,7 @@ export default class XForm {
     return this.form.pages.activePages[0] === this.form.pages.current;
   }
 
-  // resetView(): HTMLFormElement {
-  //   return this.form.resetView();
-  // }
+  resetView(): HTMLFormElement {
+    return this.form.resetView();
+  }
 }

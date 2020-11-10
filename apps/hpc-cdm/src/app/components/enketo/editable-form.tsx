@@ -65,7 +65,7 @@ export const EnketoEditableForm = (props: Props) => {
   const [lastPage, setLastPage] = useState(false);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
   const [lastChangedData, setLastChangedData] = useState<string | null>(null);
-  // const [formTouched, setFormTouched] = useState(false);
+  const [formTouched, setFormTouched] = useState(false);
   const [
     updatedAssignment,
     setUpdatedAssignment,
@@ -84,10 +84,12 @@ export const EnketoEditableForm = (props: Props) => {
     status.type === 'conflict' ? status.otherPerson : assignment.lastUpdatedBy;
 
   const unMount = () => {
-    // Clears enketo cache or something going on there which slows down form init/getData.
-    // Investigating IN_OPERATION related logic with our specific form
-    // which is related to these slow functions.
-    window.location.reload(true);
+    if (xform) {
+      xform.resetView();
+    }
+    // Clears enketo cache or something going on there which slows down
+    // form re-init/getData.
+    history.go(0);
   };
 
   useEffect(() => {
@@ -117,22 +119,17 @@ export const EnketoEditableForm = (props: Props) => {
     }));
     const xform = new XForm(form, model, currentData, files, {
       onDataUpdate: ({ xform }) => {
-        // TODO revisit this when form logic is resolved
-        const t0 = performance.now();
-        const data = xform.getData().data;
-        const t1 = performance.now();
-        setLastChangedData(data);
-        // setFormTouched(true);
+        setFormTouched(true);
       },
     });
     const timer = setTimeout(() => {
+      // Long running process, it could take up to 20 seconds
+      // depending on number of embedded locations/sublocations.
       xform.init(editable).then(() => {
         if (isSubscribed) {
           // user has abandoned this page
           setXform(xform);
           setEditable(editable);
-          setLastSavedData(xform.getData().data);
-          // setFormTouched(false);
           setUpdatedAssignment(null);
           setLoading(false);
         }
@@ -149,23 +146,19 @@ export const EnketoEditableForm = (props: Props) => {
     // Setup listeners to prevent navigating away when the form has changed
     if (!loading) {
       const unblock = history.block(() => {
-        if (xform) {
-          if (lastSavedData !== xform.getData().data) {
-            return t.t(
-              lang,
-              (s) => s.routes.operations.forms.unsavedChangesPrompt
-            );
-          }
+        if (xform && formTouched) {
+          return t.t(
+            lang,
+            (s) => s.routes.operations.forms.unsavedChangesPrompt
+          );
         }
       });
 
       const unloadListener = (event: BeforeUnloadEvent) => {
-        if (xform) {
-          if (lastSavedData !== xform.getData().data) {
-            event.preventDefault();
-            // Chrome requires returnValue to be set.
-            event.returnValue = '';
-          }
+        if (xform && formTouched) {
+          event.preventDefault();
+          // Chrome requires returnValue to be set.
+          event.returnValue = '';
         }
         return event;
       };
@@ -178,7 +171,7 @@ export const EnketoEditableForm = (props: Props) => {
         unblock();
       };
     }
-  }, [xform, lastSavedData, history, lang]);
+  }, [xform, formTouched, history, lang]);
 
   useEffect(() => {
     if (!loading && status.type !== 'saving') {
@@ -203,66 +196,71 @@ export const EnketoEditableForm = (props: Props) => {
   }, [loading, status]);
 
   const saveForm = async (redirect = false, finalized = false) => {
-    if (xform) {
-      const { data, files } = xform.getData();
+    if (xform && formTouched) {
+      setStatus({ type: 'saving' });
+      setTimeout(async () => {
+        const t0 = performance.now();
+        const { data, files } = xform.getData();
+        const t1 = performance.now();
+        console.log('getData time: ' + (t1 - t0) + 'ms');
 
-      if (lastSavedData !== data || finalized) {
-        const {
-          task: { form },
-        } = assignment;
-        setStatus({ type: 'saving' });
+        if (lastSavedData !== data || finalized) {
+          const {
+            task: { form },
+          } = assignment;
 
-        // Convert each file Blob to an ArrayBuffer
-        const convertedFiles = await Promise.all(
-          files.map(async (f) => ({
-            name: f.name,
-            data: await f.data.arrayBuffer(),
-          }))
-        );
+          // Convert each file Blob to an ArrayBuffer
+          const convertedFiles = await Promise.all(
+            files.map(async (f) => ({
+              name: f.name,
+              data: await f.data.arrayBuffer(),
+            }))
+          );
 
-        return env.model.reportingWindows
-          .updateAssignment({
-            assignmentId: assignment.id,
-            previousVersion: assignment.version,
-            form: {
-              id: form.id,
-              version: form.version,
-              data,
-              files: convertedFiles,
-              finalized,
-            },
-          })
-          .then((assignment) => {
-            setLastSavedData(assignment.task.currentData);
-            setUpdatedAssignment(assignment);
-            setStatus({ type: 'idle' });
-
-            if (redirect) {
-              history.goBack();
-            }
-          })
-          .catch((err) => {
-            if (errors.isConflictError(err)) {
-              const timeAgo = dayjs(err.timestamp).locale(lang);
-              alert(
-                t
-                  .t(lang, (s) => s.routes.operations.forms.errors.conflict)
-                  .replace('{timeAgo}', timeAgo.fromNow())
-                  .replace('{person}', err.otherUser)
-              );
-              setStatus({
-                type: 'conflict',
-                timestamp: err.timestamp,
-                otherPerson: err.otherUser,
-              });
-            } else {
-              setStatus({
-                type: 'error',
-                message: err.message || err.toString(),
-              });
-            }
-          });
-      }
+          return env.model.reportingWindows
+            .updateAssignment({
+              assignmentId: assignment.id,
+              previousVersion: assignment.version,
+              form: {
+                id: form.id,
+                version: form.version,
+                data,
+                files: convertedFiles,
+                finalized,
+              },
+            })
+            .then((assignment) => {
+              setLastSavedData(assignment.task.currentData);
+              setUpdatedAssignment(assignment);
+              setFormTouched(false);
+              setStatus({ type: 'idle' });
+              if (redirect) {
+                history.goBack();
+              }
+            })
+            .catch((err) => {
+              if (errors.isConflictError(err)) {
+                const timeAgo = dayjs(err.timestamp).locale(lang);
+                alert(
+                  t
+                    .t(lang, (s) => s.routes.operations.forms.errors.conflict)
+                    .replace('{timeAgo}', timeAgo.fromNow())
+                    .replace('{person}', err.otherUser)
+                );
+                setStatus({
+                  type: 'conflict',
+                  timestamp: err.timestamp,
+                  otherPerson: err.otherUser,
+                });
+              } else {
+                setStatus({
+                  type: 'error',
+                  message: err.message || err.toString(),
+                });
+              }
+            });
+        }
+      });
     }
   };
 
@@ -305,7 +303,7 @@ export const EnketoEditableForm = (props: Props) => {
             lang,
             (s) =>
               s.routes.operations.forms.status[
-                lastChangedData === lastSavedData ? 'idle' : 'unsavedChanges'
+                formTouched ? 'unsavedChanges' : 'idle'
               ]
           )
         ) : status.type === 'saving' ? (

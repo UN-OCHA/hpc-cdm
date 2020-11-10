@@ -6,7 +6,7 @@ declare module 'enketo-core' {
         modelStr: string;
         instanceStr?: string;
         external: undefined;
-        // submitted: boolean;
+        submitted?: boolean;
       }
     );
 
