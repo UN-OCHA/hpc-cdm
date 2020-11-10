@@ -56,7 +56,7 @@
     },
     "accessControl": {
       "addPerson": "Add User",
-      "deletePerson": "Remove User",
+      "deletePerson": "Remove Access",
       "cancelInvite": "Cancel Invite",
       "addPersonInfo": "Enter the email address of the person you'd like to give access to. If they haven't logged-in before, they will be given an invite that will become active after they log-in.",
       "activePeople": "Active Users",
