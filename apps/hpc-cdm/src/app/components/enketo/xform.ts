@@ -1,18 +1,13 @@
 import { Form } from 'enketo-core';
 import fileManager from 'enketo-core/src/js/file-manager';
-import calcModule from 'enketo-core/src/js/calculate';
-import { FormModel } from 'enketo-core/src/js/form-model';
-import preloadModule from 'enketo-core/src/js/preload';
+// import calcModule from 'enketo-core/src/js/calculate';
+// import { FormModel } from 'enketo-core/src/js/form-model';
+// import preloadModule from 'enketo-core/src/js/preload';
 
 import $ from 'jquery';
 import marked from 'marked';
 
 const markedHtml = (form: string): JQuery<HTMLElement> => {
-  form = form.replace(
-    `data-relevant=' /data/Group_IN/Group_INContact/IN_Name ="show operations"'`,
-    'data-relevant="true()"'
-  );
-
   const html = $(form);
 
   for (const selector of ['.question-label', '.question > .or-hint']) {
@@ -21,6 +16,13 @@ const markedHtml = (form: string): JQuery<HTMLElement> => {
       $(this).html(marked(text));
     });
   }
+
+  // Hardcoding to show operation selection
+  $('[name="/data/Group_IN/Group_INContact/IN_Operation"]', html).each(
+    function () {
+      $(this).attr('data-relevant', 'true()');
+    }
+  );
 
   return html;
 };
@@ -52,18 +54,18 @@ export default class XForm {
     this.modelStr = modelStr;
     this.content = content;
 
-    // Completely disable calculations in Enketo Core
-    calcModule.update = () => {
-      // console.log( 'Calculations disabled.' );
-    };
-    // Completely disable instanceID and deprecatedID population in Enketo Core
-    FormModel.prototype.setInstanceIdAndDeprecatedId = () => {
-      // console.log( 'InstanceID and deprecatedID population disabled.' );
-    };
-    // Completely disable preload items
-    preloadModule.init = () => {
-      // console.log( 'Preloaders disabled.' );
-    };
+    // // Completely disable calculations in Enketo Core
+    // calcModule.update = () => {
+    //   // console.log( 'Calculations disabled.' );
+    // };
+    // // Completely disable instanceID and deprecatedID population in Enketo Core
+    // FormModel.prototype.setInstanceIdAndDeprecatedId = () => {
+    //   // console.log( 'InstanceID and deprecatedID population disabled.' );
+    // };
+    // // Completely disable preload items
+    // preloadModule.init = () => {
+    //   // console.log( 'Preloaders disabled.' );
+    // };
 
     fileManager.getFileUrl = async (subject) => {
       if (typeof subject === 'string') {
@@ -115,9 +117,12 @@ export default class XForm {
           $(this).prop('disabled', true);
         });
       }
+
       $('select[name="/data/Group_IN/Group_INContact/IN_Operation"]').each(
         function () {
-          $(this).prop('disabled', true);
+          if ($(this).val()) {
+            $(this).prop('disabled', true);
+          }
         }
       );
 
