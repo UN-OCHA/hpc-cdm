@@ -118,6 +118,7 @@ export const EnketoEditableForm = (props: Props) => {
       data: new Blob([new Uint8Array(f.data)]),
     }));
     const xform = new XForm(form, model, currentData, files, {
+      titlePrefix: reportingWindow.name,
       onDataUpdate: ({ xform }) => {
         setFormTouched(true);
       },

@@ -3,7 +3,10 @@ import fileManager from 'enketo-core/src/js/file-manager';
 import $ from 'jquery';
 import marked from 'marked';
 
-const markedHtml = (form: string): JQuery<HTMLElement> => {
+const markedHtml = (
+  form: string,
+  titlePrefix?: string
+): JQuery<HTMLElement> => {
   const html = $(form);
 
   for (const selector of ['.question-label', '.question > .or-hint']) {
@@ -11,6 +14,11 @@ const markedHtml = (form: string): JQuery<HTMLElement> => {
       const text = $(this).text().replace(/\n/g, '<br />');
       $(this).html(marked(text));
     });
+  }
+
+  if (titlePrefix) {
+    const title = $('h3#form-title', html);
+    title.text(`${titlePrefix}: ${title.text()}`);
   }
 
   // operation selection must be visible in order for
@@ -33,8 +41,6 @@ export default class XForm {
   private form: Form;
   private files: FormFile[];
   private loading: boolean;
-  private modelStr: string;
-  private content: string | null;
 
   constructor(
     html: string,
@@ -42,14 +48,13 @@ export default class XForm {
     content: string | null,
     files: FormFile[],
     opts?: {
+      titlePrefix?: string;
       onDataUpdate?: (event: { xform: XForm }) => void;
     }
   ) {
     this.loading = true;
-    const { onDataUpdate } = opts || {};
+    const { titlePrefix, onDataUpdate } = opts || {};
     this.files = files;
-    this.modelStr = modelStr;
-    this.content = content;
 
     fileManager.getFileUrl = async (subject) => {
       if (typeof subject === 'string') {
@@ -63,7 +68,7 @@ export default class XForm {
       return window.URL.createObjectURL(subject);
     };
 
-    $('.container').replaceWith(markedHtml(html));
+    $('.container').replaceWith(markedHtml(html, titlePrefix));
     const formElement = $('#form').find('form').first()[0];
     if (onDataUpdate) {
       formElement.addEventListener(
@@ -102,12 +107,30 @@ export default class XForm {
         });
       }
 
+      // Disable operation selection option when operation is provided
       $('select[name="/data/Group_IN/Group_INContact/IN_Operation"]').each(
         function () {
           $(this).prop('disabled', $(this).val() !== '');
         }
       );
 
+      const formLanguages: string[] = [];
+      $('#form-languages option').each(function () {
+        formLanguages.push(<string>$(this).val());
+      });
+      if (formLanguages.length > 1) {
+        $('#form-languages').val($('#form-languages').data('default-lang'));
+
+        $('#form-languages').on('change', function () {
+          formLanguages.forEach((lang) => {
+            $(`span[lang="${lang}"]`).removeClass('active');
+          });
+          const selectedLang = $(this).val();
+          $(`span[lang="${selectedLang}"]`).addClass('active');
+        });
+      } else {
+        $('#form-languages').hide();
+      }
       this.loading = false;
       resolve();
     });
@@ -155,11 +178,11 @@ export default class XForm {
 
   isCurrentPageTheLastPage(): boolean {
     const totalPages = this.form.pages.activePages.length - 1;
-    return this.form.pages.activePages[totalPages] === this.form.pages.current;
+    return $(this.form.pages.activePages[totalPages]).hasClass('current');
   }
 
   isCurrentPageTheFirstPage(): boolean {
-    return this.form.pages.activePages[0] === this.form.pages.current;
+    return $(this.form.pages.activePages[0]).hasClass('current');
   }
 
   resetView(): HTMLFormElement {
