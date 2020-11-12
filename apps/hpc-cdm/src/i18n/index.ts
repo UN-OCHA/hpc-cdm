@@ -5,6 +5,10 @@ import ar from './langs/ar';
 import en from './langs/en';
 import fr from './langs/fr';
 
+import 'intl-list-format/locale-data/ar';
+import 'intl-list-format/locale-data/en';
+import 'intl-list-format/locale-data/fr';
+
 const LANGUAGES = {
   en,
   ar: merge({}, en, ar),
