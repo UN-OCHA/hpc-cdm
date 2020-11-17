@@ -5,6 +5,7 @@ export const browserSupportedByEnketo = (): boolean => {
   const isValidBrowser = browser.satisfies({
     chrome: '>20',
     firefox: '>31',
+    edge: '>46',
   });
   return isValidBrowser ? true : false;
 };

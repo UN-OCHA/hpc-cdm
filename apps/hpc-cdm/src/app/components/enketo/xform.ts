@@ -3,14 +3,32 @@ import fileManager from 'enketo-core/src/js/file-manager';
 import $ from 'jquery';
 import marked from 'marked';
 
-const markedHtml = (form: string): JQuery<HTMLElement> => {
+const markedHtml = (
+  form: string,
+  titlePrefix?: string
+): JQuery<HTMLElement> => {
   const html = $(form);
+
   for (const selector of ['.question-label', '.question > .or-hint']) {
     $(selector, html).each(function () {
       const text = $(this).text().replace(/\n/g, '<br />');
       $(this).html(marked(text));
     });
   }
+
+  if (titlePrefix) {
+    const title = $('h3#form-title', html);
+    title.text(`${titlePrefix}: ${title.text()}`);
+  }
+
+  // operation selection must be visible in order for
+  // locations/sublocations to have available options
+  $('[name="/data/Group_IN/Group_INContact/IN_Operation"]', html).each(
+    function () {
+      $(this).attr('data-relevant', 'true()');
+    }
+  );
+
   return html;
 };
 
@@ -22,6 +40,7 @@ export interface FormFile {
 export default class XForm {
   private form: Form;
   private files: FormFile[];
+  private loading: boolean;
 
   constructor(
     html: string,
@@ -29,12 +48,14 @@ export default class XForm {
     content: string | null,
     files: FormFile[],
     opts?: {
-      editable?: boolean;
+      titlePrefix?: string;
       onDataUpdate?: (event: { xform: XForm }) => void;
     }
   ) {
-    const { editable = true, onDataUpdate } = opts || {};
+    this.loading = true;
+    const { titlePrefix, onDataUpdate } = opts || {};
     this.files = files;
+
     fileManager.getFileUrl = async (subject) => {
       if (typeof subject === 'string') {
         const file = files.filter((f) => f.name === subject);
@@ -47,30 +68,72 @@ export default class XForm {
       return window.URL.createObjectURL(subject);
     };
 
-    $('.container').replaceWith(markedHtml(html));
+    $('.container').replaceWith(markedHtml(html, titlePrefix));
     const formElement = $('#form').find('form').first()[0];
     if (onDataUpdate) {
-      formElement.addEventListener('dataupdate', () =>
-        onDataUpdate({
-          xform: this,
-        })
+      formElement.addEventListener(
+        'dataupdate',
+        () => {
+          if (!this.loading) {
+            onDataUpdate({
+              xform: this,
+            });
+          }
+        },
+        { capture: true }
       );
     }
+
     this.form = new Form(formElement, {
       modelStr,
-      instanceStr: content || undefined,
+      instanceStr: content ? content : undefined,
       external: undefined,
     });
-    const errors = this.form.init();
-    if (errors && errors.length) {
-      console.error('Form Errors', JSON.stringify(errors));
-    }
+  }
 
-    if (!editable) {
-      $('#form :input:not(:button)').each(function () {
-        $(this).prop('disabled', true);
+  async init(editable: boolean): Promise<void> {
+    return new Promise((resolve) => {
+      const t0 = performance.now();
+      const errors = this.form.init();
+      const t1 = performance.now();
+      console.log('Form initialization time: ' + (t1 - t0) + ' millis');
+      if (errors && errors.length) {
+        console.error('Form Errors', JSON.stringify(errors));
+      }
+
+      if (!editable) {
+        $('#form :input:not(:button)').each(function () {
+          $(this).prop('disabled', true);
+        });
+      }
+
+      // Disable operation selection option when operation is provided
+      $('select[name="/data/Group_IN/Group_INContact/IN_Operation"]').each(
+        function () {
+          $(this).prop('disabled', $(this).val() !== '');
+        }
+      );
+
+      const formLanguages: string[] = [];
+      $('#form-languages option').each(function () {
+        formLanguages.push(<string>$(this).val());
       });
-    }
+      if (formLanguages.length > 1) {
+        $('#form-languages').val($('#form-languages').data('default-lang'));
+
+        $('#form-languages').on('change', function () {
+          formLanguages.forEach((lang) => {
+            $(`span[lang="${lang}"]`).removeClass('active');
+          });
+          const selectedLang = $(this).val();
+          $(`span[lang="${selectedLang}"]`).addClass('active');
+        });
+      } else {
+        $('#form-languages').hide();
+      }
+      this.loading = false;
+      resolve();
+    });
   }
 
   /**
@@ -115,6 +178,14 @@ export default class XForm {
 
   isCurrentPageTheLastPage(): boolean {
     const totalPages = this.form.pages.activePages.length - 1;
-    return this.form.pages.activePages[totalPages] === this.form.pages.current;
+    return $(this.form.pages.activePages[totalPages]).hasClass('current');
+  }
+
+  isCurrentPageTheFirstPage(): boolean {
+    return $(this.form.pages.activePages[0]).hasClass('current');
+  }
+
+  resetView(): HTMLFormElement {
+    return this.form.resetView();
   }
 }
