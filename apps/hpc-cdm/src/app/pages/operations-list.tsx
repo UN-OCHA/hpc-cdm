@@ -36,13 +36,15 @@ export default (props: Props) => {
                   {t.t(lang, (s) => s.navigation.operations)}
                 </C.PageTitle>
                 <C.List>
-                  {data.data.map((o, i) => (
-                    <C.ListItem
-                      key={i}
-                      text={o.name}
-                      link={paths.operation(o.id)}
-                    />
-                  ))}
+                  {data.data
+                    .sort((o1, o2) => (o1.name > o2.name ? 1 : -1))
+                    .map((o, i) => (
+                      <C.ListItem
+                        key={i}
+                        text={o.name}
+                        link={paths.operation(o.id)}
+                      />
+                    ))}
                 </C.List>
               </>
             )}

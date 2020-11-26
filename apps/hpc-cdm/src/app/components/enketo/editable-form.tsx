@@ -58,7 +58,6 @@ interface Props {
 }
 
 export const EnketoEditableForm = (props: Props) => {
-  console.log('000000>>>>>>>>>>>>>>>');
   const { reportingWindow, assignment: originalAssignment } = props;
   const env = getEnv();
   const [loading, setLoading] = useState(true);
@@ -267,14 +266,9 @@ export const EnketoEditableForm = (props: Props) => {
   };
 
   const handleNext = () => {
-    console.log('next>>>>>>>>>>>>>>>>>1');
     if (xform) {
-      console.log('next>>>>>>>>>>>>>>>>>2');
-
       // Allow enketo to flip the page
       setTimeout(() => {
-        console.log('next>>>>>>>>>>>>>>>>>3');
-        console.log(xform.isCurrentPageTheLastPage());
         setLastPage(xform.isCurrentPageTheLastPage());
       }, 200);
     }
