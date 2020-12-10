@@ -20,6 +20,10 @@
   "deployments": {
     "environments": [
       {
+        "branch": "env/stage",
+        "environment": "bluedev"
+      },
+      {
         "branch": "env/red.dev",
         "environment": "reddev"
       },
