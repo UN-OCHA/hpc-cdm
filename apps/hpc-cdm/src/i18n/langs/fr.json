@@ -93,6 +93,7 @@
           }
         },
         "status": {
+          "init": "Formulaire d'initialisation",
           "idle": "Toutes les modifications ont été enregistrées",
           "unsavedChanges": "Modifications non enregistrées",
           "saving": "Sauvegarde...",

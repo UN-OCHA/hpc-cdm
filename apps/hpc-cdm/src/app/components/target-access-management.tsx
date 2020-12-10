@@ -8,10 +8,7 @@ import dayjs from '../../libraries/dayjs';
 
 import { t } from '../../i18n';
 import { getContext } from '../context';
-import { ActionableDropdown } from './dropdown';
 import { TargetAccessManagementAddUser } from './target-access-management-add-user';
-
-const CLS = {};
 
 interface Props {
   target: access.AccessTarget;
@@ -41,6 +38,9 @@ export const TargetAccessManagement = (props: Props) => {
         (s.components.accessControl.roles as { [id: string]: string })[key] ||
         key
     );
+
+  const getRoleNames = (keys: string[]) =>
+    t.list(lang, keys.map(getRoleName), { type: 'conjunction' });
 
   return (
     <C.Loader
@@ -72,26 +72,26 @@ export const TargetAccessManagement = (props: Props) => {
           >
             {active.length > 0 ? (
               active.map((item, i) => {
-                if (item.roles.length !== 1) {
-                  //TODO: implement this (for e.g. global roles)
-                  throw new Error(
-                    'targets with multiple role assignments not supported'
-                  );
-                }
                 return (
                   <C.ListItem
                     key={i}
                     text={item.grantee.name}
                     actions={
                       <>
-                        <ActionableDropdown
+                        <C.ActionableDropdown
                           loadingLabel={t.t(lang, (s) => s.common.saving)}
-                          label={getRoleName(item.roles[0])}
+                          label={getRoleNames(item.roles)}
+                          showCheckboxes
                           options={roles.map((role) => ({
                             key: role,
                             label: getRoleName(role),
+                            selected: item.roles.indexOf(role) >= 0,
                           }))}
-                          onSelect={async (key) => {
+                          onSelect={async (role) => {
+                            const roles =
+                              item.roles.indexOf(role) >= 0
+                                ? item.roles.filter((r) => r !== role)
+                                : [...item.roles, role];
                             if (
                               window.confirm(
                                 t
@@ -102,14 +102,14 @@ export const TargetAccessManagement = (props: Props) => {
                                         .confirmRoleUpdate
                                   )
                                   .replace('{name}', item.grantee.name)
-                                  .replace('{role}', getRoleName(key))
+                                  .replace('{role}', getRoleNames(roles))
                               )
                             ) {
                               const data = await env().model.access.updateTargetAccess(
                                 {
                                   target,
                                   grantee: item.grantee,
-                                  roles: [key],
+                                  roles,
                                 }
                               );
                               updateLoadedData(data);
@@ -164,12 +164,6 @@ export const TargetAccessManagement = (props: Props) => {
           >
             {invites.length > 0 ? (
               invites.map((item, i) => {
-                if (item.roles.length !== 1) {
-                  //TODO: implement this (for e.g. global roles)
-                  throw new Error(
-                    'targets with multiple role assignments not supported'
-                  );
-                }
                 return (
                   <C.ListItem
                     text={item.email}
@@ -182,14 +176,20 @@ export const TargetAccessManagement = (props: Props) => {
                     }
                     actions={
                       <>
-                        <ActionableDropdown
+                        <C.ActionableDropdown
                           loadingLabel={t.t(lang, (s) => s.common.saving)}
-                          label={getRoleName(item.roles[0])}
+                          label={getRoleNames(item.roles)}
+                          showCheckboxes
                           options={roles.map((role) => ({
                             key: role,
                             label: getRoleName(role),
+                            selected: item.roles.indexOf(role) >= 0,
                           }))}
-                          onSelect={async (key) => {
+                          onSelect={async (role) => {
+                            const roles =
+                              item.roles.indexOf(role) >= 0
+                                ? item.roles.filter((r) => r !== role)
+                                : [...item.roles, role];
                             if (
                               window.confirm(
                                 t
@@ -200,14 +200,14 @@ export const TargetAccessManagement = (props: Props) => {
                                         .confirmRoleUpdate
                                   )
                                   .replace('{name}', item.email)
-                                  .replace('{role}', getRoleName(key))
+                                  .replace('{role}', getRoleNames(roles))
                               )
                             ) {
                               const data = await env().model.access.updateTargetAccessInvite(
                                 {
                                   target,
                                   email: item.email,
-                                  roles: [key],
+                                  roles,
                                 }
                               );
                               updateLoadedData(data);
@@ -285,10 +285,7 @@ export const TargetAccessManagement = (props: Props) => {
                             )
                             .replace('{actor}', item.actor.name)
                             .replace('{grantee}', item.grantee.name)
-                            .replace(
-                              '{role}',
-                              item.roles.map(getRoleName).join(', ')
-                            )
+                            .replace('{role}', getRoleNames(item.roles))
                     }
                   />
                 );

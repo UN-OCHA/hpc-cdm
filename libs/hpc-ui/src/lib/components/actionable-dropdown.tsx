@@ -9,8 +9,9 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 
-import { styled, ICONS } from '@unocha/hpc-ui';
-import { MdWarning } from 'react-icons/md';
+import { MdWarning, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
+import { styled } from '../theme';
+import Caret from '../assets/icons/caret';
 
 const CLS = {
   ERROR: 'error',
@@ -22,9 +23,11 @@ interface Props {
   className?: string;
   label: string;
   loadingLabel: string;
+  showCheckboxes?: boolean;
   options: Array<{
     label: string;
     key: string;
+    selected?: boolean;
   }>;
   onSelect: (key: string) => Promise<void>;
 }
@@ -62,6 +65,16 @@ const Wrapper = styled.div`
   }
 `;
 
+const MenuItemContents = styled.span`
+  display: inline-flex;
+  align-items: center;
+  margin: 0 -${(p) => p.theme.marginPx.sm}px;
+
+  > * {
+    margin: 0 ${(p) => p.theme.marginPx.sm}px;
+  }
+`;
+
 type InternalState = 'idle' | 'loading' | 'error';
 
 /**
@@ -69,7 +82,14 @@ type InternalState = 'idle' | 'loading' | 'error';
  * selects a new option, and display a loading indicator.
  */
 export const ActionableDropdown = (props: Props) => {
-  const { className, label, loadingLabel, options, onSelect } = props;
+  const {
+    className,
+    label,
+    loadingLabel,
+    showCheckboxes,
+    options,
+    onSelect,
+  } = props;
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<InternalState>('idle');
@@ -90,7 +110,7 @@ export const ActionableDropdown = (props: Props) => {
           <>
             {state === 'error' && <MdWarning className={CLS.ERROR} size={15} />}
             <span>{label}</span>
-            <ICONS.Caret
+            <Caret
               className={CLS.CARET}
               direction={open ? 'up' : 'down'}
               size={12}
@@ -124,7 +144,15 @@ export const ActionableDropdown = (props: Props) => {
                           });
                       }}
                     >
-                      {item.label}
+                      <MenuItemContents>
+                        {showCheckboxes &&
+                          (item.selected ? (
+                            <MdCheckBox />
+                          ) : (
+                            <MdCheckBoxOutlineBlank />
+                          ))}
+                        {item.label}
+                      </MenuItemContents>
                     </MenuItem>
                   ))}
                 </MenuList>
@@ -136,3 +164,5 @@ export const ActionableDropdown = (props: Props) => {
     </Wrapper>
   );
 };
+
+export default ActionableDropdown;

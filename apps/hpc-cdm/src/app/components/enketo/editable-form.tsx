@@ -10,6 +10,7 @@ import XForm from './xform';
 import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
 import SubmitButton from './submit-button';
+import { toast } from 'react-toastify';
 
 const StatusTooltip = Tooltip;
 
@@ -59,10 +60,12 @@ interface Props {
 export const EnketoEditableForm = (props: Props) => {
   const { reportingWindow, assignment: originalAssignment } = props;
   const env = getEnv();
+  const [loading, setLoading] = useState(true);
   const [xform, setXform] = useState<XForm | null>(null);
   const [lastPage, setLastPage] = useState(false);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
   const [lastChangedData, setLastChangedData] = useState<string | null>(null);
+  const [formTouched, setFormTouched] = useState(false);
   const [
     updatedAssignment,
     setUpdatedAssignment,
@@ -80,7 +83,23 @@ export const EnketoEditableForm = (props: Props) => {
   const lastUpdatedBy =
     status.type === 'conflict' ? status.otherPerson : assignment.lastUpdatedBy;
 
+  const unMount = () => {
+    if (xform) {
+      xform.resetView();
+    }
+    // Clears enketo cache or something going on there which slows down
+    // form re-init/getData.
+    history.go(0);
+  };
+
   useEffect(() => {
+    return () => {
+      unMount();
+    };
+  }, []);
+
+  useEffect(() => {
+    let isSubscribed = true; // to cancel form initialization
     const {
       state,
       editable,
@@ -98,109 +117,151 @@ export const EnketoEditableForm = (props: Props) => {
       name: f.name,
       data: new Blob([new Uint8Array(f.data)]),
     }));
-    setEditable(editable);
     const xform = new XForm(form, model, currentData, files, {
-      editable,
-      onDataUpdate: ({ xform }) => setLastChangedData(xform.getData().data),
+      titlePrefix: reportingWindow.name,
+      onDataUpdate: ({ xform }) => {
+        setFormTouched(true);
+      },
     });
-    setXform(xform);
-    setLastSavedData(xform.getData().data);
-    setUpdatedAssignment(null);
+    const timer = setTimeout(() => {
+      // Long running process, it could take up to 20 seconds
+      // depending on number of embedded locations/sublocations.
+      xform.init(editable).then(() => {
+        if (isSubscribed) {
+          // user has abandoned this page
+          setXform(xform);
+          setEditable(editable);
+          setUpdatedAssignment(null);
+          setLoading(false);
+        }
+      });
+    });
+    return () => {
+      clearTimeout(timer);
+      isSubscribed = false;
+      setLoading(false);
+    };
   }, [originalAssignment]);
 
   useEffect(() => {
     // Setup listeners to prevent navigating away when the form has changed
-
-    const unblock = history.block(() => {
-      if (xform) {
-        if (lastSavedData !== xform.getData().data) {
+    if (!loading) {
+      const unblock = history.block(() => {
+        if (xform && formTouched) {
           return t.t(
             lang,
             (s) => s.routes.operations.forms.unsavedChangesPrompt
           );
         }
-      }
-    });
+      });
 
-    const unloadListener = (event: BeforeUnloadEvent) => {
-      if (xform) {
-        if (lastSavedData !== xform.getData().data) {
+      const unloadListener = (event: BeforeUnloadEvent) => {
+        if (xform && formTouched) {
           event.preventDefault();
           // Chrome requires returnValue to be set.
           event.returnValue = '';
         }
-      }
-      return event;
-    };
-    window.addEventListener('beforeunload', unloadListener);
+        return event;
+      };
+      window.addEventListener('beforeunload', unloadListener, {
+        capture: true,
+      });
 
-    return () => {
-      window.removeEventListener('beforeunload', unloadListener);
-      unblock();
-    };
-  }, [xform, lastSavedData, history, lang]);
+      return () => {
+        window.removeEventListener('beforeunload', unloadListener);
+        unblock();
+      };
+    }
+  }, [xform, formTouched, history, lang]);
+
+  useEffect(() => {
+    if (!loading && status.type !== 'saving') {
+      let msg = t.t(lang, (s) => s.routes.operations.forms.status[status.type]);
+      if (status.type === 'error') {
+        toast.error(`${msg} ${status.message}`, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      } else if (status.type === 'conflict') {
+        const timeAgo = dayjs(status.timestamp).locale(lang);
+        msg = t
+          .t(lang, (s) => s.routes.operations.forms.errors.conflict)
+          .replace('{timeAgo}', timeAgo.fromNow())
+          .replace('{person}', status.otherPerson);
+        toast.error(msg, { position: toast.POSITION.TOP_RIGHT });
+      } else {
+        if (!xform?.isCurrentPageTheFirstPage()) {
+          toast.success(msg, { position: toast.POSITION.TOP_RIGHT });
+        }
+      }
+    }
+  }, [loading, status]);
 
   const saveForm = async (redirect = false, finalized = false) => {
-    if (xform) {
-      const { data, files } = xform.getData();
+    if (xform && formTouched) {
+      setStatus({ type: 'saving' });
+      setTimeout(async () => {
+        const t0 = performance.now();
+        const { data, files } = xform.getData();
+        const t1 = performance.now();
+        console.log('getData time: ' + (t1 - t0) + 'ms');
 
-      if (lastSavedData !== data || finalized) {
-        const {
-          task: { form },
-        } = assignment;
-        setStatus({ type: 'saving' });
+        if (lastSavedData !== data || finalized) {
+          const {
+            task: { form },
+          } = assignment;
 
-        // Convert each file Blob to an ArrayBuffer
-        const convertedFiles = await Promise.all(
-          files.map(async (f) => ({
-            name: f.name,
-            data: await f.data.arrayBuffer(),
-          }))
-        );
+          // Convert each file Blob to an ArrayBuffer
+          const convertedFiles = await Promise.all(
+            files.map(async (f) => ({
+              name: f.name,
+              data: await f.data.arrayBuffer(),
+            }))
+          );
 
-        return env.model.reportingWindows
-          .updateAssignment({
-            assignmentId: assignment.id,
-            previousVersion: assignment.version,
-            form: {
-              id: form.id,
-              version: form.version,
-              data,
-              files: convertedFiles,
-              finalized,
-            },
-          })
-          .then((assignment) => {
-            setLastSavedData(assignment.task.currentData);
-            setUpdatedAssignment(assignment);
-            setStatus({ type: 'idle' });
-
-            if (redirect) {
-              history.goBack();
-            }
-          })
-          .catch((err) => {
-            if (errors.isConflictError(err)) {
-              const timeAgo = dayjs(err.timestamp).locale(lang);
-              alert(
-                t
-                  .t(lang, (s) => s.routes.operations.forms.errors.conflict)
-                  .replace('{timeAgo}', timeAgo.fromNow())
-                  .replace('{person}', err.otherUser)
-              );
-              setStatus({
-                type: 'conflict',
-                timestamp: err.timestamp,
-                otherPerson: err.otherUser,
-              });
-            } else {
-              setStatus({
-                type: 'error',
-                message: err.message || err.toString(),
-              });
-            }
-          });
-      }
+          return env.model.reportingWindows
+            .updateAssignment({
+              assignmentId: assignment.id,
+              previousVersion: assignment.version,
+              form: {
+                id: form.id,
+                version: form.version,
+                data,
+                files: convertedFiles,
+                finalized,
+              },
+            })
+            .then((assignment) => {
+              setLastSavedData(assignment.task.currentData);
+              setUpdatedAssignment(assignment);
+              setFormTouched(false);
+              setStatus({ type: 'idle' });
+              if (redirect) {
+                history.goBack();
+              }
+            })
+            .catch((err) => {
+              if (errors.isConflictError(err)) {
+                const timeAgo = dayjs(err.timestamp).locale(lang);
+                alert(
+                  t
+                    .t(lang, (s) => s.routes.operations.forms.errors.conflict)
+                    .replace('{timeAgo}', timeAgo.fromNow())
+                    .replace('{person}', err.otherUser)
+                );
+                setStatus({
+                  type: 'conflict',
+                  timestamp: err.timestamp,
+                  otherPerson: err.otherUser,
+                });
+              } else {
+                setStatus({
+                  type: 'error',
+                  message: err.message || err.toString(),
+                });
+              }
+            });
+        }
+      });
     }
   };
 
@@ -229,18 +290,27 @@ export const EnketoEditableForm = (props: Props) => {
       }
     >
       <StatusLabel>
-        {status.type === 'idle' ? (
+        {loading ? (
+          <>
+            <span>
+              {t.t(lang, (s) => s.routes.operations.forms.status.init)}
+            </span>
+            <CircularProgress size={20} />
+          </>
+        ) : !editable ? (
+          t.t(lang, (s) => s.common.nonEditable)
+        ) : status.type === 'idle' ? (
           t.t(
             lang,
             (s) =>
               s.routes.operations.forms.status[
-                lastChangedData === lastSavedData ? 'idle' : 'unsavedChanges'
+                formTouched ? 'unsavedChanges' : 'idle'
               ]
           )
         ) : status.type === 'saving' ? (
           <>
             <span>
-              {t.t(lang, (s) => s.routes.operations.forms.status.saving)}
+              {t.t(lang, (s) => s.routes.operations.forms.status[status.type])}
             </span>
             <CircularProgress size={20} />
           </>
@@ -260,10 +330,10 @@ export const EnketoEditableForm = (props: Props) => {
     <div>
       <C.Toolbar>
         <div className={CLASSES.FLEX.GROW} />
-        {editable ? indicator() : t.t(lang, (s) => s.common.nonEditable)}
+        {indicator()}
       </C.Toolbar>
       <div className="enketo" id="form">
-        <div className="main">
+        <div className="main" style={{ display: loading ? 'none' : 'block' }}>
           <div className="container pages"></div>
           <section className="form-footer end">
             <div className="form-footer__content">
