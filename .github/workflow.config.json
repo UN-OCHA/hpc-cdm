@@ -21,7 +21,7 @@
     "environments": [
       {
         "branch": "env/stage",
-        "environment": "bluedev"
+        "environment": "stage"
       },
       {
         "branch": "env/red.dev",
