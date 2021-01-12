@@ -321,6 +321,23 @@ export class Dummy {
   public getModel = (): Model => {
     return {
       access: {
+        getOwnAccess: dummyEndpoint(
+          'access.getOwnAccess',
+          async (): Promise<access.GetOwnAccessResult> => {
+            const roles =
+              this.data.access.active.find(
+                (a) =>
+                  a.grantee.id === this.data.currentUser &&
+                  a.target.type === 'global'
+              )?.roles || false;
+            console.log(roles);
+            return {
+              permissions: {
+                canModifyGlobalUserAccess: roles && roles.includes('hpc_admin'),
+              },
+            };
+          }
+        ),
         getTargetAccess: dummyEndpoint(
           'access.getTargetAccess',
           async ({ target }: access.GetTargetAccessParams) => {

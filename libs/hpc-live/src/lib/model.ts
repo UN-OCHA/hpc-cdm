@@ -291,6 +291,11 @@ export class LiveModel implements Model {
       }`;
 
     return {
+      getOwnAccess: () =>
+        this.call({
+          pathname: `/v2/access/self`,
+          resultType: access.GET_OWN_ACCESS_RESULT,
+        }),
       getTargetAccess: (params) =>
         this.call({
           pathname: accessPathnameForTarget(params.target),

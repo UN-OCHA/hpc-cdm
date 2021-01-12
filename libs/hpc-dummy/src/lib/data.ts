@@ -25,7 +25,7 @@ export const INITIAL_DATA: DummyData = {
           type: 'user',
           id: 0,
         },
-        roles: ['hpcadmin'],
+        roles: ['hpc_admin'],
       },
     ],
     invites: [],
