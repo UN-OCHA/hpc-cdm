@@ -45,7 +45,11 @@ interface FetchInterface {
 
 interface Config {
   baseUrl: string;
-  hidToken: string;
+  /**
+   * A token to use with the API requests,
+   * or null to use the API unauthenticated
+   */
+  hidToken: string | null;
   /**
    * Optionally provide interfaces for implicit browser globals and other
    * functionality that requires a browser, when running in Node.js.
@@ -211,9 +215,11 @@ export class LiveModel implements Model {
     }
     const init: RequestInit = {
       method: method || 'GET',
-      headers: {
-        Authorization: `Bearer ${this.config.hidToken}`,
-      },
+      headers: this.config.hidToken
+        ? {
+            Authorization: `Bearer ${this.config.hidToken}`,
+          }
+        : {},
     };
     return { url, init };
   };

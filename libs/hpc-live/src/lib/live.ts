@@ -123,9 +123,10 @@ export class LiveBrowserClient {
     } else {
       const result = {
         session,
-        get model(): Model {
-          throw new Error('Not logged in!');
-        },
+        model: new LiveModel({
+          baseUrl: this.config.hpcApiUrl,
+          hidToken: null,
+        }),
       };
       return result;
     }
