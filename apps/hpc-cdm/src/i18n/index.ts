@@ -11,7 +11,7 @@ import 'intl-list-format/locale-data/fr';
 
 const LANGUAGES = {
   en,
-  ar: merge({}, en, ar),
+  // ar: merge({}, en, ar),
   fr: merge({}, en, fr),
 };
 
