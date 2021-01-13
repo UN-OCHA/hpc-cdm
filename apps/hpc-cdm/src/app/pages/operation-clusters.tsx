@@ -52,15 +52,17 @@ const PageOperationClusters = (props: Props) => {
                         (s) => s.routes.operations.clusters.listHeader
                       )}
                     >
-                      {clusters.map((cluster, i) => (
-                        <C.ListItem
-                          text={cluster.name}
-                          link={paths.operationCluster({
-                            operationId: operation.id,
-                            clusterId: cluster.id,
-                          })}
-                        />
-                      ))}
+                      {clusters
+                        .sort((c1, c2) => (c1.name > c2.name ? 1 : -1))
+                        .map((cluster, i) => (
+                          <C.ListItem
+                            text={cluster.name}
+                            link={paths.operationCluster({
+                              operationId: operation.id,
+                              clusterId: cluster.id,
+                            })}
+                          />
+                        ))}
                     </C.List>
                   </Container>
                 </Route>

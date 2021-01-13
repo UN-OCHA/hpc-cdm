@@ -197,7 +197,7 @@ export const EnketoEditableForm = (props: Props) => {
   }, [loading, status]);
 
   const saveForm = async (redirect = false, finalized = false) => {
-    if (xform && formTouched) {
+    if (xform && (formTouched || finalized)) {
       setStatus({ type: 'saving' });
       setTimeout(async () => {
         const t0 = performance.now();
@@ -270,7 +270,7 @@ export const EnketoEditableForm = (props: Props) => {
       // Allow enketo to flip the page
       setTimeout(() => {
         setLastPage(xform.isCurrentPageTheLastPage());
-      });
+      }, 200);
     }
   };
 
