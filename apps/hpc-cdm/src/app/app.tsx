@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { BaseStyling, C, styled, dataLoader } from '@unocha/hpc-ui';
 
 import env, { Environment } from '../environments/environment';
-import { AppContext } from './context';
+import { AppContext, contextFromEnv } from './context';
 import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
 import * as paths from './paths';
@@ -69,10 +69,12 @@ export const App = () => {
   }, []);
 
   const loadEnv = dataLoader([], () =>
-    env().catch((err) => {
-      console.error(err);
-      throw new Error(t.t(lang, (s) => s.errors.unableToLoadCDM));
-    })
+    env()
+      .catch((err) => {
+        console.error(err);
+        throw new Error(t.t(lang, (s) => s.errors.unableToLoadCDM));
+      })
+      .then(contextFromEnv)
   );
 
   const appTitle = (
@@ -99,68 +101,78 @@ export const App = () => {
           },
         }}
       >
-        {(env) => (
-          <AppContext.Provider value={{ lang, env: () => env }}>
-            <Container>
-              {environmentWarning(env, lang)}
-              <Header
-                session={env.session}
-                language={LANGUAGE_CHOICE}
-                strings={t.get(lang, (s) => s.user)}
-                userMenu={[
-                  {
-                    label: t.t(lang, (s) => s.user.logout),
-                    onClick: env.session.logOut,
-                  },
-                ]}
-              />
-              <Main>
-                {env.session.getUser() ? (
-                  <LoggedInContainer>
-                    <C.MainNavigation
-                      homeLink={paths.home()}
-                      appTitle={appTitle}
-                      tabs={[
-                        {
-                          label: t.t(lang, (s) => s.navigation.operations),
-                          path: paths.operations(),
-                        },
-                        {
-                          label: t.t(lang, (s) => s.navigation.admin),
-                          path: paths.admin(),
-                        },
-                      ]}
-                    />
-                    <Switch>
-                      <Route path={paths.home()} exact>
-                        <Redirect to={paths.operations()} />
-                      </Route>
-                      <Route
-                        path={paths.operations()}
-                        exact
-                        component={PageOperationsList}
+        {(context) => {
+          const env = context.env();
+          const { canModifyGlobalUserAccess } = context.access().permissions;
+          return (
+            <AppContext.Provider value={{ lang, ...context }}>
+              <Container>
+                {environmentWarning(env, lang)}
+                <Header
+                  session={env.session}
+                  language={LANGUAGE_CHOICE}
+                  strings={t.get(lang, (s) => s.user)}
+                  userMenu={[
+                    {
+                      label: t.t(lang, (s) => s.user.logout),
+                      onClick: env.session.logOut,
+                    },
+                  ]}
+                />
+                <Main>
+                  {env.session.getUser() ? (
+                    <LoggedInContainer>
+                      <C.MainNavigation
+                        homeLink={paths.home()}
+                        appTitle={appTitle}
+                        tabs={[
+                          {
+                            label: t.t(lang, (s) => s.navigation.operations),
+                            path: paths.operations(),
+                          },
+                          ...(canModifyGlobalUserAccess
+                            ? [
+                                {
+                                  label: t.t(lang, (s) => s.navigation.admin),
+                                  path: paths.admin(),
+                                },
+                              ]
+                            : []),
+                        ]}
                       />
-                      <Route
-                        path={paths.operationMatch()}
-                        component={PageOperation}
+                      <Switch>
+                        <Route path={paths.home()} exact>
+                          <Redirect to={paths.operations()} />
+                        </Route>
+                        <Route
+                          path={paths.operations()}
+                          exact
+                          component={PageOperationsList}
+                        />
+                        <Route
+                          path={paths.operationMatch()}
+                          component={PageOperation}
+                        />
+                        {canModifyGlobalUserAccess && (
+                          <Route path={paths.admin()} component={PageAdmin} />
+                        )}
+                        <Route component={PageNotFound} />
+                      </Switch>
+                    </LoggedInContainer>
+                  ) : (
+                    <>
+                      <C.MainNavigation
+                        homeLink={paths.home()}
+                        appTitle={appTitle}
                       />
-                      <Route path={paths.admin()} component={PageAdmin} />
-                      <Route component={PageNotFound} />
-                    </Switch>
-                  </LoggedInContainer>
-                ) : (
-                  <>
-                    <C.MainNavigation
-                      homeLink={paths.home()}
-                      appTitle={appTitle}
-                    />
-                    <PageNotLoggedIn />
-                  </>
-                )}
-              </Main>
-            </Container>
-          </AppContext.Provider>
-        )}
+                      <PageNotLoggedIn />
+                    </>
+                  )}
+                </Main>
+              </Container>
+            </AppContext.Provider>
+          );
+        }}
       </C.Loader>
     </>
   );
