@@ -144,8 +144,8 @@ export const EnketoEditableForm = (props: Props) => {
   }, [originalAssignment]);
 
   useEffect(() => {
-    // Setup listeners to prevent navigating away when the form has changed
     if (!loading) {
+      // React router in app navigation blocking displays custom text
       const unblock = history.block(() => {
         if (xform && formTouched) {
           return t.t(
@@ -156,16 +156,17 @@ export const EnketoEditableForm = (props: Props) => {
       });
 
       const unloadListener = (event: BeforeUnloadEvent) => {
-        if (xform && formTouched) {
-          event.preventDefault();
-          // Chrome requires returnValue to be set.
-          event.returnValue = '';
-        }
-        return event;
+        event.preventDefault();
+        event.returnValue = ''; // Chrome requires returnValue to be set.
       };
-      window.addEventListener('beforeunload', unloadListener, {
-        capture: true,
-      });
+
+      // Browser api navigation blocking returns default text
+      if (xform && formTouched) {
+        window.addEventListener('beforeunload', unloadListener);
+      } else {
+        window.removeEventListener('beforeunload', unloadListener);
+        unblock();
+      }
 
       return () => {
         window.removeEventListener('beforeunload', unloadListener);
