@@ -1,4 +1,9 @@
-import { UserManager, User, OidcMetadata } from 'oidc-client';
+import {
+  UserManager,
+  User,
+  OidcMetadata,
+  WebStorageStateStore,
+} from 'oidc-client';
 
 import { config, Session } from '@unocha/hpc-core';
 
@@ -52,6 +57,7 @@ export class LiveBrowserClient {
           // eslint-disable-next-line @typescript-eslint/camelcase
           response_type: 'token',
           scope: 'profile',
+          userStore: new WebStorageStateStore({ store: localStorage }),
           metadata,
         })
     );
