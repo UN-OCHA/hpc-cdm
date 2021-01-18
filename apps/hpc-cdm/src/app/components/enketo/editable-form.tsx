@@ -11,6 +11,7 @@ import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
 import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
+import EnketoLogo from './enketoLogo';
 
 const StatusTooltip = Tooltip;
 
@@ -367,6 +368,7 @@ export const EnketoEditableForm = (props: Props) => {
                 {editable && lastPage && <SubmitButton saveForm={saveForm} />}
               </div>
             </div>
+            <EnketoLogo />
           </section>
         </div>
       </div>
