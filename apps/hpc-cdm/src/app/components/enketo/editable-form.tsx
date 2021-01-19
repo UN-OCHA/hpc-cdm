@@ -11,7 +11,7 @@ import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
 import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
-import EnketoLogo from './enketoLogo';
+import EnketoLogo from './powered-by-footer';
 
 const StatusTooltip = Tooltip;
 
