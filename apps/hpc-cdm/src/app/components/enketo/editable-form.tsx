@@ -57,9 +57,12 @@ interface Props {
   assignment: reportingWindows.GetAssignmentResult;
 }
 
+let isRefreshing = false;
+
 export const EnketoEditableForm = (props: Props) => {
   const { reportingWindow, assignment: originalAssignment } = props;
   const env = getEnv();
+
   const [loading, setLoading] = useState(true);
   const [xform, setXform] = useState<XForm | null>(null);
   const [lastPage, setLastPage] = useState(false);
@@ -84,6 +87,7 @@ export const EnketoEditableForm = (props: Props) => {
     status.type === 'conflict' ? status.otherPerson : assignment.lastUpdatedBy;
 
   const unMount = () => {
+    isRefreshing = true;
     if (xform) {
       xform.resetView();
     }
@@ -144,30 +148,22 @@ export const EnketoEditableForm = (props: Props) => {
   }, [originalAssignment]);
 
   useEffect(() => {
-    if (!loading) {
+    //only run if there's changes
+    if (!loading && xform && formTouched) {
       // React router in app navigation blocking displays custom text
       const unblock = history.block(() => {
-        if (xform && formTouched) {
-          return t.t(
-            lang,
-            (s) => s.routes.operations.forms.unsavedChangesPrompt
-          );
-        }
+        return t.t(lang, (s) => s.routes.operations.forms.unsavedChangesPrompt);
       });
 
+      // Browser api navigation blocking returns default text
       const unloadListener = (event: BeforeUnloadEvent) => {
-        event.preventDefault();
-        event.returnValue = ''; // Chrome requires returnValue to be set.
+        if (!isRefreshing) {
+          event.preventDefault();
+          event.returnValue = ''; // Chrome requires returnValue to be set.
+        }
       };
 
-      // Browser api navigation blocking returns default text
-      if (xform && formTouched) {
-        window.addEventListener('beforeunload', unloadListener);
-      } else {
-        window.removeEventListener('beforeunload', unloadListener);
-        unblock();
-      }
-
+      window.addEventListener('beforeunload', unloadListener);
       return () => {
         window.removeEventListener('beforeunload', unloadListener);
         unblock();
