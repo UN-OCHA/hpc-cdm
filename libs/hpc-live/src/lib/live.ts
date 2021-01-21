@@ -1,7 +1,11 @@
-import { UserManager, User, OidcMetadata } from 'oidc-client';
+import {
+  UserManager,
+  User,
+  OidcMetadata,
+  WebStorageStateStore,
+} from 'oidc-client';
 
 import { config, Session } from '@unocha/hpc-core';
-import { Model } from '@unocha/hpc-data';
 
 import { LiveModel } from './model';
 
@@ -53,6 +57,7 @@ export class LiveBrowserClient {
           // eslint-disable-next-line @typescript-eslint/camelcase
           response_type: 'token',
           scope: 'profile',
+          userStore: new WebStorageStateStore({ store: localStorage }),
           metadata,
         })
     );
@@ -109,8 +114,20 @@ export class LiveBrowserClient {
         userManager.signinRedirect({
           state: window.location.href,
         }),
-      logOut: () => userManager.signoutRedirect(),
+      logOut: () =>
+        userManager.signoutRedirect().then(() => userManager.removeUser()),
     };
+
+    // When user logs in/out in a different tab, log in/out in current tab as well
+    window.addEventListener('storage', (e) => {
+      // This is how oidc-client creates its storage keys
+      const keyPart = `user:${this.config.hpcAuthUrl}:${this.config.hpcAuthClientId}`;
+      if (e.key?.indexOf(keyPart) !== -1) {
+        // Reload the window to have new session from different tab applied to current one
+        window.location.reload();
+      }
+    });
+
     if (user) {
       const result = {
         session,
