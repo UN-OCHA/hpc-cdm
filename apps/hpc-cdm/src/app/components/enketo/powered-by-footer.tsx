@@ -35,11 +35,15 @@ const PoweredByFooter = () => (
         <Text>
           {t.get(lang, (s) => s.routes.operations.forms.footer.poweredBy)}
         </Text>
-        <a href="https://enketo.org">
+        <a href="https://enketo.org" target="_blank" rel="nofollow noopener">
           <EnketoLogo src={logo} />
         </a>
         <Text>{t.get(lang, (s) => s.routes.operations.forms.footer.and)}</Text>
-        <a href="https://www.kobotoolbox.org">
+        <a
+          href="https://www.kobotoolbox.org"
+          target="_blank"
+          rel="nofollow noopener"
+        >
           <KoboLogo />
         </a>
       </Box>
