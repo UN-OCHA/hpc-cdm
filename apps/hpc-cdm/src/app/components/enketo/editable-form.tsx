@@ -11,6 +11,7 @@ import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
 import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
+import PoweredByFooter from './powered-by-footer';
 
 const StatusTooltip = Tooltip;
 
@@ -364,6 +365,7 @@ export const EnketoEditableForm = (props: Props) => {
                 {editable && lastPage && <SubmitButton saveForm={saveForm} />}
               </div>
             </div>
+            <PoweredByFooter />
           </section>
         </div>
       </div>
