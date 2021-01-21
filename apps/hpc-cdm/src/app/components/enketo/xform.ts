@@ -3,6 +3,8 @@ import fileManager from 'enketo-core/src/js/file-manager';
 import $ from 'jquery';
 import marked from 'marked';
 
+import { LANGUAGE_CHOICE, LanguageKey } from '../../../i18n';
+
 const markedHtml = (
   form: string,
   titlePrefix?: string
@@ -84,11 +86,18 @@ export default class XForm {
       );
     }
 
-    this.form = new Form(formElement, {
-      modelStr,
-      instanceStr: content ? content : undefined,
-      external: undefined,
-    });
+    this.form = new Form(
+      formElement,
+      {
+        modelStr,
+        instanceStr: content ? content : undefined,
+        external: undefined,
+      },
+      {
+        // If the language chosen in the app is available in form, it will be used else the default language of the form
+        language: LANGUAGE_CHOICE.getLanguage(),
+      }
+    );
   }
 
   async init(editable: boolean): Promise<void> {
@@ -114,11 +123,27 @@ export default class XForm {
         }
       );
 
+      const appLanguages = LANGUAGE_CHOICE.getLanguages().reduce(
+        (languageObj: Record<LanguageKey, boolean>, language) => {
+          languageObj[language.key] = true;
+          return languageObj;
+        },
+        {} as Record<LanguageKey, boolean>
+      );
+
+      let newLanguagesExistForForm = false;
+
       const formLanguages: string[] = [];
       $('#form-languages option').each(function () {
-        formLanguages.push(<string>$(this).val());
+        const language = <string>$(this).val();
+        formLanguages.push(language);
+        if (!appLanguages[language as LanguageKey]) {
+          newLanguagesExistForForm = true;
+        }
       });
-      if (formLanguages.length > 1) {
+
+      // need to show drop down only if form is available in languages not available in the app
+      if (newLanguagesExistForForm && formLanguages.length > 1) {
         $('#form-languages').val($('#form-languages').data('default-lang'));
 
         $('#form-languages').on('change', function () {
@@ -128,6 +153,7 @@ export default class XForm {
           const selectedLang = $(this).val();
           $(`span[lang="${selectedLang}"]`).addClass('active');
         });
+        $('#form-languages').show();
       } else {
         $('#form-languages').hide();
       }

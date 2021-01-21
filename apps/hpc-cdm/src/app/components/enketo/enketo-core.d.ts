@@ -7,6 +7,9 @@ declare module 'enketo-core' {
         instanceStr?: string;
         external: undefined;
         submitted?: boolean;
+      },
+      formOptions?: {
+        language: string;
       }
     );
 
@@ -19,6 +22,8 @@ declare module 'enketo-core' {
       activePages: string[];
       current: string;
     };
+
+    get languages(): string[];
 
     resetView(): HTMLFormElement;
   }
