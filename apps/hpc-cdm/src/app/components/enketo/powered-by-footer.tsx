@@ -1,48 +1,50 @@
 import React from 'react';
-import styled from 'styled-components';
+
+import { styled } from '@unocha/hpc-ui';
 import logo from '../../../assets/logos/enketologo.png';
 import { ReactComponent as KLogo } from '../../../assets/logos/kobologo.svg';
+import { AppContext } from '../../context';
+import { t } from '../../../i18n';
 
-const Box = styled.span`
-  float: right;
-  margin-bottom: 16px;
+const Box = styled.div`
+  display: flex;
+  justify-content: flex-end;
 `;
 
-const EnketoText = styled.span`
-  font-size: 16px;
-  padding-right: 5px;
+const Text = styled.span`
+  font-size: 16px; //min required by enketo
+  padding: 0 2px;
+  align-self: center;
 `;
 
-const KoboText = styled.span`
-  font-size: 16px;
-  color: black;
-`;
-
-const Image = styled.img`
+const EnketoLogo = styled.img`
   height: 18px;
-  position: relative;
-  bottom: 5px;
-  padding-right: 5px;
+  margin-top: 5px;
+  padding: 0 2px;
 `;
 
 const KoboLogo = styled(KLogo)`
   width: 120px;
   height: 30px;
-  position: relative;
-  bottom: -9px;
 `;
 
-const EnketoLogo = () => (
-  <Box>
-    <a href="https://enketo.org">
-      <EnketoText>Powered by</EnketoText>
-      <Image src={logo} />
-    </a>
-    <a href="https://www.kobotoolbox.org">
-      <KoboText>and</KoboText>
-      <KoboLogo />
-    </a>
-  </Box>
+const PoweredByFooter = () => (
+  <AppContext.Consumer>
+    {({ lang }) => (
+      <Box>
+        <Text>
+          {t.get(lang, (s) => s.routes.operations.forms.footer.poweredBy)}
+        </Text>
+        <a href="https://enketo.org">
+          <EnketoLogo src={logo} />
+        </a>
+        <Text>{t.get(lang, (s) => s.routes.operations.forms.footer.and)}</Text>
+        <a href="https://www.kobotoolbox.org">
+          <KoboLogo />
+        </a>
+      </Box>
+    )}
+  </AppContext.Consumer>
 );
 
-export default EnketoLogo;
+export default PoweredByFooter;
