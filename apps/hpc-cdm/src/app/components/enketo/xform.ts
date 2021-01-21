@@ -133,7 +133,7 @@ export default class XForm {
 
       let newLanguagesExistForForm = false;
 
-      const formLanguages: string[] = [];
+      const formLanguages: string[] = this.form.languages;
       formLanguages.forEach((language) => {
         if (!appLanguages[language as LanguageKey]) {
           newLanguagesExistForForm = true;
