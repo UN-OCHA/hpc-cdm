@@ -134,9 +134,7 @@ export default class XForm {
       let newLanguagesExistForForm = false;
 
       const formLanguages: string[] = [];
-      $('#form-languages option').each(function () {
-        const language = <string>$(this).val();
-        formLanguages.push(language);
+      formLanguages.forEach((language) => {
         if (!appLanguages[language as LanguageKey]) {
           newLanguagesExistForForm = true;
         }
