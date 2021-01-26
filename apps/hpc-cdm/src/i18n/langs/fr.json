@@ -10,6 +10,10 @@
     "userErrors": {
       "access.userAlreadyInvited": "Cet utilisateur a déjà été invité, il doit se connecter pour avoir accès",
       "access.userAlreadyAdded": "Cet utilisateur a déjà reçu l'accès",
+      "access.permissionError": {
+        "title": "Erreur interdite",
+        "info": "Autorisations insuffisantes pour afficher la ressource"
+      },
       "assignment.alreadyFinalized": "La tâche a déjà été accomplie"
     }
   },
@@ -179,13 +183,7 @@
       },
       "clusters": {
         "listHeader": "Clusters dans cette opération",
-        "settings": "Paramètres de cluster",
-        "forms": {
-          "none": {
-            "title": "Pas de formulaires",
-            "info": "Aucun formulaire n'a été attribué à ce cluster pour la fenêtre de rapport actuelle"
-          }
-        }
+        "settings": "Paramètres de cluster"
       }
     }
   }

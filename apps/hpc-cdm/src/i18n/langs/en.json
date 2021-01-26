@@ -10,6 +10,10 @@
     "userErrors": {
       "access.userAlreadyInvited": "That user has already been invited, they must log-in to get access",
       "access.userAlreadyAdded": "That user has already been given access",
+      "access.permissionError": {
+        "title": "Forbidden Error",
+        "info": "Insufficient permissions to view resource"
+      },
       "assignment.alreadyFinalized": "The assignment has already been finalised"
     }
   },
@@ -171,13 +175,7 @@
       },
       "clusters": {
         "listHeader": "Clusters in this operation",
-        "settings": "Cluster Settings",
-        "forms": {
-          "none": {
-            "title": "No forms",
-            "info": "No forms have been assigned to this cluster for the current reporting window"
-          }
-        }
+        "settings": "Cluster Settings"
       }
     }
   }

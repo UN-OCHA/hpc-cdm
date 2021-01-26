@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdCheckCircle } from 'react-icons/md';
+import { MdError } from 'react-icons/md';
 
 import { t } from '../../i18n';
 import { C, styled, dataLoader } from '@unocha/hpc-ui';
@@ -51,10 +51,10 @@ const OperationClusterFormAssignmentsList = (props: Props) => {
               )[0]?.forms || [];
             return forms.length === 0 ? (
               <C.ErrorMessage
-                icon={MdCheckCircle}
+                icon={MdError}
                 strings={t.get(
                   lang,
-                  (s) => s.routes.operations.clusters.forms.none
+                  (s) => s.errors.userErrors['access.permissionError']
                 )}
               />
             ) : (
