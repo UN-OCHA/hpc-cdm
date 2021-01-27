@@ -131,17 +131,20 @@ export default class XForm {
         {} as Record<LanguageKey, boolean>
       );
 
-      let newLanguagesExistForForm = false;
-
       const formLanguages: string[] = this.form.languages;
-      formLanguages.forEach((language) => {
-        if (!appLanguages[language as LanguageKey]) {
-          newLanguagesExistForForm = true;
-        }
-      });
+      const newLanguagesExistForForm = formLanguages.some(
+        (language) => !appLanguages[language as LanguageKey]
+      );
+      const selectedLanguage = LANGUAGE_CHOICE.getLanguage();
+      const selectedLanguageIsSupported = formLanguages.some(
+        (language) => language === selectedLanguage
+      );
 
       // need to show drop down only if form is available in languages not available in the app
-      if (newLanguagesExistForForm && formLanguages.length > 1) {
+      if (
+        (newLanguagesExistForForm || !selectedLanguageIsSupported) &&
+        formLanguages.length > 1
+      ) {
         $('#form-languages').val($('#form-languages').data('default-lang'));
 
         $('#form-languages').on('change', function () {
