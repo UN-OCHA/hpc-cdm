@@ -100,6 +100,51 @@ export default class XForm {
     );
   }
 
+  private changeLanguage(languages: string[], selectedLanguage: string) {
+    // set the value for the dropdown
+    $('#form-languages').val(selectedLanguage);
+    // activate the correct language in the form
+    languages.forEach((lang) => {
+      $(`span[lang="${lang}"]`).removeClass('active');
+    });
+    $(`span[lang="${selectedLanguage}"]`).addClass('active');
+  }
+
+  private setupLanguageUI(formLanguages: string[], selectedLanguage?: string) {
+    this.changeLanguage(
+      formLanguages,
+      selectedLanguage || $('#form-languages').data('default-lang')
+    );
+    $('#form-languages').on('change', () => {
+      const _selectedLang = selectedLanguage
+        ? selectedLanguage
+        : ($(this).val() as string);
+      this.changeLanguage(formLanguages, _selectedLang);
+    });
+    $('#form-languages').show();
+  }
+
+  private showOrHideLanguageUI(
+    newLanguagesExistForForm: boolean,
+    selectedLanguageIsSupported: boolean,
+    formLanguages: string[],
+    selectedLanguage: string
+  ) {
+    // need to show drop down only if form is available in languages not available in the app or if selected language isn't supported
+    if (
+      (newLanguagesExistForForm || !selectedLanguageIsSupported) &&
+      formLanguages.length > 1
+    ) {
+      this.setupLanguageUI(
+        formLanguages,
+        selectedLanguageIsSupported ? selectedLanguage : undefined
+      );
+    } else {
+      $('#form-languages').hide();
+      this.changeLanguage(formLanguages, selectedLanguage);
+    }
+  }
+
   async init(editable: boolean): Promise<void> {
     return new Promise((resolve) => {
       const t0 = performance.now();
@@ -140,24 +185,25 @@ export default class XForm {
         (language) => language === selectedLanguage
       );
 
-      // need to show drop down only if form is available in languages not available in the app
-      if (
-        (newLanguagesExistForForm || !selectedLanguageIsSupported) &&
-        formLanguages.length > 1
-      ) {
-        $('#form-languages').val($('#form-languages').data('default-lang'));
+      this.showOrHideLanguageUI(
+        newLanguagesExistForForm,
+        selectedLanguageIsSupported,
+        formLanguages,
+        selectedLanguage
+      );
 
-        $('#form-languages').on('change', function () {
-          formLanguages.forEach((lang) => {
-            $(`span[lang="${lang}"]`).removeClass('active');
-          });
-          const selectedLang = $(this).val();
-          $(`span[lang="${selectedLang}"]`).addClass('active');
-        });
-        $('#form-languages').show();
-      } else {
-        $('#form-languages').hide();
-      }
+      LANGUAGE_CHOICE.addListener((lang) => {
+        const _selectedLanguageIsSupported = formLanguages.some(
+          (language) => language === lang
+        );
+        this.showOrHideLanguageUI(
+          newLanguagesExistForForm,
+          _selectedLanguageIsSupported,
+          formLanguages,
+          lang
+        );
+      });
+
       this.loading = false;
       resolve();
     });
