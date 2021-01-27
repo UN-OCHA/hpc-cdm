@@ -11,6 +11,7 @@ import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
 import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
+import PoweredByFooter from './powered-by-footer';
 
 const StatusTooltip = Tooltip;
 
@@ -57,9 +58,12 @@ interface Props {
   assignment: reportingWindows.GetAssignmentResult;
 }
 
+let isRefreshing = false;
+
 export const EnketoEditableForm = (props: Props) => {
   const { reportingWindow, assignment: originalAssignment } = props;
   const env = getEnv();
+
   const [loading, setLoading] = useState(true);
   const [xform, setXform] = useState<XForm | null>(null);
   const [lastPage, setLastPage] = useState(false);
@@ -84,6 +88,7 @@ export const EnketoEditableForm = (props: Props) => {
     status.type === 'conflict' ? status.otherPerson : assignment.lastUpdatedBy;
 
   const unMount = () => {
+    isRefreshing = true;
     if (xform) {
       xform.resetView();
     }
@@ -144,29 +149,22 @@ export const EnketoEditableForm = (props: Props) => {
   }, [originalAssignment]);
 
   useEffect(() => {
-    // Setup listeners to prevent navigating away when the form has changed
-    if (!loading) {
+    //only run if there's changes
+    if (!loading && xform && formTouched) {
+      // React router in app navigation blocking displays custom text
       const unblock = history.block(() => {
-        if (xform && formTouched) {
-          return t.t(
-            lang,
-            (s) => s.routes.operations.forms.unsavedChangesPrompt
-          );
-        }
+        return t.t(lang, (s) => s.routes.operations.forms.unsavedChangesPrompt);
       });
 
+      // Browser api navigation blocking returns default text
       const unloadListener = (event: BeforeUnloadEvent) => {
-        if (xform && formTouched) {
+        if (!isRefreshing) {
           event.preventDefault();
-          // Chrome requires returnValue to be set.
-          event.returnValue = '';
+          event.returnValue = ''; // Chrome requires returnValue to be set.
         }
-        return event;
       };
-      window.addEventListener('beforeunload', unloadListener, {
-        capture: true,
-      });
 
+      window.addEventListener('beforeunload', unloadListener);
       return () => {
         window.removeEventListener('beforeunload', unloadListener);
         unblock();
@@ -367,6 +365,7 @@ export const EnketoEditableForm = (props: Props) => {
                 {editable && lastPage && <SubmitButton saveForm={saveForm} />}
               </div>
             </div>
+            <PoweredByFooter />
           </section>
         </div>
       </div>
