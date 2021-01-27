@@ -100,26 +100,22 @@ export default class XForm {
     );
   }
 
-  private changeLanguage(languages: string[], selectedLanguage: string) {
+  private changeLanguage(languages: string[], selectedLanguage?: string) {
+    const _selectedLanguage =
+      selectedLanguage || $('#form-languages').data('default-lang');
     // set the value for the dropdown
-    $('#form-languages').val(selectedLanguage);
+    $('#form-languages').val(_selectedLanguage);
     // activate the correct language in the form
     languages.forEach((lang) => {
       $(`span[lang="${lang}"]`).removeClass('active');
     });
-    $(`span[lang="${selectedLanguage}"]`).addClass('active');
+    $(`span[lang="${_selectedLanguage}"]`).addClass('active');
   }
 
   private setupLanguageUI(formLanguages: string[], selectedLanguage?: string) {
-    this.changeLanguage(
-      formLanguages,
-      selectedLanguage || $('#form-languages').data('default-lang')
-    );
+    this.changeLanguage(formLanguages, selectedLanguage);
     $('#form-languages').on('change', () => {
-      const _selectedLang = selectedLanguage
-        ? selectedLanguage
-        : ($(this).val() as string);
-      this.changeLanguage(formLanguages, _selectedLang);
+      this.changeLanguage(formLanguages, $(this).val() as string);
     });
     $('#form-languages').show();
   }
@@ -141,7 +137,10 @@ export default class XForm {
       );
     } else {
       $('#form-languages').hide();
-      this.changeLanguage(formLanguages, selectedLanguage);
+      this.changeLanguage(
+        formLanguages,
+        selectedLanguageIsSupported ? selectedLanguage : undefined
+      );
     }
   }
 
@@ -180,6 +179,7 @@ export default class XForm {
       const newLanguagesExistForForm = formLanguages.some(
         (language) => !appLanguages[language as LanguageKey]
       );
+      console.log('formLanguages: ', formLanguages);
       const selectedLanguage = LANGUAGE_CHOICE.getLanguage();
       const selectedLanguageIsSupported = formLanguages.some(
         (language) => language === selectedLanguage
