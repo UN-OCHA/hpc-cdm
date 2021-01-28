@@ -397,13 +397,23 @@ export const EnketoEditableForm = (props: Props) => {
     </StatusTooltip>
   );
 
+  /**
+   * Ensure that all link clicks open in a new tab
+   */
+  const captureLinkClicks = (e: React.MouseEvent<HTMLElement>) => {
+    if (e.target instanceof HTMLAnchorElement && e.target.href) {
+      e.target.target = '_blank';
+      e.target.rel = 'noopener noreferrer';
+    }
+  };
+
   return (
     <div>
       <C.Toolbar>
         <div className={CLASSES.FLEX.GROW} />
         {indicator()}
       </C.Toolbar>
-      <div className="enketo" id="form">
+      <div className="enketo" id="form" onClick={captureLinkClicks}>
         <div className="main" style={{ display: loading ? 'none' : 'block' }}>
           <div className="container pages"></div>
           <section className="form-footer end">
