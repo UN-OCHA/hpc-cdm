@@ -10,6 +10,7 @@ import * as paths from '../paths';
 import OperationForms from './operation-forms';
 import OperationClusters from './operation-clusters';
 import OperationSettings from './operation-settings';
+import PageMeta from '../components/page-meta';
 
 interface Props {
   match: {
@@ -48,6 +49,7 @@ const PageOperation = (props: Props) => {
 
               return (
                 <>
+                  <PageMeta title={[operation.name]} />
                   {/* <C.Toolbar>
                     <C.Breadcrumbs
                       links={[

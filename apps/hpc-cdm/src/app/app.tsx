@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Helmet } from 'react-helmet';
 
 import { BaseStyling, C, styled, dataLoader } from '@unocha/hpc-ui';
 
@@ -10,6 +11,7 @@ import { AppContext, contextFromEnv } from './context';
 import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
 import * as paths from './paths';
+import PageMeta from './components/page-meta';
 
 import PageAdmin from './pages/admin';
 import PageNotLoggedIn from './pages/not-logged-in';
@@ -106,6 +108,7 @@ export const App = () => {
           const { canModifyGlobalUserAccess } = context.access().permissions;
           return (
             <AppContext.Provider value={{ lang, ...context }}>
+              <PageMeta />
               <Container>
                 {environmentWarning(env, lang)}
                 <Header
