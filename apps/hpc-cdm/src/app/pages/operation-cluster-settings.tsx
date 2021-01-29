@@ -10,6 +10,7 @@ import * as paths from '../paths';
 
 import ClusterNavigation from '../components/cluster-navigation';
 import { TargetAccessManagement } from '../components/target-access-management';
+import PageMeta from '../components/page-meta';
 
 interface Props {
   className?: string;
@@ -24,6 +25,13 @@ const PageOperationClusterSettings = (props: Props) => {
     <AppContext.Consumer>
       {({ lang }) => (
         <>
+          <PageMeta
+            title={[
+              t.t(lang, (s) => s.navigation.settings),
+              cluster.name,
+              operation.name,
+            ]}
+          />
           <ClusterNavigation
             operation={operation}
             cluster={cluster}

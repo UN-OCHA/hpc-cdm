@@ -1,5 +1,6 @@
 {
-  "title": "HPC Coordination Description Mapping",
+  "switchToThisLanguage": "Passer à la version française",
+  "title": "HPC CDM",
   "user": {
     "login": "Connexion",
     "logout": "Déconnexion"
@@ -8,7 +9,8 @@
     "unableToLoadCDM": "Impossible de charger le CDM",
     "userErrors": {
       "access.userAlreadyInvited": "Cet utilisateur a déjà été invité, il doit se connecter pour avoir accès",
-      "access.userAlreadyAdded": "Cet utilisateur a déjà reçu l'accès"
+      "access.userAlreadyAdded": "Cet utilisateur a déjà reçu l'accès",
+      "assignment.alreadyFinalized": "La tâche a déjà été accomplie"
     }
   },
   "common": {
@@ -25,6 +27,11 @@
     }
   },
   "components": {
+    "appTitle": {
+      "primary": "Collection de données 2020",
+      "secondary": "Structures de coordination de l‘IASC au niveau national "
+    },
+    "surveyIntro": "Bienvenu(e) à l’enquête annuelle menée par OCHA afin de recenser les structures de coordination humanitaire et capacités presentes sur le terrain en 2020. Il vous sera demandé de vous connecter à l’enquête en utilisant votre Humanitarian ID et le mot de passe associé. Si vous avez oublié vos identifiants ou avez besoin de vous enregistrer, veuillez suivre les instructions sur la page ID Humanitaire suivante.",
     "acceptableUseNotification": {
       "login": "Cliquez ici pour vous connecter",
       "title": "Notification d'utilisation acceptable",
@@ -43,14 +50,24 @@
       "error": "Erreur:",
       "retry": "Réessayer"
     },
+    "unsupportedBrowser": {
+      "title": "Navigateur non compatible! ",
+      "info": "Malheureusement, votre présent navigateur n’est pas compatible. Veuillez utiliser Firefox, Chrome ou Edge. Pour ce faire, simplement copiez le lien (URL) dessus, ouvrez Firefox, Chrome, ou Edge, et collez le lien sur la barre d’adresse du nouveau navigateur."
+    },
     "accessControl": {
       "addPerson": "Ajouter quelqu'un",
+      "deletePerson": "Supprimer accès",
+      "cancelInvite": "Annuler l’invitation",
       "addPersonInfo": "Saisissez l'adresse e-mail de la personne à laquelle vous souhaitez donner accès. S'il ne s'est pas connecté auparavant, il recevra une invitation qui deviendra active après sa connexion.",
       "activePeople": "Utilisateurs actifs",
       "pendingInvites": "Invitations en attente",
       "auditLog": "Journal d'audit",
       "roles": {
         "hpc_admin": "Administrateur HPC",
+        "rpmAdmin": "Administrateur RPM",
+        "ftsAdmin": "Administrateur FTS",
+        "projectsAdmin": "Administrateur de Projets",
+        "omniscient": "Omniscient",
         "swaps": "Membre de l'équipe SWAPS",
         "operationLead": "Chef d’opération",
         "clusterLead": "Chef de cluster"
@@ -87,24 +104,46 @@
         "nav": {
           "prev": "Précédent",
           "save": "Sauvegarder",
+          "saveAndClose": "Sauvegarder & fermer",
           "next": "Suivant",
           "submit": {
+            "message": "Quand vous aurez complété l’enquête, veuillez cliquez sur le bouton dessous /Soumettre/ afin de l’envoyer. Veuillez noter qu’il ne vous sera plus possible de modifier vos réponses une fois que celles-ci seront soumises, veuillez vous assurer que l’enquête est complète et correcte avant de procéder à la soumission.",
+            "confirm": "Je confirme que l’enquête est complète et prête à être soumise",
             "submit": "Soumettre"
           }
+        },
+        "loading": {
+          "title": "Chargement du formulaire en cours",
+          "info": "Le chargement pourrait durer un certain temps. Merci de patienter et ne pas fermer le navigateur."
+        },
+        "editability": {
+          "notSubmittedEditable": "Non envoyé: modifiable",
+          "submittedNonEditable": "Envoyé: non modifiable"
+        },
+        "prompts": {
+          "finished": "Merci d’avoir complété l’enquête, vous allez être contacté dans le cas ou des informations complémentaires seraient requises.",
+          "submissionRequired": "Merci de revenir et soumettre votre réponse finale a l’enquête."
         },
         "status": {
           "init": "Formulaire d'initialisation",
           "idle": "Toutes les modifications ont été enregistrées",
-          "unsavedChanges": "Modifications non enregistrées",
+          "unsavedChanges": "Cette page contient des changements non sauvegardés",
+          "unsavedChangesExtra": "pages précédentes sauvegardées",
           "saving": "Sauvegarde...",
           "error": "Erreur lors de l'enregistrement du formulaire!",
           "conflict": "Le formulaire a été modifié par une autre personne, veuillez l'actualiser à nouveau."
         },
         "errors": {
           "conflict": "Ce formulaire a été modifié par {person} {timeAgo} (après avoir chargé la page), nous ne pouvons donc pas enregistrer vos modifications. Veuillez actualiser votre page et réessayer."
+        },
+        "footer": {
+          "poweredBy": "Conçu avec",
+          "and": "et"
         }
       },
       "clusters": {
+        "listHeader": "Clusters dans cette opération",
+        "settings": "Paramètres de cluster",
         "forms": {
           "none": {
             "title": "Pas de formulaires",

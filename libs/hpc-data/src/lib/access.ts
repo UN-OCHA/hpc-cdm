@@ -1,5 +1,19 @@
 import * as t from 'io-ts';
 
+/**
+ * An object representing the global permissions the current user has
+ */
+export const GET_OWN_ACCESS_RESULT = t.type(
+  {
+    permissions: t.type({
+      canModifyGlobalUserAccess: t.boolean,
+    }),
+  },
+  'GET_OWN_ACCESS_RESULT'
+);
+
+export type GetOwnAccessResult = t.TypeOf<typeof GET_OWN_ACCESS_RESULT>;
+
 export const ACCESS_TARGET = t.union(
   [
     t.type({
@@ -151,6 +165,10 @@ export const ADD_TARGET_ACCESS_PARAMS = t.type(
 export type AddTargetAccessParams = t.TypeOf<typeof ADD_TARGET_ACCESS_PARAMS>;
 
 export interface Model {
+  /**
+   * Get the permissions of the current user that apply across the whole app
+   */
+  getOwnAccess(): Promise<GetOwnAccessResult>;
   getTargetAccess(
     params: GetTargetAccessParams
   ): Promise<GetTargetAccessResult>;

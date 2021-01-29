@@ -7,12 +7,14 @@ import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 import TargetAccessManagement from '../components/target-access-management';
+import PageMeta from '../components/page-meta';
 
 const PageAdmin = () => {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
         <div className={CLASSES.CONTAINER.CENTERED}>
+          <PageMeta title={[t.t(lang, (s) => s.navigation.admin)]} />
           <C.SidebarNavigation
             menu={[
               {

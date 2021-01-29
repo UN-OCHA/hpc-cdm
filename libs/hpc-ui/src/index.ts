@@ -1,7 +1,9 @@
 import { CLASSES, combineClasses } from './lib/classes';
 import { BaseStyling } from './lib/styling';
-import { css, styled, THEME, Theme, ThemeProvider } from './lib/theme';
-import { DataLoaderState, dataLoader } from './lib/util';
+import { css, styled, THEME, ThemeProvider } from './lib/theme';
+import type { Theme } from './lib/theme';
+import { dataLoader } from './lib/util';
+import type { DataLoaderState } from './lib/util';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
 import * as actionableButton from './lib/components/actionable-button';
@@ -61,11 +63,11 @@ export {
   combineClasses,
   COMPONENTS as C,
   css,
-  DataLoaderState,
   dataLoader,
   ICONS,
   styled,
   THEME,
-  Theme,
   ThemeProvider,
 };
+
+export type { DataLoaderState, Theme };

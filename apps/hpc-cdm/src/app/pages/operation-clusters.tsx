@@ -7,6 +7,7 @@ import { operations } from '@unocha/hpc-data';
 import { t } from '../../i18n';
 import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
+import PageMeta from '../components/page-meta';
 
 import OperationCluster from './operation-cluster';
 
@@ -45,6 +46,12 @@ const PageOperationClusters = (props: Props) => {
             {({ data: clusters }) => (
               <Switch>
                 <Route exact path={paths.operationClusters(operation.id)}>
+                  <PageMeta
+                    title={[
+                      t.t(lang, (s) => s.navigation.clusters),
+                      operation.name,
+                    ]}
+                  />
                   <Container>
                     <C.List
                       title={t.t(
@@ -52,15 +59,17 @@ const PageOperationClusters = (props: Props) => {
                         (s) => s.routes.operations.clusters.listHeader
                       )}
                     >
-                      {clusters.map((cluster, i) => (
-                        <C.ListItem
-                          text={cluster.name}
-                          link={paths.operationCluster({
-                            operationId: operation.id,
-                            clusterId: cluster.id,
-                          })}
-                        />
-                      ))}
+                      {clusters
+                        .sort((c1, c2) => (c1.name > c2.name ? 1 : -1))
+                        .map((cluster, i) => (
+                          <C.ListItem
+                            text={cluster.name}
+                            link={paths.operationCluster({
+                              operationId: operation.id,
+                              clusterId: cluster.id,
+                            })}
+                          />
+                        ))}
                     </C.List>
                   </Container>
                 </Route>

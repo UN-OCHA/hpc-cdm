@@ -75,36 +75,40 @@ const OperationFormAssignmentsList = (props: Props) => {
               .reduce((acc, val) => acc.concat(val), []);
             return (
               <Container>
-                <FormAssignmentsList
-                  className={CLS.FORM_LIST}
-                  title={t.t(
-                    lang,
-                    (s) => s.routes.operations.forms.forOperations
-                  )}
-                  assignments={operationAssignments}
-                  assignmentLink={(a) =>
-                    paths.operationFormAssignmentData({
-                      operationId: operation.id,
-                      windowId: window.id,
-                      assignmentId: a.assignmentId,
-                    })
-                  }
-                />
-                <FormAssignmentsList
-                  className={CLS.FORM_LIST}
-                  title={t.t(
-                    lang,
-                    (s) => s.routes.operations.forms.forClusters
-                  )}
-                  assignments={clusterAssignments}
-                  assignmentLink={(a) =>
-                    paths.operationFormAssignmentData({
-                      operationId: operation.id,
-                      windowId: window.id,
-                      assignmentId: a.assignmentId,
-                    })
-                  }
-                />
+                {operationAssignments.length > 0 && (
+                  <FormAssignmentsList
+                    className={CLS.FORM_LIST}
+                    title={t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.forOperations
+                    )}
+                    assignments={operationAssignments}
+                    assignmentLink={(a) =>
+                      paths.operationFormAssignmentData({
+                        operationId: operation.id,
+                        windowId: window.id,
+                        assignmentId: a.assignmentId,
+                      })
+                    }
+                  />
+                )}
+                {clusterAssignments.length > 0 && (
+                  <FormAssignmentsList
+                    className={CLS.FORM_LIST}
+                    title={t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.forClusters
+                    )}
+                    assignments={clusterAssignments}
+                    assignmentLink={(a) =>
+                      paths.operationFormAssignmentData({
+                        operationId: operation.id,
+                        windowId: window.id,
+                        assignmentId: a.assignmentId,
+                      })
+                    }
+                  />
+                )}
               </Container>
             );
           }}

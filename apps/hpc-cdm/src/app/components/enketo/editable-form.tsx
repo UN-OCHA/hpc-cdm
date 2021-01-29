@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { reportingWindows, errors } from '@unocha/hpc-data';
 import { C, CLASSES, styled } from '@unocha/hpc-ui';
 import { Tooltip, CircularProgress } from '@material-ui/core';
-import { MdWarning } from 'react-icons/md';
+import { MdWarning, MdLock, MdLockOpen } from 'react-icons/md';
 import dayjs from '../../../libraries/dayjs';
 
 import XForm from './xform';
@@ -11,15 +11,48 @@ import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
 import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
+import PoweredByFooter from './powered-by-footer';
 
 const StatusTooltip = Tooltip;
+
+const NotSubmitted = styled.span`
+  color: ${(p) => p.theme.colors.pallete.blue.dark2};
+`;
+
+const UnsavedChanges = styled.span`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: ${(p) => p.theme.colors.text};
+  font-weight: bold;
+
+  > span {
+    color: ${(p) => p.theme.colors.textLight};
+    font-weight: normal;
+
+    &::before {
+      content: '( ';
+    }
+
+    &::after {
+      content: ' )';
+    }
+  }
+`;
 
 const StatusLabel = styled.div`
   display: flex;
   align-items: center;
+  height: 50px;
 
   > span {
     margin: 0 ${(p) => p.theme.marginPx.md}px;
+    display: flex;
+    align-items: end;
+
+    > svg {
+      margin: 0 ${(p) => p.theme.marginPx.sm}px;
+    }
   }
 
   > svg.error {
@@ -28,10 +61,23 @@ const StatusLabel = styled.div`
 `;
 
 const StatusDetails = styled.div`
-  font-size: 0.8rem;
+  font-size: 1.2rem;
 
   > .error {
     color: ${(p) => p.theme.colors.textErrorLight};
+  }
+`;
+
+const LoadingMessage = styled.div`
+  margin: 0 ${(p) => p.theme.marginPx.md};
+  text-align: center;
+
+  h3 {
+    font-size: 2.5rem;
+  }
+
+  p {
+    font-size: 2rem;
   }
 `;
 
@@ -57,9 +103,12 @@ interface Props {
   assignment: reportingWindows.GetAssignmentResult;
 }
 
+let isRefreshing = false;
+
 export const EnketoEditableForm = (props: Props) => {
   const { reportingWindow, assignment: originalAssignment } = props;
   const env = getEnv();
+
   const [loading, setLoading] = useState(true);
   const [xform, setXform] = useState<XForm | null>(null);
   const [lastPage, setLastPage] = useState(false);
@@ -84,6 +133,7 @@ export const EnketoEditableForm = (props: Props) => {
     status.type === 'conflict' ? status.otherPerson : assignment.lastUpdatedBy;
 
   const unMount = () => {
+    isRefreshing = true;
     if (xform) {
       xform.resetView();
     }
@@ -118,7 +168,6 @@ export const EnketoEditableForm = (props: Props) => {
       data: new Blob([new Uint8Array(f.data)]),
     }));
     const xform = new XForm(form, model, currentData, files, {
-      titlePrefix: reportingWindow.name,
       onDataUpdate: ({ xform }) => {
         setFormTouched(true);
       },
@@ -144,29 +193,22 @@ export const EnketoEditableForm = (props: Props) => {
   }, [originalAssignment]);
 
   useEffect(() => {
-    // Setup listeners to prevent navigating away when the form has changed
-    if (!loading) {
+    //only run if there's changes
+    if (!loading && xform && formTouched) {
+      // React router in app navigation blocking displays custom text
       const unblock = history.block(() => {
-        if (xform && formTouched) {
-          return t.t(
-            lang,
-            (s) => s.routes.operations.forms.unsavedChangesPrompt
-          );
-        }
+        return t.t(lang, (s) => s.routes.operations.forms.unsavedChangesPrompt);
       });
 
+      // Browser api navigation blocking returns default text
       const unloadListener = (event: BeforeUnloadEvent) => {
-        if (xform && formTouched) {
+        if (!isRefreshing) {
           event.preventDefault();
-          // Chrome requires returnValue to be set.
-          event.returnValue = '';
+          event.returnValue = ''; // Chrome requires returnValue to be set.
         }
-        return event;
       };
-      window.addEventListener('beforeunload', unloadListener, {
-        capture: true,
-      });
 
+      window.addEventListener('beforeunload', unloadListener);
       return () => {
         window.removeEventListener('beforeunload', unloadListener);
         unblock();
@@ -197,7 +239,7 @@ export const EnketoEditableForm = (props: Props) => {
   }, [loading, status]);
 
   const saveForm = async (redirect = false, finalized = false) => {
-    if (xform && formTouched) {
+    if (xform && (formTouched || finalized)) {
       setStatus({ type: 'saving' });
       setTimeout(async () => {
         const t0 = performance.now();
@@ -236,6 +278,19 @@ export const EnketoEditableForm = (props: Props) => {
               setFormTouched(false);
               setStatus({ type: 'idle' });
               if (redirect) {
+                if (finalized) {
+                  alert(
+                    t.t(lang, (s) => s.routes.operations.forms.prompts.finished)
+                  );
+                } else {
+                  alert(
+                    t.t(
+                      lang,
+                      (s) =>
+                        s.routes.operations.forms.prompts.submissionRequired
+                    )
+                  );
+                }
                 history.goBack();
               }
             })
@@ -262,6 +317,11 @@ export const EnketoEditableForm = (props: Props) => {
             });
         }
       });
+    } else if (redirect) {
+      alert(
+        t.t(lang, (s) => s.routes.operations.forms.prompts.submissionRequired)
+      );
+      history.goBack();
     }
   };
 
@@ -270,7 +330,7 @@ export const EnketoEditableForm = (props: Props) => {
       // Allow enketo to flip the page
       setTimeout(() => {
         setLastPage(xform.isCurrentPageTheLastPage());
-      });
+      }, 200);
     }
   };
 
@@ -297,34 +357,85 @@ export const EnketoEditableForm = (props: Props) => {
             </span>
             <CircularProgress size={20} />
           </>
-        ) : !editable ? (
-          t.t(lang, (s) => s.common.nonEditable)
-        ) : status.type === 'idle' ? (
-          t.t(
-            lang,
-            (s) =>
-              s.routes.operations.forms.status[
-                formTouched ? 'unsavedChanges' : 'idle'
-              ]
-          )
-        ) : status.type === 'saving' ? (
-          <>
-            <span>
-              {t.t(lang, (s) => s.routes.operations.forms.status[status.type])}
-            </span>
-            <CircularProgress size={20} />
-          </>
         ) : (
           <>
-            <span>
-              {t.t(lang, (s) => s.routes.operations.forms.status[status.type])}
-            </span>
-            <MdWarning className="error" size={20} />
+            {!editable ? (
+              <span>
+                <MdLock size={20} />
+                {t.t(
+                  lang,
+                  (s) =>
+                    s.routes.operations.forms.editability.submittedNonEditable
+                )}
+              </span>
+            ) : (
+              <NotSubmitted>
+                <MdLockOpen size={20} />
+                {t.t(
+                  lang,
+                  (s) =>
+                    s.routes.operations.forms.editability.notSubmittedEditable
+                )}
+              </NotSubmitted>
+            )}
+            {editable && (
+              <span>
+                {status.type === 'idle' ? (
+                  formTouched ? (
+                    <UnsavedChanges>
+                      {t.t(
+                        lang,
+                        (s) => s.routes.operations.forms.status.unsavedChanges
+                      )}
+                      <span>
+                        {t.t(
+                          lang,
+                          (s) =>
+                            s.routes.operations.forms.status.unsavedChangesExtra
+                        )}
+                      </span>
+                    </UnsavedChanges>
+                  ) : (
+                    t.t(lang, (s) => s.routes.operations.forms.status.idle)
+                  )
+                ) : status.type === 'saving' ? (
+                  <>
+                    <span>
+                      {t.t(
+                        lang,
+                        (s) => s.routes.operations.forms.status[status.type]
+                      )}
+                    </span>
+                    <CircularProgress size={20} />
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      {t.t(
+                        lang,
+                        (s) => s.routes.operations.forms.status[status.type]
+                      )}
+                    </span>
+                    <MdWarning className="error" size={20} />
+                  </>
+                )}
+              </span>
+            )}
           </>
         )}
       </StatusLabel>
     </StatusTooltip>
   );
+
+  /**
+   * Ensure that all link clicks open in a new tab
+   */
+  const captureLinkClicks = (e: React.MouseEvent<HTMLElement>) => {
+    if (e.target instanceof HTMLAnchorElement && e.target.href) {
+      e.target.target = '_blank';
+      e.target.rel = 'noopener noreferrer';
+    }
+  };
 
   return (
     <div>
@@ -332,7 +443,13 @@ export const EnketoEditableForm = (props: Props) => {
         <div className={CLASSES.FLEX.GROW} />
         {indicator()}
       </C.Toolbar>
-      <div className="enketo" id="form">
+      {loading && (
+        <LoadingMessage>
+          <h3>{t.t(lang, (s) => s.routes.operations.forms.loading.title)}</h3>
+          <p>{t.t(lang, (s) => s.routes.operations.forms.loading.info)}</p>
+        </LoadingMessage>
+      )}
+      <div className="enketo" id="form" onClick={captureLinkClicks}>
         <div className="main" style={{ display: loading ? 'none' : 'block' }}>
           <div className="container pages"></div>
           <section className="form-footer end">
@@ -353,6 +470,18 @@ export const EnketoEditableForm = (props: Props) => {
                     {t.t(lang, (s) => s.routes.operations.forms.nav.save)}
                   </button>
                 )}
+                {editable && lastPage && (
+                  <button
+                    onClick={() => saveForm(true)}
+                    className="btn btn-default"
+                    style={{ display: 'inline-block' }}
+                  >
+                    {t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.nav.saveAndClose
+                    )}
+                  </button>
+                )}
                 <button
                   onMouseDown={() => {
                     if (editable) {
@@ -367,6 +496,7 @@ export const EnketoEditableForm = (props: Props) => {
                 {editable && lastPage && <SubmitButton saveForm={saveForm} />}
               </div>
             </div>
+            <PoweredByFooter />
           </section>
         </div>
       </div>

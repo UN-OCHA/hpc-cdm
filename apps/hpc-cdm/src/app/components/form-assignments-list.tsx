@@ -26,14 +26,16 @@ const FormAssignmentsList = (props: Props) => {
     <AppContext.Consumer>
       {({ lang }) => (
         <C.List title={title} className={className}>
-          {assignments.map((a, i) => (
-            <C.ListItem
-              key={i}
-              link={assignmentLink(a)}
-              text={a.form.name}
-              secondary={a.cluster && <span>{a.cluster.name}</span>}
-            />
-          ))}
+          {assignments
+            .sort((a1, a2) => (a1.form.name > a2.form.name ? 1 : -1))
+            .map((a, i) => (
+              <C.ListItem
+                key={i}
+                link={assignmentLink(a)}
+                text={a.form.name}
+                secondary={a.cluster && <span>{a.cluster.name}</span>}
+              />
+            ))}
         </C.List>
       )}
     </AppContext.Consumer>

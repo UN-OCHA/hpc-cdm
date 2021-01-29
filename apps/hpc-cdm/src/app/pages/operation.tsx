@@ -10,6 +10,7 @@ import * as paths from '../paths';
 import OperationForms from './operation-forms';
 import OperationClusters from './operation-clusters';
 import OperationSettings from './operation-settings';
+import PageMeta from '../components/page-meta';
 
 interface Props {
   match: {
@@ -43,9 +44,12 @@ const PageOperation = (props: Props) => {
           >
             {({ data: operation }) => {
               const displaySettings = operation.permissions.canModifyAccess;
+              const displayClusters =
+                operation.permissions.canModifyClusterAccessAndPermissions;
 
               return (
                 <>
+                  <PageMeta title={[operation.name]} />
                   {/* <C.Toolbar>
                     <C.Breadcrumbs
                       links={[
@@ -76,7 +80,7 @@ const PageOperation = (props: Props) => {
                         label: t.t(lang, (s) => s.navigation.forms),
                         path: paths.operationForms(id),
                       },
-                      {
+                      displayClusters && {
                         label: t.t(lang, (s) => s.navigation.clusters),
                         path: paths.operationClusters(id),
                       },
@@ -94,9 +98,11 @@ const PageOperation = (props: Props) => {
                       <Route path={paths.operationForms(id)}>
                         <OperationForms operation={operation} />
                       </Route>
-                      <Route path={paths.operationClusters(id)}>
-                        <OperationClusters operation={operation} />
-                      </Route>
+                      {displayClusters && (
+                        <Route path={paths.operationClusters(id)}>
+                          <OperationClusters operation={operation} />
+                        </Route>
+                      )}
                       {displaySettings && (
                         <Route path={paths.operationSettings(id)}>
                           <OperationSettings operation={operation} />

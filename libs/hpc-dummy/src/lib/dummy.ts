@@ -321,6 +321,23 @@ export class Dummy {
   public getModel = (): Model => {
     return {
       access: {
+        getOwnAccess: dummyEndpoint(
+          'access.getOwnAccess',
+          async (): Promise<access.GetOwnAccessResult> => {
+            const roles =
+              this.data.access.active.find(
+                (a) =>
+                  a.grantee.id === this.data.currentUser &&
+                  a.target.type === 'global'
+              )?.roles || false;
+            console.log(roles);
+            return {
+              permissions: {
+                canModifyGlobalUserAccess: roles && roles.includes('hpc_admin'),
+              },
+            };
+          }
+        ),
         getTargetAccess: dummyEndpoint(
           'access.getTargetAccess',
           async ({ target }: access.GetTargetAccessParams) => {
@@ -476,7 +493,20 @@ export class Dummy {
                     canModifyAccess: this.userHasAccess([
                       {
                         target: { type: 'global' },
-                        role: 'hpcadmin',
+                        role: 'hpc_admin',
+                      },
+                    ]),
+                    canModifyClusterAccessAndPermissions: this.userHasAccess([
+                      {
+                        target: { type: 'global' },
+                        role: 'hpc_admin',
+                      },
+                      {
+                        target: {
+                          type: 'operation',
+                          targetId: id,
+                        },
+                        role: 'operationLead',
                       },
                     ]),
                   },
@@ -505,7 +535,7 @@ export class Dummy {
                     canModifyAccess: this.userHasAccess([
                       {
                         target: { type: 'global' },
-                        role: 'hpcadmin',
+                        role: 'hpc_admin',
                       },
                       {
                         target: {

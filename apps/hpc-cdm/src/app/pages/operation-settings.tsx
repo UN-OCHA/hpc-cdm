@@ -7,6 +7,7 @@ import { operations } from '@unocha/hpc-data';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
+import PageMeta from '../components/page-meta';
 
 import { TargetAccessManagement } from '../components/target-access-management';
 
@@ -28,6 +29,9 @@ const PageOperationSettings = (props: Props) => {
             },
           ]}
         >
+          <PageMeta
+            title={[t.t(lang, (s) => s.navigation.settings), operation.name]}
+          />
           <Switch>
             <Route exact path={paths.operationSettings(operation.id)}>
               <Redirect to={paths.operationSettingsAccess(operation.id)} />
