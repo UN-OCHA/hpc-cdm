@@ -1,6 +1,18 @@
+import 'intl-list-format';
 import { mapValues } from 'lodash';
 
 import { RecursivePartial, hasKey } from '../util';
+
+declare namespace Intl {
+  interface ListFormatOpts {
+    type?: 'conjunction' | 'disjunction' | 'unit';
+    style?: 'long' | 'short' | 'narrow';
+  }
+  class ListFormat {
+    constructor(language: string, opts?: ListFormatOpts);
+    public format: (items: string[]) => string;
+  }
+}
 
 export interface Language<Strings> {
   meta: {
@@ -118,4 +130,16 @@ export class Translations<LanguageKey extends string, Strings> {
    */
   public get = <T>(lang: LanguageKey, get: (s: Strings) => T) =>
     get(this.languages[lang].strings);
+
+  public list = (
+    lang: LanguageKey,
+    strings: string[],
+    opts?: Intl.ListFormatOpts
+  ) => {
+    if (window.Intl) {
+      return new Intl.ListFormat(lang, opts).format(strings);
+    } else {
+      return strings.join(', ');
+    }
+  };
 }

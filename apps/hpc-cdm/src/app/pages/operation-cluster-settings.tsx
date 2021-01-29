@@ -8,7 +8,9 @@ import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
+import ClusterNavigation from '../components/cluster-navigation';
 import { TargetAccessManagement } from '../components/target-access-management';
+import PageMeta from '../components/page-meta';
 
 interface Props {
   className?: string;
@@ -22,50 +24,64 @@ const PageOperationClusterSettings = (props: Props) => {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <C.SidebarNavigation
-          menu={[
-            cluster.permissions.canModifyAccess && {
-              label: t.t(lang, (s) => s.navigation.manageAccess),
-              path: paths.operationClusterSettingsAccess({
-                operationId: operation.id,
-                clusterId: cluster.id,
-              }),
-            },
-          ]}
-        >
-          <Switch>
-            <Route
-              exact
-              path={paths.operationClusterSettings({
-                operationId: operation.id,
-                clusterId: cluster.id,
-              })}
-            >
-              <Redirect
-                to={paths.operationClusterSettingsAccess({
+        <>
+          <PageMeta
+            title={[
+              t.t(lang, (s) => s.navigation.settings),
+              cluster.name,
+              operation.name,
+            ]}
+          />
+          <ClusterNavigation
+            operation={operation}
+            cluster={cluster}
+            showSettingsButton
+          />
+          <C.SidebarNavigation
+            menu={[
+              cluster.permissions.canModifyAccess && {
+                label: t.t(lang, (s) => s.navigation.manageAccess),
+                path: paths.operationClusterSettingsAccess({
                   operationId: operation.id,
                   clusterId: cluster.id,
-                })}
-              />
-            </Route>
-            {cluster.permissions.canModifyAccess && (
+                }),
+              },
+            ]}
+          >
+            <Switch>
               <Route
                 exact
-                path={paths.operationClusterSettingsAccess({
+                path={paths.operationClusterSettings({
                   operationId: operation.id,
                   clusterId: cluster.id,
                 })}
               >
-                <TargetAccessManagement
-                  target={{
-                    type: 'operationCluster',
-                    targetId: cluster.id,
-                  }}
+                <Redirect
+                  to={paths.operationClusterSettingsAccess({
+                    operationId: operation.id,
+                    clusterId: cluster.id,
+                  })}
                 />
               </Route>
-            )}
-          </Switch>
-        </C.SidebarNavigation>
+              {cluster.permissions.canModifyAccess && (
+                <Route
+                  exact
+                  path={paths.operationClusterSettingsAccess({
+                    operationId: operation.id,
+                    clusterId: cluster.id,
+                  })}
+                >
+                  <TargetAccessManagement
+                    target={{
+                      type: 'operationCluster',
+                      targetId: cluster.id,
+                    }}
+                  />
+                </Route>
+              )}
+            </Switch>
+          </C.SidebarNavigation>
+        </>
       )}
     </AppContext.Consumer>
   );

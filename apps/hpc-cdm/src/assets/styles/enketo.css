@@ -141,12 +141,6 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-.enketo h3#form-title {
-    color: #026cb6 !important;
-    border-bottom: none !important;
-    margin: 0 0 -1em 0 !important;
-}
-
 .enketo .sr-only {
     position: absolute;
     width: 1px;
@@ -932,7 +926,7 @@
 }
 
 .enketo .form-footer {
-    margin: 45px -45px -45px -45px;
+    margin: 45px 0;
 }
 
 .enketo .enketo-power {
@@ -993,10 +987,6 @@
     opacity: 0;
     -webkit-transition: all 0.6s ease-out;
     transition: all 0.6s ease-out;
-}
-
-.enketo .pages.or #form-title {
-    margin: 0;
 }
 
 .enketo .pages ~ .form-footer {
@@ -1457,8 +1447,8 @@
     color: #888888;
     display: block;
     line-height: 16px;
-    font-weight: normal;
-    font-size: 11px;
+    font-weight: bold;
+    font-size: 13px;
     font-style: italic;
     padding-top: 5px;
 }
@@ -1557,6 +1547,7 @@
     left: -30px;
     right: -30px;
     pointer-events: all;
+    cursor: pointer;
 }
 
 .enketo .or-group:not(.or-appearance-no-collapse).or-appearance-compact > h4::before {
@@ -7021,11 +7012,7 @@ legend
 }
 
 .enketo #form-title {
-    width: calc(100% + 1px);
-    color: #000 !important;
-    border-right: 1px solid black;
-    border-right-color: transparent;
-    text-align: inherit;
+    display: none;
 }
 
 .enketo .or-group > h4,
@@ -7961,7 +7948,11 @@ legend
 }
 
 .enketo #form-languages {
-    display: none;
+    max-width: 12em;
+    font-size: 14px;
+    margin: 1em 0 1em 0;
+    text-align: right;
+    text-transform: capitalize;
 }
 
 .enketo .form-language-selector {
@@ -8161,11 +8152,6 @@ input[type='checkbox']
     .enketo input[type='radio']:checked + .option-label::before {
         background-position: 0;
     }
-}
-
-.enketo .question-label p {
-    display: inline;
-    margin: 0;
 }
 
 .enketo section .disabled {
@@ -8483,12 +8469,6 @@ progress {
         padding-top: 16px;
         padding-bottom: 16px;
     }
-    .enketo .form-header .form-language-selector span {
-        display: none;
-    }
-    .enketo #form-title {
-        padding-top: 25px;
-    }
 }
 
 @media screen and (max-width: 600px) {
@@ -8510,7 +8490,7 @@ progress {
         width: calc(100% + (2 * 30px));
     }
     .enketo .form-footer {
-        margin: 30px -30px -30px -30px;
+        margin: 30px 0;
     }
 }
 

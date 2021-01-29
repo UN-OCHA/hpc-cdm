@@ -3,8 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { styled } from '../theme';
 
 const CLS = {
-  MENU: 'menu',
-  CONTENT: 'content',
+  SELECTED: 'selected',
 };
 
 interface Props {
@@ -21,51 +20,65 @@ interface Props {
 }
 
 const Wrapper = styled.div`
-  margin: ${(p) => p.theme.marginPx.sm}px -${(p) => p.theme.marginPx.sm}px;
+  margin: 0 -1rem;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
+`;
 
-  > .${CLS.MENU} {
-    flex-grow: 1;
-    margin: ${(p) => p.theme.marginPx.sm}px;
+const Menu = styled.ul`
+  flex-grow: 1;
+  margin: 0 1rem;
+  padding: 0;
+  width: 250px;
+  list-style: none;
+
+  li {
+    margin: 0;
     padding: 0;
-    width: 250px;
-    list-style: none;
-    border: 1px solid ${(p) => p.theme.colors.panel.border};
-    background: ${(p) => p.theme.colors.panel.bg};
+    border-bottom: 1px solid ${(p) => p.theme.colors.pallete.gray.light4};
 
-    li {
-      margin: 0;
-      padding: 0;
-      border-bottom: 1px solid ${(p) => p.theme.colors.panel.border};
+    a {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 49px;
+      font-size: 1.6rem;
+      color: ${(p) => p.theme.colors.pallete.gray.light};
 
-      &:last-child {
-        border-bottom: none;
+      &:hover {
+        text-decoration: none;
+        background: ${(p) => p.theme.colors.pallete.gray.light5};
+        color: ${(p) => p.theme.colors.pallete.gray.normal};
       }
 
-      a {
+      &::before {
+        content: '';
         display: block;
-        padding: ${(p) => p.theme.marginPx.sm}px;
-
-        &:hover {
-          background: ${(p) => p.theme.colors.panel.bgHover};
-        }
+        width: 4px;
+        height: 16px;
       }
 
-      &.selected {
-        a {
-          background: ${(p) => p.theme.colors.panel.bgSelected};
-        }
+      > span {
+        margin: 0 18px;
+      }
+    }
+
+    &.${CLS.SELECTED} a {
+      font-weight: 500;
+      color: ${(p) => p.theme.colors.pallete.gray.normal};
+
+      &::before {
+        background-color: ${(p) => p.theme.colors.secondary.normal};
       }
     }
   }
+`;
 
-  > .${CLS.CONTENT} {
-    margin: ${(p) => p.theme.marginPx.sm}px;
-    width: 500px;
-    flex-grow: 100;
-  }
+const Content = styled.div`
+  margin: 0 1rem;
+  width: 500px;
+  flex-grow: 100;
 `;
 
 const SidebarNavigation = (props: Props) => {
@@ -74,17 +87,22 @@ const SidebarNavigation = (props: Props) => {
 
   return (
     <Wrapper>
-      <ul className={CLS.MENU}>
+      <Menu>
         {menu.map(
           (m, i) =>
             m && (
-              <li key={i} className={loc.pathname === m.path ? 'selected' : ''}>
-                <Link to={m.path}>{m.label}</Link>
+              <li
+                key={i}
+                className={loc.pathname === m.path ? CLS.SELECTED : ''}
+              >
+                <Link to={m.path}>
+                  <span>{m.label}</span>
+                </Link>
               </li>
             )
         )}
-      </ul>
-      <div className={CLS.CONTENT}>{children}</div>
+      </Menu>
+      <Content>{children}</Content>
     </Wrapper>
   );
 };

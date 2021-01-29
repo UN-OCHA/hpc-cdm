@@ -1,23 +1,22 @@
 import React, { useContext } from 'react';
 
 import { t } from '../../i18n';
-import { BreadcrumbLinks, C, dataLoader } from '@unocha/hpc-ui';
+import { C, dataLoader } from '@unocha/hpc-ui';
 import { reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext, getEnv } from '../context';
 import { EnketoEditableForm } from './enketo';
+import { browserSupportedByEnketo } from './enketo/util';
 
 interface Props {
   className?: string;
   window: reportingWindows.ReportingWindow;
   assignmentId: number;
-  breadcrumbs: (
-    assignment: reportingWindows.GetAssignmentResult
-  ) => BreadcrumbLinks;
+  header?: (assignment: reportingWindows.GetAssignmentResult) => JSX.Element;
 }
 
 const FormAssignmentData = (props: Props) => {
-  const { window, assignmentId, breadcrumbs } = props;
+  const { window, assignmentId, header } = props;
   const { lang } = useContext(AppContext);
   const loader = dataLoader(
     [
@@ -27,7 +26,11 @@ const FormAssignmentData = (props: Props) => {
     ],
     getEnv().model.reportingWindows.getAssignment
   );
-  return (
+  return !browserSupportedByEnketo() ? (
+    <C.ErrorMessage
+      strings={t.get(lang, (s) => s.components.unsupportedBrowser)}
+    />
+  ) : (
     <C.Loader
       loader={loader}
       strings={{
@@ -36,11 +39,13 @@ const FormAssignmentData = (props: Props) => {
       }}
     >
       {(assignment) => (
-        <EnketoEditableForm
-          reportingWindow={window}
-          assignment={assignment}
-          breadcrumbs={breadcrumbs(assignment)}
-        />
+        <>
+          {header && header(assignment)}
+          <EnketoEditableForm
+            reportingWindow={window}
+            assignment={assignment}
+          />
+        </>
       )}
     </C.Loader>
   );

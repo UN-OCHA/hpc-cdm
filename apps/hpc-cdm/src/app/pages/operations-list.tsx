@@ -6,16 +6,13 @@ import { CLASSES, C, combineClasses, styled, dataLoader } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
 import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
-
-const CLS = {
-  OPERATIONS: 'operations',
-};
+import PageMeta from '../components/page-meta';
 
 interface Props {
   className?: string;
 }
 
-const PageOperationsList = (props: Props) => {
+export default (props: Props) => {
   const loader = dataLoader([], getEnv().model.operations.getOperations);
 
   return (
@@ -27,6 +24,7 @@ const PageOperationsList = (props: Props) => {
             props.className
           )}
         >
+          <PageMeta title={[t.t(lang, (s) => s.navigation.operations)]} />
           <C.Loader
             loader={loader}
             strings={{
@@ -36,23 +34,20 @@ const PageOperationsList = (props: Props) => {
           >
             {(data) => (
               <>
-                <C.Toolbar>
-                  <C.Breadcrumbs
-                    links={[
-                      {
-                        label: t.t(lang, (s) => s.navigation.operations),
-                        to: paths.operations(),
-                      },
-                    ]}
-                  />
-                </C.Toolbar>
-                <ul className={CLS.OPERATIONS}>
-                  {data.data.map((o, i) => (
-                    <li key={i}>
-                      <Link to={paths.operation(o.id)}>{o.name}</Link>
-                    </li>
-                  ))}
-                </ul>
+                <C.PageTitle>
+                  {t.t(lang, (s) => s.navigation.operations)}
+                </C.PageTitle>
+                <C.List>
+                  {data.data
+                    .sort((o1, o2) => (o1.name > o2.name ? 1 : -1))
+                    .map((o, i) => (
+                      <C.ListItem
+                        key={i}
+                        text={o.name}
+                        link={paths.operation(o.id)}
+                      />
+                    ))}
+                </C.List>
               </>
             )}
           </C.Loader>
@@ -61,31 +56,3 @@ const PageOperationsList = (props: Props) => {
     </AppContext.Consumer>
   );
 };
-
-export default styled(PageOperationsList)`
-  .${CLS.OPERATIONS} {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-
-    li {
-      display: block;
-      margin: ${(p) => p.theme.marginPx.sm}px 0;
-
-      a {
-        display: block;
-        padding: ${(p) => p.theme.marginPx.md}px;
-        border: 1px solid ${(p) => p.theme.colors.panel.border};
-        border-radius: ${(p) => p.theme.sizing.borderRadiusSm};
-        background: ${(p) => p.theme.colors.panel.bg};
-        font-size: 1.2rem;
-
-        &:hover {
-          background: ${(p) => p.theme.colors.panel.bgHover};
-        }
-      }
-    }
-  }
-`;

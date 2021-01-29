@@ -18,32 +18,34 @@ const COLOR_PALETTE = {
   orange: {
     dark2: '#b44d0e',
     dark1: '#d05b10',
-    normal: '#ee7325',
+    normal: '#e16856', // from style guide
   },
   blue: {
     dark2: '#025995',
-    dark1: '#026cb6',
+    normal: '#026cb6', // from style guide
   },
   gray: {
-    normal: '#4a4a4a',
+    normal: '#333333', // from style guide
+    light: '#6f7e94', // from style guide
     light1: '#999999',
     light2: '#d1d1d1',
     light3: '#dadada',
-    light4: '#e6e6e6',
-    light5: '#efefef',
+    light4: '#e6ecf1', // from style guide
+    light5: '#f3f5f8', // from style guide
   },
 };
 
 export const THEME = {
   colors: {
     pallete: COLOR_PALETTE,
-    primary: COLOR_PALETTE.orange,
-    secondary: COLOR_PALETTE.blue,
+    primary: COLOR_PALETTE.blue,
+    secondary: COLOR_PALETTE.orange,
     text: COLOR_PALETTE.gray.normal,
-    textLight: COLOR_PALETTE.gray.light1,
+    textLight: COLOR_PALETTE.gray.light,
     textLink: COLOR_PALETTE.orange.dark2,
     textError: COLOR_PALETTE.red.dark,
     textErrorLight: COLOR_PALETTE.red.light,
+    dividers: COLOR_PALETTE.gray.light4,
     panel: {
       border: COLOR_PALETTE.gray.light2,
       bg: COLOR_PALETTE.gray.light5,
@@ -54,6 +56,7 @@ export const THEME = {
   marginPx: {
     sm: 5,
     md: 15,
+    lg: 30,
   },
   sizing: {
     borderRadiusSm: '3px',
@@ -61,15 +64,21 @@ export const THEME = {
     containerWidthPx: 1240,
     fontSizeSm: '0.8rem',
   },
+  animations: {
+    fast: '0.2s ease-out',
+  },
 } as const;
 
 export const MUI_THEME = createMuiTheme({
+  typography: {
+    htmlFontSize: 10,
+  },
   palette: {
     primary: {
       main: THEME.colors.primary.normal,
     },
     secondary: {
-      main: THEME.colors.secondary.dark1,
+      main: THEME.colors.secondary.normal,
     },
   },
 });

@@ -7,13 +7,13 @@ import { operations } from '@unocha/hpc-data';
 import { t } from '../../i18n';
 import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
+import PageMeta from '../components/page-meta';
 
 import OperationCluster from './operation-cluster';
 
-const CLS = {
-  CLUSTERS: 'clusters',
-  ABBREVIATION: 'abbrv',
-};
+const Container = styled.div`
+  margin-top: ${(p) => p.theme.marginPx.lg}px;
+`;
 
 interface Props {
   className?: string;
@@ -46,35 +46,32 @@ const PageOperationClusters = (props: Props) => {
             {({ data: clusters }) => (
               <Switch>
                 <Route exact path={paths.operationClusters(operation.id)}>
-                  <>
-                    <C.Toolbar>
-                      <C.Breadcrumbs
-                        links={[
-                          {
-                            label: t.t(lang, (s) => s.navigation.clusters),
-                            to: paths.operationClusters(operation.id),
-                          },
-                        ]}
-                      />
-                    </C.Toolbar>
-                    <ul className={CLS.CLUSTERS}>
-                      {clusters.map((cluster, i) => (
-                        <li key={i}>
-                          <Link
-                            to={paths.operationCluster({
+                  <PageMeta
+                    title={[
+                      t.t(lang, (s) => s.navigation.clusters),
+                      operation.name,
+                    ]}
+                  />
+                  <Container>
+                    <C.List
+                      title={t.t(
+                        lang,
+                        (s) => s.routes.operations.clusters.listHeader
+                      )}
+                    >
+                      {clusters
+                        .sort((c1, c2) => (c1.name > c2.name ? 1 : -1))
+                        .map((cluster, i) => (
+                          <C.ListItem
+                            text={cluster.name}
+                            link={paths.operationCluster({
                               operationId: operation.id,
                               clusterId: cluster.id,
                             })}
-                          >
-                            <span className={CLS.ABBREVIATION}>
-                              {cluster.abbreviation}
-                            </span>
-                            {cluster.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
+                          />
+                        ))}
+                    </C.List>
+                  </Container>
                 </Route>
                 <Route
                   path={paths.operationClusterMatch({
@@ -113,36 +110,4 @@ const PageOperationClusters = (props: Props) => {
   );
 };
 
-export default styled(PageOperationClusters)`
-  .${CLS.CLUSTERS} {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-
-    li {
-      display: block;
-      margin: ${(p) => p.theme.marginPx.sm}px 0;
-
-      a {
-        display: flex;
-        padding: ${(p) => p.theme.marginPx.md}px 0;
-        border: 1px solid ${(p) => p.theme.colors.panel.border};
-        border-radius: ${(p) => p.theme.sizing.borderRadiusSm};
-        background: ${(p) => p.theme.colors.panel.bg};
-        font-size: 1.2rem;
-
-        .${CLS.ABBREVIATION} {
-          opacity: 0.4;
-          font-weight: bold;
-          margin: 0 ${(p) => p.theme.marginPx.md}px;
-        }
-
-        &:hover {
-          background: ${(p) => p.theme.colors.panel.bgHover};
-        }
-      }
-    }
-  }
-`;
+export default PageOperationClusters;

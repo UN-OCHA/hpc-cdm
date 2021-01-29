@@ -45,7 +45,11 @@ interface FetchInterface {
 
 interface Config {
   baseUrl: string;
-  hidToken: string;
+  /**
+   * A token to use with the API requests,
+   * or null to use the API unauthenticated
+   */
+  hidToken: string | null;
   /**
    * Optionally provide interfaces for implicit browser globals and other
    * functionality that requires a browser, when running in Node.js.
@@ -112,7 +116,7 @@ const fileCache = new Map<string, Promise<ArrayBuffer>>();
  * functions in the model.
  *
  * (e.g. when it's neccesary for single model function to be backed my multiple
- * HTTP endpoints, or where some daya is sent as params and some as body).
+ * HTTP endpoints, or where some data is sent as params and some as body).
  */
 export const LIVE_TYPES = {
   ACCESS: {
@@ -158,10 +162,12 @@ export const LIVE_TYPES = {
       forms.FORM_FILE_HASH
     ),
     UPDATE_ASSIGNMENT_BODY: t.type({
+      previousVersion: t.number,
       form: t.intersection([
         forms.FORM_BASE,
         t.type({
           data: t.string,
+          finalized: t.boolean,
           files: t.array(
             t.type({
               name: t.string,
@@ -209,9 +215,11 @@ export class LiveModel implements Model {
     }
     const init: RequestInit = {
       method: method || 'GET',
-      headers: {
-        Authorization: `Bearer ${this.config.hidToken}`,
-      },
+      headers: this.config.hidToken
+        ? {
+            Authorization: `Bearer ${this.config.hidToken}`,
+          }
+        : {},
     };
     return { url, init };
   };
@@ -263,7 +271,9 @@ export class LiveModel implements Model {
       }
     } else {
       const json = await res.json();
-      if (
+      if (json?.code === 'ConflictError') {
+        throw new errors.ConflictError(json.timestamp, json.otherUser);
+      } else if (
         json?.code === 'BadRequestError' &&
         errors.USER_ERROR_KEYS.includes(json?.message)
       ) {
@@ -287,6 +297,11 @@ export class LiveModel implements Model {
       }`;
 
     return {
+      getOwnAccess: () =>
+        this.call({
+          pathname: `/v2/access/self`,
+          resultType: access.GET_OWN_ACCESS_RESULT,
+        }),
       getTargetAccess: (params) =>
         this.call({
           pathname: accessPathnameForTarget(params.target),
@@ -454,6 +469,7 @@ export class LiveModel implements Model {
             id: params.form.id,
             version: params.form.version,
             data: params.form.data,
+            finalized: params.form.finalized,
             files: files.map((f) => ({
               name: f.name,
               data: { fileHash: f.fileHash },

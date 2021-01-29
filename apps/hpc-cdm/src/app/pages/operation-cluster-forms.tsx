@@ -8,6 +8,7 @@ import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
+import ClusterNavigation from '../components/cluster-navigation';
 import PageOperationClusterFormAssignments from './operation-cluster-form-assignments';
 
 interface Props {
@@ -46,9 +47,16 @@ const PageOperationClusterForms = (props: Props) => {
                   }
                 }
                 return (
-                  <C.NotFound
-                    strings={t.get(lang, (s) => s.components.notFound)}
-                  />
+                  <>
+                    <ClusterNavigation
+                      operation={operation}
+                      cluster={cluster}
+                      showSettingsButton
+                    />
+                    <C.NotFound
+                      strings={t.get(lang, (s) => s.components.notFound)}
+                    />
+                  </>
                 );
               }}
             />

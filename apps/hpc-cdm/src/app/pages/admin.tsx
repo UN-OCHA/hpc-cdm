@@ -1,18 +1,20 @@
 import React from 'react';
 import { Switch, Redirect, Route } from 'react-router-dom';
 
-import { CLASSES, C, combineClasses, styled, dataLoader } from '@unocha/hpc-ui';
+import { CLASSES, C } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
-import { AppContext, getEnv } from '../context';
+import { AppContext } from '../context';
 import * as paths from '../paths';
 import TargetAccessManagement from '../components/target-access-management';
+import PageMeta from '../components/page-meta';
 
 const PageAdmin = () => {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
         <div className={CLASSES.CONTAINER.CENTERED}>
+          <PageMeta title={[t.t(lang, (s) => s.navigation.admin)]} />
           <C.SidebarNavigation
             menu={[
               {

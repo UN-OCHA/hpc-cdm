@@ -8,6 +8,7 @@ import { AppContext } from '../context';
 import { t } from '../../i18n';
 import OperationFormAssignments from './operation-form-assignments';
 import * as paths from '../paths';
+import PageMeta from '../components/page-meta';
 
 interface Props {
   className?: string;
@@ -21,6 +22,9 @@ const PageOperationForms = (props: Props) => {
     <AppContext.Consumer>
       {({ lang }) => (
         <div className={combineClasses(props.className)}>
+          <PageMeta
+            title={[t.t(lang, (s) => s.navigation.forms), operation.name]}
+          />
           <Switch>
             <Route
               path={paths.operationFormAssignmentsMatch({

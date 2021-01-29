@@ -1,7 +1,7 @@
 {
   "stagingEnvironmentBranch": "env/stage",
   "repoType": "node",
-  "developmentEnvironmentBranches": ["env/dev", "env/demo", "env/demodev"],
+  "developmentEnvironmentBranches": ["env/red.dev", "env/blue.dev"],
   "docker": {
     "path": ".",
     "args": {
@@ -16,5 +16,21 @@
     "skipLogin": true
   },
   "ci": ["./.github/ci.sh"],
-  "mergebackLabels": ["mergeback"]
+  "mergebackLabels": ["mergeback"],
+  "deployments": {
+    "environments": [
+      {
+        "branch": "env/stage",
+        "environment": "stage"
+      },
+      {
+        "branch": "env/red.dev",
+        "environment": "reddev"
+      },
+      {
+        "branch": "env/blue.dev",
+        "environment": "bluedev"
+      }
+    ]
+  }
 }

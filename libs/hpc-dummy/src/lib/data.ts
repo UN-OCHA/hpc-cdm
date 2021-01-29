@@ -25,7 +25,7 @@ export const INITIAL_DATA: DummyData = {
           type: 'user',
           id: 0,
         },
-        roles: ['hpcadmin'],
+        roles: ['hpc_admin'],
       },
     ],
     invites: [],
@@ -62,11 +62,20 @@ export const INITIAL_DATA: DummyData = {
     },
     {
       id: 1,
-      name: 'Operation with a reporting window',
+      name:
+        'Operation with a reporting window, and cluster and operation assignments',
     },
     {
       id: 2,
       name: 'Operation with multiple reporting windows',
+    },
+    {
+      id: 3,
+      name: 'Operation with a reporting window, and cluster assignments',
+    },
+    {
+      id: 4,
+      name: 'Operation with a reporting window, and operation assignments',
     },
   ],
   operationClusters: [
@@ -94,6 +103,12 @@ export const INITIAL_DATA: DummyData = {
       abbreviation: 'PRO',
       name: 'Protection',
     },
+    {
+      id: 14,
+      operationId: 3,
+      abbreviation: 'PRO',
+      name: 'Protection',
+    },
   ],
   reportingWindows: [
     {
@@ -101,7 +116,7 @@ export const INITIAL_DATA: DummyData = {
       name: 'Some Reporting Window',
       state: 'open',
       associations: {
-        operations: [1, 2],
+        operations: [1, 2, 3, 4],
       },
       assignments: [
         {
@@ -116,6 +131,7 @@ export const INITIAL_DATA: DummyData = {
             operationId: 1,
           },
           state: 'not-entered',
+          editable: true,
           currentData: null,
           currentFiles: [],
         },
@@ -131,6 +147,7 @@ export const INITIAL_DATA: DummyData = {
             operationId: 1,
           },
           state: 'raw:entered',
+          editable: true,
           currentData: null,
           currentFiles: [],
         },
@@ -146,6 +163,39 @@ export const INITIAL_DATA: DummyData = {
             clusterId: 11,
           },
           state: 'raw:entered',
+          editable: true,
+          currentData: null,
+          currentFiles: [],
+        },
+        {
+          id: 5927,
+          version: 1,
+          lastUpdatedAt: Date.now(),
+          lastUpdatedBy: 'Some Admin',
+          type: 'form',
+          formId: 321,
+          assignee: {
+            type: 'operation',
+            operationId: 4,
+          },
+          state: 'raw:entered',
+          editable: true,
+          currentData: null,
+          currentFiles: [],
+        },
+        {
+          id: 5928,
+          version: 1,
+          lastUpdatedAt: Date.now(),
+          lastUpdatedBy: 'Some Admin',
+          type: 'form',
+          formId: 321,
+          assignee: {
+            type: 'operationCluster',
+            clusterId: 14,
+          },
+          state: 'raw:entered',
+          editable: true,
           currentData: null,
           currentFiles: [],
         },

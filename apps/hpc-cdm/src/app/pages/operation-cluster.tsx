@@ -10,6 +10,7 @@ import * as paths from '../paths';
 
 import PageOperationClusterForms from './operation-cluster-forms';
 import PageOperationClusterSettings from './operation-cluster-settings';
+import PageMeta from '../components/page-meta';
 
 interface Props {
   className?: string;
@@ -26,44 +27,7 @@ const PageOperationCluster = (props: Props) => {
     <AppContext.Consumer>
       {({ lang }) => (
         <div className={props.className}>
-          <C.Toolbar>
-            <C.Breadcrumbs
-              links={[
-                {
-                  label: t.t(lang, (s) => s.navigation.clusters),
-                  to: paths.operationClusters(operation.id),
-                },
-                {
-                  label: cluster.name,
-                  to: paths.operationCluster({
-                    operationId: operation.id,
-                    clusterId: cluster.id,
-                  }),
-                },
-              ]}
-            />
-          </C.Toolbar>
-          <C.Tabs
-            className={props.className}
-            mode="section"
-            align="start"
-            tabs={[
-              {
-                label: t.t(lang, (s) => s.navigation.forms),
-                path: paths.operationClusterForms({
-                  operationId: operation.id,
-                  clusterId: cluster.id,
-                }),
-              },
-              displaySettings && {
-                label: t.t(lang, (s) => s.navigation.settings),
-                path: paths.operationClusterSettings({
-                  operationId: operation.id,
-                  clusterId: cluster.id,
-                }),
-              },
-            ]}
-          />
+          <PageMeta title={[cluster.name, operation.name]} />
           <Switch>
             <Route
               exact

@@ -215,6 +215,7 @@ export class Dummy {
       lastUpdatedAt: assignment.lastUpdatedAt,
       lastUpdatedBy: assignment.lastUpdatedBy,
       state: assignment.state,
+      editable: assignment.editable,
       task: await getAssignmentTask(assignment),
       assignee,
     };
@@ -320,6 +321,23 @@ export class Dummy {
   public getModel = (): Model => {
     return {
       access: {
+        getOwnAccess: dummyEndpoint(
+          'access.getOwnAccess',
+          async (): Promise<access.GetOwnAccessResult> => {
+            const roles =
+              this.data.access.active.find(
+                (a) =>
+                  a.grantee.id === this.data.currentUser &&
+                  a.target.type === 'global'
+              )?.roles || false;
+            console.log(roles);
+            return {
+              permissions: {
+                canModifyGlobalUserAccess: roles && roles.includes('hpc_admin'),
+              },
+            };
+          }
+        ),
         getTargetAccess: dummyEndpoint(
           'access.getTargetAccess',
           async ({ target }: access.GetTargetAccessParams) => {
@@ -475,7 +493,20 @@ export class Dummy {
                     canModifyAccess: this.userHasAccess([
                       {
                         target: { type: 'global' },
-                        role: 'hpcadmin',
+                        role: 'hpc_admin',
+                      },
+                    ]),
+                    canModifyClusterAccessAndPermissions: this.userHasAccess([
+                      {
+                        target: { type: 'global' },
+                        role: 'hpc_admin',
+                      },
+                      {
+                        target: {
+                          type: 'operation',
+                          targetId: id,
+                        },
+                        role: 'operationLead',
                       },
                     ]),
                   },
@@ -504,7 +535,7 @@ export class Dummy {
                     canModifyAccess: this.userHasAccess([
                       {
                         target: { type: 'global' },
-                        role: 'hpcadmin',
+                        role: 'hpc_admin',
                       },
                       {
                         target: {
@@ -585,7 +616,7 @@ export class Dummy {
           ): Promise<reportingWindows.GetAssignmentResult> => {
             const {
               assignmentId,
-              form: { id, data, files },
+              form: { id, data, files, finalized },
               previousVersion,
             } = params;
 
@@ -602,6 +633,8 @@ export class Dummy {
                     (u) => u.id === this.data.currentUser
                   );
                   a.version++;
+                  a.state = finalized ? 'raw:finalized' : 'raw:entered';
+                  a.editable = !finalized;
                   a.lastUpdatedAt = Date.now();
                   a.lastUpdatedBy = u[0]?.user.name || 'Unknown';
                   a.currentData = data;

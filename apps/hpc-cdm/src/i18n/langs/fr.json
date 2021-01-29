@@ -1,8 +1,156 @@
 {
+  "switchToThisLanguage": "Passer à la version française",
   "title": "HPC CDM",
+  "user": {
+    "login": "Connexion",
+    "logout": "Déconnexion"
+  },
+  "errors": {
+    "unableToLoadCDM": "Impossible de charger le CDM",
+    "userErrors": {
+      "access.userAlreadyInvited": "Cet utilisateur a déjà été invité, il doit se connecter pour avoir accès",
+      "access.userAlreadyAdded": "Cet utilisateur a déjà reçu l'accès",
+      "assignment.alreadyFinalized": "La tâche a déjà été accomplie"
+    }
+  },
+  "common": {
+    "updatedAtBy": "Mis à jour {timeAgo} par {person}",
+    "saving": "Sauvegarde…",
+    "add": "Ajouter",
+    "emailAddress": "Adresse e-mail",
+    "validation": {
+      "missing": "Veuillez saisir {field}"
+    },
+    "devEnvironmentWarnings": {
+      "dummy": "Ceci est une instance de démonstration de CDM, les informations que vous entrez ici ne seront stockées que dans votre navigateur et ne seront pas envoyées à notre serveur",
+      "dev": "Ceci est une instance de test de CDM, les informations que vous entrez ici seront périodiquement supprimées."
+    }
+  },
   "components": {
+    "appTitle": {
+      "primary": "Collection de données 2020",
+      "secondary": "Structures de coordination de l‘IASC au niveau national "
+    },
+    "surveyIntro": "Bienvenu(e) à l’enquête annuelle menée par OCHA afin de recenser les structures de coordination humanitaire et capacités presentes sur le terrain en 2020. Il vous sera demandé de vous connecter à l’enquête en utilisant votre Humanitarian ID et le mot de passe associé. Si vous avez oublié vos identifiants ou avez besoin de vous enregistrer, veuillez suivre les instructions sur la page ID Humanitaire suivante.",
     "acceptableUseNotification": {
-      "login": "Cliquez ici pour vous identifier"
+      "login": "Cliquez ici pour vous connecter",
+      "title": "Notification d'utilisation acceptable",
+      "p1": "L’accès non autorisé à ce système informatique des Nations Unies est interdit par le document ST/SGB/2004/15 (\"Utilisation des moyens et des données informatiques et télématiques\" du 29 novembre 2004)",
+      "p2": "Les utilisateurs autorisés veillent à ce que leur utilisation des ressources des technologies de l'information et de la communication (TIC) et des données TIC soit conforme à leurs obligations en tant que membres du personnel ou à toutes autres obligations qui pourraient leur être applicables ",
+      "p3": "Toute utilisation des ressources TIC et des données TIC fait l’objet d’un suivi et d’une enquête comme indiqué dans le document ST/SGB/2004/15.",
+      "p4": "L'utilisation de ce système par tout utilisateur, autorisé ou non, constitue un consentement aux règlements et règles applicables de l'ONU"
+    },
+    "notFound": {
+      "title": "Page non trouvée",
+      "info": "Nous n'avons pas pu trouver la page que vous cherchiez",
+      "back": "Retour"
+    },
+    "loader": {
+      "loading": "Chargement...",
+      "error": "Erreur:",
+      "retry": "Réessayer"
+    },
+    "unsupportedBrowser": {
+      "title": "Navigateur non compatible! ",
+      "info": "Malheureusement, votre présent navigateur n’est pas compatible. Veuillez utiliser Firefox, Chrome ou Edge. Pour ce faire, simplement copiez le lien (URL) dessus, ouvrez Firefox, Chrome, ou Edge, et collez le lien sur la barre d’adresse du nouveau navigateur."
+    },
+    "accessControl": {
+      "addPerson": "Ajouter quelqu'un",
+      "deletePerson": "Supprimer accès",
+      "cancelInvite": "Annuler l’invitation",
+      "addPersonInfo": "Saisissez l'adresse e-mail de la personne à laquelle vous souhaitez donner accès. S'il ne s'est pas connecté auparavant, il recevra une invitation qui deviendra active après sa connexion.",
+      "activePeople": "Utilisateurs actifs",
+      "pendingInvites": "Invitations en attente",
+      "auditLog": "Journal d'audit",
+      "roles": {
+        "hpc_admin": "Administrateur HPC",
+        "rpmAdmin": "Administrateur RPM",
+        "ftsAdmin": "Administrateur FTS",
+        "projectsAdmin": "Administrateur de Projets",
+        "omniscient": "Omniscient",
+        "swaps": "Membre de l'équipe SWAPS",
+        "operationLead": "Chef d’opération",
+        "clusterLead": "Chef de cluster"
+      },
+      "invitedBy": "Invité par {name}",
+      "confirmRoleUpdate": "Êtes-vous sûr de vouloir changer le rôle de {name} en {role}?",
+      "confirmRoleRemoval": "Êtes-vous sûr de vouloir supprimer l’accès pour {name}?",
+      "auditLogRoleChange": "{actor}  a remplacé le rôle de {grantee} par {role}",
+      "auditLogRoleRemoval": "{actor} a supprimé l'accès de {grantee}",
+      "noPendingInvites": "Aucune invitation en attente",
+      "noUsers": "Pas d'utilisateurs assignés. Personne n'a obtenu l'accès",
+      "auditLogEmpty": "Le journal d'audit est vide",
+      "role": "Rôle"
+    }
+  },
+  "navigation": {
+    "admin": "Admin",
+    "operations": "Opérations",
+    "clusters": "Clusters",
+    "forms": "Formulaires",
+    "settings": "Réglages",
+    "manageAccess": "Gérer l'accès"
+  },
+  "routes": {
+    "operations": {
+      "notFound": {
+        "title": "Opération introuvable",
+        "info": "Nous n'avons pas pu trouver l'opération que vous recherchiez"
+      },
+      "forms": {
+        "forOperations": "Formulaires à l'échelle de l'opération",
+        "forClusters": "Formulaires de cluster",
+        "unsavedChangesPrompt": "Êtes-vous sûr de vouloir naviguer ailleurs ? Vous avez des changements non enregistrés.",
+        "nav": {
+          "prev": "Précédent",
+          "save": "Sauvegarder",
+          "saveAndClose": "Sauvegarder & fermer",
+          "next": "Suivant",
+          "submit": {
+            "message": "Quand vous aurez complété l’enquête, veuillez cliquez sur le bouton dessous /Soumettre/ afin de l’envoyer. Veuillez noter qu’il ne vous sera plus possible de modifier vos réponses une fois que celles-ci seront soumises, veuillez vous assurer que l’enquête est complète et correcte avant de procéder à la soumission.",
+            "confirm": "Je confirme que l’enquête est complète et prête à être soumise",
+            "submit": "Soumettre"
+          }
+        },
+        "loading": {
+          "title": "Chargement du formulaire en cours",
+          "info": "Le chargement pourrait durer un certain temps. Merci de patienter et ne pas fermer le navigateur."
+        },
+        "editability": {
+          "notSubmittedEditable": "Non envoyé: modifiable",
+          "submittedNonEditable": "Envoyé: non modifiable"
+        },
+        "prompts": {
+          "finished": "Merci d’avoir complété l’enquête, vous allez être contacté dans le cas ou des informations complémentaires seraient requises.",
+          "submissionRequired": "Merci de revenir et soumettre votre réponse finale a l’enquête."
+        },
+        "status": {
+          "init": "Formulaire d'initialisation",
+          "idle": "Toutes les modifications ont été enregistrées",
+          "unsavedChanges": "Cette page contient des changements non sauvegardés",
+          "unsavedChangesExtra": "pages précédentes sauvegardées",
+          "saving": "Sauvegarde...",
+          "error": "Erreur lors de l'enregistrement du formulaire!",
+          "conflict": "Le formulaire a été modifié par une autre personne, veuillez l'actualiser à nouveau."
+        },
+        "errors": {
+          "conflict": "Ce formulaire a été modifié par {person} {timeAgo} (après avoir chargé la page), nous ne pouvons donc pas enregistrer vos modifications. Veuillez actualiser votre page et réessayer."
+        },
+        "footer": {
+          "poweredBy": "Conçu avec",
+          "and": "et"
+        }
+      },
+      "clusters": {
+        "listHeader": "Clusters dans cette opération",
+        "settings": "Paramètres de cluster",
+        "forms": {
+          "none": {
+            "title": "Pas de formulaires",
+            "info": "Aucun formulaire n'a été attribué à ce cluster pour la fenêtre de rapport actuelle"
+          }
+        }
+      }
     }
   }
 }

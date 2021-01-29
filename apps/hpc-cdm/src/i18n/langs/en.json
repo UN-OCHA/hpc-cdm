@@ -1,5 +1,6 @@
 {
-  "title": "HPC Coordination Description Mapping",
+  "switchToThisLanguage": "Switch to English",
+  "title": "HPC CDM",
   "user": {
     "login": "Login",
     "logout": "Logout"
@@ -8,7 +9,8 @@
     "unableToLoadCDM": "Unable to load CDM",
     "userErrors": {
       "access.userAlreadyInvited": "That user has already been invited, they must log-in to get access",
-      "access.userAlreadyAdded": "That user has already been given access"
+      "access.userAlreadyAdded": "That user has already been given access",
+      "assignment.alreadyFinalized": "The assignment has already been finalised"
     }
   },
   "common": {
@@ -18,9 +20,18 @@
     "emailAddress": "E-Mail address",
     "validation": {
       "missing": "Please enter {field}"
+    },
+    "devEnvironmentWarnings": {
+      "dummy": "This is a demo instance of CDM, information you enter here will only be stored in your browser, and will not be sent to our server",
+      "dev": "This is a test instance of CDM, information you enter here will be periodically deleted."
     }
   },
   "components": {
+    "appTitle": {
+      "primary": "2020 Data Collection",
+      "secondary": "IASC Coordination Structures at Country Level"
+    },
+    "surveyIntro": "Welcome to the survey carried out by OCHA to map IASC coordination structures and capacities in the field in 2020. Click on the login button. You will be asked to log in using your Humanitarian ID email and password. If you have forgotten your credentials or need to register, please follow the prompts on the following Humanitarian ID page.",
     "acceptableUseNotification": {
       "login": "Click here to login",
       "title": "Acceptable Use Notification",
@@ -39,14 +50,24 @@
       "error": "Error:",
       "retry": "Retry"
     },
+    "unsupportedBrowser": {
+      "title": "Unsupported Browser!",
+      "info": "Unfortunately, your current browser is not supported. Please switch to either Firefox, Google Chrome or Edge. To do this, simply copy the form address (URL) above, then open Firefox, Chrome or Edge, and paste the address into the browser."
+    },
     "accessControl": {
-      "addPerson": "Add Someone",
+      "addPerson": "Add User",
+      "deletePerson": "Remove Access",
+      "cancelInvite": "Cancel Invite",
       "addPersonInfo": "Enter the email address of the person you'd like to give access to. If they haven't logged-in before, they will be given an invite that will become active after they log-in.",
       "activePeople": "Active Users",
       "pendingInvites": "Pending Invites",
       "auditLog": "Audit log",
       "roles": {
         "hpc_admin": "HPC Admin",
+        "rpmAdmin": "RPM Admin",
+        "ftsAdmin": "FTS Admin",
+        "projectsAdmin": "Projects Admin",
+        "omniscient": "Omniscient",
         "swaps": "SWAPS Team Member",
         "operationLead": "Operation Lead",
         "clusterLead": "Cluster Lead"
@@ -57,10 +78,7 @@
       "auditLogRoleChange": "{actor} changed {grantee}'s role to {role}",
       "auditLogRoleRemoval": "{actor} removed {grantee}'s access",
       "noPendingInvites": "No pending invitations",
-      "noUsers": {
-        "title": "No assigned users",
-        "info": "No one has been granted access"
-      },
+      "noUsers": "No assigned users. No one has been granted access",
       "auditLogEmpty": "The audit log is empty",
       "role": "Role"
     }
@@ -69,7 +87,7 @@
     "admin": "Admin",
     "operations": "Operations",
     "clusters": "Clusters",
-    "forms": "Forms",
+    "forms": "Survey Forms",
     "settings": "Settings",
     "manageAccess": "Manage access"
   },
@@ -80,27 +98,52 @@
         "info": "We were unable to find the operation you were looking for"
       },
       "forms": {
-        "forOperations": "Operation-Wide Forms",
-        "forClusters": "Cluster Forms",
+        "forOperations": "Operation Survey Forms",
+        "forClusters": "Cluster Survey Forms",
         "unsavedChangesPrompt": "Are you sure you want to navigate away? You have unsaved changes.",
         "nav": {
           "prev": "Prev",
           "save": "Save",
+          "saveAndClose": "Save & Close",
           "next": "Next",
-          "submit": "Submit"
+          "submit": {
+            "message": "When you have completed the form, please click on the \"Submit\" button below to send it to the moderator.\nPlease note that you will not be able to edit your answers after it has been submitted, please ensure that the form is complete and correct before proceeding with the submission.",
+            "confirm": "I confirm that the form is complete and ready to be submitted",
+            "submit": "Submit"
+          }
+        },
+        "loading": {
+          "title": "Loading Form",
+          "info": "It may take a moment for the form to load, but please be patient, and don't close your browser"
+        },
+        "editability": {
+          "notSubmittedEditable": "Not Submitted: Editable",
+          "submittedNonEditable": "Submitted: Non Editable"
+        },
+        "prompts": {
+          "finished": "Thank you for completing the survey, you will be contacted if complementary information is needed.",
+          "submissionRequired": "Please remember to come back and submit your final response to the survey."
         },
         "status": {
+          "init": "Initializing Form...",
           "idle": "All changes saved",
-          "unsavedChanges": "Unsaved Changes",
+          "unsavedChanges": "This page has unsaved changes",
+          "unsavedChangesExtra": "previous pages have been saved",
           "saving": "Saving...",
           "error": "Error saving form!",
           "conflict": "Form has been modified by another person, please refresh."
         },
         "errors": {
           "conflict": "This form was modified by {person} {timeAgo} (after you loaded the page), so we can't save your changes. Please refresh your page and try again."
+        },
+        "footer": {
+          "poweredBy": "Powered by",
+          "and": "and"
         }
       },
       "clusters": {
+        "listHeader": "Clusters in this operation",
+        "settings": "Cluster Settings",
         "forms": {
           "none": {
             "title": "No forms",

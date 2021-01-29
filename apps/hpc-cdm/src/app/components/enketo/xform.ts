@@ -1,18 +1,8 @@
 import { Form } from 'enketo-core';
 import fileManager from 'enketo-core/src/js/file-manager';
 import $ from 'jquery';
-import marked from 'marked';
 
-const markedHtml = (form: string): JQuery<HTMLElement> => {
-  const html = $(form);
-  for (const selector of ['.question-label', '.question > .or-hint']) {
-    $(selector, html).each(function () {
-      const text = $(this).text().replace(/\n/g, '<br />');
-      $(this).html(marked(text));
-    });
-  }
-  return html;
-};
+import { LANGUAGE_CHOICE, LanguageKey } from '../../../i18n';
 
 export interface FormFile {
   name: string;
@@ -22,6 +12,7 @@ export interface FormFile {
 export default class XForm {
   private form: Form;
   private files: FormFile[];
+  private loading: boolean;
 
   constructor(
     html: string,
@@ -29,12 +20,13 @@ export default class XForm {
     content: string | null,
     files: FormFile[],
     opts?: {
-      editable?: boolean;
       onDataUpdate?: (event: { xform: XForm }) => void;
     }
   ) {
-    const { editable = true, onDataUpdate } = opts || {};
+    this.loading = true;
+    const { onDataUpdate } = opts || {};
     this.files = files;
+
     fileManager.getFileUrl = async (subject) => {
       if (typeof subject === 'string') {
         const file = files.filter((f) => f.name === subject);
@@ -47,30 +39,143 @@ export default class XForm {
       return window.URL.createObjectURL(subject);
     };
 
-    $('.container').replaceWith(markedHtml(html));
+    $('.container').replaceWith(html);
     const formElement = $('#form').find('form').first()[0];
     if (onDataUpdate) {
-      formElement.addEventListener('dataupdate', () =>
-        onDataUpdate({
-          xform: this,
-        })
+      formElement.addEventListener(
+        'dataupdate',
+        () => {
+          if (!this.loading) {
+            onDataUpdate({
+              xform: this,
+            });
+          }
+        },
+        { capture: true }
       );
     }
-    this.form = new Form(formElement, {
-      modelStr,
-      instanceStr: content || undefined,
-      external: undefined,
-    });
-    const errors = this.form.init();
-    if (errors && errors.length) {
-      console.error('Form Errors', JSON.stringify(errors));
-    }
 
-    if (!editable) {
-      $('#form :input:not(:button)').each(function (x) {
-        $(this).prop('disabled', true);
-      });
+    this.form = new Form(
+      formElement,
+      {
+        modelStr,
+        instanceStr: content ? content : undefined,
+        external: undefined,
+      },
+      {
+        // If the language chosen in the app is available in form, it will be used else the default language of the form
+        language: LANGUAGE_CHOICE.getLanguage(),
+      }
+    );
+  }
+
+  private changeLanguage(languages: string[], selectedLanguage?: string) {
+    const _selectedLanguage =
+      selectedLanguage || $('#form-languages').data('default-lang');
+    // set the value for the dropdown
+    $('#form-languages').val(_selectedLanguage);
+    // activate the correct language in the form
+    languages.forEach((lang) => {
+      $(`span[lang="${lang}"]`).removeClass('active');
+    });
+    $(`span[lang="${_selectedLanguage}"]`).addClass('active');
+  }
+
+  private setupLanguageUI(formLanguages: string[], selectedLanguage?: string) {
+    this.changeLanguage(formLanguages, selectedLanguage);
+    $('#form-languages').on('change', () => {
+      this.changeLanguage(formLanguages, $(this).val() as string);
+    });
+    $('#form-languages').show();
+  }
+
+  private showOrHideLanguageUI(
+    newLanguagesExistForForm: boolean,
+    selectedLanguageIsSupported: boolean,
+    formLanguages: string[],
+    selectedLanguage: string
+  ) {
+    // need to show drop down only if form is available in languages not available in the app or if selected language isn't supported
+    if (
+      (newLanguagesExistForForm || !selectedLanguageIsSupported) &&
+      formLanguages.length > 1
+    ) {
+      this.setupLanguageUI(
+        formLanguages,
+        selectedLanguageIsSupported ? selectedLanguage : undefined
+      );
+    } else {
+      $('#form-languages').hide();
+      this.changeLanguage(
+        formLanguages,
+        selectedLanguageIsSupported ? selectedLanguage : undefined
+      );
     }
+  }
+
+  async init(editable: boolean): Promise<void> {
+    return new Promise((resolve) => {
+      const t0 = performance.now();
+      const errors = this.form.init();
+      const t1 = performance.now();
+      console.log('Form initialization time: ' + (t1 - t0) + ' millis');
+      if (errors && errors.length) {
+        console.error('Form Errors', JSON.stringify(errors));
+      }
+
+      if (!editable) {
+        $('#form :input:not(:button)').each(function () {
+          $(this).prop('disabled', true);
+        });
+      }
+
+      // Disable operation selection option when operation is provided
+      $('select[name="/data/Group_IN/Group_INContact/IN_Operation"]').each(
+        function () {
+          $(this).prop('disabled', $(this).val() !== '');
+        }
+      );
+
+      const appLanguages = LANGUAGE_CHOICE.getLanguages().reduce(
+        (languageObj: Record<LanguageKey, boolean>, language) => {
+          languageObj[language.key] = true;
+          return languageObj;
+        },
+        {} as Record<LanguageKey, boolean>
+      );
+
+      const formLanguages: string[] = this.form.languages;
+      const newLanguagesExistForForm = formLanguages.some(
+        (language) => !appLanguages[language as LanguageKey]
+      );
+      console.log('formLanguages: ', formLanguages);
+      const selectedLanguage = LANGUAGE_CHOICE.getLanguage();
+      const selectedLanguageIsSupported = formLanguages.some(
+        (language) => language === selectedLanguage
+      );
+
+      this.showOrHideLanguageUI(
+        newLanguagesExistForForm,
+        selectedLanguageIsSupported,
+        formLanguages,
+        selectedLanguage
+      );
+
+      LANGUAGE_CHOICE.addListener((lang) => {
+        const _selectedLanguageIsSupported = formLanguages.some(
+          (language) => language === lang
+        );
+        this.showOrHideLanguageUI(
+          newLanguagesExistForForm,
+          _selectedLanguageIsSupported,
+          formLanguages,
+          lang
+        );
+      });
+
+      this.loading = false;
+      resolve();
+    });
   }
 
   /**
@@ -111,5 +216,18 @@ export default class XForm {
     }
 
     return { data, files };
+  }
+
+  isCurrentPageTheLastPage(): boolean {
+    const totalPages = this.form.pages.activePages.length - 1;
+    return $(this.form.pages.activePages[totalPages]).hasClass('current');
+  }
+
+  isCurrentPageTheFirstPage(): boolean {
+    return $(this.form.pages.activePages[0]).hasClass('current');
+  }
+
+  resetView(): HTMLFormElement {
+    return this.form.resetView();
   }
 }
