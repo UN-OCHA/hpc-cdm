@@ -30,6 +30,10 @@ export const DETAILED_OPERATION = t.intersection([
     reportingWindows: t.array(REPORTING_WINDOW),
     permissions: t.type({
       canModifyAccess: t.boolean,
+      /**
+       * Can modify the access and permissions of any of this operation's clusters
+       */
+      canModifyClusterAccessAndPermissions: t.boolean,
     }),
   }),
 ]);

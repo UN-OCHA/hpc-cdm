@@ -493,7 +493,20 @@ export class Dummy {
                     canModifyAccess: this.userHasAccess([
                       {
                         target: { type: 'global' },
-                        role: 'hpcadmin',
+                        role: 'hpc_admin',
+                      },
+                    ]),
+                    canModifyClusterAccessAndPermissions: this.userHasAccess([
+                      {
+                        target: { type: 'global' },
+                        role: 'hpc_admin',
+                      },
+                      {
+                        target: {
+                          type: 'operation',
+                          targetId: id,
+                        },
+                        role: 'operationLead',
                       },
                     ]),
                   },
@@ -522,7 +535,7 @@ export class Dummy {
                     canModifyAccess: this.userHasAccess([
                       {
                         target: { type: 'global' },
-                        role: 'hpcadmin',
+                        role: 'hpc_admin',
                       },
                       {
                         target: {
