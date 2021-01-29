@@ -8154,11 +8154,6 @@ input[type='checkbox']
     }
 }
 
-.enketo .question-label p {
-    display: inline;
-    margin: 0;
-}
-
 .enketo section .disabled {
     display: none !important;
 }
