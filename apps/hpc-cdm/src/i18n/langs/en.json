@@ -1,4 +1,5 @@
 {
+  "switchToThisLanguage": "Switch to English",
   "title": "HPC Coordination Description Mapping",
   "user": {
     "login": "Login",
@@ -106,7 +107,7 @@
           "saveAndClose": "Save & Close",
           "next": "Next",
           "submit": {
-            "message": "When you have completed the form, please click on the \"Submit\" button below to send it to the moderator.\nPlease note that you will not be able to edit your answers after it has been submitted, so please ensure that the form is complete and correct.",
+            "message": "When you have completed the form, please click on the \"Submit\" button below to send it to the moderator.\nPlease note that you will not be able to edit your answers after it has been submitted, please ensure that the form is complete and correct before proceeding with the submission.",
             "confirm": "I confirm that the form is complete and ready to be submitted",
             "submit": "Submit"
           }
@@ -116,7 +117,7 @@
           "submittedNonEditable": "Submitted: Non Editable"
         },
         "prompts": {
-          "finished": "Thank you for completing the survey, you will be contacted if there is anything more for you to do.",
+          "finished": "Thank you for completing the survey, you will be contacted if complementary information is needed.",
           "submissionRequired": "Please remember to come back and submit your final response to the survey."
         },
         "status": {
