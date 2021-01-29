@@ -10,6 +10,7 @@ import * as paths from '../paths';
 
 import PageOperationClusterForms from './operation-cluster-forms';
 import PageOperationClusterSettings from './operation-cluster-settings';
+import PageMeta from '../components/page-meta';
 
 interface Props {
   className?: string;
@@ -26,6 +27,7 @@ const PageOperationCluster = (props: Props) => {
     <AppContext.Consumer>
       {({ lang }) => (
         <div className={props.className}>
+          <PageMeta title={[cluster.name, operation.name]} />
           <Switch>
             <Route
               exact

@@ -10,6 +10,7 @@ import * as paths from '../paths';
 
 import OperationFormAssignmentsList from '../components/operation-form-assignments-list';
 import FormAssignmentData from '../components/form-assignment-data';
+import PageMeta from '../components/page-meta';
 
 interface Props {
   className?: string;
@@ -46,11 +47,22 @@ const PageOperationFormAssignments = (props: Props) => {
                 return (
                   <FormAssignmentData
                     header={(assignment) => (
-                      <C.PageTitle>
-                        {assignment.assignee.type === 'operation'
-                          ? assignment.task.form.name
-                          : `${assignment.assignee.clusterName}: ${assignment.task.form.name}`}
-                      </C.PageTitle>
+                      <>
+                        <PageMeta
+                          title={[
+                            assignment.task.form.name,
+                            ...(assignment.assignee.type === 'operationCluster'
+                              ? [assignment.assignee.clusterName]
+                              : []),
+                            operation.name,
+                          ]}
+                        />
+                        <C.PageTitle>
+                          {assignment.assignee.type === 'operation'
+                            ? assignment.task.form.name
+                            : `${assignment.assignee.clusterName}: ${assignment.task.form.name}`}
+                        </C.PageTitle>
+                      </>
                     )}
                     {...{ window, assignmentId }}
                   />

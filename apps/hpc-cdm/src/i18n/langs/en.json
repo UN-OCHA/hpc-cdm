@@ -1,6 +1,6 @@
 {
   "switchToThisLanguage": "Switch to English",
-  "title": "HPC Coordination Description Mapping",
+  "title": "HPC CDM",
   "user": {
     "login": "Login",
     "logout": "Logout"
@@ -111,6 +111,10 @@
             "confirm": "I confirm that the form is complete and ready to be submitted",
             "submit": "Submit"
           }
+        },
+        "loading": {
+          "title": "Loading Form",
+          "info": "It may take a moment for the form to load, but please be patient, and don't close your browser"
         },
         "editability": {
           "notSubmittedEditable": "Not Submitted: Editable",

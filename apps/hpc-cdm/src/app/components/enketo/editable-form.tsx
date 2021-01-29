@@ -68,6 +68,19 @@ const StatusDetails = styled.div`
   }
 `;
 
+const LoadingMessage = styled.div`
+  margin: 0 ${(p) => p.theme.marginPx.md};
+  text-align: center;
+
+  h3 {
+    font-size: 2.5rem;
+  }
+
+  p {
+    font-size: 2rem;
+  }
+`;
+
 type Status =
   | {
       type: 'idle';
@@ -266,6 +279,19 @@ export const EnketoEditableForm = (props: Props) => {
               setFormTouched(false);
               setStatus({ type: 'idle' });
               if (redirect) {
+                if (finalized) {
+                  alert(
+                    t.t(lang, (s) => s.routes.operations.forms.prompts.finished)
+                  );
+                } else {
+                  alert(
+                    t.t(
+                      lang,
+                      (s) =>
+                        s.routes.operations.forms.prompts.submissionRequired
+                    )
+                  );
+                }
                 history.goBack();
               }
             })
@@ -292,6 +318,11 @@ export const EnketoEditableForm = (props: Props) => {
             });
         }
       });
+    } else if (redirect) {
+      alert(
+        t.t(lang, (s) => s.routes.operations.forms.prompts.submissionRequired)
+      );
+      history.goBack();
     }
   };
 
@@ -413,6 +444,12 @@ export const EnketoEditableForm = (props: Props) => {
         <div className={CLASSES.FLEX.GROW} />
         {indicator()}
       </C.Toolbar>
+      {loading && (
+        <LoadingMessage>
+          <h3>{t.t(lang, (s) => s.routes.operations.forms.loading.title)}</h3>
+          <p>{t.t(lang, (s) => s.routes.operations.forms.loading.info)}</p>
+        </LoadingMessage>
+      )}
       <div className="enketo" id="form" onClick={captureLinkClicks}>
         <div className="main" style={{ display: loading ? 'none' : 'block' }}>
           <div className="container pages"></div>
@@ -432,6 +469,18 @@ export const EnketoEditableForm = (props: Props) => {
                     style={{ display: 'inline-block' }}
                   >
                     {t.t(lang, (s) => s.routes.operations.forms.nav.save)}
+                  </button>
+                )}
+                {editable && lastPage && (
+                  <button
+                    onClick={() => saveForm(true)}
+                    className="btn btn-default"
+                    style={{ display: 'inline-block' }}
+                  >
+                    {t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.nav.saveAndClose
+                    )}
                   </button>
                 )}
                 <button

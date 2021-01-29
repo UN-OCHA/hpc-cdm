@@ -6,6 +6,7 @@ import { CLASSES, C, combineClasses, styled, dataLoader } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
 import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
+import PageMeta from '../components/page-meta';
 
 interface Props {
   className?: string;
@@ -23,6 +24,7 @@ export default (props: Props) => {
             props.className
           )}
         >
+          <PageMeta title={[t.t(lang, (s) => s.navigation.operations)]} />
           <C.Loader
             loader={loader}
             strings={{
