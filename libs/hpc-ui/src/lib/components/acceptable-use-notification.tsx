@@ -21,6 +21,11 @@ interface Props {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+
+  h2,
+  p {
+    margin: 1em 0 0;
+  }
 `;
 
 const Actions = styled.div`

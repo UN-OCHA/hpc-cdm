@@ -1,4 +1,5 @@
 {
+  "switchToThisLanguage": "Switch to English",
   "title": "HPC Coordination Description Mapping",
   "user": {
     "login": "Login",
@@ -9,7 +10,7 @@
     "userErrors": {
       "access.userAlreadyInvited": "That user has already been invited, they must log-in to get access",
       "access.userAlreadyAdded": "That user has already been given access",
-      "assignment.alreadyFinalized": "The assignment has been finalised"
+      "assignment.alreadyFinalized": "The assignment has already been finalised"
     }
   },
   "common": {
@@ -17,7 +18,6 @@
     "saving": "Saving...",
     "add": "Add",
     "emailAddress": "E-Mail address",
-    "nonEditable": "Non Editable",
     "validation": {
       "missing": "Please enter {field}"
     },
@@ -52,7 +52,7 @@
     },
     "unsupportedBrowser": {
       "title": "Unsupported Browser!",
-      "info": "Unfortunately your current browser is not supported. Please switch to either Firefox or Google Chrome. To do this, simply copy the form address (URL) above, then open Firefox or Chrome, and paste the address into the browser."
+      "info": "Unfortunately, your current browser is not supported. Please switch to either Firefox, Google Chrome or Edge. To do this, simply copy the form address (URL) above, then open Firefox, Chrome or Edge, and paste the address into the browser."
     },
     "accessControl": {
       "addPerson": "Add User",
@@ -104,17 +104,27 @@
         "nav": {
           "prev": "Prev",
           "save": "Save",
+          "saveAndClose": "Save & Close",
           "next": "Next",
           "submit": {
-            "message": "When you have completed the form, please click on the \"Submit\" button below to send it to the moderator.\nPlease note that you will not be able to edit your answers after it has been submitted, so please ensure that the form is complete and correct.",
+            "message": "When you have completed the form, please click on the \"Submit\" button below to send it to the moderator.\nPlease note that you will not be able to edit your answers after it has been submitted, please ensure that the form is complete and correct before proceeding with the submission.",
             "confirm": "I confirm that the form is complete and ready to be submitted",
             "submit": "Submit"
           }
         },
+        "editability": {
+          "notSubmittedEditable": "Not Submitted: Editable",
+          "submittedNonEditable": "Submitted: Non Editable"
+        },
+        "prompts": {
+          "finished": "Thank you for completing the survey, you will be contacted if complementary information is needed.",
+          "submissionRequired": "Please remember to come back and submit your final response to the survey."
+        },
         "status": {
           "init": "Initializing Form...",
           "idle": "All changes saved",
-          "unsavedChanges": "Unsaved Changes",
+          "unsavedChanges": "This page has unsaved changes",
+          "unsavedChangesExtra": "previous pages have been saved",
           "saving": "Saving...",
           "error": "Error saving form!",
           "conflict": "Form has been modified by another person, please refresh."

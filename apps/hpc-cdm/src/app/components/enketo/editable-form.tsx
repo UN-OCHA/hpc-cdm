@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { reportingWindows, errors } from '@unocha/hpc-data';
 import { C, CLASSES, styled } from '@unocha/hpc-ui';
 import { Tooltip, CircularProgress } from '@material-ui/core';
-import { MdWarning } from 'react-icons/md';
+import { MdWarning, MdLock, MdLockOpen } from 'react-icons/md';
 import dayjs from '../../../libraries/dayjs';
 
 import XForm from './xform';
@@ -15,12 +15,44 @@ import PoweredByFooter from './powered-by-footer';
 
 const StatusTooltip = Tooltip;
 
+const NotSubmitted = styled.span`
+  color: ${(p) => p.theme.colors.pallete.blue.dark2};
+`;
+
+const UnsavedChanges = styled.span`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: ${(p) => p.theme.colors.text};
+  font-weight: bold;
+
+  > span {
+    color: ${(p) => p.theme.colors.textLight};
+    font-weight: normal;
+
+    &::before {
+      content: '( ';
+    }
+
+    &::after {
+      content: ' )';
+    }
+  }
+`;
+
 const StatusLabel = styled.div`
   display: flex;
   align-items: center;
+  height: 50px;
 
   > span {
     margin: 0 ${(p) => p.theme.marginPx.md}px;
+    display: flex;
+    align-items: end;
+
+    > svg {
+      margin: 0 ${(p) => p.theme.marginPx.sm}px;
+    }
   }
 
   > svg.error {
@@ -29,7 +61,7 @@ const StatusLabel = styled.div`
 `;
 
 const StatusDetails = styled.div`
-  font-size: 0.8rem;
+  font-size: 1.2rem;
 
   > .error {
     color: ${(p) => p.theme.colors.textErrorLight};
@@ -295,34 +327,85 @@ export const EnketoEditableForm = (props: Props) => {
             </span>
             <CircularProgress size={20} />
           </>
-        ) : !editable ? (
-          t.t(lang, (s) => s.common.nonEditable)
-        ) : status.type === 'idle' ? (
-          t.t(
-            lang,
-            (s) =>
-              s.routes.operations.forms.status[
-                formTouched ? 'unsavedChanges' : 'idle'
-              ]
-          )
-        ) : status.type === 'saving' ? (
-          <>
-            <span>
-              {t.t(lang, (s) => s.routes.operations.forms.status[status.type])}
-            </span>
-            <CircularProgress size={20} />
-          </>
         ) : (
           <>
-            <span>
-              {t.t(lang, (s) => s.routes.operations.forms.status[status.type])}
-            </span>
-            <MdWarning className="error" size={20} />
+            {!editable ? (
+              <span>
+                <MdLock size={20} />
+                {t.t(
+                  lang,
+                  (s) =>
+                    s.routes.operations.forms.editability.submittedNonEditable
+                )}
+              </span>
+            ) : (
+              <NotSubmitted>
+                <MdLockOpen size={20} />
+                {t.t(
+                  lang,
+                  (s) =>
+                    s.routes.operations.forms.editability.notSubmittedEditable
+                )}
+              </NotSubmitted>
+            )}
+            {editable && (
+              <span>
+                {status.type === 'idle' ? (
+                  formTouched ? (
+                    <UnsavedChanges>
+                      {t.t(
+                        lang,
+                        (s) => s.routes.operations.forms.status.unsavedChanges
+                      )}
+                      <span>
+                        {t.t(
+                          lang,
+                          (s) =>
+                            s.routes.operations.forms.status.unsavedChangesExtra
+                        )}
+                      </span>
+                    </UnsavedChanges>
+                  ) : (
+                    t.t(lang, (s) => s.routes.operations.forms.status.idle)
+                  )
+                ) : status.type === 'saving' ? (
+                  <>
+                    <span>
+                      {t.t(
+                        lang,
+                        (s) => s.routes.operations.forms.status[status.type]
+                      )}
+                    </span>
+                    <CircularProgress size={20} />
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      {t.t(
+                        lang,
+                        (s) => s.routes.operations.forms.status[status.type]
+                      )}
+                    </span>
+                    <MdWarning className="error" size={20} />
+                  </>
+                )}
+              </span>
+            )}
           </>
         )}
       </StatusLabel>
     </StatusTooltip>
   );
+
+  /**
+   * Ensure that all link clicks open in a new tab
+   */
+  const captureLinkClicks = (e: React.MouseEvent<HTMLElement>) => {
+    if (e.target instanceof HTMLAnchorElement && e.target.href) {
+      e.target.target = '_blank';
+      e.target.rel = 'noopener noreferrer';
+    }
+  };
 
   return (
     <div>
@@ -330,7 +413,7 @@ export const EnketoEditableForm = (props: Props) => {
         <div className={CLASSES.FLEX.GROW} />
         {indicator()}
       </C.Toolbar>
-      <div className="enketo" id="form">
+      <div className="enketo" id="form" onClick={captureLinkClicks}>
         <div className="main" style={{ display: loading ? 'none' : 'block' }}>
           <div className="container pages"></div>
           <section className="form-footer end">
