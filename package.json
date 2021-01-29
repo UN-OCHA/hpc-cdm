@@ -42,7 +42,6 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@types/jquery": "^3.5.1",
-    "@types/marked": "^1.1.0",
     "@types/react-helmet": "^6.1.0",
     "bowser": "^2.11.0",
     "dayjs": "^1.9.1",
@@ -53,7 +52,6 @@
     "fp-ts": "^2.7.1",
     "intl-list-format": "^1.0.3",
     "io-ts": "^2.2.9",
-    "marked": "^1.1.1",
     "oidc-client": "^1.10.1",
     "pm2": "^4.4.0",
     "react": "16.13.1",

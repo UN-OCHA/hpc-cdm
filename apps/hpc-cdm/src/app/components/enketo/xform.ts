@@ -1,38 +1,8 @@
 import { Form } from 'enketo-core';
 import fileManager from 'enketo-core/src/js/file-manager';
 import $ from 'jquery';
-import marked from 'marked';
 
 import { LANGUAGE_CHOICE, LanguageKey } from '../../../i18n';
-
-const markedHtml = (
-  form: string,
-  titlePrefix?: string
-): JQuery<HTMLElement> => {
-  const html = $(form);
-
-  for (const selector of ['.question-label', '.question > .or-hint']) {
-    $(selector, html).each(function () {
-      const text = $(this).text().replace(/\n/g, '<br />');
-      $(this).html(marked(text));
-    });
-  }
-
-  if (titlePrefix) {
-    const title = $('h3#form-title', html);
-    title.text(`${titlePrefix}: ${title.text()}`);
-  }
-
-  // operation selection must be visible in order for
-  // locations/sublocations to have available options
-  $('[name="/data/Group_IN/Group_INContact/IN_Operation"]', html).each(
-    function () {
-      $(this).attr('data-relevant', 'true()');
-    }
-  );
-
-  return html;
-};
 
 export interface FormFile {
   name: string;
@@ -50,12 +20,11 @@ export default class XForm {
     content: string | null,
     files: FormFile[],
     opts?: {
-      titlePrefix?: string;
       onDataUpdate?: (event: { xform: XForm }) => void;
     }
   ) {
     this.loading = true;
-    const { titlePrefix, onDataUpdate } = opts || {};
+    const { onDataUpdate } = opts || {};
     this.files = files;
 
     fileManager.getFileUrl = async (subject) => {
@@ -70,7 +39,7 @@ export default class XForm {
       return window.URL.createObjectURL(subject);
     };
 
-    $('.container').replaceWith(markedHtml(html, titlePrefix));
+    $('.container').replaceWith(html);
     const formElement = $('#form').find('form').first()[0];
     if (onDataUpdate) {
       formElement.addEventListener(
