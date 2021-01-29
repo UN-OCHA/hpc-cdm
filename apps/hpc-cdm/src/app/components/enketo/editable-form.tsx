@@ -68,6 +68,19 @@ const StatusDetails = styled.div`
   }
 `;
 
+const LoadingMessage = styled.div`
+  margin: 0 ${(p) => p.theme.marginPx.md};
+  text-align: center;
+
+  h3 {
+    font-size: 2.5rem;
+  }
+
+  p {
+    font-size: 2rem;
+  }
+`;
+
 type Status =
   | {
       type: 'idle';
@@ -431,6 +444,12 @@ export const EnketoEditableForm = (props: Props) => {
         <div className={CLASSES.FLEX.GROW} />
         {indicator()}
       </C.Toolbar>
+      {loading && (
+        <LoadingMessage>
+          <h3>{t.t(lang, (s) => s.routes.operations.forms.loading.title)}</h3>
+          <p>{t.t(lang, (s) => s.routes.operations.forms.loading.info)}</p>
+        </LoadingMessage>
+      )}
       <div className="enketo" id="form" onClick={captureLinkClicks}>
         <div className="main" style={{ display: loading ? 'none' : 'block' }}>
           <div className="container pages"></div>

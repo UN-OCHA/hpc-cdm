@@ -112,6 +112,10 @@
             "submit": "Submit"
           }
         },
+        "loading": {
+          "title": "Loading Form",
+          "info": "It may take a moment for the form to load, but please be patient, and don't close your browser"
+        },
         "editability": {
           "notSubmittedEditable": "Not Submitted: Editable",
           "submittedNonEditable": "Submitted: Non Editable"

@@ -112,6 +112,10 @@
             "submit": "Soumettre"
           }
         },
+        "loading": {
+          "title": "Chargement du formulaire en cours",
+          "info": "Le chargement pourrait durer un certain temps. Merci de patienter et ne pas fermer le navigateur."
+        },
         "editability": {
           "notSubmittedEditable": "Non envoyé: modifiable",
           "submittedNonEditable": "Envoyé: non modifiable"
