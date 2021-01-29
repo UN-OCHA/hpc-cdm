@@ -15,8 +15,11 @@ const LANGUAGES = {
   fr,
 };
 
-export const LANGUAGE_CHOICE = new i18n.LanguageChoice(LANGUAGES, 'en');
-
 export type LanguageKey = keyof typeof LANGUAGES;
+
+export const LANGUAGE_CHOICE = new i18n.LanguageChoice<LanguageKey>(
+  LANGUAGES,
+  'en'
+);
 
 export const t = new i18n.Translations(LANGUAGES);
