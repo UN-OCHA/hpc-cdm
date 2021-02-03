@@ -242,12 +242,7 @@ export default class XForm {
   getPageInfo(): PageInfo {
     const pages = this.form.pages.activePages;
     const totalPages = pages.length;
-    let currentPage: null | number = null;
-    for (let i = 0; i < pages.length; i++) {
-      if (pages[i] === this.form.pages.current) {
-        currentPage = i;
-      }
-    }
+    const currentPage = this.form.pages._getCurrentIndex();
 
     return {
       totalPages,
@@ -258,5 +253,23 @@ export default class XForm {
 
   resetView(): HTMLFormElement {
     return this.form.resetView();
+  }
+
+  validateCurrentPage() {
+    const currentPage = this.form.pages._getCurrentIndex();
+    return this.form.validateContent($(this.form.pages.current));
+  }
+
+  validateEverything() {
+    return this.form.validateAll();
+  }
+
+  goToNextPage() {
+    const currentPage = this.form.pages._getCurrentIndex();
+    const nextIndex = currentPage + 1;
+    const next = this.form.pages.activePages[nextIndex];
+    if (next) {
+      this.form.pages._flipTo(next, nextIndex);
+    }
   }
 }

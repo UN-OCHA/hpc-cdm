@@ -2,7 +2,16 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { reportingWindows, errors } from '@unocha/hpc-data';
 import { C, CLASSES, styled } from '@unocha/hpc-ui';
-import { Tooltip, CircularProgress } from '@material-ui/core';
+import {
+  Tooltip,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from '@material-ui/core';
 import { MdWarning, MdLock, MdLockOpen } from 'react-icons/md';
 import dayjs from '../../../libraries/dayjs';
 
@@ -120,6 +129,13 @@ export const EnketoEditableForm = (props: Props) => {
   ] = useState<reportingWindows.GetAssignmentResult | null>(null);
   const [status, setStatus] = useState<Status>({ type: 'idle' });
   const [editable, setEditable] = useState(true);
+  const [showValidationConfirmation, setShowValidationConfirmation] = useState(
+    false
+  );
+  const [
+    showInvalidSubmissionMessage,
+    setShowInvalidSubmissionMessage,
+  ] = useState(false);
   const history = useHistory();
   const { lang } = useContext(AppContext);
 
@@ -184,6 +200,7 @@ export const EnketoEditableForm = (props: Props) => {
           setEditable(editable);
           setUpdatedAssignment(null);
           setLoading(false);
+          setPageInfo(xform.getPageInfo());
         }
       });
     });
@@ -218,8 +235,53 @@ export const EnketoEditableForm = (props: Props) => {
     }
   }, [xform, formTouched, history, lang]);
 
+  const handleNext = async () => {
+    if (xform) {
+      if (editable) {
+        const valid = await xform.validateCurrentPage();
+        if (valid) {
+          xform.goToNextPage();
+        } else {
+          setShowValidationConfirmation(true);
+        }
+      } else {
+        xform.goToNextPage();
+      }
+    }
+    // Save form after advancing to the next page
+    setTimeout(() => saveForm(), 0);
+  };
+
+  const closeValidationMessage = () => {
+    setShowValidationConfirmation(false);
+  };
+
+  const forceNextPage = () => {
+    if (xform) {
+      xform.goToNextPage();
+      setShowValidationConfirmation(false);
+    }
+  };
+
+  const closeInvalidSubmissionMessage = () => {
+    setShowInvalidSubmissionMessage(false);
+  };
+
   const saveForm = async (redirect = false, finalized = false) => {
     if (xform && (formTouched || finalized)) {
+      // If the user is trying to finalize (submit) the form
+      // Ensure the entire form is valid
+      if (finalized) {
+        const valid = await xform.validateEverything();
+        if (!valid) {
+          // If the form is invalid, we don't want to submit it
+          // But we can still save it.
+          saveForm();
+          setShowInvalidSubmissionMessage(true);
+          return;
+        }
+      }
+
       setStatus({ type: 'saving' });
       setTimeout(async () => {
         const t0 = performance.now();
@@ -467,21 +529,82 @@ export const EnketoEditableForm = (props: Props) => {
                     )}
                   </button>
                 )}
-                <button
-                  onMouseDown={() => {
-                    if (editable) {
-                      saveForm();
-                    }
-                  }}
-                  className="btn btn-primary next-page disabled"
-                >
-                  {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
-                </button>
+                {!pageInfo?.isLastPage && (
+                  <button onClick={handleNext} className="btn btn-primary">
+                    {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
+                  </button>
+                )}
                 {editable && pageInfo?.isLastPage && (
                   <SubmitButton saveForm={saveForm} />
                 )}
               </div>
             </div>
+            <Dialog
+              open={showValidationConfirmation}
+              onClose={closeValidationMessage}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {t.t(lang, (s) => s.routes.operations.forms.invalidData.title)}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  {t.t(
+                    lang,
+                    (s) =>
+                      s.routes.operations.forms.invalidData.infoOnNavigation
+                  )}
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  variant="contained"
+                  onClick={closeValidationMessage}
+                  color="primary"
+                  autoFocus
+                >
+                  {t.t(
+                    lang,
+                    (s) => s.routes.operations.forms.invalidData.fixNow
+                  )}
+                </Button>
+                <Button onClick={forceNextPage} color="primary">
+                  {t.t(
+                    lang,
+                    (s) => s.routes.operations.forms.invalidData.fixLater
+                  )}
+                </Button>
+              </DialogActions>
+            </Dialog>
+            <Dialog
+              open={showInvalidSubmissionMessage}
+              onClose={closeInvalidSubmissionMessage}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {t.t(lang, (s) => s.routes.operations.forms.invalidData.title)}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  {t.t(
+                    lang,
+                    (s) => s.routes.operations.forms.invalidData.infoOnSubmit
+                  )}
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  variant="contained"
+                  onClick={closeInvalidSubmissionMessage}
+                  color="primary"
+                  autoFocus
+                >
+                  {t.t(lang, (s) => s.routes.operations.forms.invalidData.okay)}
+                </Button>
+              </DialogActions>
+            </Dialog>
             <PoweredByFooter />
           </section>
         </div>

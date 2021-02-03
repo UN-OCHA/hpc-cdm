@@ -19,13 +19,19 @@ declare module 'enketo-core' {
 
     pages: {
       active: boolean;
-      activePages: Element[];
-      current: Element;
+      activePages: HTMLElement[];
+      current: HTMLElement;
+      _getCurrentIndex(): number;
+      _flipTo(page: HTMLElement, inxes: number);
     };
 
     get languages(): string[];
 
     resetView(): HTMLFormElement;
+
+    validateContent(page: JQuery): Promise<boolean>;
+
+    validateAll(): Promise<boolean>;
   }
 }
 

@@ -1012,7 +1012,6 @@
     margin-bottom: 50px;
 }
 
-.enketo .pages ~ .form-footer .btn,
 .enketo .pages ~ .form-footer .vex.vex-theme-plain .vex-dialog-button,
 .enketo .vex.vex-theme-plain .pages ~ .form-footer .vex-dialog-button {
     display: none;

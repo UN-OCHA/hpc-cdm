@@ -124,6 +124,14 @@
           "finished": "Thank you for completing the survey, you will be contacted if complementary information is needed.",
           "submissionRequired": "Please remember to come back and submit your final response to the survey."
         },
+        "invalidData": {
+          "title": "Invalid information entered",
+          "infoOnNavigation": "There are some issues with the information you have entered on this page. You can fix this now, or continue with the rest of the form, and come back later.",
+          "fixNow": "Fix Now",
+          "fixLater": "Continue Anyway",
+          "infoOnSubmit": "There are some issues with the information you have entered. You must go back and fix them before you can submit the form.",
+          "okay": ""
+        },
         "status": {
           "init": "Initializing Form...",
           "idle": "All changes saved",
