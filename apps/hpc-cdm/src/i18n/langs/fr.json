@@ -86,7 +86,7 @@
   "navigation": {
     "admin": "Admin",
     "operations": "Opérations",
-    "clusters": "Clusters",
+    "clusters": "Clusters/Secteurs",
     "forms": "Formulaires",
     "settings": "Réglages",
     "manageAccess": "Gérer l'accès"
@@ -99,7 +99,7 @@
       },
       "forms": {
         "forOperations": "Formulaires à l'échelle de l'opération",
-        "forClusters": "Formulaires de cluster",
+        "forClusters": "Formulaires de cluster/secteur",
         "unsavedChangesPrompt": "Êtes-vous sûr de vouloir naviguer ailleurs ? Vous avez des changements non enregistrés.",
         "nav": {
           "prev": "Précédent",
