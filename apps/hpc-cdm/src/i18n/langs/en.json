@@ -147,7 +147,8 @@
         "footer": {
           "poweredBy": "Powered by",
           "and": "and"
-        }
+        },
+        "pageIndicator": "Page {page,number} of {count,number}"
       },
       "clusters": {
         "listHeader": "Clusters in this operation",

@@ -139,7 +139,8 @@
         "footer": {
           "poweredBy": "Conçu avec",
           "and": "et"
-        }
+        },
+        "pageIndicator": "Page {page,number} sur {count,number}"
       },
       "clusters": {
         "listHeader": "Clusters dans cette opération",

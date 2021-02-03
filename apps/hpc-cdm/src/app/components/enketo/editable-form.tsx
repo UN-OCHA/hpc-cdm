@@ -90,6 +90,12 @@ const LoadingMessage = styled.div`
   }
 `;
 
+const PageIndicator = styled.div`
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: ${(p) => p.theme.marginPx.md}px;
+`;
+
 type Status =
   | {
       type: 'idle';
@@ -487,6 +493,15 @@ export const EnketoEditableForm = (props: Props) => {
     }
   };
 
+  const pageIndicator = pageInfo && (
+    <PageIndicator>
+      {t.t(lang, (s) => s.routes.operations.forms.pageIndicator, {
+        page: (pageInfo.currentPage || 0) + 1,
+        count: pageInfo.totalPages,
+      })}
+    </PageIndicator>
+  );
+
   return (
     <div>
       <C.Toolbar>
@@ -500,10 +515,12 @@ export const EnketoEditableForm = (props: Props) => {
         </LoadingMessage>
       )}
       <div className="enketo" id="form" onClick={captureLinkClicks}>
+        {pageIndicator}
         <div className="main" style={{ display: loading ? 'none' : 'block' }}>
           <div className="container pages"></div>
           <section className="form-footer end">
             <div className="form-footer__content">
+              {pageIndicator}
               <div className="form-footer__content__main-controls">
                 <button className="btn btn-default previous-page disabled">
                   {t.t(lang, (s) => s.routes.operations.forms.nav.prev)}
