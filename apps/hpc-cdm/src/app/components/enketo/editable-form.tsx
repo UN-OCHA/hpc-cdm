@@ -6,7 +6,7 @@ import { Tooltip, CircularProgress } from '@material-ui/core';
 import { MdWarning, MdLock, MdLockOpen } from 'react-icons/md';
 import dayjs from '../../../libraries/dayjs';
 
-import XForm from './xform';
+import XForm, { PageInfo } from './xform';
 import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
 import SubmitButton from './submit-button';
@@ -111,9 +111,8 @@ export const EnketoEditableForm = (props: Props) => {
 
   const [loading, setLoading] = useState(true);
   const [xform, setXform] = useState<XForm | null>(null);
-  const [lastPage, setLastPage] = useState(false);
+  const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
-  const [lastChangedData, setLastChangedData] = useState<string | null>(null);
   const [formTouched, setFormTouched] = useState(false);
   const [
     updatedAssignment,
@@ -171,6 +170,9 @@ export const EnketoEditableForm = (props: Props) => {
       onDataUpdate: ({ xform }) => {
         setFormTouched(true);
       },
+      onPageFlip: ({ xform }) => {
+        setPageInfo(xform.getPageInfo());
+      },
     });
     const timer = setTimeout(() => {
       // Long running process, it could take up to 20 seconds
@@ -216,28 +218,6 @@ export const EnketoEditableForm = (props: Props) => {
     }
   }, [xform, formTouched, history, lang]);
 
-  useEffect(() => {
-    if (!loading && status.type !== 'saving') {
-      let msg = t.t(lang, (s) => s.routes.operations.forms.status[status.type]);
-      if (status.type === 'error') {
-        toast.error(`${msg} ${status.message}`, {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-      } else if (status.type === 'conflict') {
-        const timeAgo = dayjs(status.timestamp).locale(lang);
-        msg = t
-          .t(lang, (s) => s.routes.operations.forms.errors.conflict)
-          .replace('{timeAgo}', timeAgo.fromNow())
-          .replace('{person}', status.otherPerson);
-        toast.error(msg, { position: toast.POSITION.TOP_RIGHT });
-      } else {
-        if (!xform?.isCurrentPageTheFirstPage()) {
-          toast.success(msg, { position: toast.POSITION.TOP_RIGHT });
-        }
-      }
-    }
-  }, [loading, status]);
-
   const saveForm = async (redirect = false, finalized = false) => {
     if (xform && (formTouched || finalized)) {
       setStatus({ type: 'saving' });
@@ -277,6 +257,11 @@ export const EnketoEditableForm = (props: Props) => {
               setUpdatedAssignment(assignment);
               setFormTouched(false);
               setStatus({ type: 'idle' });
+              const msg = t.t(
+                lang,
+                (s) => s.routes.operations.forms.status.idle
+              );
+              toast.success(msg, { position: toast.POSITION.TOP_RIGHT });
               if (redirect) {
                 if (finalized) {
                   alert(
@@ -308,10 +293,22 @@ export const EnketoEditableForm = (props: Props) => {
                   timestamp: err.timestamp,
                   otherPerson: err.otherUser,
                 });
+                const msg = t
+                  .t(lang, (s) => s.routes.operations.forms.errors.conflict)
+                  .replace('{timeAgo}', timeAgo.fromNow())
+                  .replace('{person}', err.otherUser);
+                toast.error(msg, { position: toast.POSITION.TOP_RIGHT });
               } else {
                 setStatus({
                   type: 'error',
                   message: err.message || err.toString(),
+                });
+                const msg = t.t(
+                  lang,
+                  (s) => s.routes.operations.forms.status.error
+                );
+                toast.error(`${msg} ${err.message || err.toString()}`, {
+                  position: toast.POSITION.TOP_RIGHT,
                 });
               }
             });
@@ -322,15 +319,6 @@ export const EnketoEditableForm = (props: Props) => {
         t.t(lang, (s) => s.routes.operations.forms.prompts.submissionRequired)
       );
       history.goBack();
-    }
-  };
-
-  const handleNext = () => {
-    if (xform) {
-      // Allow enketo to flip the page
-      setTimeout(() => {
-        setLastPage(xform.isCurrentPageTheLastPage());
-      }, 200);
     }
   };
 
@@ -455,10 +443,7 @@ export const EnketoEditableForm = (props: Props) => {
           <section className="form-footer end">
             <div className="form-footer__content">
               <div className="form-footer__content__main-controls">
-                <button
-                  onMouseDown={() => setLastPage(false)}
-                  className="btn btn-default previous-page disabled"
-                >
+                <button className="btn btn-default previous-page disabled">
                   {t.t(lang, (s) => s.routes.operations.forms.nav.prev)}
                 </button>
                 {editable && (
@@ -470,7 +455,7 @@ export const EnketoEditableForm = (props: Props) => {
                     {t.t(lang, (s) => s.routes.operations.forms.nav.save)}
                   </button>
                 )}
-                {editable && lastPage && (
+                {editable && pageInfo?.isLastPage && (
                   <button
                     onClick={() => saveForm(true)}
                     className="btn btn-default"
@@ -486,14 +471,15 @@ export const EnketoEditableForm = (props: Props) => {
                   onMouseDown={() => {
                     if (editable) {
                       saveForm();
-                      handleNext();
                     }
                   }}
                   className="btn btn-primary next-page disabled"
                 >
                   {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
                 </button>
-                {editable && lastPage && <SubmitButton saveForm={saveForm} />}
+                {editable && pageInfo?.isLastPage && (
+                  <SubmitButton saveForm={saveForm} />
+                )}
               </div>
             </div>
             <PoweredByFooter />

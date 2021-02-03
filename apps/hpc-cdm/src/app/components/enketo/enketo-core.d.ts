@@ -19,8 +19,8 @@ declare module 'enketo-core' {
 
     pages: {
       active: boolean;
-      activePages: string[];
-      current: string;
+      activePages: Element[];
+      current: Element;
     };
 
     get languages(): string[];
