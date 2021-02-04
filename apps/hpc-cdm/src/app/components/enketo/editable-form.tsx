@@ -2,11 +2,20 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { reportingWindows, errors } from '@unocha/hpc-data';
 import { C, CLASSES, styled } from '@unocha/hpc-ui';
-import { Tooltip, CircularProgress } from '@material-ui/core';
+import {
+  Tooltip,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from '@material-ui/core';
 import { MdWarning, MdLock, MdLockOpen } from 'react-icons/md';
 import dayjs from '../../../libraries/dayjs';
 
-import XForm from './xform';
+import XForm, { PageInfo } from './xform';
 import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
 import SubmitButton from './submit-button';
@@ -81,6 +90,12 @@ const LoadingMessage = styled.div`
   }
 `;
 
+const PageIndicator = styled.div`
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: ${(p) => p.theme.marginPx.md}px;
+`;
+
 type Status =
   | {
       type: 'idle';
@@ -111,9 +126,8 @@ export const EnketoEditableForm = (props: Props) => {
 
   const [loading, setLoading] = useState(true);
   const [xform, setXform] = useState<XForm | null>(null);
-  const [lastPage, setLastPage] = useState(false);
+  const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
-  const [lastChangedData, setLastChangedData] = useState<string | null>(null);
   const [formTouched, setFormTouched] = useState(false);
   const [
     updatedAssignment,
@@ -121,6 +135,13 @@ export const EnketoEditableForm = (props: Props) => {
   ] = useState<reportingWindows.GetAssignmentResult | null>(null);
   const [status, setStatus] = useState<Status>({ type: 'idle' });
   const [editable, setEditable] = useState(true);
+  const [showValidationConfirmation, setShowValidationConfirmation] = useState(
+    false
+  );
+  const [
+    showInvalidSubmissionMessage,
+    setShowInvalidSubmissionMessage,
+  ] = useState(false);
   const history = useHistory();
   const { lang } = useContext(AppContext);
 
@@ -171,6 +192,9 @@ export const EnketoEditableForm = (props: Props) => {
       onDataUpdate: ({ xform }) => {
         setFormTouched(true);
       },
+      onPageFlip: ({ xform }) => {
+        setPageInfo(xform.getPageInfo());
+      },
     });
     const timer = setTimeout(() => {
       // Long running process, it could take up to 20 seconds
@@ -182,6 +206,7 @@ export const EnketoEditableForm = (props: Props) => {
           setEditable(editable);
           setUpdatedAssignment(null);
           setLoading(false);
+          setPageInfo(xform.getPageInfo());
         }
       });
     });
@@ -216,30 +241,53 @@ export const EnketoEditableForm = (props: Props) => {
     }
   }, [xform, formTouched, history, lang]);
 
-  useEffect(() => {
-    if (!loading && status.type !== 'saving') {
-      let msg = t.t(lang, (s) => s.routes.operations.forms.status[status.type]);
-      if (status.type === 'error') {
-        toast.error(`${msg} ${status.message}`, {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-      } else if (status.type === 'conflict') {
-        const timeAgo = dayjs(status.timestamp).locale(lang);
-        msg = t
-          .t(lang, (s) => s.routes.operations.forms.errors.conflict)
-          .replace('{timeAgo}', timeAgo.fromNow())
-          .replace('{person}', status.otherPerson);
-        toast.error(msg, { position: toast.POSITION.TOP_RIGHT });
-      } else {
-        if (!xform?.isCurrentPageTheFirstPage()) {
-          toast.success(msg, { position: toast.POSITION.TOP_RIGHT });
+  const handleNext = async () => {
+    if (xform) {
+      if (editable) {
+        const valid = await xform.validateCurrentPage();
+        if (valid) {
+          xform.goToNextPage();
+        } else {
+          setShowValidationConfirmation(true);
         }
+      } else {
+        xform.goToNextPage();
       }
     }
-  }, [loading, status]);
+    // Save form after advancing to the next page
+    setTimeout(() => saveForm(), 0);
+  };
+
+  const closeValidationMessage = () => {
+    setShowValidationConfirmation(false);
+  };
+
+  const forceNextPage = () => {
+    if (xform) {
+      xform.goToNextPage();
+      setShowValidationConfirmation(false);
+    }
+  };
+
+  const closeInvalidSubmissionMessage = () => {
+    setShowInvalidSubmissionMessage(false);
+  };
 
   const saveForm = async (redirect = false, finalized = false) => {
     if (xform && (formTouched || finalized)) {
+      // If the user is trying to finalize (submit) the form
+      // Ensure the entire form is valid
+      if (finalized) {
+        const valid = await xform.validateEverything();
+        if (!valid) {
+          // If the form is invalid, we don't want to submit it
+          // But we can still save it.
+          saveForm();
+          setShowInvalidSubmissionMessage(true);
+          return;
+        }
+      }
+
       setStatus({ type: 'saving' });
       setTimeout(async () => {
         const t0 = performance.now();
@@ -277,6 +325,11 @@ export const EnketoEditableForm = (props: Props) => {
               setUpdatedAssignment(assignment);
               setFormTouched(false);
               setStatus({ type: 'idle' });
+              const msg = t.t(
+                lang,
+                (s) => s.routes.operations.forms.status.idle
+              );
+              toast.success(msg, { position: toast.POSITION.TOP_RIGHT });
               if (redirect) {
                 if (finalized) {
                   alert(
@@ -308,10 +361,22 @@ export const EnketoEditableForm = (props: Props) => {
                   timestamp: err.timestamp,
                   otherPerson: err.otherUser,
                 });
+                const msg = t
+                  .t(lang, (s) => s.routes.operations.forms.errors.conflict)
+                  .replace('{timeAgo}', timeAgo.fromNow())
+                  .replace('{person}', err.otherUser);
+                toast.error(msg, { position: toast.POSITION.TOP_RIGHT });
               } else {
                 setStatus({
                   type: 'error',
                   message: err.message || err.toString(),
+                });
+                const msg = t.t(
+                  lang,
+                  (s) => s.routes.operations.forms.status.error
+                );
+                toast.error(`${msg} ${err.message || err.toString()}`, {
+                  position: toast.POSITION.TOP_RIGHT,
                 });
               }
             });
@@ -322,15 +387,6 @@ export const EnketoEditableForm = (props: Props) => {
         t.t(lang, (s) => s.routes.operations.forms.prompts.submissionRequired)
       );
       history.goBack();
-    }
-  };
-
-  const handleNext = () => {
-    if (xform) {
-      // Allow enketo to flip the page
-      setTimeout(() => {
-        setLastPage(xform.isCurrentPageTheLastPage());
-      }, 200);
     }
   };
 
@@ -437,6 +493,15 @@ export const EnketoEditableForm = (props: Props) => {
     }
   };
 
+  const pageIndicator = pageInfo && (
+    <PageIndicator>
+      {t.t(lang, (s) => s.routes.operations.forms.pageIndicator, {
+        page: (pageInfo.currentPage || 0) + 1,
+        count: pageInfo.totalPages,
+      })}
+    </PageIndicator>
+  );
+
   return (
     <div>
       <C.Toolbar>
@@ -450,15 +515,14 @@ export const EnketoEditableForm = (props: Props) => {
         </LoadingMessage>
       )}
       <div className="enketo" id="form" onClick={captureLinkClicks}>
+        {pageIndicator}
         <div className="main" style={{ display: loading ? 'none' : 'block' }}>
           <div className="container pages"></div>
           <section className="form-footer end">
             <div className="form-footer__content">
+              {pageIndicator}
               <div className="form-footer__content__main-controls">
-                <button
-                  onMouseDown={() => setLastPage(false)}
-                  className="btn btn-default previous-page disabled"
-                >
+                <button className="btn btn-default previous-page disabled">
                   {t.t(lang, (s) => s.routes.operations.forms.nav.prev)}
                 </button>
                 {editable && (
@@ -470,7 +534,7 @@ export const EnketoEditableForm = (props: Props) => {
                     {t.t(lang, (s) => s.routes.operations.forms.nav.save)}
                   </button>
                 )}
-                {editable && lastPage && (
+                {editable && pageInfo?.isLastPage && (
                   <button
                     onClick={() => saveForm(true)}
                     className="btn btn-default"
@@ -482,20 +546,89 @@ export const EnketoEditableForm = (props: Props) => {
                     )}
                   </button>
                 )}
-                <button
-                  onMouseDown={() => {
-                    if (editable) {
-                      saveForm();
-                      handleNext();
-                    }
-                  }}
-                  className="btn btn-primary next-page disabled"
-                >
-                  {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
-                </button>
-                {editable && lastPage && <SubmitButton saveForm={saveForm} />}
+                {!pageInfo?.isLastPage && (
+                  <button onClick={handleNext} className="btn btn-primary">
+                    {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
+                  </button>
+                )}
+                {editable && pageInfo?.isLastPage && (
+                  <SubmitButton saveForm={saveForm} />
+                )}
               </div>
             </div>
+            <Dialog
+              open={showValidationConfirmation}
+              onClose={closeValidationMessage}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {t.t(lang, (s) => s.routes.operations.forms.invalidData.title)}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  {t.t(
+                    lang,
+                    (s) =>
+                      s.routes.operations.forms.invalidData.infoOnNavigation
+                  )}
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <C.Button
+                  onClick={closeValidationMessage}
+                  color="primary"
+                  autoFocus
+                >
+                  <span>
+                    {t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.invalidData.fixNow
+                    )}
+                  </span>
+                </C.Button>
+                <C.Button onClick={forceNextPage} color="primary">
+                  <span>
+                    {t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.invalidData.fixLater
+                    )}
+                  </span>
+                </C.Button>
+              </DialogActions>
+            </Dialog>
+            <Dialog
+              open={showInvalidSubmissionMessage}
+              onClose={closeInvalidSubmissionMessage}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {t.t(lang, (s) => s.routes.operations.forms.invalidData.title)}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  {t.t(
+                    lang,
+                    (s) => s.routes.operations.forms.invalidData.infoOnSubmit
+                  )}
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <C.Button
+                  onClick={closeInvalidSubmissionMessage}
+                  color="primary"
+                  autoFocus
+                >
+                  <span>
+                    {t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.invalidData.okay
+                    )}
+                  </span>
+                </C.Button>
+              </DialogActions>
+            </Dialog>
             <PoweredByFooter />
           </section>
         </div>

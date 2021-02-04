@@ -86,7 +86,7 @@
   "navigation": {
     "admin": "Admin",
     "operations": "Operations",
-    "clusters": "Clusters",
+    "clusters": "Clusters/Sectors",
     "forms": "Survey Forms",
     "settings": "Settings",
     "manageAccess": "Manage access"
@@ -99,7 +99,7 @@
       },
       "forms": {
         "forOperations": "Operation Survey Forms",
-        "forClusters": "Cluster Survey Forms",
+        "forClusters": "Cluster/Sector Survey Forms",
         "unsavedChangesPrompt": "Are you sure you want to navigate away? You have unsaved changes.",
         "nav": {
           "prev": "Prev",
@@ -114,7 +114,7 @@
         },
         "loading": {
           "title": "Loading Form",
-          "info": "It may take a moment for the form to load, but please be patient, and don't close your browser"
+          "info": "It may take a moment for the form to load, but please be patient, and don't close your browser; and if prompted by your browser with any page responsiveness messages, please press wait."
         },
         "editability": {
           "notSubmittedEditable": "Not Submitted: Editable",
@@ -123,6 +123,14 @@
         "prompts": {
           "finished": "Thank you for completing the survey, you will be contacted if complementary information is needed.",
           "submissionRequired": "Please remember to come back and submit your final response to the survey."
+        },
+        "invalidData": {
+          "title": "Incomplete/Invalid information entered",
+          "infoOnNavigation": "There are some issues with the information you have entered on this page. You can fix this now, or continue with the rest of the form, and come back later.",
+          "fixNow": "Fix Now",
+          "fixLater": "Continue Anyway",
+          "infoOnSubmit": "There are some issues with the information you have entered. You must go back and fix them before you can submit the form.",
+          "okay": "Okay"
         },
         "status": {
           "init": "Initializing Form...",
@@ -139,7 +147,8 @@
         "footer": {
           "poweredBy": "Powered by",
           "and": "and"
-        }
+        },
+        "pageIndicator": "Page {page,number} of {count,number}"
       },
       "clusters": {
         "listHeader": "Clusters in this operation",

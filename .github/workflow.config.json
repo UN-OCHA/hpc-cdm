@@ -20,6 +20,10 @@
   "deployments": {
     "environments": [
       {
+        "branch": "env/prod",
+        "environment": "prod"
+      },
+      {
         "branch": "env/stage",
         "environment": "stage"
       },
