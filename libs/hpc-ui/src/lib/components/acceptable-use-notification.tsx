@@ -22,9 +22,14 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 
-  h2,
+  h2 {
+    margin: 1em 0 0;
+    font-size: 1.7rem;
+  }
+
   p {
     margin: 1em 0 0;
+    font-size: 1.3rem;
   }
 `;
 
@@ -44,10 +49,10 @@ const AcceptableUseNotification = (props: Props) => (
       />
     </Actions>
     <h2>{props.strings.title}</h2>
-    <p>{props.strings.p1}</p>
-    <p>{props.strings.p2}</p>
-    <p>{props.strings.p3}</p>
-    <p>{props.strings.p4}</p>
+    <p>
+      {props.strings.p1} {props.strings.p2} {props.strings.p3}{' '}
+      {props.strings.p4}
+    </p>
   </Container>
 );
 

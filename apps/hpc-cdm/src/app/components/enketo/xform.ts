@@ -1,5 +1,6 @@
 import { Form } from 'enketo-core';
 import fileManager from 'enketo-core/src/js/file-manager';
+import { number } from 'io-ts';
 import $ from 'jquery';
 
 import { LANGUAGE_CHOICE, LanguageKey } from '../../../i18n';
@@ -7,6 +8,12 @@ import { LANGUAGE_CHOICE, LanguageKey } from '../../../i18n';
 export interface FormFile {
   name: string;
   data: Blob;
+}
+
+export interface PageInfo {
+  totalPages: number;
+  currentPage: number | null;
+  isLastPage: boolean;
 }
 
 export default class XForm {
@@ -21,10 +28,11 @@ export default class XForm {
     files: FormFile[],
     opts?: {
       onDataUpdate?: (event: { xform: XForm }) => void;
+      onPageFlip?: (event: { xform: XForm }) => void;
     }
   ) {
     this.loading = true;
-    const { onDataUpdate } = opts || {};
+    const { onDataUpdate, onPageFlip } = opts || {};
     this.files = files;
 
     fileManager.getFileUrl = async (subject) => {
@@ -47,6 +55,19 @@ export default class XForm {
         () => {
           if (!this.loading) {
             onDataUpdate({
+              xform: this,
+            });
+          }
+        },
+        { capture: true }
+      );
+    }
+    if (onPageFlip) {
+      formElement.addEventListener(
+        'pageflip',
+        () => {
+          if (!this.loading) {
+            onPageFlip({
               xform: this,
             });
           }
@@ -191,7 +212,7 @@ export default class XForm {
     data: string;
     files: FormFile[];
   } {
-    const data = this.form.getDataStr({ irrelevant: false });
+    const data = this.form.getDataStr({ irrelevant: true });
 
     /** Collect the newly uploaded files */
     const newUploads = new Map<string, File>();
@@ -218,16 +239,37 @@ export default class XForm {
     return { data, files };
   }
 
-  isCurrentPageTheLastPage(): boolean {
-    const totalPages = this.form.pages.activePages.length - 1;
-    return $(this.form.pages.activePages[totalPages]).hasClass('current');
-  }
+  getPageInfo(): PageInfo {
+    const pages = this.form.pages.activePages;
+    const totalPages = pages.length;
+    const currentPage = this.form.pages._getCurrentIndex();
 
-  isCurrentPageTheFirstPage(): boolean {
-    return $(this.form.pages.activePages[0]).hasClass('current');
+    return {
+      totalPages,
+      currentPage,
+      isLastPage: currentPage === totalPages - 1,
+    };
   }
 
   resetView(): HTMLFormElement {
     return this.form.resetView();
+  }
+
+  validateCurrentPage() {
+    const currentPage = this.form.pages._getCurrentIndex();
+    return this.form.validateContent($(this.form.pages.current));
+  }
+
+  validateEverything() {
+    return this.form.validateAll();
+  }
+
+  goToNextPage() {
+    const currentPage = this.form.pages._getCurrentIndex();
+    const nextIndex = currentPage + 1;
+    const next = this.form.pages.activePages[nextIndex];
+    if (next) {
+      this.form.pages._flipTo(next, nextIndex);
+    }
   }
 }

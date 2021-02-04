@@ -1012,7 +1012,6 @@
     margin-bottom: 50px;
 }
 
-.enketo .pages ~ .form-footer .btn,
 .enketo .pages ~ .form-footer .vex.vex-theme-plain .vex-dialog-button,
 .enketo .vex.vex-theme-plain .pages ~ .form-footer .vex-dialog-button {
     display: none;
@@ -1533,90 +1532,10 @@
     pointer-events: none;
 }
 
-.enketo .or-group:not(.or-appearance-no-collapse) > h4::before {
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-top: 12px solid #026cb6;
-    border-bottom: 0;
-    display: block;
-    position: absolute;
-    content: '';
-    top: 5px;
-    left: -30px;
-    right: -30px;
-    pointer-events: all;
-    cursor: pointer;
-}
-
-.enketo .or-group:not(.or-appearance-no-collapse).or-appearance-compact > h4::before {
-    width: 0;
-    height: 0;
-    border-top: 12px solid transparent;
-    border-bottom: 12px solid transparent;
-    border-left: 12px solid #026cb6;
-    border-right: 0;
-    left: -22px;
-    right: -22px;
-    top: 0;
-}
-
-.enketo .or-group:not(.or-appearance-no-collapse).or-appearance-compact > h4 ~ * {
-    display: none !important;
-}
-
-.enketo [dir='rtl']
-.or-group:not(.or-appearance-no-collapse).or-appearance-compact
-> h4::before {
-    border-left: 0;
-    /*border-right: 12px solid #ee7325; */
-    border-right: 12px solid blue;
-}
 
 .enketo .or-group:not(.or-appearance-no-collapse) > h4 {
     position: relative;
     pointer-events: none;
-}
-
-.enketo .or-group:not(.or-appearance-no-collapse) > h4::before {
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-top: 12px solid #026cb6;
-    border-bottom: 0;
-    display: block;
-    position: absolute;
-    content: '';
-    top: 5px;
-    left: -30px;
-    right: -30px;
-    pointer-events: all;
-}
-
-.enketo .or-group:not(.or-appearance-no-collapse).or-appearance-compact > h4::before {
-    width: 0;
-    height: 0;
-    border-top: 12px solid transparent;
-    border-bottom: 12px solid transparent;
-    border-left: 12px solid #026cb6;
-    border-right: 0;
-    left: -22px;
-    right: -22px;
-    top: 0;
-}
-
-.enketo .or-group:not(.or-appearance-no-collapse).or-appearance-compact > h4 ~ * {
-    display: none !important;
-}
-
-.enketo [dir='rtl']
-.or-group:not(.or-appearance-no-collapse).or-appearance-compact
-> h4::before {
-    border-left: 0;
-    /*border-right: 12px solid #ee7325; */
-    border-right: 12px solid blue;
 }
 
 .enketo #stats + .or-group,
@@ -6676,10 +6595,6 @@ html:not(.touch)
     background: #ffffff;
     margin: 0 -1px 0 0;
     padding: 12px 6px 6px 6px;
-}
-
-.enketo .or-group > h4::before {
-    margin-top: 14px;
 }
 
 .enketo .or,
