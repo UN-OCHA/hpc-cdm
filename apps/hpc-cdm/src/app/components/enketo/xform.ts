@@ -212,7 +212,7 @@ export default class XForm {
     data: string;
     files: FormFile[];
   } {
-    const data = this.form.getDataStr({ irrelevant: false });
+    const data = this.form.getDataStr({ irrelevant: true });
 
     /** Collect the newly uploaded files */
     const newUploads = new Map<string, File>();
