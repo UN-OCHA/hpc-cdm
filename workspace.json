@@ -43,7 +43,6 @@
                   "with": "apps/hpc-cdm/src/environments/environment.prod.ts"
                 }
               ],
-              "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
               "extractCss": true,

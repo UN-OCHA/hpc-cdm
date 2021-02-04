@@ -86,7 +86,7 @@
   "navigation": {
     "admin": "Admin",
     "operations": "Opérations",
-    "clusters": "Clusters",
+    "clusters": "Clusters/Secteurs",
     "forms": "Formulaires",
     "settings": "Réglages",
     "manageAccess": "Gérer l'accès"
@@ -99,7 +99,7 @@
       },
       "forms": {
         "forOperations": "Formulaires à l'échelle de l'opération",
-        "forClusters": "Formulaires de cluster",
+        "forClusters": "Formulaires de cluster/secteur",
         "unsavedChangesPrompt": "Êtes-vous sûr de vouloir naviguer ailleurs ? Vous avez des changements non enregistrés.",
         "nav": {
           "prev": "Précédent",
@@ -114,7 +114,7 @@
         },
         "loading": {
           "title": "Chargement du formulaire en cours",
-          "info": "Le chargement pourrait durer un certain temps. Merci de patienter et ne pas fermer le navigateur."
+          "info": "Le chargement de cette page peut prendre quelques instants, veuillez patienter sans fermer votre navigateur, si votre navigateur vous informe d’un délai ou absence de réponse dans le chargement de la page, cliquez ‘attendre’."
         },
         "editability": {
           "notSubmittedEditable": "Non envoyé: modifiable",
@@ -123,6 +123,14 @@
         "prompts": {
           "finished": "Merci d’avoir complété l’enquête, vous allez être contacté dans le cas ou des informations complémentaires seraient requises.",
           "submissionRequired": "Merci de revenir et soumettre votre réponse finale a l’enquête."
+        },
+        "invalidData": {
+          "title": "Données incomplètes/non-valables",
+          "infoOnNavigation": "Il y a quelques soucis avec les informations que vous avez saisies sur cette page. Vous pouvez les régler maintenant, ou poursuivre avec le formulaire et y revenir plus tard.",
+          "fixNow": "Réglez maintenant",
+          "fixLater": "Poursuivre",
+          "infoOnSubmit": "L’information que vous avez entrée contient des erreurs. Veuillez retourner et revoir vos réponses avant de procéder avec la soumission de l’enquête. ",
+          "okay": "D’accord"
         },
         "status": {
           "init": "Formulaire d'initialisation",
@@ -139,7 +147,8 @@
         "footer": {
           "poweredBy": "Conçu avec",
           "and": "et"
-        }
+        },
+        "pageIndicator": "Page {page,number} sur {count,number}"
       },
       "clusters": {
         "listHeader": "Clusters dans cette opération",

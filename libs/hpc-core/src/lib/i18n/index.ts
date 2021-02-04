@@ -1,3 +1,4 @@
+import IntlMessageFormat from 'intl-messageformat';
 import 'intl-list-format';
 import { mapValues } from 'lodash';
 
@@ -115,15 +116,45 @@ export class LanguageChoice<LanguageKey extends string> {
 export class Translations<LanguageKey extends string, Strings> {
   private readonly languages: { [key in LanguageKey]: Language<Strings> };
 
+  /**
+   * A mapping from language -> string -> IntlMessageFormat
+   */
+  private readonly formatCache = new Map<
+    string,
+    Map<string, IntlMessageFormat>
+  >();
+
   public constructor(languages: { [key in LanguageKey]: Language<Strings> }) {
     this.languages = languages;
   }
 
-  /**
-   * TODO: extend this with formatting using intl-messageformat
-   */
-  public t = (lang: LanguageKey, get: (s: Strings) => string) =>
-    this.get(lang, get);
+  public t = (
+    lang: LanguageKey,
+    get: (s: Strings) => string,
+    /**
+     * An optional parameter including arguments to use to generate the string
+     *
+     * If not passed, then the original string from the translations file will
+     * be used directly.
+     */
+    params?: Record<string, string | number | boolean | Date>
+  ) => {
+    const str = this.get(lang, get);
+    if (!params) {
+      return str;
+    } else {
+      let langCache = this.formatCache.get(lang);
+      if (!langCache) {
+        this.formatCache.set(lang, (langCache = new Map()));
+      }
+      let cache = langCache.get(str);
+      if (!cache) {
+        langCache.set(str, (cache = new IntlMessageFormat(str, lang)));
+      }
+      console.log(str, lang, params);
+      return cache.format(params) as string;
+    }
+  };
 
   /**
    * Get a particular string or object of strings from the strings object.
