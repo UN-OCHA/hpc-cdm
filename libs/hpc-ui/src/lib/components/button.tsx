@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IconType } from 'react-icons/lib';
 import { Link } from 'react-router-dom';
 
@@ -45,6 +45,7 @@ interface Props {
    */
   active?: boolean;
   condensed?: boolean;
+  autoFocus?: boolean;
 }
 
 const BaseButton = (props: Props) => {
@@ -58,7 +59,18 @@ const BaseButton = (props: Props) => {
     displayCaret,
     active,
     condensed,
+    autoFocus,
   } = props;
+
+  const [focused, setFocused] = useState(false);
+  const ref = useRef<HTMLButtonElement | HTMLElement>(null);
+
+  useEffect(() => {
+    if (!focused && autoFocus && ref.current) {
+      ref.current.focus();
+      setFocused(true);
+    }
+  }, [focused, autoFocus, ref.current]);
 
   const className = combineClasses(
     props.className,
@@ -78,11 +90,19 @@ const BaseButton = (props: Props) => {
   );
 
   return behaviour.type === 'button' ? (
-    <button className={className} onClick={behaviour.onClick}>
+    <button
+      className={className}
+      onClick={behaviour.onClick}
+      ref={ref as React.RefObject<HTMLButtonElement>}
+    >
       {contents}
     </button>
   ) : (
-    <Link className={className} to={behaviour.to}>
+    <Link
+      className={className}
+      to={behaviour.to}
+      ref={ref as React.RefObject<HTMLAnchorElement>}
+    >
       {contents}
     </Link>
   );
