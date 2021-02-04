@@ -575,23 +575,26 @@ export const EnketoEditableForm = (props: Props) => {
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button
-                  variant="contained"
+                <C.Button
                   onClick={closeValidationMessage}
                   color="primary"
                   autoFocus
                 >
-                  {t.t(
-                    lang,
-                    (s) => s.routes.operations.forms.invalidData.fixNow
-                  )}
-                </Button>
-                <Button onClick={forceNextPage} color="primary">
-                  {t.t(
-                    lang,
-                    (s) => s.routes.operations.forms.invalidData.fixLater
-                  )}
-                </Button>
+                  <span>
+                    {t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.invalidData.fixNow
+                    )}
+                  </span>
+                </C.Button>
+                <C.Button onClick={forceNextPage} color="primary">
+                  <span>
+                    {t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.invalidData.fixLater
+                    )}
+                  </span>
+                </C.Button>
               </DialogActions>
             </Dialog>
             <Dialog
@@ -612,14 +615,18 @@ export const EnketoEditableForm = (props: Props) => {
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button
-                  variant="contained"
+                <C.Button
                   onClick={closeInvalidSubmissionMessage}
                   color="primary"
                   autoFocus
                 >
-                  {t.t(lang, (s) => s.routes.operations.forms.invalidData.okay)}
-                </Button>
+                  <span>
+                    {t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.invalidData.okay
+                    )}
+                  </span>
+                </C.Button>
               </DialogActions>
             </Dialog>
             <PoweredByFooter />
