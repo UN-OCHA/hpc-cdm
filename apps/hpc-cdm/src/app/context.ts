@@ -22,12 +22,7 @@ export const AppContext = createContext<Context>({
 export const contextFromEnv = async (
   env: Environment
 ): Promise<Omit<Context, 'lang'>> => {
-  const perms = await env.model.access.getOwnAccess().catch((err) => {
-    // If an error occured with this endpoint log out the user
-    // as auth token has probably expired
-    env.session.logOut();
-    throw err;
-  });
+  const perms = await env.model.access.getOwnAccess();
   return {
     env: () => env,
     access: () => perms,
