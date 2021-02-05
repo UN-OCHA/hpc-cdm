@@ -27,7 +27,19 @@ const FormAssignmentsList = (props: Props) => {
       {({ lang }) => (
         <C.List title={title} className={className}>
           {assignments
-            .sort((a1, a2) => (a1.form.name > a2.form.name ? 1 : -1))
+            .sort((a1, a2) => {
+              const formCmp = a1.form.name
+                .toLowerCase()
+                .localeCompare(a2.form.name.toLowerCase());
+
+              if (formCmp !== 0) {
+                return formCmp;
+              } else {
+                const c1 = (a1.cluster?.name || '').toLowerCase();
+                const c2 = (a2.cluster?.name || '').toLowerCase();
+                return c1.localeCompare(c2);
+              }
+            })
             .map((a, i) => (
               <C.ListItem
                 key={i}
