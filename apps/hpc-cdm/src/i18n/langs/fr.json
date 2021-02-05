@@ -29,9 +29,9 @@
   "components": {
     "appTitle": {
       "primary": "Enquête sur les structures de coordination humanitaire – 2020",
-      "secondary": "Structures de coordination de l‘IASC au niveau national "
+      "secondary": "Structures de Coordination Humanitaire au Niveau du Pays"
     },
-    "surveyIntro": "Bienvenu(e) à l’enquête annuelle menée par OCHA afin de recenser les structures de coordination humanitaire et capacités presentes sur le terrain en 2020. Il vous sera demandé de vous connecter à l’enquête en utilisant votre Humanitarian ID et le mot de passe associé. Si vous avez oublié vos identifiants ou avez besoin de vous enregistrer, veuillez suivre les instructions sur la page ID Humanitaire suivante.",
+    "surveyIntro": "Bienvenue à l'enquête annuelle sur les structures et capacités de coordination humanitaire en place pendant 2020. Cliquez sur le bouton de connexion. Il vous sera demandé de vous connecter en utilisant votre adresse e-mail et votre mot de passe « Humanitarian ID”. Si vous avez oublié vos informations d'identification ou vous avez besoin de vous inscrire,  veuillez suivre les instructions sur la page Humanitarian ID suivante.",
     "acceptableUseNotification": {
       "login": "Cliquez ici pour vous connecter",
       "title": "Notification d'utilisation acceptable",

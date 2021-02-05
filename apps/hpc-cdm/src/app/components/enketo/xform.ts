@@ -36,6 +36,9 @@ export default class XForm {
     this.files = files;
 
     fileManager.getFileUrl = async (subject) => {
+      if (!subject) {
+        return undefined;
+      }
       if (typeof subject === 'string') {
         const file = files.filter((f) => f.name === subject);
         if (file.length > 0) {
