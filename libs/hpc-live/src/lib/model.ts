@@ -62,6 +62,16 @@ interface Config {
      */
     sha256Hash?: (data: ArrayBuffer) => Promise<string>;
   };
+  /**
+   * When it is detected that the token / auth session currently being used by
+   * the user is invalid (e.g. the token has expired), then this function is
+   * called to clear the storage for that auth session, and refresh the page,
+   * allowing the user to log in again.
+   *
+   * This should not log the user out of any respective oauth provider,
+   * or redirect the user to a provider.
+   */
+  clearSessionStorage: () => void;
 }
 
 interface Res<T> {
@@ -301,6 +311,13 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v2/access/self`,
           resultType: access.GET_OWN_ACCESS_RESULT,
+        }).catch((err) => {
+          if ((err as ModelError)?.json?.code === 'ForbiddenError') {
+            // If a 403 error occured with this endpoint,
+            // the auth token has probably expired, so clear storage and refresh
+            this.config.clearSessionStorage();
+          }
+          throw err;
         }),
       getTargetAccess: (params) =>
         this.call({
