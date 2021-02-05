@@ -29,9 +29,9 @@
   "components": {
     "appTitle": {
       "primary": "Humanitarian Coordination Mapping - 2020",
-      "secondary": "IASC Coordination Structures at Country Level"
+      "secondary": "Humanitarian Coordination Structures at the Country Level"
     },
-    "surveyIntro": "Welcome to the survey carried out by OCHA to map IASC coordination structures and capacities in the field in 2020. Click on the login button. You will be asked to log in using your Humanitarian ID email and password. If you have forgotten your credentials or need to register, please follow the prompts on the following Humanitarian ID page.",
+    "surveyIntro": "Welcome to the annual mapping survey on  humanitarian coordination structures and capacities in place during 2020. Click on the login button. You will be asked to log in using your Humanitarian ID email and password. If you have forgotten your credentials or need to register, please follow the prompts on the following Humanitarian ID page.",
     "acceptableUseNotification": {
       "login": "Click here to login",
       "title": "Acceptable Use Notification",
