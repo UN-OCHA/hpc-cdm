@@ -35,6 +35,7 @@ const getOpenIDMetadata = async (authUrl: string): Promise<OidcMetadata> => {
 
 export class LiveBrowserClient {
   private readonly config: config.Config;
+  private readonly store: WebStorageStateStore;
   private readonly userManager: Promise<UserManager>;
 
   public constructor(config: config.Config) {
@@ -45,6 +46,12 @@ export class LiveBrowserClient {
     const redirectUri = new URL(document.location.href);
     redirectUri.pathname = '/';
     redirectUri.hash = '';
+
+    this.store = new WebStorageStateStore({
+      store: localStorage,
+    });
+
+    (window as any).clearSessionStorage = this.clearSessionStorage;
 
     this.userManager = getOpenIDMetadata(config.hpcAuthUrl).then(
       (metadata) =>
@@ -57,11 +64,17 @@ export class LiveBrowserClient {
           // eslint-disable-next-line @typescript-eslint/camelcase
           response_type: 'token',
           scope: 'profile',
-          userStore: new WebStorageStateStore({ store: localStorage }),
+          userStore: this.store,
           metadata,
         })
     );
   }
+
+  private clearSessionStorage = async () => {
+    const keys = await this.store.getAllKeys();
+    await Promise.all(keys.map((key) => this.store.remove(key)));
+    window.location.reload();
+  };
 
   private getSessionUser = async (
     user: User | null
@@ -134,6 +147,7 @@ export class LiveBrowserClient {
         model: new LiveModel({
           baseUrl: this.config.hpcApiUrl,
           hidToken: user.access_token,
+          clearSessionStorage: this.clearSessionStorage,
         }),
       };
       return result;
@@ -143,6 +157,7 @@ export class LiveBrowserClient {
         model: new LiveModel({
           baseUrl: this.config.hpcApiUrl,
           hidToken: null,
+          clearSessionStorage: this.clearSessionStorage,
         }),
       };
       return result;

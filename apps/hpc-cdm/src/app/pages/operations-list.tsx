@@ -39,7 +39,9 @@ export default (props: Props) => {
                 </C.PageTitle>
                 <C.List>
                   {data.data
-                    .sort((o1, o2) => (o1.name > o2.name ? 1 : -1))
+                    .sort((o1, o2) =>
+                      o1.name.toLowerCase().localeCompare(o2.name.toLowerCase())
+                    )
                     .map((o, i) => (
                       <C.ListItem
                         key={i}
