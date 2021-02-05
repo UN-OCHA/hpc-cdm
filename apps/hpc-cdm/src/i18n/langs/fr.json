@@ -1,6 +1,6 @@
 {
   "switchToThisLanguage": "Passer à la version française",
-  "title": "HPC CDM",
+  "title": "Enquête sur les structures de coordination humanitaire – 2020",
   "user": {
     "login": "Connexion",
     "logout": "Déconnexion"
@@ -28,7 +28,7 @@
   },
   "components": {
     "appTitle": {
-      "primary": "Collection de données 2020",
+      "primary": "Enquête sur les structures de coordination humanitaire – 2020",
       "secondary": "Structures de coordination de l‘IASC au niveau national "
     },
     "surveyIntro": "Bienvenu(e) à l’enquête annuelle menée par OCHA afin de recenser les structures de coordination humanitaire et capacités presentes sur le terrain en 2020. Il vous sera demandé de vous connecter à l’enquête en utilisant votre Humanitarian ID et le mot de passe associé. Si vous avez oublié vos identifiants ou avez besoin de vous enregistrer, veuillez suivre les instructions sur la page ID Humanitaire suivante.",
