@@ -118,8 +118,8 @@
           "info": "Le chargement de cette page peut prendre quelques instants, veuillez patienter sans fermer votre navigateur, si votre navigateur vous informe d’un délai ou absence de réponse dans le chargement de la page, cliquez ‘attendre’."
         },
         "editability": {
-          "notSubmittedEditable": "Non envoyé: modifiable",
-          "submittedNonEditable": "Envoyé: non modifiable"
+          "notSubmittedEditable": "Formulaire non encore soumis: modifiable",
+          "submittedNonEditable": "Formulaire soumis: ne plus modifiable"
         },
         "prompts": {
           "finished": "Merci d’avoir complété l’enquête, vous allez être contacté dans le cas ou des informations complémentaires seraient requises.",
