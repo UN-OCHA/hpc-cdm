@@ -138,10 +138,9 @@ export const EnketoEditableForm = (props: Props) => {
   const [showValidationConfirmation, setShowValidationConfirmation] = useState(
     false
   );
-  const [
-    showInvalidSubmissionMessage,
-    setShowInvalidSubmissionMessage,
-  ] = useState(false);
+  const [submissionValidation, setSubmissionValidation] = useState<
+    'in-progress' | 'invalid' | null
+  >(null);
   const history = useHistory();
   const { lang } = useContext(AppContext);
 
@@ -270,7 +269,7 @@ export const EnketoEditableForm = (props: Props) => {
   };
 
   const closeInvalidSubmissionMessage = () => {
-    setShowInvalidSubmissionMessage(false);
+    setSubmissionValidation(null);
   };
 
   const saveForm = async (redirect = false, finalized = false) => {
@@ -278,13 +277,20 @@ export const EnketoEditableForm = (props: Props) => {
       // If the user is trying to finalize (submit) the form
       // Ensure the entire form is valid
       if (finalized) {
+        // Display a validating inicator before enketo freezes the browser
+        setSubmissionValidation('in-progress');
+        // Give the browser some time to render this state change
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
         const valid = await xform.validateEverything();
         if (!valid) {
           // If the form is invalid, we don't want to submit it
           // But we can still save it.
           saveForm();
-          setShowInvalidSubmissionMessage(true);
+          setSubmissionValidation('invalid');
           return;
+        } else {
+          setSubmissionValidation(null);
         }
       }
 
@@ -552,7 +558,10 @@ export const EnketoEditableForm = (props: Props) => {
                   </button>
                 )}
                 {editable && pageInfo?.isLastPage && (
-                  <SubmitButton saveForm={saveForm} />
+                  <SubmitButton
+                    validating={submissionValidation === 'in-progress'}
+                    saveForm={saveForm}
+                  />
                 )}
               </div>
             </div>
@@ -598,8 +607,7 @@ export const EnketoEditableForm = (props: Props) => {
               </DialogActions>
             </Dialog>
             <Dialog
-              open={showInvalidSubmissionMessage}
-              onClose={closeInvalidSubmissionMessage}
+              open={submissionValidation === 'invalid'}
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
             >
