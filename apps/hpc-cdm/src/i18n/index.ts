@@ -1,4 +1,5 @@
 import { i18n } from '@unocha/hpc-core';
+import { Translations } from '@unocha/hpc-ui';
 import merge from 'lodash/merge';
 
 import ar from './langs/ar';
@@ -22,4 +23,4 @@ export const LANGUAGE_CHOICE = new i18n.LanguageChoice<LanguageKey>(
   'en'
 );
 
-export const t = new i18n.Translations(LANGUAGES);
+export const t = new Translations(LANGUAGES);
