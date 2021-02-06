@@ -145,10 +145,7 @@
         "errors": {
           "conflict": "Ce formulaire a été modifié par {person} {timeAgo} (après avoir chargé la page), nous ne pouvons donc pas enregistrer vos modifications. Veuillez actualiser votre page et réessayer."
         },
-        "footer": {
-          "poweredBy": "Conçu avec",
-          "and": "et"
-        },
+        "poweredByFooter": "Conçu avec {enketo,component} et {kobotoolbox,component}",
         "pageIndicator": "Page {page,number} sur {count,number}"
       },
       "clusters": {

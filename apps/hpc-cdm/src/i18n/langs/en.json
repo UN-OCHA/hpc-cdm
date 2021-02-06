@@ -145,10 +145,7 @@
         "errors": {
           "conflict": "This form was modified by {person} {timeAgo} (after you loaded the page), so we can't save your changes. Please refresh your page and try again."
         },
-        "footer": {
-          "poweredBy": "Powered by",
-          "and": "and"
-        },
+        "poweredByFooter": "Powered by {enketo,component} and {kobotoolbox, component}",
         "pageIndicator": "Page {page,number} of {count,number}"
       },
       "clusters": {
