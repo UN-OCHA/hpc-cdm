@@ -110,7 +110,8 @@
             "message": "Quand vous aurez complété l’enquête, veuillez cliquez sur le bouton dessous /Soumettre/ afin de l’envoyer. {warning, component} Veuillez vous assurer que l’enquête est complète et correcte avant de procéder à la soumission.",
             "warning": "Veuillez noter qu’il ne vous sera plus possible de modifier vos réponses une fois que celles-ci seront soumises.",
             "confirm": "Je confirme que l’enquête est complète et prête à être soumise",
-            "submit": "Soumettre"
+            "submit": "Soumettre",
+            "validating": "En cours de validation"
           }
         },
         "loading": {

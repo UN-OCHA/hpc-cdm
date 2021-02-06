@@ -16,11 +16,12 @@ const WarningText = styled.span`
 `;
 
 interface Props {
+  validating: boolean;
   saveForm: (redirect: boolean, finalized: boolean) => void;
 }
 
 const SubmitButton = (props: Props) => {
-  const { saveForm } = props;
+  const { validating, saveForm } = props;
   const { lang } = useContext(AppContext);
   const [confirmed, setConfirmed] = useState(false);
 
@@ -46,13 +47,19 @@ const SubmitButton = (props: Props) => {
       />
       <div>
         <button
-          disabled={!confirmed}
+          disabled={!confirmed || validating}
           id="submit-form"
           onClick={() => saveForm(true, true)}
           className="btn btn-primary"
         >
-          <i className="icon icon-check"> </i>
-          {t.t(lang, (s) => s.routes.operations.forms.nav.submit.submit)}
+          {!validating && <i className="icon icon-check" />}
+          {t.t(
+            lang,
+            (s) =>
+              s.routes.operations.forms.nav.submit[
+                validating ? 'validating' : 'submit'
+              ]
+          )}
         </button>
       </div>
     </SubmitPanel>
