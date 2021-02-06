@@ -126,14 +126,14 @@
         },
         "invalidData": {
           "title": "Données incomplètes/non-valables",
-          "infoOnNavigation": "Il y a quelques soucis avec les informations que vous avez saisies sur cette page. Vous pouvez les régler maintenant, ou poursuivre avec le formulaire et y revenir plus tard.",
+          "infoOnNavigation": "Il y a quelques soucis avec les informations que vous avez saisies sur cette page. Vous pouvez les régler maintenant, ou poursuivre avec le formulaire et y revenir plus tard. Ils doivent être résolus avant de finaliser et de soumettre le formulaire.",
           "fixNow": "Réglez maintenant",
           "fixLater": "Poursuivre",
           "infoOnSubmit": "L’information que vous avez entrée contient des erreurs. Veuillez retourner et revoir vos réponses avant de procéder avec la soumission de l’enquête. ",
           "okay": "D’accord"
         },
         "status": {
-          "init": "Formulaire d'initialisation",
+          "init": "Chargement du formulaire",
           "idle": "Toutes les modifications ont été enregistrées",
           "unsavedChanges": "Cette page contient des changements non sauvegardés",
           "unsavedChangesExtra": "pages précédentes sauvegardées",
