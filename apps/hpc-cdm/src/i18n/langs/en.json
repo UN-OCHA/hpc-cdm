@@ -107,7 +107,8 @@
           "saveAndClose": "Save & Close",
           "next": "Next",
           "submit": {
-            "message": "When you have completed the form, please click on the \"Submit\" button below to send it to the moderator.\nPlease note that you will not be able to edit your answers after it has been submitted, please ensure that the form is complete and correct before proceeding with the submission.",
+            "message": "When you have completed the form, please click on the \"Submit\" button below to send it to the moderator. {warning,component} Please ensure that the form is complete and correct before proceeding with the submission.",
+            "warning": "Please note that you will not be able to edit your answers after it has been submitted.",
             "confirm": "I confirm that the form is complete and ready to be submitted",
             "submit": "Submit"
           }

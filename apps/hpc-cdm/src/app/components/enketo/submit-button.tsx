@@ -10,6 +10,11 @@ const SubmitPanel = styled.div`
   padding: 1em 1em 0 1em;
 `;
 
+const WarningText = styled.span`
+  font-weight: bold;
+  color: ${(p) => p.theme.colors.textError};
+`;
+
 interface Props {
   saveForm: (redirect: boolean, finalized: boolean) => void;
 }
@@ -17,12 +22,19 @@ interface Props {
 const SubmitButton = (props: Props) => {
   const { saveForm } = props;
   const { lang } = useContext(AppContext);
-  const strings = t.get(lang, (s) => s.routes.operations.forms.nav.submit);
   const [confirmed, setConfirmed] = useState(false);
 
   return (
     <SubmitPanel>
-      <p>{strings.message}</p>
+      <p>
+        {t.c(lang, (s) => s.routes.operations.forms.nav.submit.message, {
+          warning: (key) => (
+            <WarningText key={key}>
+              {t.t(lang, (s) => s.routes.operations.forms.nav.submit.warning)}
+            </WarningText>
+          ),
+        })}
+      </p>
       <FormControlLabel
         control={
           <Checkbox
@@ -30,7 +42,7 @@ const SubmitButton = (props: Props) => {
             onChange={(e) => setConfirmed(e.target.checked)}
           />
         }
-        label={strings.confirm}
+        label={t.t(lang, (s) => s.routes.operations.forms.nav.submit.confirm)}
       />
       <div>
         <button
@@ -40,7 +52,7 @@ const SubmitButton = (props: Props) => {
           className="btn btn-primary"
         >
           <i className="icon icon-check"> </i>
-          {strings.submit}
+          {t.t(lang, (s) => s.routes.operations.forms.nav.submit.submit)}
         </button>
       </div>
     </SubmitPanel>
