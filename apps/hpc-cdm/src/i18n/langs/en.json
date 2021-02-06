@@ -107,18 +107,20 @@
           "saveAndClose": "Save & Close",
           "next": "Next",
           "submit": {
-            "message": "When you have completed the form, please click on the \"Submit\" button below to send it to the moderator.\nPlease note that you will not be able to edit your answers after it has been submitted, please ensure that the form is complete and correct before proceeding with the submission.",
+            "message": "When you have completed the form, please click on the \"Submit\" button below to send it to the moderator. {warning,component} Please ensure that the form is complete and correct before proceeding with the submission.",
+            "warning": "Please note that you will not be able to edit your answers after it has been submitted.",
             "confirm": "I confirm that the form is complete and ready to be submitted",
-            "submit": "Submit"
+            "submit": "Submit",
+            "validating": "Validating"
           }
         },
         "loading": {
           "title": "Loading Form",
-          "info": "It may take a moment for the form to load, but please be patient, and don't close your browser; and if prompted by your browser with any page responsiveness messages, please press wait."
+          "info": "It may take a moment for the form to load, but please be patient, and don't close your browser; and if the browser alerts you that the page has become unresponsive, please press wait."
         },
         "editability": {
-          "notSubmittedEditable": "Not Submitted: Editable",
-          "submittedNonEditable": "Submitted: Non Editable"
+          "notSubmittedEditable": "Survey not yet submitted: Editable",
+          "submittedNonEditable": "Survey submitted: No longer editable"
         },
         "prompts": {
           "finished": "Thank you for completing the survey, you will be contacted if complementary information is needed.",
@@ -126,14 +128,14 @@
         },
         "invalidData": {
           "title": "Incomplete/Invalid information entered",
-          "infoOnNavigation": "There are some issues with the information you have entered on this page. You can fix this now, or continue with the rest of the form, and come back later.",
+          "infoOnNavigation": "There are some issues with the information you have entered on this page. You can fix these now, or continue with the rest of the form, and come back later. These issues must be fixed in order to finalize and submit the survey.",
           "fixNow": "Fix Now",
           "fixLater": "Continue Anyway",
           "infoOnSubmit": "There are some issues with the information you have entered. You must go back and fix them before you can submit the form.",
           "okay": "Okay"
         },
         "status": {
-          "init": "Initializing Form...",
+          "init": "Loading form...",
           "idle": "All changes saved",
           "unsavedChanges": "This page has unsaved changes",
           "unsavedChangesExtra": "previous pages have been saved",
@@ -144,10 +146,7 @@
         "errors": {
           "conflict": "This form was modified by {person} {timeAgo} (after you loaded the page), so we can't save your changes. Please refresh your page and try again."
         },
-        "footer": {
-          "poweredBy": "Powered by",
-          "and": "and"
-        },
+        "poweredByFooter": "Powered by {enketo,component} and {kobotoolbox, component}",
         "pageIndicator": "Page {page,number} of {count,number}"
       },
       "clusters": {

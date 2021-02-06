@@ -4,6 +4,7 @@ import { css, styled, THEME, ThemeProvider } from './lib/theme';
 import type { Theme } from './lib/theme';
 import { dataLoader } from './lib/util';
 import type { DataLoaderState } from './lib/util';
+import { Translations } from './lib/i18n';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
 import * as actionableButton from './lib/components/actionable-button';
@@ -68,6 +69,7 @@ export {
   styled,
   THEME,
   ThemeProvider,
+  Translations,
 };
 
 export type { DataLoaderState, Theme };
