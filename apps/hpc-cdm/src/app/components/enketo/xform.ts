@@ -1,6 +1,5 @@
 import { Form } from 'enketo-core';
 import fileManager from 'enketo-core/src/js/file-manager';
-import { number } from 'io-ts';
 import $ from 'jquery';
 
 import { LANGUAGE_CHOICE, LanguageKey } from '../../../i18n';

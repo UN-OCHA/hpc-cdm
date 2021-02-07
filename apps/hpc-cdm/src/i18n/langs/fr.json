@@ -40,6 +40,10 @@
       "p3": "Toute utilisation des ressources TIC et des données TIC fait l’objet d’un suivi et d’une enquête comme indiqué dans le document ST/SGB/2004/15.",
       "p4": "L'utilisation de ce système par tout utilisateur, autorisé ou non, constitue un consentement aux règlements et règles applicables de l'ONU"
     },
+    "dialogs": {
+      "okay": "Confirmer",
+      "cancel": "Annuler"
+    },
     "notFound": {
       "title": "Page non trouvée",
       "info": "Nous n'avons pas pu trouver la page que vous cherchiez",
@@ -73,8 +77,8 @@
         "clusterLead": "Chef de cluster"
       },
       "invitedBy": "Invité par {name}",
-      "confirmRoleUpdate": "Êtes-vous sûr de vouloir changer le rôle de {name} en {role}?",
-      "confirmRoleRemoval": "Êtes-vous sûr de vouloir supprimer l’accès pour {name}?",
+      "confirmRoleUpdate": "Êtes-vous sûr de vouloir changer le rôle de {name} en {role} ?",
+      "confirmRoleRemoval": "Êtes-vous sûr de vouloir supprimer l’accès pour {name} ?",
       "auditLogRoleChange": "{actor}  a remplacé le rôle de {grantee} par {role}",
       "auditLogRoleRemoval": "{actor} a supprimé l'accès de {grantee}",
       "noPendingInvites": "Aucune invitation en attente",
@@ -147,7 +151,31 @@
           "conflict": "Ce formulaire a été modifié par {person} {timeAgo} (après avoir chargé la page), nous ne pouvons donc pas enregistrer vos modifications. Veuillez actualiser votre page et réessayer."
         },
         "poweredByFooter": "Conçu avec {enketo,component} et {kobotoolbox,component}",
-        "pageIndicator": "Page {page,number} sur {count,number}"
+        "pageIndicator": "Page {page,number} sur {count,number}",
+        "enketoStrings": {
+          "constraint": {
+            "required": "Cette information est obligatoire"
+          },
+          "confirm": {
+            "repeatremove": {
+              "heading": "Supprimer élément",
+              "msg": "L'élément sera définitivement supprimé avec toutes les données qu'il contient. Êtes-vous sûr ?"
+            }
+          },
+          "filepicker": {
+            "placeholder": "Cliquez ici pour télécharger le fichier (< {maxSize, number})",
+            "notFound": "Fichier soumis antérieurement. Si vous souhaitez le remplacer, cliquez sur les flèches pour supprimer le fichier, puis téléchargez un autre fichier.",
+            "resetWarning": "Le fichier sera supprimé. Êtes-vous sûr ?"
+          },
+          "selectpicker": {
+            "noneselected": "aucune sélection",
+            "numberselected": "{number, number} sélectionnés"
+          }
+        },
+        "removingItem": {
+          "title": "Élément en cours de suppression",
+          "message": "Veuillez patienter pendant que l'élément est supprimé. Cela peut prendre un moment. Si votre navigateur vous informe que la page ne répond pas, cliquez 'attendre'."
+        }
       },
       "clusters": {
         "listHeader": "Clusters dans cette opération",

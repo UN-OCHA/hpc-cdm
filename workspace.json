@@ -21,7 +21,7 @@
             ],
             "styles": [],
             "scripts": [],
-            "webpackConfig": "@nrwl/react/plugins/webpack"
+            "webpackConfig": "apps/hpc-cdm/webpack"
           },
           "configurations": {
             "dev-live": {
