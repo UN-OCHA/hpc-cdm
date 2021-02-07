@@ -40,6 +40,10 @@
       "p3": "All use of ICT resources and ICT data is subject to monitoring and investigation as set forth in ST/SGB/2004/15",
       "p4": "Use of this system by any user, authorized or unauthorized, constitutes consent to the applicable UN regulations and rules"
     },
+    "dialogs": {
+      "okay": "Confirm",
+      "cancel": "Cancel"
+    },
     "notFound": {
       "title": "Page not found",
       "info": "We were unable to find the page you were looking for",
@@ -147,7 +151,23 @@
           "conflict": "This form was modified by {person} {timeAgo} (after you loaded the page), so we can't save your changes. Please refresh your page and try again."
         },
         "poweredByFooter": "Powered by {enketo,component} and {kobotoolbox, component}",
-        "pageIndicator": "Page {page,number} of {count,number}"
+        "pageIndicator": "Page {page,number} of {count,number}",
+        "enketoStrings": {
+          "confirm": {
+            "repeatremove": {
+              "heading": "Remove Item",
+              "msg": "This will permanently remove the item and all the data in it. Are you sure?"
+            }
+          },
+          "filepicker": {
+            "notFound": "File previously submitted. If you wish to replace it, click the arrows to remove the file and then upload a different file.",
+            "resetWarning": "This will remove the file. Are you sure?"
+          }
+        },
+        "removingItem": {
+          "title": "Removing item",
+          "message": "Please wait while the item is removed. This may take a moment. If the browser alerts you that the page has become unresponsive, please press 'Wait'."
+        }
       },
       "clusters": {
         "listHeader": "Clusters in this operation",

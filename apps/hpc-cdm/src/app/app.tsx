@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Helmet } from 'react-helmet';
 
-import { BaseStyling, C, styled, dataLoader } from '@unocha/hpc-ui';
+import { BaseStyling, C, styled, dataLoader, dialogs } from '@unocha/hpc-ui';
 
 import env, { Environment } from '../environments/environment';
 import { AppContext, contextFromEnv } from './context';
@@ -174,6 +174,7 @@ export const App = () => {
                   )}
                 </Main>
               </Container>
+              <dialogs.Dialogs />
             </AppContext.Provider>
           );
         }}

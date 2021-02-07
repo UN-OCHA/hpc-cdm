@@ -55,3 +55,7 @@ declare module 'enketo-core/src/js/form-model' {
 declare module 'enketo-core/src/js/preload' {
   export function init(): void;
 }
+
+declare module 'enketo-core/src/js/fake-translator' {
+  export function t(key: string, options?: Record<string, string>): string;
+}
