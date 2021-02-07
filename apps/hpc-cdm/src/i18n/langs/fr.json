@@ -40,6 +40,10 @@
       "p3": "Toute utilisation des ressources TIC et des données TIC fait l’objet d’un suivi et d’une enquête comme indiqué dans le document ST/SGB/2004/15.",
       "p4": "L'utilisation de ce système par tout utilisateur, autorisé ou non, constitue un consentement aux règlements et règles applicables de l'ONU"
     },
+    "dialogs": {
+      "okay": "Confirmer",
+      "cancel": "Annuler"
+    },
     "notFound": {
       "title": "Page non trouvée",
       "info": "Nous n'avons pas pu trouver la page que vous cherchiez",
@@ -147,7 +151,19 @@
           "conflict": "Ce formulaire a été modifié par {person} {timeAgo} (après avoir chargé la page), nous ne pouvons donc pas enregistrer vos modifications. Veuillez actualiser votre page et réessayer."
         },
         "poweredByFooter": "Conçu avec {enketo,component} et {kobotoolbox,component}",
-        "pageIndicator": "Page {page,number} sur {count,number}"
+        "pageIndicator": "Page {page,number} sur {count,number}",
+        "enketoStrings": {
+          "confirm": {
+            "repeatremove": {
+              "heading": "Supprimer élément",
+              "msg": "L'élément sera définitivement supprimé avec toutes les données qu'il contient. Êtes-vous sûr?"
+            }
+          }
+        },
+        "removingItem": {
+          "title": "Élément en cours de suppression",
+          "message": "Veuillez patienter pendant que l'élément est supprimé. Cela peut prendre un moment. Si votre navigateur vous informe que la page ne répond pas, cliquez 'attendre'."
+        }
       },
       "clusters": {
         "listHeader": "Clusters dans cette opération",

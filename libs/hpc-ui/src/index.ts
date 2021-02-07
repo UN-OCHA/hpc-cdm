@@ -23,6 +23,7 @@ import SidebarNavigation from './lib/components/sidebar-navigation';
 import SecondaryNavigation from './lib/components/secondary-navigation';
 import TertiaryNavigation from './lib/components/tertiary-navigation';
 import Toolbar from './lib/components/toolbar';
+import * as dialogs from './lib/components/dialogs';
 
 import Caret from './lib/assets/icons/caret';
 import Gear from './lib/assets/icons/gear';
@@ -70,6 +71,7 @@ export {
   THEME,
   ThemeProvider,
   Translations,
+  dialogs,
 };
 
 export type { DataLoaderState, Theme };

@@ -111,6 +111,14 @@ export class LanguageChoice<LanguageKey extends string> {
       document.documentElement.setAttribute('dir', meta.direction);
     }
   };
+
+  /**
+   * Convinience method to use when the current language needs to be accessed
+   * from outside the scope of a react context
+   */
+  public withLanguage = <T>(cb: (lang: LanguageKey) => T): T => {
+    return cb(this.language);
+  };
 }
 
 export class Translations<LanguageKey extends string, Strings> {
