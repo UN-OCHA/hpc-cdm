@@ -159,7 +159,6 @@ export class Translations<LanguageKey extends string, Strings> {
       if (!cache) {
         langCache.set(str, (cache = new IntlMessageFormat(str, lang)));
       }
-      console.log(str, lang, params);
       return cache.format(params) as string;
     }
   };
