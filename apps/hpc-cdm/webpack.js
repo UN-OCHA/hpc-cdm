@@ -10,6 +10,10 @@ module.exports = (config) => {
     __dirname,
     'src/app/components/enketo/overrides/dialog'
   );
+  config.resolve.alias['enketo/translator'] = path.resolve(
+    __dirname,
+    'src/app/components/enketo/overrides/translator'
+  );
 
   return config;
 };

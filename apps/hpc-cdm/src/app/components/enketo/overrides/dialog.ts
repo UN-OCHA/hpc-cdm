@@ -2,6 +2,8 @@ import { dialogs } from '@unocha/hpc-ui';
 
 import { LANGUAGE_CHOICE, t } from '../../../../i18n';
 
+import { enketoTranslate } from './translator';
+
 type DialogContentObject = {
   msg?: string;
   message?: string;
@@ -17,38 +19,22 @@ const confirm = (content: string | DialogContentObject) =>
      * Do we need to handle this confirmation in any special way?
      */
     let mode: null | 'repeatremove' = null;
-    let title: string | undefined = undefined;
-    let message: string | undefined;
 
-    if (typeof content === 'string') {
-      message = content;
-    } else {
-      // TODO: remove hard-coding of heading message, and instead use key
-      // when translation module is intercepted
-      if (content.heading === 'Delete this group of responses?') {
-        mode = 'repeatremove';
-        title = t.t(
-          lang,
-          (s) =>
-            s.routes.operations.forms.enketoStrings.confirm.repeatremove.heading
-        );
-        message = t.t(
-          lang,
-          (s) =>
-            s.routes.operations.forms.enketoStrings.confirm.repeatremove.msg
-        );
-      } else {
-        title = content.heading;
-        message = content.message || content.msg;
-      }
+    const repeatRemoveHeader = enketoTranslate('confirm.repeatremove.heading');
+
+    if (typeof content !== 'string' && content.heading === repeatRemoveHeader) {
+      mode = 'repeatremove';
     }
 
     return dialogs
       .confirm({
         buttonCancel: t.t(lang, (s) => s.components.dialogs.cancel),
         buttonConfirm: t.t(lang, (s) => s.components.dialogs.okay),
-        title,
-        message,
+        title: typeof content === 'string' ? undefined : content.heading,
+        message:
+          typeof content === 'string'
+            ? content
+            : content.message || content.msg,
       })
       .then((res) => {
         if (res && mode === 'repeatremove') {

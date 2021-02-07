@@ -77,8 +77,8 @@
         "clusterLead": "Chef de cluster"
       },
       "invitedBy": "Invité par {name}",
-      "confirmRoleUpdate": "Êtes-vous sûr de vouloir changer le rôle de {name} en {role}?",
-      "confirmRoleRemoval": "Êtes-vous sûr de vouloir supprimer l’accès pour {name}?",
+      "confirmRoleUpdate": "Êtes-vous sûr de vouloir changer le rôle de {name} en {role} ?",
+      "confirmRoleRemoval": "Êtes-vous sûr de vouloir supprimer l’accès pour {name} ?",
       "auditLogRoleChange": "{actor}  a remplacé le rôle de {grantee} par {role}",
       "auditLogRoleRemoval": "{actor} a supprimé l'accès de {grantee}",
       "noPendingInvites": "Aucune invitation en attente",
@@ -153,11 +153,23 @@
         "poweredByFooter": "Conçu avec {enketo,component} et {kobotoolbox,component}",
         "pageIndicator": "Page {page,number} sur {count,number}",
         "enketoStrings": {
+          "constraint": {
+            "required": "Cette information est obligatoire"
+          },
           "confirm": {
             "repeatremove": {
               "heading": "Supprimer élément",
-              "msg": "L'élément sera définitivement supprimé avec toutes les données qu'il contient. Êtes-vous sûr?"
+              "msg": "L'élément sera définitivement supprimé avec toutes les données qu'il contient. Êtes-vous sûr ?"
             }
+          },
+          "filepicker": {
+            "placeholder": "Cliquez ici pour télécharger le fichier (< {maxSize, number})",
+            "notFound": "Fichier soumis antérieurement. Si vous souhaitez le remplacer, cliquez sur les flèches pour supprimer le fichier, puis téléchargez un autre fichier.",
+            "resetWarning": "Le fichier sera supprimé. Êtes-vous sûr ?"
+          },
+          "selectpicker": {
+            "noneselected": "aucune sélection",
+            "numberselected": "{number, number} sélectionnés"
           }
         },
         "removingItem": {

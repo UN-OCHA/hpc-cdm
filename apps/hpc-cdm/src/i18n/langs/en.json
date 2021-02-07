@@ -158,6 +158,10 @@
               "heading": "Remove Item",
               "msg": "This will permanently remove the item and all the data in it. Are you sure?"
             }
+          },
+          "filepicker": {
+            "notFound": "File previously submitted. If you wish to replace it, click the arrows to remove the file and then upload a different file.",
+            "resetWarning": "This will remove the file. Are you sure?"
           }
         },
         "removingItem": {
