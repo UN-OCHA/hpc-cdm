@@ -93,7 +93,8 @@
     "clusters": "Clusters/Secteurs",
     "forms": "Formulaires",
     "settings": "Réglages",
-    "manageAccess": "Gérer l'accès"
+    "manageAccess": "Gérer l'accès",
+    "faq": "FAQ"
   },
   "routes": {
     "operations": {

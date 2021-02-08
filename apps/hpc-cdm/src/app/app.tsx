@@ -131,17 +131,24 @@ export const App = () => {
                         appTitle={appTitle}
                         tabs={[
                           {
+                            type: 'internal',
                             label: t.t(lang, (s) => s.navigation.operations),
                             path: paths.operations(),
                           },
                           ...(canModifyGlobalUserAccess
                             ? [
                                 {
+                                  type: 'internal' as 'internal',
                                   label: t.t(lang, (s) => s.navigation.admin),
                                   path: paths.admin(),
                                 },
                               ]
                             : []),
+                          {
+                            type: 'external',
+                            label: t.t(lang, (s) => s.navigation.faq),
+                            href: 'https://google.com',
+                          },
                         ]}
                       />
                       <Switch>

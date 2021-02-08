@@ -93,7 +93,8 @@
     "clusters": "Clusters/Sectors",
     "forms": "Survey Forms",
     "settings": "Settings",
-    "manageAccess": "Manage access"
+    "manageAccess": "Manage access",
+    "faq": "FAQ"
   },
   "routes": {
     "operations": {

@@ -19,9 +19,15 @@ interface Props {
   appTitle: JSX.Element;
   tabs?: Array<
     | {
+        type: 'internal';
         path: string;
         label: string;
         selected?: boolean;
+      }
+    | {
+        type: 'external';
+        href: string;
+        label: string;
       }
     | null
     | undefined
@@ -117,6 +123,15 @@ export default (props: Props) => {
       {tabs.map((tab, i) => {
         if (!tab) {
           return null;
+        }
+        if (tab.type === 'external') {
+          return (
+            <li key={i}>
+              <a href={tab.href} target="_blank" rel="noopener noreferrer">
+                <span>{tab.label}</span>
+              </a>
+            </li>
+          );
         }
         const selected =
           tab.selected === undefined
