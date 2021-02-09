@@ -56,7 +56,7 @@
     },
     "unsupportedBrowser": {
       "title": "Navigateur non compatible! ",
-      "info": "Malheureusement, votre présent navigateur n’est pas compatible. Veuillez utiliser Firefox, Chrome ou Edge. Pour ce faire, simplement copiez le lien (URL) dessus, ouvrez Firefox, Chrome, ou Edge, et collez le lien sur la barre d’adresse du nouveau navigateur."
+      "info": "Malheureusement, votre présent navigateur n’est pas compatible. Veuillez utiliser Firefox ou Chrome. Pour ce faire, simplement copiez le lien (URL) dessus, ouvrez Firefox, ou Chrome, et collez le lien sur la barre d’adresse du nouveau navigateur."
     },
     "accessControl": {
       "addPerson": "Ajouter quelqu'un",
