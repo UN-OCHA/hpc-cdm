@@ -56,7 +56,7 @@
     },
     "unsupportedBrowser": {
       "title": "Unsupported Browser!",
-      "info": "Unfortunately, your current browser is not supported. Please switch to either Firefox, Google Chrome or Edge. To do this, simply copy the form address (URL) above, then open Firefox, Chrome or Edge, and paste the address into the browser."
+      "info": "Unfortunately, your current browser is not supported. Please switch to either Firefox or Google Chrome. To do this, simply copy the form address (URL) above, then open Firefox or Chrome, and paste the address into the browser."
     },
     "accessControl": {
       "addPerson": "Add User",
