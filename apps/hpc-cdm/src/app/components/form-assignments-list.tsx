@@ -4,6 +4,7 @@ import { C, styled } from '@unocha/hpc-ui';
 import { reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
+import { t } from '../../i18n';
 
 interface Props {
   className?: string;
@@ -20,13 +21,15 @@ interface Props {
 
 const Label = styled.span<{ submitted: boolean }>`
   margin: 0 2rem;
-  padding: 0.5rem;
+  padding: 0.5rem 0.8rem;
   border-radius: 0.5rem;
   background-color: ${(p) =>
     p.submitted
       ? p.theme.colors.pallete.green.light
       : p.theme.colors.pallete.blue.light};
-  color: ${(p) => p.theme.colors.text};
+  color: rgba(0, 0, 0, 0.9);
+  font-size: 1.2rem;
+  font-weight: bold;
 `;
 
 const FormAssignmentsList = (props: Props) => {
@@ -51,7 +54,12 @@ const FormAssignmentsList = (props: Props) => {
               }
             })
             .map((a) => {
-              const submitted = a.state === 'clean:entered';
+              const submitted = [
+                'clean:entered',
+                'raw:finalized',
+                'clean:finalized',
+              ].includes(a.state);
+
               return (
                 <C.ListItem
                   key={a.assignmentId}
@@ -60,7 +68,13 @@ const FormAssignmentsList = (props: Props) => {
                   secondary={a.cluster && <span>{a.cluster.name}</span>}
                   label={
                     <Label submitted={submitted}>
-                      {submitted ? 'submitted' : 'not submitted'}
+                      {t.get(
+                        lang,
+                        (s) =>
+                          s.routes.operations.forms.labels[
+                            submitted ? 'submitted' : 'notSubmitted'
+                          ]
+                      )}
                     </Label>
                   }
                 />

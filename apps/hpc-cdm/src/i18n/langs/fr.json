@@ -183,6 +183,10 @@
         "removingItem": {
           "title": "Élément en cours de suppression",
           "message": "Veuillez patienter pendant que l'élément est supprimé. Cela peut prendre un moment. Si votre navigateur vous informe que la page ne répond pas, cliquez 'attendre'."
+        },
+        "labels": {
+          "submitted": "soumis",
+          "notSubmitted": "pas soumis"
         }
       },
       "clusters": {

@@ -94,7 +94,7 @@ const ListItem = (props: Props) => {
         </>
       )}
       <div className={CLASSES.FLEX.GROW} />
-      {label && label}
+      {label}
       {actions && <Actions>{actions}</Actions>}
     </>
   );

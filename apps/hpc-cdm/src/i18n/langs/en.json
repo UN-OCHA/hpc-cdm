@@ -175,6 +175,10 @@
         "removingItem": {
           "title": "Removing item",
           "message": "Please wait while the item is removed. This may take a moment. If the browser alerts you that the page has become unresponsive, please press 'Wait'."
+        },
+        "labels": {
+          "submitted": "submitted",
+          "notSubmitted": "not submitted"
         }
       },
       "clusters": {
