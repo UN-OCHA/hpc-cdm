@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
 import { reportingWindows } from '@unocha/hpc-data';
@@ -18,6 +17,17 @@ interface Props {
   >;
   assignmentLink: (assignment: reportingWindows.FormAssignment) => string;
 }
+
+const Label = styled.span<{ submitted: boolean }>`
+  margin: 0 2rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: ${(p) =>
+    p.submitted
+      ? p.theme.colors.pallete.green.light
+      : p.theme.colors.pallete.blue.light};
+  color: ${(p) => p.theme.colors.text};
+`;
 
 const FormAssignmentsList = (props: Props) => {
   const { title, className, assignments, assignmentLink } = props;
@@ -40,14 +50,22 @@ const FormAssignmentsList = (props: Props) => {
                 return c1.localeCompare(c2);
               }
             })
-            .map((a, i) => (
-              <C.ListItem
-                key={i}
-                link={assignmentLink(a)}
-                text={a.form.name}
-                secondary={a.cluster && <span>{a.cluster.name}</span>}
-              />
-            ))}
+            .map((a) => {
+              const submitted = a.state === 'clean:entered';
+              return (
+                <C.ListItem
+                  key={a.assignmentId}
+                  link={assignmentLink(a)}
+                  text={a.form.name}
+                  secondary={a.cluster && <span>{a.cluster.name}</span>}
+                  label={
+                    <Label submitted={submitted}>
+                      {submitted ? 'submitted' : 'not submitted'}
+                    </Label>
+                  }
+                />
+              );
+            })}
         </C.List>
       )}
     </AppContext.Consumer>

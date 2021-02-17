@@ -26,6 +26,10 @@ const COLOR_PALETTE = {
   blue: {
     dark2: '#025995',
     normal: '#026cb6', // from style guide
+    light: '#96c3e1',
+  },
+  green: {
+    light: '#afdfb0',
   },
   gray: {
     normal: '#333333', // from style guide
