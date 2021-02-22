@@ -119,7 +119,13 @@
           },
           "close": "Fermer"
         },
-        "assignedUsers": "Utilisateurs Attribués",
+        "assignedUsers": {
+          "title": "Utilisateurs Attribués",
+          "tooltip": {
+            "title": "Nouvelle fonctionnalité:",
+            "description": "cliquez sur ce bouton pour voir tous les utilisateurs qui contribuent à cette enquête"
+          }
+        },
         "loading": {
           "title": "Chargement du formulaire en cours",
           "info": "Le chargement de cette page peut prendre quelques instants, veuillez patienter sans fermer votre navigateur, si votre navigateur vous informe d’un délai ou absence de réponse dans le chargement de la page, cliquez ‘attendre’."

@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { reportingWindows, errors } from '@unocha/hpc-data';
-import { C, CLASSES, styled } from '@unocha/hpc-ui';
+import { C, CLASSES, styled, THEME } from '@unocha/hpc-ui';
 import {
   Tooltip,
   CircularProgress,
@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  withStyles,
 } from '@material-ui/core';
 import {
   MdWarning,
@@ -100,14 +101,64 @@ const PageIndicator = styled.div`
   margin-bottom: ${(p) => p.theme.marginPx.md}px;
 `;
 
+// Styles for Assigned Users
+const TOOLTIP_COLOR = THEME.colors.pallete.yellow.normal;
+const OrangeTooltip = withStyles({
+  tooltip: {
+    backgroundColor: TOOLTIP_COLOR,
+    padding: 10,
+  },
+  arrow: {
+    color: TOOLTIP_COLOR,
+  },
+})(Tooltip);
+
+const Dot = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  bottom: -1rem;
+  left: -1.5rem;
+  position: relative;
+  background-color: ${TOOLTIP_COLOR};
+  border-radius: 2rem;
+  border: 3px white solid;
+  color: white;
+  font-size: 2rem;
+  font-weight: bolder;
+`;
+
 const AssignedUsersListItem = styled.div`
   display: flex;
   justify-content: space-between;
-  color: ${(p) => p.theme.colors.textError};
+  align-items: center;
+`;
+
+const UserLink = styled.a`
+  color: ${(p) => p.theme.colors.secondary.normal};
+`;
+
+const UserTitle = styled.h3`
+  color: ${(p) => p.theme.colors.text};
+  text-align: center;
+`;
+
+const UserText = styled.span`
+  color: ${(p) => p.theme.colors.text};
+  margin: 0.25rem;
 `;
 
 const MdEmail = styled(_MdEmail)`
-  margin-left: 0.5rem;
+  margin: 0 0.5rem;
+`;
+
+const AssigneeUsersToolTipText = styled.span<{ bold: boolean }>`
+  font-size: 1.5rem;
+  font-weight: ${(p) => (p.bold ? 'bold' : 'normal')};
+  color: ${(p) => p.theme.colors.text};
+  ${(p) => !p.bold && 'margin: 0 5px'};
 `;
 
 type Status =
@@ -436,12 +487,6 @@ export const EnketoEditableForm = (props: Props) => {
           </>
         ) : (
           <>
-            <C.Button
-              onClick={() => setShowAssignedUsers(true)}
-              color="primary"
-            >
-              <span>Assigned Users</span>
-            </C.Button>
             {!editable ? (
               <span>
                 <MdLock size={20} />
@@ -510,6 +555,36 @@ export const EnketoEditableForm = (props: Props) => {
     </StatusTooltip>
   );
 
+  const assignedUsersButton = () => (
+    <>
+      <C.Button onClick={() => setShowAssignedUsers(true)} color="primary">
+        <span>Assigned Users</span>
+      </C.Button>
+      <OrangeTooltip
+        arrow
+        title={
+          <>
+            <AssigneeUsersToolTipText bold={true}>
+              {t.t(
+                lang,
+                (s) => s.routes.operations.forms.assignedUsers.tooltip.title
+              )}
+            </AssigneeUsersToolTipText>
+            <AssigneeUsersToolTipText bold={false}>
+              {t.t(
+                lang,
+                (s) =>
+                  s.routes.operations.forms.assignedUsers.tooltip.description
+              )}
+            </AssigneeUsersToolTipText>
+          </>
+        }
+      >
+        <Dot>!</Dot>
+      </OrangeTooltip>
+    </>
+  );
+
   /**
    * Ensure that all link clicks open in a new tab
    */
@@ -533,6 +608,7 @@ export const EnketoEditableForm = (props: Props) => {
     <div>
       <C.Toolbar>
         <div className={CLASSES.FLEX.GROW} />
+        {!loading && assignedUsersButton()}
         {indicator()}
       </C.Toolbar>
       {loading && (
@@ -664,20 +740,24 @@ export const EnketoEditableForm = (props: Props) => {
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
             >
-              <DialogTitle id="alert-dialog-title">
-                {t.t(lang, (s) => s.routes.operations.forms.assignedUsers)}
-              </DialogTitle>
+              <UserTitle id="alert-dialog-title">
+                {t.t(
+                  lang,
+                  (s) => s.routes.operations.forms.assignedUsers.title
+                )}
+              </UserTitle>
 
-              <DialogContent>
+              <DialogContent id="alert-dialog-description">
                 {assignment.assignedUsers.map((user) => (
-                  <a href={`mailto:${user.email}`}>
+                  <UserLink href={`mailto:${user.email}`}>
                     <AssignedUsersListItem key={user.email}>
-                      <DialogContentText>
-                        {user.name || user.email}
-                      </DialogContentText>
-                      <MdEmail size={20} />
+                      <UserText>{user.name || user.email}</UserText>
+                      <MdEmail
+                        size={20}
+                        color={THEME.colors.pallete.orange.normal}
+                      />
                     </AssignedUsersListItem>
-                  </a>
+                  </UserLink>
                 ))}
               </DialogContent>
 

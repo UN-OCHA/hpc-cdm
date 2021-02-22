@@ -119,7 +119,13 @@
           },
           "close": "Close"
         },
-        "assignedUsers": "Assigned Users",
+        "assignedUsers": {
+          "title": "Assigned Users",
+          "tooltip": {
+            "title": "new feature:",
+            "description": "click this button to see to see all users collaborating on this survey"
+          }
+        },
         "loading": {
           "title": "Loading Form",
           "info": "It may take a moment for the form to load, but please be patient, and don't close your browser; and if the browser alerts you that the page has become unresponsive, please press wait."
