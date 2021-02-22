@@ -110,6 +110,7 @@ export const GET_ASSIGNMENT_RESULT = <T>(fileType: t.Type<T>) =>
       currentFiles: t.array(fileType),
     }),
     assignee: ASSIGNMENT_ASSIGNEE,
+    assignedUsers: t.array(t.partial({ email: t.string, name: t.string })),
   });
 
 export const GET_ASSIGNMENT_RESULT_MODEL = GET_ASSIGNMENT_RESULT(FORM_FILE);
