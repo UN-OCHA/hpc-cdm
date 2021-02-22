@@ -116,8 +116,10 @@
             "confirm": "I confirm that the form is complete and ready to be submitted",
             "submit": "Submit",
             "validating": "Validating"
-          }
+          },
+          "close": "Close"
         },
+        "assignedUsers": "Assigned Users",
         "loading": {
           "title": "Loading Form",
           "info": "It may take a moment for the form to load, but please be patient, and don't close your browser; and if the browser alerts you that the page has become unresponsive, please press wait."

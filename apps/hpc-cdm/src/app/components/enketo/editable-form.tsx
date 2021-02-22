@@ -10,9 +10,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  Button,
 } from '@material-ui/core';
-import { MdWarning, MdLock, MdLockOpen } from 'react-icons/md';
+import {
+  MdWarning,
+  MdLock,
+  MdLockOpen,
+  MdEmail as _MdEmail,
+} from 'react-icons/md';
 import dayjs from '../../../libraries/dayjs';
 
 import XForm, { PageInfo } from './xform';
@@ -96,6 +100,16 @@ const PageIndicator = styled.div`
   margin-bottom: ${(p) => p.theme.marginPx.md}px;
 `;
 
+const AssignedUsersListItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  color: ${(p) => p.theme.colors.textError};
+`;
+
+const MdEmail = styled(_MdEmail)`
+  margin-left: 0.5rem;
+`;
+
 type Status =
   | {
       type: 'idle';
@@ -138,6 +152,7 @@ export const EnketoEditableForm = (props: Props) => {
   const [showValidationConfirmation, setShowValidationConfirmation] = useState(
     false
   );
+  const [showAssignedUsers, setShowAssignedUsers] = useState(false);
   const [submissionValidation, setSubmissionValidation] = useState<
     'in-progress' | 'invalid' | null
   >(null);
@@ -421,6 +436,12 @@ export const EnketoEditableForm = (props: Props) => {
           </>
         ) : (
           <>
+            <C.Button
+              onClick={() => setShowAssignedUsers(true)}
+              color="primary"
+            >
+              <span>Assigned Users</span>
+            </C.Button>
             {!editable ? (
               <span>
                 <MdLock size={20} />
@@ -633,6 +654,41 @@ export const EnketoEditableForm = (props: Props) => {
                       lang,
                       (s) => s.routes.operations.forms.invalidData.okay
                     )}
+                  </span>
+                </C.Button>
+              </DialogActions>
+            </Dialog>
+            <Dialog
+              open={showAssignedUsers}
+              onClose={() => setShowAssignedUsers(false)}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {t.t(lang, (s) => s.routes.operations.forms.assignedUsers)}
+              </DialogTitle>
+
+              <DialogContent>
+                {assignment.assignedUsers.map((user) => (
+                  <a href={`mailto:${user.email}`}>
+                    <AssignedUsersListItem key={user.email}>
+                      <DialogContentText>
+                        {user.name || user.email}
+                      </DialogContentText>
+                      <MdEmail size={20} />
+                    </AssignedUsersListItem>
+                  </a>
+                ))}
+              </DialogContent>
+
+              <DialogActions>
+                <C.Button
+                  onClick={() => setShowAssignedUsers(false)}
+                  color="primary"
+                  autoFocus
+                >
+                  <span>
+                    {t.t(lang, (s) => s.routes.operations.forms.nav.close)}
                   </span>
                 </C.Button>
               </DialogActions>

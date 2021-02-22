@@ -116,8 +116,10 @@
             "confirm": "Je confirme que l’enquête est complète et prête à être soumise",
             "submit": "Soumettre",
             "validating": "En cours de validation"
-          }
+          },
+          "close": "Fermer"
         },
+        "assignedUsers": "Utilisateurs Attribués",
         "loading": {
           "title": "Chargement du formulaire en cours",
           "info": "Le chargement de cette page peut prendre quelques instants, veuillez patienter sans fermer votre navigateur, si votre navigateur vous informe d’un délai ou absence de réponse dans le chargement de la page, cliquez ‘attendre’."
