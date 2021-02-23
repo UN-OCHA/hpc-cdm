@@ -116,6 +116,14 @@
             "confirm": "I confirm that the form is complete and ready to be submitted",
             "submit": "Submit",
             "validating": "Validating"
+          },
+          "close": "Close"
+        },
+        "assignedUsers": {
+          "title": "Assigned Users",
+          "tooltip": {
+            "title": "new feature:",
+            "description": "click this button to see to see all users collaborating on this survey"
           }
         },
         "loading": {

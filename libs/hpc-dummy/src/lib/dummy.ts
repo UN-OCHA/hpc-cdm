@@ -218,6 +218,7 @@ export class Dummy {
       editable: assignment.editable,
       task: await getAssignmentTask(assignment),
       assignee,
+      assignedUsers: [{ name: 'Assignee Name', email: 'test@email.com' }],
     };
     return r;
   }

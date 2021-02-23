@@ -116,6 +116,14 @@
             "confirm": "Je confirme que l’enquête est complète et prête à être soumise",
             "submit": "Soumettre",
             "validating": "En cours de validation"
+          },
+          "close": "Fermer"
+        },
+        "assignedUsers": {
+          "title": "Utilisateurs Attribués",
+          "tooltip": {
+            "title": "Nouvelle fonctionnalité:",
+            "description": "cliquez sur ce bouton pour voir tous les utilisateurs qui contribuent à cette enquête"
           }
         },
         "loading": {
