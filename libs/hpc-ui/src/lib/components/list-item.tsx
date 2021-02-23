@@ -26,6 +26,10 @@ interface Props {
    * If set, display this element as secondary information after the main text
    */
   secondary?: JSX.Element | string;
+  /**
+   * If set, display this element as additional information before the action
+   */
+  label?: JSX.Element;
   actions?: JSX.Element | JSX.Element[];
   muted?: boolean;
 }
@@ -64,7 +68,16 @@ const Actions = styled.div`
 `;
 
 const ListItem = (props: Props) => {
-  const { className, link, text, prefix, secondary, actions, muted } = props;
+  const {
+    className,
+    link,
+    text,
+    prefix,
+    secondary,
+    actions,
+    muted,
+    label,
+  } = props;
   const contents = (
     <>
       {prefix && (
@@ -81,6 +94,7 @@ const ListItem = (props: Props) => {
         </>
       )}
       <div className={CLASSES.FLEX.GROW} />
+      {label}
       {actions && <Actions>{actions}</Actions>}
     </>
   );

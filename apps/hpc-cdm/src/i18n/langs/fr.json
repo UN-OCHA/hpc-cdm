@@ -116,6 +116,14 @@
             "confirm": "Je confirme que l’enquête est complète et prête à être soumise",
             "submit": "Soumettre",
             "validating": "En cours de validation"
+          },
+          "close": "Fermer"
+        },
+        "assignedUsers": {
+          "title": "Utilisateurs Attribués",
+          "tooltip": {
+            "title": "Nouvelle fonctionnalité:",
+            "description": "cliquez sur ce bouton pour voir tous les utilisateurs qui contribuent à cette enquête"
           }
         },
         "loading": {
@@ -175,6 +183,10 @@
         "removingItem": {
           "title": "Élément en cours de suppression",
           "message": "Veuillez patienter pendant que l'élément est supprimé. Cela peut prendre un moment. Si votre navigateur vous informe que la page ne répond pas, cliquez 'attendre'."
+        },
+        "labels": {
+          "submitted": "soumis",
+          "notSubmitted": "pas soumis"
         }
       },
       "clusters": {
