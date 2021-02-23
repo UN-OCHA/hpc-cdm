@@ -558,7 +558,9 @@ export const EnketoEditableForm = (props: Props) => {
   const assignedUsersButton = () => (
     <>
       <C.Button onClick={() => setShowAssignedUsers(true)} color="primary">
-        <span>Assigned Users</span>
+        <span>
+          {t.t(lang, (s) => s.routes.operations.forms.assignedUsers.title)}
+        </span>
       </C.Button>
       <OrangeTooltip
         arrow
