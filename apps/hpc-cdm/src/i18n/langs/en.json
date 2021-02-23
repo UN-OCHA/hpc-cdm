@@ -123,7 +123,7 @@
           "title": "Assigned Users",
           "tooltip": {
             "title": "new feature:",
-            "description": "click this button to see to see all users collaborating on this survey"
+            "description": "click this button to see all users collaborating on this survey"
           }
         },
         "loading": {
