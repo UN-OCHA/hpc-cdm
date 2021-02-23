@@ -116,6 +116,14 @@
             "confirm": "I confirm that the form is complete and ready to be submitted",
             "submit": "Submit",
             "validating": "Validating"
+          },
+          "close": "Close"
+        },
+        "assignedUsers": {
+          "title": "Assigned Users",
+          "tooltip": {
+            "title": "new feature:",
+            "description": "click this button to see all users collaborating on this survey"
           }
         },
         "loading": {
@@ -167,6 +175,10 @@
         "removingItem": {
           "title": "Removing item",
           "message": "Please wait while the item is removed. This may take a moment. If the browser alerts you that the page has become unresponsive, please press 'Wait'."
+        },
+        "labels": {
+          "submitted": "submitted",
+          "notSubmitted": "not submitted"
         }
       },
       "clusters": {

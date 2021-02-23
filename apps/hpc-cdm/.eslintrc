@@ -125,14 +125,6 @@
     ],
     "no-unexpected-multiline": "warn",
     "no-unreachable": "warn",
-    "no-unused-expressions": [
-      "error",
-      {
-        "allowShortCircuit": true,
-        "allowTernary": true,
-        "allowTaggedTemplates": true
-      }
-    ],
     "no-unused-labels": "warn",
     "no-useless-computed-key": "warn",
     "no-useless-concat": "warn",
