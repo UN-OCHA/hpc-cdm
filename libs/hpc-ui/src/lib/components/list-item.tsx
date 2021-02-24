@@ -29,7 +29,7 @@ interface Props {
   /**
    * If set, display this element as additional information before the action
    */
-  label?: JSX.Element;
+  itemEnd?: JSX.Element;
   actions?: JSX.Element | JSX.Element[];
   muted?: boolean;
 }
@@ -48,7 +48,7 @@ const Info = styled.span`
   font-weight: 500;
 `;
 
-const SecondaryDiv = styled.div`
+const Divider = styled.div`
   height: 13px;
   border-left: 1px solid ${(p) => p.theme.colors.dividers};
   margin: 0 ${(p) => p.theme.marginPx.lg}px;
@@ -76,7 +76,7 @@ const ListItem = (props: Props) => {
     secondary,
     actions,
     muted,
-    label,
+    itemEnd,
   } = props;
   const contents = (
     <>
@@ -89,12 +89,17 @@ const ListItem = (props: Props) => {
       <Text className={(muted && CLS.MUTED) || undefined}>{text}</Text>
       {secondary && (
         <>
-          <SecondaryDiv />
+          <Divider />
           <Info>{secondary}</Info>
         </>
       )}
       <div className={CLASSES.FLEX.GROW} />
-      {label}
+      {itemEnd && (
+        <>
+          <Divider />
+          {itemEnd}
+        </>
+      )}
       {actions && <Actions>{actions}</Actions>}
     </>
   );
