@@ -576,6 +576,8 @@ export class Dummy {
                   .map((a) => ({
                     assignmentId: a.id,
                     state: a.state,
+                    lastUpdatedAt: a.lastUpdatedAt,
+                    lastUpdatedBy: a.lastUpdatedBy,
                     form: this.getFormMeta(a.formId),
                   })),
               },
@@ -594,6 +596,8 @@ export class Dummy {
                     .map((a) => ({
                       assignmentId: a.id,
                       state: a.state,
+                      lastUpdatedAt: a.lastUpdatedAt,
+                      lastUpdatedBy: a.lastUpdatedBy,
                       form: this.getFormMeta(a.formId),
                     })),
                 })),
