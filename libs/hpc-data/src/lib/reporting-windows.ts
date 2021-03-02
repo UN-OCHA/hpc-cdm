@@ -34,6 +34,8 @@ export type AssignmentState = t.TypeOf<typeof ASSIGNMENT_STATE>;
 const FORM_ASSIGNMENT = t.type({
   assignmentId: t.number,
   state: ASSIGNMENT_STATE,
+  lastUpdatedAt: t.number,
+  lastUpdatedBy: t.string,
   form: FORM_META,
 });
 
