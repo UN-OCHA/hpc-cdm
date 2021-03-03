@@ -5,6 +5,8 @@ import { reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
 import { t } from '../../i18n';
+import dayjs from '../../libraries/dayjs';
+import { Tooltip, withStyles } from '@material-ui/core';
 
 interface Props {
   className?: string;
@@ -30,6 +32,17 @@ const Label = styled.span<{ submitted: boolean }>`
   color: rgba(0, 0, 0, 0.9);
   font-size: 1.2rem;
   font-weight: bold;
+`;
+
+const StyledToolTip = withStyles({
+  tooltip: {
+    padding: 8,
+  },
+})(Tooltip);
+
+const LastChanged = styled.span`
+  font-style: italic;
+  color: ${(p) => p.theme.colors.textLight};
 `;
 
 const FormAssignmentsList = (props: Props) => {
@@ -66,16 +79,25 @@ const FormAssignmentsList = (props: Props) => {
                   link={assignmentLink(a)}
                   text={a.form.name}
                   secondary={a.cluster && <span>{a.cluster.name}</span>}
-                  label={
-                    <Label submitted={submitted}>
-                      {t.get(
-                        lang,
-                        (s) =>
-                          s.routes.operations.forms.labels[
-                            submitted ? 'submitted' : 'notSubmitted'
-                          ]
-                      )}
-                    </Label>
+                  itemEnd={
+                    <>
+                      <StyledToolTip
+                        arrow
+                        title={`${dayjs(a.lastUpdatedAt).locale(lang)}`}
+                      >
+                        <LastChanged>{`Last updated by ${a.lastUpdatedBy}`}</LastChanged>
+                      </StyledToolTip>
+
+                      <Label submitted={submitted}>
+                        {t.get(
+                          lang,
+                          (s) =>
+                            s.routes.operations.forms.labels[
+                              submitted ? 'submitted' : 'notSubmitted'
+                            ]
+                        )}
+                      </Label>
+                    </>
                   }
                 />
               );
