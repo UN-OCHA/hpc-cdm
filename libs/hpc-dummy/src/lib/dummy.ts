@@ -622,7 +622,9 @@ export class Dummy {
           async (
             params: reportingWindows.UpdateAssignmentParams
           ): Promise<reportingWindows.GetAssignmentResult> => {
-            if (reportingWindows.UPDATE_ASSIGNMENT_PARAMS_STATE_CHANGE.is(params)) {
+            if (
+              reportingWindows.UPDATE_ASSIGNMENT_PARAMS_STATE_CHANGE.is(params)
+            ) {
               const [assignment] = this.data.reportingWindows
                 .map((rw) =>
                   rw.assignments.find((a) => a.id === params.assignmentId)

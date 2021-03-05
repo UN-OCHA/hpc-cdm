@@ -27,6 +27,7 @@ import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
 import PoweredByFooter from './powered-by-footer';
 
+// Styles for status bar
 const StatusTooltip = Tooltip;
 
 const NotSubmitted = styled.span`
@@ -159,6 +160,11 @@ const AssigneeUsersToolTipText = styled.span<{ bold: boolean }>`
   font-weight: ${(p) => (p.bold ? 'bold' : 'normal')};
   color: ${(p) => p.theme.colors.text};
   ${(p) => !p.bold && 'margin: 0 5px'};
+`;
+
+// Styles for undo buttons
+const UndoButton = styled(C.Button)`
+  margin: 0 1rem;
 `;
 
 type Status =
@@ -499,10 +505,10 @@ export const EnketoEditableForm = (props: Props) => {
             ) : (
               <NotSubmitted>
                 <MdLockOpen size={20} />
-                {t.t(
-                  lang,
-                  (s) =>
-                    s.routes.operations.forms.editability.notSubmittedEditable
+                {t.t(lang, (s) =>
+                  assignment.state === 'raw:entered'
+                    ? s.routes.operations.forms.editability.notSubmittedEditable
+                    : s.routes.operations.forms.editability.submittedEditable
                 )}
               </NotSubmitted>
             )}
@@ -587,6 +593,61 @@ export const EnketoEditableForm = (props: Props) => {
     </>
   );
 
+  const onStatusChangeClick = (state: reportingWindows.AssignmentState) => {
+    setStatus({ type: 'saving' });
+    env.model.reportingWindows
+      .updateAssignment({
+        assignmentId: assignment.id,
+        state,
+      })
+      .then(() => {
+        history.go(0);
+      })
+      .catch((err) => {
+        setStatus({
+          type: 'error',
+          message: err.message || err.toString(),
+        });
+      });
+  };
+  const statusChangeButtons = () => {
+    return (
+      status.type === 'idle' && (
+        <>
+          {assignment.state !== 'raw:entered' &&
+            assignment.permissions.canModifyWhenClean && (
+              <UndoButton
+                color="neutral"
+                onClick={() => onStatusChangeClick('raw:entered')}
+              >
+                <span>
+                  {t.t(
+                    lang,
+                    (s) => s.routes.operations.forms.statusChange.unsubmit
+                  )}
+                </span>
+              </UndoButton>
+            )}
+          {!editable && assignment.permissions.canModifyWhenClean && (
+            <span>
+              <UndoButton
+                color="neutral"
+                onClick={() => onStatusChangeClick('clean:entered')}
+              >
+                <span>
+                  {t.t(
+                    lang,
+                    (s) => s.routes.operations.forms.statusChange.unlock
+                  )}
+                </span>
+              </UndoButton>
+            </span>
+          )}
+        </>
+      )
+    );
+  };
+
   /**
    * Ensure that all link clicks open in a new tab
    */
@@ -609,6 +670,7 @@ export const EnketoEditableForm = (props: Props) => {
   return (
     <div>
       <C.Toolbar>
+        {!loading && statusChangeButtons()}
         <div className={CLASSES.FLEX.GROW} />
         {!loading && assignedUsersButton()}
         {indicator()}
