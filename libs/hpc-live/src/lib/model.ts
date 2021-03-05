@@ -128,6 +128,36 @@ const fileCache = new Map<string, Promise<ArrayBuffer>>();
  * (e.g. when it's neccesary for single model function to be backed my multiple
  * HTTP endpoints, or where some data is sent as params and some as body).
  */
+
+const UPDATE_ASSIGNMENT_BODY_VALUES = t.type({
+  previousVersion: t.number,
+  form: t.intersection([
+    forms.FORM_BASE,
+    t.type({
+      data: t.string,
+      finalized: t.boolean,
+      files: t.array(
+        t.type({
+          name: t.string,
+          data: t.type({
+            fileHash: t.string,
+          }),
+        })
+      ),
+    }),
+  ]),
+});
+
+const UPDATE_ASSIGNMENT_BODY_STATE_CHANGE = t.type({
+  state: t.type({
+    type: t.keyof({
+      raw: null,
+      clean: null,
+    }),
+    finalized: t.boolean,
+  }),
+});
+
 export const LIVE_TYPES = {
   ACCESS: {
     /**
@@ -171,24 +201,11 @@ export const LIVE_TYPES = {
     GET_ASSIGNMENT_RESULT: reportingWindows.GET_ASSIGNMENT_RESULT(
       forms.FORM_FILE_HASH
     ),
-    UPDATE_ASSIGNMENT_BODY: t.type({
-      previousVersion: t.number,
-      form: t.intersection([
-        forms.FORM_BASE,
-        t.type({
-          data: t.string,
-          finalized: t.boolean,
-          files: t.array(
-            t.type({
-              name: t.string,
-              data: t.type({
-                fileHash: t.string,
-              }),
-            })
-          ),
-        }),
-      ]),
-    }),
+    UPDATE_ASSIGNMENT_BODY: t.union([
+      UPDATE_ASSIGNMENT_BODY_VALUES,
+      UPDATE_ASSIGNMENT_BODY_STATE_CHANGE,
+    ]),
+    UPDATE_ASSIGNMENT_BODY_STATE_CHANGE,
   },
 } as const;
 
@@ -459,50 +476,70 @@ export class LiveModel implements Model {
       updateAssignment: async (params) => {
         const { assignmentId: aId } = params;
 
-        const files = await Promise.all(
-          params.form.files.map(async (f) => ({
-            name: f.name,
-            data: f.data,
-            fileHash: await this.sha256Hash(f.data),
-          }))
-        );
+        if (reportingWindows.UPDATE_ASSIGNMENT_PARAMS_STATE_CHANGE.is(params)) {
+          const [type, finalized] = params.state.split(':');
 
-        keepOnlyGivenFiles(files.map((f) => f.fileHash));
-
-        for (const file of files) {
-          fileCache.set(file.fileHash, Promise.resolve(file.data));
-        }
-
-        if (files && files.length) {
-          const newFiles = await this.checkFormAssignmentFiles(aId, files);
-          if (newFiles) {
-            await this.uploadFormAssignmentFiles(aId, newFiles);
-          }
-        }
-
-        const data = {
-          ...params,
-          form: {
-            id: params.form.id,
-            version: params.form.version,
-            data: params.form.data,
-            finalized: params.form.finalized,
-            files: files.map((f) => ({
+          const result = await this.call({
+            method: 'PUT',
+            body: {
+              type: 'json',
+              data: {
+                state: {
+                  type,
+                  finalized: finalized === 'finalized',
+                },
+              },
+            },
+            pathname: `/v2/reportingwindows/assignments/${aId}`,
+            resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
+          });
+          return handleAssignmentResult(result);
+        } else {
+          const files = await Promise.all(
+            params.form.files.map(async (f) => ({
               name: f.name,
-              data: { fileHash: f.fileHash },
-            })),
-          },
-        };
-        const result = await this.call({
-          method: 'PUT',
-          body: {
-            type: 'json',
-            data,
-          },
-          pathname: `/v2/reportingwindows/assignments/${aId}`,
-          resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
-        });
-        return handleAssignmentResult(result);
+              data: f.data,
+              fileHash: await this.sha256Hash(f.data),
+            }))
+          );
+
+          keepOnlyGivenFiles(files.map((f) => f.fileHash));
+
+          for (const file of files) {
+            fileCache.set(file.fileHash, Promise.resolve(file.data));
+          }
+
+          if (files && files.length) {
+            const newFiles = await this.checkFormAssignmentFiles(aId, files);
+            if (newFiles) {
+              await this.uploadFormAssignmentFiles(aId, newFiles);
+            }
+          }
+
+          const data = {
+            ...params,
+            form: {
+              id: params.form.id,
+              version: params.form.version,
+              data: params.form.data,
+              finalized: params.form.finalized,
+              files: files.map((f) => ({
+                name: f.name,
+                data: { fileHash: f.fileHash },
+              })),
+            },
+          };
+          const result = await this.call({
+            method: 'PUT',
+            body: {
+              type: 'json',
+              data,
+            },
+            pathname: `/v2/reportingwindows/assignments/${aId}`,
+            resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
+          });
+          return handleAssignmentResult(result);
+        }
       },
     };
   }
