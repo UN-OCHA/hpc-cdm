@@ -216,6 +216,9 @@ export class Dummy {
       lastUpdatedBy: assignment.lastUpdatedBy,
       state: assignment.state,
       editable: assignment.editable,
+      permissions: {
+        canModifyWhenClean: true,
+      },
       task: await getAssignmentTask(assignment),
       assignee,
       assignedUsers: [{ name: 'Assignee Name', email: 'test@email.com' }],
@@ -619,6 +622,22 @@ export class Dummy {
           async (
             params: reportingWindows.UpdateAssignmentParams
           ): Promise<reportingWindows.GetAssignmentResult> => {
+            if (
+              reportingWindows.UPDATE_ASSIGNMENT_PARAMS_STATE_CHANGE.is(params)
+            ) {
+              const [assignment] = this.data.reportingWindows
+                .map((rw) =>
+                  rw.assignments.find((a) => a.id === params.assignmentId)
+                )
+                .filter((a) => a);
+
+              if (assignment) {
+                assignment.state = params.state;
+                assignment.editable = true;
+              }
+              this.store();
+              return this.getAssignmentResult(params.assignmentId);
+            }
             const {
               assignmentId,
               form: { id, data, files, finalized },
