@@ -132,6 +132,7 @@
         },
         "editability": {
           "notSubmittedEditable": "Formulaire non encore soumis: modifiable",
+          "submittedEditable": "Formulaire soumis: modifiable",
           "submittedNonEditable": "Formulaire soumis: ne plus modifiable"
         },
         "prompts": {
@@ -187,6 +188,10 @@
         "labels": {
           "submitted": "soumis",
           "notSubmitted": "pas soumis"
+        },
+        "statusChange": {
+          "unsubmit": "Annuler la soumission",
+          "unlock": "Déverrouiller pour le nettoyage"
         }
       },
       "clusters": {

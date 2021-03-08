@@ -132,6 +132,7 @@
         },
         "editability": {
           "notSubmittedEditable": "Survey not yet submitted: Editable",
+          "submittedEditable": "Survey submitted: Editable",
           "submittedNonEditable": "Survey submitted: No longer editable"
         },
         "prompts": {
@@ -179,6 +180,10 @@
         "labels": {
           "submitted": "submitted",
           "notSubmitted": "not submitted"
+        },
+        "statusChange": {
+          "unsubmit": "Unsubmit",
+          "unlock": "Unlock for cleaning"
         }
       },
       "clusters": {

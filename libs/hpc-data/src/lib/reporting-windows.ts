@@ -113,13 +113,16 @@ export const GET_ASSIGNMENT_RESULT = <T>(fileType: t.Type<T>) =>
     }),
     assignee: ASSIGNMENT_ASSIGNEE,
     assignedUsers: t.array(t.partial({ email: t.string, name: t.string })),
+    permissions: t.type({
+      canModifyWhenClean: t.boolean,
+    }),
   });
 
 export const GET_ASSIGNMENT_RESULT_MODEL = GET_ASSIGNMENT_RESULT(FORM_FILE);
 
 export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT_MODEL>;
 
-export const UPDATE_ASSIGNMENT_PARAMS = t.type({
+export const UPDATE_ASSIGNMENT_PARAMS_VALUES = t.type({
   assignmentId: INTEGER_FROM_STRING,
   /**
    * Supply the last-known version number of the assignment.
@@ -130,6 +133,16 @@ export const UPDATE_ASSIGNMENT_PARAMS = t.type({
   previousVersion: t.number,
   form: FORM_UPDATE_DATA,
 });
+
+export const UPDATE_ASSIGNMENT_PARAMS_STATE_CHANGE = t.type({
+  assignmentId: INTEGER_FROM_STRING,
+  state: ASSIGNMENT_STATE,
+});
+
+export const UPDATE_ASSIGNMENT_PARAMS = t.union([
+  UPDATE_ASSIGNMENT_PARAMS_VALUES,
+  UPDATE_ASSIGNMENT_PARAMS_STATE_CHANGE,
+]);
 
 export type UpdateAssignmentParams = t.TypeOf<typeof UPDATE_ASSIGNMENT_PARAMS>;
 
