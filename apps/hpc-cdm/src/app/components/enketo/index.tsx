@@ -1,23 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { reportingWindows, errors } from '@unocha/hpc-data';
-import { C, CLASSES, styled, THEME } from '@unocha/hpc-ui';
+import { C, styled, THEME } from '@unocha/hpc-ui';
 import {
-  Tooltip,
-  CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
-  withStyles,
 } from '@material-ui/core';
-import {
-  MdWarning,
-  MdLock,
-  MdLockOpen,
-  MdEmail as _MdEmail,
-} from 'react-icons/md';
+import { MdEmail as _MdEmail } from 'react-icons/md';
 import dayjs from '../../../libraries/dayjs';
 
 import XForm, { PageInfo } from './xform';
@@ -27,62 +19,8 @@ import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
 import PageIndicator from './pageIndicator';
 import PoweredByFooter from './powered-by-footer';
-
-// Styles for status bar
-const StatusTooltip = Tooltip;
-
-const NotSubmitted = styled.span`
-  color: ${(p) => p.theme.colors.pallete.blue.dark2};
-`;
-
-const UnsavedChanges = styled.span`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: ${(p) => p.theme.colors.text};
-  font-weight: bold;
-
-  > span {
-    color: ${(p) => p.theme.colors.textLight};
-    font-weight: normal;
-
-    &::before {
-      content: '( ';
-    }
-
-    &::after {
-      content: ' )';
-    }
-  }
-`;
-
-const StatusLabel = styled.div`
-  display: flex;
-  align-items: center;
-  height: 50px;
-
-  > span {
-    margin: 0 ${(p) => p.theme.marginPx.md}px;
-    display: flex;
-    align-items: end;
-
-    > svg {
-      margin: 0 ${(p) => p.theme.marginPx.sm}px;
-    }
-  }
-
-  > svg.error {
-    color: ${(p) => p.theme.colors.textError};
-  }
-`;
-
-const StatusDetails = styled.div`
-  font-size: 1.2rem;
-
-  > .error {
-    color: ${(p) => p.theme.colors.textErrorLight};
-  }
-`;
+import { FormStatus } from './types';
+import FormToolbar from './formToolbar';
 
 const LoadingMessage = styled.div`
   margin: 0 ${(p) => p.theme.marginPx.md};
@@ -95,35 +33,6 @@ const LoadingMessage = styled.div`
   p {
     font-size: 2rem;
   }
-`;
-
-// Styles for Assigned Users
-const TOOLTIP_COLOR = THEME.colors.pallete.yellow.normal;
-const OrangeTooltip = withStyles({
-  tooltip: {
-    backgroundColor: TOOLTIP_COLOR,
-    padding: 10,
-  },
-  arrow: {
-    color: TOOLTIP_COLOR,
-  },
-})(Tooltip);
-
-const Dot = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  bottom: -1rem;
-  left: -1.5rem;
-  position: relative;
-  background-color: ${TOOLTIP_COLOR};
-  border-radius: 2rem;
-  border: 3px white solid;
-  color: white;
-  font-size: 2rem;
-  font-weight: bolder;
 `;
 
 const AssignedUsersListItem = styled.div`
@@ -149,36 +58,6 @@ const UserText = styled.span`
 const MdEmail = styled(_MdEmail)`
   margin: 0 0.5rem;
 `;
-
-const AssigneeUsersToolTipText = styled.span<{ bold: boolean }>`
-  font-size: 1.5rem;
-  font-weight: ${(p) => (p.bold ? 'bold' : 'normal')};
-  color: ${(p) => p.theme.colors.text};
-  ${(p) => !p.bold && 'margin: 0 5px'};
-`;
-
-// Styles for undo buttons
-const UndoButton = styled(C.Button)`
-  margin: 0 1rem;
-`;
-
-type Status =
-  | {
-      type: 'idle';
-    }
-  | {
-      type: 'saving';
-    }
-  | {
-      type: 'error';
-      message: string;
-    }
-  | {
-      type: 'conflict';
-      otherPerson: string;
-      timestamp: Date;
-    };
-
 interface Props {
   reportingWindow: reportingWindows.ReportingWindow;
   assignment: reportingWindows.GetAssignmentResult;
@@ -187,7 +66,7 @@ interface Props {
 let isRefreshing = false;
 
 export const EnketoEditableForm = (props: Props) => {
-  const { reportingWindow, assignment: originalAssignment } = props;
+  const { assignment: originalAssignment } = props;
   const env = getEnv();
 
   const [loading, setLoading] = useState(true);
@@ -199,7 +78,7 @@ export const EnketoEditableForm = (props: Props) => {
     updatedAssignment,
     setUpdatedAssignment,
   ] = useState<reportingWindows.GetAssignmentResult | null>(null);
-  const [status, setStatus] = useState<Status>({ type: 'idle' });
+  const [status, setStatus] = useState<FormStatus>({ type: 'idle' });
   const [editable, setEditable] = useState(true);
   const [showValidationConfirmation, setShowValidationConfirmation] = useState(
     false
@@ -212,12 +91,6 @@ export const EnketoEditableForm = (props: Props) => {
   const { lang } = useContext(AppContext);
 
   const assignment = updatedAssignment || originalAssignment;
-
-  const lastUpdatedAt = dayjs(
-    status.type === 'conflict' ? status.timestamp : assignment.lastUpdatedAt
-  ).locale(lang);
-  const lastUpdatedBy =
-    status.type === 'conflict' ? status.otherPerson : assignment.lastUpdatedBy;
 
   const unMount = () => {
     isRefreshing = true;
@@ -238,7 +111,6 @@ export const EnketoEditableForm = (props: Props) => {
   useEffect(() => {
     let isSubscribed = true; // to cancel form initialization
     const {
-      state,
       editable,
       task: {
         form: {
@@ -463,186 +335,6 @@ export const EnketoEditableForm = (props: Props) => {
     }
   };
 
-  const indicator = () => (
-    <StatusTooltip
-      arrow
-      title={
-        <StatusDetails>
-          {status.type === 'error' && <p className="error">{status.message}</p>}
-          <p>
-            {t
-              .t(lang, (s) => s.common.updatedAtBy)
-              .replace('{timeAgo}', lastUpdatedAt.fromNow())
-              .replace('{person}', lastUpdatedBy)}
-          </p>
-        </StatusDetails>
-      }
-    >
-      <StatusLabel>
-        {loading ? (
-          <>
-            <span>
-              {t.t(lang, (s) => s.routes.operations.forms.status.init)}
-            </span>
-            <CircularProgress size={20} />
-          </>
-        ) : (
-          <>
-            {!editable ? (
-              <span>
-                <MdLock size={20} />
-                {t.t(
-                  lang,
-                  (s) =>
-                    s.routes.operations.forms.editability.submittedNonEditable
-                )}
-              </span>
-            ) : (
-              <NotSubmitted>
-                <MdLockOpen size={20} />
-                {t.t(lang, (s) =>
-                  assignment.state === 'raw:entered'
-                    ? s.routes.operations.forms.editability.notSubmittedEditable
-                    : s.routes.operations.forms.editability.submittedEditable
-                )}
-              </NotSubmitted>
-            )}
-            {(editable || assignment.permissions.canModifyWhenClean) && (
-              <span>
-                {status.type === 'idle' ? (
-                  formTouched ? (
-                    <UnsavedChanges>
-                      {t.t(
-                        lang,
-                        (s) => s.routes.operations.forms.status.unsavedChanges
-                      )}
-                      <span>
-                        {t.t(
-                          lang,
-                          (s) =>
-                            s.routes.operations.forms.status.unsavedChangesExtra
-                        )}
-                      </span>
-                    </UnsavedChanges>
-                  ) : (
-                    t.t(lang, (s) => s.routes.operations.forms.status.idle)
-                  )
-                ) : status.type === 'saving' ? (
-                  <>
-                    <span>
-                      {t.t(
-                        lang,
-                        (s) => s.routes.operations.forms.status[status.type]
-                      )}
-                    </span>
-                    <CircularProgress size={20} />
-                  </>
-                ) : (
-                  <>
-                    <span>
-                      {t.t(
-                        lang,
-                        (s) => s.routes.operations.forms.status[status.type]
-                      )}
-                    </span>
-                    <MdWarning className="error" size={20} />
-                  </>
-                )}
-              </span>
-            )}
-          </>
-        )}
-      </StatusLabel>
-    </StatusTooltip>
-  );
-
-  const assignedUsersButton = () => (
-    <>
-      <C.Button onClick={() => setShowAssignedUsers(true)} color="primary">
-        <span>
-          {t.t(lang, (s) => s.routes.operations.forms.assignedUsers.title)}
-        </span>
-      </C.Button>
-      <OrangeTooltip
-        arrow
-        title={
-          <>
-            <AssigneeUsersToolTipText bold={true}>
-              {t.t(
-                lang,
-                (s) => s.routes.operations.forms.assignedUsers.tooltip.title
-              )}
-            </AssigneeUsersToolTipText>
-            <AssigneeUsersToolTipText bold={false}>
-              {t.t(
-                lang,
-                (s) =>
-                  s.routes.operations.forms.assignedUsers.tooltip.description
-              )}
-            </AssigneeUsersToolTipText>
-          </>
-        }
-      >
-        <Dot>!</Dot>
-      </OrangeTooltip>
-    </>
-  );
-
-  const onStatusChangeClick = (state: reportingWindows.AssignmentState) => {
-    setStatus({ type: 'saving' });
-    env.model.reportingWindows
-      .updateAssignment({
-        assignmentId: assignment.id,
-        state,
-      })
-      .then(() => {
-        history.go(0);
-      })
-      .catch((err) => {
-        setStatus({
-          type: 'error',
-          message: err.message || err.toString(),
-        });
-      });
-  };
-  const statusChangeButtons = () => {
-    return (
-      status.type !== 'saving' && (
-        <>
-          {assignment.state !== 'raw:entered' &&
-            assignment.permissions.canModifyWhenClean && (
-              <UndoButton
-                color="neutral"
-                onClick={() => onStatusChangeClick('raw:entered')}
-              >
-                <span>
-                  {t.t(
-                    lang,
-                    (s) => s.routes.operations.forms.statusChange.unsubmit
-                  )}
-                </span>
-              </UndoButton>
-            )}
-          {!editable && assignment.permissions.canModifyWhenClean && (
-            <span>
-              <UndoButton
-                color="neutral"
-                onClick={() => onStatusChangeClick('clean:entered')}
-              >
-                <span>
-                  {t.t(
-                    lang,
-                    (s) => s.routes.operations.forms.statusChange.unlock
-                  )}
-                </span>
-              </UndoButton>
-            </span>
-          )}
-        </>
-      )
-    );
-  };
-
   /**
    * Ensure that all link clicks open in a new tab
    */
@@ -653,14 +345,17 @@ export const EnketoEditableForm = (props: Props) => {
     }
   };
 
+  const formToolBarProps = {
+    loading,
+    assignment,
+    setShowAssignedUsers,
+    formTouched,
+    formStatus: status,
+    setStatus,
+  };
   return (
     <div>
-      <C.Toolbar>
-        {!loading && statusChangeButtons()}
-        <div className={CLASSES.FLEX.GROW} />
-        {!loading && assignedUsersButton()}
-        {indicator()}
-      </C.Toolbar>
+      <FormToolbar {...formToolBarProps} />
       {loading && (
         <LoadingMessage>
           <h3>{t.t(lang, (s) => s.routes.operations.forms.loading.title)}</h3>
