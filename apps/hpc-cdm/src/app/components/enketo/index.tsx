@@ -25,6 +25,7 @@ import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
 import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
+import PageIndicator from './pageIndicator';
 import PoweredByFooter from './powered-by-footer';
 
 // Styles for status bar
@@ -94,12 +95,6 @@ const LoadingMessage = styled.div`
   p {
     font-size: 2rem;
   }
-`;
-
-const PageIndicator = styled.div`
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: ${(p) => p.theme.marginPx.md}px;
 `;
 
 // Styles for Assigned Users
@@ -658,15 +653,6 @@ export const EnketoEditableForm = (props: Props) => {
     }
   };
 
-  const pageIndicator = pageInfo && (
-    <PageIndicator>
-      {t.t(lang, (s) => s.routes.operations.forms.pageIndicator, {
-        page: (pageInfo.currentPage || 0) + 1,
-        count: pageInfo.totalPages,
-      })}
-    </PageIndicator>
-  );
-
   return (
     <div>
       <C.Toolbar>
@@ -682,12 +668,12 @@ export const EnketoEditableForm = (props: Props) => {
         </LoadingMessage>
       )}
       <div className="enketo" id="form" onClick={captureLinkClicks}>
-        {pageIndicator}
+        <PageIndicator pageInfo={pageInfo} />
         <div className="main" style={{ display: loading ? 'none' : 'block' }}>
           <div className="container pages"></div>
           <section className="form-footer end">
             <div className="form-footer__content">
-              {pageIndicator}
+              <PageIndicator pageInfo={pageInfo} />
               <div className="form-footer__content__main-controls">
                 <button className="btn btn-default previous-page disabled">
                   {t.t(lang, (s) => s.routes.operations.forms.nav.prev)}
