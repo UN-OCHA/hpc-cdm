@@ -512,7 +512,7 @@ export const EnketoEditableForm = (props: Props) => {
                 )}
               </NotSubmitted>
             )}
-            {editable && (
+            {(editable || assignment.permissions.canModifyWhenClean) && (
               <span>
                 {status.type === 'idle' ? (
                   formTouched ? (
@@ -612,7 +612,7 @@ export const EnketoEditableForm = (props: Props) => {
   };
   const statusChangeButtons = () => {
     return (
-      status.type === 'idle' && (
+      status.type !== 'saving' && (
         <>
           {assignment.state !== 'raw:entered' &&
             assignment.permissions.canModifyWhenClean && (
