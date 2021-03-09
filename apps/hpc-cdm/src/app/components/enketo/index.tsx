@@ -1,15 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { reportingWindows, errors } from '@unocha/hpc-data';
-import { C, styled, THEME } from '@unocha/hpc-ui';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-} from '@material-ui/core';
-import { MdEmail as _MdEmail } from 'react-icons/md';
+import { styled } from '@unocha/hpc-ui';
+
 import dayjs from '../../../libraries/dayjs';
 
 import XForm, { PageInfo } from './xform';
@@ -19,8 +12,11 @@ import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
 import PageIndicator from './pageIndicator';
 import PoweredByFooter from './powered-by-footer';
-import { FormStatus } from './types';
+import { FormStatus, SubmissionValidation } from './types';
 import FormToolbar from './formToolbar';
+import ValidationOnNavigationModal from './modals/validationOnNavigationModal';
+import ValidationOnSubmitModal from './modals/validationOnSubmitModal';
+import AssignedUsersModal from './modals/assignedUsersModal';
 
 const LoadingMessage = styled.div`
   margin: 0 ${(p) => p.theme.marginPx.md};
@@ -35,29 +31,6 @@ const LoadingMessage = styled.div`
   }
 `;
 
-const AssignedUsersListItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const UserLink = styled.a`
-  color: ${(p) => p.theme.colors.secondary.normal};
-`;
-
-const UserTitle = styled.h3`
-  color: ${(p) => p.theme.colors.text};
-  text-align: center;
-`;
-
-const UserText = styled.span`
-  color: ${(p) => p.theme.colors.text};
-  margin: 0.25rem;
-`;
-
-const MdEmail = styled(_MdEmail)`
-  margin: 0 0.5rem;
-`;
 interface Props {
   reportingWindow: reportingWindows.ReportingWindow;
   assignment: reportingWindows.GetAssignmentResult;
@@ -85,7 +58,7 @@ export const EnketoEditableForm = (props: Props) => {
   );
   const [showAssignedUsers, setShowAssignedUsers] = useState(false);
   const [submissionValidation, setSubmissionValidation] = useState<
-    'in-progress' | 'invalid' | null
+    SubmissionValidation
   >(null);
   const history = useHistory();
   const { lang } = useContext(AppContext);
@@ -196,19 +169,11 @@ export const EnketoEditableForm = (props: Props) => {
     setTimeout(() => saveForm(), 0);
   };
 
-  const closeValidationMessage = () => {
-    setShowValidationConfirmation(false);
-  };
-
   const forceNextPage = () => {
     if (xform) {
       xform.goToNextPage();
       setShowValidationConfirmation(false);
     }
-  };
-
-  const closeInvalidSubmissionMessage = () => {
-    setSubmissionValidation(null);
   };
 
   const saveForm = async (redirect = false, finalized = false) => {
@@ -407,117 +372,24 @@ export const EnketoEditableForm = (props: Props) => {
                 )}
               </div>
             </div>
-            <Dialog
-              open={showValidationConfirmation}
-              onClose={closeValidationMessage}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">
-                {t.t(lang, (s) => s.routes.operations.forms.invalidData.title)}
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  {t.t(
-                    lang,
-                    (s) =>
-                      s.routes.operations.forms.invalidData.infoOnNavigation
-                  )}
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <C.Button
-                  onClick={closeValidationMessage}
-                  color="primary"
-                  autoFocus
-                >
-                  <span>
-                    {t.t(
-                      lang,
-                      (s) => s.routes.operations.forms.invalidData.fixNow
-                    )}
-                  </span>
-                </C.Button>
-                <C.Button onClick={forceNextPage} color="primary">
-                  <span>
-                    {t.t(
-                      lang,
-                      (s) => s.routes.operations.forms.invalidData.fixLater
-                    )}
-                  </span>
-                </C.Button>
-              </DialogActions>
-            </Dialog>
-            <Dialog
-              open={submissionValidation === 'invalid'}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">
-                {t.t(lang, (s) => s.routes.operations.forms.invalidData.title)}
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  {t.t(
-                    lang,
-                    (s) => s.routes.operations.forms.invalidData.infoOnSubmit
-                  )}
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <C.Button
-                  onClick={closeInvalidSubmissionMessage}
-                  color="primary"
-                  autoFocus
-                >
-                  <span>
-                    {t.t(
-                      lang,
-                      (s) => s.routes.operations.forms.invalidData.okay
-                    )}
-                  </span>
-                </C.Button>
-              </DialogActions>
-            </Dialog>
-            <Dialog
-              open={showAssignedUsers}
-              onClose={() => setShowAssignedUsers(false)}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <UserTitle id="alert-dialog-title">
-                {t.t(
-                  lang,
-                  (s) => s.routes.operations.forms.assignedUsers.title
-                )}
-              </UserTitle>
-
-              <DialogContent id="alert-dialog-description">
-                {assignment.assignedUsers.map((user) => (
-                  <UserLink href={`mailto:${user.email}`}>
-                    <AssignedUsersListItem key={user.email}>
-                      <UserText>{user.name || user.email}</UserText>
-                      <MdEmail
-                        size={20}
-                        color={THEME.colors.pallete.orange.normal}
-                      />
-                    </AssignedUsersListItem>
-                  </UserLink>
-                ))}
-              </DialogContent>
-
-              <DialogActions>
-                <C.Button
-                  onClick={() => setShowAssignedUsers(false)}
-                  color="primary"
-                  autoFocus
-                >
-                  <span>
-                    {t.t(lang, (s) => s.routes.operations.forms.nav.close)}
-                  </span>
-                </C.Button>
-              </DialogActions>
-            </Dialog>
+            <ValidationOnNavigationModal
+              nextPage={forceNextPage}
+              showValidationConfirmation={showValidationConfirmation}
+              closeValidationMessage={() =>
+                setShowValidationConfirmation(false)
+              }
+            />
+            <ValidationOnSubmitModal
+              submissionValidation={submissionValidation}
+              closeInvalidSubmissionMessage={() =>
+                setSubmissionValidation(null)
+              }
+            />
+            <AssignedUsersModal
+              showAssignedUsers={showAssignedUsers}
+              closeAssignedUsers={() => setShowAssignedUsers(false)}
+              assignment={assignment}
+            />
             <PoweredByFooter />
           </section>
         </div>

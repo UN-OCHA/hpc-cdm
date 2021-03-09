@@ -14,3 +14,5 @@ export type FormStatus =
       otherPerson: string;
       timestamp: Date;
     };
+
+export type SubmissionValidation = 'in-progress' | 'invalid' | null;
