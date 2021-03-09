@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import { styled } from '@unocha/hpc-ui';
 import logo from '../../../assets/logos/enketologo.png';
@@ -28,35 +28,34 @@ const KoboLogo = styled(KLogo)`
   height: 30px;
 `;
 
-const PoweredByFooter = () => (
-  <AppContext.Consumer>
-    {({ lang }) => (
-      <Box>
-        {t.c(lang, (s) => s.routes.operations.forms.poweredByFooter, {
-          enketo: (key) => (
-            <a
-              key={key}
-              href="https://enketo.org"
-              target="_blank"
-              rel="nofollow noopener"
-            >
-              <EnketoLogo src={logo} />
-            </a>
-          ),
-          kobotoolbox: (key) => (
-            <a
-              key={key}
-              href="https://www.kobotoolbox.org"
-              target="_blank"
-              rel="nofollow noopener"
-            >
-              <KoboLogo />
-            </a>
-          ),
-        })}
-      </Box>
-    )}
-  </AppContext.Consumer>
-);
+const PoweredByFooter = () => {
+  const { lang } = useContext(AppContext);
+  return (
+    <Box>
+      {t.c(lang, (s) => s.routes.operations.forms.poweredByFooter, {
+        enketo: (key) => (
+          <a
+            key={key}
+            href="https://enketo.org"
+            target="_blank"
+            rel="nofollow noopener"
+          >
+            <EnketoLogo src={logo} />
+          </a>
+        ),
+        kobotoolbox: (key) => (
+          <a
+            key={key}
+            href="https://www.kobotoolbox.org"
+            target="_blank"
+            rel="nofollow noopener"
+          >
+            <KoboLogo />
+          </a>
+        ),
+      })}
+    </Box>
+  );
+};
 
 export default PoweredByFooter;

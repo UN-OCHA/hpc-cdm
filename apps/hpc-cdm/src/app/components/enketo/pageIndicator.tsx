@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { styled } from '@unocha/hpc-ui';
 
 import { PageInfo } from './xform';
@@ -15,18 +15,18 @@ const Container = styled.div`
   margin-bottom: ${(p) => p.theme.marginPx.md}px;
 `;
 
-const PageIndicator = ({ pageInfo }: Props) =>
-  pageInfo && (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <Container>
-          {t.t(lang, (s) => s.routes.operations.forms.pageIndicator, {
-            page: (pageInfo.currentPage || 0) + 1,
-            count: pageInfo.totalPages,
-          })}
-        </Container>
-      )}
-    </AppContext.Consumer>
+const PageIndicator = ({ pageInfo }: Props) => {
+  const { lang } = useContext(AppContext);
+  return (
+    pageInfo && (
+      <Container>
+        {t.t(lang, (s) => s.routes.operations.forms.pageIndicator, {
+          page: (pageInfo.currentPage || 0) + 1,
+          count: pageInfo.totalPages,
+        })}
+      </Container>
+    )
   );
+};
 
 export default PageIndicator;
