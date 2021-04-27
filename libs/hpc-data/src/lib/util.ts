@@ -26,6 +26,57 @@ export const INTEGER_FROM_STRING = new t.Type<number, number>(
 );
 
 /**
+ * Accepts either an integer array, or a string of comma separated integers.
+ */
+export const INTEGER_ARRAY_FROM_STRING = new t.Type<number[], number[]>(
+  'INTEGER_ARRAY_FROM_STRING',
+  t.array(t.number).is,
+  (v, c) => {
+    if (Array.isArray(v)) {
+      return v.every((val) => Number.isInteger(val))
+        ? t.success(v)
+        : t.failure(v, c);
+    } else if (typeof v === 'string') {
+      const nums = v.split(',');
+      return nums.every((n) => INTEGER_REGEX.test(n))
+        ? t.success(nums.map((n) => parseInt(n)))
+        : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
+ * Accepts either a boolean, or a string of a boolean.
+ */
+export const BOOLEAN_FROM_STRING = new t.Type<boolean, boolean>(
+  'BOOLEAN_FROM_STRING',
+  t.boolean.is,
+  (v, c) => {
+    if (typeof v === 'boolean') {
+      return t.success(v);
+    } else if (typeof v === 'string') {
+      switch (v.toLowerCase()) {
+        case 'false':
+        case '0':
+        case '':
+          return t.success(false);
+        case 'true':
+        case '1':
+          return t.success(true);
+        default:
+          return t.failure(v, c);
+      }
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
  * A file BLOB
  */
 export const BLOB = new t.Type<Blob, Blob>(

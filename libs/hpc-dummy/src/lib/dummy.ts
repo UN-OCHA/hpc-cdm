@@ -217,7 +217,12 @@ export class Dummy {
       state: assignment.state,
       editable: assignment.editable,
       permissions: {
-        canModifyWhenClean: true,
+        canModifyWhenClean: this.userHasAccess([
+          {
+            target: { type: 'global' },
+            role: 'hpc_admin',
+          },
+        ]),
       },
       task: await getAssignmentTask(assignment),
       assignee,
