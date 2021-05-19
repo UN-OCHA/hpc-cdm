@@ -27,6 +27,10 @@ export const ACCESS_TARGET = t.union(
       type: t.literal('operationCluster'),
       targetId: t.number,
     }),
+    t.type({
+      type: t.literal('project'),
+      targetId: t.number,
+    }),
   ],
   'ACCESS_TARGET'
 );
