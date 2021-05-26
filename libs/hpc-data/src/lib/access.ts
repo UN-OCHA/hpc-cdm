@@ -46,6 +46,7 @@ export const USER_WITH_META = t.intersection(
     USER,
     t.type({
       name: t.string,
+      email: t.string,
       id: t.number,
     }),
   ],

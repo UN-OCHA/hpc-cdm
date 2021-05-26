@@ -281,6 +281,7 @@ export class Dummy {
         return {
           ...g,
           name: u.user.name,
+          email: u.email,
         };
       } else {
         throw new Error('Unexpected access grantee type');
