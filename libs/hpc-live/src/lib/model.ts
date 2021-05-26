@@ -167,6 +167,7 @@ export const LIVE_TYPES = {
       t.type({
         targetType: t.keyof({
           global: null,
+          project: null,
           operation: null,
           operationCluster: null,
           plan: null,

@@ -1,12 +1,11 @@
 {
   "name": "unocha",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "license": "MIT",
   "scripts": {
     "remove-unneeded-deps": "node tools/remove-unneeded-deps.js",
     "nx": "nx",
     "start": "nx serve",
-    "start-cdm-prod": "pm2 start dist/apps/hpc-cdm-serve/main.js --no-daemon",
     "build": "nx build",
     "test": "nx test",
     "lint": "nx workspace-lint && nx affected:lint && nx lint && prettier --check '**/*.{ts,tsx,js}'",
@@ -39,7 +38,7 @@
     ]
   },
   "private": true,
-  "dependencies": {
+  "devDependencies": {
     "@material-ui/core": "^4.11.0",
     "@types/jquery": "^3.5.1",
     "@types/react-helmet": "^6.1.0",
@@ -54,16 +53,13 @@
     "intl-messageformat": "^9.4.6",
     "io-ts": "^2.2.9",
     "oidc-client": "^1.10.1",
-    "pm2": "^4.4.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-helmet": "^6.1.0",
     "react-is": "16.13.1",
     "react-router-dom": "5.2.0",
     "react-toastify": "^6.0.9",
-    "styled-components": "5.1.1"
-  },
-  "devDependencies": {
+    "styled-components": "5.1.1",
     "@babel/core": "7.9.6",
     "@babel/preset-env": "7.9.6",
     "@babel/preset-react": "7.9.4",
