@@ -170,6 +170,8 @@ export const LIVE_TYPES = {
           project: null,
           operation: null,
           operationCluster: null,
+          plan: null,
+          governingEntity: null,
         }),
       }),
       t.partial({
