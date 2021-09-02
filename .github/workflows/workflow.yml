@@ -10,6 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Login to Docker
+      if: ${{ github.actor != 'dependabot[bot]' }}
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
