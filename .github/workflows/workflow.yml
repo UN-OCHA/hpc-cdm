@@ -19,4 +19,4 @@ jobs:
     - uses: UN-OCHA/hpc-actions@develop
       env:
         CONFIG_FILE: .github/workflow.config.json
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.HPC_BOT_TOKEN }}
