@@ -4,7 +4,7 @@ services:
     image: hpc-cdm
     hostname: cdm
     volumes:
-      - .env.json:/var/www/config.json
+      - .env.json:/var/www/config/config.json
     networks:
       service:
         aliases:
