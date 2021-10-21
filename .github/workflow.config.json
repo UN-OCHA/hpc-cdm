@@ -12,7 +12,7 @@
       "commitSha": "HPC_ACTIONS_COMMIT_SHA",
       "treeSha": "HPC_ACTIONS_TREE_SHA"
     },
-    "repository": "unocha/hpc-cdm",
+    "repository": "public.ecr.aws/unocha/hpc-cdm",
     "skipLogin": true
   },
   "ci": ["./.github/ci.sh"],
