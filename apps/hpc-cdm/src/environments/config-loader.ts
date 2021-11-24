@@ -16,18 +16,8 @@ const parseConfig = async (res: Response) => {
   }
 };
 
-export const loadEnvForConfig = (
-  url: string,
-  backupUrl: string
-): Promise<Environment> =>
-  fetch(url)
-    .then(parseConfig)
-    .catch((err) => {
-      console.warn(err);
-      console.info('Unable to load primary config, using backup');
-      return fetch(backupUrl).then(parseConfig);
-    })
-    .then(initializeLiveEnvironment);
+export const loadEnvForConfig = (url: string): Promise<Environment> =>
+  fetch(url).then(parseConfig).then(initializeLiveEnvironment);
 
 export const initializeLiveEnvironment = async (config: config.Config) => {
   const client = new LiveBrowserClient(config);
