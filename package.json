@@ -28,6 +28,9 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help"
   },
+  "engines": {
+    "node": ">=16.12.0"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "npm run affected:build && npm run affected:lint"
