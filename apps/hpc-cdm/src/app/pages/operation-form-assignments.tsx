@@ -67,11 +67,28 @@ const PageOperationFormAssignments = (props: Props) => {
                             operation.name,
                           ]}
                         />
-                        <C.PageTitle>
-                          {assignment.assignee.type === 'operation'
-                            ? assignment.task.form.name
-                            : `${assignment.assignee.clusterName}: ${assignment.task.form.name}`}
-                        </C.PageTitle>
+                        <C.TertiaryNavigation
+                          breadcrumbs={[
+                            {
+                              label: window.name,
+                              to: paths.operationFormAssignments({
+                                operationId: operation.id,
+                                windowId: window.id,
+                              }),
+                            },
+                            {
+                              label:
+                                assignment.assignee.type === 'operation'
+                                  ? assignment.task.form.name
+                                  : `${assignment.assignee.clusterName}: ${assignment.task.form.name}`,
+                              to: paths.operationFormAssignmentData({
+                                operationId: operation.id,
+                                windowId: window.id,
+                                assignmentId: assignment.id,
+                              }),
+                            },
+                          ]}
+                        />
                       </>
                     )}
                     {...{ window, assignmentId }}

@@ -81,6 +81,14 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                           <ClusterNavigation
                             breadcrumbs={[
                               {
+                                to: paths.operationClusterFormAssignments({
+                                  operationId: operation.id,
+                                  clusterId: cluster.id,
+                                  windowId: window.id,
+                                }),
+                                label: window.name,
+                              },
+                              {
                                 to: paths.operationClusterFormAssignmentData({
                                   operationId: operation.id,
                                   clusterId: cluster.id,
