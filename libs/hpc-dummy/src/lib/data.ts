@@ -202,7 +202,7 @@ export const INITIAL_DATA: DummyData = {
       ],
     },
     {
-      id: 0,
+      id: 1,
       name: 'Another Reporting Window',
       state: 'pending',
       associations: {
