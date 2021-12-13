@@ -206,7 +206,16 @@ export const INITIAL_DATA: DummyData = {
       name: 'Another Reporting Window',
       state: 'pending',
       associations: {
-        operations: [2],
+        operations: [2, 4],
+      },
+      assignments: [],
+    },
+    {
+      id: 2,
+      name: 'Closed Reporting Window',
+      state: 'closed',
+      associations: {
+        operations: [2, 4],
       },
       assignments: [],
     },

@@ -12,6 +12,7 @@ import ClusterNavigation from '../components/cluster-navigation';
 import FormAssignmentData from '../components/form-assignment-data';
 import OperationClusterFormAssignmentsList from '../components/operation-cluster-form-assignments-list';
 import PageMeta from '../components/page-meta';
+import { prepareReportingWindowsAsSidebarNavigation } from '../utils/reportingWindows';
 
 interface Props {
   className?: string;
@@ -42,14 +43,16 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                 showSettingsButton
               />
               <C.SidebarNavigation
-                menu={operation.reportingWindows.map((w) => ({
-                  label: w.name,
-                  path: paths.operationClusterFormAssignments({
-                    operationId: operation.id,
-                    clusterId: cluster.id,
-                    windowId: w.id,
-                  }),
-                }))}
+                menu={prepareReportingWindowsAsSidebarNavigation(
+                  lang,
+                  operation.reportingWindows,
+                  (w) =>
+                    paths.operationClusterFormAssignments({
+                      operationId: operation.id,
+                      clusterId: cluster.id,
+                      windowId: w.id,
+                    })
+                )}
               >
                 <OperationClusterFormAssignmentsList
                   {...{ operation, cluster, window }}

@@ -11,6 +11,7 @@ import * as paths from '../paths';
 import OperationFormAssignmentsList from '../components/operation-form-assignments-list';
 import FormAssignmentData from '../components/form-assignment-data';
 import PageMeta from '../components/page-meta';
+import { prepareReportingWindowsAsSidebarNavigation } from '../utils/reportingWindows';
 
 interface Props {
   className?: string;
@@ -33,13 +34,15 @@ const PageOperationFormAssignments = (props: Props) => {
             })}
           >
             <C.SidebarNavigation
-              menu={operation.reportingWindows.map((w) => ({
-                label: w.name,
-                path: paths.operationFormAssignments({
-                  operationId: operation.id,
-                  windowId: w.id,
-                }),
-              }))}
+              menu={prepareReportingWindowsAsSidebarNavigation(
+                lang,
+                operation.reportingWindows,
+                (w) =>
+                  paths.operationFormAssignments({
+                    operationId: operation.id,
+                    windowId: w.id,
+                  })
+              )}
             >
               <OperationFormAssignmentsList {...{ operation, window }} />
             </C.SidebarNavigation>

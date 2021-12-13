@@ -24,6 +24,13 @@
     "devEnvironmentWarnings": {
       "dummy": "Ceci est une instance de démonstration de CDM, les informations que vous entrez ici ne seront stockées que dans votre navigateur et ne seront pas envoyées à notre serveur",
       "dev": "Ceci est une instance de test de CDM, les informations que vous entrez ici seront périodiquement supprimées."
+    },
+    "reportingWindows": {
+      "state": {
+        "open": "Ouvert",
+        "closed": "Fermé",
+        "pending": "Brouillon"
+      }
     }
   },
   "components": {
