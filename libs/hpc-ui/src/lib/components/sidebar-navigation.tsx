@@ -20,7 +20,7 @@ interface Props {
 }
 
 const Wrapper = styled.div`
-  margin: 0 -1rem;
+  margin: ${(p) => p.theme.marginPx.md}px -1rem 0;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -42,7 +42,7 @@ const Menu = styled.ul`
       position: relative;
       display: flex;
       align-items: center;
-      height: 49px;
+      height: ${(p) => p.theme.sizing.singleLineBlockItemHeightPx}px;
       font-size: 1.6rem;
       color: ${(p) => p.theme.colors.pallete.gray.light};
 
