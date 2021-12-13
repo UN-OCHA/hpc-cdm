@@ -32,7 +32,17 @@ const PageOperationFormAssignments = (props: Props) => {
               windowId: window.id,
             })}
           >
-            <OperationFormAssignmentsList {...{ operation, window }} />
+            <C.SidebarNavigation
+              menu={operation.reportingWindows.map((w) => ({
+                label: w.name,
+                path: paths.operationFormAssignments({
+                  operationId: operation.id,
+                  windowId: w.id,
+                }),
+              }))}
+            >
+              <OperationFormAssignmentsList {...{ operation, window }} />
+            </C.SidebarNavigation>
           </Route>
           <Route
             path={paths.operationFormAssignmentDataMatch({

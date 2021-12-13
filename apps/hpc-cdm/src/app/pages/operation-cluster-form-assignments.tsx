@@ -41,9 +41,20 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                 cluster={cluster}
                 showSettingsButton
               />
-              <OperationClusterFormAssignmentsList
-                {...{ operation, cluster, window }}
-              />
+              <C.SidebarNavigation
+                menu={operation.reportingWindows.map((w) => ({
+                  label: w.name,
+                  path: paths.operationClusterFormAssignments({
+                    operationId: operation.id,
+                    clusterId: cluster.id,
+                    windowId: w.id,
+                  }),
+                }))}
+              >
+                <OperationClusterFormAssignmentsList
+                  {...{ operation, cluster, window }}
+                />
+              </C.SidebarNavigation>
             </Route>
             <Route
               path={paths.operationClusterFormAssignmentDataMatch({
