@@ -138,7 +138,10 @@
           "info": "It may take a moment for the form to load, but please be patient, and don't close your browser; and if the browser alerts you that the page has become unresponsive, please press wait."
         },
         "editability": {
+          "reportingWindowPending": "Survey not yet open",
+          "reportingWindowClosed": "Survey closed",
           "notSubmittedEditable": "Survey not yet submitted: Editable",
+          "notSubmittedNotEditable": "Survey not editable",
           "submittedEditable": "Survey submitted: Editable",
           "submittedNonEditable": "Survey submitted: No longer editable"
         },

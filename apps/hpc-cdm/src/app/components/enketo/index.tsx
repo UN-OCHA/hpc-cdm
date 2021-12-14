@@ -39,7 +39,7 @@ interface Props {
 let isRefreshing = false;
 
 export const EnketoEditableForm = (props: Props) => {
-  const { assignment: originalAssignment } = props;
+  const { assignment: originalAssignment, reportingWindow } = props;
   const env = getEnv();
 
   const [loading, setLoading] = useState(true);
@@ -84,7 +84,6 @@ export const EnketoEditableForm = (props: Props) => {
   useEffect(() => {
     let isSubscribed = true; // to cancel form initialization
     const {
-      editable,
       task: {
         form: {
           definition: { form, model },
@@ -93,6 +92,19 @@ export const EnketoEditableForm = (props: Props) => {
         currentFiles,
       },
     } = originalAssignment;
+
+    /**
+     * Should the UI treat the assignment as editable?
+     *
+     * (The API will have editable as true if the user has edit access, but we
+     * also want to prevent a user editing the form data if it's in a finalized
+     * state, to prevent accidental changes)
+     */
+    const editable =
+      assignment.state === 'clean:finalized' ||
+      assignment.state === 'raw:finalized'
+        ? false
+        : assignment.editable;
 
     // Convert the ArrayBuffers to Blobs to use in the form
     const files = currentFiles.map((f) => ({
@@ -312,6 +324,8 @@ export const EnketoEditableForm = (props: Props) => {
 
   const formToolBarProps = {
     loading,
+    editable,
+    reportingWindow,
     assignment,
     setShowAssignedUsers,
     formTouched,
