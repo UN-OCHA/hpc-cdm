@@ -9,6 +9,7 @@ import { t } from '../../i18n';
 import OperationFormAssignments from './operation-form-assignments';
 import * as paths from '../paths';
 import PageMeta from '../components/page-meta';
+import { getBestReportingWindow } from '../utils/reportingWindows';
 
 interface Props {
   className?: string;
@@ -54,27 +55,20 @@ const PageOperationForms = (props: Props) => {
               }}
             />
             <Route>
-              {operation.reportingWindows.length === 1 ? (
+              {operation.reportingWindows.length > 0 ? (
                 <Redirect
                   to={paths.operationFormAssignments({
                     operationId: operation.id,
-                    windowId: operation.reportingWindows[0].id,
+                    windowId: getBestReportingWindow(operation.reportingWindows)
+                      .id,
                   })}
                 />
-              ) : operation.reportingWindows.length === 0 ? (
+              ) : (
                 <C.ErrorMessage
                   strings={{
                     title: 'No reporting windows',
                     info:
                       "This operation doesn't have any reporting windows associated with it",
-                  }}
-                />
-              ) : (
-                <C.ErrorMessage
-                  strings={{
-                    title: 'Multiple reporting windows',
-                    info:
-                      'This operation has multiple reporting windows associated with it, currently only 1 window is supported at a time.',
                   }}
                 />
               )}

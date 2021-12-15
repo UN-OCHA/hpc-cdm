@@ -19,7 +19,7 @@ import Loader from './lib/components/loader';
 import MainNavigation from './lib/components/main-navigation';
 import NotFound from './lib/components/not-found';
 import PageTitle from './lib/components/page-title';
-import SidebarNavigation from './lib/components/sidebar-navigation';
+import * as sidebarNavigation from './lib/components/sidebar-navigation';
 import SecondaryNavigation from './lib/components/secondary-navigation';
 import TertiaryNavigation from './lib/components/tertiary-navigation';
 import Toolbar from './lib/components/toolbar';
@@ -44,7 +44,7 @@ const COMPONENTS = {
   MainNavigation,
   NotFound,
   PageTitle,
-  SidebarNavigation,
+  SidebarNavigation: sidebarNavigation.default,
   SecondaryNavigation,
   TertiaryNavigation,
   Toolbar,
@@ -57,6 +57,7 @@ const ICONS = {
 
 export declare namespace Types {
   export type ActionableButtonState = actionableButton.ActionableButtonState;
+  export type SidebarNavigationItem = sidebarNavigation.SidebarNavigationItem;
 }
 
 export {

@@ -10,11 +10,19 @@ import { t } from '../../i18n';
 import { getContext } from '../context';
 import { TargetAccessManagementAddUser } from './target-access-management-add-user';
 
+const CLS = {
+  PADDED_LIST: 'padded-list',
+};
+
 interface Props {
   target: access.AccessTarget;
 }
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  > .${CLS.PADDED_LIST} {
+    margin-top: ${(p) => p.theme.marginPx.lg}px;
+  }
+`;
 
 /**
  * Component for managing user access for a specific "target" (i.e. non-global),
@@ -161,6 +169,7 @@ export const TargetAccessManagement = (props: Props) => {
           </C.List>
           <C.List
             title={t.t(lang, (s) => s.components.accessControl.pendingInvites)}
+            className={CLS.PADDED_LIST}
           >
             {invites.length > 0 ? (
               invites.map((item, i) => {
@@ -260,7 +269,10 @@ export const TargetAccessManagement = (props: Props) => {
               />
             )}
           </C.List>
-          <C.List title={t.t(lang, (s) => s.components.accessControl.auditLog)}>
+          <C.List
+            title={t.t(lang, (s) => s.components.accessControl.auditLog)}
+            className={CLS.PADDED_LIST}
+          >
             {auditLog.length > 0 ? (
               auditLog.map((item, i) => {
                 const m = dayjs(item.date).locale(lang);
