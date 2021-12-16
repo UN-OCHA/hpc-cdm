@@ -22,10 +22,6 @@ interface Props {
 // Styles for status bar
 const StatusTooltip = Tooltip;
 
-const NotSubmitted = styled.span`
-  color: ${(p) => p.theme.colors.pallete.blue.dark2};
-`;
-
 const UnsavedChanges = styled.span`
   display: flex;
   flex-direction: column;
@@ -137,15 +133,6 @@ const Indicator = (props: Props) => {
         ) : (
           <>
             {editable ? <MdLockOpen size={20} /> : <MdLock size={20} />}
-            {assignmentState === 'not-entered' ||
-            assignmentState === 'raw:entered' ? (
-              <NotSubmitted>
-                {t.t(
-                  lang,
-                  (s) => s.routes.operations.forms.editability.submittedEditable
-                )}
-              </NotSubmitted>
-            ) : null}
             <span>{stateString}</span>
             {editable && (
               <span>
