@@ -10,9 +10,7 @@ import * as paths from '../paths';
 
 import FormAssignmentsList from './form-assignments-list';
 
-const Container = styled.div`
-  margin-top: ${(p) => p.theme.marginPx.lg}px;
-`;
+const Container = styled.div``;
 
 interface Props {
   className?: string;

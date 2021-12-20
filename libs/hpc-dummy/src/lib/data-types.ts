@@ -63,7 +63,6 @@ const FORM_ASSIGNMENT = t.type({
   formId: t.number,
   assignee: ASSIGNEE,
   state: ASSIGNMENT_STATE,
-  editable: t.boolean,
   currentData: t.union([t.string, t.null]),
   currentFiles: t.array(
     t.type({

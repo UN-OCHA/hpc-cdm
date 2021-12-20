@@ -10,7 +10,7 @@ import * as paths from '../paths';
 import FormAssignmentsList from './form-assignments-list';
 
 const CLS = {
-  FORM_LIST: 'cluster-forms',
+  CLUSTER_FORM_LIST: 'cluster-forms',
 };
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const Container = styled.div`
-  > .${CLS.FORM_LIST} {
+  > .${CLS.CLUSTER_FORM_LIST} {
     margin-top: ${(p) => p.theme.marginPx.lg}px;
   }
 `;
@@ -77,7 +77,6 @@ const OperationFormAssignmentsList = (props: Props) => {
               <Container>
                 {operationAssignments.length > 0 && (
                   <FormAssignmentsList
-                    className={CLS.FORM_LIST}
                     title={t.t(
                       lang,
                       (s) => s.routes.operations.forms.forOperations
@@ -94,7 +93,7 @@ const OperationFormAssignmentsList = (props: Props) => {
                 )}
                 {clusterAssignments.length > 0 && (
                   <FormAssignmentsList
-                    className={CLS.FORM_LIST}
+                    className={CLS.CLUSTER_FORM_LIST}
                     title={t.t(
                       lang,
                       (s) => s.routes.operations.forms.forClusters

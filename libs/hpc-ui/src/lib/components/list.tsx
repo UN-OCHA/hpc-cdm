@@ -20,7 +20,8 @@ const Header = styled.div`
 const Title = styled.h2`
   text-transform: uppercase;
   font-size: 1.2rem;
-  line-height: 40px;
+  line-height: ${(p) => p.theme.sizing.singleLineBlockItemHeightPx}px;
+  margin: 0;
   color: ${(p) => p.theme.colors.pallete.gray.light};
 `;
 

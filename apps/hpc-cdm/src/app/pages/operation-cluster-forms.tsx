@@ -2,11 +2,12 @@ import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
-import { operations } from '@unocha/hpc-data';
+import { operations, reportingWindows } from '@unocha/hpc-data';
 
 import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
+import { getBestReportingWindow } from '../utils/reportingWindows';
 
 import ClusterNavigation from '../components/cluster-navigation';
 import PageOperationClusterFormAssignments from './operation-cluster-form-assignments';
@@ -61,28 +62,21 @@ const PageOperationClusterForms = (props: Props) => {
               }}
             />
             <Route>
-              {operation.reportingWindows.length === 1 ? (
+              {operation.reportingWindows.length > 0 ? (
                 <Redirect
                   to={paths.operationClusterFormAssignments({
                     operationId: operation.id,
                     clusterId: cluster.id,
-                    windowId: operation.reportingWindows[0].id,
+                    windowId: getBestReportingWindow(operation.reportingWindows)
+                      .id,
                   })}
                 />
-              ) : operation.reportingWindows.length === 0 ? (
+              ) : (
                 <C.ErrorMessage
                   strings={{
                     title: 'No reporting windows',
                     info:
                       "This operation doesn't have any reporting windows associated with it",
-                  }}
-                />
-              ) : (
-                <C.ErrorMessage
-                  strings={{
-                    title: 'Multiple reporting windows',
-                    info:
-                      'This operation has multiple reporting windows associated with it, currently only 1 window is supported at a time.',
                   }}
                 />
               )}

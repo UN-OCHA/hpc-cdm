@@ -11,6 +11,7 @@ import * as paths from '../paths';
 import OperationFormAssignmentsList from '../components/operation-form-assignments-list';
 import FormAssignmentData from '../components/form-assignment-data';
 import PageMeta from '../components/page-meta';
+import { prepareReportingWindowsAsSidebarNavigation } from '../utils/reportingWindows';
 
 interface Props {
   className?: string;
@@ -32,7 +33,19 @@ const PageOperationFormAssignments = (props: Props) => {
               windowId: window.id,
             })}
           >
-            <OperationFormAssignmentsList {...{ operation, window }} />
+            <C.SidebarNavigation
+              menu={prepareReportingWindowsAsSidebarNavigation(
+                lang,
+                operation.reportingWindows,
+                (w) =>
+                  paths.operationFormAssignments({
+                    operationId: operation.id,
+                    windowId: w.id,
+                  })
+              )}
+            >
+              <OperationFormAssignmentsList {...{ operation, window }} />
+            </C.SidebarNavigation>
           </Route>
           <Route
             path={paths.operationFormAssignmentDataMatch({
@@ -57,11 +70,28 @@ const PageOperationFormAssignments = (props: Props) => {
                             operation.name,
                           ]}
                         />
-                        <C.PageTitle>
-                          {assignment.assignee.type === 'operation'
-                            ? assignment.task.form.name
-                            : `${assignment.assignee.clusterName}: ${assignment.task.form.name}`}
-                        </C.PageTitle>
+                        <C.TertiaryNavigation
+                          breadcrumbs={[
+                            {
+                              label: window.name,
+                              to: paths.operationFormAssignments({
+                                operationId: operation.id,
+                                windowId: window.id,
+                              }),
+                            },
+                            {
+                              label:
+                                assignment.assignee.type === 'operation'
+                                  ? assignment.task.form.name
+                                  : `${assignment.assignee.clusterName}: ${assignment.task.form.name}`,
+                              to: paths.operationFormAssignmentData({
+                                operationId: operation.id,
+                                windowId: window.id,
+                                assignmentId: assignment.id,
+                              }),
+                            },
+                          ]}
+                        />
                       </>
                     )}
                     {...{ window, assignmentId }}

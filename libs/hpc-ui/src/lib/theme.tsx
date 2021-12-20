@@ -70,6 +70,13 @@ export const THEME = {
     borderRadiusMd: '6px',
     containerWidthPx: 1240,
     fontSizeSm: '0.8rem',
+    /**
+     * Standard height to use for single-line item block components,
+     * such as list headers, list items, or sidebar menu items.
+     *
+     * (this excludes the height of any top and bottom borders)
+     */
+    singleLineBlockItemHeightPx: 49,
   },
   animations: {
     fast: '0.2s ease-out',

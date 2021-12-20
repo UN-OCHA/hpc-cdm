@@ -215,15 +215,15 @@ export class Dummy {
       lastUpdatedAt: assignment.lastUpdatedAt,
       lastUpdatedBy: assignment.lastUpdatedBy,
       state: assignment.state,
-      editable: assignment.editable,
-      permissions: {
-        canModifyWhenClean: this.userHasAccess([
-          {
-            target: { type: 'global' },
-            role: 'hpc_admin',
-          },
-        ]),
-      },
+      editable:
+        assignment.state in ['not-entered', 'raw:entered']
+          ? true
+          : this.userHasAccess([
+              {
+                target: { type: 'global' },
+                role: 'hpc_admin',
+              },
+            ]),
       task: await getAssignmentTask(assignment),
       assignee,
       assignedUsers: [{ name: 'Assignee Name', email: 'test@email.com' }],
@@ -639,7 +639,6 @@ export class Dummy {
 
               if (assignment) {
                 assignment.state = params.state;
-                assignment.editable = true;
               }
               this.store();
               return this.getAssignmentResult(params.assignmentId);
@@ -664,7 +663,6 @@ export class Dummy {
                   );
                   a.version++;
                   a.state = finalized ? 'raw:finalized' : 'raw:entered';
-                  a.editable = !finalized;
                   a.lastUpdatedAt = Date.now();
                   a.lastUpdatedBy = u[0]?.user.name || 'Unknown';
                   a.currentData = data;
