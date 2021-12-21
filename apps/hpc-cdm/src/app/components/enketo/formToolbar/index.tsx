@@ -8,8 +8,11 @@ import Indicator from './indicator';
 import { FormStatus } from '../types';
 import dayjs from '../../../../libraries/dayjs';
 import StatusChangeButtons from './StatusChangeButtons';
+import { assign } from 'lodash';
 interface Props {
   loading: boolean;
+  editable: boolean;
+  reportingWindow: reportingWindows.ReportingWindow;
   setShowAssignedUsers: Dispatch<SetStateAction<boolean>>;
   assignment: reportingWindows.GetAssignmentResult;
   formTouched: boolean;
@@ -19,6 +22,8 @@ interface Props {
 
 const FormToolbar = ({
   loading,
+  editable,
+  reportingWindow,
   setShowAssignedUsers,
   assignment,
   formTouched,
@@ -26,11 +31,7 @@ const FormToolbar = ({
   setStatus,
 }: Props) => {
   const { lang } = useContext(AppContext);
-  const {
-    editable,
-    permissions: { canModifyWhenClean },
-    state: assignmentState,
-  } = assignment;
+  const { state: assignmentState } = assignment;
 
   const changeStatusButtonsProps = { loading, assignment, setStatus, editable };
 
@@ -49,9 +50,9 @@ const FormToolbar = ({
   const indicatorProps = {
     loading,
     editable,
+    reportingWindow,
     formTouched,
     formStatus,
-    canModifyWhenClean,
     assignmentState,
     lastUpdatedAt,
     lastUpdatedBy,

@@ -11,7 +11,6 @@ interface Props {
   loading: boolean;
   assignment: reportingWindows.GetAssignmentResult;
   setStatus: Dispatch<SetStateAction<FormStatus>>;
-  editable: boolean;
 }
 
 const ChangeStateButton = styled(C.Button)`
@@ -22,7 +21,7 @@ const StatusChangeButtons = (props: Props) => {
   const history = useHistory();
   const env = getEnv();
   const { lang } = useContext(AppContext);
-  const { assignment, setStatus, editable } = props;
+  const { assignment, setStatus } = props;
 
   const onStatusChangeClick = (state: reportingWindows.AssignmentState) => {
     setStatus({ type: 'saving' });
@@ -42,10 +41,20 @@ const StatusChangeButtons = (props: Props) => {
       });
   };
 
+  /**
+   * We deliberately use `assignment.editable` here (which reflects user
+   * permissions) rather than `editable` from parent components (whether the
+   * form elements should be editable), because we still want to allow the user
+   * to change the form state, even if we want to prevent them accidentally
+   * changing form data.
+   */
+  const canChangeState = assignment.editable;
+
   return (
     <>
-      {assignment.state !== 'raw:entered' &&
-        assignment.permissions.canModifyWhenClean && (
+      {canChangeState &&
+        assignment.state !== 'not-entered' &&
+        assignment.state !== 'raw:entered' && (
           <ChangeStateButton
             color="neutral"
             onClick={() => onStatusChangeClick('raw:entered')}
@@ -58,18 +67,23 @@ const StatusChangeButtons = (props: Props) => {
             </span>
           </ChangeStateButton>
         )}
-      {!editable && assignment.permissions.canModifyWhenClean && (
-        <span>
-          <ChangeStateButton
-            color="neutral"
-            onClick={() => onStatusChangeClick('clean:entered')}
-          >
-            <span>
-              {t.t(lang, (s) => s.routes.operations.forms.statusChange.unlock)}
-            </span>
-          </ChangeStateButton>
-        </span>
-      )}
+      {canChangeState &&
+        (assignment.state === 'raw:finalized' ||
+          assignment.state === 'clean:finalized') && (
+          <span>
+            <ChangeStateButton
+              color="neutral"
+              onClick={() => onStatusChangeClick('clean:entered')}
+            >
+              <span>
+                {t.t(
+                  lang,
+                  (s) => s.routes.operations.forms.statusChange.unlock
+                )}
+              </span>
+            </ChangeStateButton>
+          </span>
+        )}
     </>
   );
 };

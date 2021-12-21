@@ -13,7 +13,7 @@ interface Props {
   editable: boolean;
   formTouched: boolean;
   formStatus: FormStatus;
-  canModifyWhenClean: boolean;
+  reportingWindow: reportingWindows.ReportingWindow;
   assignmentState: reportingWindows.AssignmentState;
   lastUpdatedAt: string;
   lastUpdatedBy: string;
@@ -21,10 +21,6 @@ interface Props {
 
 // Styles for status bar
 const StatusTooltip = Tooltip;
-
-const NotSubmitted = styled.span`
-  color: ${(p) => p.theme.colors.pallete.blue.dark2};
-`;
 
 const UnsavedChanges = styled.span`
   display: flex;
@@ -79,14 +75,36 @@ const Indicator = (props: Props) => {
   const { lang } = useContext(AppContext);
   const {
     formStatus,
+    reportingWindow,
     lastUpdatedAt,
     lastUpdatedBy,
     loading,
     assignmentState,
     editable,
-    canModifyWhenClean,
     formTouched,
   } = props;
+
+  const surveySubmitted =
+    assignmentState !== 'not-entered' && assignmentState !== 'raw:entered';
+
+  const stateString = t.t(
+    lang,
+    (s) =>
+      s.routes.operations.forms.editability[
+        surveySubmitted && editable
+          ? 'submittedEditable'
+          : surveySubmitted && !editable
+          ? 'submittedNonEditable'
+          : !surveySubmitted && editable
+          ? 'notSubmittedEditable'
+          : reportingWindow.state === 'pending'
+          ? 'reportingWindowPending'
+          : reportingWindow.state === 'closed'
+          ? 'reportingWindowClosed'
+          : 'notSubmittedNotEditable'
+      ]
+  );
+
   return (
     <StatusTooltip
       arrow
@@ -114,26 +132,9 @@ const Indicator = (props: Props) => {
           </>
         ) : (
           <>
-            {!editable ? (
-              <span>
-                <MdLock size={20} />
-                {t.t(
-                  lang,
-                  (s) =>
-                    s.routes.operations.forms.editability.submittedNonEditable
-                )}
-              </span>
-            ) : (
-              <NotSubmitted>
-                <MdLockOpen size={20} />
-                {t.t(lang, (s) =>
-                  assignmentState === 'raw:entered'
-                    ? s.routes.operations.forms.editability.notSubmittedEditable
-                    : s.routes.operations.forms.editability.submittedEditable
-                )}
-              </NotSubmitted>
-            )}
-            {(editable || canModifyWhenClean) && (
+            {editable ? <MdLockOpen size={20} /> : <MdLock size={20} />}
+            <span>{stateString}</span>
+            {editable && (
               <span>
                 {formStatus.type === 'idle' ? (
                   formTouched ? (

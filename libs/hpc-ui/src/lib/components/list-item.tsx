@@ -117,7 +117,7 @@ const ListItem = (props: Props) => {
 export default styled(ListItem)`
   display: flex;
   align-items: center;
-  height: 54px;
+  height: ${(p) => p.theme.sizing.singleLineBlockItemHeightPx}px;
   border-bottom: 1px solid ${(p) => p.theme.colors.dividers};
   padding: 0 0;
   transition: padding ${(p) => p.theme.animations.fast};

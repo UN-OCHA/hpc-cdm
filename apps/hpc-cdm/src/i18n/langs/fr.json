@@ -24,6 +24,13 @@
     "devEnvironmentWarnings": {
       "dummy": "Ceci est une instance de démonstration de CDM, les informations que vous entrez ici ne seront stockées que dans votre navigateur et ne seront pas envoyées à notre serveur",
       "dev": "Ceci est une instance de test de CDM, les informations que vous entrez ici seront périodiquement supprimées."
+    },
+    "reportingWindows": {
+      "state": {
+        "open": "Ouvert",
+        "closed": "Fermé",
+        "pending": "Brouillon"
+      }
     }
   },
   "components": {
@@ -131,7 +138,10 @@
           "info": "Le chargement de cette page peut prendre quelques instants, veuillez patienter sans fermer votre navigateur, si votre navigateur vous informe d’un délai ou absence de réponse dans le chargement de la page, cliquez ‘attendre’."
         },
         "editability": {
+          "reportingWindowPending": "L'enquête n'est pas encore ouverte",
+          "reportingWindowClosed": "L'enquête est fermée",
           "notSubmittedEditable": "Formulaire non encore soumis: modifiable",
+          "notSubmittedNotEditable": "L'enquête n'est pas modifiable",
           "submittedEditable": "Formulaire soumis: modifiable",
           "submittedNonEditable": "Formulaire soumis: ne plus modifiable"
         },

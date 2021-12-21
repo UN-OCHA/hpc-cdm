@@ -1,26 +1,29 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { styled } from '../theme';
+import { IconType } from 'react-icons/lib';
 
 const CLS = {
   SELECTED: 'selected',
 };
 
+export interface SidebarNavigationItem {
+  label: string;
+  path: string;
+  icon?: {
+    icon: IconType;
+    color?: string;
+    title?: string;
+  };
+}
+
 interface Props {
-  menu: Array<
-    | {
-        label: string;
-        path: string;
-      }
-    | undefined
-    | null
-    | false
-  >;
+  menu: Array<SidebarNavigationItem | undefined | null | false>;
   children?: JSX.Element | JSX.Element[];
 }
 
 const Wrapper = styled.div`
-  margin: 0 -1rem;
+  margin: ${(p) => p.theme.marginPx.md}px -1rem 0;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -42,7 +45,7 @@ const Menu = styled.ul`
       position: relative;
       display: flex;
       align-items: center;
-      height: 49px;
+      height: ${(p) => p.theme.sizing.singleLineBlockItemHeightPx}px;
       font-size: 1.6rem;
       color: ${(p) => p.theme.colors.pallete.gray.light};
 
@@ -60,7 +63,12 @@ const Menu = styled.ul`
       }
 
       > span {
+        flex-basis: 0;
+        flex-grow: 1;
         margin: 0 18px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
     }
 
@@ -95,8 +103,20 @@ const SidebarNavigation = (props: Props) => {
                 key={i}
                 className={loc.pathname === m.path ? CLS.SELECTED : ''}
               >
-                <Link to={m.path}>
+                <Link
+                  title={
+                    m.icon?.title ? `${m.label}: ${m.icon.title}` : m.label
+                  }
+                  to={m.path}
+                >
                   <span>{m.label}</span>
+                  {m.icon && (
+                    <m.icon.icon
+                      size={24}
+                      color={m.icon.color}
+                      title={m.icon.title}
+                    />
+                  )}
                 </Link>
               </li>
             )

@@ -12,6 +12,7 @@ import ClusterNavigation from '../components/cluster-navigation';
 import FormAssignmentData from '../components/form-assignment-data';
 import OperationClusterFormAssignmentsList from '../components/operation-cluster-form-assignments-list';
 import PageMeta from '../components/page-meta';
+import { prepareReportingWindowsAsSidebarNavigation } from '../utils/reportingWindows';
 
 interface Props {
   className?: string;
@@ -41,9 +42,22 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                 cluster={cluster}
                 showSettingsButton
               />
-              <OperationClusterFormAssignmentsList
-                {...{ operation, cluster, window }}
-              />
+              <C.SidebarNavigation
+                menu={prepareReportingWindowsAsSidebarNavigation(
+                  lang,
+                  operation.reportingWindows,
+                  (w) =>
+                    paths.operationClusterFormAssignments({
+                      operationId: operation.id,
+                      clusterId: cluster.id,
+                      windowId: w.id,
+                    })
+                )}
+              >
+                <OperationClusterFormAssignmentsList
+                  {...{ operation, cluster, window }}
+                />
+              </C.SidebarNavigation>
             </Route>
             <Route
               path={paths.operationClusterFormAssignmentDataMatch({
@@ -69,6 +83,14 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                           />
                           <ClusterNavigation
                             breadcrumbs={[
+                              {
+                                to: paths.operationClusterFormAssignments({
+                                  operationId: operation.id,
+                                  clusterId: cluster.id,
+                                  windowId: window.id,
+                                }),
+                                label: window.name,
+                              },
                               {
                                 to: paths.operationClusterFormAssignmentData({
                                   operationId: operation.id,
