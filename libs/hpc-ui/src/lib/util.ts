@@ -82,6 +82,7 @@ export function dataLoader<Deps extends DepsBaseType, Data>(
     });
 
   const load = () => {
+    setState({ type: 'loading' });
     get(...dependencies)
       .then(setData)
       .catch((err: Error) => {
