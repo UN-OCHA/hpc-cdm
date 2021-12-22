@@ -1,4 +1,5 @@
 import React from 'react';
+import { MdCheckCircle } from 'react-icons/md';
 
 import { t } from '../../i18n';
 import { C, dataLoader, styled } from '@unocha/hpc-ui';
@@ -73,6 +74,29 @@ const OperationFormAssignmentsList = (props: Props) => {
                 })
               )
               .reduce((acc, val) => acc.concat(val), []);
+            if (
+              operationAssignments.length === 0 &&
+              clusterAssignments.length === 0
+            ) {
+              return (
+                <C.ErrorMessage
+                  icon={MdCheckCircle}
+                  strings={{
+                    title: t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.none.title
+                    ),
+                    info: t.t(
+                      lang,
+                      (s) => s.routes.operations.forms.none.info,
+                      {
+                        window: window.name,
+                      }
+                    ),
+                  }}
+                />
+              );
+            }
             return (
               <Container>
                 {operationAssignments.length > 0 && (

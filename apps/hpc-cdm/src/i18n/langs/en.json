@@ -194,6 +194,10 @@
         "statusChange": {
           "unsubmit": "Unsubmit",
           "unlock": "Unlock for cleaning"
+        },
+        "none": {
+          "title": "No forms",
+          "info": "No forms have been assigned to this operation for {window}"
         }
       },
       "clusters": {
