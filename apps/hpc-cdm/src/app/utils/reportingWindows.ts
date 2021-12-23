@@ -30,22 +30,24 @@ export const prepareReportingWindowsAsSidebarNavigation = (
   reportingWindows: reportingWindows.ReportingWindow[],
   generatePath: (window: reportingWindows.ReportingWindow) => string
 ): Types.SidebarNavigationItem[] =>
-  reportingWindows.map((w) => ({
-    label: w.name,
-    path: generatePath(w),
-    icon: {
-      icon:
-        w.state === 'open'
-          ? MdPendingActions
-          : w.state === 'pending'
-          ? MdPending
-          : MdLock,
-      color:
-        w.state === 'open'
-          ? colorOpen
-          : w.state === 'pending'
-          ? colorPending
-          : colorClosed,
-      title: t.get(lang, (s) => s.common.reportingWindows.state[w.state]),
-    },
-  }));
+  reportingWindows
+    .sort((w1, w2) => (w1.id < w2.id ? 1 : -1))
+    .map((w) => ({
+      label: w.name,
+      path: generatePath(w),
+      icon: {
+        icon:
+          w.state === 'open'
+            ? MdPendingActions
+            : w.state === 'pending'
+            ? MdPending
+            : MdLock,
+        color:
+          w.state === 'open'
+            ? colorOpen
+            : w.state === 'pending'
+            ? colorPending
+            : colorClosed,
+        title: t.get(lang, (s) => s.common.reportingWindows.state[w.state]),
+      },
+    }));
