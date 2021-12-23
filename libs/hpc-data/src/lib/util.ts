@@ -6,6 +6,7 @@ export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(
 ) => t.type({ data, permissions });
 
 const INTEGER_REGEX = /^[0-9]+$/;
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
  * Accepts either an integer, or a string of an integer, serializes to a number.
@@ -104,6 +105,56 @@ export const ARRAY_BUFFER = new t.Type<ArrayBuffer, ArrayBuffer>(
     } else {
       return t.failure(v, c);
     }
+  },
+  t.identity
+);
+
+/**
+ * Takes date string and verifies that
+ * it is a valid date in YYYY-MM-DD format
+ */
+const isDateValid = (date: string) => {
+  if (!ISO_DATE.test(date)) {
+    return false;
+  }
+
+  const [yearString, monthString, dayString] = date.split('-');
+  const day = parseInt(dayString, 10);
+  const month = parseInt(monthString, 10);
+  const year = parseInt(yearString, 10);
+
+  // Check the ranges of month and year
+  if (year < 1000 || year > 3000 || month === 0 || month > 12) {
+    return false;
+  }
+
+  const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  // Adjust for leap years
+  if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) {
+    monthLength[1] = 29;
+  }
+
+  // Check the range of the day
+  return day > 0 && day <= monthLength[month - 1];
+};
+
+/**
+ * Accepts strings representing dates in ISO format YYYY-MM-DD
+ */
+export const ISO_DATE_FROM_STRING = new t.Type<string, string>(
+  'ISO_DATE_FROM_STRING',
+  t.string.is,
+  (v, c) => {
+    if (typeof v === 'string') {
+      if (isDateValid(v)) {
+        return t.success(v);
+      }
+
+      return t.failure(v, c);
+    }
+
+    return t.failure(v, c);
   },
   t.identity
 );
