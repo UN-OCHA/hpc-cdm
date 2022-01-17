@@ -1,6 +1,6 @@
 {
   "name": "unocha",
-  "version": "1.2.0-hotfix-1",
+  "version": "1.2.1",
   "license": "Apache-2.0",
   "scripts": {
     "remove-unneeded-deps": "node tools/remove-unneeded-deps.js",
