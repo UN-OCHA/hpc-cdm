@@ -28,6 +28,10 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help"
   },
+  "engines": {
+    "node": ">=16.12.0",
+    "npm": ">=8.1.0"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "npm run affected:build && npm run affected:lint"
@@ -60,7 +64,7 @@
     "@types/jest": "25.1.4",
     "@types/jquery": "^3.5.1",
     "@types/lodash": "^4.14.158",
-    "@types/node": "~8.9.4",
+    "@types/node": "^16.11.21",
     "@types/react": "17.0.2",
     "@types/react-dom": "17.0.2",
     "@types/react-helmet": "^6.1.0",
@@ -104,7 +108,6 @@
     "react-toastify": "^6.0.9",
     "styled-components": "5.1.1",
     "ts-jest": "25.2.1",
-    "ts-node": "~7.0.0",
     "tslint": "~6.0.0",
     "typescript": "~3.8.3"
   }
