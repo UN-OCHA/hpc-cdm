@@ -83,7 +83,7 @@
     "document-register-element": "1.13.1",
     "dotenv": "10.0.0",
     "enketo-core": "^5.16.6",
-    "eslint": "7.10.0",
+    "eslint": "8.13.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-import": "2.26.0",
