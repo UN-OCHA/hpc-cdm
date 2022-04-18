@@ -100,7 +100,8 @@
           },
           "outputs": ["coverage/apps/hpc-cdm"]
         }
-      }
+      },
+      "tags": []
     },
     "hpc-cdm-e2e": {
       "root": "apps/hpc-cdm-e2e",
@@ -130,7 +131,9 @@
           },
           "outputs": ["{options.outputFile}"]
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["hpc-cdm"]
     },
     "hpc-core": {
       "root": "libs/hpc-core",
@@ -160,7 +163,8 @@
           },
           "outputs": ["coverage/libs/hpc-core"]
         }
-      }
+      },
+      "tags": []
     },
     "hpc-data": {
       "root": "libs/hpc-data",
@@ -190,7 +194,8 @@
           },
           "outputs": ["coverage/libs/hpc-data"]
         }
-      }
+      },
+      "tags": []
     },
     "hpc-dummy": {
       "root": "libs/hpc-dummy",
@@ -220,7 +225,8 @@
           },
           "outputs": ["coverage/libs/hpc-dummy"]
         }
-      }
+      },
+      "tags": []
     },
     "hpc-live": {
       "root": "libs/hpc-live",
@@ -250,7 +256,8 @@
           },
           "outputs": ["coverage/libs/hpc-live"]
         }
-      }
+      },
+      "tags": []
     },
     "hpc-ui": {
       "root": "libs/hpc-ui",
@@ -283,13 +290,10 @@
           },
           "outputs": ["coverage/libs/hpc-ui"]
         }
-      }
+      },
+      "tags": []
     }
   },
-  "cli": {
-    "defaultCollection": "@nrwl/react"
-  },
-  "defaultProject": "hpc-cdm",
   "schematics": {
     "@nrwl/workspace": {
       "library": {

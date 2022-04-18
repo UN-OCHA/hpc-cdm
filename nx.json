@@ -21,30 +21,6 @@
       }
     }
   },
-  "projects": {
-    "hpc-cdm": {
-      "tags": []
-    },
-    "hpc-cdm-e2e": {
-      "tags": [],
-      "implicitDependencies": ["hpc-cdm"]
-    },
-    "hpc-core": {
-      "tags": []
-    },
-    "hpc-data": {
-      "tags": []
-    },
-    "hpc-dummy": {
-      "tags": []
-    },
-    "hpc-live": {
-      "tags": []
-    },
-    "hpc-ui": {
-      "tags": []
-    }
-  },
   "cli": {
     "defaultCollection": "@nrwl/react"
   },
