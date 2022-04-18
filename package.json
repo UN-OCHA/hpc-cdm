@@ -29,7 +29,8 @@
     "workspace-generator": "nx workspace-generator"
   },
   "engines": {
-    "node": ">=16.12.0"
+    "node": ">=16.12.0",
+    "npm": ">=8.1.0"
   },
   "husky": {
     "hooks": {
