@@ -15,13 +15,11 @@ interface Props {
 const AssignedUsersButton = ({ setShowAssignedUsers }: Props) => {
   const { lang } = useContext(AppContext);
   return (
-    <>
-      <Button onClick={() => setShowAssignedUsers(true)} color="primary">
-        <span>
-          {t.t(lang, (s) => s.routes.operations.forms.assignedUsers.title)}
-        </span>
-      </Button>
-    </>
+    <Button onClick={() => setShowAssignedUsers(true)} color="primary">
+      <span>
+        {t.t(lang, (s) => s.routes.operations.forms.assignedUsers.title)}
+      </span>
+    </Button>
   );
 };
 

@@ -113,13 +113,12 @@ export const TargetAccessManagement = (props: Props) => {
                                   .replace('{role}', getRoleNames(roles))
                               )
                             ) {
-                              const data = await env().model.access.updateTargetAccess(
-                                {
+                              const data =
+                                await env().model.access.updateTargetAccess({
                                   target,
                                   grantee: item.grantee,
                                   roles,
-                                }
-                              );
+                                });
                               updateLoadedData(data);
                             }
                           }}
@@ -144,13 +143,12 @@ export const TargetAccessManagement = (props: Props) => {
                                   .replace('{name}', item.grantee.name)
                               )
                             ) {
-                              const data = await env().model.access.updateTargetAccess(
-                                {
+                              const data =
+                                await env().model.access.updateTargetAccess({
                                   target,
                                   grantee: item.grantee,
                                   roles: [],
-                                }
-                              );
+                                });
                               updateLoadedData(data);
                             }
                           }}
@@ -212,13 +210,14 @@ export const TargetAccessManagement = (props: Props) => {
                                   .replace('{role}', getRoleNames(roles))
                               )
                             ) {
-                              const data = await env().model.access.updateTargetAccessInvite(
-                                {
-                                  target,
-                                  email: item.email,
-                                  roles,
-                                }
-                              );
+                              const data =
+                                await env().model.access.updateTargetAccessInvite(
+                                  {
+                                    target,
+                                    email: item.email,
+                                    roles,
+                                  }
+                                );
                               updateLoadedData(data);
                             }
                           }}
@@ -243,13 +242,14 @@ export const TargetAccessManagement = (props: Props) => {
                                   .replace('{name}', item.email)
                               )
                             ) {
-                              const data = await env().model.access.updateTargetAccessInvite(
-                                {
-                                  target,
-                                  email: item.email,
-                                  roles: [],
-                                }
-                              );
+                              const data =
+                                await env().model.access.updateTargetAccessInvite(
+                                  {
+                                    target,
+                                    email: item.email,
+                                    roles: [],
+                                  }
+                                );
                               updateLoadedData(data);
                             }
                           }}

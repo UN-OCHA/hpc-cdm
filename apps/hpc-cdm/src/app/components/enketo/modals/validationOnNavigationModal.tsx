@@ -20,11 +20,8 @@ interface Props {
 
 const ValidationOnNavigationModal = (props: Props) => {
   const { lang } = useContext(AppContext);
-  const {
-    nextPage,
-    showValidationConfirmation,
-    closeValidationMessage,
-  } = props;
+  const { nextPage, showValidationConfirmation, closeValidationMessage } =
+    props;
 
   return (
     <Dialog

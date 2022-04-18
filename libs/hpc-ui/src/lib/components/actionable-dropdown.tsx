@@ -82,14 +82,8 @@ type InternalState = 'idle' | 'loading' | 'error';
  * selects a new option, and display a loading indicator.
  */
 export const ActionableDropdown = (props: Props) => {
-  const {
-    className,
-    label,
-    loadingLabel,
-    showCheckboxes,
-    options,
-    onSelect,
-  } = props;
+  const { className, label, loadingLabel, showCheckboxes, options, onSelect } =
+    props;
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<InternalState>('idle');

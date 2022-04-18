@@ -68,16 +68,8 @@ const Actions = styled.div`
 `;
 
 const ListItem = (props: Props) => {
-  const {
-    className,
-    link,
-    text,
-    prefix,
-    secondary,
-    actions,
-    muted,
-    itemEnd,
-  } = props;
+  const { className, link, text, prefix, secondary, actions, muted, itemEnd } =
+    props;
   const contents = (
     <>
       {prefix && (
