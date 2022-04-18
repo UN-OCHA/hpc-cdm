@@ -11,7 +11,7 @@ services:
           - cdm
           - cdm.hpc.vm
     ports:
-      - "127.0.0.1:4200:80"
+      - '127.0.0.1:4200:80'
 
 networks:
   service:
