@@ -10,7 +10,8 @@
       "devDependencies": "*"
     },
     "tsconfig.json": "*",
-    "nx.json": "*"
+    "nx.json": "*",
+    ".eslintrc.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
