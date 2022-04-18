@@ -24,9 +24,9 @@
     "format:write": "nx format:write",
     "format:check": "nx format:check",
     "update": "nx migrate latest",
-    "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
-    "help": "nx help"
+    "help": "nx help",
+    "workspace-generator": "nx workspace-generator"
   },
   "engines": {
     "node": ">=16.12.0"
