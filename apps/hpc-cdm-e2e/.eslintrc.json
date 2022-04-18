@@ -3,9 +3,6 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "parserOptions": {
-        "project": ["apps/hpc-cdm-e2e/tsconfig.*?.json"]
-      },
       "rules": {}
     },
     {
