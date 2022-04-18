@@ -58,9 +58,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/web:dev-server",
@@ -91,7 +89,8 @@
               "apps/hpc-cdm/**/*.spec.jsx",
               "apps/hpc-cdm/**/*.d.ts"
             ]
-          }
+          },
+          "outputs": ["{options.outputFile}"]
         },
         "test": {
           "builder": "@nrwl/jest:jest",
@@ -99,9 +98,7 @@
             "jestConfig": "apps/hpc-cdm/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/hpc-cdm"
-          ]
+          "outputs": ["coverage/apps/hpc-cdm"]
         }
       }
     },
@@ -130,7 +127,8 @@
               "apps/hpc-cdm-e2e/src/**/*.ts",
               "apps/hpc-cdm-e2e/src/**/*.js"
             ]
-          }
+          },
+          "outputs": ["{options.outputFile}"]
         }
       }
     },
@@ -151,7 +149,8 @@
               "libs/hpc-core/**/*.spec.jsx",
               "libs/hpc-core/**/*.d.ts"
             ]
-          }
+          },
+          "outputs": ["{options.outputFile}"]
         },
         "test": {
           "builder": "@nrwl/jest:jest",
@@ -159,9 +158,7 @@
             "jestConfig": "libs/hpc-core/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/hpc-core"
-          ]
+          "outputs": ["coverage/libs/hpc-core"]
         }
       }
     },
@@ -182,7 +179,8 @@
               "libs/hpc-data/**/*.spec.jsx",
               "libs/hpc-data/**/*.d.ts"
             ]
-          }
+          },
+          "outputs": ["{options.outputFile}"]
         },
         "test": {
           "builder": "@nrwl/jest:jest",
@@ -190,9 +188,7 @@
             "jestConfig": "libs/hpc-data/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/hpc-data"
-          ]
+          "outputs": ["coverage/libs/hpc-data"]
         }
       }
     },
@@ -213,7 +209,8 @@
               "libs/hpc-dummy/**/*.spec.jsx",
               "libs/hpc-dummy/**/*.d.ts"
             ]
-          }
+          },
+          "outputs": ["{options.outputFile}"]
         },
         "test": {
           "builder": "@nrwl/jest:jest",
@@ -221,9 +218,37 @@
             "jestConfig": "libs/hpc-dummy/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/hpc-dummy"
-          ]
+          "outputs": ["coverage/libs/hpc-dummy"]
+        }
+      }
+    },
+    "hpc-live": {
+      "root": "libs/hpc-live",
+      "sourceRoot": "libs/hpc-live/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/hpc-live/**/*.ts",
+              "libs/hpc-live/**/*.spec.ts",
+              "libs/hpc-live/**/*.spec.tsx",
+              "libs/hpc-live/**/*.spec.js",
+              "libs/hpc-live/**/*.spec.jsx",
+              "libs/hpc-live/**/*.d.ts"
+            ]
+          },
+          "outputs": ["{options.outputFile}"]
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/hpc-live/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/hpc-live"]
         }
       }
     },
@@ -247,7 +272,8 @@
               "libs/hpc-ui/**/*.spec.jsx",
               "libs/hpc-ui/**/*.d.ts"
             ]
-          }
+          },
+          "outputs": ["{options.outputFile}"]
         },
         "test": {
           "builder": "@nrwl/jest:jest",
@@ -255,41 +281,77 @@
             "jestConfig": "libs/hpc-ui/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/hpc-ui"
-          ]
+          "outputs": ["coverage/libs/hpc-ui"]
         }
       }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/react"
+  },
+  "defaultProject": "hpc-cdm",
+  "schematics": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "eslint"
+      }
     },
-    "hpc-live": {
-      "root": "libs/hpc-live",
-      "sourceRoot": "libs/hpc-live/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/hpc-live/**/*.ts",
-              "libs/hpc-live/**/*.spec.ts",
-              "libs/hpc-live/**/*.spec.tsx",
-              "libs/hpc-live/**/*.spec.js",
-              "libs/hpc-live/**/*.spec.jsx",
-              "libs/hpc-live/**/*.d.ts"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/hpc-live/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": [
-            "coverage/libs/hpc-live"
-          ]
-        }
+    "@nrwl/cypress": {
+      "cypress-project": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/react": {
+      "application": {
+        "style": "styled-components",
+        "linter": "eslint",
+        "babel": true
+      },
+      "library": {
+        "style": "styled-components",
+        "linter": "eslint"
+      },
+      "storybook-configuration": {
+        "linter": "eslint"
+      },
+      "component": {
+        "style": "styled-components"
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/web": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/node": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nx-plugin": {
+      "plugin": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nest": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/express": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
       }
     }
   }
