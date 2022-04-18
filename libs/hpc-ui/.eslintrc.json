@@ -3,5 +3,22 @@
     "@typescript-eslint/no-namespace": "warn"
   },
   "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc"],
-  "ignorePatterns": ["!**/*", "**/*.d.ts"]
+  "ignorePatterns": ["!**/*", "**/*.d.ts"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "parserOptions": {
+        "project": ["libs/hpc-ui/tsconfig.*?.json"]
+      },
+      "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    }
+  ]
 }
