@@ -57,7 +57,10 @@
                 }
               ]
             }
-          }
+          },
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
         "serve": {
           "builder": "@nrwl/web:dev-server",
@@ -95,7 +98,10 @@
           "options": {
             "jestConfig": "apps/hpc-cdm/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/apps/hpc-cdm"
+          ]
         }
       }
     },
@@ -152,7 +158,10 @@
           "options": {
             "jestConfig": "libs/hpc-core/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/hpc-core"
+          ]
         }
       }
     },
@@ -180,7 +189,10 @@
           "options": {
             "jestConfig": "libs/hpc-data/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/hpc-data"
+          ]
         }
       }
     },
@@ -208,7 +220,10 @@
           "options": {
             "jestConfig": "libs/hpc-dummy/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/hpc-dummy"
+          ]
         }
       }
     },
@@ -239,7 +254,10 @@
           "options": {
             "jestConfig": "libs/hpc-ui/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/hpc-ui"
+          ]
         }
       }
     },
@@ -267,78 +285,12 @@
           "options": {
             "jestConfig": "libs/hpc-live/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/hpc-live"
+          ]
         }
       }
     }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/react"
-  },
-  "schematics": {
-    "@nrwl/workspace": {
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/cypress": {
-      "cypress-project": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/react": {
-      "application": {
-        "style": "styled-components",
-        "linter": "eslint",
-        "babel": true
-      },
-      "library": {
-        "style": "styled-components",
-        "linter": "eslint"
-      },
-      "storybook-configuration": {
-        "linter": "eslint"
-      },
-      "component": {
-        "style": "styled-components"
-      }
-    },
-    "@nrwl/next": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/web": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/node": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nx-plugin": {
-      "plugin": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nest": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/express": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    }
-  },
-  "defaultProject": "hpc-cdm"
+  }
 }
