@@ -1,9 +1,10 @@
 module.exports = {
-  name: 'hpc-live',
-  preset: '../../jest.config.js',
+  preset: '../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   coverageDirectory: '../../coverage/libs/hpc-live',
+  globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
+  displayName: 'hpc-live',
 };

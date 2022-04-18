@@ -1,9 +1,10 @@
 module.exports = {
-  testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
-  transform: {
-    '^.+\\.(ts|js|html)$': 'ts-jest',
-  },
-  resolver: '@nrwl/jest/plugins/resolver',
-  moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageReporters: ['html'],
+  projects: [
+    '<rootDir>/apps/hpc-cdm',
+    '<rootDir>/libs/hpc-core',
+    '<rootDir>/libs/hpc-data',
+    '<rootDir>/libs/hpc-dummy',
+    '<rootDir>/libs/hpc-ui',
+    '<rootDir>/libs/hpc-live',
+  ],
 };
