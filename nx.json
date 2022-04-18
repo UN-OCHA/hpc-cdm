@@ -17,12 +17,7 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ]
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
       }
     }
   },
@@ -32,9 +27,7 @@
     },
     "hpc-cdm-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "hpc-cdm"
-      ]
+      "implicitDependencies": ["hpc-cdm"]
     },
     "hpc-core": {
       "tags": []
@@ -45,10 +38,10 @@
     "hpc-dummy": {
       "tags": []
     },
-    "hpc-ui": {
+    "hpc-live": {
       "tags": []
     },
-    "hpc-live": {
+    "hpc-ui": {
       "tags": []
     }
   },
@@ -120,5 +113,13 @@
         "linter": "eslint"
       }
     }
+  },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
   }
 }
