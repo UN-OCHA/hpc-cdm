@@ -45,6 +45,7 @@ const ClusterNavitation = (props: Props) => {
         ...(breadcrumbs || []),
       ]}
       actions={
+        // eslint-disable-next-line react/jsx-no-useless-fragment
         <>
           {displaySettings && (
             <C.ButtonLink
