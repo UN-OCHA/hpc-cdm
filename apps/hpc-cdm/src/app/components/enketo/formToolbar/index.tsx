@@ -8,7 +8,7 @@ import Indicator from './indicator';
 import { FormStatus } from '../types';
 import dayjs from '../../../../libraries/dayjs';
 import StatusChangeButtons from './StatusChangeButtons';
-import { assign } from 'lodash';
+
 interface Props {
   loading: boolean;
   editable: boolean;

@@ -1,6 +1,5 @@
 import { i18n } from '@unocha/hpc-core';
 import { Translations } from '@unocha/hpc-ui';
-import merge from 'lodash/merge';
 
 import ar from './langs/ar';
 import en from './langs/en';
