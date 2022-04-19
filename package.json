@@ -26,16 +26,12 @@
     "update": "nx migrate latest",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "workspace-generator": "nx workspace-generator"
+    "workspace-generator": "nx workspace-generator",
+    "prepare": "husky install"
   },
   "engines": {
     "node": ">=16.12.0",
     "npm": ">=8.1.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run affected:build && npm run affected:lint"
-    }
   },
   "lint-staged": {
     "*.{js,ts,tsx,md,json}": [
