@@ -63,7 +63,6 @@ interface ActionableButtonProps {
 export const ActionableButton = (props: ActionableButtonProps) => {
   const {
     color = 'secondary',
-    className,
     icon,
     onClick,
     state,
