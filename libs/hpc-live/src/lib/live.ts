@@ -50,7 +50,9 @@ export class LiveBrowserClient {
       store: localStorage,
     });
 
-    (window as any).clearSessionStorage = this.clearSessionStorage;
+    (
+      window as unknown as { clearSessionStorage: () => Promise<void> }
+    ).clearSessionStorage = this.clearSessionStorage;
 
     this.userManager = getOpenIDMetadata(config.hpcAuthUrl).then(
       (metadata) =>
