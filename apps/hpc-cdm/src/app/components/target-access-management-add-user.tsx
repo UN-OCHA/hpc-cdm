@@ -10,7 +10,7 @@ import {
   Select,
   TextField,
 } from '@material-ui/core';
-import { C, Types as UiTypes, styled } from '@unocha/hpc-ui';
+import { C, ActionableButtonState, styled } from '@unocha/hpc-ui';
 import { access, errors } from '@unocha/hpc-data';
 
 import { t } from '../../i18n';
@@ -119,7 +119,7 @@ export const TargetAccessManagementAddUser = (props: Props) => {
     }
   };
 
-  const getButtonState = (): UiTypes.ActionableButtonState => {
+  const getButtonState = (): ActionableButtonState => {
     if (submissionState.type === 'unknownError') {
       return 'error';
     }
