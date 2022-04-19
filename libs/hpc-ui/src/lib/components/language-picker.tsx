@@ -8,16 +8,11 @@ import {
   Grow,
 } from '@material-ui/core';
 
-import { styled } from '../theme';
 import Caret from '../assets/icons/caret';
 import { MdLanguage } from 'react-icons/md';
 import { i18n } from '@unocha/hpc-core';
 
 import HeaderButton from './header-button';
-
-const CLS = {
-  LOGO: 'logo',
-} as const;
 
 interface Props<LanguageKey extends string> {
   className?: string;
