@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction, useContext } from 'react';
-import { styled, C, THEME } from '@unocha/hpc-ui';
-import { Tooltip, withStyles } from '@material-ui/core';
+import { styled, C } from '@unocha/hpc-ui';
 import { AppContext } from '../../../context';
 
 import { t } from '../../../../i18n';

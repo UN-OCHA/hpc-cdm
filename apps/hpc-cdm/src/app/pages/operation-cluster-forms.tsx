@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
-import { operations, reportingWindows } from '@unocha/hpc-data';
+import { operations } from '@unocha/hpc-data';
 
 import { t } from '../../i18n';
 import { AppContext } from '../context';
