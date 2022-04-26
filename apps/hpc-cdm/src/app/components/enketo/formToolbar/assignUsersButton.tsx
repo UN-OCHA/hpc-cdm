@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction, useContext } from 'react';
-import { styled, C, THEME } from '@unocha/hpc-ui';
-import { Tooltip, withStyles } from '@material-ui/core';
+import { styled, C } from '@unocha/hpc-ui';
 import { AppContext } from '../../../context';
 
 import { t } from '../../../../i18n';
@@ -15,13 +14,11 @@ interface Props {
 const AssignedUsersButton = ({ setShowAssignedUsers }: Props) => {
   const { lang } = useContext(AppContext);
   return (
-    <>
-      <Button onClick={() => setShowAssignedUsers(true)} color="primary">
-        <span>
-          {t.t(lang, (s) => s.routes.operations.forms.assignedUsers.title)}
-        </span>
-      </Button>
-    </>
+    <Button onClick={() => setShowAssignedUsers(true)} color="primary">
+      <span>
+        {t.t(lang, (s) => s.routes.operations.forms.assignedUsers.title)}
+      </span>
+    </Button>
   );
 };
 

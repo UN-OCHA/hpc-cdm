@@ -35,7 +35,7 @@ interface RequestInit {
 interface Response {
   readonly ok: boolean;
   readonly statusText: string;
-  json(): Promise<any>;
+  json(): Promise<unknown>;
   arrayBuffer(): Promise<ArrayBuffer>;
 }
 
@@ -89,9 +89,9 @@ const MODEL_ERROR = Symbol('ModelError');
 
 export class ModelError extends Error {
   public readonly code = MODEL_ERROR;
-  public readonly json: any;
+  public readonly json: unknown;
 
-  public constructor(message: string, json: any) {
+  public constructor(message: string, json: unknown) {
     super(message);
     this.json = json;
   }
@@ -290,7 +290,7 @@ export class LiveModel implements Model {
     }
     const res = await this.fetch(url.href, init);
     if (res.ok) {
-      const json: Res<T> = await res.json();
+      const json: Res<T> = (await res.json()) as Res<T>;
       const decode = resultType.decode(json.data);
       if (isRight(decode)) {
         return decode.right;
@@ -300,7 +300,12 @@ export class LiveModel implements Model {
         throw new ModelError('Received unexpected result from server', json);
       }
     } else {
-      const json = await res.json();
+      const json = (await res.json()) as {
+        timestamp: Date;
+        otherUser: string;
+        code?: string;
+        message: errors.UserErrorKey;
+      };
       if (json?.code === 'ConflictError') {
         throw new errors.ConflictError(json.timestamp, json.otherUser);
       } else if (
@@ -332,7 +337,10 @@ export class LiveModel implements Model {
           pathname: `/v2/access/self`,
           resultType: access.GET_OWN_ACCESS_RESULT,
         }).catch((err) => {
-          if ((err as ModelError)?.json?.code === 'ForbiddenError') {
+          if (
+            ((err as ModelError)?.json as { code: string })?.code ===
+            'ForbiddenError'
+          ) {
             // If a 403 error occured with this endpoint,
             // the auth token has probably expired, so clear storage and refresh
             this.config.clearSessionStorage();
@@ -431,24 +439,25 @@ export class LiveModel implements Model {
       keepOnlyGivenFiles(result.task.currentFiles.map((f) => f.data.fileHash));
 
       // Download / prepare any neccesary fiels
-      const currentFiles: reportingWindows.GetAssignmentResult['task']['currentFiles'] = await Promise.all(
-        result.task.currentFiles.map(async (f) => {
-          let data = fileCache.get(f.data.fileHash);
-          if (!data) {
-            // Download file
-            const { url, init } = this.baseFetchInit({
-              pathname: `/v2/reportingwindows/assignments/${result.id}/files/${f.data.fileHash}`,
-            });
-            const res = await this.fetch(url.href, init);
-            data = res.arrayBuffer();
-            fileCache.set(f.data.fileHash, data);
-          }
-          return {
-            name: f.name,
-            data: await data,
-          };
-        })
-      );
+      const currentFiles: reportingWindows.GetAssignmentResult['task']['currentFiles'] =
+        await Promise.all(
+          result.task.currentFiles.map(async (f) => {
+            let data = fileCache.get(f.data.fileHash);
+            if (!data) {
+              // Download file
+              const { url, init } = this.baseFetchInit({
+                pathname: `/v2/reportingwindows/assignments/${result.id}/files/${f.data.fileHash}`,
+              });
+              const res = await this.fetch(url.href, init);
+              data = res.arrayBuffer();
+              fileCache.set(f.data.fileHash, data);
+            }
+            return {
+              name: f.name,
+              data: await data,
+            };
+          })
+        );
 
       const r: reportingWindows.GetAssignmentResult = {
         ...result,
@@ -574,7 +583,7 @@ export class LiveModel implements Model {
     files: FileInfo[]
   ) {
     for (const f of files) {
-      const res = await this.call({
+      await this.call({
         method: 'POST',
         body: {
           type: 'raw',

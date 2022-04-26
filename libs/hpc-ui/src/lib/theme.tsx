@@ -5,10 +5,8 @@ import styled, {
   ThemedStyledInterface,
   ThemeProvider as SCThemeProvider,
 } from 'styled-components';
-import {
-  ThemeProvider as MUIThemeProvider,
-  createMuiTheme,
-} from '@material-ui/core';
+import { ThemeProvider as MUIThemeProvider } from '@material-ui/core';
+import { createTheme } from '@material-ui/core/styles';
 
 const COLOR_PALETTE = {
   red: {
@@ -83,7 +81,7 @@ export const THEME = {
   },
 } as const;
 
-export const MUI_THEME = createMuiTheme({
+export const MUI_THEME = createTheme({
   typography: {
     htmlFontSize: 10,
   },

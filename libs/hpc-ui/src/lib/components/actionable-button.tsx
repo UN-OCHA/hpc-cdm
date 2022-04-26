@@ -17,9 +17,8 @@ interface ActionableIconButtonProps {
 
 export const ActionableIconButton = (props: ActionableIconButtonProps) => {
   const { color = 'secondary', icon: Icon, onClick, state } = props;
-  const [internalState, setInternalState] = useState<ActionableButtonState>(
-    'idle'
-  );
+  const [internalState, setInternalState] =
+    useState<ActionableButtonState>('idle');
 
   const effectiveState = state || internalState;
 
@@ -64,16 +63,14 @@ interface ActionableButtonProps {
 export const ActionableButton = (props: ActionableButtonProps) => {
   const {
     color = 'secondary',
-    className,
     icon,
     onClick,
     state,
     label,
     loadingLabel,
   } = props;
-  const [internalState, setInternalState] = useState<ActionableButtonState>(
-    'idle'
-  );
+  const [internalState, setInternalState] =
+    useState<ActionableButtonState>('idle');
 
   const effectiveState = state || internalState;
 

@@ -7,9 +7,18 @@
   },
   "include": [
     "**/*.spec.ts",
+    "**/*.test.ts",
     "**/*.spec.tsx",
+    "**/*.test.tsx",
     "**/*.spec.js",
+    "**/*.test.js",
     "**/*.spec.jsx",
+    "**/*.test.jsx",
     "**/*.d.ts"
+  ],
+  "files": [
+    "src/app/components/enketo-form/enketo-core.d.ts",
+    "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
+    "../../node_modules/@nrwl/react/typings/image.d.ts"
   ]
 }

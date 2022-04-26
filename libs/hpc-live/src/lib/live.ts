@@ -27,7 +27,6 @@ const getOpenIDMetadata = async (authUrl: string): Promise<OidcMetadata> => {
     throw new Error('Unable to get HID metadata');
   }
   const metadata: OidcMetadata = await req.json();
-  // eslint-disable-next-line @typescript-eslint/camelcase
   metadata.end_session_endpoint = logoutEndpoint.href;
   console.log(metadata);
   return metadata;
@@ -51,17 +50,16 @@ export class LiveBrowserClient {
       store: localStorage,
     });
 
-    (window as any).clearSessionStorage = this.clearSessionStorage;
+    (
+      window as unknown as { clearSessionStorage: () => Promise<void> }
+    ).clearSessionStorage = this.clearSessionStorage;
 
     this.userManager = getOpenIDMetadata(config.hpcAuthUrl).then(
       (metadata) =>
         new UserManager({
-          // eslint-disable-next-line @typescript-eslint/camelcase
           client_id: config.hpcAuthClientId,
           authority: config.hpcAuthUrl,
-          // eslint-disable-next-line @typescript-eslint/camelcase
           redirect_uri: redirectUri.href,
-          // eslint-disable-next-line @typescript-eslint/camelcase
           response_type: 'token',
           scope: 'profile',
           userStore: this.store,

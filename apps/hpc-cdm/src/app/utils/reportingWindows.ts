@@ -3,7 +3,7 @@ import { MdPending, MdLock, MdPendingActions } from 'react-icons/md';
 import { t, LanguageKey } from '../../i18n';
 
 import { reportingWindows } from '@unocha/hpc-data';
-import { THEME, Types } from '@unocha/hpc-ui';
+import { THEME, SidebarNavigationItem } from '@unocha/hpc-ui';
 /**
  * Get the reporting window that is most likely to be useful to the current
  * user.
@@ -29,7 +29,7 @@ export const prepareReportingWindowsAsSidebarNavigation = (
   lang: LanguageKey,
   reportingWindows: reportingWindows.ReportingWindow[],
   generatePath: (window: reportingWindows.ReportingWindow) => string
-): Types.SidebarNavigationItem[] =>
+): SidebarNavigationItem[] =>
   reportingWindows
     .sort((w1, w2) => (w1.id < w2.id ? 1 : -1))
     .map((w) => ({

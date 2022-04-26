@@ -6,7 +6,7 @@ RUN npm run remove-unneeded-deps && \
     npm install && \
     npm run build hpc-cdm -- --output-path=/srv/src/dist --configuration=$ENVIRONMENT
 
-FROM public.ecr.aws/unocha/nginx:1.20
+FROM public.ecr.aws/unocha/nginx:1.20.1-safe-beagle
 
 ARG COMMIT_SHA
 ARG TREE_SHA
