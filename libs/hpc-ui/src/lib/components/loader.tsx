@@ -8,12 +8,12 @@ import { styled } from '../theme';
 import NotFound from './not-found';
 
 interface Props<T> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   children: (
     data: T,
     actions: {
       updateLoadedData: (data: T) => void;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => ReactElement<any, any>;
   className?: string;
   loader: DataLoaderState<T>;

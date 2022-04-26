@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Helmet } from 'react-helmet';
 
 import { BaseStyling, C, styled, dataLoader, dialogs } from '@unocha/hpc-ui';
 

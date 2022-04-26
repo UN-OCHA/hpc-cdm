@@ -55,10 +55,8 @@ const ICONS = {
   Gear,
 };
 
-export declare namespace Types {
-  export type ActionableButtonState = actionableButton.ActionableButtonState;
-  export type SidebarNavigationItem = sidebarNavigation.SidebarNavigationItem;
-}
+export type ActionableButtonState = actionableButton.ActionableButtonState;
+export type SidebarNavigationItem = sidebarNavigation.SidebarNavigationItem;
 
 export {
   BaseStyling,

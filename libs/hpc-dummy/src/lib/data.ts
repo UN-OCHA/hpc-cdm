@@ -9,11 +9,11 @@ import * as formAImport from './forms/form-a.json';
 import * as formCImport from './forms/form-c.json';
 let formA = formAImport;
 let formC = formCImport;
-if ((formA as any).default) {
-  formA = (formA as any).default;
+if ('default' in formA) {
+  formA = (formA as unknown as { default: typeof formA }).default;
 }
-if ((formC as any).default) {
-  formC = (formC as any).default;
+if ('default' in formC) {
+  formC = (formC as unknown as { default: typeof formC }).default;
 }
 
 export const INITIAL_DATA: DummyData = {
