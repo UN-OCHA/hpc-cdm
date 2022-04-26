@@ -75,8 +75,7 @@ const PageOperationClusterForms = (props: Props) => {
                 <C.ErrorMessage
                   strings={{
                     title: 'No reporting windows',
-                    info:
-                      "This operation doesn't have any reporting windows associated with it",
+                    info: "This operation doesn't have any reporting windows associated with it",
                   }}
                 />
               )}

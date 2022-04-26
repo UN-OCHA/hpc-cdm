@@ -27,7 +27,8 @@ const hasObjDeps = (
 const hasPrimitivesOnly = (
   deps: DepsBaseType
 ): deps is [Primitive, ...Primitive[]] =>
-  deps.every(
+  Array.prototype.every.call(
+    deps,
     (v: unknown) =>
       typeof v === 'string' ||
       typeof v === 'boolean' ||

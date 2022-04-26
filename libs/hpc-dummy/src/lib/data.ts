@@ -62,8 +62,7 @@ export const INITIAL_DATA: DummyData = {
     },
     {
       id: 1,
-      name:
-        'Operation with a reporting window, and cluster and operation assignments',
+      name: 'Operation with a reporting window, and cluster and operation assignments',
     },
     {
       id: 2,

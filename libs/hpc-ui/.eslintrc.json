@@ -1,0 +1,21 @@
+{
+  "rules": {
+    "@typescript-eslint/no-namespace": "warn"
+  },
+  "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc"],
+  "ignorePatterns": ["!**/*", "**/*.d.ts"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    }
+  ]
+}

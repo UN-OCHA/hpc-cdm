@@ -431,24 +431,25 @@ export class LiveModel implements Model {
       keepOnlyGivenFiles(result.task.currentFiles.map((f) => f.data.fileHash));
 
       // Download / prepare any neccesary fiels
-      const currentFiles: reportingWindows.GetAssignmentResult['task']['currentFiles'] = await Promise.all(
-        result.task.currentFiles.map(async (f) => {
-          let data = fileCache.get(f.data.fileHash);
-          if (!data) {
-            // Download file
-            const { url, init } = this.baseFetchInit({
-              pathname: `/v2/reportingwindows/assignments/${result.id}/files/${f.data.fileHash}`,
-            });
-            const res = await this.fetch(url.href, init);
-            data = res.arrayBuffer();
-            fileCache.set(f.data.fileHash, data);
-          }
-          return {
-            name: f.name,
-            data: await data,
-          };
-        })
-      );
+      const currentFiles: reportingWindows.GetAssignmentResult['task']['currentFiles'] =
+        await Promise.all(
+          result.task.currentFiles.map(async (f) => {
+            let data = fileCache.get(f.data.fileHash);
+            if (!data) {
+              // Download file
+              const { url, init } = this.baseFetchInit({
+                pathname: `/v2/reportingwindows/assignments/${result.id}/files/${f.data.fileHash}`,
+              });
+              const res = await this.fetch(url.href, init);
+              data = res.arrayBuffer();
+              fileCache.set(f.data.fileHash, data);
+            }
+            return {
+              name: f.name,
+              data: await data,
+            };
+          })
+        );
 
       const r: reportingWindows.GetAssignmentResult = {
         ...result,

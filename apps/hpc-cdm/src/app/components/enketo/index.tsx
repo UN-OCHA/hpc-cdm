@@ -47,19 +47,15 @@ export const EnketoEditableForm = (props: Props) => {
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
   const [formTouched, setFormTouched] = useState(false);
-  const [
-    updatedAssignment,
-    setUpdatedAssignment,
-  ] = useState<reportingWindows.GetAssignmentResult | null>(null);
+  const [updatedAssignment, setUpdatedAssignment] =
+    useState<reportingWindows.GetAssignmentResult | null>(null);
   const [status, setStatus] = useState<FormStatus>({ type: 'idle' });
   const [editable, setEditable] = useState(true);
-  const [showValidationConfirmation, setShowValidationConfirmation] = useState(
-    false
-  );
+  const [showValidationConfirmation, setShowValidationConfirmation] =
+    useState(false);
   const [showAssignedUsers, setShowAssignedUsers] = useState(false);
-  const [submissionValidation, setSubmissionValidation] = useState<
-    SubmissionValidation
-  >(null);
+  const [submissionValidation, setSubmissionValidation] =
+    useState<SubmissionValidation>(null);
   const history = useHistory();
   const { lang } = useContext(AppContext);
 
