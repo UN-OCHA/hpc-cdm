@@ -10,7 +10,7 @@ const path = require('path');
 
 const PACKAGE = path.join(path.dirname(__dirname), 'package.json');
 
-const PACKAGES_TO_REMOVE = ['cypress', 'husky'];
+const PACKAGES_TO_REMOVE = ['cypress'];
 
 (async () => {
   console.log(
