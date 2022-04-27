@@ -4,6 +4,7 @@ import { mapValues } from 'lodash';
 
 import { RecursivePartial, hasKey } from '../util';
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Intl {
   interface ListFormatOpts {
     type?: 'conjunction' | 'disjunction' | 'unit';

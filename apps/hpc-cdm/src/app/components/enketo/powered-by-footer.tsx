@@ -38,7 +38,7 @@ const PoweredByFooter = () => {
             key={key}
             href="https://enketo.org"
             target="_blank"
-            rel="nofollow noopener"
+            rel="nofollow noopener noreferrer"
           >
             <EnketoLogo src={logo} />
           </a>
@@ -48,7 +48,7 @@ const PoweredByFooter = () => {
             key={key}
             href="https://www.kobotoolbox.org"
             target="_blank"
-            rel="nofollow noopener"
+            rel="nofollow noopener noreferrer"
           >
             <KoboLogo />
           </a>

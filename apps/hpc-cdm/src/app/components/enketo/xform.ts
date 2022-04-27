@@ -258,7 +258,6 @@ export default class XForm {
   }
 
   validateCurrentPage() {
-    const currentPage = this.form.pages._getCurrentIndex();
     return this.form.validateContent($(this.form.pages.current));
   }
 

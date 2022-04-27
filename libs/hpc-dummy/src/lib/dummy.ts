@@ -178,7 +178,7 @@ export class Dummy {
           throw new Error('missing form');
         }
         const r: reportingWindows.GetAssignmentResult['task'] = {
-          type: 'form' as 'form',
+          type: 'form' as const,
           form: form[0],
           currentData: a.currentData,
           currentFiles: await Promise.all(

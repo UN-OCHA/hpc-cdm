@@ -5,8 +5,6 @@ import Caret from '../assets/icons/caret';
 import { CLASSES } from '../classes';
 import { styled } from '../theme';
 
-import { ButtonLink } from './button';
-
 const CLS = {
   LAST_BREADCRUMB: 'last',
   BREADCRUMB_CARET: 'caret',

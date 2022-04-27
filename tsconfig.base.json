@@ -21,8 +21,8 @@
       "@unocha/hpc-core": ["libs/hpc-core/src/index.ts"],
       "@unocha/hpc-data": ["libs/hpc-data/src/index.ts"],
       "@unocha/hpc-dummy": ["libs/hpc-dummy/src/index.ts"],
-      "@unocha/hpc-ui": ["libs/hpc-ui/src/index.ts"],
-      "@unocha/hpc-live": ["libs/hpc-live/src/index.ts"]
+      "@unocha/hpc-live": ["libs/hpc-live/src/index.ts"],
+      "@unocha/hpc-ui": ["libs/hpc-ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
