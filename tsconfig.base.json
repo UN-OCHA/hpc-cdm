@@ -18,11 +18,11 @@
     "baseUrl": ".",
     "resolveJsonModule": true,
     "paths": {
-      "@unocha/hpc-core": ["libs/hpc-core/src/index.ts"],
-      "@unocha/hpc-data": ["libs/hpc-data/src/index.ts"],
-      "@unocha/hpc-dummy": ["libs/hpc-dummy/src/index.ts"],
-      "@unocha/hpc-live": ["libs/hpc-live/src/index.ts"],
-      "@unocha/hpc-ui": ["libs/hpc-ui/src/index.ts"]
+      "@unocha/hpc-core": ["libs/hpc-apps-core/src/hpc-core/src/index.ts"],
+      "@unocha/hpc-data": ["libs/hpc-apps-core/src/hpc-data/src/index.ts"],
+      "@unocha/hpc-dummy": ["libs/hpc-apps-core/src/hpc-dummy/src/index.ts"],
+      "@unocha/hpc-live": ["libs/hpc-apps-core/src/hpc-live/src/index.ts"],
+      "@unocha/hpc-ui": ["libs/hpc-apps-core/src/hpc-ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

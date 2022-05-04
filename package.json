@@ -4,6 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "remove-unneeded-deps": "node tools/remove-unneeded-deps.js",
+    "update-libs": "node libs/setup.js",
     "nx": "nx",
     "start": "nx serve",
     "check-types": "tsc --noEmit --project tsconfig.base.json",

@@ -1,0 +1,7 @@
+[
+  {
+    "path": "hpc-apps-core",
+    "url": "git@github.com:UN-OCHA/hpc-apps-core.git",
+    "ref": "develop"
+  }
+]
