@@ -29,7 +29,7 @@ interface RequestInit {
   headers: {
     [id: string]: string;
   };
-  body?: string | ArrayBuffer;
+  body?: string | Blob;
 }
 
 interface Response {
@@ -284,7 +284,18 @@ export class LiveModel implements Model {
         init.body = JSON.stringify(body.data);
         init.headers['Content-Type'] = 'application/json';
       } else {
-        init.body = body.data;
+        /**
+         * HACK: Since this method is used on API side for testing purposes,
+         * our `LiveModel` constructor accepts providing `fetch` in its parameters.
+         * Otherwise, browser's native `fetch` is used.
+         *
+         * When `node-fetch` got updated from v2 to v3, its types changed,
+         * and request body could no longer be `ArrayBuffer` type.
+         * Thus, `RequestInit` type in this file was changed to accept `Blob`.
+         * That is done to fix typing problems on API side, and since our code
+         * depends on files being `ArrayBuffer` we do this stupid cast here.
+         */
+        init.body = body.data as unknown as Blob;
         init.headers['Content-Type'] = body.contentType;
       }
     }
