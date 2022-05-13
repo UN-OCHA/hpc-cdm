@@ -27,6 +27,27 @@ export const INTEGER_FROM_STRING = new t.Type<number, number>(
 );
 
 /**
+ * Accepts either a number, or a string of a number, serializes to a number type.
+ */
+export const NUMBER_FROM_STRING = new t.Type<number, number>(
+  'NUMBER_FROM_STRING',
+  t.number.is,
+  (v, c) => {
+    if (typeof v === 'number') {
+      return t.success(v);
+    } else if (typeof v === 'string') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return !isNaN(v as any) && !isNaN(parseFloat(v))
+        ? t.success(parseFloat(v))
+        : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
  * Accepts either an integer array, or a string of comma separated integers.
  */
 export const INTEGER_ARRAY_FROM_STRING = new t.Type<number[], number[]>(
