@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from '@material-ui/core';
+} from '@mui/material';
 import { C } from '@unocha/hpc-ui';
 
 import { AppContext } from '../../../context';
