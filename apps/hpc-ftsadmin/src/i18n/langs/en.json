@@ -1,0 +1,58 @@
+{
+  "title": "FTS Admin",
+  "user": {
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "errors": {
+    "unableToLoadFTSAdmin": "Unable to load FTS Admin"
+  },
+  "common": {
+    "devEnvironmentWarnings": {
+      "dummy": "This is a demo instance of FTS Admin, information you enter here will only be stored in your browser, and will not be sent to our server",
+      "dev": "This is a test instance of FTS Admin, information you enter here will be periodically deleted."
+    }
+  },
+  "components": {
+    "appTitle": {
+      "primary": "FTS Data Module"
+    },
+    "acceptableUseNotification": {
+      "login": "Click here to login",
+      "title": "Acceptable Use Notification",
+      "p1": "Unauthorized access to this United Nations Computer System is prohibited by ST/SGB/2004/15 (\"Use of information and communication technology resources and data\" of 29 November 2004)",
+      "p2": "Authorized users shall ensure that their use of Information and Communication Technology (ICT) resources and ICT data is consistent with their obligations as staff members or such other obligations as may apply to them",
+      "p3": "All use of ICT resources and ICT data is subject to monitoring and investigation as set forth in ST/SGB/2004/15",
+      "p4": "Use of this system by any user, authorized or unauthorized, constitutes consent to the applicable UN regulations and rules"
+    },
+    "dialogs": {
+      "okay": "Confirm",
+      "cancel": "Cancel"
+    },
+    "notFound": {
+      "title": "Page not found",
+      "info": "We were unable to find the page you were looking for",
+      "back": "Go back"
+    },
+    "loader": {
+      "loading": "Loading...",
+      "error": "Error:",
+      "retry": "Retry"
+    },
+    "unsupportedBrowser": {
+      "title": "Unsupported Browser!",
+      "info": "Unfortunately, your current browser is not supported. Please switch to either Firefox or Google Chrome. To do this, simply copy the form address (URL) above, then open Firefox or Chrome, and paste the address into the browser."
+    }
+  },
+  "navigation": {
+    "flows": "Search Funding Flows"
+  },
+  "routes": {
+    "operations": {
+      "notFound": {
+        "title": "Operation not found",
+        "info": "We were unable to find the operation you were looking for"
+      }
+    }
+  }
+}

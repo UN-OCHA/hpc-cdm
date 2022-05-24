@@ -1,0 +1,58 @@
+{
+  "title": "FTS Admin",
+  "user": {
+    "login": "Connexion",
+    "logout": "Déconnexion"
+  },
+  "errors": {
+    "unableToLoadFTSAdmin": "Impossible de charger le FTS Admin"
+  },
+  "common": {
+    "devEnvironmentWarnings": {
+      "dummy": "Ceci est une instance de démonstration de FTS Admin, les informations que vous entrez ici ne seront stockées que dans votre navigateur et ne seront pas envoyées à notre serveur",
+      "dev": "Ceci est une instance de test de FTS Admin, les informations que vous entrez ici seront périodiquement supprimées."
+    }
+  },
+  "components": {
+    "appTitle": {
+      "primary": "FTS Data Module"
+    },
+    "acceptableUseNotification": {
+      "login": "Cliquez ici pour vous connecter",
+      "title": "Notification d'utilisation acceptable",
+      "p1": "L’accès non autorisé à ce système informatique des Nations Unies est interdit par le document ST/SGB/2004/15 (\"Utilisation des moyens et des données informatiques et télématiques\" du 29 novembre 2004)",
+      "p2": "Les utilisateurs autorisés veillent à ce que leur utilisation des ressources des technologies de l'information et de la communication (TIC) et des données TIC soit conforme à leurs obligations en tant que membres du personnel ou à toutes autres obligations qui pourraient leur être applicables ",
+      "p3": "Toute utilisation des ressources TIC et des données TIC fait l’objet d’un suivi et d’une enquête comme indiqué dans le document ST/SGB/2004/15.",
+      "p4": "L'utilisation de ce système par tout utilisateur, autorisé ou non, constitue un consentement aux règlements et règles applicables de l'ONU"
+    },
+    "dialogs": {
+      "okay": "Confirmer",
+      "cancel": "Annuler"
+    },
+    "notFound": {
+      "title": "Page non trouvée",
+      "info": "Nous n'avons pas pu trouver la page que vous cherchiez",
+      "back": "Retour"
+    },
+    "loader": {
+      "loading": "Chargement...",
+      "error": "Erreur:",
+      "retry": "Réessayer"
+    },
+    "unsupportedBrowser": {
+      "title": "Navigateur non compatible! ",
+      "info": "Malheureusement, votre présent navigateur n’est pas compatible. Veuillez utiliser Firefox ou Chrome. Pour ce faire, simplement copiez le lien (URL) dessus, ouvrez Firefox, ou Chrome, et collez le lien sur la barre d’adresse du nouveau navigateur."
+    }
+  },
+  "navigation": {
+    "flows": "Rechercher des flux de financement"
+  },
+  "routes": {
+    "operations": {
+      "notFound": {
+        "title": "Opération introuvable",
+        "info": "Nous n'avons pas pu trouver l'opération que vous recherchiez"
+      }
+    }
+  }
+}
