@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Humanitarian Coordination Mapping - 2020</title>
+    <base href="/" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style type="text/css">
+      #ie_error {
+        display: none;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+          'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+        max-width: 800px;
+        margin: 40px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ie_error" style="display: none">
+      <h3>Unsupported Browser!</h3>
+      <p>
+        Unfortunately, your current browser is not supported. Please switch to
+        either Firefox, Google Chrome or Edge. To do this, simply copy the form
+        address (URL) above, then open Firefox, Chrome or Edge, and paste the
+        address into the browser.
+      </p>
+      <hr />
+      <h3>Navigateur non compatible!</h3>
+      <p>
+        Malheureusement, votre présent navigateur n’est pas compatible. Veuillez
+        utiliser Firefox, Chrome ou Edge. Pour ce faire, simplement copiez le
+        lien (URL) dessus, ouvrez Firefox, Chrome, ou Edge, et collez le lien
+        sur la barre d’adresse du nouveau navigateur.
+      </p>
+    </div>
+    <div id="root"></div>
+    <script type="text/javascript">
+      (function () {
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf('MSIE ');
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+          // Running in internet explorer!
+          document.getElementById('root').style.display = 'none';
+          document.getElementById('ie_error').style.display = 'block';
+        }
+      })();
+    </script>
+  </body>
+</html>
