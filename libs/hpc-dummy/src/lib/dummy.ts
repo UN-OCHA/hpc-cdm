@@ -3,6 +3,7 @@ import { Session } from '@unocha/hpc-core';
 import {
   Model,
   access,
+  flows,
   operations,
   reportingWindows,
   errors,
@@ -473,6 +474,18 @@ export class Dummy {
             this.store();
             return this.getAccessForTarget(target);
           }
+        ),
+      },
+      flows: {
+        getFlow: dummyEndpoint('flows.getFlow', async () => {
+          throw new errors.NotFoundError();
+        }),
+        searchFlows: dummyEndpoint(
+          'flows.searchFlows',
+          async (params: flows.SearchFlowsParams) => ({
+            flows: this.data.flows,
+            flowCount: this.data.flows.length.toString(),
+          })
         ),
       },
       operations: {

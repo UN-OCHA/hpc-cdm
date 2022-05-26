@@ -5,6 +5,7 @@ import { util } from '@unocha/hpc-core';
 import {
   Model,
   forms,
+  flows,
   operations,
   reportingWindows,
   access,
@@ -390,6 +391,26 @@ export class LiveModel implements Model {
             },
           },
           resultType: access.GET_TARGET_ACCESS_RESULT,
+        }),
+    };
+  }
+
+  get flows(): flows.Model {
+    return {
+      getFlow: (params) =>
+        this.call({
+          pathname: `/v2/flow/${params.id}`,
+          resultType: flows.GET_FLOW_RESULT,
+        }),
+      searchFlows: (params) =>
+        this.call({
+          pathname: `/v2/flow/search`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.SEARCH_FLOWS_RESULT,
         }),
     };
   }
