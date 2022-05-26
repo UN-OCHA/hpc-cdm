@@ -254,6 +254,18 @@
             "webpackConfig": "@nrwl/react/plugins/webpack"
           },
           "configurations": {
+            "dev-live": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/hpc-ftsadmin/src/environments/environment.ts",
+                  "with": "apps/hpc-ftsadmin/src/environments/environment.dev-live.ts"
+                },
+                {
+                  "replace": "apps/hpc-ftsadmin/src/environments/env.json",
+                  "with": ".env.json"
+                }
+              ]
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -261,12 +273,19 @@
                   "with": "apps/hpc-ftsadmin/src/environments/environment.prod.ts"
                 }
               ],
-              "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
+              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
             }
           }
         },
@@ -277,6 +296,9 @@
             "hmr": true
           },
           "configurations": {
+            "dev-live": {
+              "buildTarget": "hpc-ftsadmin:build:dev-live"
+            },
             "production": {
               "buildTarget": "hpc-ftsadmin:build:production",
               "hmr": false
