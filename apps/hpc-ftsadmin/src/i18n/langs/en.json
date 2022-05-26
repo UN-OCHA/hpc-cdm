@@ -45,13 +45,31 @@
     }
   },
   "navigation": {
-    "flows": "Search Funding Flows"
+    "flows": "Flows"
   },
   "routes": {
-    "operations": {
-      "notFound": {
-        "title": "Operation not found",
-        "info": "We were unable to find the operation you were looking for"
+    "flows": {
+      "title": "Search funding flows",
+      "table": {
+        "id": "ID",
+        "updatedCreated": "Updated/Created",
+        "dataProvider": "Data Provider",
+        "amountUSD": "Amount USD",
+        "sourceOrganization": "Source Organization",
+        "destinationOrganization": "Destination Organization",
+        "destinationPlan": "Destination Plan",
+        "destinationCountry": "Destination Country",
+        "destinationYear": "Destination Year",
+        "details": "Details",
+        "restricted": "restricted",
+        "inactive": "inactive",
+        "child": "child",
+        "parent": "parent",
+        "notFound": {
+          "title": "Flows not found",
+          "info": "We were unable to load flows"
+        },
+        "reportTooltip": "reported by {organization} on {date} via {channel}"
       }
     }
   }

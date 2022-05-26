@@ -93,10 +93,7 @@ export const App = () => {
         loader={loadEnv}
         strings={{
           ...t.get(lang, (s) => s.components.loader),
-          notFound: {
-            ...t.get(lang, (s) => s.components.notFound),
-            ...t.get(lang, (s) => s.routes.operations.notFound),
-          },
+          notFound: t.get(lang, (s) => s.components.notFound),
         }}
       >
         {(context) => {
