@@ -42,6 +42,30 @@
     "unsupportedBrowser": {
       "title": "Navigateur non compatible! ",
       "info": "Malheureusement, votre présent navigateur n’est pas compatible. Veuillez utiliser Firefox ou Chrome. Pour ce faire, simplement copiez le lien (URL) dessus, ouvrez Firefox, ou Chrome, et collez le lien sur la barre d’adresse du nouveau navigateur."
+    },
+    "flowsTable": {
+      "headers": {
+        "id": "ID",
+        "updatedCreated": "Mise à jour/Création",
+        "dataProvider": "Fournisseur de données",
+        "amountUSD": "Montant USD",
+        "sourceOrganization": "Organisation source",
+        "destinationOrganization": "Organisation de destination",
+        "destinationPlan": "Destination Plan",
+        "destinationCountry": "Pays de destination",
+        "destinationYear": "Année de destination",
+        "details": "Détails"
+      },
+      "restricted": "restreint",
+      "inactive": "inactif",
+      "child": "enfant",
+      "parent": "parent",
+      "notFound": {
+        "title": "Flux introuvables",
+        "info": "Nous n’avons pas pu charger les flux"
+      },
+      "reportTooltip": "signalé par {organization} le {date} via {channel}",
+      "parkedSource": "Source stationnée"
     }
   },
   "navigation": {
@@ -53,11 +77,8 @@
     "help": "Aide"
   },
   "routes": {
-    "operations": {
-      "notFound": {
-        "title": "Opération introuvable",
-        "info": "Nous n'avons pas pu trouver l'opération que vous recherchiez"
-      }
+    "flows": {
+      "title": "Rechercher des flux de financement"
     }
   }
 }
