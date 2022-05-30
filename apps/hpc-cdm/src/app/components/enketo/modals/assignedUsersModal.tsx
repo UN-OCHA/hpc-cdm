@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import { Dialog, DialogContent, DialogActions } from '@material-ui/core';
+import { Dialog, DialogContent, DialogActions } from '@mui/material';
 import { MdEmail as _MdEmail } from 'react-icons/md';
 import { C, styled, THEME } from '@unocha/hpc-ui';
 

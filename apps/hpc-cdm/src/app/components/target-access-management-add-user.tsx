@@ -9,7 +9,7 @@ import {
   MenuItem,
   Select,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 import { C, ActionableButtonState, styled } from '@unocha/hpc-ui';
 import { access, errors } from '@unocha/hpc-data';
 
