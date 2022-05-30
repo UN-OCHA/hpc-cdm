@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { styled } from '@unocha/hpc-ui';
-import { Tooltip, CircularProgress } from '@material-ui/core';
+import { Tooltip, CircularProgress } from '@mui/material';
 import { MdWarning, MdLock, MdLockOpen } from 'react-icons/md';
 import { AppContext } from '../../../context';
 

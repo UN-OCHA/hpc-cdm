@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import {
   Dialog,
   DialogTitle,
   List,
   ListItem,
   ListItemText,
-} from '@material-ui/core';
-
-import { styled, combineClasses, ThemeProvider } from '@unocha/hpc-ui';
-
+} from '@mui/material';
+import { ThemeProvider } from '@unocha/hpc-ui';
+import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { User } from './data-types';
 
 interface Listener {

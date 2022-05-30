@@ -1,12 +1,11 @@
-import React from 'react';
+import { ThemeProvider as MUIThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 import styled, {
   css,
   ThemedCssFunction,
   ThemedStyledInterface,
   ThemeProvider as SCThemeProvider,
 } from 'styled-components';
-import { ThemeProvider as MUIThemeProvider } from '@material-ui/core';
-import { createTheme } from '@material-ui/core/styles';
 
 const COLOR_PALETTE = {
   red: {
@@ -82,6 +81,18 @@ export const THEME = {
 } as const;
 
 export const MUI_THEME = createTheme({
+  components: {
+    MuiTextField: {
+      defaultProps: {
+        margin: 'normal',
+      },
+    },
+    MuiFormControl: {
+      defaultProps: {
+        margin: 'normal',
+      },
+    },
+  },
   typography: {
     htmlFontSize: 10,
   },

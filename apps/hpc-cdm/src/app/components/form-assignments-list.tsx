@@ -1,12 +1,11 @@
-import React from 'react';
-
-import { C, styled } from '@unocha/hpc-ui';
+import { Tooltip } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { reportingWindows } from '@unocha/hpc-data';
-
-import { AppContext } from '../context';
+import { C, styled } from '@unocha/hpc-ui';
+import React from 'react';
 import { t } from '../../i18n';
 import dayjs from '../../libraries/dayjs';
-import { Tooltip, withStyles } from '@material-ui/core';
+import { AppContext } from '../context';
 
 interface Props {
   className?: string;

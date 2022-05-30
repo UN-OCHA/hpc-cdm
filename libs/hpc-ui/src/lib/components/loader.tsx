@@ -1,10 +1,8 @@
+import { CircularProgress } from '@mui/material';
 import React, { ReactElement } from 'react';
-import { CircularProgress } from '@material-ui/core';
-
-import { Button } from './button';
-import { DataLoaderState } from '../util';
 import { styled } from '../theme';
-
+import { DataLoaderState } from '../util';
+import { Button } from './button';
 import NotFound from './not-found';
 
 interface Props<T> {

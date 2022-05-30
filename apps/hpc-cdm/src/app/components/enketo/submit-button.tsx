@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { FormControlLabel, Checkbox } from '@material-ui/core';
+import { FormControlLabel, Checkbox } from '@mui/material';
 import { styled } from '@unocha/hpc-ui';
 import { AppContext } from '../../context';
 import { t } from '../../../i18n';
