@@ -7,26 +7,56 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
-// eslint-disable-next-line @typescript-eslint/no-namespace
-declare namespace Cypress {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    login(email: string, password: string): void;
+
+import { DummyData } from '@unocha/hpc-dummy';
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Cypress {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    interface Chainable<Subject> {
+      login(username: string): void;
+      getDummyData(): DummyData;
+    }
   }
 }
-//
-// -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
-  console.log('Custom command example: Login', email, password);
+
+const STORAGE_KEY = 'hpc-dummy';
+
+const getData = (): DummyData => {
+  const data = localStorage.getItem(STORAGE_KEY);
+
+  if (!data) {
+    throw new Error(
+      `Could not find dummy data in local storage: ${STORAGE_KEY}`
+    );
+  }
+
+  return JSON.parse(data);
+};
+
+Cypress.Commands.add('getDummyData', () => {
+  return getData();
 });
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+/* Login takes a username from the dummy data
+ * libs/hpc-dummy/src/lib/dummy.ts
+ * and logs in as that user
+ */
+Cypress.Commands.add('login', (username: string) => {
+  const parsedData = getData();
+  const userIds = parsedData.users
+    .filter((storedUser) => storedUser.user.name === username)
+    .map((user) => user.id);
+
+  if (userIds.length > 1) {
+    throw new Error(`Multiple users exist with the name ${username}`);
+  }
+
+  if (userIds.length === 0) {
+    throw new Error(`Could not find user with the name ${username}`);
+  }
+
+  const dataWithUser = { ...parsedData, currentUser: userIds[0] };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(dataWithUser));
+});

@@ -1,13 +1,13 @@
-import { getGreeting } from '../support/app.po';
-
 describe('hpc-ftsadmin', () => {
   beforeEach(() => cy.visit('/'));
 
-  it('should display welcome message', () => {
-    // Custom command example, see `../support/commands.ts` file
-    cy.login('my-email@something.com', 'myPassword');
+  it('redirects to /flows when logged in', () => {
+    cy.login('Admin User');
+    cy.visit('/');
+    cy.location('pathname', { timeout: 2000 }).should('eq', '/flows');
+  });
 
-    // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome to hpc-ftsadmin!');
+  it("doesn't redirect if not logged in", () => {
+    cy.location('pathname').should('not.eq', '/flows');
   });
 });
