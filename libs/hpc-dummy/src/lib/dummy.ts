@@ -74,6 +74,8 @@ function dummyEndpoint<Args extends [unknown, ...unknown[]], Data>(
     });
 }
 
+export { DummyData };
+
 export class Dummy {
   private data: DummyData;
   private readonly users: Users;
