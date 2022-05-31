@@ -1,4 +1,11 @@
-import { BaseStyling, C, dataLoader, dialogs, styled } from '@unocha/hpc-ui';
+import {
+  BaseStyling,
+  C,
+  CLASSES,
+  dataLoader,
+  dialogs,
+  styled,
+} from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -121,6 +128,7 @@ export const App = () => {
                             path: paths.flows(),
                           },
                         ]}
+                        className={CLASSES.CONTAINER.FLUID}
                       />
                       <Switch>
                         <Route path={paths.home()} exact>
