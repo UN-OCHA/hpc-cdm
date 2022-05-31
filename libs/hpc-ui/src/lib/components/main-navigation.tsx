@@ -27,6 +27,7 @@ interface Props {
     | undefined
     | false
   >;
+  className?: string;
 }
 
 const HEADER_HEIGHT_PX = 60;
@@ -139,7 +140,8 @@ export default (props: Props) => {
       <div
         className={combineClasses(
           CLASSES.CONTAINER.CENTERED,
-          CLASSES.FLEX.CONTAINER
+          CLASSES.FLEX.CONTAINER,
+          props.className
         )}
       >
         <div className={CLS.HEADER}>
