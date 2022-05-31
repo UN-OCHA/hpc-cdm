@@ -14,10 +14,7 @@ export default (props: Props) => {
     <AppContext.Consumer>
       {({ lang }) => (
         <div
-          className={combineClasses(
-            CLASSES.CONTAINER.CENTERED,
-            props.className
-          )}
+          className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
         >
           <PageMeta title={[t.t(lang, (s) => s.navigation.flows)]} />
           <C.Loader

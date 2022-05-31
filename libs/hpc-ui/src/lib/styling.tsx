@@ -37,6 +37,7 @@ body {
   padding-right: ${(p) => p.theme.marginPx.md}px;
   margin-left: 0;
   margin-right: 0;
+  max-width: none;
 }
 
 .${CLASSES.FLEX.CONTAINER} {
