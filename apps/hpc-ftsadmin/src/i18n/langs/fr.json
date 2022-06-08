@@ -65,7 +65,8 @@
         "info": "Nous n’avons pas pu charger les flux"
       },
       "reportTooltip": "signalé par {organization} le {date} via {channel}",
-      "parkedSource": "Source stationnée"
+      "parkedSource": "Source stationnée",
+      "sortBy": "Trier par"
     }
   },
   "navigation": {

@@ -9,29 +9,80 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  TableSortLabel,
   Tooltip,
 } from '@mui/material';
 import { flows } from '@unocha/hpc-data';
-import { C, dataLoader } from '@unocha/hpc-ui';
-import { useState } from 'react';
+import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
+import React, { useState } from 'react';
 import { MdInfoOutline } from 'react-icons/md';
 import { LanguageKey, t } from '../../i18n';
+import { Strings } from '../../i18n/iface';
 import { AppContext, getEnv } from '../context';
 
 export default function FlowsTable() {
   const env = getEnv();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(50);
+  const [orderBy, setOrderBy] = useState('flow.updatedAt');
+  const [orderDir, setOrderDir] = useState<'DESC' | 'ASC'>('DESC');
 
-  const loader = dataLoader([page, rowsPerPage], () =>
+  const loader = dataLoader([page, rowsPerPage, orderBy, orderDir], () =>
     env.model.flows.searchFlows({
       flowSearch: {
         limit: rowsPerPage,
         offset: page * rowsPerPage,
         includeChildrenOfParkedFlows: true,
+        orderBy,
+        orderDir,
       },
     })
   );
+
+  const headers: {
+    sort?: string;
+    label: keyof Strings['components']['flowsTable']['headers'];
+  }[] = [
+    {
+      sort: 'flow.id',
+      label: 'id',
+    },
+    {
+      sort: 'flow.updatedAt',
+      label: 'updatedCreated',
+    },
+    {
+      sort: 'externalReference.systemID',
+      label: 'dataProvider',
+    },
+    {
+      sort: 'flow.amountUSD',
+      label: 'amountUSD',
+    },
+    {
+      sort: 'source.organization.name',
+      label: 'sourceOrganization',
+    },
+    {
+      sort: 'destination.organization.name',
+      label: 'destinationOrganization',
+    },
+    {
+      sort: 'destination.planVersion.name',
+      label: 'destinationPlan',
+    },
+    {
+      sort: 'destination.location.name',
+      label: 'destinationCountry',
+    },
+    {
+      sort: 'destination.usageYear.year',
+      label: 'destinationYear',
+    },
+    {
+      label: 'details',
+    },
+  ];
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -42,6 +93,17 @@ export default function FlowsTable() {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleSort = (newSort = 'flow.id') => {
+    const changeDir = newSort === orderBy;
+
+    if (changeDir) {
+      setOrderDir(orderDir === 'ASC' ? 'DESC' : 'ASC');
+    } else {
+      setOrderBy(newSort);
+      setOrderDir('DESC');
+    }
   };
 
   const renderReportDetail = (
@@ -108,67 +170,37 @@ export default function FlowsTable() {
                     />
                   </TableRow>
                   <TableRow>
-                    <TableCell>
-                      {t.t(lang, (s) => s.components.flowsTable.headers.id)}
-                    </TableCell>
-                    <TableCell>
-                      {t.t(
-                        lang,
-                        (s) => s.components.flowsTable.headers.updatedCreated
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {t.t(
-                        lang,
-                        (s) => s.components.flowsTable.headers.dataProvider
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {t.t(
-                        lang,
-                        (s) => s.components.flowsTable.headers.amountUSD
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {t.t(
-                        lang,
-                        (s) =>
-                          s.components.flowsTable.headers.sourceOrganization
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {t.t(
-                        lang,
-                        (s) =>
-                          s.components.flowsTable.headers
-                            .destinationOrganization
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {t.t(
-                        lang,
-                        (s) => s.components.flowsTable.headers.destinationPlan
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {t.t(
-                        lang,
-                        (s) =>
-                          s.components.flowsTable.headers.destinationCountry
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {t.t(
-                        lang,
-                        (s) => s.components.flowsTable.headers.destinationYear
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {t.t(
-                        lang,
-                        (s) => s.components.flowsTable.headers.details
-                      )}
-                    </TableCell>
+                    {headers.map((header) => (
+                      <TableCell key={header.label}>
+                        {header.sort ? (
+                          <TableSortLabel
+                            active={orderBy === header.sort}
+                            direction={
+                              orderBy === header.sort
+                                ? (orderDir.toLowerCase() as Lowercase<
+                                    typeof orderDir
+                                  >)
+                                : 'desc'
+                            }
+                            onClick={() => handleSort(header.sort)}
+                          >
+                            <span className={CLASSES.VISUALLY_HIDDEN}>
+                              {t.t(lang, (s) => s.components.flowsTable.sortBy)}
+                            </span>
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowsTable.headers[header.label]
+                            )}
+                          </TableSortLabel>
+                        ) : (
+                          t.t(
+                            lang,
+                            (s) => s.components.flowsTable.headers[header.label]
+                          )
+                        )}
+                      </TableCell>
+                    ))}
                   </TableRow>
                 </TableHead>
                 <TableBody>
