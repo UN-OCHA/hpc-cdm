@@ -51,16 +51,18 @@
     "flows": {
       "title": "Search funding flows",
       "table": {
-        "id": "ID",
-        "updatedCreated": "Updated/Created",
-        "dataProvider": "Data Provider",
-        "amountUSD": "Amount USD",
-        "sourceOrganization": "Source Organization",
-        "destinationOrganization": "Destination Organization",
-        "destinationPlan": "Destination Plan",
-        "destinationCountry": "Destination Country",
-        "destinationYear": "Destination Year",
-        "details": "Details",
+        "headers": {
+          "id": "ID",
+          "updatedCreated": "Updated/Created",
+          "dataProvider": "Data Provider",
+          "amountUSD": "Amount USD",
+          "sourceOrganization": "Source Organization",
+          "destinationOrganization": "Destination Organization",
+          "destinationPlan": "Destination Plan",
+          "destinationCountry": "Destination Country",
+          "destinationYear": "Destination Year",
+          "details": "Details"
+        },
         "restricted": "restricted",
         "inactive": "inactive",
         "child": "child",
@@ -69,7 +71,8 @@
           "title": "Flows not found",
           "info": "We were unable to load flows"
         },
-        "reportTooltip": "reported by {organization} on {date} via {channel}"
+        "reportTooltip": "reported by {organization} on {date} via {channel}",
+        "sortBy": "Sort by"
       }
     }
   }
