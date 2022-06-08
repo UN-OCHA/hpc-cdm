@@ -65,7 +65,8 @@
         "info": "We were unable to load flows"
       },
       "reportTooltip": "reported by {organization} on {date} via {channel}",
-      "parkedSource": "Parked source"
+      "parkedSource": "Parked source",
+      "sortBy": "Sort by"
     }
   },
   "navigation": {
