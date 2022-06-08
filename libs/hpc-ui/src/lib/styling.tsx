@@ -49,6 +49,15 @@ body {
   flex-grow: 1;
 }
 
+.${CLASSES.VISUALLY_HIDDEN} {
+  position:absolute;
+  left:-10000px;
+  top:auto;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+}
+
 a {
   color: ${(p) => p.theme.colors.textLink};
   text-decoration: none;
