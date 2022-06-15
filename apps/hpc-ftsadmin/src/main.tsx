@@ -1,11 +1,14 @@
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
+import { QueryParamProvider } from 'use-query-params';
 
 import App from './app/app';
 
 ReactDOM.render(
   <BrowserRouter>
-    <App />
+    <QueryParamProvider ReactRouterRoute={Route}>
+      <App />
+    </QueryParamProvider>
   </BrowserRouter>,
   document.getElementById('root')
 );

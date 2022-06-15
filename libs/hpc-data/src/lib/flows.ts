@@ -207,7 +207,7 @@ export const SEARCH_FLOWS_PARAMS = t.type({
     flowList: FLOW_LIST,
     active: t.boolean,
     orderBy: t.string,
-    orderDir: t.string,
+    orderDir: t.union([t.string, t.null]),
     allReportDetails: t.boolean,
     categories: t.array(FLOW_CATEGORY),
     flowObjects: t.array(FLOW_OBJECT),
