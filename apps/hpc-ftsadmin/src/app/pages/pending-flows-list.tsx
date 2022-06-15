@@ -17,6 +17,11 @@ export default (props: Props) => {
         label: 'id',
       },
       {
+        id: 'flow.versionID',
+        sortable: true,
+        label: 'status',
+      },
+      {
         id: 'flow.updatedAt',
         sortable: true,
         label: 'updatedCreated',
@@ -61,7 +66,7 @@ export default (props: Props) => {
         label: 'details',
       },
     ],
-    flowList: 'all',
+    flowList: 'pending',
   };
 
   return (
@@ -70,8 +75,10 @@ export default (props: Props) => {
         <div
           className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
         >
-          <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
-          <C.PageTitle>{t.t(lang, (s) => s.routes.flows.title)}</C.PageTitle>
+          <PageMeta title={[t.t(lang, (s) => s.routes.pendingFlows.title)]} />
+          <C.PageTitle>
+            {t.t(lang, (s) => s.routes.pendingFlows.title)}
+          </C.PageTitle>
           <FlowsTable {...flowsTableProps} />
         </div>
       )}

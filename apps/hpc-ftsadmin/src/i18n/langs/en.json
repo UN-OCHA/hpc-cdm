@@ -46,6 +46,7 @@
     "flowsTable": {
       "headers": {
         "id": "ID",
+        "status": "Status",
         "updatedCreated": "Updated/Created",
         "dataProvider": "Data Provider",
         "amountUSD": "Amount USD",
@@ -56,6 +57,8 @@
         "destinationYear": "Destination Year",
         "details": "Details"
       },
+      "update": "Update",
+      "new": "New",
       "restricted": "restricted",
       "inactive": "inactive",
       "child": "child",
@@ -80,6 +83,9 @@
   "routes": {
     "flows": {
       "title": "Search funding flows"
+    },
+    "pendingFlows": {
+      "title": "Search pending flows"
     }
   }
 }
