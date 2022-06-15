@@ -41,7 +41,7 @@ export interface FlowsTableProps {
   headers: {
     id: HeaderId;
     sortable?: boolean;
-    label: keyof Strings['routes']['flows']['table']['headers'];
+    label: keyof Strings['components']['flowsTable']['headers'];
   }[];
 }
 
@@ -129,7 +129,7 @@ export default function FlowsTable(props: FlowsTableProps) {
       rd[0].date && (
         <Tooltip
           title={t
-            .t(lang, (s) => s.routes.flows.table.reportTooltip)
+            .t(lang, (s) => s.components.flowsTable.reportTooltip)
             .replace('{organization}', org.name)
             .replace(
               '{date}',
@@ -157,7 +157,7 @@ export default function FlowsTable(props: FlowsTableProps) {
             ...t.get(lang, (s) => s.components.loader),
             notFound: {
               ...t.get(lang, (s) => s.components.notFound),
-              ...t.get(lang, (s) => s.routes.flows.table.notFound),
+              ...t.get(lang, (s) => s.components.flowsTable.notFound),
             },
           }}
         >
@@ -194,17 +194,18 @@ export default function FlowsTable(props: FlowsTableProps) {
                             onClick={() => handleSort(header.id)}
                           >
                             <span className={CLASSES.VISUALLY_HIDDEN}>
-                              {t.t(lang, (s) => s.routes.flows.table.sortBy)}
+                              {t.t(lang, (s) => s.components.flowsTable.sortBy)}
                             </span>
                             {t.t(
                               lang,
-                              (s) => s.routes.flows.table.headers[header.label]
+                              (s) =>
+                                s.components.flowsTable.headers[header.label]
                             )}
                           </TableSortLabel>
                         ) : (
                           t.t(
                             lang,
-                            (s) => s.routes.flows.table.headers[header.label]
+                            (s) => s.components.flowsTable.headers[header.label]
                           )
                         )}
                       </TableCell>
@@ -354,7 +355,8 @@ export default function FlowsTable(props: FlowsTableProps) {
                                     label={[
                                       t.t(
                                         lang,
-                                        (s) => s.routes.flows.table.restricted
+                                        (s) =>
+                                          s.components.flowsTable.restricted
                                       ),
                                     ]}
                                     sx={chipSpacing}
@@ -368,7 +370,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                                     label={[
                                       t.t(
                                         lang,
-                                        (s) => s.routes.flows.table.inactive
+                                        (s) => s.components.flowsTable.inactive
                                       ),
                                     ]}
                                     size="small"
@@ -380,7 +382,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                                     label={[
                                       t.t(
                                         lang,
-                                        (s) => s.routes.flows.table.child
+                                        (s) => s.components.flowsTable.child
                                       ),
                                     ]}
                                     size="small"
@@ -393,7 +395,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                                     label={[
                                       t.t(
                                         lang,
-                                        (s) => s.routes.flows.table.parent
+                                        (s) => s.components.flowsTable.parent
                                       ),
                                     ]}
                                     size="small"
