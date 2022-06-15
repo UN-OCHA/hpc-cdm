@@ -27,6 +27,7 @@ import { AppContext, getEnv } from '../context';
 
 type HeaderId =
   | 'flow.id'
+  | 'flow.versionID'
   | 'flow.updatedAt'
   | 'externalReference.systemID'
   | 'flow.amountUSD'
@@ -43,6 +44,7 @@ export interface FlowsTableProps {
     sortable?: boolean;
     label: keyof Strings['components']['flowsTable']['headers'];
   }[];
+  flowList: flows.FlowList;
 }
 
 export default function FlowsTable(props: FlowsTableProps) {
@@ -75,6 +77,7 @@ export default function FlowsTable(props: FlowsTableProps) {
         includeChildrenOfParkedFlows: true,
         orderBy: query.orderBy,
         orderDir: query.orderDir,
+        flowList: props.flowList,
       },
     })
   );
@@ -225,6 +228,20 @@ export default function FlowsTable(props: FlowsTableProps) {
                                 data-test="flows-table-id"
                               >
                                 {row.id} v{row.versionID}
+                              </TableCell>
+                            );
+                          case 'flow.versionID':
+                            return (
+                              <TableCell
+                                component="th"
+                                scope="row"
+                                data-test="flows-table-status"
+                              >
+                                {t.t(lang, (s) =>
+                                  row.versionID > 1
+                                    ? s.components.flowsTable.update
+                                    : s.components.flowsTable.new
+                                )}
                               </TableCell>
                             );
                           case 'flow.updatedAt':
