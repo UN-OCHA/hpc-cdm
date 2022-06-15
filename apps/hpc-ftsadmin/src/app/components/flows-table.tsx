@@ -14,30 +14,19 @@ import {
 } from '@mui/material';
 import { flows } from '@unocha/hpc-data';
 import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
-import React, { useState } from 'react';
 import { MdInfoOutline } from 'react-icons/md';
+import {
+  createEnumParam,
+  NumberParam,
+  useQueryParams,
+  withDefault,
+} from 'use-query-params';
 import { LanguageKey, t } from '../../i18n';
 import { Strings } from '../../i18n/iface';
 import { AppContext, getEnv } from '../context';
 
 export default function FlowsTable() {
   const env = getEnv();
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(50);
-  const [orderBy, setOrderBy] = useState('flow.updatedAt');
-  const [orderDir, setOrderDir] = useState<'DESC' | 'ASC'>('DESC');
-
-  const loader = dataLoader([page, rowsPerPage, orderBy, orderDir], () =>
-    env.model.flows.searchFlows({
-      flowSearch: {
-        limit: rowsPerPage,
-        offset: page * rowsPerPage,
-        includeChildrenOfParkedFlows: true,
-        orderBy,
-        orderDir,
-      },
-    })
-  );
 
   const headers: {
     sort?: string;
@@ -84,25 +73,68 @@ export default function FlowsTable() {
     },
   ];
 
+  const [query, setQuery] = useQueryParams({
+    page: withDefault(NumberParam, 0),
+    rowsPerPage: withDefault(NumberParam, 50),
+    orderBy: withDefault(
+      createEnumParam(
+        // Same as filter then map but this is acceptable to typescript
+        headers.reduce((acc, curr) => {
+          if (curr.sort) {
+            return [...acc, curr.sort];
+          }
+
+          return acc;
+        }, [] as string[])
+      ),
+      'flow.updatedAt'
+    ),
+    orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
+  });
+
+  const loader = dataLoader([query], () =>
+    env.model.flows.searchFlows({
+      flowSearch: {
+        limit: query.rowsPerPage,
+        offset: query.page * query.rowsPerPage,
+        includeChildrenOfParkedFlows: true,
+        orderBy: query.orderBy,
+        orderDir: query.orderDir,
+      },
+    })
+  );
+
   const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+    setQuery({
+      ...query,
+      page: newPage,
+    });
   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setQuery({
+      ...query,
+      rowsPerPage: parseInt(event.target.value, 10),
+      page: 0,
+    });
   };
 
   const handleSort = (newSort = 'flow.id') => {
-    const changeDir = newSort === orderBy;
+    const changeDir = newSort === query.orderBy;
 
     if (changeDir) {
-      setOrderDir(orderDir === 'ASC' ? 'DESC' : 'ASC');
+      setQuery({
+        ...query,
+        orderDir: query.orderDir === 'ASC' ? 'DESC' : 'ASC',
+      });
     } else {
-      setOrderBy(newSort);
-      setOrderDir('DESC');
+      setQuery({
+        ...query,
+        orderBy: newSort,
+        orderDir: 'DESC',
+      });
     }
   };
 
@@ -163,8 +195,8 @@ export default function FlowsTable() {
                       rowsPerPageOptions={rowsPerPageOptions}
                       component="td"
                       count={parseInt(data.flowCount)}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
+                      rowsPerPage={query.rowsPerPage}
+                      page={query.page}
                       onPageChange={handleChangePage}
                       onRowsPerPageChange={handleChangeRowsPerPage}
                     />
@@ -174,11 +206,13 @@ export default function FlowsTable() {
                       <TableCell key={header.label}>
                         {header.sort ? (
                           <TableSortLabel
-                            active={orderBy === header.sort}
+                            active={query.orderBy === header.sort}
                             direction={
-                              orderBy === header.sort
-                                ? (orderDir.toLowerCase() as Lowercase<
-                                    typeof orderDir
+                              (query.orderDir === 'ASC' ||
+                                query.orderDir === 'DESC') &&
+                              query.orderBy === header.sort
+                                ? (query.orderDir.toLowerCase() as Lowercase<
+                                    typeof query.orderDir
                                   >)
                                 : 'desc'
                             }
@@ -345,8 +379,8 @@ export default function FlowsTable() {
                       rowsPerPageOptions={rowsPerPageOptions}
                       component="td"
                       count={parseInt(data.flowCount)}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
+                      rowsPerPage={query.rowsPerPage}
+                      page={query.page}
                       onPageChange={handleChangePage}
                       onRowsPerPageChange={handleChangeRowsPerPage}
                     />
