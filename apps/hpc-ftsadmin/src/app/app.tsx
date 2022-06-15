@@ -19,6 +19,7 @@ import { Z_INDEX } from './layout';
 import PageFlowsList from './pages/flows-list';
 import PageNotFound from './pages/not-found';
 import PageNotLoggedIn from './pages/not-logged-in';
+import PagePendingFlowsList from './pages/pending-flows-list';
 import * as paths from './paths';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
@@ -125,6 +126,10 @@ export const App = () => {
                             label: t.t(lang, (s) => s.navigation.flows),
                             path: paths.flows(),
                           },
+                          {
+                            label: t.t(lang, (s) => s.navigation.pendingFlows),
+                            path: paths.pendingFlows(),
+                          },
                         ]}
                         className={CLASSES.CONTAINER.FLUID}
                       />
@@ -136,6 +141,11 @@ export const App = () => {
                           path={paths.flows()}
                           exact
                           component={PageFlowsList}
+                        />
+                        <Route
+                          path={paths.pendingFlows()}
+                          exact
+                          component={PagePendingFlowsList}
                         />
                         <Route component={PageNotFound} />
                       </Switch>
