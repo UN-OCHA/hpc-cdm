@@ -181,7 +181,17 @@ export default function FlowsTable(props: FlowsTableProps) {
                   </TableRow>
                   <TableRow>
                     {props.headers.map((header) => (
-                      <TableCell key={header.label}>
+                      <TableCell
+                        key={header.label}
+                        data-test={`header-${header.label}`}
+                        {...(header.sortable &&
+                          query.orderBy === header.id && {
+                            'aria-sort':
+                              query.orderDir === 'ASC'
+                                ? 'ascending'
+                                : 'descending',
+                          })}
+                      >
                         {header.sortable ? (
                           <TableSortLabel
                             active={query.orderBy === header.id}
@@ -198,6 +208,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                           >
                             <span className={CLASSES.VISUALLY_HIDDEN}>
                               {t.t(lang, (s) => s.components.flowsTable.sortBy)}
+                              <br />
                             </span>
                             {t.t(
                               lang,
@@ -431,6 +442,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                 <TableFooter>
                   <TableRow>
                     <TablePagination
+                      data-test="flows-table-pagination"
                       rowsPerPageOptions={rowsPerPageOptions}
                       component="td"
                       count={parseInt(data.flowCount)}
