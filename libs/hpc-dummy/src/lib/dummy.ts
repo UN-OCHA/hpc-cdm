@@ -482,10 +482,112 @@ export class Dummy {
         }),
         searchFlows: dummyEndpoint(
           'flows.searchFlows',
-          async (params: flows.SearchFlowsParams) => ({
-            flows: this.data.flows,
-            flowCount: this.data.flows.length.toString(),
-          })
+          async (params: flows.SearchFlowsParams) => {
+            const { flowSearch } = params;
+            const { flows } = this.data;
+
+            if (flowSearch.orderBy) {
+              flows.sort((a, b) => {
+                let returnVal = 0;
+                switch (flowSearch.orderBy) {
+                  case 'flow.id':
+                    returnVal = a.id > b.id ? 1 : -1;
+                    break;
+                  case 'flow.versionID':
+                    returnVal = a.versionID > b.versionID ? 1 : -1;
+                    break;
+                  case 'flow.updatedAt':
+                    returnVal = a.updatedAt > b.updatedAt ? 1 : -1;
+                    break;
+                  case 'externalReference.systemID':
+                    if (
+                      a.externalReference?.systemID &&
+                      b.externalReference?.systemID
+                    ) {
+                      returnVal =
+                        a.externalReference?.systemID >
+                        b.externalReference?.systemID
+                          ? 1
+                          : -1;
+                    }
+                    break;
+                  case 'flow.amountUSD':
+                    returnVal =
+                      parseInt(a.amountUSD) > parseInt(b.amountUSD) ? 1 : -1;
+                    break;
+                  case 'source.organization.name': {
+                    const sourceOrgA = a.organizations?.find(
+                      (org) => org.refDirection === 'source'
+                    );
+                    const sourceOrgB = a.organizations?.find(
+                      (org) => org.refDirection === 'source'
+                    );
+                    if (sourceOrgA && sourceOrgB) {
+                      returnVal = sourceOrgA.name > sourceOrgB.name ? 1 : -1;
+                    }
+                    break;
+                  }
+                  case 'destination.organization.name': {
+                    const destOrgA = a.organizations?.find(
+                      (org) => org.refDirection === 'destination'
+                    );
+                    const destOrgB = a.organizations?.find(
+                      (org) => org.refDirection === 'destination'
+                    );
+                    if (destOrgA && destOrgB) {
+                      returnVal = destOrgA.name > destOrgB.name ? 1 : -1;
+                    }
+                    break;
+                  }
+                  case 'destination.planVersion.name': {
+                    const planA = a.plans && a.plans[0];
+                    const planB = b.plans && b.plans[0];
+                    if (!planA) {
+                      returnVal = -1;
+                    } else if (!planB) {
+                      returnVal = 1;
+                    } else {
+                      returnVal = planA.name > planB.name ? 1 : -1;
+                    }
+                    break;
+                  }
+                  case 'destination.location.name': {
+                    const locationA = a.locations && a.locations[0];
+                    const locationB = b.locations && b.locations[0];
+                    if (!locationA) {
+                      returnVal = -1;
+                    } else if (!locationB) {
+                      returnVal = 1;
+                    } else {
+                      returnVal = locationA.name > locationB.name ? 1 : -1;
+                    }
+                    break;
+                  }
+                  case 'destination.usageYear.year': {
+                    const yearA = a.usageYears?.find(
+                      (org) => org.refDirection === 'destination'
+                    );
+                    const yearB = a.usageYears?.find(
+                      (org) => org.refDirection === 'destination'
+                    );
+                    if (yearA && yearB) {
+                      returnVal = yearA.year > yearB.year ? 1 : -1;
+                    }
+                    break;
+                  }
+                }
+
+                return flowSearch.orderDir === 'DESC'
+                  ? returnVal * -1
+                  : returnVal;
+              });
+            }
+
+            return {
+              flows,
+              flowCount: flows.length.toString(),
+            };
+          }
         ),
       },
       operations: {
