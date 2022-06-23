@@ -45,7 +45,12 @@
     }
   },
   "navigation": {
-    "flows": "Search Funding Flows"
+    "flows": "Flows",
+    "pendingFlows": "Pending Flows",
+    "rpm": "Response Planning Module",
+    "prism": "Online Projects System",
+    "ftsWebsite": "FTS Website",
+    "help": "Help"
   },
   "routes": {
     "operations": {

@@ -45,7 +45,12 @@
     }
   },
   "navigation": {
-    "flows": "Rechercher des flux de financement"
+    "flows": "Flux",
+    "pendingFlows": "Flux en attente",
+    "rpm": "Module de planification des interventions",
+    "prism": "Système de projets en ligne",
+    "ftsWebsite": "Site web FTS",
+    "help": "Aide"
   },
   "routes": {
     "operations": {
