@@ -31,7 +31,18 @@
       "cancel": "Annuler"
     },
     "forms": {
+      "autocomplete": {
+        "label": "Recherche",
+        "placeholder": "Type de recherche",
+        "searchError": "Impossible de récupérer les résultats de la recherche",
+        "validation": {
+          "minLength": "Entrez au moins 3 caractères pour la recherche"
+        }
+      },
       "newEditFlow": {
+        "fields": {
+          "organizations": "Organization(s)"
+        },
         "funding": "Financement",
         "createdAt": "Créé le {date} par {author}",
         "updatedAt": "Mis à jour {date} par {author}"

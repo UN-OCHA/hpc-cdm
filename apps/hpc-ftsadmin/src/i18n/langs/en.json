@@ -31,7 +31,18 @@
       "cancel": "Cancel"
     },
     "forms": {
+      "autocomplete": {
+        "label": "Search",
+        "placeholder": "Type to search",
+        "searchError": "Failed to fetch search results",
+        "validation": {
+          "minLength": "Enter at least 3 characters to search"
+        }
+      },
       "newEditFlow": {
+        "fields": {
+          "organizations": "Organization(s)"
+        },
         "funding": "Funding",
         "createdAt": "Created {date} by {author}",
         "updatedAt": "Updated {date} by {author}"
