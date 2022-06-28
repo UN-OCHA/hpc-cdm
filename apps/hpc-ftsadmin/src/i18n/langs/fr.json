@@ -29,6 +29,17 @@
       "okay": "Confirmer",
       "cancel": "Annuler"
     },
+    "forms": {
+      "organizations": "Organisation(s)",
+      "autocomplete": {
+        "label": "Recherche",
+        "placeholder": "Type de recherche",
+        "searchError": "Impossible de récupérer les résultats de la recherche",
+        "validation": {
+          "minLength": "Entrez au moins 3 caractères pour la recherche"
+        }
+      }
+    },
     "notFound": {
       "title": "Page non trouvée",
       "info": "Nous n'avons pas pu trouver la page que vous cherchiez",

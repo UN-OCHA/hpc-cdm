@@ -29,6 +29,17 @@
       "okay": "Confirm",
       "cancel": "Cancel"
     },
+    "forms": {
+      "organizations": "Organization(s)",
+      "autocomplete": {
+        "label": "Search",
+        "placeholder": "Type to search",
+        "searchError": "Failed to fetch search results",
+        "validation": {
+          "minLength": "Enter at least 3 characters to search"
+        }
+      }
+    },
     "notFound": {
       "title": "Page not found",
       "info": "We were unable to find the page you were looking for",

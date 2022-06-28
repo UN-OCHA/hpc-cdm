@@ -4,6 +4,7 @@ import { CLASSES, combineClasses } from './lib/classes';
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
 import * as actionableButton from './lib/components/actionable-button';
 import ActionableDropdown from './lib/components/actionable-dropdown';
+import AutocompleteAsync from './lib/components/autocomplete-async';
 import { Button, ButtonLink } from './lib/components/button';
 import DevEnvWarning from './lib/components/development-environment-warning';
 import * as dialogs from './lib/components/dialogs';
@@ -31,6 +32,7 @@ const COMPONENTS = {
   ActionableButton: actionableButton.ActionableButton,
   ActionableDropdown,
   ActionableIconButton: actionableButton.ActionableIconButton,
+  AutocompleteAsync,
   Button,
   ButtonLink,
   DevEnvWarning,
