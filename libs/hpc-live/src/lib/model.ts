@@ -6,6 +6,7 @@ import {
   Model,
   forms,
   flows,
+  organizations,
   operations,
   reportingWindows,
   access,
@@ -411,6 +412,18 @@ export class LiveModel implements Model {
             data: params,
           },
           resultType: flows.SEARCH_FLOWS_RESULT,
+        }),
+    };
+  }
+
+  get organizations(): organizations.Model {
+    return {
+      getOrganizationsAutocomplete: (
+        params: organizations.GetOrganizationsAutocompleteParams
+      ) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/organization/${params.search}`,
+          resultType: organizations.GET_ORGANIZATIONS_RESULT,
         }),
     };
   }
