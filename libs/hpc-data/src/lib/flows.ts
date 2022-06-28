@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { ORGANIZATION } from './organizations';
 
 import { INTEGER_FROM_STRING } from './util';
 
@@ -194,6 +195,15 @@ const FLOW = t.intersection([
       }),
       t.null,
     ]),
+    flowObjects: t.array(FLOW_OBJECT),
+    organizations: t.array(
+      t.intersection([
+        ORGANIZATION,
+        t.type({
+          flowObject: FLOW_OBJECT,
+        }),
+      ])
+    ),
   }),
 ]);
 

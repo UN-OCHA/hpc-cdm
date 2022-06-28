@@ -5,6 +5,7 @@ import {
   access,
   flows,
   operations,
+  organizations,
   reportingWindows,
   errors,
 } from '@unocha/hpc-data';
@@ -668,6 +669,17 @@ export class Dummy {
                 })),
             };
             return r;
+          }
+        ),
+      },
+      organizations: {
+        getOrganizationsAutocomplete: dummyEndpoint(
+          'organizations.getOrganizationsAutocomplete',
+          async (params: organizations.GetOrganizationsAutocompleteParams) => {
+            const { search } = params;
+            const { organizations } = this.data;
+
+            return organizations.filter((org) => org.name.includes(search));
           }
         ),
       },
