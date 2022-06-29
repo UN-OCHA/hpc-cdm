@@ -80,6 +80,10 @@ export const THEME = {
   animations: {
     fast: '0.2s ease-out',
   },
+  typography: {
+    fontFamilyBase:
+      '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"',
+  },
 } as const;
 
 export const MUI_THEME: ThemeOptions = {
@@ -97,6 +101,19 @@ export const MUI_THEME: ThemeOptions = {
   },
   typography: {
     htmlFontSize: 10,
+    fontFamily: THEME.typography.fontFamilyBase,
+    h1: {
+      fontSize: '3rem',
+      fontWeight: 700,
+    },
+    h2: {
+      fontSize: '2.4rem',
+      fontWeight: 700,
+    },
+    h3: {
+      fontSize: '1.8rem',
+      fontWeight: 700,
+    },
   },
   palette: {
     primary: {
