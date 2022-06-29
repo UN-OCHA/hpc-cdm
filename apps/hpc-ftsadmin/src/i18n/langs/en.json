@@ -2,7 +2,8 @@
   "title": "FTS Admin",
   "user": {
     "login": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "ftsUser": "FTS User"
   },
   "errors": {
     "unableToLoadFTSAdmin": "Unable to load FTS Admin"
@@ -28,6 +29,13 @@
     "dialogs": {
       "okay": "Confirm",
       "cancel": "Cancel"
+    },
+    "forms": {
+      "newEditFlow": {
+        "funding": "Funding",
+        "createdAt": "Created {date} by {author}",
+        "updatedAt": "Updated {date} by {author}"
+      }
     },
     "notFound": {
       "title": "Page not found",
@@ -78,10 +86,20 @@
   },
   "routes": {
     "flows": {
+      "notFound": {
+        "title": "Flow not found",
+        "info": "We were unable to find the flow you were looking for"
+      },
       "title": "Search funding flows"
     },
     "pendingFlows": {
       "title": "Search pending flows"
+    },
+    "editFlow": {
+      "title": "Edit flow"
+    },
+    "newFlow": {
+      "title": "New flow"
     }
   }
 }

@@ -2,7 +2,8 @@
   "title": "FTS Admin",
   "user": {
     "login": "Connexion",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "ftsUser": "Utilisateur FTS"
   },
   "errors": {
     "unableToLoadFTSAdmin": "Impossible de charger le FTS Admin"
@@ -28,6 +29,13 @@
     "dialogs": {
       "okay": "Confirmer",
       "cancel": "Annuler"
+    },
+    "forms": {
+      "newEditFlow": {
+        "funding": "Financement",
+        "createdAt": "Créé le {date} par {author}",
+        "updatedAt": "Mis à jour {date} par {author}"
+      }
     },
     "notFound": {
       "title": "Page non trouvée",
@@ -78,10 +86,20 @@
   },
   "routes": {
     "flows": {
+      "notFound": {
+        "title": "Flux non trouvé",
+        "info": "Nous n'avons pas pu trouver le flux que vous recherchiez."
+      },
       "title": "Rechercher des flux de financement"
     },
     "pendingFlows": {
       "title": "Recherche de flux en attente"
+    },
+    "editFlow": {
+      "title": "Modifier flux"
+    },
+    "newFlow": {
+      "title": "Nouveau flux"
     }
   }
 }
