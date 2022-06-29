@@ -20,6 +20,7 @@ import PageNotFound from './pages/not-found';
 import PageNotLoggedIn from './pages/not-logged-in';
 import PageFlowsList from './pages/flows-list';
 import PagePendingFlowsList from './pages/pending-flows-list';
+import PageFlow from './pages/flow';
 import * as paths from './paths';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
@@ -147,6 +148,7 @@ export const App = () => {
                           exact
                           component={PagePendingFlowsList}
                         />
+                        <Route path={paths.flowMatch()} component={PageFlow} />
                         <Route component={PageNotFound} />
                       </Switch>
                     </LoggedInContainer>
