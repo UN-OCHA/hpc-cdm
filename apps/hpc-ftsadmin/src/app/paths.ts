@@ -1,6 +1,8 @@
 const HOME = '/';
 const FLOWS = '/flows';
 const PENDING_FLOWS = '/pending-flows';
+const FLOW = `${FLOWS}/:id`;
+const EDIT_FLOW = `${FLOW}/edit`;
 
 const replacePlaceholders = (
   path: string,
@@ -17,3 +19,9 @@ export const home = () => replacePlaceholders(HOME, {});
 export const flows = () => replacePlaceholders(FLOWS, {});
 
 export const pendingFlows = () => replacePlaceholders(PENDING_FLOWS, {});
+
+export const flowMatch = () => replacePlaceholders(FLOW, {});
+
+export const flow = (id: number) => replacePlaceholders(FLOW, { id });
+
+export const editFlow = (id: number) => replacePlaceholders(EDIT_FLOW, { id });

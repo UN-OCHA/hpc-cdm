@@ -77,6 +77,10 @@
   },
   "routes": {
     "flows": {
+      "notFound": {
+        "title": "Flow not found",
+        "info": "We were unable to find the flow you were looking for"
+      },
       "title": "Search funding flows"
     },
     "pendingFlows": {

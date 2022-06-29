@@ -77,6 +77,10 @@
   },
   "routes": {
     "flows": {
+      "notFound": {
+        "title": "Flux non trouvé",
+        "info": "Nous n'avons pas pu trouver le flux que vous recherchiez."
+      },
       "title": "Rechercher des flux de financement"
     },
     "pendingFlows": {

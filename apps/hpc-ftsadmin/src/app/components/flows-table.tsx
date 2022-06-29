@@ -15,6 +15,7 @@ import {
 import { flows } from '@unocha/hpc-data';
 import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
 import { MdInfoOutline } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 import {
   createEnumParam,
   NumberParam,
@@ -24,6 +25,7 @@ import {
 import { LanguageKey, t } from '../../i18n';
 import { Strings } from '../../i18n/iface';
 import { AppContext, getEnv } from '../context';
+import { editFlow } from '../paths';
 
 type HeaderId =
   | 'flow.id'
@@ -238,7 +240,9 @@ export default function FlowsTable(props: FlowsTableProps) {
                                 scope="row"
                                 data-test="flows-table-id"
                               >
-                                {row.id} v{row.versionID}
+                                <Link to={editFlow(row.id)}>
+                                  {row.id} v{row.versionID}
+                                </Link>
                               </TableCell>
                             );
                           case 'flow.versionID':
