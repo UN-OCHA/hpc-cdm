@@ -7,7 +7,7 @@ export const BaseStyling = createGlobalStyle<{ theme: Theme }>`
 body, html {
   margin: 0;
   padding: 0;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  font-family: ${(p) => p.theme.typography.fontFamilyBase};
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
