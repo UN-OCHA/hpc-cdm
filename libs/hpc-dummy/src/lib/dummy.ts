@@ -490,6 +490,12 @@ export class Dummy {
           }
         ),
       },
+      currencies: {
+        getCurrencies: dummyEndpoint(
+          'currencies.getCurrencies',
+          async () => this.data.currencies
+        ),
+      },
       emergencies: {
         getEmergenciesAutocomplete: dummyEndpoint(
           'emergencies.getEmergenciesAutocomplete',

@@ -54,6 +54,13 @@ const ACCESS = t.type(
   'ACCESS'
 );
 
+const CURRENCY = t.type({
+  id: t.number,
+  code: t.string,
+  createdAt: t.string,
+  updatedAt: t.string,
+});
+
 const FORM_ASSIGNMENT = t.type({
   id: t.number,
   version: t.number,
@@ -474,6 +481,7 @@ const FORM = t.type(
 export const DUMMY_DATA = t.type(
   {
     access: ACCESS,
+    currencies: t.array(CURRENCY),
     users: t.array(USER),
     currentUser: t.union([t.null, t.number]),
     emergencies: t.array(EMERGENCY),

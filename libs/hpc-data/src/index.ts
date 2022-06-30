@@ -1,5 +1,6 @@
 import * as access from './lib/access';
 import * as errors from './lib/errors';
+import * as currencies from './lib/currencies';
 import * as emergencies from './lib/emergencies';
 import * as fieldClusters from './lib/field-clusters';
 import * as flows from './lib/flows';
@@ -16,6 +17,7 @@ import * as util from './lib/util';
 
 export interface Model {
   access: access.Model;
+  currencies: currencies.Model;
   emergencies: emergencies.Model;
   fieldClusters: fieldClusters.Model;
   flows: flows.Model;
@@ -31,6 +33,7 @@ export interface Model {
 
 export {
   access,
+  currencies,
   emergencies,
   fieldClusters,
   flows,
