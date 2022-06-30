@@ -4,6 +4,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { util } from '@unocha/hpc-core';
 import {
   Model,
+  currencies,
   forms,
   emergencies,
   flows,
@@ -395,6 +396,16 @@ export class LiveModel implements Model {
             },
           },
           resultType: access.GET_TARGET_ACCESS_RESULT,
+        }),
+    };
+  }
+
+  get currencies(): currencies.Model {
+    return {
+      getCurrencies: () =>
+        this.call({
+          pathname: `/v1/currency`,
+          resultType: currencies.GET_CURRENCIES_RESULT,
         }),
     };
   }
