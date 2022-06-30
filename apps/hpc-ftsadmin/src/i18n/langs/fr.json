@@ -11,7 +11,9 @@
     "devEnvironmentWarnings": {
       "dummy": "Ceci est une instance de démonstration de FTS Admin, les informations que vous entrez ici ne seront stockées que dans votre navigateur et ne seront pas envoyées à notre serveur",
       "dev": "Ceci est une instance de test de FTS Admin, les informations que vous entrez ici seront périodiquement supprimées."
-    }
+    },
+    "add": "Ajouter",
+    "remove": "Retirer"
   },
   "components": {
     "appTitle": {
@@ -30,7 +32,25 @@
       "cancel": "Annuler"
     },
     "forms": {
-      "organizations": "Organisation(s)",
+      "newEditFlow": {
+        "funding": "Financement",
+        "sources": "Source(s)",
+        "destinations": "Destination(s)",
+        "flow": "Débit",
+        "fields": {
+          "anonymizedOrganizations": "Organisations anonymisées",
+          "emergencies": "Urgence(s)",
+          "globalClusters": "Cluster(s) global(aux)",
+          "locations": "Lieu(x)",
+          "organizations": "Organisation(s)",
+          "plan": "Plan",
+          "projects": "Projet(s)",
+          "usageYears": "Année(s) d'utilisation"
+        },
+        "placeholders": {
+          "fundingFlowDescription": "1-2 phrases pour le nom du flux"
+        }
+      },
       "autocomplete": {
         "label": "Recherche",
         "placeholder": "Type de recherche",
@@ -96,6 +116,9 @@
     },
     "pendingFlows": {
       "title": "Recherche de flux en attente"
+    },
+    "editFlow": {
+      "title": "Modifier le flux"
     }
   }
 }

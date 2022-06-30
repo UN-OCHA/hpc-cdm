@@ -11,7 +11,9 @@
     "devEnvironmentWarnings": {
       "dummy": "This is a demo instance of FTS Admin, information you enter here will only be stored in your browser, and will not be sent to our server",
       "dev": "This is a test instance of FTS Admin, information you enter here will be periodically deleted."
-    }
+    },
+    "add": "Add",
+    "remove": "Remove"
   },
   "components": {
     "appTitle": {
@@ -30,7 +32,25 @@
       "cancel": "Cancel"
     },
     "forms": {
-      "organizations": "Organization(s)",
+      "newEditFlow": {
+        "funding": "Funding",
+        "sources": "Source(s)",
+        "destinations": "Destination(s)",
+        "flow": "Flow",
+        "fields": {
+          "anonymizedOrganizations": "Anonymized organizations",
+          "emergencies": "Emergenc(ies)",
+          "globalClusters": "Global cluster(s)",
+          "locations": "Location(s)",
+          "organizations": "Organization(s)",
+          "plan": "Plan",
+          "projects": "Project(s)",
+          "usageYears": "Usage year(s)"
+        },
+        "placeholders": {
+          "fundingFlowDescription": "1-2 sentences for flow name"
+        }
+      },
       "autocomplete": {
         "label": "Search",
         "placeholder": "Type to search",
@@ -96,6 +116,9 @@
     },
     "pendingFlows": {
       "title": "Search pending flows"
+    },
+    "editFlow": {
+      "title": "Edit flow"
     }
   }
 }

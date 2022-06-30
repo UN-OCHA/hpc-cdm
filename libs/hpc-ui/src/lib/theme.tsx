@@ -91,6 +91,7 @@ export const MUI_THEME: ThemeOptions = {
     MuiTextField: {
       defaultProps: {
         margin: 'normal',
+        fullWidth: true,
       },
     },
     MuiFormControl: {
