@@ -1,8 +1,9 @@
-import { Button, Grid, Typography } from '@mui/material';
+import { Button, Divider, Grid, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 
 import { t } from '../../i18n';
 import { AppContext } from '../context';
+import ExchangeRateCalculator from './exchange-rate-calculator';
 import FormNewEditFlowObjects from './form-new-edit-flow-objects';
 
 export default function FormNewEditFlow() {
@@ -41,6 +42,21 @@ export default function FormNewEditFlow() {
                   lang,
                   (s) => s.components.forms.newEditFlow.destinations
                 )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Divider flexItem sx={{ marginY: 6 }} />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h2">
+                {t.get(lang, (s) => s.components.forms.newEditFlow.flow)}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} lg={4}>
+              <ExchangeRateCalculator
+                strings={{
+                  ...t.get(lang, (s) => s.components.exchangeRateCalculator),
+                }}
               />
             </Grid>
           </Grid>

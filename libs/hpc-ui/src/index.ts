@@ -18,6 +18,7 @@ import MainNavigation from './lib/components/main-navigation';
 import NotFound from './lib/components/not-found';
 import PageTitle from './lib/components/page-title';
 import SecondaryNavigation from './lib/components/secondary-navigation';
+import SkeletonLoader from './lib/components/loader-skeleton';
 import * as sidebarNavigation from './lib/components/sidebar-navigation';
 import TertiaryNavigation from './lib/components/tertiary-navigation';
 import Toolbar from './lib/components/toolbar';
@@ -48,6 +49,7 @@ const COMPONENTS = {
   PageTitle,
   SidebarNavigation: sidebarNavigation.default,
   SecondaryNavigation,
+  SkeletonLoader,
   TertiaryNavigation,
   Toolbar,
 };
