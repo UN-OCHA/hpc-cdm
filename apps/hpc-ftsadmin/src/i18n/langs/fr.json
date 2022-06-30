@@ -31,6 +31,25 @@
       "okay": "Confirmer",
       "cancel": "Annuler"
     },
+    "exchangeRateCalculator": {
+      "amountUSD": "Montant du financement en USD",
+      "calculateExchangeRate": "Calculer le taux de change",
+      "calculateOriginalCurrency": "Calculer le montant dans la devise d'origine",
+      "calculateUSD": "Calculer le montant en USD",
+      "exchangeRateUsed": "Taux de change utilisé",
+      "fundingAmountOriginal": "Montant du financement (devise originale)",
+      "toggle": "Entrez la devise originale",
+      "treasuryLinkText": "Taux du Trésor des Nations Unies",
+      "loader": {
+        "loading": "Chargement",
+        "error": "Erreur",
+        "retry": "Réessayer",
+        "notFound": {
+          "title": "Devises non trouvées",
+          "info": "Nous n'avons pas pu charger les devises"
+        }
+      }
+    },
     "forms": {
       "newEditFlow": {
         "funding": "Financement",

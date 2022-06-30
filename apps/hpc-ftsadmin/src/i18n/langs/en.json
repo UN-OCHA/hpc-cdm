@@ -31,6 +31,25 @@
       "okay": "Confirm",
       "cancel": "Cancel"
     },
+    "exchangeRateCalculator": {
+      "amountUSD": "Funding amount in USD",
+      "calculateExchangeRate": "Calculate the exchange rate",
+      "calculateOriginalCurrency": "Calculate amount in original currency",
+      "calculateUSD": "Calculate amount in USD",
+      "exchangeRateUsed": "Exchange rate used",
+      "fundingAmountOriginal": "Funding amount (original currency)",
+      "toggle": "Enter original currency",
+      "treasuryLinkText": "UN Treasury rates",
+      "loader": {
+        "loading": "Loading",
+        "error": "Error",
+        "retry": "Retry",
+        "notFound": {
+          "title": "Currencies not found",
+          "info": "We were unable to load currencies"
+        }
+      }
+    },
     "forms": {
       "newEditFlow": {
         "funding": "Funding",
