@@ -5,6 +5,7 @@ import {
   dataLoader,
   dialogs,
   styled,
+  ThemeProvider,
 } from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -86,7 +87,7 @@ export const App = () => {
   );
 
   return (
-    <>
+    <ThemeProvider language={lang}>
       <BaseStyling />
       <C.Loader
         loader={loadEnv}
@@ -158,7 +159,7 @@ export const App = () => {
           );
         }}
       </C.Loader>
-    </>
+    </ThemeProvider>
   );
 };
 
