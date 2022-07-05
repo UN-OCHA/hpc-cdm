@@ -1,6 +1,11 @@
 import { Button, IconButton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { locations, organizations, usageYears } from '@unocha/hpc-data';
+import {
+  emergencies,
+  locations,
+  organizations,
+  usageYears,
+} from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
 import { useMemo, useState } from 'react';
 import { Control, Controller, FieldValues } from 'react-hook-form';
@@ -28,6 +33,7 @@ interface FundingOption<T> {
 }
 
 interface FundingOptions {
+  emergencies: FundingOption<emergencies.Emergency>;
   locations: FundingOption<locations.Location>;
   organizations: FundingOption<organizations.Organization>;
   usageYears: FundingOption<usageYears.UsageYear>;
@@ -69,6 +75,16 @@ export default function FormNewEditFlowObjects(props: Props) {
           searchOnType: true,
           multiple: true,
           getOptions: model.locations.getLocationsAutocomplete,
+          getOptionLabel: (option) => option.name,
+        },
+      },
+      emergencies: {
+        label: (s) => s.components.forms.newEditFlow.fields.emergencies,
+        isDeletable: true,
+        autocompleteProps: {
+          searchOnType: true,
+          multiple: true,
+          getOptions: model.emergencies.getEmergenciesAutocomplete,
           getOptionLabel: (option) => option.name,
         },
       },

@@ -5,6 +5,7 @@ import { util } from '@unocha/hpc-core';
 import {
   Model,
   forms,
+  emergencies,
   flows,
   locations,
   organizations,
@@ -394,6 +395,18 @@ export class LiveModel implements Model {
             },
           },
           resultType: access.GET_TARGET_ACCESS_RESULT,
+        }),
+    };
+  }
+
+  get emergencies(): emergencies.Model {
+    return {
+      getEmergenciesAutocomplete: (
+        params: emergencies.GetEmergenciesAutocompleteParams
+      ) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/emergency/${params.search}`,
+          resultType: emergencies.GET_EMERGENCIES_RESULT,
         }),
     };
   }
