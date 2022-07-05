@@ -106,6 +106,23 @@ const USER = t.type({
 
 export type User = t.TypeOf<typeof USER>;
 
+const EMERGENCY = t.intersection([
+  t.type({
+    id: t.number,
+    name: t.string,
+    date: t.string,
+    active: t.boolean,
+    restricted: t.boolean,
+    createdAt: t.string,
+    updatedAt: t.string,
+  }),
+  t.partial({
+    description: t.union([t.string, t.null]),
+    glideId: t.union([t.string, t.null]),
+    levelThree: t.union([t.boolean, t.null]),
+  }),
+]);
+
 const FLOW_REF_DIRECTION = t.keyof({
   source: null,
   destination: null,
@@ -319,6 +336,7 @@ export const DUMMY_DATA = t.type(
     access: ACCESS,
     users: t.array(USER),
     currentUser: t.union([t.null, t.number]),
+    emergencies: t.array(EMERGENCY),
     flows: t.array(FLOW),
     locations: t.array(LOCATION),
     operations: t.array(OPERATION),

@@ -3,6 +3,7 @@ import { Session } from '@unocha/hpc-core';
 import {
   Model,
   access,
+  emergencies,
   flows,
   locations,
   operations,
@@ -484,6 +485,19 @@ export class Dummy {
             }
             this.store();
             return this.getAccessForTarget(target);
+          }
+        ),
+      },
+      emergencies: {
+        getEmergenciesAutocomplete: dummyEndpoint(
+          'emergencies.getEmergenciesAutocomplete',
+          async (params: emergencies.GetEmergenciesAutocompleteParams) => {
+            const { search } = params;
+            const { emergencies } = this.data;
+
+            return emergencies.filter((emergency) =>
+              emergency.name.includes(search)
+            );
           }
         ),
       },
