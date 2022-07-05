@@ -12,6 +12,7 @@ import {
   access,
   errors,
   util as dataUtil,
+  usageYears,
 } from '@unocha/hpc-data';
 
 interface URLInterface {
@@ -587,6 +588,18 @@ export class LiveModel implements Model {
           return handleAssignmentResult(result);
         }
       },
+    };
+  }
+
+  get usageYears(): usageYears.Model {
+    return {
+      getUsageYearsAutocomplete: (
+        params: usageYears.GetUsageYearsAutocompleteParams
+      ) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/usageYear/${params.search}`,
+          resultType: usageYears.GET_USAGE_YEARS_RESULT,
+        }),
     };
   }
 

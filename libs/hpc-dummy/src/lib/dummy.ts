@@ -7,6 +7,7 @@ import {
   operations,
   organizations,
   reportingWindows,
+  usageYears,
   errors,
 } from '@unocha/hpc-data';
 import isEqual from 'lodash/isEqual';
@@ -807,6 +808,17 @@ export class Dummy {
 
             this.store();
             return this.getAssignmentResult(assignmentId);
+          }
+        ),
+      },
+      usageYears: {
+        getUsageYearsAutocomplete: dummyEndpoint(
+          'organizations.getUsageYearsAutocomplete',
+          async (params: usageYears.GetUsageYearsAutocompleteParams) => {
+            const { search } = params;
+            const { usageYears } = this.data;
+
+            return usageYears.filter((year) => year.year.includes(search));
           }
         ),
       },

@@ -262,6 +262,13 @@ const ORGANIZATION = t.intersection([
   }),
 ]);
 
+const USAGE_YEAR = t.type({
+  id: t.number,
+  year: t.string,
+  createdAt: t.string,
+  updatedAt: t.string,
+});
+
 const FORM = t.type(
   {
     id: t.number,
@@ -282,6 +289,7 @@ export const DUMMY_DATA = t.type(
     operationClusters: t.array(OPERATION_CLUSTER),
     organizations: t.array(ORGANIZATION),
     reportingWindows: t.array(REPORTING_WINDOW),
+    usageYears: t.array(USAGE_YEAR),
     forms: t.array(FORM),
   },
   'DUMMY_DATA'
