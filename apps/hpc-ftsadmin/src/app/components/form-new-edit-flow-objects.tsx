@@ -1,6 +1,6 @@
 import { Button, IconButton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { organizations, usageYears } from '@unocha/hpc-data';
+import { locations, organizations, usageYears } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
 import { useState } from 'react';
 import { Control, Controller, FieldValues } from 'react-hook-form';
@@ -27,6 +27,7 @@ interface FundingOption<T> {
 }
 
 interface FundingOptions {
+  locations: FundingOption<locations.Location>;
   organizations: FundingOption<organizations.Organization>;
   usageYears: FundingOption<usageYears.UsageYear>;
 }
@@ -42,6 +43,14 @@ export default function FormNewEditFlowObjects(props: Props) {
   const { model } = getEnv();
 
   const fundingOptions: FundingOptions = {
+    locations: {
+      label: (s) => s.components.forms.newEditFlow.fields.locations,
+      autocompleteProps: {
+        multiple: true,
+        getOptions: model.locations.getLocationsAutocomplete,
+        getOptionLabel: (option) => option.name,
+      },
+    },
     organizations: {
       label: (s) => s.components.forms.newEditFlow.fields.organizations,
       autocompleteProps: {
@@ -61,7 +70,7 @@ export default function FormNewEditFlowObjects(props: Props) {
   };
 
   const [visibleFundingOptions, setVisibleFundingOptions] = useState(
-    new Set<keyof FundingOptions>(['organizations', 'usageYears'])
+    new Set<keyof FundingOptions>(['organizations', 'usageYears', 'locations'])
   );
   const [hiddenFundingOptions, setHiddenFundingOptions] = useState(
     new Set<keyof FundingOptions>([])

@@ -201,6 +201,41 @@ const FLOW = t.intersection([
   }),
 ]);
 
+const LOCATION_BASE = t.intersection([
+  t.type({
+    id: t.number,
+    name: t.string,
+    adminLevel: t.number,
+    status: t.string,
+    itosSync: t.boolean,
+    createdAt: t.string,
+    updatedAt: t.string,
+  }),
+  t.partial({
+    externalId: t.union([t.string, t.null]),
+    latitude: t.union([t.number, t.null]),
+    longitude: t.union([t.number, t.null]),
+    pcode: t.union([t.string, t.null]),
+    iso3: t.union([t.string, t.null]),
+    validOn: t.union([t.string, t.null]),
+  }),
+]);
+
+const LOCATION_CHILD = t.intersection([
+  LOCATION_BASE,
+  t.type({
+    parentId: t.number,
+  }),
+]);
+
+const LOCATION = t.intersection([
+  LOCATION_BASE,
+  t.partial({
+    parentId: t.union([t.number, t.null]),
+    children: t.union([t.array(LOCATION_CHILD), t.null]),
+  }),
+]);
+
 const OPERATION = t.type({
   id: t.number,
   name: t.string,
@@ -285,6 +320,7 @@ export const DUMMY_DATA = t.type(
     users: t.array(USER),
     currentUser: t.union([t.null, t.number]),
     flows: t.array(FLOW),
+    locations: t.array(LOCATION),
     operations: t.array(OPERATION),
     operationClusters: t.array(OPERATION_CLUSTER),
     organizations: t.array(ORGANIZATION),
