@@ -6,6 +6,7 @@ import * as actionableButton from './lib/components/actionable-button';
 import ActionableDropdown from './lib/components/actionable-dropdown';
 import AutocompleteAsync from './lib/components/autocomplete-async';
 import { Button, ButtonLink } from './lib/components/button';
+import CurrencyField from './lib/components/currency-field';
 import DevEnvWarning from './lib/components/development-environment-warning';
 import * as dialogs from './lib/components/dialogs';
 import ErrorMessage from './lib/components/error-message';
@@ -35,6 +36,7 @@ const COMPONENTS = {
   AutocompleteAsync,
   Button,
   ButtonLink,
+  CurrencyField,
   DevEnvWarning,
   ErrorMessage,
   Header,

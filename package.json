@@ -114,6 +114,7 @@
     "@mui/styled-engine-sc": "^5.8.0",
     "@mui/styles": "^5.8.0",
     "react-hook-form": "^7.33.1",
+    "react-number-format": "^4.9.3",
     "styled-components": "^5.3.5",
     "use-query-params": "^1.2.3"
   }
