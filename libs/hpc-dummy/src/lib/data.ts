@@ -993,6 +993,68 @@ export const INITIAL_DATA: DummyData = {
       assignments: [],
     },
   ],
+  usageYears: [
+    {
+      id: 41,
+      year: '2020',
+      createdAt: '2016-02-23T15:03:30.916Z',
+      updatedAt: '2016-02-23T15:03:30.916Z',
+    },
+    {
+      id: 42,
+      year: '2021',
+      createdAt: '2016-02-23T15:03:30.923Z',
+      updatedAt: '2016-02-23T15:03:30.923Z',
+    },
+    {
+      id: 43,
+      year: '2022',
+      createdAt: '2016-02-23T15:03:30.928Z',
+      updatedAt: '2016-02-23T15:03:30.928Z',
+    },
+    {
+      id: 44,
+      year: '2023',
+      createdAt: '2016-02-23T15:03:30.941Z',
+      updatedAt: '2016-02-23T15:03:30.941Z',
+    },
+    {
+      id: 45,
+      year: '2024',
+      createdAt: '2016-02-23T15:03:30.953Z',
+      updatedAt: '2016-02-23T15:03:30.953Z',
+    },
+    {
+      id: 46,
+      year: '2025',
+      createdAt: '2016-02-23T15:03:30.955Z',
+      updatedAt: '2016-02-23T15:03:30.955Z',
+    },
+    {
+      id: 47,
+      year: '2026',
+      createdAt: '2016-02-23T15:03:30.959Z',
+      updatedAt: '2016-02-23T15:03:30.959Z',
+    },
+    {
+      id: 48,
+      year: '2027',
+      createdAt: '2016-02-23T15:03:30.975Z',
+      updatedAt: '2016-02-23T15:03:30.975Z',
+    },
+    {
+      id: 49,
+      year: '2028',
+      createdAt: '2016-02-23T15:03:30.984Z',
+      updatedAt: '2016-02-23T15:03:30.984Z',
+    },
+    {
+      id: 50,
+      year: '2029',
+      createdAt: '2016-02-23T15:03:30.990Z',
+      updatedAt: '2016-02-23T15:03:30.990Z',
+    },
+  ],
   forms: [
     {
       id: 123,

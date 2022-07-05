@@ -810,6 +810,11 @@ export class Dummy {
           }
         ),
       },
+      usageYears: {
+        getUsageYears: dummyEndpoint('usageYears.getUsageYears', async () => {
+          return this.data.usageYears;
+        }),
+      },
     };
   };
 }

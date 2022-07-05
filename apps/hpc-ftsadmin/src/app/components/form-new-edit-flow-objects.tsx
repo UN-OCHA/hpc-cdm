@@ -1,6 +1,6 @@
 import { Button, IconButton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { organizations } from '@unocha/hpc-data';
+import { organizations, usageYears } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
 import { useMemo, useState } from 'react';
 import { Control, Controller, FieldValues } from 'react-hook-form';
@@ -29,6 +29,7 @@ interface FundingOption<T> {
 
 interface FundingOptions {
   organizations: FundingOption<organizations.Organization>;
+  usageYears: FundingOption<usageYears.UsageYear>;
 }
 
 interface Props {
@@ -51,6 +52,14 @@ export default function FormNewEditFlowObjects(props: Props) {
           multiple: true,
           getOptions: model.organizations.getOrganizationsAutocomplete,
           getOptionLabel: (option) => option.name,
+        },
+      },
+      usageYears: {
+        label: (s) => s.components.forms.newEditFlow.fields.usageYears,
+        autocompleteProps: {
+          multiple: true,
+          getOptions: model.usageYears.getUsageYears,
+          getOptionLabel: (option) => option.year,
         },
       },
     }),
@@ -83,7 +92,7 @@ export default function FormNewEditFlowObjects(props: Props) {
             {label}
           </Typography>
           {Array.from(visibleFundingOptions.values()).map((key) => {
-            const option = fundingOptions[key];
+            const option: FundingOption<any> = fundingOptions[key];
             return (
               <Box
                 sx={{ display: 'flex', alignItems: 'center' }}
