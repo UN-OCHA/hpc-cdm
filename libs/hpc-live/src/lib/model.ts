@@ -10,6 +10,7 @@ import {
   locations,
   organizations,
   operations,
+  plans,
   reportingWindows,
   access,
   errors,
@@ -471,6 +472,16 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v2/operations/${params.id}`,
           resultType: operations.GET_OPERATION_RESULT,
+        }),
+    };
+  }
+
+  get plans(): plans.Model {
+    return {
+      getPlansAutocomplete: (params: plans.GetPlansAutocompleteParams) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/plan/${params.search}`,
+          resultType: plans.GET_PLANS_RESULT,
         }),
     };
   }

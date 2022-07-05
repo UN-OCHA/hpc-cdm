@@ -8,6 +8,7 @@ import {
   locations,
   operations,
   organizations,
+  plans,
   reportingWindows,
   errors,
 } from '@unocha/hpc-data';
@@ -716,6 +717,17 @@ export class Dummy {
             const { organizations } = this.data;
 
             return organizations.filter((org) => org.name.includes(search));
+          }
+        ),
+      },
+      plans: {
+        getPlansAutocomplete: dummyEndpoint(
+          'plans.getPlansAutocomplete',
+          async (params: plans.GetPlansAutocompleteParams) => {
+            const { search } = params;
+            const { plans } = this.data;
+
+            return plans.filter((plan) => plan.name.includes(search));
           }
         ),
       },

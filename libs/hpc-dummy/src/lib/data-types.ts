@@ -314,6 +314,34 @@ const ORGANIZATION = t.intersection([
   }),
 ]);
 
+const PLAN = t.intersection([
+  t.type({
+    id: t.number,
+    restricted: t.boolean,
+    createdAt: t.string,
+    updatedAt: t.string,
+    planVersionId: t.number,
+    planId: t.number,
+    name: t.string,
+    startDate: t.string,
+    endDate: t.string,
+    isForHPCProjects: t.boolean,
+    code: t.string,
+    currentVersion: t.boolean,
+    latestVersion: t.boolean,
+    latestTaggedVersion: t.boolean,
+  }),
+  t.partial({
+    revisionState: t.union([t.string, t.null]),
+    comments: t.union([t.string, t.null]),
+    customLocationCode: t.union([t.string, t.null]),
+    currentReportingPeriodId: t.union([t.number, t.null]),
+    lastPublishedReportingPeriodId: t.union([t.number, t.null]),
+    clusterSelectionType: t.union([t.string, t.null]),
+    versionTags: t.union([t.array(t.string), t.null]),
+  }),
+]);
+
 const USAGE_YEAR = t.type({
   id: t.number,
   year: t.string,
@@ -342,6 +370,7 @@ export const DUMMY_DATA = t.type(
     operations: t.array(OPERATION),
     operationClusters: t.array(OPERATION_CLUSTER),
     organizations: t.array(ORGANIZATION),
+    plans: t.array(PLAN),
     reportingWindows: t.array(REPORTING_WINDOW),
     usageYears: t.array(USAGE_YEAR),
     forms: t.array(FORM),

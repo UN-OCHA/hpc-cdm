@@ -4,6 +4,7 @@ import {
   emergencies,
   locations,
   organizations,
+  plans,
   usageYears,
 } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
@@ -36,6 +37,7 @@ interface FundingOptions {
   emergencies: FundingOption<emergencies.Emergency>;
   locations: FundingOption<locations.Location>;
   organizations: FundingOption<organizations.Organization>;
+  plans: FundingOption<plans.Plan>;
   usageYears: FundingOption<usageYears.UsageYear>;
 }
 
@@ -47,7 +49,7 @@ interface Props {
 }
 
 export default function FormNewEditFlowObjects(props: Props) {
-  const { name, label, control } = props;
+  const { refDirection, name, label, control } = props;
   const { model } = getEnv();
 
   const fundingOptions: FundingOptions = useMemo(
@@ -78,6 +80,15 @@ export default function FormNewEditFlowObjects(props: Props) {
           getOptionLabel: (option) => option.name,
         },
       },
+      plans: {
+        label: (s) => s.components.forms.newEditFlow.fields.plan,
+        isDeletable: refDirection === 'source',
+        autocompleteProps: {
+          searchOnType: true,
+          getOptions: model.plans.getPlansAutocomplete,
+          getOptionLabel: (option) => option.name,
+        },
+      },
       emergencies: {
         label: (s) => s.components.forms.newEditFlow.fields.emergencies,
         isDeletable: true,
@@ -89,7 +100,7 @@ export default function FormNewEditFlowObjects(props: Props) {
         },
       },
     }),
-    [model]
+    [model, refDirection]
   );
 
   const [visibleFundingOptions, setVisibleFundingOptions] = useState(

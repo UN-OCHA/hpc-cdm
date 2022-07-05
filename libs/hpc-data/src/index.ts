@@ -6,6 +6,7 @@ import * as forms from './lib/forms';
 import * as locations from './lib/locations';
 import * as operations from './lib/operations';
 import * as organizations from './lib/organizations';
+import * as plans from './lib/plans';
 import * as reportingWindows from './lib/reporting-windows';
 import * as usageYears from './lib/usage-years';
 import * as util from './lib/util';
@@ -17,6 +18,7 @@ export interface Model {
   locations: locations.Model;
   operations: operations.Model;
   organizations: organizations.Model;
+  plans: plans.Model;
   reportingWindows: reportingWindows.Model;
   usageYears: usageYears.Model;
 }
@@ -29,6 +31,7 @@ export {
   locations,
   operations,
   organizations,
+  plans,
   reportingWindows,
   usageYears,
   errors,
