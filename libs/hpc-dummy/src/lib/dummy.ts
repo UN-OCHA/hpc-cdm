@@ -4,6 +4,7 @@ import {
   Model,
   access,
   flows,
+  locations,
   operations,
   organizations,
   reportingWindows,
@@ -677,6 +678,19 @@ export class Dummy {
                 })),
             };
             return r;
+          }
+        ),
+      },
+      locations: {
+        getLocationsAutocomplete: dummyEndpoint(
+          'locations.getLocationsAutocomplete',
+          async (params: locations.GetLocationsAutocompleteParams) => {
+            const { search } = params;
+            const { locations } = this.data;
+
+            return locations.filter((location) =>
+              location.name.includes(search)
+            );
           }
         ),
       },

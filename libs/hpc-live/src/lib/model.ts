@@ -6,6 +6,7 @@ import {
   Model,
   forms,
   flows,
+  locations,
   organizations,
   operations,
   reportingWindows,
@@ -413,6 +414,18 @@ export class LiveModel implements Model {
             data: params,
           },
           resultType: flows.SEARCH_FLOWS_RESULT,
+        }),
+    };
+  }
+
+  get locations(): locations.Model {
+    return {
+      getLocationsAutocomplete: (
+        params: locations.GetLocationsAutocompleteParams
+      ) =>
+        this.call({
+          pathname: `/v2/location/autocomplete/${params.search}`,
+          resultType: locations.GET_LOCATIONS_RESULT,
         }),
     };
   }
