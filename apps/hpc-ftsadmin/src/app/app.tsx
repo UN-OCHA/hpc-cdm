@@ -1,3 +1,5 @@
+import { LocalizationProvider as MuiDatePickerProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import {
   BaseStyling,
   C,
@@ -90,84 +92,92 @@ export const App = () => {
 
   return (
     <ThemeProvider language={lang}>
-      <BaseStyling />
-      <C.Loader
-        loader={loadEnv}
-        strings={{
-          ...t.get(lang, (s) => s.components.loader),
-          notFound: t.get(lang, (s) => s.components.notFound),
-        }}
-      >
-        {(context) => {
-          const env = context.env();
-          return (
-            <AppContext.Provider value={{ lang, ...context }}>
-              <PageMeta />
-              <Container>
-                {environmentWarning(env, lang)}
-                <Header
-                  session={env.session}
-                  language={LANGUAGE_CHOICE}
-                  strings={t.get(lang, (s) => s.user)}
-                  userMenu={[
-                    {
-                      label: t.t(lang, (s) => s.user.logout),
-                      onClick: env.session.logOut,
-                    },
-                  ]}
-                />
-                <Main>
-                  {env.session.getUser() ? (
-                    <LoggedInContainer>
-                      <C.MainNavigation
-                        homeLink={paths.home()}
-                        appTitle={appTitle}
-                        tabs={[
-                          {
-                            label: t.t(lang, (s) => s.navigation.flows),
-                            path: paths.flows(),
-                          },
-                          {
-                            label: t.t(lang, (s) => s.navigation.pendingFlows),
-                            path: paths.pendingFlows(),
-                          },
-                        ]}
-                        className={CLASSES.CONTAINER.FLUID}
-                      />
-                      <Switch>
-                        <Route path={paths.home()} exact>
-                          <Redirect to={paths.flows()} />
-                        </Route>
-                        <Route
-                          path={paths.flows()}
-                          exact
-                          component={PageFlowsList}
+      <MuiDatePickerProvider dateAdapter={AdapterDayjs}>
+        <BaseStyling />
+        <C.Loader
+          loader={loadEnv}
+          strings={{
+            ...t.get(lang, (s) => s.components.loader),
+            notFound: t.get(lang, (s) => s.components.notFound),
+          }}
+        >
+          {(context) => {
+            const env = context.env();
+            return (
+              <AppContext.Provider value={{ lang, ...context }}>
+                <PageMeta />
+                <Container>
+                  {environmentWarning(env, lang)}
+                  <Header
+                    session={env.session}
+                    language={LANGUAGE_CHOICE}
+                    strings={t.get(lang, (s) => s.user)}
+                    userMenu={[
+                      {
+                        label: t.t(lang, (s) => s.user.logout),
+                        onClick: env.session.logOut,
+                      },
+                    ]}
+                  />
+                  <Main>
+                    {env.session.getUser() ? (
+                      <LoggedInContainer>
+                        <C.MainNavigation
+                          homeLink={paths.home()}
+                          appTitle={appTitle}
+                          tabs={[
+                            {
+                              label: t.t(lang, (s) => s.navigation.flows),
+                              path: paths.flows(),
+                            },
+                            {
+                              label: t.t(
+                                lang,
+                                (s) => s.navigation.pendingFlows
+                              ),
+                              path: paths.pendingFlows(),
+                            },
+                          ]}
+                          className={CLASSES.CONTAINER.FLUID}
                         />
-                        <Route
-                          path={paths.pendingFlows()}
-                          exact
-                          component={PagePendingFlowsList}
+                        <Switch>
+                          <Route path={paths.home()} exact>
+                            <Redirect to={paths.flows()} />
+                          </Route>
+                          <Route
+                            path={paths.flows()}
+                            exact
+                            component={PageFlowsList}
+                          />
+                          <Route
+                            path={paths.pendingFlows()}
+                            exact
+                            component={PagePendingFlowsList}
+                          />
+                          <Route
+                            path={paths.flowMatch()}
+                            component={PageFlow}
+                          />
+                          <Route component={PageNotFound} />
+                        </Switch>
+                      </LoggedInContainer>
+                    ) : (
+                      <>
+                        <C.MainNavigation
+                          homeLink={paths.home()}
+                          appTitle={appTitle}
                         />
-                        <Route path={paths.flowMatch()} component={PageFlow} />
-                        <Route component={PageNotFound} />
-                      </Switch>
-                    </LoggedInContainer>
-                  ) : (
-                    <>
-                      <C.MainNavigation
-                        homeLink={paths.home()}
-                        appTitle={appTitle}
-                      />
-                      <PageNotLoggedIn />
-                    </>
-                  )}
-                </Main>
-              </Container>
-              <dialogs.Dialogs />
-            </AppContext.Provider>
-          );
-        }}
-      </C.Loader>
+                        <PageNotLoggedIn />
+                      </>
+                    )}
+                  </Main>
+                </Container>
+                <dialogs.Dialogs />
+              </AppContext.Provider>
+            );
+          }}
+        </C.Loader>
+      </MuiDatePickerProvider>
     </ThemeProvider>
   );
 };
