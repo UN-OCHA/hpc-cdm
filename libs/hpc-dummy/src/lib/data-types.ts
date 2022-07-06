@@ -360,6 +360,35 @@ const PLAN = t.intersection([
   }),
 ]);
 
+const PROJECT = t.intersection([
+  t.type({
+    id: t.number,
+    createdAt: t.string,
+    updatedAt: t.string,
+    latestVersionId: t.number,
+    name: t.string,
+    version: t.number,
+    projectVersionCode: t.string,
+    visible: t.boolean,
+  }),
+  t.partial({
+    code: t.union([t.string, t.null]),
+    creatorParticipantId: t.union([t.number, t.null]),
+    currentPublishedVersionId: t.union([t.number, t.null]),
+    implementationStatus: t.union([t.string, t.null]),
+    pdf: t.union([
+      t.partial({
+        anonymous: t.partial({
+          file: t.unknown,
+          generatedAt: t.union([t.string, t.number]),
+        }),
+      }),
+      t.null,
+    ]),
+    sourceProjectId: t.union([t.number, t.null]),
+  }),
+]);
+
 const USAGE_YEAR = t.type({
   id: t.number,
   year: t.string,
@@ -390,6 +419,7 @@ export const DUMMY_DATA = t.type(
     operationClusters: t.array(OPERATION_CLUSTER),
     organizations: t.array(ORGANIZATION),
     plans: t.array(PLAN),
+    projects: t.array(PROJECT),
     reportingWindows: t.array(REPORTING_WINDOW),
     usageYears: t.array(USAGE_YEAR),
     forms: t.array(FORM),

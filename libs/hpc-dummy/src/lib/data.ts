@@ -1301,6 +1301,24 @@ export const INITIAL_DATA: DummyData = {
       versionTags: ['1.10'],
     },
   ],
+  projects: [
+    {
+      id: 23078,
+      createdAt: '2010-02-09T16:58:00.000Z',
+      updatedAt: '2017-02-06T20:41:45.048Z',
+      code: 'LKA-10/H/31160/R/8549',
+      currentPublishedVersionId: 46156,
+      creatorParticipantId: null,
+      latestVersionId: 46156,
+      implementationStatus: 'Planning',
+      pdf: null,
+      sourceProjectId: null,
+      name: 'EMS: increased access to Emergency Medical Care for resettled IDPs within Northern Districts',
+      version: 2,
+      projectVersionCode: 'LKA-10/H/31160/R/8549',
+      visible: true,
+    },
+  ],
   reportingWindows: [
     {
       id: 0,

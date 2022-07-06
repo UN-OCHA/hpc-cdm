@@ -6,6 +6,7 @@ import {
   locations,
   organizations,
   plans,
+  projects,
   usageYears,
 } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
@@ -41,6 +42,7 @@ interface FundingOptions {
   locations: FundingOption<locations.Location>;
   organizations: FundingOption<organizations.Organization>;
   plans: FundingOption<plans.Plan>;
+  projects: FundingOption<projects.Project>;
   usageYears: FundingOption<usageYears.UsageYear>;
 }
 
@@ -109,6 +111,15 @@ export default function FormNewEditFlowObjects(props: Props) {
         autocompleteProps: {
           searchOnType: true,
           getOptions: model.plans.getPlansAutocomplete,
+          getOptionLabel: (option) => option.name,
+        },
+      },
+      projects: {
+        label: (s) => s.components.forms.newEditFlow.fields.projects,
+        isDeletable: true,
+        autocompleteProps: {
+          searchOnType: true,
+          getOptions: model.projects.getProjectsAutocomplete,
           getOptionLabel: (option) => option.name,
         },
       },

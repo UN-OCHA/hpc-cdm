@@ -12,6 +12,7 @@ import {
   organizations,
   operations,
   plans,
+  projects,
   reportingWindows,
   access,
   errors,
@@ -303,7 +304,7 @@ export class LiveModel implements Model {
         return decode.right;
       } else {
         const report = PathReporter.report(decode);
-        console.error('Received unexpected result from server', report, json);
+        console.error('Received unexpected result from server', decode.left);
         throw new ModelError('Received unexpected result from server', json);
       }
     } else {
@@ -493,6 +494,18 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v2/object/autocomplete/plan/${params.search}`,
           resultType: plans.GET_PLANS_RESULT,
+        }),
+    };
+  }
+
+  get projects(): projects.Model {
+    return {
+      getProjectsAutocomplete: (
+        params: projects.GetProjectsAutocompleteParams
+      ) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/project/${params.search}`,
+          resultType: projects.GET_PROJECTS_RESULT,
         }),
     };
   }
