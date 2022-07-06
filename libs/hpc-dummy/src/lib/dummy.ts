@@ -4,6 +4,7 @@ import {
   Model,
   access,
   emergencies,
+  fieldClusters,
   flows,
   locations,
   operations,
@@ -498,6 +499,19 @@ export class Dummy {
 
             return emergencies.filter((emergency) =>
               emergency.name.includes(search)
+            );
+          }
+        ),
+      },
+      fieldClusters: {
+        getFieldClustersAutocomplete: dummyEndpoint(
+          'fieldClusters.getFieldClustersAutocomplete',
+          async (params: fieldClusters.GetFieldClustersAutocompleteParams) => {
+            const { search } = params;
+            const { fieldClusters } = this.data;
+
+            return fieldClusters.filter((cluster) =>
+              cluster.name.includes(search)
             );
           }
         ),

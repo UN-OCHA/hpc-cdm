@@ -6,6 +6,7 @@ import {
   Model,
   forms,
   emergencies,
+  fieldClusters,
   flows,
   globalClusters,
   locations,
@@ -410,6 +411,18 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v2/object/autocomplete/emergency/${params.search}`,
           resultType: emergencies.GET_EMERGENCIES_RESULT,
+        }),
+    };
+  }
+
+  get fieldClusters(): fieldClusters.Model {
+    return {
+      getFieldClustersAutocomplete: (
+        params: fieldClusters.GetFieldClustersAutocompleteParams
+      ) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/cluster/${params.search}`,
+          resultType: fieldClusters.GET_FIELD_CLUSTERS_RESULT,
         }),
     };
   }

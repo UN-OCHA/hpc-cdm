@@ -40,6 +40,7 @@
         "fields": {
           "anonymizedOrganizations": "Organisations anonymisées",
           "emergencies": "Urgence(s)",
+          "fieldClusters": "Cluster(s) de terrain",
           "globalClusters": "Cluster(s) global(aux)",
           "locations": "Lieu(x)",
           "organizations": "Organisation(s)",

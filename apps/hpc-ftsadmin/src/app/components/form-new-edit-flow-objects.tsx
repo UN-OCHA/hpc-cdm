@@ -2,6 +2,7 @@ import { Button, IconButton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import {
   emergencies,
+  fieldClusters,
   globalClusters,
   locations,
   organizations,
@@ -11,7 +12,7 @@ import {
 } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
 import { useMemo, useState } from 'react';
-import { Control, Controller, FieldValues } from 'react-hook-form';
+import { Controller, FieldValues, UseFormReturn } from 'react-hook-form';
 import { MdAdd, MdRemoveCircleOutline } from 'react-icons/md';
 
 import { t } from '../../i18n';
@@ -38,6 +39,7 @@ interface FundingOption<T> {
 interface FundingOptions {
   anonymizedOrganizations: FundingOption<organizations.Organization>;
   emergencies: FundingOption<emergencies.Emergency>;
+  fieldClusters?: FundingOption<fieldClusters.FieldCluster>;
   globalClusters: FundingOption<globalClusters.GlobalCluster>;
   locations: FundingOption<locations.Location>;
   organizations: FundingOption<organizations.Organization>;
@@ -50,12 +52,20 @@ interface Props {
   refDirection: 'source' | 'destination';
   name: string;
   label: string;
-  control: Control<FieldValues, any>;
+  form: UseFormReturn<FieldValues, object>;
 }
 
 export default function FormNewEditFlowObjects(props: Props) {
-  const { refDirection, name, label, control } = props;
+  const {
+    refDirection,
+    name,
+    label,
+    form: { control, watch },
+  } = props;
   const { model } = getEnv();
+  const watchPlan = watch(`${name}.plans`);
+
+  const showFieldClusters = useMemo(() => !!watchPlan, [watchPlan]);
 
   const fundingOptions: FundingOptions = useMemo(
     () => ({
@@ -123,6 +133,18 @@ export default function FormNewEditFlowObjects(props: Props) {
           getOptionLabel: (option) => option.name,
         },
       },
+      ...(showFieldClusters && {
+        fieldClusters: {
+          label: (s) => s.components.forms.newEditFlow.fields.fieldClusters,
+          isDeletable: true,
+          autocompleteProps: {
+            searchOnType: true,
+            multiple: true,
+            getOptions: model.fieldClusters.getFieldClustersAutocomplete,
+            getOptionLabel: (option) => option.name,
+          },
+        },
+      }),
       emergencies: {
         label: (s) => s.components.forms.newEditFlow.fields.emergencies,
         isDeletable: true,
@@ -134,13 +156,13 @@ export default function FormNewEditFlowObjects(props: Props) {
         },
       },
     }),
-    [model, refDirection]
+    [model, refDirection, showFieldClusters]
   );
 
   const [visibleFundingOptions, setVisibleFundingOptions] = useState(
     new Set(
       (Object.keys(fundingOptions) as Array<keyof FundingOptions>).filter(
-        (key) => !fundingOptions[key].isDeletable
+        (key) => !fundingOptions[key]?.isDeletable
       )
     )
   );
@@ -163,43 +185,48 @@ export default function FormNewEditFlowObjects(props: Props) {
             {label}
           </Typography>
           {Array.from(visibleFundingOptions.values()).map((key) => {
-            const option: FundingOption<any> = fundingOptions[key];
+            const option: FundingOption<any> | undefined = fundingOptions[key];
             return (
-              <Box
-                sx={{ display: 'flex', alignItems: 'center' }}
-                key={`autocompleteAsync-${key}`}
-              >
-                <Controller
-                  name={`${name}.${key}`}
-                  control={control}
-                  render={({ field: { onChange } }) => (
-                    <C.AutocompleteAsync
-                      strings={{
-                        ...t.get(lang, (s) => s.components.forms.autocomplete),
-                        label: t.get(lang, option.label),
-                      }}
-                      isOptionEqualToValue={(option, value) =>
-                        option.id === value.id
-                      }
-                      ChipProps={{
-                        sx: { maxWidth: '440px!important' },
-                      }}
-                      fullWidth
-                      {...option.autocompleteProps}
-                      onChange={(event, value) => onChange(value)}
-                    />
+              option && (
+                <Box
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                  key={`autocompleteAsync-${key}`}
+                >
+                  <Controller
+                    name={`${name}.${key}`}
+                    control={control}
+                    render={({ field: { onChange } }) => (
+                      <C.AutocompleteAsync
+                        strings={{
+                          ...t.get(
+                            lang,
+                            (s) => s.components.forms.autocomplete
+                          ),
+                          label: t.get(lang, option.label),
+                        }}
+                        isOptionEqualToValue={(option, value) =>
+                          option.id === value.id
+                        }
+                        ChipProps={{
+                          sx: { maxWidth: '440px!important' },
+                        }}
+                        fullWidth
+                        {...option.autocompleteProps}
+                        onChange={(event, value) => onChange(value)}
+                      />
+                    )}
+                  />
+                  {option.isDeletable && (
+                    <IconButton
+                      aria-label={t.get(lang, (s) => s.common.remove)}
+                      sx={{ marginLeft: 1, marginTop: 1 }}
+                      onClick={() => setHidden(key)}
+                    >
+                      <MdRemoveCircleOutline />
+                    </IconButton>
                   )}
-                />
-                {option.isDeletable && (
-                  <IconButton
-                    aria-label={t.get(lang, (s) => s.common.remove)}
-                    sx={{ marginLeft: 1, marginTop: 1 }}
-                    onClick={() => setHidden(key)}
-                  >
-                    <MdRemoveCircleOutline />
-                  </IconButton>
-                )}
-              </Box>
+                </Box>
+              )
             );
           })}
           <Box sx={{ marginY: 2 }}>
@@ -208,17 +235,19 @@ export default function FormNewEditFlowObjects(props: Props) {
               .map((key) => {
                 const option = fundingOptions[key];
                 return (
-                  <Button
-                    key={`autocompleteButton-${key}`}
-                    startIcon={
-                      <MdAdd aria-label={t.get(lang, (s) => s.common.add)} />
-                    }
-                    variant="outlined"
-                    sx={{ marginRight: 1, marginBottom: 1 }}
-                    onClick={() => setVisible(key)}
-                  >
-                    {t.get(lang, option.label)}
-                  </Button>
+                  option && (
+                    <Button
+                      key={`autocompleteButton-${key}`}
+                      startIcon={
+                        <MdAdd aria-label={t.get(lang, (s) => s.common.add)} />
+                      }
+                      variant="outlined"
+                      sx={{ marginRight: 1, marginBottom: 1 }}
+                      onClick={() => setVisible(key)}
+                    >
+                      {t.get(lang, option.label)}
+                    </Button>
+                  )
                 );
               })}
           </Box>

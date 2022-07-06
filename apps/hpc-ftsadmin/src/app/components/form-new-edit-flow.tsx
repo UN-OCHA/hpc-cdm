@@ -6,7 +6,10 @@ import { AppContext } from '../context';
 import FormNewEditFlowObjects from './form-new-edit-flow-objects';
 
 export default function FormNewEditFlow() {
-  const { handleSubmit, control } = useForm();
+  const useFormReturn = useForm({
+    shouldUnregister: true,
+  });
+  const { handleSubmit } = useFormReturn;
 
   return (
     <AppContext.Consumer>
@@ -22,7 +25,7 @@ export default function FormNewEditFlow() {
               <FormNewEditFlowObjects
                 refDirection="source"
                 name="source"
-                control={control}
+                form={useFormReturn}
                 label={t.get(
                   lang,
                   (s) => s.components.forms.newEditFlow.sources
@@ -33,7 +36,7 @@ export default function FormNewEditFlow() {
               <FormNewEditFlowObjects
                 refDirection="destination"
                 name="destination"
-                control={control}
+                form={useFormReturn}
                 label={t.get(
                   lang,
                   (s) => s.components.forms.newEditFlow.destinations
