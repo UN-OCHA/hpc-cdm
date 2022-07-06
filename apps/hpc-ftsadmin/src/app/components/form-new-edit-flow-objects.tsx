@@ -34,6 +34,7 @@ interface FundingOption<T> {
 }
 
 interface FundingOptions {
+  anonymizedOrganizations: FundingOption<organizations.Organization>;
   emergencies: FundingOption<emergencies.Emergency>;
   locations: FundingOption<locations.Location>;
   organizations: FundingOption<organizations.Organization>;
@@ -56,6 +57,17 @@ export default function FormNewEditFlowObjects(props: Props) {
     () => ({
       organizations: {
         label: (s) => s.components.forms.newEditFlow.fields.organizations,
+        autocompleteProps: {
+          searchOnType: true,
+          multiple: true,
+          getOptions: model.organizations.getOrganizationsAutocomplete,
+          getOptionLabel: (option) => option.name,
+        },
+      },
+      anonymizedOrganizations: {
+        label: (s) =>
+          s.components.forms.newEditFlow.fields.anonymizedOrganizations,
+        isDeletable: true,
         autocompleteProps: {
           searchOnType: true,
           multiple: true,
