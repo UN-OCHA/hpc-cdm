@@ -3,6 +3,7 @@ import * as errors from './lib/errors';
 import * as emergencies from './lib/emergencies';
 import * as flows from './lib/flows';
 import * as forms from './lib/forms';
+import * as globalClusters from './lib/global-clusters';
 import * as locations from './lib/locations';
 import * as operations from './lib/operations';
 import * as organizations from './lib/organizations';
@@ -15,6 +16,7 @@ export interface Model {
   access: access.Model;
   emergencies: emergencies.Model;
   flows: flows.Model;
+  globalClusters: globalClusters.Model;
   locations: locations.Model;
   operations: operations.Model;
   organizations: organizations.Model;
@@ -28,6 +30,7 @@ export {
   emergencies,
   flows,
   forms,
+  globalClusters,
   locations,
   operations,
   organizations,

@@ -7,6 +7,7 @@ import {
   forms,
   emergencies,
   flows,
+  globalClusters,
   locations,
   organizations,
   operations,
@@ -428,6 +429,16 @@ export class LiveModel implements Model {
             data: params,
           },
           resultType: flows.SEARCH_FLOWS_RESULT,
+        }),
+    };
+  }
+
+  get globalClusters(): globalClusters.Model {
+    return {
+      getGlobalClusters: () =>
+        this.call({
+          pathname: '/v1/global-cluster',
+          resultType: globalClusters.GET_GLOBAL_CLUSTERS_RESULT,
         }),
     };
   }

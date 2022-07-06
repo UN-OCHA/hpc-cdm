@@ -2,6 +2,7 @@ import { Button, IconButton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import {
   emergencies,
+  globalClusters,
   locations,
   organizations,
   plans,
@@ -36,6 +37,7 @@ interface FundingOption<T> {
 interface FundingOptions {
   anonymizedOrganizations: FundingOption<organizations.Organization>;
   emergencies: FundingOption<emergencies.Emergency>;
+  globalClusters: FundingOption<globalClusters.GlobalCluster>;
   locations: FundingOption<locations.Location>;
   organizations: FundingOption<organizations.Organization>;
   plans: FundingOption<plans.Plan>;
@@ -89,6 +91,15 @@ export default function FormNewEditFlowObjects(props: Props) {
           searchOnType: true,
           multiple: true,
           getOptions: model.locations.getLocationsAutocomplete,
+          getOptionLabel: (option) => option.name,
+        },
+      },
+      globalClusters: {
+        label: (s) => s.components.forms.newEditFlow.fields.globalClusters,
+        isDeletable: refDirection === 'source',
+        autocompleteProps: {
+          multiple: true,
+          getOptions: model.globalClusters.getGlobalClusters,
           getOptionLabel: (option) => option.name,
         },
       },

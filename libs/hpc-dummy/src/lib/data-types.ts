@@ -218,6 +218,24 @@ const FLOW = t.intersection([
   }),
 ]);
 
+const GLOBAL_CLUSTER = t.intersection([
+  t.type({
+    id: t.number,
+    type: t.string,
+    name: t.string,
+    code: t.string,
+    createdAt: t.string,
+    updatedAt: t.string,
+  }),
+  t.partial({
+    hrinfoId: t.union([t.number, t.null]),
+    homepage: t.union([t.string, t.null]),
+    defaultIconId: t.union([t.string, t.null]),
+    parentId: t.union([t.number, t.null]),
+    displayFTSSummariesFromYear: t.union([t.number, t.null]),
+  }),
+]);
+
 const LOCATION_BASE = t.intersection([
   t.type({
     id: t.number,
@@ -366,6 +384,7 @@ export const DUMMY_DATA = t.type(
     currentUser: t.union([t.null, t.number]),
     emergencies: t.array(EMERGENCY),
     flows: t.array(FLOW),
+    globalClusters: t.array(GLOBAL_CLUSTER),
     locations: t.array(LOCATION),
     operations: t.array(OPERATION),
     operationClusters: t.array(OPERATION_CLUSTER),

@@ -615,6 +615,14 @@ export class Dummy {
           }
         ),
       },
+      globalClusters: {
+        getGlobalClusters: dummyEndpoint(
+          'globalClusters.getGlobalClusters',
+          async () => {
+            return this.data.globalClusters;
+          }
+        ),
+      },
       operations: {
         getOperations: dummyEndpoint('operations.getOperations', async () => ({
           data: this.data.operations,
