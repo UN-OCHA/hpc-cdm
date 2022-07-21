@@ -81,6 +81,18 @@ export const THEME = {
 } as const;
 
 export const MUI_THEME = createTheme({
+  components: {
+    MuiTextField: {
+      defaultProps: {
+        margin: 'normal',
+      },
+    },
+    MuiFormControl: {
+      defaultProps: {
+        margin: 'normal',
+      },
+    },
+  },
   typography: {
     htmlFontSize: 10,
   },
