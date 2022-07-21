@@ -14,6 +14,7 @@ module.exports = (config) => {
     __dirname,
     'src/app/components/enketo/overrides/translator'
   );
+  config.resolve.alias['@mui/styled-engine'] = '@mui/styled-engine-sc';
 
   return config;
 };
