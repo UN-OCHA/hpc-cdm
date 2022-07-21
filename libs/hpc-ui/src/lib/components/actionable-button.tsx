@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IconType } from 'react-icons/lib';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress } from '@mui/material';
 import { MdWarning } from 'react-icons/md';
 
 import { Button, ButtonColor } from './button';

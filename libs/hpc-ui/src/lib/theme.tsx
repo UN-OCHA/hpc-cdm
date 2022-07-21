@@ -5,8 +5,8 @@ import styled, {
   ThemedStyledInterface,
   ThemeProvider as SCThemeProvider,
 } from 'styled-components';
-import { ThemeProvider as MUIThemeProvider } from '@material-ui/core';
-import { createTheme } from '@material-ui/core/styles';
+import { ThemeProvider as MUIThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 
 const COLOR_PALETTE = {
   red: {

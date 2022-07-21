@@ -6,7 +6,9 @@ import { reportingWindows } from '@unocha/hpc-data';
 import { AppContext } from '../context';
 import { t } from '../../i18n';
 import dayjs from '../../libraries/dayjs';
-import { Tooltip, withStyles } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
+
+import withStyles from '@mui/styles/withStyles';
 
 interface Props {
   className?: string;

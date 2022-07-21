@@ -6,7 +6,7 @@ import {
   MenuList,
   Paper,
   Grow,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import { Session } from '@unocha/hpc-core';
 import { i18n } from '@unocha/hpc-core';

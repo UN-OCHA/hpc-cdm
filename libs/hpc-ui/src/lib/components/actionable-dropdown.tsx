@@ -7,7 +7,7 @@ import {
   Paper,
   Grow,
   CircularProgress,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import { MdWarning, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { styled } from '../theme';
