@@ -3,7 +3,6 @@ import styled, {
   css,
   ThemedCssFunction,
   ThemedStyledInterface,
-  ThemeProvider as SCThemeProvider,
 } from 'styled-components';
 import { ThemeProvider as MUIThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
@@ -93,6 +92,7 @@ export const MUI_THEME = createTheme({
       main: THEME.colors.secondary.normal,
     },
   },
+  ...THEME,
 });
 
 export type Theme = typeof THEME;
@@ -104,8 +104,4 @@ export { themedStyled as styled, themedCSS as css };
 
 export const ThemeProvider = (props: {
   children: JSX.Element | JSX.Element[];
-}) => (
-  <SCThemeProvider theme={THEME}>
-    <MUIThemeProvider theme={MUI_THEME}>{props.children}</MUIThemeProvider>
-  </SCThemeProvider>
-);
+}) => <MUIThemeProvider theme={MUI_THEME}>{props.children}</MUIThemeProvider>;
