@@ -3,10 +3,9 @@ import styled, {
   css,
   ThemedCssFunction,
   ThemedStyledInterface,
-  ThemeProvider as SCThemeProvider,
 } from 'styled-components';
-import { ThemeProvider as MUIThemeProvider } from '@material-ui/core';
-import { createTheme } from '@material-ui/core/styles';
+import { ThemeProvider as MUIThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 
 const COLOR_PALETTE = {
   red: {
@@ -82,6 +81,18 @@ export const THEME = {
 } as const;
 
 export const MUI_THEME = createTheme({
+  components: {
+    MuiTextField: {
+      defaultProps: {
+        margin: 'normal',
+      },
+    },
+    MuiFormControl: {
+      defaultProps: {
+        margin: 'normal',
+      },
+    },
+  },
   typography: {
     htmlFontSize: 10,
   },
@@ -93,6 +104,7 @@ export const MUI_THEME = createTheme({
       main: THEME.colors.secondary.normal,
     },
   },
+  ...THEME,
 });
 
 export type Theme = typeof THEME;
@@ -104,8 +116,4 @@ export { themedStyled as styled, themedCSS as css };
 
 export const ThemeProvider = (props: {
   children: JSX.Element | JSX.Element[];
-}) => (
-  <SCThemeProvider theme={THEME}>
-    <MUIThemeProvider theme={MUI_THEME}>{props.children}</MUIThemeProvider>
-  </SCThemeProvider>
-);
+}) => <MUIThemeProvider theme={MUI_THEME}>{props.children}</MUIThemeProvider>;

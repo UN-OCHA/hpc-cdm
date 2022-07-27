@@ -6,7 +6,7 @@ import {
   MenuList,
   Paper,
   Grow,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import Caret from '../assets/icons/caret';
 import { MdLanguage } from 'react-icons/md';

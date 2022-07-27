@@ -6,9 +6,9 @@ import {
   List,
   ListItem,
   ListItemText,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import { styled, combineClasses, ThemeProvider } from '@unocha/hpc-ui';
+import { ThemeProvider } from '@unocha/hpc-ui';
 
 import { User } from './data-types';
 
