@@ -1,11 +1,12 @@
-import React from 'react';
+import { useMemo } from 'react';
 import styled, {
   css,
   ThemedCssFunction,
   ThemedStyledInterface,
 } from 'styled-components';
 import { ThemeProvider as MUIThemeProvider } from '@mui/material';
-import { createTheme } from '@mui/material/styles';
+import { enUS, frFR } from '@mui/material/locale';
+import { createTheme, ThemeOptions } from '@mui/material/styles';
 
 const COLOR_PALETTE = {
   red: {
@@ -80,7 +81,7 @@ export const THEME = {
   },
 } as const;
 
-export const MUI_THEME = createTheme({
+export const MUI_THEME: ThemeOptions = {
   components: {
     MuiTextField: {
       defaultProps: {
@@ -105,7 +106,7 @@ export const MUI_THEME = createTheme({
     },
   },
   ...THEME,
-});
+};
 
 export type Theme = typeof THEME;
 
@@ -114,6 +115,19 @@ const themedCSS: ThemedCssFunction<Theme> = css;
 
 export { themedStyled as styled, themedCSS as css };
 
+const localeMapper = {
+  en: enUS,
+  fr: frFR,
+};
+
 export const ThemeProvider = (props: {
   children: JSX.Element | JSX.Element[];
-}) => <MUIThemeProvider theme={MUI_THEME}>{props.children}</MUIThemeProvider>;
+  language?: keyof typeof localeMapper;
+}) => {
+  const { language } = props;
+  const muiTheme = useMemo(() => {
+    return createTheme(MUI_THEME, language ? localeMapper[language] : enUS);
+  }, [language]);
+
+  return <MUIThemeProvider theme={muiTheme}>{props.children}</MUIThemeProvider>;
+};
