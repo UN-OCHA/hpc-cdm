@@ -50,27 +50,19 @@ function dummyEndpoint<Args extends [unknown, ...unknown[]], Data>(
   fn: (...data: Args) => Promise<Data>
 ): (...args: Args) => Promise<Data> {
   return (...args: Args) =>
-    new Promise<Data>((resolve, reject) => {
+    new Promise<Data>((resolve) => {
       console.log('[DUMMY] Endpoint Called: ', name, ...args);
-      if (Math.random() > 0.1) {
-        setTimeout(
-          () =>
-            resolve(
-              fn(...args).then((data) => {
-                console.log(
-                  '[DUMMY] Endpoint Resolving: ',
-                  name,
-                  ...args,
-                  data
-                );
-                return data;
-              })
-            ),
-          300
-        );
-      } else {
-        setTimeout(() => reject(new Error('A random error ocurred!')), 300);
-      }
+      // TODO: allow triggering dummy endpoint failures for testing
+      setTimeout(
+        () =>
+          resolve(
+            fn(...args).then((data) => {
+              console.log('[DUMMY] Endpoint Resolving: ', name, ...args, data);
+              return data;
+            })
+          ),
+        300
+      );
     });
 }
 

@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress } from '@mui/material';
 
 import { Button } from './button';
 import { DataLoaderState } from '../util';

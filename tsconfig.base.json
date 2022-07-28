@@ -18,6 +18,7 @@
     "baseUrl": ".",
     "resolveJsonModule": true,
     "paths": {
+      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"],
       "@unocha/hpc-core": ["libs/hpc-core/src/index.ts"],
       "@unocha/hpc-data": ["libs/hpc-data/src/index.ts"],
       "@unocha/hpc-dummy": ["libs/hpc-dummy/src/index.ts"],
