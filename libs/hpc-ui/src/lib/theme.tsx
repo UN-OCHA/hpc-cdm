@@ -1,3 +1,4 @@
+import { merge } from 'lodash';
 import { useMemo } from 'react';
 import styled, {
   css,
@@ -79,6 +80,10 @@ export const THEME = {
   animations: {
     fast: '0.2s ease-out',
   },
+  typography: {
+    fontFamilyBase:
+      '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"',
+  },
 } as const;
 
 export const MUI_THEME: ThemeOptions = {
@@ -96,6 +101,19 @@ export const MUI_THEME: ThemeOptions = {
   },
   typography: {
     htmlFontSize: 10,
+    fontFamily: THEME.typography.fontFamilyBase,
+    h1: {
+      fontSize: '3rem',
+      fontWeight: 700,
+    },
+    h2: {
+      fontSize: '2.4rem',
+      fontWeight: 700,
+    },
+    h3: {
+      fontSize: '1.8rem',
+      fontWeight: 700,
+    },
   },
   palette: {
     primary: {
@@ -105,7 +123,6 @@ export const MUI_THEME: ThemeOptions = {
       main: THEME.colors.secondary.normal,
     },
   },
-  ...THEME,
 };
 
 export type Theme = typeof THEME;
@@ -126,7 +143,10 @@ export const ThemeProvider = (props: {
 }) => {
   const { language } = props;
   const muiTheme = useMemo(() => {
-    return createTheme(MUI_THEME, language ? localeMapper[language] : enUS);
+    return createTheme(
+      merge(THEME, MUI_THEME),
+      language ? localeMapper[language] : enUS
+    );
   }, [language]);
 
   return <MUIThemeProvider theme={muiTheme}>{props.children}</MUIThemeProvider>;
