@@ -1,5 +1,5 @@
 import { Grid, Typography } from '@mui/material';
-import { flows } from '@unocha/hpc-data';
+import { flows, projectVersions } from '@unocha/hpc-data';
 import { cloneDeep } from 'lodash';
 import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -31,7 +31,10 @@ const initialFlowDirs = {
 };
 
 const mapper = new Map(
-  Object.keys(inititalFlowObjects).map((key) => [key, `${key}s`])
+  Object.keys(inititalFlowObjects).map((key) => [
+    key,
+    key.endsWith('y') ? `${key.substring(0, key.length - 1)}ies` : `${key}s`,
+  ])
 );
 
 export default function FormNewEditFlow(props: Props) {
@@ -70,6 +73,17 @@ export default function FormNewEditFlow(props: Props) {
 
         if (!objToPush) {
           return acc;
+        }
+
+        if (curr.objectType === 'plan') {
+          objToPush.name = objToPush.planVersion.name;
+        } else if (curr.objectType === 'project' && objToPush.projectVersions) {
+          objToPush.name = objToPush.projectVersions.find(
+            (ver: projectVersions.ProjectVersion) =>
+              ver.id === objToPush.currentPublishedVersionId
+          ).name;
+        } else if (curr.objectType === 'governingEntity') {
+          objToPush.name = objToPush.governingEntityVersion.name;
         }
 
         accDirObj.push(objToPush);

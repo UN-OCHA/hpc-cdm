@@ -1,5 +1,12 @@
 import * as t from 'io-ts';
+import { EMERGENCY } from './emergencies';
+import { GOVERNING_ENTITY } from './governing-entities';
+import { GLOBAL_CLUSTER } from './global-clusters';
+import { LOCATION } from './locations';
 import { ORGANIZATION } from './organizations';
+import { PLAN } from './plans';
+import { PROJECT } from './projects';
+import { USAGE_YEAR } from './usage-years';
 
 import { INTEGER_FROM_STRING } from './util';
 
@@ -219,6 +226,63 @@ const FLOW = t.intersection([
         }),
       ])
     ),
+    locations: t.array(
+      t.intersection([
+        LOCATION,
+        t.type({
+          flowObject: FLOW_OBJECT,
+        }),
+      ])
+    ),
+    usageYears: t.array(
+      t.intersection([
+        USAGE_YEAR,
+        t.type({
+          flowObject: FLOW_OBJECT,
+        }),
+      ])
+    ),
+    emergencies: t.array(
+      t.intersection([
+        EMERGENCY,
+        t.type({
+          flowObject: FLOW_OBJECT,
+        }),
+      ])
+    ),
+    plans: t.array(
+      t.intersection([
+        PLAN,
+        t.type({
+          flowObject: FLOW_OBJECT,
+        }),
+      ])
+    ),
+    globalClusters: t.array(
+      t.intersection([
+        GLOBAL_CLUSTER,
+        t.type({
+          flowObject: FLOW_OBJECT,
+        }),
+      ])
+    ),
+    projects: t.array(
+      t.intersection([
+        PROJECT,
+        t.type({
+          flowObject: FLOW_OBJECT,
+        }),
+      ])
+    ),
+    governingEntities: t.array(
+      t.intersection([
+        GOVERNING_ENTITY,
+        t.type({
+          flowObject: FLOW_OBJECT,
+        }),
+      ])
+    ),
+    anonymizedOrganizations: t.array(ORGANIZATION),
   }),
 ]);
 

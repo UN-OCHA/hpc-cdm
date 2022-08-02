@@ -3,9 +3,14 @@ import { Session } from '@unocha/hpc-core';
 import {
   Model,
   access,
+  emergencies,
   flows,
+  governingEntities,
+  locations,
   operations,
   organizations,
+  plans,
+  projects,
   reportingWindows,
   errors,
 } from '@unocha/hpc-data';
@@ -477,6 +482,34 @@ export class Dummy {
           }
         ),
       },
+      emergencies: {
+        getEmergenciesAutocomplete: dummyEndpoint(
+          'emergencies.getEmergenciesAutocomplete',
+          async (params: emergencies.GetEmergenciesAutocompleteParams) => {
+            const { search } = params;
+            const { emergencies } = this.data;
+
+            return emergencies.filter((emergency) =>
+              emergency.name.includes(search)
+            );
+          }
+        ),
+      },
+      governingEntities: {
+        getGoverningEntitiesAutocomplete: dummyEndpoint(
+          'governingEntities.getGoverningEntitiesAutocomplete',
+          async (
+            params: governingEntities.GetGoverningEntitiesAutocompleteParams
+          ) => {
+            const { search } = params;
+            const { governingEntities } = this.data;
+
+            return governingEntities.filter((cluster) =>
+              cluster.name.includes(search)
+            );
+          }
+        ),
+      },
       flows: {
         getFlow: dummyEndpoint('flows.getFlow', async () => {
           throw new errors.NotFoundError();
@@ -591,6 +624,14 @@ export class Dummy {
           }
         ),
       },
+      globalClusters: {
+        getGlobalClusters: dummyEndpoint(
+          'globalClusters.getGlobalClusters',
+          async () => {
+            return this.data.globalClusters;
+          }
+        ),
+      },
       operations: {
         getOperations: dummyEndpoint('operations.getOperations', async () => ({
           data: this.data.operations,
@@ -672,6 +713,19 @@ export class Dummy {
           }
         ),
       },
+      locations: {
+        getLocationsAutocomplete: dummyEndpoint(
+          'locations.getLocationsAutocomplete',
+          async (params: locations.GetLocationsAutocompleteParams) => {
+            const { search } = params;
+            const { locations } = this.data;
+
+            return locations.filter((location) =>
+              location.name.includes(search)
+            );
+          }
+        ),
+      },
       organizations: {
         getOrganizationsAutocomplete: dummyEndpoint(
           'organizations.getOrganizationsAutocomplete',
@@ -680,6 +734,28 @@ export class Dummy {
             const { organizations } = this.data;
 
             return organizations.filter((org) => org.name.includes(search));
+          }
+        ),
+      },
+      plans: {
+        getPlansAutocomplete: dummyEndpoint(
+          'plans.getPlansAutocomplete',
+          async (params: plans.GetPlansAutocompleteParams) => {
+            const { search } = params;
+            const { plans } = this.data;
+
+            return plans.filter((plan) => plan.name.includes(search));
+          }
+        ),
+      },
+      projects: {
+        getProjectsAutocomplete: dummyEndpoint(
+          'projects.getProjectsAutocomplete',
+          async (params: projects.GetProjectsAutocompleteParams) => {
+            const { search } = params;
+            const { projects } = this.data;
+
+            return projects.filter((project) => project.name.includes(search));
           }
         ),
       },
@@ -801,6 +877,11 @@ export class Dummy {
             return this.getAssignmentResult(assignmentId);
           }
         ),
+      },
+      usageYears: {
+        getUsageYears: dummyEndpoint('usageYears.getUsageYears', async () => {
+          return this.data.usageYears;
+        }),
       },
     };
   };

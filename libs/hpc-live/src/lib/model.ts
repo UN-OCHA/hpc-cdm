@@ -5,13 +5,20 @@ import { util } from '@unocha/hpc-core';
 import {
   Model,
   forms,
+  emergencies,
   flows,
+  globalClusters,
+  governingEntities,
+  locations,
   organizations,
   operations,
+  plans,
+  projects,
   reportingWindows,
   access,
   errors,
   util as dataUtil,
+  usageYears,
 } from '@unocha/hpc-data';
 
 interface URLInterface {
@@ -396,6 +403,30 @@ export class LiveModel implements Model {
     };
   }
 
+  get emergencies(): emergencies.Model {
+    return {
+      getEmergenciesAutocomplete: (
+        params: emergencies.GetEmergenciesAutocompleteParams
+      ) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/emergency/${params.search}`,
+          resultType: emergencies.GET_EMERGENCIES_RESULT,
+        }),
+    };
+  }
+
+  get governingEntities(): governingEntities.Model {
+    return {
+      getGoverningEntitiesAutocomplete: (
+        params: governingEntities.GetGoverningEntitiesAutocompleteParams
+      ) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/cluster/${params.search}`,
+          resultType: governingEntities.GET_GOVERNING_ENTITIES_RESULT,
+        }),
+    };
+  }
+
   get flows(): flows.Model {
     return {
       getFlow: (params) =>
@@ -412,6 +443,28 @@ export class LiveModel implements Model {
             data: params,
           },
           resultType: flows.SEARCH_FLOWS_RESULT,
+        }),
+    };
+  }
+
+  get globalClusters(): globalClusters.Model {
+    return {
+      getGlobalClusters: () =>
+        this.call({
+          pathname: '/v1/global-cluster',
+          resultType: globalClusters.GET_GLOBAL_CLUSTERS_RESULT,
+        }),
+    };
+  }
+
+  get locations(): locations.Model {
+    return {
+      getLocationsAutocomplete: (
+        params: locations.GetLocationsAutocompleteParams
+      ) =>
+        this.call({
+          pathname: `/v2/location/autocomplete/${params.search}`,
+          resultType: locations.GET_LOCATIONS_RESULT,
         }),
     };
   }
@@ -444,6 +497,28 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v2/operations/${params.id}`,
           resultType: operations.GET_OPERATION_RESULT,
+        }),
+    };
+  }
+
+  get plans(): plans.Model {
+    return {
+      getPlansAutocomplete: (params: plans.GetPlansAutocompleteParams) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/plan/${params.search}`,
+          resultType: plans.GET_PLANS_RESULT,
+        }),
+    };
+  }
+
+  get projects(): projects.Model {
+    return {
+      getProjectsAutocomplete: (
+        params: projects.GetProjectsAutocompleteParams
+      ) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/project/${params.search}`,
+          resultType: projects.GET_PROJECTS_RESULT,
         }),
     };
   }
@@ -587,6 +662,16 @@ export class LiveModel implements Model {
           return handleAssignmentResult(result);
         }
       },
+    };
+  }
+
+  get usageYears(): usageYears.Model {
+    return {
+      getUsageYears: () =>
+        this.call({
+          pathname: '/v2/fts/usage-year',
+          resultType: usageYears.GET_USAGE_YEARS_RESULT,
+        }),
     };
   }
 

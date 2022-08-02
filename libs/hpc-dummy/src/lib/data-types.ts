@@ -106,6 +106,88 @@ const USER = t.type({
 
 export type User = t.TypeOf<typeof USER>;
 
+const EMERGENCY = t.intersection([
+  t.type({
+    id: t.number,
+    name: t.string,
+    date: t.string,
+    active: t.boolean,
+    restricted: t.boolean,
+    createdAt: t.string,
+    updatedAt: t.string,
+  }),
+  t.partial({
+    description: t.union([t.string, t.null]),
+    glideId: t.union([t.string, t.null]),
+    levelThree: t.union([t.boolean, t.null]),
+  }),
+]);
+
+const ENTITY_PROTOTYPE = t.type({
+  id: t.number,
+  refCode: t.string,
+  value: t.intersection([
+    t.type({
+      name: t.type({
+        en: t.type({
+          singular: t.string,
+          plural: t.string,
+        }),
+      }),
+    }),
+    t.partial({
+      possibleChildren: t.union([
+        t.array(
+          t.type({
+            refCode: t.string,
+            cardinality: t.string,
+            id: t.number,
+          })
+        ),
+        t.null,
+      ]),
+    }),
+  ]),
+  type: t.string,
+  planId: t.number,
+  orderNumber: t.number,
+  createdAt: t.string,
+  updatedAt: t.string,
+});
+
+const FIELD_CLUSTER = t.intersection([
+  t.type({
+    id: t.number,
+    planId: t.number,
+    entityPrototypeId: t.number,
+    entityType: t.string,
+    currentVersion: t.boolean,
+    latestVersion: t.boolean,
+    latestTaggedVersion: t.boolean,
+    createdAt: t.string,
+    updatedAt: t.string,
+    governingEntityVersionId: t.number,
+    governingEntityId: t.number,
+    name: t.string,
+    customReference: t.string,
+    overriding: t.boolean,
+    clusterNumber: t.string,
+    entityPrototype: ENTITY_PROTOTYPE,
+    value: t.union([
+      t.type({
+        icon: t.string,
+        orderNumber: t.number,
+      }),
+      t.partial({ categories: t.union([t.array(t.unknown), t.null]) }),
+    ]),
+  }),
+  t.partial({
+    versionTags: t.union([t.array(t.string), t.null]),
+    deletedAt: t.union([t.string, t.null]),
+    tags: t.union([t.array(t.string), t.null]),
+  }),
+]);
+
 const FLOW_REF_DIRECTION = t.keyof({
   source: null,
   destination: null,
@@ -201,6 +283,59 @@ const FLOW = t.intersection([
   }),
 ]);
 
+const GLOBAL_CLUSTER = t.intersection([
+  t.type({
+    id: t.number,
+    type: t.string,
+    name: t.string,
+    code: t.string,
+    createdAt: t.string,
+    updatedAt: t.string,
+  }),
+  t.partial({
+    hrinfoId: t.union([t.number, t.null]),
+    homepage: t.union([t.string, t.null]),
+    defaultIconId: t.union([t.string, t.null]),
+    parentId: t.union([t.number, t.null]),
+    displayFTSSummariesFromYear: t.union([t.number, t.null]),
+  }),
+]);
+
+const LOCATION_BASE = t.intersection([
+  t.type({
+    id: t.number,
+    name: t.string,
+    adminLevel: t.number,
+    status: t.string,
+    itosSync: t.boolean,
+    createdAt: t.string,
+    updatedAt: t.string,
+  }),
+  t.partial({
+    externalId: t.union([t.string, t.null]),
+    latitude: t.union([t.number, t.null]),
+    longitude: t.union([t.number, t.null]),
+    pcode: t.union([t.string, t.null]),
+    iso3: t.union([t.string, t.null]),
+    validOn: t.union([t.string, t.null]),
+  }),
+]);
+
+const LOCATION_CHILD = t.intersection([
+  LOCATION_BASE,
+  t.type({
+    parentId: t.number,
+  }),
+]);
+
+const LOCATION = t.intersection([
+  LOCATION_BASE,
+  t.partial({
+    parentId: t.union([t.number, t.null]),
+    children: t.union([t.array(LOCATION_CHILD), t.null]),
+  }),
+]);
+
 const OPERATION = t.type({
   id: t.number,
   name: t.string,
@@ -262,6 +397,70 @@ const ORGANIZATION = t.intersection([
   }),
 ]);
 
+const PLAN = t.intersection([
+  t.type({
+    id: t.number,
+    restricted: t.boolean,
+    createdAt: t.string,
+    updatedAt: t.string,
+    planVersionId: t.number,
+    planId: t.number,
+    name: t.string,
+    startDate: t.string,
+    endDate: t.string,
+    isForHPCProjects: t.boolean,
+    code: t.string,
+    currentVersion: t.boolean,
+    latestVersion: t.boolean,
+    latestTaggedVersion: t.boolean,
+  }),
+  t.partial({
+    revisionState: t.union([t.string, t.null]),
+    comments: t.union([t.string, t.null]),
+    customLocationCode: t.union([t.string, t.null]),
+    currentReportingPeriodId: t.union([t.number, t.null]),
+    lastPublishedReportingPeriodId: t.union([t.number, t.null]),
+    clusterSelectionType: t.union([t.string, t.null]),
+    versionTags: t.union([t.array(t.string), t.null]),
+  }),
+]);
+
+const PROJECT = t.intersection([
+  t.type({
+    id: t.number,
+    createdAt: t.string,
+    updatedAt: t.string,
+    latestVersionId: t.number,
+    name: t.string,
+    version: t.number,
+    projectVersionCode: t.string,
+    visible: t.boolean,
+  }),
+  t.partial({
+    code: t.union([t.string, t.null]),
+    creatorParticipantId: t.union([t.number, t.null]),
+    currentPublishedVersionId: t.union([t.number, t.null]),
+    implementationStatus: t.union([t.string, t.null]),
+    pdf: t.union([
+      t.partial({
+        anonymous: t.partial({
+          file: t.unknown,
+          generatedAt: t.union([t.string, t.number]),
+        }),
+      }),
+      t.null,
+    ]),
+    sourceProjectId: t.union([t.number, t.null]),
+  }),
+]);
+
+const USAGE_YEAR = t.type({
+  id: t.number,
+  year: t.string,
+  createdAt: t.string,
+  updatedAt: t.string,
+});
+
 const FORM = t.type(
   {
     id: t.number,
@@ -277,11 +476,18 @@ export const DUMMY_DATA = t.type(
     access: ACCESS,
     users: t.array(USER),
     currentUser: t.union([t.null, t.number]),
+    emergencies: t.array(EMERGENCY),
+    governingEntities: t.array(FIELD_CLUSTER),
     flows: t.array(FLOW),
+    globalClusters: t.array(GLOBAL_CLUSTER),
+    locations: t.array(LOCATION),
     operations: t.array(OPERATION),
     operationClusters: t.array(OPERATION_CLUSTER),
     organizations: t.array(ORGANIZATION),
+    plans: t.array(PLAN),
+    projects: t.array(PROJECT),
     reportingWindows: t.array(REPORTING_WINDOW),
+    usageYears: t.array(USAGE_YEAR),
     forms: t.array(FORM),
   },
   'DUMMY_DATA'

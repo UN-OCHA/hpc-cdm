@@ -41,7 +41,15 @@
       },
       "newEditFlow": {
         "fields": {
-          "organizations": "Organization(s)"
+          "organizations": "Organization(s)",
+          "usageYears": "Année(s) d'utilisation",
+          "locations": "Lieu(x)",
+          "emergencies": "Urgence(s)",
+          "plans": "Plan(s)",
+          "globalClusters": "Cluster(s) global(aux)",
+          "projects": "Projet(s)",
+          "governingEntities": "Cluster(s) de terrain",
+          "anonymizedOrganizations": "Organisation(s) anonymisée(s)"
         },
         "funding": "Financement",
         "sources": "Source(s)",
