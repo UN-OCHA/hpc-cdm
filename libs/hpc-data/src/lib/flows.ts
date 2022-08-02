@@ -7,6 +7,7 @@ const FLOW_REF_DIRECTION = t.keyof({
   source: null,
   destination: null,
 });
+export type FlowRefDirection = t.TypeOf<typeof FLOW_REF_DIRECTION>;
 
 const FLOW_LIST = t.keyof({
   pending: null,
@@ -16,11 +17,25 @@ const FLOW_LIST = t.keyof({
 
 export type FlowList = t.TypeOf<typeof FLOW_LIST>;
 
+const FLOW_OBJECT_TYPE = t.keyof({
+  organization: null,
+  anonymizedOrganization: null,
+  usageYear: null,
+  location: null,
+  emergency: null,
+  plan: null,
+  project: null,
+  globalCluster: null,
+  governingEntity: null,
+});
+
+export type FlowObjectType = t.TypeOf<typeof FLOW_OBJECT_TYPE>;
+
 const FLOW_OBJECT = t.intersection([
   t.type({
     objectID: t.number,
     refDirection: FLOW_REF_DIRECTION,
-    objectType: t.string,
+    objectType: FLOW_OBJECT_TYPE,
   }),
   t.partial({
     flowID: t.number,

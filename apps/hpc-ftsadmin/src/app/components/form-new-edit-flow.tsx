@@ -1,22 +1,97 @@
 import { Grid, Typography } from '@mui/material';
 import { flows } from '@unocha/hpc-data';
+import { cloneDeep } from 'lodash';
+import { useMemo } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { t } from '../../i18n';
-import { useForm, FormProvider } from 'react-hook-form';
 import { AppContext } from '../context';
-import FormNewEditFlowObjectControl from './form-new-edit-flow-object-control';
+import FormNewEditFlowObjects from './form-new-edit-flow-objects';
 
 interface Props {
   existing?: flows.Flow;
 }
 
+const inititalFlowObjects: {
+  [key in flows.FlowObjectType]: { id: number; flowObject: unknown }[];
+} = {
+  organization: [],
+  anonymizedOrganization: [],
+  usageYear: [],
+  location: [],
+  emergency: [],
+  plan: [],
+  project: [],
+  globalCluster: [],
+  governingEntity: [],
+};
+
+const initialFlowDirs = {
+  source: cloneDeep(inititalFlowObjects),
+  destination: cloneDeep(inititalFlowObjects),
+};
+
+const mapper = new Map(
+  Object.keys(inititalFlowObjects).map((key) => [key, `${key}s`])
+);
+
 export default function FormNewEditFlow(props: Props) {
   const { existing } = props;
   const isExistingFlow = !!existing;
-  const formMethods = useForm({
-    defaultValues: {
-      source: {
-        organizations: [],
-      },
+  const initial = {
+    ...existing,
+    ...initialFlowDirs,
+  };
+
+  const formMethods = useForm<typeof initial>({
+    defaultValues: useMemo(() => {
+      if (!existing) {
+        return {};
+      }
+
+      return existing.flowObjects?.reduce((acc, curr) => {
+        const key = mapper.get(curr.objectType);
+
+        if (!key) {
+          return acc;
+        }
+
+        const accDirObj = acc[curr.refDirection][curr.objectType];
+        const thisTypeObjs = existing[key as keyof flows.Flow];
+
+        if (!(thisTypeObjs && Array.isArray(thisTypeObjs))) {
+          return acc;
+        }
+
+        const objToPush = (thisTypeObjs as any[]).find(
+          (obj) =>
+            obj.flowObject?.refDirection === curr.refDirection &&
+            obj.id === curr.objectID
+        );
+
+        if (!objToPush) {
+          return acc;
+        }
+
+        accDirObj.push(objToPush);
+
+        return acc;
+      }, initialFlowDirs);
+    }, [existing]),
+    resolver: async (data, context) => {
+      const { source, destination, ...values } = data;
+
+      const flow = {
+        ...values,
+        flowObjects: Object.values(source)
+          .concat(Object.values(destination))
+          .flat()
+          .map((flow) => flow.flowObject),
+      };
+
+      return {
+        values: { flow },
+        errors: {},
+      };
     },
   });
 
@@ -82,8 +157,23 @@ export default function FormNewEditFlow(props: Props) {
                   {t.get(lang, (s) => s.components.forms.newEditFlow.funding)}
                 </Typography>
               </Grid>
-              <Grid item xs={12}>
-                <FormNewEditFlowObjectControl refDirection="source" />
+              <Grid item xs={12} lg={6}>
+                <FormNewEditFlowObjects
+                  refDirection="source"
+                  label={t.get(
+                    lang,
+                    (s) => s.components.forms.newEditFlow.sources
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} lg={6}>
+                <FormNewEditFlowObjects
+                  refDirection="destination"
+                  label={t.get(
+                    lang,
+                    (s) => s.components.forms.newEditFlow.destinations
+                  )}
+                />
               </Grid>
             </Grid>
           </form>

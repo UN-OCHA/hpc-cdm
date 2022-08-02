@@ -44,6 +44,8 @@
           "organizations": "Organization(s)"
         },
         "funding": "Financement",
+        "sources": "Source(s)",
+        "destinations": "Destination(s)",
         "createdAt": "Créé le {date} par {author}",
         "updatedAt": "Mis à jour {date} par {author}"
       }
