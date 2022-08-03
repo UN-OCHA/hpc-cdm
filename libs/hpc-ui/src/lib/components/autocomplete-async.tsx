@@ -38,6 +38,7 @@ interface Props<T, Multiple extends boolean | undefined>
   };
   getOptions: (params: any) => Promise<T[]>; // TODO: remove any
   getOptionLabel: (option: T) => string;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }
 
 /**
@@ -48,7 +49,14 @@ export default function AutocompleteAsync<
   T,
   Multiple extends boolean | undefined
 >(props: Props<T, Multiple>) {
-  const { strings, getOptions, getOptionLabel, searchOnType, ...rest } = props;
+  const {
+    strings,
+    getOptions,
+    getOptionLabel,
+    searchOnType,
+    inputRef,
+    ...rest
+  } = props;
   const [options, setOptions] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
   const [noOptionsText, setNoOptionsText] = useState<string | null>(
@@ -89,6 +97,7 @@ export default function AutocompleteAsync<
           label={strings.label}
           placeholder={strings.placeholder}
           helperText={strings.helperText}
+          inputRef={inputRef}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

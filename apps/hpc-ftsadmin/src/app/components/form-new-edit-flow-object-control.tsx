@@ -12,6 +12,7 @@ export interface FormNewEditFlowObjectControlProps<T> {
   overlap?: boolean;
   getOptions: (params: any) => Promise<T[]>;
   optionLabel?: keyof T;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }
 
 export default function FormNewEditFlowObjectControl<T>(

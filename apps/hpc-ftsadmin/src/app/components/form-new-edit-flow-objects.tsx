@@ -10,7 +10,7 @@ import {
   usageYears,
 } from '@unocha/hpc-data';
 import { styled } from '@unocha/hpc-ui';
-import { useMemo, useState } from 'react';
+import { createRef, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { MdAdd, MdRemoveCircleOutline } from 'react-icons/md';
 import { t } from '../../i18n';
@@ -78,6 +78,7 @@ export default function FormNewEditFlowObjects(props: Props) {
           getOptions: model.organizations.getOrganizationsAutocomplete,
           searchOnType: true,
           isDeletable: true,
+          inputRef: createRef(),
         },
       }),
       usageYear: {
@@ -96,6 +97,7 @@ export default function FormNewEditFlowObjects(props: Props) {
         searchOnType: true,
         isDeletable: refDirection === 'source',
         overlap: true,
+        inputRef: createRef(),
       },
       project: {
         label: (s) => s.components.forms.newEditFlow.fields.projects,
@@ -103,18 +105,21 @@ export default function FormNewEditFlowObjects(props: Props) {
         searchOnType: true,
         isDeletable: true,
         overlap: true,
+        inputRef: createRef(),
       },
       emergency: {
         label: (s) => s.components.forms.newEditFlow.fields.emergencies,
         getOptions: model.emergencies.getEmergenciesAutocomplete,
         searchOnType: true,
         isDeletable: true,
+        inputRef: createRef(),
         overlap: true,
       },
       globalCluster: {
         label: (s) => s.components.forms.newEditFlow.fields.globalClusters,
         getOptions: model.globalClusters.getGlobalClusters,
         isDeletable: refDirection === 'source',
+        inputRef: createRef(),
       },
       ...(showGoverningEntities && {
         governingEntity: {
@@ -122,6 +127,7 @@ export default function FormNewEditFlowObjects(props: Props) {
           getOptions: model.governingEntities.getGoverningEntitiesAutocomplete,
           searchOnType: true,
           isDeletable: true,
+          inputRef: createRef(),
         },
       }),
     }),
@@ -140,6 +146,13 @@ export default function FormNewEditFlowObjects(props: Props) {
   );
   const setVisible = (key: keyof Fields) => {
     setVisibleFields(new Set(visibleFields).add(key));
+
+    // Hacky timeout to allow re-render. Is there a more React-y way to do this?
+    setTimeout(() => {
+      if (Object.keys(fields).includes(key)) {
+        fields[key as keyof Fields]?.inputRef?.current?.focus();
+      }
+    }, 1);
   };
   const setHidden = (key: keyof Fields) => {
     const visible = new Set(visibleFields);
