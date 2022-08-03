@@ -9,6 +9,7 @@ export interface FormNewEditFlowObjectControlProps<T> {
   refDirection: string;
   label: (s: Strings) => string;
   searchOnType?: boolean;
+  overlap?: boolean;
   getOptions: (params: any) => Promise<T[]>;
   optionLabel?: keyof T;
 }
@@ -20,11 +21,13 @@ export default function FormNewEditFlowObjectControl<T>(
     refDirection,
     objectType,
     label,
+    overlap,
     optionLabel = 'name',
     ...otherProps
   } = props;
-  const { control } = useFormContext();
+  const { control, watch } = useFormContext();
   const name = `${refDirection}.${objectType}`;
+  const watchField = watch(name);
 
   return (
     <AppContext.Consumer>
@@ -37,6 +40,16 @@ export default function FormNewEditFlowObjectControl<T>(
               strings={{
                 ...t.get(lang, (s) => s.components.forms.autocomplete),
                 label: t.get(lang, label),
+                ...(watchField &&
+                  watchField.length > 1 && {
+                    helperText: t.get(
+                      lang,
+                      (s) =>
+                        s.components.forms.newEditFlow.hints[
+                          overlap ? 'overlap' : 'shared'
+                        ]
+                    ),
+                  }),
               }}
               ChipProps={{
                 sx: { maxWidth: '440px!important' },

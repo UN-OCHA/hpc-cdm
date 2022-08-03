@@ -53,6 +53,10 @@
           "governingEntities": "Field cluster(s)",
           "anonymizedOrganizations": "Anonymized organization(s)"
         },
+        "hints": {
+          "shared": "Shared: will be reported as possible funding for each of the selected values",
+          "overlap": "Overlap: will be reported as direct funding for each of the selected values"
+        },
         "funding": "Funding",
         "sources": "Source(s)",
         "destinations": "Destination(s)",

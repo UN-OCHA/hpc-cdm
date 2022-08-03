@@ -53,6 +53,10 @@
           "governingEntities": "Cluster(s) de terrain",
           "anonymizedOrganizations": "Organisation(s) anonymisée(s)"
         },
+        "hints": {
+          "shared": "Partagé: sera signalé comme financement possible pour chacune des valeurs sélectionnées.",
+          "overlap": "Chevauchement: sera déclaré comme financement direct pour chacune des valeurs sélectionnées."
+        },
         "funding": "Financement",
         "sources": "Source(s)",
         "destinations": "Destination(s)",

@@ -30,6 +30,7 @@ interface Props<T, Multiple extends boolean | undefined>
   strings: {
     label: ReactNode;
     placeholder?: string;
+    helperText?: string;
     searchError: string;
     validation: {
       minLength: string;
@@ -87,6 +88,7 @@ export default function AutocompleteAsync<
           {...params}
           label={strings.label}
           placeholder={strings.placeholder}
+          helperText={strings.helperText}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

@@ -95,18 +95,21 @@ export default function FormNewEditFlowObjects(props: Props) {
         getOptions: model.plans.getPlansAutocomplete,
         searchOnType: true,
         isDeletable: refDirection === 'source',
+        overlap: true,
       },
       project: {
         label: (s) => s.components.forms.newEditFlow.fields.projects,
         getOptions: model.projects.getProjectsAutocomplete,
         searchOnType: true,
         isDeletable: true,
+        overlap: true,
       },
       emergency: {
         label: (s) => s.components.forms.newEditFlow.fields.emergencies,
         getOptions: model.emergencies.getEmergenciesAutocomplete,
         searchOnType: true,
         isDeletable: true,
+        overlap: true,
       },
       globalCluster: {
         label: (s) => s.components.forms.newEditFlow.fields.globalClusters,
