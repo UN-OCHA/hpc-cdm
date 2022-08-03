@@ -39,7 +39,7 @@ interface Fields {
   project: Field<projects.Project>;
   globalCluster: Field<globalClusters.GlobalCluster>;
   governingEntity?: Field<governingEntities.GoverningEntity>;
-  anonymizedOrganization: Field<organizations.Organization>;
+  anonymizedOrganization?: Field<organizations.Organization>;
 }
 
 export default function FormNewEditFlowObjects(props: Props) {
@@ -48,7 +48,13 @@ export default function FormNewEditFlowObjects(props: Props) {
   const { watch } = useFormContext();
 
   const watchPlan = watch(`${refDirection}.plan`);
+  const watchDestOrgs = watch('destination.organization');
+
   const showGoverningEntities = !!(watchPlan && watchPlan.length);
+  const showAnonymizedOrgs = !!(
+    watchDestOrgs &&
+    watchDestOrgs.some((org: organizations.Organization) => org.collectiveInd)
+  );
 
   const fields = useMemo<Fields>(
     () => ({
@@ -57,12 +63,14 @@ export default function FormNewEditFlowObjects(props: Props) {
         getOptions: model.organizations.getOrganizationsAutocomplete,
         searchOnType: true,
       },
-      anonymizedOrganization: {
-        label: (s) =>
-          s.components.forms.newEditFlow.fields.anonymizedOrganizations,
-        getOptions: model.organizations.getOrganizationsAutocomplete,
-        searchOnType: true,
-      },
+      ...(showAnonymizedOrgs && {
+        anonymizedOrganization: {
+          label: (s) =>
+            s.components.forms.newEditFlow.fields.anonymizedOrganizations,
+          getOptions: model.organizations.getOrganizationsAutocomplete,
+          searchOnType: true,
+        },
+      }),
       usageYear: {
         label: (s) => s.components.forms.newEditFlow.fields.usageYears,
         getOptions: model.usageYears.getUsageYears,
@@ -100,7 +108,7 @@ export default function FormNewEditFlowObjects(props: Props) {
         },
       }),
     }),
-    [model, showGoverningEntities]
+    [model, showGoverningEntities, showAnonymizedOrgs]
   );
 
   return (
