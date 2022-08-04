@@ -51,17 +51,22 @@
           "globalClusters": "Global cluster(s)",
           "projects": "Project(s)",
           "governingEntities": "Field cluster(s)",
-          "anonymizedOrganizations": "Anonymized organization(s)"
+          "anonymizedOrganizations": "Anonymized organization(s)",
+          "restrictedInternal": "Restricted to internal use",
+          "errorCorrection": "as error correction"
         },
         "hints": {
           "shared": "Shared: will be reported as possible funding for each of the selected values",
-          "overlap": "Overlap: will be reported as direct funding for each of the selected values"
+          "overlap": "Overlap: will be reported as direct funding for each of the selected values",
+          "restrictedTooltip": "The Restricted setting applies to this flow only. If linked parent or child flows should have the same Restricted setting, you must manually update those flows accordingly."
         },
         "funding": "Funding",
         "sources": "Source(s)",
         "destinations": "Destination(s)",
         "createdAt": "Created {date} by {author}",
-        "updatedAt": "Updated {date} by {author}"
+        "updatedAt": "Updated {date} by {author}",
+        "saveAndViewAll": "Save & view all",
+        "save": "Save"
       }
     },
     "notFound": {

@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
+import FormNewEditFlowActions from './form-new-edit-flow-actions';
 import FormNewEditFlowObjects from './form-new-edit-flow-objects';
 
 interface Props {
@@ -40,10 +41,13 @@ const mapper = new Map(
 export default function FormNewEditFlow(props: Props) {
   const { existing } = props;
   const isExistingFlow = !!existing;
-  const initial = {
-    ...existing,
-    ...initialFlowDirs,
-  };
+  const initial = useMemo(
+    () => ({
+      ...existing,
+      ...initialFlowDirs,
+    }),
+    [existing]
+  );
 
   const formMethods = useForm<typeof initial>({
     defaultValues: useMemo(() => {
@@ -51,7 +55,7 @@ export default function FormNewEditFlow(props: Props) {
         return {};
       }
 
-      return existing.flowObjects?.reduce((acc, curr) => {
+      const flowObjects = existing.flowObjects?.reduce((acc, curr) => {
         const key = mapper.get(curr.objectType);
 
         if (!key) {
@@ -90,7 +94,13 @@ export default function FormNewEditFlow(props: Props) {
 
         return acc;
       }, initialFlowDirs);
-    }, [existing]),
+
+      return {
+        ...initial,
+        ...flowObjects,
+        isErrorCorrection: false,
+      };
+    }, [existing, initial]),
     resolver: async (data, context) => {
       const { source, destination, ...values } = data;
 
@@ -117,7 +127,7 @@ export default function FormNewEditFlow(props: Props) {
             onSubmit={formMethods.handleSubmit((data) => console.log(data))}
           >
             <Grid container spacing={3} sx={{ marginY: 4 }}>
-              <Grid item xs={12} sx={{ marginBottom: 2 }}>
+              <Grid item xs={12} lg={4} sx={{ marginBottom: 2 }}>
                 <Typography variant="h1" sx={{ marginBottom: 2 }}>
                   {isExistingFlow
                     ? `${t.get(lang, (s) => s.routes.editFlow.title)} ${
@@ -166,6 +176,9 @@ export default function FormNewEditFlow(props: Props) {
                   </Typography>
                 )}
               </Grid>
+              <Grid item xs={12} lg={8}>
+                <FormNewEditFlowActions />
+              </Grid>
               <Grid item xs={12} sx={{ marginBottom: 1 }}>
                 <Typography variant="h2">
                   {t.get(lang, (s) => s.components.forms.newEditFlow.funding)}
@@ -189,6 +202,9 @@ export default function FormNewEditFlow(props: Props) {
                   )}
                 />
               </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <FormNewEditFlowActions />
             </Grid>
           </form>
         </FormProvider>

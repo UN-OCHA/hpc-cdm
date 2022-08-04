@@ -51,17 +51,22 @@
           "globalClusters": "Cluster(s) global(aux)",
           "projects": "Projet(s)",
           "governingEntities": "Cluster(s) de terrain",
-          "anonymizedOrganizations": "Organisation(s) anonymisée(s)"
+          "anonymizedOrganizations": "Organisation(s) anonymisée(s)",
+          "restrictedInternal": "Restreint à l'usage interne",
+          "errorCorrection": "comme correction des erreurs"
         },
         "hints": {
           "shared": "Partagé: sera signalé comme financement possible pour chacune des valeurs sélectionnées.",
-          "overlap": "Chevauchement: sera déclaré comme financement direct pour chacune des valeurs sélectionnées."
+          "overlap": "Chevauchement: sera déclaré comme financement direct pour chacune des valeurs sélectionnées.",
+          "restrictedTooltip": "Le paramètre Restreint s'applique uniquement à ce flux. Si des flux parents ou enfants liés doivent avoir le même paramètre Restreint, vous devez mettre à jour manuellement ces flux en conséquence."
         },
         "funding": "Financement",
         "sources": "Source(s)",
         "destinations": "Destination(s)",
         "createdAt": "Créé le {date} par {author}",
-        "updatedAt": "Mis à jour {date} par {author}"
+        "updatedAt": "Mis à jour {date} par {author}",
+        "saveAndViewAll": "Sauvegarder & voir tous",
+        "save": "Sauvez"
       }
     },
     "notFound": {
