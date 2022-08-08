@@ -1,4 +1,5 @@
 import { C } from '@unocha/hpc-ui';
+import { useCallback } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { t } from '../../i18n';
 import { Strings } from '../../i18n/iface';
@@ -26,9 +27,14 @@ export default function FormNewEditFlowObjectControl<T>(
     optionLabel = 'name',
     ...otherProps
   } = props;
-  const { control, watch } = useFormContext();
+  const { control, watch, getFieldState, formState } = useFormContext();
   const name = `${refDirection}.${objectType}`;
   const watchField = watch(name);
+
+  const getOptionLabel = useCallback(
+    (option) => option[optionLabel],
+    [optionLabel]
+  );
 
   return (
     <AppContext.Consumer>
@@ -52,13 +58,49 @@ export default function FormNewEditFlowObjectControl<T>(
                     ),
                   }),
               }}
-              ChipProps={{
-                sx: { maxWidth: '440px!important' },
-              }}
               fullWidth
               multiple
               autoHighlight
-              getOptionLabel={(option) => option[optionLabel]}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => {
+                  const { error } = getFieldState(
+                    `${name}.id${option.id}`,
+                    formState
+                  );
+                  return (
+                    <C.ValidatedChip
+                      {...getTagProps({ index })}
+                      label={getOptionLabel(option)}
+                      sx={{ maxWidth: '440px!important' }}
+                      state={error ? 'error' : 'default'}
+                      strings={{
+                        error:
+                          error &&
+                          t
+                            .get(
+                              lang,
+                              (s) =>
+                                s.components.forms.newEditFlow.hints.invalidTag
+                            )
+                            .replace('{item}', getOptionLabel(option))
+                            .replace(
+                              '{validOptions}',
+                              (
+                                error as unknown as { options: unknown[] }
+                              ).options
+                                .map((validOption) =>
+                                  typeof validOption === 'number'
+                                    ? validOption
+                                    : getOptionLabel(validOption)
+                                )
+                                .join('; ')
+                            ),
+                      }}
+                    />
+                  );
+                })
+              }
+              getOptionLabel={getOptionLabel}
               onChange={(event, value) =>
                 onChange(
                   value.map((arrItem) => ({

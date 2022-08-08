@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash';
 import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { t } from '../../i18n';
-import { AppContext } from '../context';
+import { AppContext, getEnv } from '../context';
 import FormNewEditFlowActions from './form-new-edit-flow-actions';
 import FormNewEditFlowObjects from './form-new-edit-flow-objects';
 
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const inititalFlowObjects: {
-  [key in flows.FlowObjectType]: { id: number; flowObject: unknown }[];
+  [key in flows.FlowObjectType]: { id: number; flowObject: flows.FlowObject }[];
 } = {
   organization: [],
   anonymizedOrganization: [],
@@ -38,8 +38,13 @@ const mapper = new Map(
   ])
 );
 
+const reverseMapper = new Map(
+  Array.from(mapper, (entry) => [entry[1], entry[0]])
+);
+
 export default function FormNewEditFlow(props: Props) {
   const { existing } = props;
+  const { model } = getEnv();
   const isExistingFlow = !!existing;
   const initial = useMemo(
     () => ({
@@ -112,9 +117,39 @@ export default function FormNewEditFlow(props: Props) {
           .map((flow) => flow.flowObject),
       };
 
+      const { reason } = await model.flows.checkFlowConsistency({ flow });
+
+      const errors =
+        reason?.reduce((acc, r) => {
+          const objectType = reverseMapper.get(r.type);
+          r.values.forEach((value) => {
+            const refDirection = value.refDirection;
+
+            if (!(objectType && refDirection)) {
+              return acc;
+            }
+
+            if (!(refDirection in acc)) {
+              acc[refDirection] = {};
+            }
+
+            const accRefDir = acc[refDirection] as Record<string, unknown>;
+
+            if (!(objectType in accRefDir)) {
+              accRefDir[objectType] = {};
+            }
+
+            (accRefDir[objectType] as Record<string, unknown>)[
+              `id${value.id}`
+            ] = value;
+          });
+
+          return acc;
+        }, {} as Record<string, unknown>) || {};
+
       return {
         values: { flow },
-        errors: {},
+        errors,
       };
     },
   });

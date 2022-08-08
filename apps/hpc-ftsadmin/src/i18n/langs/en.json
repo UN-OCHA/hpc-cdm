@@ -58,7 +58,8 @@
         "hints": {
           "shared": "Shared: will be reported as possible funding for each of the selected values",
           "overlap": "Overlap: will be reported as direct funding for each of the selected values",
-          "restrictedTooltip": "The Restricted setting applies to this flow only. If linked parent or child flows should have the same Restricted setting, you must manually update those flows accordingly."
+          "restrictedTooltip": "The Restricted setting applies to this flow only. If linked parent or child flows should have the same Restricted setting, you must manually update those flows accordingly.",
+          "invalidTag": "{item} is not in the list of acceptable options: {validOptions}"
         },
         "funding": "Funding",
         "sources": "Source(s)",

@@ -58,7 +58,8 @@
         "hints": {
           "shared": "Partagé: sera signalé comme financement possible pour chacune des valeurs sélectionnées.",
           "overlap": "Chevauchement: sera déclaré comme financement direct pour chacune des valeurs sélectionnées.",
-          "restrictedTooltip": "Le paramètre Restreint s'applique uniquement à ce flux. Si des flux parents ou enfants liés doivent avoir le même paramètre Restreint, vous devez mettre à jour manuellement ces flux en conséquence."
+          "restrictedTooltip": "Le paramètre Restreint s'applique uniquement à ce flux. Si des flux parents ou enfants liés doivent avoir le même paramètre Restreint, vous devez mettre à jour manuellement ces flux en conséquence.",
+          "invalidTag": "{item} n'est pas dans la liste des options acceptables: {validOptions}"
         },
         "funding": "Financement",
         "sources": "Source(s)",

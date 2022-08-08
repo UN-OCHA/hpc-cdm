@@ -352,7 +352,7 @@ export const FLOW_CONSISTENCY_REASON = t.type({
     t.intersection([
       ANY_FLOW_TYPE,
       t.type({
-        options: t.array(ANY_FLOW_TYPE),
+        options: t.array(t.union([ANY_FLOW_TYPE, t.number])),
         refDirection: FLOW_REF_DIRECTION,
       }),
     ])

@@ -24,6 +24,7 @@ import * as sidebarNavigation from './lib/components/sidebar-navigation';
 import SecondaryNavigation from './lib/components/secondary-navigation';
 import TertiaryNavigation from './lib/components/tertiary-navigation';
 import Toolbar from './lib/components/toolbar';
+import ValidatedChip from './lib/components/validated-chip';
 import * as dialogs from './lib/components/dialogs';
 
 import Caret from './lib/assets/icons/caret';
@@ -50,6 +51,7 @@ const COMPONENTS = {
   SecondaryNavigation,
   TertiaryNavigation,
   Toolbar,
+  ValidatedChip,
 };
 
 const ICONS = {
