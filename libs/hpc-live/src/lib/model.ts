@@ -444,6 +444,16 @@ export class LiveModel implements Model {
           },
           resultType: flows.SEARCH_FLOWS_RESULT,
         }),
+      checkFlowConsistency: (params) =>
+        this.call({
+          pathname: `/v1/flow/validate`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.FLOW_CONSISTENCY_RESULT,
+        }),
     };
   }
 

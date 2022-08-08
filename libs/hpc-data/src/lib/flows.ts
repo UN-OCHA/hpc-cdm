@@ -10,6 +10,17 @@ import { USAGE_YEAR } from './usage-years';
 
 import { INTEGER_FROM_STRING } from './util';
 
+const ANY_FLOW_TYPE = t.union([
+  EMERGENCY,
+  GOVERNING_ENTITY,
+  GLOBAL_CLUSTER,
+  LOCATION,
+  ORGANIZATION,
+  PLAN,
+  PROJECT,
+  USAGE_YEAR,
+]);
+
 const FLOW_REF_DIRECTION = t.keyof({
   source: null,
   destination: null,
@@ -327,7 +338,42 @@ export const SEARCH_FLOWS_PARAMS = t.type({
 
 export type SearchFlowsParams = t.TypeOf<typeof SEARCH_FLOWS_PARAMS>;
 
+export const POST_FLOW_PARAMS = t.type({
+  flow: t.type({
+    flowObjects: t.array(FLOW_OBJECT),
+  }),
+});
+
+export type PostFlowParams = t.TypeOf<typeof POST_FLOW_PARAMS>;
+
+export const FLOW_CONSISTENCY_REASON = t.type({
+  type: t.string,
+  values: t.array(
+    t.intersection([
+      ANY_FLOW_TYPE,
+      t.type({
+        options: t.array(ANY_FLOW_TYPE),
+        refDirection: FLOW_REF_DIRECTION,
+      }),
+    ])
+  ),
+});
+
+export type FlowConsistencyReason = t.TypeOf<typeof FLOW_CONSISTENCY_REASON>;
+
+export const FLOW_CONSISTENCY_RESULT = t.intersection([
+  t.type({
+    success: t.boolean,
+  }),
+  t.partial({
+    reason: t.array(FLOW_CONSISTENCY_REASON),
+  }),
+]);
+
+export type FlowConsistencyResult = t.TypeOf<typeof FLOW_CONSISTENCY_RESULT>;
+
 export interface Model {
   getFlow(params: GetFlowParams): Promise<GetFlowResult>;
   searchFlows(params: SearchFlowsParams): Promise<SearchFlowsResult>;
+  checkFlowConsistency(params: PostFlowParams): Promise<FlowConsistencyResult>;
 }

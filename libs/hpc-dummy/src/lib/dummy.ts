@@ -623,6 +623,14 @@ export class Dummy {
             };
           }
         ),
+        checkFlowConsistency: dummyEndpoint(
+          'flows.checkFlowConsistency',
+          async () => {
+            return {
+              success: true,
+            };
+          }
+        ),
       },
       globalClusters: {
         getGlobalClusters: dummyEndpoint(
