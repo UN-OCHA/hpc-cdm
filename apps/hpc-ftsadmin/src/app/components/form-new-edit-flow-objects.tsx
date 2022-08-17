@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import {
   emergencies,
@@ -10,7 +12,7 @@ import {
   usageYears,
 } from '@unocha/hpc-data';
 import { styled } from '@unocha/hpc-ui';
-import { createRef, useMemo, useState } from 'react';
+import { createRef, useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { MdAdd, MdRemoveCircleOutline } from 'react-icons/md';
 import { t } from '../../i18n';
@@ -53,9 +55,10 @@ interface Fields {
 export default function FormNewEditFlowObjects(props: Props) {
   const { refDirection, label } = props;
   const { model } = getEnv();
-  const { watch, getValues } = useFormContext();
+  const { watch, getValues, setValue } = useFormContext();
 
   const watchPlan = watch(`${refDirection}.plan`);
+  const [prevPlan, setPrevPlan] = useState(watchPlan);
   const watchDestOrgs = watch('destination.organization');
 
   const showGoverningEntities = !!(watchPlan && watchPlan.length);
@@ -159,6 +162,39 @@ export default function FormNewEditFlowObjects(props: Props) {
     visible.delete(key);
     setVisibleFields(visible);
   };
+
+  useEffect(() => {
+    watchPlan.forEach((plan: plans.Plan) => {
+      if (
+        prevPlan &&
+        !prevPlan.find((prevPlan: plans.Plan) => prevPlan.id === plan.id)
+      ) {
+        const scopes = ['locations', 'years'] as const;
+        model.plans
+          .getPlan({ id: plan.id, scopes: scopes.join(',') })
+          .then((res) => {
+            scopes.forEach((scope) => {
+              // TODO: update data model
+              if (res[scope]) {
+                // TODO: generic pluralize mapper
+                const fieldName =
+                  scope === 'years'
+                    ? `${refDirection}.usageYear`
+                    : `${refDirection}.${scope.slice(0, -1)}`;
+                const existing = getValues(fieldName) || [];
+                const toAdd = res[scope].filter(
+                  (newObj) => !existing.some((e) => e.id === newObj.id)
+                );
+
+                // TODO: add with a visual marker (outline?)
+                setValue(fieldName, [...existing, ...toAdd]);
+              }
+            });
+          });
+      }
+      setPrevPlan(watchPlan);
+    });
+  }, [getValues, model.plans, prevPlan, refDirection, setValue, watchPlan]);
 
   return (
     <AppContext.Consumer>

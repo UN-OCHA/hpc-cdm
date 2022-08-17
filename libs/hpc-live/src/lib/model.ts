@@ -518,6 +518,18 @@ export class LiveModel implements Model {
           pathname: `/v2/object/autocomplete/plan/${params.search}`,
           resultType: plans.GET_PLANS_RESULT,
         }),
+      getPlan: (params: plans.GetPlanParams) => {
+        const { id, scopes } = params;
+        return this.call({
+          pathname: `/v2/plan/${id}`,
+          ...(scopes && {
+            queryParams: {
+              scopes,
+            },
+          }),
+          resultType: plans.PLAN,
+        });
+      },
     };
   }
 

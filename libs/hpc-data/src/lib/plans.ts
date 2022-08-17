@@ -42,8 +42,22 @@ export type GetPlansAutocompleteParams = t.TypeOf<
 
 export type GetPlansResult = t.TypeOf<typeof GET_PLANS_RESULT>;
 
+const GET_PLAN_PARAMS = t.intersection([
+  t.type({
+    id: t.number,
+  }),
+  t.partial({
+    scopes: t.string,
+  }),
+]);
+
+export type GetPlanParams = t.TypeOf<typeof GET_PLAN_PARAMS>;
+
+export type GetPlanResult = t.TypeOf<typeof PLAN>;
+
 export interface Model {
   getPlansAutocomplete(
     params: GetPlansAutocompleteParams
   ): Promise<GetPlansResult>;
+  getPlan(params: GetPlanParams): Promise<GetPlanResult>;
 }

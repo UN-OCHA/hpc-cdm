@@ -755,6 +755,19 @@ export class Dummy {
             return plans.filter((plan) => plan.name.includes(search));
           }
         ),
+        getPlan: dummyEndpoint(
+          'plans.getPlan',
+          async (params: plans.GetPlanParams) => {
+            const { id } = params;
+            const plan = this.data.plans.find((plan) => plan.id === id);
+
+            if (plan) {
+              return plan;
+            }
+
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       projects: {
         getProjectsAutocomplete: dummyEndpoint(
