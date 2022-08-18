@@ -2,14 +2,20 @@
 
 This project was generated using [Nx](https://nx.dev).
 
-## Building & Running CDM
+## Building & Running CDM and FTS Admin
 
 ### Autoloading dev server with in-browser dummy model
 
-To run the app using the in-browser dummy model, run the following command:
+To run the **CDM** app using the in-browser dummy model, run the following command:
 
 ```
 npm run start hpc-cdm
+```
+
+To run the **FTS Admin** app using the in-browser dummy model, run the following command:
+
+```
+npm run start hpc-ftsadmin
 ```
 
 Then navigate to to <http://localhost:4200/>
@@ -21,9 +27,14 @@ To run the app and connect to an API server
 
 - Configure the file `.env.json` with appropriate values for the API you will be
   interacting with
-- Run the following command:
+- Run one of the following commands:
+  - CDM
   ```bash
   npm run start hpc-cdm -- --configuration=dev-live
+  ```
+  - FTS Admin
+  ```bash
+  npm run start hpc-ftsadmin -- --configuration=dev-live
   ```
 
 Then navigate to to <http://localhost:4200/>
@@ -34,6 +45,7 @@ Then navigate to to <http://localhost:4200/>
   ```bash
   docker build -t hpc-cdm .
   ```
+  (building FTS Admin is not supported yet)
 - Configure the file `.env.json` with appropriate values for the API you will be
   interacting with
 - Run the docker container:
