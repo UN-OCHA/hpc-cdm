@@ -130,6 +130,43 @@ export const App = () => {
                           },
                         ]}
                         className={CLASSES.CONTAINER.FLUID}
+                        externalLinks={[
+                          ...(env.externalUrls?.rpmBaseUrl
+                            ? [
+                                {
+                                  label: t.t(lang, (s) => s.navigation.rpm),
+                                  url: env.externalUrls.rpmBaseUrl,
+                                },
+                              ]
+                            : []),
+                          ...(env.externalUrls?.prismBaseUrl
+                            ? [
+                                {
+                                  label: t.t(lang, (s) => s.navigation.prism),
+                                  url: env.externalUrls.prismBaseUrl,
+                                },
+                              ]
+                            : []),
+                          ...(env.externalUrls?.ftsWebsiteBaseUrl
+                            ? [
+                                {
+                                  label: t.t(
+                                    lang,
+                                    (s) => s.navigation.ftsWebsite
+                                  ),
+                                  url: env.externalUrls.ftsWebsiteBaseUrl,
+                                },
+                              ]
+                            : []),
+                          ...(env.externalUrls?.helpUrl
+                            ? [
+                                {
+                                  label: t.t(lang, (s) => s.navigation.help),
+                                  url: env.externalUrls.helpUrl,
+                                },
+                              ]
+                            : []),
+                        ]}
                       />
                       <Switch>
                         <Route path={paths.home()} exact>

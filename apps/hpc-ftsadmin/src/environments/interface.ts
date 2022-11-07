@@ -9,6 +9,13 @@ export interface Environment {
    * the environment, to avoid users accidentally using a non-prod env
    */
   getDevHeaderWarning: (lang: LanguageKey) => string | undefined;
+  externalUrls?: {
+    ftsAdminBaseUrl: string | undefined;
+    rpmBaseUrl: string | undefined;
+    prismBaseUrl: string | undefined;
+    ftsWebsiteBaseUrl: string | undefined;
+    helpUrl: string | undefined;
+  };
   session: Session;
   model: Model;
 }

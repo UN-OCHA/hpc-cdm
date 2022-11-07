@@ -1,10 +1,20 @@
 import * as t from 'io-ts';
 
-export const CONFIG = t.type({
-  hpcAuthUrl: t.string,
-  hpcAuthClientId: t.string,
-  hpcApiUrl: t.string,
-});
+export const CONFIG = t.intersection([
+  t.type({
+    hpcAuthUrl: t.string,
+    hpcAuthClientId: t.string,
+    hpcApiUrl: t.string,
+  }),
+  // These are optional so that no changes are required to CDM for now
+  t.partial({
+    ftsAdminBaseUrl: t.string,
+    rpmBaseUrl: t.string,
+    prismBaseUrl: t.string,
+    ftsWebsiteBaseUrl: t.string,
+    helpUrl: t.string,
+  }),
+]);
 
 export type Config = t.TypeOf<typeof CONFIG>;
 
