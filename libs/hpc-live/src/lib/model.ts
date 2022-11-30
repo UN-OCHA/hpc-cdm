@@ -29,7 +29,7 @@ interface RequestInit {
   headers: {
     [id: string]: string;
   };
-  body?: string | ArrayBuffer;
+  body?: string | Blob;
 }
 
 interface Response {
@@ -125,7 +125,7 @@ const fileCache = new Map<string, Promise<ArrayBuffer>>();
  * Custom types for endpoints where endpoints aren't directly implementing
  * functions in the model.
  *
- * (e.g. when it's neccesary for single model function to be backed my multiple
+ * (e.g. when it's necessary for single model function to be backed my multiple
  * HTTP endpoints, or where some data is sent as params and some as body).
  */
 
@@ -284,7 +284,18 @@ export class LiveModel implements Model {
         init.body = JSON.stringify(body.data);
         init.headers['Content-Type'] = 'application/json';
       } else {
-        init.body = body.data;
+        /**
+         * HACK: Since this method is used on API side for testing purposes,
+         * our `LiveModel` constructor accepts providing `fetch` in its parameters.
+         * Otherwise, browser's native `fetch` is used.
+         *
+         * When `node-fetch` got updated from v2 to v3, its types changed,
+         * and request body could no longer be `ArrayBuffer` type.
+         * Thus, `RequestInit` type in this file was changed to accept `Blob`.
+         * That is done to fix typing problems on API side, and since our code
+         * depends on files being `ArrayBuffer` we do this stupid cast here.
+         */
+        init.body = body.data as unknown as Blob;
         init.headers['Content-Type'] = body.contentType;
       }
     }
@@ -341,7 +352,7 @@ export class LiveModel implements Model {
             ((err as ModelError)?.json as { code: string })?.code ===
             'ForbiddenError'
           ) {
-            // If a 403 error occured with this endpoint,
+            // If a 403 error occurred with this endpoint,
             // the auth token has probably expired, so clear storage and refresh
             this.config.clearSessionStorage();
           }
@@ -438,7 +449,7 @@ export class LiveModel implements Model {
       // Only keep files that are used by this version of the assignment
       keepOnlyGivenFiles(result.task.currentFiles.map((f) => f.data.fileHash));
 
-      // Download / prepare any neccesary fiels
+      // Download / prepare any necessary fields
       const currentFiles: reportingWindows.GetAssignmentResult['task']['currentFiles'] =
         await Promise.all(
           result.task.currentFiles.map(async (f) => {
