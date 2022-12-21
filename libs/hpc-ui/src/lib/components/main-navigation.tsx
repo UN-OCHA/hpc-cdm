@@ -8,7 +8,6 @@ import {
 import { CLASSES, combineClasses } from '../classes';
 import HpcLogo from '../assets/logos/hpc';
 import { styled } from '../theme';
-
 const CLS = {
   HEADER: 'header',
   LOGO: 'logo',
@@ -60,6 +59,12 @@ const Nav = styled.nav`
       align-items: center;
       color: #221e1f;
 
+     .${CLS.LOGO_CONTAINER} 
+        position: relative;
+        z-index: 1;
+        display: flex;
+        height: 36px;
+
       .${CLS.LOGO} {
         max-height: 36px;
       }
@@ -90,8 +95,7 @@ const Nav = styled.nav`
       position: relative;
       z-index: 1;
       display: flex;
-      align-items: center;
-      height: ${HEADER_HEIGHT_PX}px;
+      height: 36px;
 
       &.${CLS.HAS_EXTERNAL_LINKS} {
         cursor: pointer;
