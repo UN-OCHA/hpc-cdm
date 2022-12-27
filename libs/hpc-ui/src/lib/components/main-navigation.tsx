@@ -1,6 +1,10 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+import {
+  List as MUIList,
+  ListItem as MUIListItem,
+  ListItemButton as MUIListItemButton,
+} from '@mui/material';
 import { CLASSES, combineClasses } from '../classes';
 import HpcLogo from '../assets/logos/hpc';
 import { styled } from '../theme';
@@ -8,10 +12,13 @@ import { styled } from '../theme';
 const CLS = {
   HEADER: 'header',
   LOGO: 'logo',
+  LOGO_CONTAINER: 'logo-container',
   HEADER_SEPARATOR: 'header-separator',
   APP_LOGO: 'app-logo',
+  EXTERNAL_LINKS: 'external-links',
   TABS: 'tabs',
   SELECTED: 'selected',
+  HAS_EXTERNAL_LINKS: 'has-external-links',
 } as const;
 
 interface Props {
@@ -22,6 +29,15 @@ interface Props {
         path: string;
         label: string;
         selected?: boolean;
+      }
+    | null
+    | undefined
+    | false
+  >;
+  externalLinks?: Array<
+    | {
+        url: string;
+        label: string;
       }
     | null
     | undefined
@@ -41,11 +57,11 @@ const Nav = styled.nav`
 
     > .${CLS.HEADER} {
       display: flex;
-      height: 36px;
+      align-items: center;
       color: #221e1f;
 
-      > .${CLS.LOGO} {
-        height: 100%;
+      .${CLS.LOGO} {
+        max-height: 36px;
       }
 
       > .${CLS.HEADER_SEPARATOR} {
@@ -69,6 +85,33 @@ const Nav = styled.nav`
         }
       }
     }
+
+    .${CLS.LOGO_CONTAINER} {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      height: 36px;
+
+      &.${CLS.HAS_EXTERNAL_LINKS} {
+        cursor: pointer;
+
+        &:hover {
+          .${CLS.EXTERNAL_LINKS} {
+            display: block;
+          }
+        }
+      }
+    }
+
+    .${CLS.EXTERNAL_LINKS} {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      display: none;
+      background: ${(p) => p.theme.colors.panel.bg};
+      white-space: nowrap;
+    }
+
     > .${CLS.TABS} {
       display: flex;
       margin: 0;
@@ -110,7 +153,7 @@ const Nav = styled.nav`
 `;
 
 export default (props: Props) => {
-  const { tabs, appTitle, homeLink } = props;
+  const { tabs, externalLinks, appTitle, homeLink } = props;
 
   const loc = useLocation();
   const tabElements = tabs && (
@@ -135,6 +178,21 @@ export default (props: Props) => {
     </ul>
   );
 
+  const externalLinksElements = externalLinks && (
+    <MUIList className={CLS.EXTERNAL_LINKS}>
+      {externalLinks.map((link, i) => {
+        if (!link) {
+          return null;
+        }
+        return (
+          <MUIListItem disablePadding>
+            <MUIListItemButton href={link.url}>{link.label}</MUIListItemButton>
+          </MUIListItem>
+        );
+      })}
+    </MUIList>
+  );
+
   return (
     <Nav>
       <div
@@ -145,7 +203,15 @@ export default (props: Props) => {
         )}
       >
         <div className={CLS.HEADER}>
-          <HpcLogo className={CLS.LOGO} />
+          <div
+            className={combineClasses(
+              CLS.LOGO_CONTAINER,
+              externalLinks && CLS.HAS_EXTERNAL_LINKS
+            )}
+          >
+            <HpcLogo className={CLS.LOGO} />
+            {externalLinksElements}
+          </div>
           <div className={CLS.HEADER_SEPARATOR} />
           <Link className={CLS.APP_LOGO} to={homeLink}>
             {appTitle}

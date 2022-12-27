@@ -29,6 +29,15 @@ export const initializeLiveEnvironment = async (config: config.Config) => {
         return t.t(lang, (s) => s.common.devEnvironmentWarnings.dev);
       }
     },
+    get externalUrls() {
+      return {
+        ftsAdminBaseUrl: config.ftsAdminBaseUrl,
+        rpmBaseUrl: config.rpmBaseUrl,
+        prismBaseUrl: config.prismBaseUrl,
+        ftsWebsiteBaseUrl: config.ftsWebsiteBaseUrl,
+        helpUrl: config.helpUrl,
+      };
+    },
     get model() {
       return live.model;
     },
