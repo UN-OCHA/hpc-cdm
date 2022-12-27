@@ -90,8 +90,7 @@ const Nav = styled.nav`
       position: relative;
       z-index: 1;
       display: flex;
-      align-items: center;
-      height: ${HEADER_HEIGHT_PX}px;
+      height: 36px;
 
       &.${CLS.HAS_EXTERNAL_LINKS} {
         cursor: pointer;
