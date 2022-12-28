@@ -67,7 +67,7 @@ const Nav = styled.nav`
       > .${CLS.HEADER_SEPARATOR} {
         margin: 0 18px;
         width: 1px;
-        height: 100%;
+        height: 36px;
         background-color: ${(p) => p.theme.colors.dividers};
       }
 
