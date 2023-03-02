@@ -85,7 +85,9 @@ const FormAssignmentsList = (props: Props) => {
                     <>
                       <StyledToolTip
                         arrow
-                        title={`${dayjs(a.lastUpdatedAt).locale(lang)}`}
+                        title={`${dayjs(a.lastUpdatedAt)
+                          .locale(lang)
+                          .format('ddd D MMM YYYY LTS')}`}
                       >
                         <LastChanged>{`Last updated by ${a.lastUpdatedBy}`}</LastChanged>
                       </StyledToolTip>
