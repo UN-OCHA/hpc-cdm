@@ -11,7 +11,7 @@ import { LiveModel } from './model';
 
 /**
  * Construct the OIDC Metadata for HID,
- * this is neccesary because HID doesn't include information about the
+ * this is necessary because HID doesn't include information about the
  * logout endpoint in its metadata, and we need to add it manually.
  */
 const getOpenIDMetadata = async (authUrl: string): Promise<OidcMetadata> => {

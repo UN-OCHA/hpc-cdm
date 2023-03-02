@@ -42,7 +42,7 @@ export const arrayBufferToHex = (data: ArrayBuffer): string => {
 };
 
 /**
- * Get the SHA-256 hex digest of an ArryaBuffer in the browser
+ * Get the SHA-256 hex digest of an ArrayBuffer in the browser
  */
 export const hashFileInBrowser = async (data: ArrayBuffer): Promise<string> => {
   const digest = await crypto.subtle.digest('SHA-256', data);

@@ -13,7 +13,7 @@ export interface Session {
    */
   getUser(): null | SessionUser;
   /**
-   * Do whatever is neccesary to log the user in to the system. Usually this
+   * Do whatever is necessary to log the user in to the system. Usually this
    * would be a redirect to HID, but in the case of e.g. the dummy
    * implementation, this may simply refresh the page after performing an action.
    */
