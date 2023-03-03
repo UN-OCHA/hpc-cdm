@@ -89,7 +89,11 @@ const FormAssignmentsList = (props: Props) => {
                           .locale(lang)
                           .format('ddd D MMM YYYY LTS')}`}
                       >
-                        <LastChanged>{`Last updated by ${a.lastUpdatedBy}`}</LastChanged>
+                        <LastChanged>
+                          {t
+                            .t(lang, (s) => s.common.lastUpdatedBy)
+                            .replace('{person}', a.lastUpdatedBy)}
+                        </LastChanged>
                       </StyledToolTip>
 
                       <Label submitted={submitted}>

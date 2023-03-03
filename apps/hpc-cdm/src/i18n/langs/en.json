@@ -14,6 +14,7 @@
     }
   },
   "common": {
+    "lastUpdatedBy": "Last updated by {person}",
     "updatedAtBy": "Updated {timeAgo} by {person}",
     "saving": "Saving...",
     "add": "Add",

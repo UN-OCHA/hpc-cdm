@@ -14,6 +14,7 @@
     }
   },
   "common": {
+    "lastUpdatedBy": "Última actualización por {person}",
     "updatedAtBy": "Actualizado {timeAgo} por {person}",
     "saving": "Ahorrar...",
     "add": "Añadir",
