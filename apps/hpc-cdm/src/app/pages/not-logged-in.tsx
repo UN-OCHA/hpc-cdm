@@ -5,6 +5,7 @@ import { C, CLASSES, styled } from '@unocha/hpc-ui';
 
 import { t, LANGUAGE_CHOICE } from '../../i18n';
 import en from '../../i18n/langs/en';
+import es from '../../i18n/langs/es';
 import fr from '../../i18n/langs/fr';
 
 import { AppContext } from '../context';
@@ -44,6 +45,14 @@ const PageNotLoggedIn = (props: Props) => (
               onClick={() => LANGUAGE_CHOICE.setLanguage('en')}
               color="secondary"
               text={en.strings.switchToThisLanguage}
+            />
+          )}
+          {lang !== 'es' && (
+            <C.Button
+              startIcon={MdTranslate}
+              onClick={() => LANGUAGE_CHOICE.setLanguage('es')}
+              color="secondary"
+              text={es.strings.switchToThisLanguage}
             />
           )}
           {lang !== 'fr' && (

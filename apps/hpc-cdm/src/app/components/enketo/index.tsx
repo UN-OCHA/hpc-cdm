@@ -189,7 +189,7 @@ export const EnketoEditableForm = (props: Props) => {
       // If the user is trying to finalize (submit) the form
       // Ensure the entire form is valid
       if (finalized) {
-        // Display a validating inicator before enketo freezes the browser
+        // Display a validating indicator before enketo freezes the browser
         setSubmissionValidation('in-progress');
         // Give the browser some time to render this state change
         await new Promise((resolve) => setTimeout(resolve, 10));

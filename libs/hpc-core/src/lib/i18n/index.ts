@@ -114,7 +114,7 @@ export class LanguageChoice<LanguageKey extends string> {
   };
 
   /**
-   * Convinience method to use when the current language needs to be accessed
+   * Convenience method to use when the current language needs to be accessed
    * from outside the scope of a react context
    */
   public withLanguage = <T>(cb: (lang: LanguageKey) => T): T => {
