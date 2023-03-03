@@ -1,6 +1,6 @@
 {
   "switchToThisLanguage": "Passer à la version française",
-  "title": "Enquête sur les structures de coordination humanitaire – 2021",
+  "title": "Enquête sur les structures de coordination humanitaire – 2022",
   "user": {
     "login": "Connexion",
     "logout": "Déconnexion"
@@ -35,10 +35,10 @@
   },
   "components": {
     "appTitle": {
-      "primary": "Enquête sur les structures de coordination humanitaire – 2021",
+      "primary": "Enquête sur les structures de coordination humanitaire – 2022",
       "secondary": "Structures de Coordination Humanitaire au Niveau du Pays"
     },
-    "surveyIntro": "Bienvenue à l'enquête annuelle sur les structures et capacités de coordination humanitaire en place pendant 2021. Cliquez sur le bouton de connexion. Il vous sera demandé de vous connecter en utilisant votre adresse e-mail et votre mot de passe « Humanitarian ID”. Si vous avez oublié vos informations d'identification ou vous avez besoin de vous inscrire, veuillez suivre les instructions sur la page Humanitarian ID suivante.",
+    "surveyIntro": "Bienvenue à l'enquête annuelle sur les structures et capacités de coordination humanitaire en place pendant 2022. Cliquez sur le bouton de connexion. Il vous sera demandé de vous connecter en utilisant votre adresse e-mail et votre mot de passe « Humanitarian ID”. Si vous avez oublié vos informations d'identification ou vous avez besoin de vous inscrire, veuillez suivre les instructions sur la page Humanitarian ID suivante.",
     "acceptableUseNotification": {
       "login": "Cliquez ici pour vous connecter",
       "title": "Notification d'utilisation acceptable",
