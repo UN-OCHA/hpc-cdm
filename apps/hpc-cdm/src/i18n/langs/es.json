@@ -1,0 +1,223 @@
+{
+  "switchToThisLanguage": "Pasar al español",
+  "title": "Encuesta sobre las estructuras de coordinación humanitaria - 2022",
+  "user": {
+    "login": "Inicio de sesión",
+    "logout": "Cerrar sesión"
+  },
+  "errors": {
+    "unableToLoadCDM": "No se puede cargar CDM",
+    "userErrors": {
+      "access.userAlreadyInvited": "Ese usuario ya ha sido invitado, debe conectarse para obtener acceso",
+      "access.userAlreadyAdded": "Ese usuario ya tiene acceso",
+      "assignment.alreadyFinalized": "La misión ya ha finalizado"
+    }
+  },
+  "common": {
+    "updatedAtBy": "Actualizado {timeAgo} por {person}",
+    "saving": "Ahorrar...",
+    "add": "Añadir",
+    "emailAddress": "Dirección electrónica",
+    "validation": {
+      "missing": "Por favor, introduzca {field}"
+    },
+    "devEnvironmentWarnings": {
+      "dummy": "Esta es una instancia de demostración de CDM, la información que introduzca aquí sólo se almacenará en su navegador y no se enviará a nuestro servidor.",
+      "dev": "Esta es una instancia de prueba de CDM, la información que introduzca aquí se borrará periódicamente."
+    },
+    "reportingWindows": {
+      "state": {
+        "open": "Abierto",
+        "closed": "Cerrado",
+        "pending": "Pendiente"
+      }
+    }
+  },
+  "components": {
+    "appTitle": {
+      "primary": "Encuesta sobre las estructuras de coordinación humanitaria - 2022",
+      "secondary": "Estructuras de coordinación humanitaria a escala nacional"
+    },
+    "surveyIntro": "Bienvenido a la encuesta anual sobre las estructuras y capacidades de coordinación humanitaria existentes en 2022. Haga clic en el botón de inicio de sesión. Se le pedirá que inicie sesión con su dirección de correo electrónico y su contraseña de \"Humanitarian ID\". Si ha olvidado sus datos de acceso o necesita registrarse, siga las instrucciones de la página del Humanitarian ID.",
+    "acceptableUseNotification": {
+      "login": "Haga clic aquí para iniciar sesión",
+      "title": "Notificación de uso aceptable",
+      "p1": "El acceso no autorizado a este Sistema Informático de las Naciones Unidas está prohibido por ST/SGB/2004/15 (\"Utilisation des moyens et des données informatiques et télématiques\" du 29 novembre 2004)",
+      "p2": "Los usuarios autorizados velarán por que el uso que hagan de los recursos de las tecnologías de la información y la comunicación (TIC) y de los datos de las TIC sea coherente con sus obligaciones como miembros del personal o con cualquier otra obligación que les sea aplicable.",
+      "p3": "Todo uso de los recursos y datos de las TIC está sujeto a supervisión e investigación, tal como se establece en el documento ST/SGB/2004/15.",
+      "p4": "El uso de este sistema por parte de cualquier usuario, autorizado o no, constituye el consentimiento a los reglamentos y normas aplicables de las Naciones Unidas."
+    },
+    "dialogs": {
+      "okay": "Confirme",
+      "cancel": "Cancelar"
+    },
+    "notFound": {
+      "title": "Página no encontrada",
+      "info": "No hemos podido encontrar la página que buscaba",
+      "back": "Volver atrás"
+    },
+    "loader": {
+      "loading": "Cargando...",
+      "error": "Error:",
+      "retry": "Inténtalo de nuevo"
+    },
+    "unsupportedBrowser": {
+      "title": "Navegador no compatible!",
+      "info": "Lamentablemente, su navegador actual no es compatible. Por favor, cambie a Firefox o Google Chrome. Para ello, copie la dirección del formulario (URL) anterior, abra Firefox o Chrome y pegue la dirección en el navegador."
+    },
+    "accessControl": {
+      "addPerson": "Añadir usuario",
+      "deletePerson": "Quitar acceso",
+      "cancelInvite": "Cancelar invitación",
+      "addPersonInfo": "Introduce la dirección de correo electrónico de la persona a la que quieres dar acceso. Si no han iniciado sesión antes, se les dará una invitación que se activará después de iniciar sesión.",
+      "activePeople": "Usuarios Activos",
+      "pendingInvites": "Invitaciones Pendientes",
+      "auditLog": "Registro de auditoría",
+      "roles": {
+        "hpc_admin": "Administrador HPC",
+        "rpmAdmin": "Administrador RPM",
+        "ftsAdmin": "Administrador FTS",
+        "projectsAdmin": "Administrador de Proyectos",
+        "omniscient": "Omnisciente",
+        "swaps": "Miembro del equipo de SWAPS",
+        "operationLead": "Jefe de Operaciones",
+        "clusterLead": "Líder de clúster"
+      },
+      "invitedBy": "Invitado por {name}",
+      "confirmRoleUpdate": "¿Está seguro de que desea cambiar el rol de {name} a {role}?",
+      "confirmRoleRemoval": "¿Estás seguro de que quieres eliminar el acceso a {name}?",
+      "auditLogRoleChange": "{actor} cambió el rol de {grantee} a {role}",
+      "auditLogRoleRemoval": "{actor} eliminó el acceso de {grantee}",
+      "noPendingInvites": "No hay invitaciones pendientes",
+      "noUsers": "No hay usuarios asignados. A nadie se le ha concedido acceso",
+      "auditLogEmpty": "El registro de auditoría está vacío",
+      "role": "Rol"
+    }
+  },
+  "navigation": {
+    "admin": "Admin",
+    "operations": "Operaciones",
+    "clusters": "Clusters/Sectores",
+    "forms": "Formularios de encuesta",
+    "settings": "Ajustes",
+    "manageAccess": "Administrar el acceso"
+  },
+  "routes": {
+    "operations": {
+      "notFound": {
+        "title": "Operación no encontrada",
+        "info": "No hemos podido encontrar la operación que estabas buscando"
+      },
+      "forms": {
+        "forOperations": "Formularios de encuesta de operación",
+        "forClusters": "Formularios de encuestas por conglomerados/sectores",
+        "unsavedChangesPrompt": "¿Estás seguro de que quieres navegar? Tiene cambios no guardados.",
+        "nav": {
+          "prev": "Anterior",
+          "save": "Guardar",
+          "saveAndClose": "Guardar y cerrar",
+          "next": "Próximo",
+          "submit": {
+            "message": "Una vez que haya completado la encuesta, haga clic en el botón de abajo / Enviar / para enviarla. {warning,component} Asegúrese de que la encuesta esté completa y sea correcta antes de continuar con la presentación.",
+            "warning": "Tenga en cuenta que no podrá editar sus respuestas después de que se hayan enviado.",
+            "confirm": "Confirmo que el formulario está completo y listo para ser enviado",
+            "submit": "Enviar",
+            "validating": "En proceso de validación"
+          },
+          "close": "Cerrar"
+        },
+        "assignedUsers": {
+          "title": "Usuarios asignados",
+          "tooltip": {
+            "title": "Nueva característica:",
+            "description": "Haga clic en este botón para ver todos los usuarios que contribuyen a esta encuesta"
+          }
+        },
+        "loading": {
+          "title": "Carga del formulario en curso",
+          "info": "Esta página puede tardar unos minutos en cargarse, espere sin cerrar su navegador, si su navegador le informa de un retraso o falta de respuesta en la carga de la página, haga clic en 'esperar'."
+        },
+        "editability": {
+          "reportingWindowPending": "La encuesta aún no está abierta",
+          "reportingWindowClosed": "Encuesta cerrada",
+          "notSubmittedEditable": "Encuesta aún no enviada: Editable",
+          "notSubmittedNotEditable": "Encuesta no editable",
+          "submittedEditable": "Encuesta enviada: Editable",
+          "submittedNonEditable": "Encuesta enviada: ya no se puede editar"
+        },
+        "prompts": {
+          "finished": "Gracias por completar la encuesta, nos pondremos en contacto con usted si se necesita información complementaria.",
+          "submissionRequired": "Por favor, regrese y envíe su respuesta final a la encuesta."
+        },
+        "invalidData": {
+          "title": "Información incompleta/no válida introducida",
+          "infoOnNavigation": "Hay algunos problemas con la información que ha introducido en esta página. Puede arreglarlos ahora, o continuar con el resto del formulario y volver más tarde. Estos problemas deben solucionarse para finalizar y enviar la encuesta.",
+          "fixNow": "Arreglar ahora",
+          "fixLater": "Continuar de todos modos",
+          "infoOnSubmit": "Hay algunos problemas con la información que ha introducido. Debe volver atrás y corregirlos antes de poder enviar el formulario.",
+          "okay": "Muy bien"
+        },
+        "status": {
+          "init": "Cargando el formulario…",
+          "idle": "Todos los cambios guardados",
+          "unsavedChanges": "Esta página contiene cambios no guardados",
+          "unsavedChangesExtra": "Páginas anteriores guardadas",
+          "saving": "Guardando…",
+          "error": "¡Error al guardar el formulario!",
+          "conflict": "El formulario ha sido modificado por otra persona, por favor actualícelo de nuevo."
+        },
+        "errors": {
+          "conflict": "Este formulario ha sido modificado por {person} {timeAgo} (después de cargar la página), por lo que no podemos guardar sus cambios. Actualiza tu página e inténtalo de nuevo."
+        },
+        "poweredByFooter": "Diseñado con {enketo,component} y {kobotoolbox,component}",
+        "pageIndicator": "Página {page,number} en {count,number}",
+        "enketoStrings": {
+          "constraint": {
+            "required": "Esta información es obligatoria"
+          },
+          "confirm": {
+            "repeatremove": {
+              "heading": "Eliminar elemento",
+              "msg": "El elemento se eliminará permanentemente junto con todos los datos que contiene. ¿Estás seguro?"
+            }
+          },
+          "filepicker": {
+            "placeholder": "Haga clic aquí para descargar el archivo (< {maxSize, number})",
+            "notFound": "Archivo enviado anteriormente. Si desea reemplazarlo, haga clic en las flechas para eliminar el archivo y, a continuación, cargue otro archivo.",
+            "resetWarning": "El archivo se eliminará. ¿Estás seguro?"
+          },
+          "selectpicker": {
+            "noneselected": "Sin selección",
+            "numberselected": "{number, number} seleccionado"
+          }
+        },
+        "removingItem": {
+          "title": "Elemento que se va a eliminar",
+          "message": "Espere mientras se elimina el elemento. Puede tomar un tiempo. Si su navegador le informa que la página no responde, haga clic en 'esperar'."
+        },
+        "labels": {
+          "submitted": "presentado",
+          "notSubmitted": "no enviado"
+        },
+        "statusChange": {
+          "unsubmit": "Anular envío",
+          "unlock": "Desbloqueo para limpieza"
+        },
+        "none": {
+          "title": "Sin formularios",
+          "info": "No se han asignado formularios a esta operación para {window}"
+        }
+      },
+      "clusters": {
+        "listHeader": "Clústeres en esta operación",
+        "settings": "Configuración del clúster",
+        "forms": {
+          "none": {
+            "title": "Sin formularios",
+            "info": "No se ha asignado ningún formulario a este clúster para la ventana de informe actual"
+          }
+        }
+      }
+    }
+  }
+}
