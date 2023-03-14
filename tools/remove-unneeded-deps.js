@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * This module removes packages that aren't neccesary to install in the
+ * This module removes packages that aren't necessary to install in the
  * production image, speeding up image creation, and reducing image size.
  */
 
