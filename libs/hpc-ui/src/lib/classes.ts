@@ -5,7 +5,7 @@ const CLASS_PREFIX = 'hpc-';
 /**
  * Set of standard CSS classes to use across our applications.
  *
- * Defining them in one centeral location allows us to easily find all usages,
+ * Defining them in one central location allows us to easily find all usages,
  * and define the string in only one location.
  */
 export const CLASSES = {
