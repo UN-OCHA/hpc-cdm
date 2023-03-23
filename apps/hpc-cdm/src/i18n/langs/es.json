@@ -111,7 +111,7 @@
       },
       "forms": {
         "forOperations": "Formularios de encuesta de operación",
-        "forClusters": "Formularios de encuestas por conglomerados/sectores",
+        "forClusters": "Formularios de encuestas por clusters/sectores",
         "unsavedChangesPrompt": "¿Estás seguro de que quieres navegar? Tiene cambios no guardados.",
         "nav": {
           "prev": "Anterior",
