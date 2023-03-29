@@ -1,15 +1,14 @@
 /* eslint-disable */
 const path = require('path');
-const upstreamConfig = require('@nrwl/react/plugins/webpack');
+const { composePlugins, withNx } = require('@nrwl/webpack');
 
-module.exports = (config) => {
-  config = upstreamConfig(config);
+module.exports = composePlugins(withNx(), (config, { options, context }) => {
 
-  // Override enketo modules
-  config.resolve.alias['enketo/dialog'] = path.resolve(
-    __dirname,
-    'src/app/components/enketo/overrides/dialog'
-  );
+    // Override enketo modules
+    (config.resolve.alias['enketo/dialog'] = path.resolve(
+      __dirname,
+      'src/app/components/enketo/overrides/dialog'
+    ));
   config.resolve.alias['enketo/translator'] = path.resolve(
     __dirname,
     'src/app/components/enketo/overrides/translator'
@@ -17,4 +16,4 @@ module.exports = (config) => {
   config.resolve.alias['@mui/styled-engine'] = '@mui/styled-engine-sc';
 
   return config;
-};
+});

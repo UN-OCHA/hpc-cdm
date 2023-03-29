@@ -1,0 +1,106 @@
+{
+  "name": "hpc-ftsadmin",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/hpc-ftsadmin/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/hpc-ftsadmin",
+        "index": "apps/hpc-ftsadmin/src/index.html",
+        "baseHref": "/",
+        "main": "apps/hpc-ftsadmin/src/main.tsx",
+        "polyfills": "apps/hpc-ftsadmin/src/polyfills.ts",
+        "tsConfig": "apps/hpc-ftsadmin/tsconfig.app.json",
+        "assets": [
+          "apps/hpc-ftsadmin/src/favicon.ico",
+          "apps/hpc-ftsadmin/src/assets"
+        ],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "@nrwl/react/plugins/webpack"
+      },
+      "configurations": {
+        "dev-live": {
+          "fileReplacements": [
+            {
+              "replace": "apps/hpc-ftsadmin/src/environments/environment.ts",
+              "with": "apps/hpc-ftsadmin/src/environments/environment.dev-live.ts"
+            },
+            {
+              "replace": "apps/hpc-ftsadmin/src/environments/env.json",
+              "with": ".env.json"
+            }
+          ]
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/hpc-ftsadmin/src/environments/environment.ts",
+              "with": "apps/hpc-ftsadmin/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all",
+          "sourceMap": false,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "5mb"
+            }
+          ]
+        },
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "options": {
+        "buildTarget": "hpc-ftsadmin:build",
+        "hmr": true
+      },
+      "configurations": {
+        "dev-live": {
+          "buildTarget": "hpc-ftsadmin:build:dev-live"
+        },
+        "production": {
+          "buildTarget": "hpc-ftsadmin:build:production",
+          "hmr": false
+        },
+        "development": {
+          "buildTarget": "hpc-ftsadmin:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/hpc-ftsadmin/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/hpc-ftsadmin"],
+      "options": {
+        "jestConfig": "apps/hpc-ftsadmin/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

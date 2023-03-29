@@ -14,7 +14,8 @@
     "**/*.test.js",
     "**/*.spec.jsx",
     "**/*.test.jsx",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "jest.config.ts"
   ],
   "files": [
     "src/app/components/enketo-form/enketo-core.d.ts",
