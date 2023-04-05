@@ -61,8 +61,9 @@ const PageOperationClusters = (props: Props) => {
                     >
                       {clusters
                         .sort((c1, c2) => (c1.name > c2.name ? 1 : -1))
-                        .map((cluster, i) => (
+                        .map((cluster) => (
                           <C.ListItem
+                            key={cluster.id}
                             text={cluster.name}
                             link={paths.operationCluster({
                               operationId: operation.id,

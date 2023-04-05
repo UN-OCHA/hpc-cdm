@@ -53,8 +53,8 @@ const AssignedUsersModal = (props: Props) => {
       </UserTitle>
 
       <DialogContent id="alert-dialog-description">
-        {assignment.assignedUsers.map((user) => (
-          <UserLink href={`mailto:${user.email}`}>
+        {assignment.assignedUsers.map((user, i) => (
+          <UserLink key={i} href={`mailto:${user.email}`}>
             <AssignedUsersListItem key={user.email}>
               <UserText>{user.name || user.email}</UserText>
               <MdEmail size={20} color={THEME.colors.pallete.orange.normal} />

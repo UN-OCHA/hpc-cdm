@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { BaseStyling, C, styled, dataLoader, dialogs } from '@unocha/hpc-ui';
 
 import env, { Environment } from '../environments/environment';
-import { version as appVersion } from '../../../../package.json';
 import { AppContext, contextFromEnv } from './context';
 import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
@@ -83,7 +82,8 @@ export const App = () => {
   const appTitle = (
     <>
       <TitlePrimary>
-        {t.t(lang, (s) => s.components.appTitle.primary)} (v{appVersion})
+        {t.t(lang, (s) => s.components.appTitle.primary)} (v
+        {APP_VERSION})
       </TitlePrimary>
       <TitleSecondary>
         {t.t(lang, (s) => s.components.appTitle.secondary)}
