@@ -79,6 +79,7 @@ class LanguagePicker<LanguageKey extends string> extends React.Component<
                   <MenuList autoFocusItem={open}>
                     {choice.getLanguages().map(({ key, name }) => (
                       <MenuItem
+                        key={key}
                         onClick={() => {
                           this.setState({ open: false });
                           choice.setLanguage(key);

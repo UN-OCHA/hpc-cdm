@@ -79,10 +79,10 @@ export const TargetAccessManagement = (props: Props) => {
             }
           >
             {active.length > 0 ? (
-              active.map((item, i) => {
+              active.map((item) => {
                 return (
                   <C.ListItem
-                    key={i}
+                    key={item.grantee.id}
                     text={item.grantee.name}
                     actions={
                       <>
@@ -170,9 +170,10 @@ export const TargetAccessManagement = (props: Props) => {
             className={CLS.PADDED_LIST}
           >
             {invites.length > 0 ? (
-              invites.map((item, i) => {
+              invites.map((item) => {
                 return (
                   <C.ListItem
+                    key={item.email}
                     text={item.email}
                     secondary={
                       <span>
@@ -274,10 +275,11 @@ export const TargetAccessManagement = (props: Props) => {
             className={CLS.PADDED_LIST}
           >
             {auditLog.length > 0 ? (
-              auditLog.map((item, i) => {
+              auditLog.map((item) => {
                 const m = dayjs(item.date).locale(lang);
                 return (
                   <C.ListItem
+                    key={`${item.actor.id}-${item.grantee.id}-${item.date}`}
                     prefix={m.fromNow()}
                     text={
                       item.roles.length === 0
