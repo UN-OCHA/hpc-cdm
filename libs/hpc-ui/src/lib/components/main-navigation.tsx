@@ -185,7 +185,7 @@ export default (props: Props) => {
           return null;
         }
         return (
-          <MUIListItem disablePadding>
+          <MUIListItem disablePadding key={i}>
             <MUIListItemButton href={link.url}>{link.label}</MUIListItemButton>
           </MUIListItem>
         );

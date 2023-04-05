@@ -41,9 +41,9 @@ export default (props: Props) => {
                     .sort((o1, o2) =>
                       o1.name.toLowerCase().localeCompare(o2.name.toLowerCase())
                     )
-                    .map((o, i) => (
+                    .map((o) => (
                       <C.ListItem
-                        key={i}
+                        key={o.id}
                         text={o.name}
                         link={paths.operation(o.id)}
                       />
