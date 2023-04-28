@@ -93,7 +93,7 @@
     "fp-ts": "^2.14.0",
     "husky": "8.0.3",
     "intl-list-format": "^1.0.3",
-    "intl-messageformat": "^9.4.6",
+    "intl-messageformat": "^10.3.4",
     "io-ts": "^2.2.20",
     "jest": "27.5.1",
     "lint-staged": "12.3.8",
