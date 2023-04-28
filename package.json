@@ -79,7 +79,7 @@
     "babel-plugin-styled-components": "2.1.1",
     "bowser": "^2.11.0",
     "cypress": "9.5.4",
-    "dayjs": "^1.9.1",
+    "dayjs": "^1.11.7",
     "document-register-element": "1.13.1",
     "dotenv": "16.0.3",
     "enketo-core": "^5.16.6",
