@@ -432,7 +432,7 @@ export class LiveModel implements Model {
 
     const handleAssignmentResult = async (
       result: t.TypeOf<
-        typeof LIVE_TYPES['REPORTING_WINDOWS']['GET_ASSIGNMENT_RESULT']
+        (typeof LIVE_TYPES)['REPORTING_WINDOWS']['GET_ASSIGNMENT_RESULT']
       >
     ): Promise<reportingWindows.GetAssignmentResult> => {
       // Only keep files that are used by this version of the assignment
