@@ -1,6 +1,6 @@
 const HOME = '/';
 const OPERATIONS = '/operations';
-const OPERATION = `${OPERATIONS}/:id`;
+const OPERATION = `${OPERATIONS}/:id/*`;
 const OPERATION_FORMS = `${OPERATIONS}/:id/forms`;
 const OPERATION_FORM_ASSIGNMENTS = `${OPERATIONS}/:operationId/forms/w/:windowId`;
 const OPERATION_FORM_ASSIGNMENT_DATA = `${OPERATIONS}/:operationId/forms/w/:windowId/data/:assignmentId`;
@@ -13,7 +13,7 @@ const OPERATION_CLUSTER_SETTINGS = `${OPERATIONS}/:operationId/clusters/:cluster
 const OPERATION_CLUSTER_SETTINGS_ACCESS = `${OPERATIONS}/:operationId/clusters/:clusterId/settings/access`;
 const OPERATION_SETTINGS = `${OPERATIONS}/:id/settings`;
 const OPERATION_SETTINGS_ACCESS = `${OPERATIONS}/:id/settings/access`;
-const ADMIN = '/admin';
+const ADMIN = '/admin/*';
 const ADMIN_ACCESS = '/admin/access';
 
 const replacePlaceholders = (

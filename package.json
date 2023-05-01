@@ -105,7 +105,7 @@
     "react-helmet": "^6.1.0",
     "react-icons": "^4.3.1",
     "react-is": "18.2.0",
-    "react-router-dom": "5.3.0",
+    "react-router-dom": "6.4.1",
     "react-toastify": "8.2.0",
     "styled-components": "5.3.5",
     "ts-jest": "28.0.8",

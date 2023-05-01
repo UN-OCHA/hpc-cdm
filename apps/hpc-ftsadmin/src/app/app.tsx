@@ -8,7 +8,7 @@ import {
   ThemeProvider,
 } from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import env, { Environment } from '../environments/environment';
@@ -168,17 +168,17 @@ export const App = () => {
                             : []),
                         ]}
                       />
-                      <Switch>
-                        <Route path={paths.home()} exact>
-                          <Redirect to={paths.flows()} />
-                        </Route>
+                      <Routes>
+                        <Route
+                          path={paths.home()}
+                          element={<Navigate to={paths.flows()} />}
+                        />
                         <Route
                           path={paths.flows()}
-                          exact
-                          component={PageFlowsList}
+                          element={<PageFlowsList />}
                         />
-                        <Route component={PageNotFound} />
-                      </Switch>
+                        <Route path="*" element={<PageNotFound />} />
+                      </Routes>
                     </LoggedInContainer>
                   ) : (
                     <>
