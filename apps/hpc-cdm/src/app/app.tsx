@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -142,7 +142,7 @@ export const App = () => {
                             : []),
                         ]}
                       />
-                      <Switch>
+                      <Routes>
                         <Route path={paths.home()} exact>
                           <Redirect to={paths.operations()} />
                         </Route>
@@ -159,7 +159,7 @@ export const App = () => {
                           <Route path={paths.admin()} component={PageAdmin} />
                         )}
                         <Route component={PageNotFound} />
-                      </Switch>
+                      </Routes>
                     </LoggedInContainer>
                   ) : (
                     <>

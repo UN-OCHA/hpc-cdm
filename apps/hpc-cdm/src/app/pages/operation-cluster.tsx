@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, Routes } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -28,7 +28,7 @@ const PageOperationCluster = (props: Props) => {
       {({ lang }) => (
         <div className={props.className}>
           <PageMeta title={[cluster.name, operation.name]} />
-          <Switch>
+          <Routes>
             <Route
               exact
               path={paths.operationCluster({
@@ -64,7 +64,7 @@ const PageOperationCluster = (props: Props) => {
             <Route>
               <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
             </Route>
-          </Switch>
+          </Routes>
         </div>
       )}
     </AppContext.Consumer>

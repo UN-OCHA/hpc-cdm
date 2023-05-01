@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import { C, styled, dataLoader } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -44,7 +44,7 @@ const PageOperationClusters = (props: Props) => {
             }}
           >
             {({ data: clusters }) => (
-              <Switch>
+              <Routes>
                 <Route exact path={paths.operationClusters(operation.id)}>
                   <PageMeta
                     title={[
@@ -102,7 +102,7 @@ const PageOperationClusters = (props: Props) => {
                     );
                   }}
                 />
-              </Switch>
+              </Routes>
             )}
           </C.Loader>
         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Redirect, Route } from 'react-router-dom';
+import { Redirect, Route, Routes } from 'react-router-dom';
 
 import { CLASSES, C, dataLoader } from '@unocha/hpc-ui';
 
@@ -77,7 +77,7 @@ const PageOperation = (props: Props) => {
                     ]}
                   />
                   <div className={CLASSES.CONTAINER.CENTERED}>
-                    <Switch>
+                    <Routes>
                       <Route exact path={paths.operation(id)}>
                         <Redirect to={paths.operationForms(id)} />
                       </Route>
@@ -99,7 +99,7 @@ const PageOperation = (props: Props) => {
                           strings={t.get(lang, (s) => s.components.notFound)}
                         />
                       </Route>
-                    </Switch>
+                    </Routes>
                   </div>
                 </>
               );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, Routes } from 'react-router-dom';
 
 import { C } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -32,7 +32,7 @@ const PageOperationSettings = (props: Props) => {
           <PageMeta
             title={[t.t(lang, (s) => s.navigation.settings), operation.name]}
           />
-          <Switch>
+          <Routes>
             <Route exact path={paths.operationSettings(operation.id)}>
               <Redirect to={paths.operationSettingsAccess(operation.id)} />
             </Route>
@@ -46,7 +46,7 @@ const PageOperationSettings = (props: Props) => {
                 />
               </Route>
             )}
-          </Switch>
+          </Routes>
         </C.SidebarNavigation>
       )}
     </AppContext.Consumer>

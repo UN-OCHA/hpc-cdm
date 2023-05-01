@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
 import { operations, reportingWindows } from '@unocha/hpc-data';
@@ -28,7 +28,7 @@ const PageOperationClusterFormAssignments = (props: Props) => {
     <AppContext.Consumer>
       {({ lang }) => (
         <div className={props.className}>
-          <Switch>
+          <Routes>
             <Route
               exact
               path={paths.operationClusterFormAssignments({
@@ -121,7 +121,7 @@ const PageOperationClusterFormAssignments = (props: Props) => {
             <Route>
               <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
             </Route>
-          </Switch>
+          </Routes>
         </div>
       )}
     </AppContext.Consumer>

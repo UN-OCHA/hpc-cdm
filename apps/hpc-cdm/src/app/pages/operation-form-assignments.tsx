@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import { t } from '../../i18n';
 import { C, styled } from '@unocha/hpc-ui';
@@ -25,7 +25,7 @@ const PageOperationFormAssignments = (props: Props) => {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <Switch>
+        <Routes>
           <Route
             exact
             path={paths.operationFormAssignments({
@@ -109,7 +109,7 @@ const PageOperationFormAssignments = (props: Props) => {
           <Route>
             <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
           </Route>
-        </Switch>
+        </Routes>
       )}
     </AppContext.Consumer>
   );

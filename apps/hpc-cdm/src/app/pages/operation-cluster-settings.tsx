@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, Routes } from 'react-router-dom';
 
 import { C } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -48,7 +48,7 @@ const PageOperationClusterSettings = (props: Props) => {
               },
             ]}
           >
-            <Switch>
+            <Routes>
               <Route
                 exact
                 path={paths.operationClusterSettings({
@@ -79,7 +79,7 @@ const PageOperationClusterSettings = (props: Props) => {
                   />
                 </Route>
               )}
-            </Switch>
+            </Routes>
           </C.SidebarNavigation>
         </>
       )}

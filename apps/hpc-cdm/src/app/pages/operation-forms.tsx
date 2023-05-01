@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Routes } from 'react-router-dom';
 
 import { C, combineClasses, styled } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -26,7 +26,7 @@ const PageOperationForms = (props: Props) => {
           <PageMeta
             title={[t.t(lang, (s) => s.navigation.forms), operation.name]}
           />
-          <Switch>
+          <Routes>
             <Route
               path={paths.operationFormAssignmentsMatch({
                 operationId: operation.id,
@@ -72,7 +72,7 @@ const PageOperationForms = (props: Props) => {
                 />
               )}
             </Route>
-          </Switch>
+          </Routes>
         </div>
       )}
     </AppContext.Consumer>
