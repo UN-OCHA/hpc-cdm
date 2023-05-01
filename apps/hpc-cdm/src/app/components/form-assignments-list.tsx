@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { styled as muiStyled } from '@mui/material/styles';
+
 import { C, styled } from '@unocha/hpc-ui';
 import { reportingWindows } from '@unocha/hpc-data';
 
@@ -8,7 +10,17 @@ import { t } from '../../i18n';
 import dayjs from '../../libraries/dayjs';
 import { Tooltip } from '@mui/material';
 
-import withStyles from '@mui/styles/withStyles';
+const PREFIX = 'FormAssignmentsList';
+
+const classes = {
+  tooltip: `${PREFIX}-tooltip`,
+};
+
+const StyledAppContextConsumer = muiStyled(AppContext.Consumer)({
+  [`& .${classes.tooltip}`]: {
+    padding: 8,
+  },
+});
 
 interface Props {
   className?: string;
@@ -36,11 +48,7 @@ const Label = styled.span<{ submitted: boolean }>`
   font-weight: bold;
 `;
 
-const StyledToolTip = withStyles({
-  tooltip: {
-    padding: 8,
-  },
-})(Tooltip);
+const StyledToolTip = Tooltip;
 
 const LastChanged = styled.span`
   font-style: italic;
@@ -51,7 +59,7 @@ const FormAssignmentsList = (props: Props) => {
   const { title, className, assignments, assignmentLink } = props;
 
   return (
-    <AppContext.Consumer>
+    <StyledAppContextConsumer>
       {({ lang }) => (
         <C.List title={title} className={className}>
           {assignments
@@ -88,6 +96,9 @@ const FormAssignmentsList = (props: Props) => {
                         title={`${dayjs(a.lastUpdatedAt)
                           .locale(lang)
                           .format('ddd D MMM YYYY LTS')}`}
+                          classes={{
+                            tooltip: classes.tooltip,
+                          }}
                       >
                         <LastChanged>
                           {t
@@ -112,7 +123,7 @@ const FormAssignmentsList = (props: Props) => {
             })}
         </C.List>
       )}
-    </AppContext.Consumer>
+    </StyledAppContextConsumer>
   );
 };
 

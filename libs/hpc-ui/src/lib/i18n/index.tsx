@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import IntlMessageFormat from 'intl-messageformat';
 
 import { i18n } from '@unocha/hpc-core';
@@ -107,7 +107,7 @@ export class Translations<
       <>
         {cache.map((v, i) =>
           v.type === 'format' ? (
-            <span key={i}>{v.format.format(params)}</span>
+            <span key={i}>{v.format.format(params) as ReactNode}</span>
           ) : (
             components[v.name]?.(i)
           )

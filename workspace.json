@@ -56,9 +56,16 @@
                   "maximumError": "5mb"
                 }
               ]
+            },
+            "development": {
+              "extractLicenses": false,
+              "optimization": false,
+              "sourceMap": true,
+              "vendorChunk": true
             }
           },
-          "outputs": ["{options.outputPath}"]
+          "outputs": ["{options.outputPath}"],
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@nrwl/web:dev-server",
@@ -71,8 +78,12 @@
             },
             "production": {
               "buildTarget": "hpc-cdm:build:production"
+            },
+            "development": {
+              "buildTarget": "hpc-cdm:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
@@ -286,6 +297,12 @@
                   "maximumError": "5mb"
                 }
               ]
+            },
+            "development": {
+              "extractLicenses": false,
+              "optimization": false,
+              "sourceMap": true,
+              "vendorChunk": true
             }
           }
         },
@@ -302,8 +319,12 @@
             "production": {
               "buildTarget": "hpc-ftsadmin:build:production",
               "hmr": false
+            },
+            "development": {
+              "buildTarget": "hpc-ftsadmin:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",

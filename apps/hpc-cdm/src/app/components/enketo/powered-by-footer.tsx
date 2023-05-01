@@ -2,9 +2,17 @@ import React, { useContext } from 'react';
 
 import { styled } from '@unocha/hpc-ui';
 import logo from '../../../assets/logos/enketologo.png';
-import { ReactComponent as KLogo } from '../../../assets/logos/kobologo.svg';
+import KLogoRoute from '../../../assets/logos/kobologo.svg';
 import { AppContext } from '../../context';
 import { t } from '../../../i18n';
+
+const KLogo: React.FunctionComponent<React.SVGProps<SVGSVGElement>> = () => {
+  return (
+    <svg>
+      <use xlinkHref={KLogoRoute} />{' '}
+    </svg>
+  );
+};
 
 const Box = styled.div`
   display: flex;
