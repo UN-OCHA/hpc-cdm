@@ -8,7 +8,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/web:webpack",
+          "builder": "@nrwl/webpack:webpack",
           "options": {
             "outputPath": "dist/apps/hpc-cdm",
             "index": "apps/hpc-cdm/src/index.html",
@@ -68,7 +68,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@nrwl/web:dev-server",
+          "builder": "@nrwl/webpack:dev-server",
           "options": {
             "buildTarget": "hpc-cdm:build"
           },
@@ -245,7 +245,7 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@nrwl/web:webpack",
+          "builder": "@nrwl/webpack:webpack",
           "outputs": ["{options.outputPath}"],
           "defaultConfiguration": "production",
           "options": {
@@ -307,7 +307,7 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/web:dev-server",
+          "builder": "@nrwl/webpack:dev-server",
           "options": {
             "buildTarget": "hpc-ftsadmin:build",
             "hmr": true
