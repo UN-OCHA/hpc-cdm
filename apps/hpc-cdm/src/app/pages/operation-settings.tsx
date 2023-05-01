@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Redirect, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { C } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -36,7 +36,7 @@ const PageOperationSettings = (props: Props) => {
             <Route
               path={paths.operationSettings(operation.id)}
               element={
-                <Redirect to={paths.operationSettingsAccess(operation.id)} />
+                <Navigate to={paths.operationSettingsAccess(operation.id)} />
               }
             />
             {operation.permissions.canModifyAccess && (

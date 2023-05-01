@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Redirect, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { C } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -55,7 +55,7 @@ const PageOperationClusterSettings = (props: Props) => {
                   clusterId: cluster.id,
                 })}
                 element={
-                  <Redirect
+                  <Navigate
                     to={paths.operationClusterSettingsAccess({
                       operationId: operation.id,
                       clusterId: cluster.id,

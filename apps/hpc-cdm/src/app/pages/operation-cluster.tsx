@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Redirect, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -35,7 +35,7 @@ const PageOperationCluster = (props: Props) => {
                 clusterId: cluster.id,
               })}
               element={
-                <Redirect
+                <Navigate
                   to={paths.operationClusterForms({
                     operationId: operation.id,
                     clusterId: cluster.id,

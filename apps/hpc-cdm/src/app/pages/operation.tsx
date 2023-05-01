@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { CLASSES, C, dataLoader } from '@unocha/hpc-ui';
 
@@ -80,7 +80,7 @@ const PageOperation = (props: Props) => {
                     <Routes>
                       <Route
                         path={paths.operation(id)}
-                        element={<Redirect to={paths.operationForms(id)} />}
+                        element={<Navigate to={paths.operationForms(id)} />}
                       />
                       <Route
                         path={paths.operationForms(id)}

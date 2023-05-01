@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { CLASSES, C } from '@unocha/hpc-ui';
 
@@ -24,7 +24,10 @@ const PageAdmin = () => {
             ]}
           >
             <Routes>
-              <Route path={paths.admin()} element={<Redirect to={paths.adminAccess()} />}/>
+              <Route
+                path={paths.admin()}
+                element={<Navigate to={paths.adminAccess()} />}
+              />
               <Route
                 path={paths.adminAccess()}
                 element={

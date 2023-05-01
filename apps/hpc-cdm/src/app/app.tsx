@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Redirect, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -145,7 +145,7 @@ export const App = () => {
                       <Routes>
                         <Route
                           path={paths.home()}
-                          element={<Redirect to={paths.operations()} />}
+                          element={<Navigate to={paths.operations()} />}
                         />
                         <Route
                           path={paths.operations()}

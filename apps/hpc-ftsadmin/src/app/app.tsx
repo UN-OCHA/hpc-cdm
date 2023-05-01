@@ -8,7 +8,7 @@ import {
   ThemeProvider,
 } from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
-import { Redirect, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import env, { Environment } from '../environments/environment';
@@ -169,7 +169,7 @@ export const App = () => {
                       <Routes>
                         <Route
                           path={paths.home()}
-                          element={<Redirect to={paths.flows()} />}
+                          element={<Navigate to={paths.flows()} />}
                         />
                         <Route
                           path={paths.flows()}

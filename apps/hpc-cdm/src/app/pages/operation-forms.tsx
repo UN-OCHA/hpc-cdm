@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { C, combineClasses, styled } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -57,7 +57,7 @@ const PageOperationForms = (props: Props) => {
             <Route
               element={
                 operation.reportingWindows.length > 0 ? (
-                  <Redirect
+                  <Navigate
                     to={paths.operationFormAssignments({
                       operationId: operation.id,
                       windowId: getBestReportingWindow(
