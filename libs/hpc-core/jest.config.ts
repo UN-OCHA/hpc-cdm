@@ -1,10 +1,11 @@
-module.exports = {
+/* eslint-disable */
+export default {
   preset: '../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '../../coverage/libs/hpc-live',
+  coverageDirectory: '../../coverage/libs/hpc-core',
   globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
-  displayName: 'hpc-live',
+  displayName: 'hpc-core',
 };

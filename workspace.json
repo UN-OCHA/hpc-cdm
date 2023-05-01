@@ -106,7 +106,7 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/hpc-cdm/jest.config.js",
+            "jestConfig": "apps/hpc-cdm/jest.config.ts",
             "passWithNoTests": true
           },
           "outputs": ["coverage/apps/hpc-cdm"]
@@ -169,7 +169,7 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/hpc-core/jest.config.js",
+            "jestConfig": "libs/hpc-core/jest.config.ts",
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/hpc-core"]
@@ -200,7 +200,7 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/hpc-data/jest.config.js",
+            "jestConfig": "libs/hpc-data/jest.config.ts",
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/hpc-data"]
@@ -231,7 +231,7 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/hpc-dummy/jest.config.js",
+            "jestConfig": "libs/hpc-dummy/jest.config.ts",
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/hpc-dummy"]
@@ -337,7 +337,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/apps/hpc-ftsadmin"],
           "options": {
-            "jestConfig": "apps/hpc-ftsadmin/jest.config.js",
+            "jestConfig": "apps/hpc-ftsadmin/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -395,7 +395,7 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/hpc-live/jest.config.js",
+            "jestConfig": "libs/hpc-live/jest.config.ts",
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/hpc-live"]
@@ -429,7 +429,7 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/hpc-ui/jest.config.js",
+            "jestConfig": "libs/hpc-ui/jest.config.ts",
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/hpc-ui"]
