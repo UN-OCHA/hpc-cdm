@@ -1,11 +1,11 @@
 import React, { useContext, Dispatch, SetStateAction } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import { styled, C } from '@unocha/hpc-ui';
 import { reportingWindows } from '@unocha/hpc-data';
 import { AppContext, getEnv } from '../../../context';
 import { t } from '../../../../i18n';
 import { FormStatus } from '../types';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   loading: boolean;
@@ -18,8 +18,8 @@ const ChangeStateButton = styled(C.Button)`
 `;
 
 const StatusChangeButtons = (props: Props) => {
-  const history = useHistory();
   const env = getEnv();
+  const navigate = useNavigate();
   const { lang } = useContext(AppContext);
   const { assignment, setStatus } = props;
 
@@ -30,9 +30,7 @@ const StatusChangeButtons = (props: Props) => {
         assignmentId: assignment.id,
         state,
       })
-      .then(() => {
-        history.go(0);
-      })
+      .then(() => navigate(0))
       .catch((err) => {
         setStatus({
           type: 'error',
