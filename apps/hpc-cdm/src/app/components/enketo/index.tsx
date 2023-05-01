@@ -1,13 +1,14 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import { reportingWindows, errors } from '@unocha/hpc-data';
 import { styled } from '@unocha/hpc-ui';
+import { useNavigate } from 'react-router-dom';
 
 import dayjs from '../../../libraries/dayjs';
 
 import XForm, { PageInfo } from './xform';
 import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
+import usePrompt from '../../utils/usePrompt';
 import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
 import PageIndicator from './pageIndicator';
@@ -36,8 +37,6 @@ interface Props {
   assignment: reportingWindows.GetAssignmentResult;
 }
 
-let isRefreshing = false;
-
 export const EnketoEditableForm = (props: Props) => {
   const { assignment: originalAssignment, reportingWindow } = props;
   const env = getEnv();
@@ -56,19 +55,24 @@ export const EnketoEditableForm = (props: Props) => {
   const [showAssignedUsers, setShowAssignedUsers] = useState(false);
   const [submissionValidation, setSubmissionValidation] =
     useState<SubmissionValidation>(null);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { lang } = useContext(AppContext);
 
   const assignment = updatedAssignment || originalAssignment;
 
+  const isFormModified = !loading && xform !== null && formTouched;
+  usePrompt(
+    t.t(lang, (s) => s.routes.operations.forms.unsavedChangesPrompt),
+    isFormModified
+  );
+
   const unMount = () => {
-    isRefreshing = true;
     if (xform) {
       xform.resetView();
     }
     // Clears enketo cache or something going on there which slows down
     // form re-init/getData.
-    history.go(0);
+    navigate(0);
   };
 
   useEffect(() => {
@@ -135,30 +139,6 @@ export const EnketoEditableForm = (props: Props) => {
       setLoading(false);
     };
   }, [originalAssignment]);
-
-  useEffect(() => {
-    //only run if there's changes
-    if (!loading && xform && formTouched) {
-      // React router in app navigation blocking displays custom text
-      const unblock = history.block(() => {
-        return t.t(lang, (s) => s.routes.operations.forms.unsavedChangesPrompt);
-      });
-
-      // Browser api navigation blocking returns default text
-      const unloadListener = (event: BeforeUnloadEvent) => {
-        if (!isRefreshing) {
-          event.preventDefault();
-          event.returnValue = ''; // Chrome requires returnValue to be set.
-        }
-      };
-
-      window.addEventListener('beforeunload', unloadListener);
-      return () => {
-        window.removeEventListener('beforeunload', unloadListener);
-        unblock();
-      };
-    }
-  }, [xform, formTouched, history, lang]);
 
   const handleNext = async () => {
     if (xform) {
@@ -262,7 +242,7 @@ export const EnketoEditableForm = (props: Props) => {
                     )
                   );
                 }
-                history.goBack();
+                navigate(-1);
               }
             })
             .catch((err) => {
@@ -304,7 +284,7 @@ export const EnketoEditableForm = (props: Props) => {
       alert(
         t.t(lang, (s) => s.routes.operations.forms.prompts.submissionRequired)
       );
-      history.goBack();
+      navigate(-1);
     }
   };
 
