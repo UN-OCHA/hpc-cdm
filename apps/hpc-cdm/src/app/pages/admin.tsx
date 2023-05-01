@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Redirect, Route } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 
 import { CLASSES, C } from '@unocha/hpc-ui';
 
@@ -23,23 +23,27 @@ const PageAdmin = () => {
               },
             ]}
           >
-            <Switch>
-              <Route exact path={paths.admin()}>
-                <Redirect to={paths.adminAccess()} />
-              </Route>
-              <Route path={paths.adminAccess()}>
-                <TargetAccessManagement
-                  target={{
-                    type: 'global',
-                  }}
-                />
-              </Route>
-              <Route>
-                <C.NotFound
-                  strings={t.get(lang, (s) => s.components.notFound)}
-                />
-              </Route>
-            </Switch>
+            <Routes>
+              <Route path="/*" element={<Navigate to={'access'} />} />
+              <Route
+                path={'access'}
+                element={
+                  <TargetAccessManagement
+                    target={{
+                      type: 'global',
+                    }}
+                  />
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <C.NotFound
+                    strings={t.get(lang, (s) => s.components.notFound)}
+                  />
+                }
+              />
+            </Routes>
           </C.SidebarNavigation>
         </div>
       )}

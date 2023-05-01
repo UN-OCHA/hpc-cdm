@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -144,24 +144,29 @@ export const App = () => {
                             : []),
                         ]}
                       />
-                      <Switch>
-                        <Route path={paths.home()} exact>
-                          <Redirect to={paths.operations()} />
+                      <Routes>
+                        <Route path={paths.home()}>
+                          <Route
+                            index
+                            element={<Navigate to={paths.operations()} />}
+                          />
+                          <Route
+                            path={paths.operations()}
+                            element={<PageOperationsList />}
+                          />
+                          <Route
+                            path={paths.operationMatch()}
+                            element={<PageOperation />}
+                          />
+                          {canModifyGlobalUserAccess && (
+                            <Route
+                              path={paths.admin()}
+                              element={<PageAdmin />}
+                            />
+                          )}
+                          <Route path="*" element={<PageNotFound />} />
                         </Route>
-                        <Route
-                          path={paths.operations()}
-                          exact
-                          component={PageOperationsList}
-                        />
-                        <Route
-                          path={paths.operationMatch()}
-                          component={PageOperation}
-                        />
-                        {canModifyGlobalUserAccess && (
-                          <Route path={paths.admin()} component={PageAdmin} />
-                        )}
-                        <Route component={PageNotFound} />
-                      </Switch>
+                      </Routes>
                     </LoggedInContainer>
                   ) : (
                     <>
