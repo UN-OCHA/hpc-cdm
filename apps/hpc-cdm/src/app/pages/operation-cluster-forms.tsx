@@ -1,10 +1,10 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
 
-import { t } from '../../i18n';
+import { LanguageKey, t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 import { getBestReportingWindow } from '../utils/reportingWindows';
@@ -20,70 +20,72 @@ interface Props {
 
 const PageOperationClusterForms = (props: Props) => {
   const { operation, cluster } = props;
-
   return (
     <AppContext.Consumer>
       {({ lang }) => (
         <div className={props.className}>
-          <Switch>
+          <Routes>
             <Route
-              path={paths.operationClusterFormAssignmentsMatch({
-                operationId: operation.id,
-                clusterId: cluster.id,
-              })}
-              render={(props: { match: { params: { windowId: string } } }) => {
-                const id = parseInt(props.match.params.windowId);
-                if (!isNaN(id)) {
-                  const windows = operation.reportingWindows.filter(
-                    (w) => w.id === id
-                  );
-                  if (windows.length === 1) {
-                    console.log(props);
-                    return (
-                      <PageOperationClusterFormAssignments
-                        window={windows[0]}
-                        {...{ operation, cluster }}
-                      />
-                    );
-                  }
-                }
-                return (
-                  <>
-                    <ClusterNavigation
-                      operation={operation}
-                      cluster={cluster}
-                      showSettingsButton
-                    />
-                    <C.NotFound
-                      strings={t.get(lang, (s) => s.components.notFound)}
-                    />
-                  </>
-                );
-              }}
+              path="/w/:windowId/*"
+              element={<ValidateParams {...props} lang={lang} />}
             />
-            <Route>
-              {operation.reportingWindows.length > 0 ? (
-                <Redirect
-                  to={paths.operationClusterFormAssignments({
-                    operationId: operation.id,
-                    clusterId: cluster.id,
-                    windowId: getBestReportingWindow(operation.reportingWindows)
-                      .id,
-                  })}
-                />
-              ) : (
-                <C.ErrorMessage
-                  strings={{
-                    title: 'No reporting windows',
-                    info: "This operation doesn't have any reporting windows associated with it",
-                  }}
-                />
-              )}
-            </Route>
-          </Switch>
+            <Route
+              path=""
+              element={
+                operation.reportingWindows.length > 0 ? (
+                  <Navigate
+                    to={paths.operationClusterFormAssignments({
+                      operationId: operation.id,
+                      clusterId: cluster.id,
+                      windowId: getBestReportingWindow(
+                        operation.reportingWindows
+                      ).id,
+                    })}
+                  />
+                ) : (
+                  <C.ErrorMessage
+                    strings={{
+                      title: 'No reporting windows',
+                      info: "This operation doesn't have any reporting windows associated with it",
+                    }}
+                  />
+                )
+              }
+            />
+          </Routes>
         </div>
       )}
     </AppContext.Consumer>
+  );
+};
+
+interface ValidateParamsProps extends Props {
+  lang: LanguageKey;
+}
+const ValidateParams = (props: ValidateParamsProps) => {
+  const { operation, cluster, lang } = props;
+  const params = useParams();
+  const id = Number(params.windowId);
+  if (!isNaN(id)) {
+    const windows = operation.reportingWindows.filter((w) => w.id === id);
+    if (windows.length === 1) {
+      return (
+        <PageOperationClusterFormAssignments
+          window={windows[0]}
+          {...{ operation, cluster }}
+        />
+      );
+    }
+  }
+  return (
+    <>
+      <ClusterNavigation
+        operation={operation}
+        cluster={cluster}
+        showSettingsButton
+      />
+      <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
+    </>
   );
 };
 

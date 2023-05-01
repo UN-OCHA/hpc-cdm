@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Route, Navigate, Routes } from 'react-router-dom';
 
 import { C } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -32,21 +32,22 @@ const PageOperationSettings = (props: Props) => {
           <PageMeta
             title={[t.t(lang, (s) => s.navigation.settings), operation.name]}
           />
-          <Switch>
-            <Route exact path={paths.operationSettings(operation.id)}>
-              <Redirect to={paths.operationSettingsAccess(operation.id)} />
-            </Route>
+          <Routes>
+            <Route path="" element={<Navigate to="access" />} />
             {operation.permissions.canModifyAccess && (
-              <Route exact path={paths.operationSettingsAccess(operation.id)}>
-                <TargetAccessManagement
-                  target={{
-                    type: 'operation',
-                    targetId: operation.id,
-                  }}
-                />
-              </Route>
+              <Route
+                path="access"
+                element={
+                  <TargetAccessManagement
+                    target={{
+                      type: 'operation',
+                      targetId: operation.id,
+                    }}
+                  />
+                }
+              />
             )}
-          </Switch>
+          </Routes>
         </C.SidebarNavigation>
       )}
     </AppContext.Consumer>

@@ -4,7 +4,6 @@ import { CLASSES, C, combineClasses, dataLoader } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
 import { AppContext, getEnv } from '../context';
-import * as paths from '../paths';
 import PageMeta from '../components/page-meta';
 
 interface Props {
@@ -13,7 +12,6 @@ interface Props {
 
 export default (props: Props) => {
   const loader = dataLoader([], getEnv().model.operations.getOperations);
-
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -42,11 +40,7 @@ export default (props: Props) => {
                       o1.name.toLowerCase().localeCompare(o2.name.toLowerCase())
                     )
                     .map((o) => (
-                      <C.ListItem
-                        key={o.id}
-                        text={o.name}
-                        link={paths.operation(o.id)}
-                      />
+                      <C.ListItem key={o.id} text={o.name} link={`${o.id}`} />
                     ))}
                 </C.List>
               </>

@@ -1,13 +1,12 @@
 import React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
 import { C, combineClasses, styled } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
-import { t } from '../../i18n';
+import { LanguageKey, t } from '../../i18n';
 import OperationFormAssignments from './operation-form-assignments';
-import * as paths from '../paths';
 import PageMeta from '../components/page-meta';
 import { getBestReportingWindow } from '../utils/reportingWindows';
 
@@ -26,57 +25,54 @@ const PageOperationForms = (props: Props) => {
           <PageMeta
             title={[t.t(lang, (s) => s.navigation.forms), operation.name]}
           />
-          <Switch>
+          <Routes>
             <Route
-              path={paths.operationFormAssignmentsMatch({
-                operationId: operation.id,
-              })}
-              render={(props: { match: { params: { windowId: string } } }) => {
-                const id = parseInt(props.match.params.windowId);
-                if (!isNaN(id)) {
-                  const windows = operation.reportingWindows.filter(
-                    (w) => w.id === id
-                  );
-                  if (windows.length === 1) {
-                    console.log(props);
-                    return (
-                      <OperationFormAssignments
-                        operation={operation}
-                        window={windows[0]}
-                      />
-                    );
-                  }
-                }
-                return (
-                  <C.NotFound
-                    strings={t.get(lang, (s) => s.components.notFound)}
-                  />
-                );
-              }}
+              path="w/:windowId/*"
+              element={<ValidateParams {...props} lang={lang} />}
             />
-            <Route>
-              {operation.reportingWindows.length > 0 ? (
-                <Redirect
-                  to={paths.operationFormAssignments({
-                    operationId: operation.id,
-                    windowId: getBestReportingWindow(operation.reportingWindows)
-                      .id,
-                  })}
-                />
-              ) : (
-                <C.ErrorMessage
-                  strings={{
-                    title: 'No reporting windows',
-                    info: "This operation doesn't have any reporting windows associated with it",
-                  }}
-                />
-              )}
-            </Route>
-          </Switch>
+            <Route
+              path=""
+              element={
+                operation.reportingWindows.length > 0 ? (
+                  <Navigate
+                    to={`w/${
+                      getBestReportingWindow(operation.reportingWindows).id
+                    }`}
+                  />
+                ) : (
+                  <C.ErrorMessage
+                    strings={{
+                      title: 'No reporting windows',
+                      info: "This operation doesn't have any reporting windows associated with it",
+                    }}
+                  />
+                )
+              }
+            ></Route>
+          </Routes>
         </div>
       )}
     </AppContext.Consumer>
   );
+};
+interface ValidateParamsProps extends Props {
+  lang: LanguageKey;
+}
+
+const ValidateParams = (props: ValidateParamsProps) => {
+  const { operation, lang } = props;
+  const params = useParams();
+  const windowId = Number(params.windowId);
+
+  if (!isNaN(windowId)) {
+    const windows = operation.reportingWindows.filter((w) => w.id === windowId);
+    if (windows.length === 1) {
+      return (
+        <OperationFormAssignments operation={operation} window={windows[0]} />
+      );
+    }
+  }
+  return <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />;
 };
 
 export default styled(PageOperationForms)``;

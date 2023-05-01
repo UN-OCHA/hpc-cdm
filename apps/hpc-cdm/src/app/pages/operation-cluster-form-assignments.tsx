@@ -1,10 +1,10 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Route, Routes, useParams } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
 import { operations, reportingWindows } from '@unocha/hpc-data';
 
-import { t } from '../../i18n';
+import { LanguageKey, t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
@@ -28,104 +28,98 @@ const PageOperationClusterFormAssignments = (props: Props) => {
     <AppContext.Consumer>
       {({ lang }) => (
         <div className={props.className}>
-          <Switch>
+          <Routes>
             <Route
-              exact
-              path={paths.operationClusterFormAssignments({
-                operationId: operation.id,
-                clusterId: cluster.id,
-                windowId: window.id,
-              })}
-            >
-              <ClusterNavigation
-                operation={operation}
-                cluster={cluster}
-                showSettingsButton
-              />
-              <C.SidebarNavigation
-                menu={prepareReportingWindowsAsSidebarNavigation(
-                  lang,
-                  operation.reportingWindows,
-                  (w) =>
-                    paths.operationClusterFormAssignments({
-                      operationId: operation.id,
-                      clusterId: cluster.id,
-                      windowId: w.id,
-                    })
-                )}
-              >
-                <OperationClusterFormAssignmentsList
-                  {...{ operation, cluster, window }}
-                />
-              </C.SidebarNavigation>
-            </Route>
-            <Route
-              path={paths.operationClusterFormAssignmentDataMatch({
-                operationId: operation.id,
-                clusterId: cluster.id,
-                windowId: window.id,
-              })}
-              render={(props: {
-                match: { params: { assignmentId: string } };
-              }) => {
-                const assignmentId = parseInt(props.match.params.assignmentId);
-                if (!isNaN(assignmentId)) {
-                  return (
-                    <FormAssignmentData
-                      header={(assignment) => (
-                        <>
-                          <PageMeta
-                            title={[
-                              assignment.task.form.name,
-                              cluster.name,
-                              operation.name,
-                            ]}
-                          />
-                          <ClusterNavigation
-                            breadcrumbs={[
-                              {
-                                to: paths.operationClusterFormAssignments({
-                                  operationId: operation.id,
-                                  clusterId: cluster.id,
-                                  windowId: window.id,
-                                }),
-                                label: window.name,
-                              },
-                              {
-                                to: paths.operationClusterFormAssignmentData({
-                                  operationId: operation.id,
-                                  clusterId: cluster.id,
-                                  windowId: window.id,
-                                  assignmentId,
-                                }),
-                                label: assignment.task.form.name,
-                              },
-                            ]}
-                            operation={operation}
-                            cluster={cluster}
-                          />
-                        </>
-                      )}
-                      {...{ window, assignmentId }}
+              path=""
+              element={
+                <>
+                  <ClusterNavigation
+                    operation={operation}
+                    cluster={cluster}
+                    showSettingsButton
+                  />
+                  <C.SidebarNavigation
+                    menu={prepareReportingWindowsAsSidebarNavigation(
+                      lang,
+                      operation.reportingWindows,
+                      (w) =>
+                        paths.operationClusterFormAssignments({
+                          operationId: operation.id,
+                          clusterId: cluster.id,
+                          windowId: w.id,
+                        })
+                    )}
+                  >
+                    <OperationClusterFormAssignmentsList
+                      {...{ operation, cluster, window }}
                     />
-                  );
-                } else {
-                  return (
-                    <C.NotFound
-                      strings={t.get(lang, (s) => s.components.notFound)}
-                    />
-                  );
-                }
-              }}
+                  </C.SidebarNavigation>
+                </>
+              }
             />
-            <Route>
-              <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
-            </Route>
-          </Switch>
+            <Route
+              path="/data/:assignmentId"
+              element={<TemporalForm {...props} lang={lang} />}
+            />
+            <Route
+              path="*"
+              element={
+                <C.NotFound
+                  strings={t.get(lang, (s) => s.components.notFound)}
+                />
+              }
+            ></Route>
+          </Routes>
         </div>
       )}
     </AppContext.Consumer>
   );
 };
+interface TemporalFormProps extends Props {
+  lang: LanguageKey;
+}
+const TemporalForm = (props: TemporalFormProps) => {
+  const { cluster, operation, window, lang } = props;
+  const params = useParams();
+  const assignmentId = Number(params.assignmentId);
 
+  if (!isNaN(assignmentId)) {
+    return (
+      <FormAssignmentData
+        header={(assignment) => (
+          <>
+            <PageMeta
+              title={[assignment.task.form.name, cluster.name, operation.name]}
+            />
+            <ClusterNavigation
+              breadcrumbs={[
+                {
+                  to: paths.operationClusterFormAssignments({
+                    operationId: operation.id,
+                    clusterId: cluster.id,
+                    windowId: window.id,
+                  }),
+                  label: window.name,
+                },
+                {
+                  to: paths.operationClusterFormAssignmentData({
+                    operationId: operation.id,
+                    clusterId: cluster.id,
+                    windowId: window.id,
+                    assignmentId,
+                  }),
+                  label: assignment.task.form.name,
+                },
+              ]}
+              operation={operation}
+              cluster={cluster}
+            />
+          </>
+        )}
+        {...{ window, assignmentId }}
+      />
+    );
+  }
+  return <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />;
+};
 export default styled(PageOperationClusterFormAssignments)``;
