@@ -1,11 +1,9 @@
 /* eslint-disable */
 const path = require('path');
-const upstreamConfig = require('@nrwl/react/plugins/webpack');
+const { composePlugins, withNx } = require('@nx/webpack');
 const webpack = require('webpack');
 
-module.exports = (config) => {
-  config = upstreamConfig(config);
-
+module.exports = composePlugins(withNx(), (config, { options, context }) => {
   /*
    * To avoid loading version from package.json in application code,
    * which causes unintentional bundling of entire package.json, we
@@ -32,4 +30,4 @@ module.exports = (config) => {
   config.resolve.alias['@mui/styled-engine'] = '@mui/styled-engine-sc';
 
   return config;
-};
+});

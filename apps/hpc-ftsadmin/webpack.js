@@ -1,10 +1,8 @@
 /* eslint-disable */
 const path = require('path');
-const upstreamConfig = require('@nrwl/react/plugins/webpack');
+const { composePlugins, withNx } = require('@nx/webpack');
 
-module.exports = (config) => {
-  config = upstreamConfig(config);
-
+module.exports = composePlugins(withNx(), (config, { options, context }) => {
   // Override enketo modules
   config.resolve.alias['enketo/dialog'] = path.resolve(
     __dirname,
@@ -16,4 +14,4 @@ module.exports = (config) => {
   );
 
   return config;
-};
+});

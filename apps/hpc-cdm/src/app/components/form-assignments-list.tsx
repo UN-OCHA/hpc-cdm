@@ -96,9 +96,9 @@ const FormAssignmentsList = (props: Props) => {
                         title={`${dayjs(a.lastUpdatedAt)
                           .locale(lang)
                           .format('ddd D MMM YYYY LTS')}`}
-                          classes={{
-                            tooltip: classes.tooltip,
-                          }}
+                        classes={{
+                          tooltip: classes.tooltip,
+                        }}
                       >
                         <LastChanged>
                           {t
