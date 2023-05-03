@@ -1,0 +1,32 @@
+{
+  "name": "hpc-data",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/hpc-data/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/hpc-data/**/*.ts",
+          "libs/hpc-data/**/*.spec.ts",
+          "libs/hpc-data/**/*.spec.tsx",
+          "libs/hpc-data/**/*.spec.js",
+          "libs/hpc-data/**/*.spec.jsx",
+          "libs/hpc-data/**/*.d.ts"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/hpc-data/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/hpc-data"]
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,35 @@
+{
+  "name": "hpc-ui",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/hpc-ui/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/hpc-ui/**/*.js",
+          "libs/hpc-ui/**/*.jsx",
+          "libs/hpc-ui/**/*.ts",
+          "libs/hpc-ui/**/*.tsx",
+          "libs/hpc-ui/**/*.spec.ts",
+          "libs/hpc-ui/**/*.spec.tsx",
+          "libs/hpc-ui/**/*.spec.js",
+          "libs/hpc-ui/**/*.spec.jsx",
+          "libs/hpc-ui/**/*.d.ts"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/hpc-ui/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/hpc-ui"]
+    }
+  },
+  "tags": []
+}
