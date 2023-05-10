@@ -8,7 +8,7 @@ export const USER_ERROR_KEYS = [
   'assignment.alreadyFinalized',
 ] as const;
 
-export type UserErrorKey = typeof USER_ERROR_KEYS[number];
+export type UserErrorKey = (typeof USER_ERROR_KEYS)[number];
 
 export class NotFoundError extends Error {
   public readonly code = NOT_FOUND_ERROR;
