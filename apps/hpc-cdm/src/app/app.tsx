@@ -143,21 +143,22 @@ export const App = () => {
                         ]}
                       />
                       <Routes>
-                        <Route path={paths.home()}>
-                          <Redirect to={paths.operations()} />
-                        </Route>
+                        <Route
+                          path={paths.home()}
+                          element={<Redirect to={paths.operations()} />}
+                        />
                         <Route
                           path={paths.operations()}
-                          component={PageOperationsList}
+                          element={<PageOperationsList />}
                         />
                         <Route
                           path={paths.operationMatch()}
-                          component={PageOperation}
+                          element={<PageOperation />}
                         />
                         {canModifyGlobalUserAccess && (
-                          <Route path={paths.admin()} component={PageAdmin} />
+                          <Route path={paths.admin()} element={<PageAdmin />} />
                         )}
-                        <Route component={PageNotFound} />
+                        <Route element={<PageNotFound />} />
                       </Routes>
                     </LoggedInContainer>
                   ) : (

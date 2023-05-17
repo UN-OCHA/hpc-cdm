@@ -31,21 +31,22 @@ const PageOperationFormAssignments = (props: Props) => {
               operationId: operation.id,
               windowId: window.id,
             })}
-          >
-            <C.SidebarNavigation
-              menu={prepareReportingWindowsAsSidebarNavigation(
-                lang,
-                operation.reportingWindows,
-                (w) =>
-                  paths.operationFormAssignments({
-                    operationId: operation.id,
-                    windowId: w.id,
-                  })
-              )}
-            >
-              <OperationFormAssignmentsList {...{ operation, window }} />
-            </C.SidebarNavigation>
-          </Route>
+            element={
+              <C.SidebarNavigation
+                menu={prepareReportingWindowsAsSidebarNavigation(
+                  lang,
+                  operation.reportingWindows,
+                  (w) =>
+                    paths.operationFormAssignments({
+                      operationId: operation.id,
+                      windowId: w.id,
+                    })
+                )}
+              >
+                <OperationFormAssignmentsList {...{ operation, window }} />
+              </C.SidebarNavigation>
+            }
+          />
           <Route
             path={paths.operationFormAssignmentDataMatch({
               operationId: operation.id,
@@ -105,9 +106,11 @@ const PageOperationFormAssignments = (props: Props) => {
               }
             }}
           />
-          <Route>
-            <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
-          </Route>
+          <Route
+            element={
+              <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
+            }
+          />
         </Routes>
       )}
     </AppContext.Consumer>

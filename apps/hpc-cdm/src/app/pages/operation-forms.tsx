@@ -54,24 +54,27 @@ const PageOperationForms = (props: Props) => {
                 );
               }}
             />
-            <Route>
-              {operation.reportingWindows.length > 0 ? (
-                <Redirect
-                  to={paths.operationFormAssignments({
-                    operationId: operation.id,
-                    windowId: getBestReportingWindow(operation.reportingWindows)
-                      .id,
-                  })}
-                />
-              ) : (
-                <C.ErrorMessage
-                  strings={{
-                    title: 'No reporting windows',
-                    info: "This operation doesn't have any reporting windows associated with it",
-                  }}
-                />
-              )}
-            </Route>
+            <Route
+              element={
+                operation.reportingWindows.length > 0 ? (
+                  <Redirect
+                    to={paths.operationFormAssignments({
+                      operationId: operation.id,
+                      windowId: getBestReportingWindow(
+                        operation.reportingWindows
+                      ).id,
+                    })}
+                  />
+                ) : (
+                  <C.ErrorMessage
+                    strings={{
+                      title: 'No reporting windows',
+                      info: "This operation doesn't have any reporting windows associated with it",
+                    }}
+                  />
+                )
+              }
+            />
           </Routes>
         </div>
       )}

@@ -45,35 +45,40 @@ const PageOperationClusters = (props: Props) => {
           >
             {({ data: clusters }) => (
               <Routes>
-                <Route path={paths.operationClusters(operation.id)}>
-                  <PageMeta
-                    title={[
-                      t.t(lang, (s) => s.navigation.clusters),
-                      operation.name,
-                    ]}
-                  />
-                  <Container>
-                    <C.List
-                      title={t.t(
-                        lang,
-                        (s) => s.routes.operations.clusters.listHeader
-                      )}
-                    >
-                      {clusters
-                        .sort((c1, c2) => (c1.name > c2.name ? 1 : -1))
-                        .map((cluster) => (
-                          <C.ListItem
-                            key={cluster.id}
-                            text={cluster.name}
-                            link={paths.operationCluster({
-                              operationId: operation.id,
-                              clusterId: cluster.id,
-                            })}
-                          />
-                        ))}
-                    </C.List>
-                  </Container>
-                </Route>
+                <Route
+                  path={paths.operationClusters(operation.id)}
+                  element={
+                    <>
+                      <PageMeta
+                        title={[
+                          t.t(lang, (s) => s.navigation.clusters),
+                          operation.name,
+                        ]}
+                      />
+                      <Container>
+                        <C.List
+                          title={t.t(
+                            lang,
+                            (s) => s.routes.operations.clusters.listHeader
+                          )}
+                        >
+                          {clusters
+                            .sort((c1, c2) => (c1.name > c2.name ? 1 : -1))
+                            .map((cluster) => (
+                              <C.ListItem
+                                key={cluster.id}
+                                text={cluster.name}
+                                link={paths.operationCluster({
+                                  operationId: operation.id,
+                                  clusterId: cluster.id,
+                                })}
+                              />
+                            ))}
+                        </C.List>
+                      </Container>
+                    </>
+                  }
+                />
                 <Route
                   path={paths.operationClusterMatch({
                     operationId: operation.id,

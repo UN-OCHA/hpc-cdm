@@ -35,29 +35,32 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                 clusterId: cluster.id,
                 windowId: window.id,
               })}
-            >
-              <ClusterNavigation
-                operation={operation}
-                cluster={cluster}
-                showSettingsButton
-              />
-              <C.SidebarNavigation
-                menu={prepareReportingWindowsAsSidebarNavigation(
-                  lang,
-                  operation.reportingWindows,
-                  (w) =>
-                    paths.operationClusterFormAssignments({
-                      operationId: operation.id,
-                      clusterId: cluster.id,
-                      windowId: w.id,
-                    })
-                )}
-              >
-                <OperationClusterFormAssignmentsList
-                  {...{ operation, cluster, window }}
-                />
-              </C.SidebarNavigation>
-            </Route>
+              element={
+                <>
+                  <ClusterNavigation
+                    operation={operation}
+                    cluster={cluster}
+                    showSettingsButton
+                  />
+                  <C.SidebarNavigation
+                    menu={prepareReportingWindowsAsSidebarNavigation(
+                      lang,
+                      operation.reportingWindows,
+                      (w) =>
+                        paths.operationClusterFormAssignments({
+                          operationId: operation.id,
+                          clusterId: cluster.id,
+                          windowId: w.id,
+                        })
+                    )}
+                  >
+                    <OperationClusterFormAssignmentsList
+                      {...{ operation, cluster, window }}
+                    />
+                  </C.SidebarNavigation>
+                </>
+              }
+            />
             <Route
               path={paths.operationClusterFormAssignmentDataMatch({
                 operationId: operation.id,
@@ -117,9 +120,13 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                 }
               }}
             />
-            <Route>
-              <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
-            </Route>
+            <Route
+              element={
+                <C.NotFound
+                  strings={t.get(lang, (s) => s.components.notFound)}
+                />
+              }
+            />
           </Routes>
         </div>
       )}

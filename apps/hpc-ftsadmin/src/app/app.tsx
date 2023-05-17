@@ -167,14 +167,15 @@ export const App = () => {
                         ]}
                       />
                       <Routes>
-                        <Route path={paths.home()}>
-                          <Redirect to={paths.flows()} />
-                        </Route>
+                        <Route
+                          path={paths.home()}
+                          element={<Redirect to={paths.flows()} />}
+                        />
                         <Route
                           path={paths.flows()}
-                          component={PageFlowsList}
+                          element={<PageFlowsList />}
                         />
-                        <Route component={PageNotFound} />
+                        <Route element={<PageNotFound />} />
                       </Routes>
                     </LoggedInContainer>
                   ) : (

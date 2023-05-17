@@ -54,28 +54,30 @@ const PageOperationClusterSettings = (props: Props) => {
                   operationId: operation.id,
                   clusterId: cluster.id,
                 })}
-              >
-                <Redirect
-                  to={paths.operationClusterSettingsAccess({
-                    operationId: operation.id,
-                    clusterId: cluster.id,
-                  })}
-                />
-              </Route>
+                element={
+                  <Redirect
+                    to={paths.operationClusterSettingsAccess({
+                      operationId: operation.id,
+                      clusterId: cluster.id,
+                    })}
+                  />
+                }
+              />
               {cluster.permissions.canModifyAccess && (
                 <Route
                   path={paths.operationClusterSettingsAccess({
                     operationId: operation.id,
                     clusterId: cluster.id,
                   })}
-                >
-                  <TargetAccessManagement
-                    target={{
-                      type: 'operationCluster',
-                      targetId: cluster.id,
-                    }}
-                  />
-                </Route>
+                  element={
+                    <TargetAccessManagement
+                      target={{
+                        type: 'operationCluster',
+                        targetId: cluster.id,
+                      }}
+                    />
+                  }
+                />
               )}
             </Routes>
           </C.SidebarNavigation>

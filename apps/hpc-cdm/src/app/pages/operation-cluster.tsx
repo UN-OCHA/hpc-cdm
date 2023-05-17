@@ -34,35 +34,42 @@ const PageOperationCluster = (props: Props) => {
                 operationId: operation.id,
                 clusterId: cluster.id,
               })}
-            >
-              <Redirect
-                to={paths.operationClusterForms({
-                  operationId: operation.id,
-                  clusterId: cluster.id,
-                })}
-              />
-            </Route>
+              element={
+                <Redirect
+                  to={paths.operationClusterForms({
+                    operationId: operation.id,
+                    clusterId: cluster.id,
+                  })}
+                />
+              }
+            />
             <Route
               path={paths.operationClusterForms({
                 operationId: operation.id,
                 clusterId: cluster.id,
               })}
-            >
-              <PageOperationClusterForms {...{ operation, cluster }} />
-            </Route>
+              element={
+                <PageOperationClusterForms {...{ operation, cluster }} />
+              }
+            />
             {displaySettings && (
               <Route
                 path={paths.operationClusterSettings({
                   operationId: operation.id,
                   clusterId: cluster.id,
                 })}
-              >
-                <PageOperationClusterSettings {...{ operation, cluster }} />
-              </Route>
+                element={
+                  <PageOperationClusterSettings {...{ operation, cluster }} />
+                }
+              />
             )}
-            <Route>
-              <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
-            </Route>
+            <Route
+              element={
+                <C.NotFound
+                  strings={t.get(lang, (s) => s.components.notFound)}
+                />
+              }
+            />
           </Routes>
         </div>
       )}

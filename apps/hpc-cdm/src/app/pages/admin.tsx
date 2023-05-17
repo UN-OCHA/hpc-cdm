@@ -24,21 +24,24 @@ const PageAdmin = () => {
             ]}
           >
             <Routes>
-              <Route path={paths.admin()}>
-                <Redirect to={paths.adminAccess()} />
-              </Route>
-              <Route path={paths.adminAccess()}>
-                <TargetAccessManagement
-                  target={{
-                    type: 'global',
-                  }}
-                />
-              </Route>
-              <Route>
-                <C.NotFound
-                  strings={t.get(lang, (s) => s.components.notFound)}
-                />
-              </Route>
+              <Route path={paths.admin()} element={<Redirect to={paths.adminAccess()} />}/>
+              <Route
+                path={paths.adminAccess()}
+                element={
+                  <TargetAccessManagement
+                    target={{
+                      type: 'global',
+                    }}
+                  />
+                }
+              />
+              <Route
+                element={
+                  <C.NotFound
+                    strings={t.get(lang, (s) => s.components.notFound)}
+                  />
+                }
+              />
             </Routes>
           </C.SidebarNavigation>
         </div>

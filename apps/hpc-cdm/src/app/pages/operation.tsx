@@ -78,27 +78,33 @@ const PageOperation = (props: Props) => {
                   />
                   <div className={CLASSES.CONTAINER.CENTERED}>
                     <Routes>
-                      <Route path={paths.operation(id)}>
-                        <Redirect to={paths.operationForms(id)} />
-                      </Route>
-                      <Route path={paths.operationForms(id)}>
-                        <OperationForms operation={operation} />
-                      </Route>
+                      <Route
+                        path={paths.operation(id)}
+                        element={<Redirect to={paths.operationForms(id)} />}
+                      />
+                      <Route
+                        path={paths.operationForms(id)}
+                        element={<OperationForms operation={operation} />}
+                      />
                       {displayClusters && (
-                        <Route path={paths.operationClusters(id)}>
-                          <OperationClusters operation={operation} />
-                        </Route>
+                        <Route
+                          path={paths.operationClusters(id)}
+                          element={<OperationClusters operation={operation} />}
+                        />
                       )}
                       {displaySettings && (
-                        <Route path={paths.operationSettings(id)}>
-                          <OperationSettings operation={operation} />
-                        </Route>
-                      )}
-                      <Route>
-                        <C.NotFound
-                          strings={t.get(lang, (s) => s.components.notFound)}
+                        <Route
+                          path={paths.operationSettings(id)}
+                          element={<OperationSettings operation={operation} />}
                         />
-                      </Route>
+                      )}
+                      <Route
+                        element={
+                          <C.NotFound
+                            strings={t.get(lang, (s) => s.components.notFound)}
+                          />
+                        }
+                      />
                     </Routes>
                   </div>
                 </>

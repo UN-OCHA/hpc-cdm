@@ -33,18 +33,24 @@ const PageOperationSettings = (props: Props) => {
             title={[t.t(lang, (s) => s.navigation.settings), operation.name]}
           />
           <Routes>
-            <Route path={paths.operationSettings(operation.id)}>
-              <Redirect to={paths.operationSettingsAccess(operation.id)} />
-            </Route>
+            <Route
+              path={paths.operationSettings(operation.id)}
+              element={
+                <Redirect to={paths.operationSettingsAccess(operation.id)} />
+              }
+            />
             {operation.permissions.canModifyAccess && (
-              <Route path={paths.operationSettingsAccess(operation.id)}>
-                <TargetAccessManagement
-                  target={{
-                    type: 'operation',
-                    targetId: operation.id,
-                  }}
-                />
-              </Route>
+              <Route
+                path={paths.operationSettingsAccess(operation.id)}
+                element={
+                  <TargetAccessManagement
+                    target={{
+                      type: 'operation',
+                      targetId: operation.id,
+                    }}
+                  />
+                }
+              />
             )}
           </Routes>
         </C.SidebarNavigation>
