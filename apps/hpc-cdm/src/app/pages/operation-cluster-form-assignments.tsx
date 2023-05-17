@@ -30,7 +30,6 @@ const PageOperationClusterFormAssignments = (props: Props) => {
         <div className={props.className}>
           <Routes>
             <Route
-              exact
               path={paths.operationClusterFormAssignments({
                 operationId: operation.id,
                 clusterId: cluster.id,

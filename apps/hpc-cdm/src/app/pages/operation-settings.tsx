@@ -33,11 +33,11 @@ const PageOperationSettings = (props: Props) => {
             title={[t.t(lang, (s) => s.navigation.settings), operation.name]}
           />
           <Routes>
-            <Route exact path={paths.operationSettings(operation.id)}>
+            <Route path={paths.operationSettings(operation.id)}>
               <Redirect to={paths.operationSettingsAccess(operation.id)} />
             </Route>
             {operation.permissions.canModifyAccess && (
-              <Route exact path={paths.operationSettingsAccess(operation.id)}>
+              <Route path={paths.operationSettingsAccess(operation.id)}>
                 <TargetAccessManagement
                   target={{
                     type: 'operation',

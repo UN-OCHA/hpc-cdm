@@ -30,7 +30,6 @@ const PageOperationCluster = (props: Props) => {
           <PageMeta title={[cluster.name, operation.name]} />
           <Routes>
             <Route
-              exact
               path={paths.operationCluster({
                 operationId: operation.id,
                 clusterId: cluster.id,

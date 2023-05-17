@@ -167,12 +167,11 @@ export const App = () => {
                         ]}
                       />
                       <Routes>
-                        <Route path={paths.home()} exact>
+                        <Route path={paths.home()}>
                           <Redirect to={paths.flows()} />
                         </Route>
                         <Route
                           path={paths.flows()}
-                          exact
                           component={PageFlowsList}
                         />
                         <Route component={PageNotFound} />

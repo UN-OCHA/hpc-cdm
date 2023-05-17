@@ -50,7 +50,6 @@ const PageOperationClusterSettings = (props: Props) => {
           >
             <Routes>
               <Route
-                exact
                 path={paths.operationClusterSettings({
                   operationId: operation.id,
                   clusterId: cluster.id,
@@ -65,7 +64,6 @@ const PageOperationClusterSettings = (props: Props) => {
               </Route>
               {cluster.permissions.canModifyAccess && (
                 <Route
-                  exact
                   path={paths.operationClusterSettingsAccess({
                     operationId: operation.id,
                     clusterId: cluster.id,

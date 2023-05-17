@@ -45,7 +45,7 @@ const PageOperationClusters = (props: Props) => {
           >
             {({ data: clusters }) => (
               <Routes>
-                <Route exact path={paths.operationClusters(operation.id)}>
+                <Route path={paths.operationClusters(operation.id)}>
                   <PageMeta
                     title={[
                       t.t(lang, (s) => s.navigation.clusters),

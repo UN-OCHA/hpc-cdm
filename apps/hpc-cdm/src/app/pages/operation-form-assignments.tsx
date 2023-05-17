@@ -27,7 +27,6 @@ const PageOperationFormAssignments = (props: Props) => {
       {({ lang }) => (
         <Routes>
           <Route
-            exact
             path={paths.operationFormAssignments({
               operationId: operation.id,
               windowId: window.id,

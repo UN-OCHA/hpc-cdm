@@ -143,12 +143,11 @@ export const App = () => {
                         ]}
                       />
                       <Routes>
-                        <Route path={paths.home()} exact>
+                        <Route path={paths.home()}>
                           <Redirect to={paths.operations()} />
                         </Route>
                         <Route
                           path={paths.operations()}
-                          exact
                           component={PageOperationsList}
                         />
                         <Route

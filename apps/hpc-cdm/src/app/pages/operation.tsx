@@ -78,7 +78,7 @@ const PageOperation = (props: Props) => {
                   />
                   <div className={CLASSES.CONTAINER.CENTERED}>
                     <Routes>
-                      <Route exact path={paths.operation(id)}>
+                      <Route path={paths.operation(id)}>
                         <Redirect to={paths.operationForms(id)} />
                       </Route>
                       <Route path={paths.operationForms(id)}>

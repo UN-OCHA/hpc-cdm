@@ -24,7 +24,7 @@ const PageAdmin = () => {
             ]}
           >
             <Routes>
-              <Route exact path={paths.admin()}>
+              <Route path={paths.admin()}>
                 <Redirect to={paths.adminAccess()} />
               </Route>
               <Route path={paths.adminAccess()}>
