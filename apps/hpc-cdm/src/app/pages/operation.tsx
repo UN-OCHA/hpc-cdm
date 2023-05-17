@@ -50,20 +50,6 @@ const PageOperation = (props: Props) => {
               return (
                 <>
                   <PageMeta title={[operation.name]} />
-                  {/* <C.Toolbar>
-                    <C.Breadcrumbs
-                      links={[
-                        {
-                          label: t.t(lang, (s) => s.navigation.operations),
-                          to: paths.operations(),
-                        },
-                        {
-                          label: operation.name,
-                          to: paths.operation(id),
-                        },
-                      ]}
-                    />
-                  </C.Toolbar> */}
                   <C.SecondaryNavigation
                     breadcrumbs={[
                       {
