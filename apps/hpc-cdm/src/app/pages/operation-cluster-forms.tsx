@@ -10,6 +10,7 @@ import * as paths from '../paths';
 import { getBestReportingWindow } from '../utils/reportingWindows';
 
 import ClusterNavigation from '../components/cluster-navigation';
+import { RouteParamsValidator } from '../components/route-params-validator';
 import PageOperationClusterFormAssignments from './operation-cluster-form-assignments';
 
 interface Props {
@@ -31,35 +32,28 @@ const PageOperationClusterForms = (props: Props) => {
                 operationId: operation.id,
                 clusterId: cluster.id,
               })}
-              render={(props: { match: { params: { windowId: string } } }) => {
-                const id = parseInt(props.match.params.windowId);
-                if (!isNaN(id)) {
-                  const windows = operation.reportingWindows.filter(
-                    (w) => w.id === id
-                  );
-                  if (windows.length === 1) {
-                    console.log(props);
-                    return (
-                      <PageOperationClusterFormAssignments
-                        window={windows[0]}
-                        {...{ operation, cluster }}
-                      />
-                    );
+              element={
+                <RouteParamsValidator
+                  element={
+                    <PageOperationClusterFormAssignments
+                      {...{ operation, cluster }}
+                    />
                   }
-                }
-                return (
-                  <>
-                    <ClusterNavigation
-                      operation={operation}
-                      cluster={cluster}
-                      showSettingsButton
-                    />
-                    <C.NotFound
-                      strings={t.get(lang, (s) => s.components.notFound)}
-                    />
-                  </>
-                );
-              }}
+                  routeParam="windowId"
+                  errorElement={
+                    <>
+                      <ClusterNavigation
+                        operation={operation}
+                        cluster={cluster}
+                        showSettingsButton
+                      />
+                      <C.NotFound
+                        strings={t.get(lang, (s) => s.components.notFound)}
+                      />
+                    </>
+                  }
+                />
+              }
             />
             <Route
               element={

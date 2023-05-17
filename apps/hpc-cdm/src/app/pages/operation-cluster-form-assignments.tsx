@@ -1,8 +1,8 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useParams } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
-import { operations, reportingWindows } from '@unocha/hpc-data';
+import { operations } from '@unocha/hpc-data';
 
 import { t } from '../../i18n';
 import { AppContext } from '../context';
@@ -12,17 +12,33 @@ import ClusterNavigation from '../components/cluster-navigation';
 import FormAssignmentData from '../components/form-assignment-data';
 import OperationClusterFormAssignmentsList from '../components/operation-cluster-form-assignments-list';
 import PageMeta from '../components/page-meta';
+import { RouteParamsValidator } from '../components/route-params-validator';
 import { prepareReportingWindowsAsSidebarNavigation } from '../utils/reportingWindows';
 
 interface Props {
   className?: string;
   operation: operations.DetailedOperation;
   cluster: operations.OperationCluster;
-  window: reportingWindows.ReportingWindow;
 }
 
+type PageOperationClusterFormAssignmentsRouteParams = {
+  windowId: string;
+};
+
 const PageOperationClusterFormAssignments = (props: Props) => {
-  const { operation, cluster, window } = props;
+  const { operation, cluster } = props;
+
+  const { windowId: windowIdString } =
+    useParams<PageOperationClusterFormAssignmentsRouteParams>();
+  const windowId = parseInt(windowIdString ?? '', 10);
+
+  const windows = operation.reportingWindows.filter((w) => w.id === windowId);
+  if (windows.length !== 1) {
+    throw new Error(
+      `Cannot find unique reporting window with ID ${windowIdString}`
+    );
+  }
+  const window = windows[0];
 
   return (
     <AppContext.Consumer>
@@ -67,12 +83,9 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                 clusterId: cluster.id,
                 windowId: window.id,
               })}
-              render={(props: {
-                match: { params: { assignmentId: string } };
-              }) => {
-                const assignmentId = parseInt(props.match.params.assignmentId);
-                if (!isNaN(assignmentId)) {
-                  return (
+              element={
+                <RouteParamsValidator
+                  element={
                     <FormAssignmentData
                       header={(assignment) => (
                         <>
@@ -98,7 +111,7 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                                   operationId: operation.id,
                                   clusterId: cluster.id,
                                   windowId: window.id,
-                                  assignmentId,
+                                  assignmentId: assignment.id,
                                 }),
                                 label: assignment.task.form.name,
                               },
@@ -108,17 +121,12 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                           />
                         </>
                       )}
-                      {...{ window, assignmentId }}
+                      {...{ window }}
                     />
-                  );
-                } else {
-                  return (
-                    <C.NotFound
-                      strings={t.get(lang, (s) => s.components.notFound)}
-                    />
-                  );
-                }
-              }}
+                  }
+                  routeParam="windowId"
+                />
+              }
             />
             <Route
               element={

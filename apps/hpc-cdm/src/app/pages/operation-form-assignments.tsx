@@ -1,9 +1,9 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useParams } from 'react-router-dom';
 
 import { t } from '../../i18n';
 import { C, styled } from '@unocha/hpc-ui';
-import { operations, reportingWindows } from '@unocha/hpc-data';
+import { operations } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
 import * as paths from '../paths';
@@ -11,16 +11,32 @@ import * as paths from '../paths';
 import OperationFormAssignmentsList from '../components/operation-form-assignments-list';
 import FormAssignmentData from '../components/form-assignment-data';
 import PageMeta from '../components/page-meta';
+import { RouteParamsValidator } from '../components/route-params-validator';
 import { prepareReportingWindowsAsSidebarNavigation } from '../utils/reportingWindows';
 
 interface Props {
   className?: string;
   operation: operations.DetailedOperation;
-  window: reportingWindows.ReportingWindow;
 }
 
+type OperationFormAssignmentsRouteParams = {
+  windowId: string;
+};
+
 const PageOperationFormAssignments = (props: Props) => {
-  const { operation, window } = props;
+  const { operation } = props;
+
+  const { windowId: windowIdString } =
+    useParams<OperationFormAssignmentsRouteParams>();
+  const windowId = parseInt(windowIdString ?? '');
+
+  const windows = operation.reportingWindows.filter((w) => w.id === windowId);
+  if (windows.length !== 1) {
+    throw new Error(
+      `Cannot find unique reporting window with ID ${windowIdString}`
+    );
+  }
+  const window = windows[0];
 
   return (
     <AppContext.Consumer>
@@ -52,12 +68,10 @@ const PageOperationFormAssignments = (props: Props) => {
               operationId: operation.id,
               windowId: window.id,
             })}
-            render={(props: {
-              match: { params: { assignmentId: string } };
-            }) => {
-              const assignmentId = parseInt(props.match.params.assignmentId);
-              if (!isNaN(assignmentId)) {
-                return (
+            element={
+              <RouteParamsValidator
+                routeParam="assignmentId"
+                element={
                   <FormAssignmentData
                     header={(assignment) => (
                       <>
@@ -94,17 +108,11 @@ const PageOperationFormAssignments = (props: Props) => {
                         />
                       </>
                     )}
-                    {...{ window, assignmentId }}
+                    {...{ window }}
                   />
-                );
-              } else {
-                return (
-                  <C.NotFound
-                    strings={t.get(lang, (s) => s.components.notFound)}
-                  />
-                );
-              }
-            }}
+                }
+              />
+            }
           />
           <Route
             element={

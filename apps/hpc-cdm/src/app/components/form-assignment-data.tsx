@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { t } from '../../i18n';
 import { C, dataLoader } from '@unocha/hpc-ui';
 import { reportingWindows } from '@unocha/hpc-data';
+import { useParams } from 'react-router-dom';
 
 import { AppContext, getEnv } from '../context';
 import { EnketoEditableForm } from './enketo';
@@ -11,13 +12,21 @@ import { browserSupportedByEnketo } from './enketo/util';
 interface Props {
   className?: string;
   window: reportingWindows.ReportingWindow;
-  assignmentId: number;
   header?: (assignment: reportingWindows.GetAssignmentResult) => JSX.Element;
 }
 
+type FormAssignmentRouteParams = {
+  assignmentId: string;
+};
+
 const FormAssignmentData = (props: Props) => {
-  const { window, assignmentId, header } = props;
+  const { window, header } = props;
   const { lang } = useContext(AppContext);
+
+  const { assignmentId: assignmentIdString } =
+    useParams<FormAssignmentRouteParams>();
+  const assignmentId = parseInt(assignmentIdString ?? '', 10);
+
   const loader = dataLoader(
     [
       {

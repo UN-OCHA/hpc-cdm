@@ -11,6 +11,7 @@ import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
 import * as paths from './paths';
 import PageMeta from './components/page-meta';
+import { RouteParamsValidator } from './components/route-params-validator';
 
 import PageAdmin from './pages/admin';
 import PageNotLoggedIn from './pages/not-logged-in';
@@ -153,7 +154,12 @@ export const App = () => {
                         />
                         <Route
                           path={paths.operationMatch()}
-                          element={<PageOperation />}
+                          element={
+                            <RouteParamsValidator
+                              element={<PageOperation />}
+                              routeParam="id"
+                            />
+                          }
                         />
                         {canModifyGlobalUserAccess && (
                           <Route path={paths.admin()} element={<PageAdmin />} />

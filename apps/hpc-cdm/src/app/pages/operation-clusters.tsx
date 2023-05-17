@@ -8,6 +8,7 @@ import { t } from '../../i18n';
 import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
 import PageMeta from '../components/page-meta';
+import { RouteParamsValidator } from '../components/route-params-validator';
 
 import OperationCluster from './operation-cluster';
 
@@ -83,29 +84,17 @@ const PageOperationClusters = (props: Props) => {
                   path={paths.operationClusterMatch({
                     operationId: operation.id,
                   })}
-                  render={(props: {
-                    match: { params: { clusterId: string } };
-                  }) => {
-                    const clusterId = parseInt(props.match.params.clusterId);
-                    if (!isNaN(clusterId)) {
-                      const cluster = clusters.filter(
-                        (c) => c.id === clusterId
-                      );
-                      if (cluster.length === 1) {
-                        return (
-                          <OperationCluster
-                            cluster={cluster[0]}
-                            {...{ operation }}
-                          />
-                        );
+                  element={
+                    <RouteParamsValidator
+                      element={
+                        <OperationCluster
+                          clusters={clusters}
+                          {...{ operation }}
+                        />
                       }
-                    }
-                    return (
-                      <C.NotFound
-                        strings={t.get(lang, (s) => s.components.notFound)}
-                      />
-                    );
-                  }}
+                      routeParam="clusterId"
+                    />
+                  }
                 />
               </Routes>
             )}

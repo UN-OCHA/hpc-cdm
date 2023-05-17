@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
 import { CLASSES, C, dataLoader } from '@unocha/hpc-ui';
 
@@ -12,20 +12,14 @@ import OperationClusters from './operation-clusters';
 import OperationSettings from './operation-settings';
 import PageMeta from '../components/page-meta';
 
-interface Props {
-  match: {
-    params: {
-      id: string;
-    };
-  };
-}
+type OperationRouteParams = {
+  id: string;
+};
 
-const PageOperation = (props: Props) => {
-  const id = parseInt(props.match.params.id);
-  if (isNaN(id)) {
-    // TODO: improve this
-    return <>Not Found</>;
-  }
+const PageOperation = () => {
+  const { id: idString } = useParams<OperationRouteParams>();
+  const id = parseInt(idString ?? '', 10);
+
   const loader = dataLoader([{ id }], getEnv().model.operations.getOperation);
 
   return (

@@ -57,6 +57,11 @@
       "info": "Nous n'avons pas pu trouver la page que vous cherchiez",
       "back": "Retour"
     },
+    "invalidRouteParam": {
+      "title": "Route invalide",
+      "info": "Un identifiant (ID) non numérique a été detecté dans l'URL",
+      "back": "Retour"
+    },
     "loader": {
       "loading": "Chargement...",
       "error": "Erreur:",

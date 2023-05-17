@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -15,11 +15,25 @@ import PageMeta from '../components/page-meta';
 interface Props {
   className?: string;
   operation: operations.DetailedOperation;
-  cluster: operations.OperationCluster;
+  clusters: operations.OperationCluster[];
 }
 
+type OperationClusterRouteParams = {
+  clusterId: string;
+};
+
 const PageOperationCluster = (props: Props) => {
-  const { operation, cluster } = props;
+  const { operation, clusters } = props;
+
+  const { clusterId: clusterIdString } =
+    useParams<OperationClusterRouteParams>();
+  const clusterId = parseInt(clusterIdString ?? '', 10);
+
+  const clusterWithMatchingId = clusters.filter((c) => c.id === clusterId);
+  if (clusterWithMatchingId.length !== 1) {
+    throw new Error(`Cannot find unique cluster with ID ${clusterIdString}`);
+  }
+  const cluster = clusterWithMatchingId[0];
 
   const displaySettings = cluster.permissions.canModifyAccess;
 

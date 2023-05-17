@@ -9,6 +9,7 @@ import { t } from '../../i18n';
 import OperationFormAssignments from './operation-form-assignments';
 import * as paths from '../paths';
 import PageMeta from '../components/page-meta';
+import { RouteParamsValidator } from '../components/route-params-validator';
 import { getBestReportingWindow } from '../utils/reportingWindows';
 
 interface Props {
@@ -31,28 +32,12 @@ const PageOperationForms = (props: Props) => {
               path={paths.operationFormAssignmentsMatch({
                 operationId: operation.id,
               })}
-              render={(props: { match: { params: { windowId: string } } }) => {
-                const id = parseInt(props.match.params.windowId);
-                if (!isNaN(id)) {
-                  const windows = operation.reportingWindows.filter(
-                    (w) => w.id === id
-                  );
-                  if (windows.length === 1) {
-                    console.log(props);
-                    return (
-                      <OperationFormAssignments
-                        operation={operation}
-                        window={windows[0]}
-                      />
-                    );
-                  }
-                }
-                return (
-                  <C.NotFound
-                    strings={t.get(lang, (s) => s.components.notFound)}
-                  />
-                );
-              }}
+              element={
+                <RouteParamsValidator
+                  element={<OperationFormAssignments operation={operation} />}
+                  routeParam="windowId"
+                />
+              }
             />
             <Route
               element={
