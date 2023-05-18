@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { BaseStyling, C, styled, dataLoader, dialogs } from '@unocha/hpc-ui';
@@ -57,8 +57,6 @@ const TitleSecondary = styled.div`
   line-height: 100%;
   font-size: 1.7rem;
 `;
-
-toast.configure();
 
 export const App = () => {
   const [lang, setLang] = useState(LANGUAGE_CHOICE.getLanguage());
@@ -179,6 +177,7 @@ export const App = () => {
           );
         }}
       </C.Loader>
+      <ToastContainer />
     </>
   );
 };

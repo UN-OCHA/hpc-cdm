@@ -9,7 +9,7 @@ import {
 } from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import env, { Environment } from '../environments/environment';
 import { LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
@@ -58,8 +58,6 @@ const TitlePrimary = styled.div`
   display: flex;
   align-items: center;
 `;
-
-toast.configure();
 
 export const App = () => {
   const [lang, setLang] = useState(LANGUAGE_CHOICE.getLanguage());
@@ -196,6 +194,7 @@ export const App = () => {
           );
         }}
       </C.Loader>
+      <ToastContainer />
     </ThemeProvider>
   );
 };
