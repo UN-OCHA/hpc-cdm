@@ -1,0 +1,32 @@
+{
+  "name": "hpc-live",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/hpc-live/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/hpc-live/**/*.ts",
+          "libs/hpc-live/**/*.spec.ts",
+          "libs/hpc-live/**/*.spec.tsx",
+          "libs/hpc-live/**/*.spec.js",
+          "libs/hpc-live/**/*.spec.jsx",
+          "libs/hpc-live/**/*.d.ts"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/hpc-live/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/hpc-live"]
+    }
+  },
+  "tags": []
+}
