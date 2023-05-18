@@ -30,6 +30,8 @@ module.exports = composePlugins(
       __dirname,
       'src/app/components/enketo/overrides/translator'
     );
+    // Use styled-components as MUI styled engine
+    // https://mui.com/material-ui/guides/styled-engine/#how-to-switch-to-styled-components
     config.resolve.alias['@mui/styled-engine'] = '@mui/styled-engine-sc';
 
     return config;
