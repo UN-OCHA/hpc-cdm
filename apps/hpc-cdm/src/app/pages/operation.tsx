@@ -73,26 +73,27 @@ const PageOperation = () => {
                   <div className={CLASSES.CONTAINER.CENTERED}>
                     <Routes>
                       <Route
-                        path={paths.operation(id)}
-                        element={<Navigate to={paths.operationForms(id)} />}
+                        path={paths.home()}
+                        element={<Navigate to={paths.forms()} />}
                       />
                       <Route
-                        path={paths.operationForms(id)}
+                        path={paths.formsRoot()}
                         element={<OperationForms operation={operation} />}
                       />
                       {displayClusters && (
                         <Route
-                          path={paths.operationClusters(id)}
+                          path={paths.operationClustersRoot()}
                           element={<OperationClusters operation={operation} />}
                         />
                       )}
                       {displaySettings && (
                         <Route
-                          path={paths.operationSettings(id)}
+                          path={paths.settingsRoot()}
                           element={<OperationSettings operation={operation} />}
                         />
                       )}
                       <Route
+                        path={paths.root()}
                         element={
                           <C.NotFound
                             strings={t.get(lang, (s) => s.components.notFound)}

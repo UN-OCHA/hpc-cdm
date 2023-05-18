@@ -43,10 +43,7 @@ const PageOperationFormAssignments = (props: Props) => {
       {({ lang }) => (
         <Routes>
           <Route
-            path={paths.operationFormAssignments({
-              operationId: operation.id,
-              windowId: window.id,
-            })}
+            path={paths.home()}
             element={
               <C.SidebarNavigation
                 menu={prepareReportingWindowsAsSidebarNavigation(
@@ -64,10 +61,7 @@ const PageOperationFormAssignments = (props: Props) => {
             }
           />
           <Route
-            path={paths.operationFormAssignmentDataMatch({
-              operationId: operation.id,
-              windowId: window.id,
-            })}
+            path={paths.formAssignmentDataMatch()}
             element={
               <RouteParamsValidator
                 routeParam="assignmentId"
@@ -115,6 +109,7 @@ const PageOperationFormAssignments = (props: Props) => {
             }
           />
           <Route
+            path={paths.root()}
             element={
               <C.NotFound strings={t.get(lang, (s) => s.components.notFound)} />
             }

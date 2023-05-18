@@ -44,40 +44,25 @@ const PageOperationCluster = (props: Props) => {
           <PageMeta title={[cluster.name, operation.name]} />
           <Routes>
             <Route
-              path={paths.operationCluster({
-                operationId: operation.id,
-                clusterId: cluster.id,
-              })}
-              element={
-                <Navigate
-                  to={paths.operationClusterForms({
-                    operationId: operation.id,
-                    clusterId: cluster.id,
-                  })}
-                />
-              }
+              path={paths.home()}
+              element={<Navigate to={paths.forms()} />}
             />
             <Route
-              path={paths.operationClusterForms({
-                operationId: operation.id,
-                clusterId: cluster.id,
-              })}
+              path={paths.formsRoot()}
               element={
                 <PageOperationClusterForms {...{ operation, cluster }} />
               }
             />
             {displaySettings && (
               <Route
-                path={paths.operationClusterSettings({
-                  operationId: operation.id,
-                  clusterId: cluster.id,
-                })}
+                path={paths.settingsRoot()}
                 element={
                   <PageOperationClusterSettings {...{ operation, cluster }} />
                 }
               />
             )}
             <Route
+              path={paths.root()}
               element={
                 <C.NotFound
                   strings={t.get(lang, (s) => s.components.notFound)}

@@ -46,11 +46,7 @@ const PageOperationClusterFormAssignments = (props: Props) => {
         <div className={props.className}>
           <Routes>
             <Route
-              path={paths.operationClusterFormAssignments({
-                operationId: operation.id,
-                clusterId: cluster.id,
-                windowId: window.id,
-              })}
+              path={paths.home()}
               element={
                 <>
                   <ClusterNavigation
@@ -78,11 +74,7 @@ const PageOperationClusterFormAssignments = (props: Props) => {
               }
             />
             <Route
-              path={paths.operationClusterFormAssignmentDataMatch({
-                operationId: operation.id,
-                clusterId: cluster.id,
-                windowId: window.id,
-              })}
+              path={paths.formAssignmentDataMatch()}
               element={
                 <RouteParamsValidator
                   element={
@@ -129,6 +121,7 @@ const PageOperationClusterFormAssignments = (props: Props) => {
               }
             />
             <Route
+              path={paths.root()}
               element={
                 <C.NotFound
                   strings={t.get(lang, (s) => s.components.notFound)}

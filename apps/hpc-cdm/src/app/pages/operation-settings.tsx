@@ -34,14 +34,12 @@ const PageOperationSettings = (props: Props) => {
           />
           <Routes>
             <Route
-              path={paths.operationSettings(operation.id)}
-              element={
-                <Navigate to={paths.operationSettingsAccess(operation.id)} />
-              }
+              path={paths.home()}
+              element={<Navigate to={paths.access()} />}
             />
             {operation.permissions.canModifyAccess && (
               <Route
-                path={paths.operationSettingsAccess(operation.id)}
+                path={paths.access()}
                 element={
                   <TargetAccessManagement
                     target={{

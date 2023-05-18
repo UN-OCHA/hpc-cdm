@@ -47,7 +47,7 @@ const PageOperationClusters = (props: Props) => {
             {({ data: clusters }) => (
               <Routes>
                 <Route
-                  path={paths.operationClusters(operation.id)}
+                  path={paths.home()}
                   element={
                     <>
                       <PageMeta
@@ -81,9 +81,7 @@ const PageOperationClusters = (props: Props) => {
                   }
                 />
                 <Route
-                  path={paths.operationClusterMatch({
-                    operationId: operation.id,
-                  })}
+                  path={paths.operationClusterMatch()}
                   element={
                     <RouteParamsValidator
                       element={

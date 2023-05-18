@@ -25,11 +25,11 @@ const PageAdmin = () => {
           >
             <Routes>
               <Route
-                path={paths.admin()}
-                element={<Navigate to={paths.adminAccess()} />}
+                path={paths.home()}
+                element={<Navigate to={paths.access()} />}
               />
               <Route
-                path={paths.adminAccess()}
+                path={paths.access()}
                 element={
                   <TargetAccessManagement
                     target={{
@@ -39,6 +39,7 @@ const PageAdmin = () => {
                 }
               />
               <Route
+                path={paths.root()}
                 element={
                   <C.NotFound
                     strings={t.get(lang, (s) => s.components.notFound)}

@@ -28,10 +28,7 @@ const PageOperationClusterForms = (props: Props) => {
         <div className={props.className}>
           <Routes>
             <Route
-              path={paths.operationClusterFormAssignmentsMatch({
-                operationId: operation.id,
-                clusterId: cluster.id,
-              })}
+              path={paths.formAssignmentsRoot()}
               element={
                 <RouteParamsValidator
                   element={
@@ -56,16 +53,14 @@ const PageOperationClusterForms = (props: Props) => {
               }
             />
             <Route
+              path={paths.home()}
               element={
                 operation.reportingWindows.length > 0 ? (
                   <Navigate
-                    to={paths.operationClusterFormAssignments({
-                      operationId: operation.id,
-                      clusterId: cluster.id,
-                      windowId: getBestReportingWindow(
-                        operation.reportingWindows
-                      ).id,
-                    })}
+                    to={
+                      paths.reportingWindow() +
+                      getBestReportingWindow(operation.reportingWindows).id
+                    }
                   />
                 ) : (
                   <C.ErrorMessage

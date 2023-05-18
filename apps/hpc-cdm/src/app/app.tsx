@@ -153,7 +153,7 @@ export const App = () => {
                           element={<PageOperationsList />}
                         />
                         <Route
-                          path={paths.operationMatch()}
+                          path={paths.operationRoot()}
                           element={
                             <RouteParamsValidator
                               element={<PageOperation />}
@@ -162,9 +162,12 @@ export const App = () => {
                           }
                         />
                         {canModifyGlobalUserAccess && (
-                          <Route path={paths.admin()} element={<PageAdmin />} />
+                          <Route
+                            path={paths.adminRoot()}
+                            element={<PageAdmin />}
+                          />
                         )}
-                        <Route element={<PageNotFound />} />
+                        <Route path={paths.root()} element={<PageNotFound />} />
                       </Routes>
                     </LoggedInContainer>
                   ) : (

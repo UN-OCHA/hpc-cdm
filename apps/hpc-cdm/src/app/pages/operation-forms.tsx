@@ -29,9 +29,7 @@ const PageOperationForms = (props: Props) => {
           />
           <Routes>
             <Route
-              path={paths.operationFormAssignmentsMatch({
-                operationId: operation.id,
-              })}
+              path={paths.formAssignmentsRoot()}
               element={
                 <RouteParamsValidator
                   element={<OperationFormAssignments operation={operation} />}
@@ -40,15 +38,14 @@ const PageOperationForms = (props: Props) => {
               }
             />
             <Route
+              path={paths.home()}
               element={
                 operation.reportingWindows.length > 0 ? (
                   <Navigate
-                    to={paths.operationFormAssignments({
-                      operationId: operation.id,
-                      windowId: getBestReportingWindow(
-                        operation.reportingWindows
-                      ).id,
-                    })}
+                    to={
+                      paths.reportingWindow() +
+                      getBestReportingWindow(operation.reportingWindows).id
+                    }
                   />
                 ) : (
                   <C.ErrorMessage

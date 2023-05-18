@@ -50,10 +50,7 @@ const PageOperationClusterSettings = (props: Props) => {
           >
             <Routes>
               <Route
-                path={paths.operationClusterSettings({
-                  operationId: operation.id,
-                  clusterId: cluster.id,
-                })}
+                path={paths.home()}
                 element={
                   <Navigate
                     to={paths.operationClusterSettingsAccess({
@@ -65,10 +62,7 @@ const PageOperationClusterSettings = (props: Props) => {
               />
               {cluster.permissions.canModifyAccess && (
                 <Route
-                  path={paths.operationClusterSettingsAccess({
-                    operationId: operation.id,
-                    clusterId: cluster.id,
-                  })}
+                  path={paths.access()}
                   element={
                     <TargetAccessManagement
                       target={{
