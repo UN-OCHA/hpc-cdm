@@ -22,7 +22,7 @@
         ],
         "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/hpc-ftsadmin/webpack.js",
+        "webpackConfig": "apps/hpc-ftsadmin/webpack.config.js",
         "isolatedConfig": true
       },
       "configurations": {

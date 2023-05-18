@@ -16,7 +16,7 @@
         "assets": ["apps/hpc-cdm/src/favicon.ico", "apps/hpc-cdm/src/assets"],
         "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/hpc-cdm/webpack.js",
+        "webpackConfig": "apps/hpc-cdm/webpack.config.js",
         "isolatedConfig": true
       },
       "configurations": {
