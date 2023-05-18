@@ -59,14 +59,16 @@
     "serve": {
       "executor": "@nrwl/webpack:dev-server",
       "options": {
-        "buildTarget": "hpc-cdm:build"
+        "buildTarget": "hpc-cdm:build",
+        "hmr": true
       },
       "configurations": {
         "dev-live": {
           "buildTarget": "hpc-cdm:build:dev-live"
         },
         "production": {
-          "buildTarget": "hpc-cdm:build:production"
+          "buildTarget": "hpc-cdm:build:production",
+          "hmr": false
         }
       }
     },
