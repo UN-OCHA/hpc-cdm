@@ -18,7 +18,7 @@ interface Props {
   }>;
 }
 
-const ClusterNavitation = (props: Props) => {
+const ClusterNavigation = (props: Props) => {
   const loc = useLocation();
 
   const { breadcrumbs, operation, cluster, showSettingsButton } = props;
@@ -59,4 +59,4 @@ const ClusterNavitation = (props: Props) => {
   );
 };
 
-export default ClusterNavitation;
+export default ClusterNavigation;
