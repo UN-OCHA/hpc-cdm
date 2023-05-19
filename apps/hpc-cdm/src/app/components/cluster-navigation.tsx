@@ -45,18 +45,15 @@ const ClusterNavitation = (props: Props) => {
         ...(breadcrumbs || []),
       ]}
       actions={
-        // eslint-disable-next-line react/jsx-no-useless-fragment
-        <>
-          {displaySettings && (
-            <C.ButtonLink
-              color="neutral"
-              text={t.t(lang, (s) => s.routes.operations.clusters.settings)}
-              to={settingsPath}
-              active={loc.pathname.startsWith(settingsPath)}
-              startIcon={ICONS.Gear}
-            />
-          )}
-        </>
+        displaySettings ? (
+          <C.ButtonLink
+            color="neutral"
+            text={t.t(lang, (s) => s.routes.operations.clusters.settings)}
+            to={settingsPath}
+            active={loc.pathname.startsWith(settingsPath)}
+            startIcon={ICONS.Gear}
+          />
+        ) : undefined
       }
     />
   );
