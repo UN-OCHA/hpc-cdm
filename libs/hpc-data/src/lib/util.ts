@@ -179,3 +179,24 @@ export const ISO_DATE_FROM_STRING = new t.Type<string, string>(
   },
   t.identity
 );
+
+/**
+ * Accepts date object serialized to string
+ */
+export const DATE_FROM_STRING = new t.Type(
+  'DATE_FROM_STRING',
+  (u): u is Date => u instanceof Date,
+  (v, c) => {
+    if (typeof v === 'string') {
+      const d = new Date(v);
+      if (v === d.toISOString()) {
+        return t.success(d);
+      }
+
+      return t.failure(v, c);
+    }
+
+    return t.failure(v, c);
+  },
+  t.identity
+);
