@@ -57,6 +57,11 @@
       "info": "No hemos podido encontrar la página que buscaba",
       "back": "Volver atrás"
     },
+    "invalidRouteParam": {
+      "title": "Ruta no valida",
+      "info": "El ID de la URL no es un número entero",
+      "back": "Volver atrás"
+    },
     "loader": {
       "loading": "Cargando...",
       "error": "Error:",

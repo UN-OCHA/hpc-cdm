@@ -8,8 +8,6 @@ import { t } from '../../i18n';
 import dayjs from '../../libraries/dayjs';
 import { Tooltip } from '@mui/material';
 
-import withStyles from '@mui/styles/withStyles';
-
 interface Props {
   className?: string;
   title?: string;
@@ -35,12 +33,6 @@ const Label = styled.span<{ submitted: boolean }>`
   font-size: 1.2rem;
   font-weight: bold;
 `;
-
-const StyledToolTip = withStyles({
-  tooltip: {
-    padding: 8,
-  },
-})(Tooltip);
 
 const LastChanged = styled.span`
   font-style: italic;
@@ -83,8 +75,11 @@ const FormAssignmentsList = (props: Props) => {
                   secondary={a.cluster && <span>{a.cluster.name}</span>}
                   itemEnd={
                     <>
-                      <StyledToolTip
+                      <Tooltip
                         arrow
+                        componentsProps={{
+                          tooltip: { sx: { padding: '8px' } },
+                        }}
                         title={`${dayjs(a.lastUpdatedAt)
                           .locale(lang)
                           .format('ddd D MMM YYYY LTS')}`}
@@ -94,7 +89,7 @@ const FormAssignmentsList = (props: Props) => {
                             .t(lang, (s) => s.common.lastUpdatedBy)
                             .replace('{person}', a.lastUpdatedBy)}
                         </LastChanged>
-                      </StyledToolTip>
+                      </Tooltip>
 
                       <Label submitted={submitted}>
                         {t.get(

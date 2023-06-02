@@ -18,7 +18,7 @@ interface Props {
   }>;
 }
 
-const ClusterNavitation = (props: Props) => {
+const ClusterNavigation = (props: Props) => {
   const loc = useLocation();
 
   const { breadcrumbs, operation, cluster, showSettingsButton } = props;
@@ -45,21 +45,18 @@ const ClusterNavitation = (props: Props) => {
         ...(breadcrumbs || []),
       ]}
       actions={
-        // eslint-disable-next-line react/jsx-no-useless-fragment
-        <>
-          {displaySettings && (
-            <C.ButtonLink
-              color="neutral"
-              text={t.t(lang, (s) => s.routes.operations.clusters.settings)}
-              to={settingsPath}
-              active={loc.pathname.startsWith(settingsPath)}
-              startIcon={ICONS.Gear}
-            />
-          )}
-        </>
+        displaySettings ? (
+          <C.ButtonLink
+            color="neutral"
+            text={t.t(lang, (s) => s.routes.operations.clusters.settings)}
+            to={settingsPath}
+            active={loc.pathname.startsWith(settingsPath)}
+            startIcon={ICONS.Gear}
+          />
+        ) : undefined
       }
     />
   );
 };
 
-export default ClusterNavitation;
+export default ClusterNavigation;

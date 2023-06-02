@@ -1,0 +1,33 @@
+{
+  "name": "hpc-cdm-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/hpc-cdm-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/hpc-cdm-e2e/cypress.json",
+        "tsConfig": "apps/hpc-cdm-e2e/tsconfig.e2e.json",
+        "devServerTarget": "hpc-cdm:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "hpc-cdm:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/hpc-cdm-e2e/src/**/*.ts",
+          "apps/hpc-cdm-e2e/src/**/*.js"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["hpc-cdm"]
+}
