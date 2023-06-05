@@ -1,0 +1,32 @@
+{
+  "name": "hpc-dummy",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/hpc-dummy/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/hpc-dummy/**/*.ts",
+          "libs/hpc-dummy/**/*.spec.ts",
+          "libs/hpc-dummy/**/*.spec.tsx",
+          "libs/hpc-dummy/**/*.spec.js",
+          "libs/hpc-dummy/**/*.spec.jsx",
+          "libs/hpc-dummy/**/*.d.ts"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/hpc-dummy/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/hpc-dummy"]
+    }
+  },
+  "tags": []
+}

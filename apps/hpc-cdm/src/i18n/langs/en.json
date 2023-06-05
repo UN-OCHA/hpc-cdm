@@ -57,6 +57,11 @@
       "info": "We were unable to find the page you were looking for",
       "back": "Go back"
     },
+    "invalidRouteParam": {
+      "title": "Invalid route",
+      "info": "Non-integer ID detected in URL",
+      "back": "Go back"
+    },
     "loader": {
       "loading": "Loading...",
       "error": "Error:",

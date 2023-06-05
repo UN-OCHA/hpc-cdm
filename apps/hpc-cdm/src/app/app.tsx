@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { BaseStyling, C, styled, dataLoader, dialogs } from '@unocha/hpc-ui';
@@ -11,6 +11,7 @@ import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
 import * as paths from './paths';
 import PageMeta from './components/page-meta';
+import { RouteParamsValidator } from './components/route-params-validator';
 
 import PageAdmin from './pages/admin';
 import PageNotLoggedIn from './pages/not-logged-in';
@@ -57,8 +58,6 @@ const TitleSecondary = styled.div`
   line-height: 100%;
   font-size: 1.7rem;
 `;
-
-toast.configure();
 
 export const App = () => {
   const [lang, setLang] = useState(LANGUAGE_CHOICE.getLanguage());
@@ -144,24 +143,32 @@ export const App = () => {
                             : []),
                         ]}
                       />
-                      <Switch>
-                        <Route path={paths.home()} exact>
-                          <Redirect to={paths.operations()} />
-                        </Route>
+                      <Routes>
+                        <Route
+                          path={paths.home()}
+                          element={<Navigate to={paths.operations()} />}
+                        />
                         <Route
                           path={paths.operations()}
-                          exact
-                          component={PageOperationsList}
+                          element={<PageOperationsList />}
                         />
                         <Route
-                          path={paths.operationMatch()}
-                          component={PageOperation}
+                          path={paths.operationRoot()}
+                          element={
+                            <RouteParamsValidator
+                              element={<PageOperation />}
+                              routeParam="id"
+                            />
+                          }
                         />
                         {canModifyGlobalUserAccess && (
-                          <Route path={paths.admin()} component={PageAdmin} />
+                          <Route
+                            path={paths.adminRoot()}
+                            element={<PageAdmin />}
+                          />
                         )}
-                        <Route component={PageNotFound} />
-                      </Switch>
+                        <Route path={paths.root()} element={<PageNotFound />} />
+                      </Routes>
                     </LoggedInContainer>
                   ) : (
                     <>
@@ -179,6 +186,7 @@ export const App = () => {
           );
         }}
       </C.Loader>
+      <ToastContainer />
     </>
   );
 };

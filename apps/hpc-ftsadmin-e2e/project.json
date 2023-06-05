@@ -1,0 +1,29 @@
+{
+  "name": "hpc-ftsadmin-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/hpc-ftsadmin-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/hpc-ftsadmin-e2e/cypress.json",
+        "devServerTarget": "hpc-ftsadmin:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "hpc-ftsadmin:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/hpc-ftsadmin-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["hpc-ftsadmin"]
+}

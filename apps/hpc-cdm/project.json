@@ -1,0 +1,103 @@
+{
+  "name": "hpc-cdm",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/hpc-cdm/src",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "options": {
+        "outputPath": "dist/apps/hpc-cdm",
+        "index": "apps/hpc-cdm/src/index.html",
+        "main": "apps/hpc-cdm/src/main.tsx",
+        "polyfills": "apps/hpc-cdm/src/polyfills.ts",
+        "tsConfig": "apps/hpc-cdm/tsconfig.app.json",
+        "assets": ["apps/hpc-cdm/src/favicon.ico", "apps/hpc-cdm/src/assets"],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/hpc-cdm/webpack.config.js",
+        "isolatedConfig": true
+      },
+      "configurations": {
+        "dev-live": {
+          "fileReplacements": [
+            {
+              "replace": "apps/hpc-cdm/src/environments/environment.ts",
+              "with": "apps/hpc-cdm/src/environments/environment.dev-live.ts"
+            },
+            {
+              "replace": "apps/hpc-cdm/src/environments/env.json",
+              "with": ".env.json"
+            }
+          ]
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/hpc-cdm/src/environments/environment.ts",
+              "with": "apps/hpc-cdm/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all",
+          "sourceMap": false,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "5mb"
+            }
+          ]
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nx/webpack:dev-server",
+      "options": {
+        "buildTarget": "hpc-cdm:build",
+        "hmr": true
+      },
+      "configurations": {
+        "dev-live": {
+          "buildTarget": "hpc-cdm:build:dev-live"
+        },
+        "production": {
+          "buildTarget": "hpc-cdm:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/hpc-cdm/**/*.js",
+          "apps/hpc-cdm/**/*.jsx",
+          "apps/hpc-cdm/**/*.ts",
+          "apps/hpc-cdm/**/*.tsx",
+          "apps/hpc-cdm/src/app/components/enketo-form/enketo-core.d.ts",
+          "apps/hpc-cdm/**/*.spec.ts",
+          "apps/hpc-cdm/**/*.spec.tsx",
+          "apps/hpc-cdm/**/*.spec.js",
+          "apps/hpc-cdm/**/*.spec.jsx",
+          "apps/hpc-cdm/**/*.d.ts"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/hpc-cdm/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/hpc-cdm"]
+    }
+  },
+  "tags": []
+}

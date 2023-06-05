@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Redirect, Route } from 'react-router-dom';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
 import { CLASSES, C, dataLoader } from '@unocha/hpc-ui';
 
@@ -12,20 +12,14 @@ import OperationClusters from './operation-clusters';
 import OperationSettings from './operation-settings';
 import PageMeta from '../components/page-meta';
 
-interface Props {
-  match: {
-    params: {
-      id: string;
-    };
-  };
-}
+type OperationRouteParams = {
+  id: string;
+};
 
-const PageOperation = (props: Props) => {
-  const id = parseInt(props.match.params.id);
-  if (isNaN(id)) {
-    // TODO: improve this
-    return <>Not Found</>;
-  }
+const PageOperation = () => {
+  const { id: idString } = useParams<OperationRouteParams>();
+  const id = parseInt(idString ?? '', 10);
+
   const loader = dataLoader([{ id }], getEnv().model.operations.getOperation);
 
   return (
@@ -50,20 +44,6 @@ const PageOperation = (props: Props) => {
               return (
                 <>
                   <PageMeta title={[operation.name]} />
-                  {/* <C.Toolbar>
-                    <C.Breadcrumbs
-                      links={[
-                        {
-                          label: t.t(lang, (s) => s.navigation.operations),
-                          to: paths.operations(),
-                        },
-                        {
-                          label: operation.name,
-                          to: paths.operation(id),
-                        },
-                      ]}
-                    />
-                  </C.Toolbar> */}
                   <C.SecondaryNavigation
                     breadcrumbs={[
                       {
@@ -91,29 +71,36 @@ const PageOperation = (props: Props) => {
                     ]}
                   />
                   <div className={CLASSES.CONTAINER.CENTERED}>
-                    <Switch>
-                      <Route exact path={paths.operation(id)}>
-                        <Redirect to={paths.operationForms(id)} />
-                      </Route>
-                      <Route path={paths.operationForms(id)}>
-                        <OperationForms operation={operation} />
-                      </Route>
+                    <Routes>
+                      <Route
+                        path={paths.home()}
+                        element={<Navigate to={paths.forms()} />}
+                      />
+                      <Route
+                        path={paths.formsRoot()}
+                        element={<OperationForms operation={operation} />}
+                      />
                       {displayClusters && (
-                        <Route path={paths.operationClusters(id)}>
-                          <OperationClusters operation={operation} />
-                        </Route>
+                        <Route
+                          path={paths.operationClustersRoot()}
+                          element={<OperationClusters operation={operation} />}
+                        />
                       )}
                       {displaySettings && (
-                        <Route path={paths.operationSettings(id)}>
-                          <OperationSettings operation={operation} />
-                        </Route>
-                      )}
-                      <Route>
-                        <C.NotFound
-                          strings={t.get(lang, (s) => s.components.notFound)}
+                        <Route
+                          path={paths.settingsRoot()}
+                          element={<OperationSettings operation={operation} />}
                         />
-                      </Route>
-                    </Switch>
+                      )}
+                      <Route
+                        path={paths.root()}
+                        element={
+                          <C.NotFound
+                            strings={t.get(lang, (s) => s.components.notFound)}
+                          />
+                        }
+                      />
+                    </Routes>
                   </div>
                 </>
               );

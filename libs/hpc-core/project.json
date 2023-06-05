@@ -1,0 +1,32 @@
+{
+  "name": "hpc-core",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/hpc-core/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/hpc-core/**/*.ts",
+          "libs/hpc-core/**/*.spec.ts",
+          "libs/hpc-core/**/*.spec.tsx",
+          "libs/hpc-core/**/*.spec.js",
+          "libs/hpc-core/**/*.spec.jsx",
+          "libs/hpc-core/**/*.d.ts"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/hpc-core/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/hpc-core"]
+    }
+  },
+  "tags": []
+}
