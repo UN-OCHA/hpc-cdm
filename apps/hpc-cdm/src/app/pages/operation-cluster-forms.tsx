@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { C, styled } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -10,6 +10,7 @@ import * as paths from '../paths';
 import { getBestReportingWindow } from '../utils/reportingWindows';
 
 import ClusterNavigation from '../components/cluster-navigation';
+import { RouteParamsValidator } from '../components/route-params-validator';
 import PageOperationClusterFormAssignments from './operation-cluster-form-assignments';
 
 interface Props {
@@ -25,62 +26,53 @@ const PageOperationClusterForms = (props: Props) => {
     <AppContext.Consumer>
       {({ lang }) => (
         <div className={props.className}>
-          <Switch>
+          <Routes>
             <Route
-              path={paths.operationClusterFormAssignmentsMatch({
-                operationId: operation.id,
-                clusterId: cluster.id,
-              })}
-              render={(props: { match: { params: { windowId: string } } }) => {
-                const id = parseInt(props.match.params.windowId);
-                if (!isNaN(id)) {
-                  const windows = operation.reportingWindows.filter(
-                    (w) => w.id === id
-                  );
-                  if (windows.length === 1) {
-                    console.log(props);
-                    return (
-                      <PageOperationClusterFormAssignments
-                        window={windows[0]}
-                        {...{ operation, cluster }}
-                      />
-                    );
+              path={paths.formAssignmentsRoot()}
+              element={
+                <RouteParamsValidator
+                  element={
+                    <PageOperationClusterFormAssignments
+                      {...{ operation, cluster }}
+                    />
                   }
-                }
-                return (
-                  <>
-                    <ClusterNavigation
-                      operation={operation}
-                      cluster={cluster}
-                      showSettingsButton
-                    />
-                    <C.NotFound
-                      strings={t.get(lang, (s) => s.components.notFound)}
-                    />
-                  </>
-                );
-              }}
+                  routeParam="windowId"
+                  errorElement={
+                    <>
+                      <ClusterNavigation
+                        operation={operation}
+                        cluster={cluster}
+                        showSettingsButton
+                      />
+                      <C.NotFound
+                        strings={t.get(lang, (s) => s.components.notFound)}
+                      />
+                    </>
+                  }
+                />
+              }
             />
-            <Route>
-              {operation.reportingWindows.length > 0 ? (
-                <Redirect
-                  to={paths.operationClusterFormAssignments({
-                    operationId: operation.id,
-                    clusterId: cluster.id,
-                    windowId: getBestReportingWindow(operation.reportingWindows)
-                      .id,
-                  })}
-                />
-              ) : (
-                <C.ErrorMessage
-                  strings={{
-                    title: 'No reporting windows',
-                    info: "This operation doesn't have any reporting windows associated with it",
-                  }}
-                />
-              )}
-            </Route>
-          </Switch>
+            <Route
+              path={paths.home()}
+              element={
+                operation.reportingWindows.length > 0 ? (
+                  <Navigate
+                    to={
+                      paths.reportingWindow() +
+                      getBestReportingWindow(operation.reportingWindows).id
+                    }
+                  />
+                ) : (
+                  <C.ErrorMessage
+                    strings={{
+                      title: 'No reporting windows',
+                      info: "This operation doesn't have any reporting windows associated with it",
+                    }}
+                  />
+                )
+              }
+            />
+          </Routes>
         </div>
       )}
     </AppContext.Consumer>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { C } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';
@@ -48,38 +48,32 @@ const PageOperationClusterSettings = (props: Props) => {
               },
             ]}
           >
-            <Switch>
+            <Routes>
               <Route
-                exact
-                path={paths.operationClusterSettings({
-                  operationId: operation.id,
-                  clusterId: cluster.id,
-                })}
-              >
-                <Redirect
-                  to={paths.operationClusterSettingsAccess({
-                    operationId: operation.id,
-                    clusterId: cluster.id,
-                  })}
-                />
-              </Route>
+                path={paths.home()}
+                element={
+                  <Navigate
+                    to={paths.operationClusterSettingsAccess({
+                      operationId: operation.id,
+                      clusterId: cluster.id,
+                    })}
+                  />
+                }
+              />
               {cluster.permissions.canModifyAccess && (
                 <Route
-                  exact
-                  path={paths.operationClusterSettingsAccess({
-                    operationId: operation.id,
-                    clusterId: cluster.id,
-                  })}
-                >
-                  <TargetAccessManagement
-                    target={{
-                      type: 'operationCluster',
-                      targetId: cluster.id,
-                    }}
-                  />
-                </Route>
+                  path={paths.access()}
+                  element={
+                    <TargetAccessManagement
+                      target={{
+                        type: 'operationCluster',
+                        targetId: cluster.id,
+                      }}
+                    />
+                  }
+                />
               )}
-            </Switch>
+            </Routes>
           </C.SidebarNavigation>
         </>
       )}

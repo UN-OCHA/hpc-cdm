@@ -2,7 +2,7 @@
   "rules": {
     "@typescript-eslint/no-namespace": "warn"
   },
-  "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc"],
+  "extends": ["plugin:@nx/react", "../../.eslintrc"],
   "ignorePatterns": ["!**/*", "**/*.d.ts"],
   "overrides": [
     {

@@ -8,8 +8,8 @@ import {
   ThemeProvider,
 } from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import env, { Environment } from '../environments/environment';
 import { LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
@@ -58,8 +58,6 @@ const TitlePrimary = styled.div`
   display: flex;
   align-items: center;
 `;
-
-toast.configure();
 
 export const App = () => {
   const [lang, setLang] = useState(LANGUAGE_CHOICE.getLanguage());
@@ -168,17 +166,17 @@ export const App = () => {
                             : []),
                         ]}
                       />
-                      <Switch>
-                        <Route path={paths.home()} exact>
-                          <Redirect to={paths.flows()} />
-                        </Route>
+                      <Routes>
+                        <Route
+                          path={paths.home()}
+                          element={<Navigate to={paths.flows()} />}
+                        />
                         <Route
                           path={paths.flows()}
-                          exact
-                          component={PageFlowsList}
+                          element={<PageFlowsList />}
                         />
-                        <Route component={PageNotFound} />
-                      </Switch>
+                        <Route element={<PageNotFound />} />
+                      </Routes>
                     </LoggedInContainer>
                   ) : (
                     <>
@@ -196,6 +194,7 @@ export const App = () => {
           );
         }}
       </C.Loader>
+      <ToastContainer />
     </ThemeProvider>
   );
 };

@@ -92,7 +92,7 @@ export class Translations<
      * If not passed, then the original string from the translations file will
      * be used directly.
      */
-    params?: Record<string, string | number | boolean | Date>
+    params?: Record<string, string | number | boolean>
   ) => {
     const str = this.get(lang, get);
     let langCache = this.componentStringCache.get(lang);
