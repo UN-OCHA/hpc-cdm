@@ -102,10 +102,10 @@ export const EnketoEditableForm = (props: Props) => {
      * state, to prevent accidental changes)
      */
     const editable =
-      assignment.state === 'clean:finalized' ||
-      assignment.state === 'raw:finalized'
+      originalAssignment.state === 'clean:finalized' ||
+      originalAssignment.state === 'raw:finalized'
         ? false
-        : assignment.editable;
+        : originalAssignment.editable;
 
     // Convert the ArrayBuffers to Blobs to use in the form
     const files = currentFiles.map((f) => ({
