@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { reportingWindows, errors } from '@unocha/hpc-data';
 import { styled } from '@unocha/hpc-ui';
 import { useNavigate } from 'react-router-dom';
@@ -42,7 +42,8 @@ export const EnketoEditableForm = (props: Props) => {
   const env = getEnv();
 
   const [loading, setLoading] = useState(true);
-  const [xform, setXform] = useState<XForm | null>(null);
+  const xform = useRef<XForm | null>(null);
+
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
   const [formTouched, setFormTouched] = useState(false);
@@ -66,20 +67,20 @@ export const EnketoEditableForm = (props: Props) => {
     isFormModified
   );
 
-  const unMount = () => {
-    if (xform) {
-      xform.resetView();
-    }
-    // Clears enketo cache or something going on there which slows down
-    // form re-init/getData.
-    navigate(0);
-  };
-
   useEffect(() => {
+    const unMount = () => {
+      if (xform.current) {
+        xform.current.resetView();
+      }
+      // Clears enketo cache or something going on there which slows down
+      // form re-init/getData.
+      navigate(0);
+    };
+
     return () => {
       unMount();
     };
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     let isSubscribed = true; // to cancel form initialization
@@ -101,17 +102,17 @@ export const EnketoEditableForm = (props: Props) => {
      * state, to prevent accidental changes)
      */
     const editable =
-      assignment.state === 'clean:finalized' ||
-      assignment.state === 'raw:finalized'
+      originalAssignment.state === 'clean:finalized' ||
+      originalAssignment.state === 'raw:finalized'
         ? false
-        : assignment.editable;
+        : originalAssignment.editable;
 
     // Convert the ArrayBuffers to Blobs to use in the form
     const files = currentFiles.map((f) => ({
       name: f.name,
       data: new Blob([new Uint8Array(f.data)]),
     }));
-    const xform = new XForm(form, model, currentData, files, {
+    const _xform = new XForm(form, model, currentData, files, {
       onDataUpdate: ({ xform }) => {
         setFormTouched(true);
       },
@@ -122,14 +123,14 @@ export const EnketoEditableForm = (props: Props) => {
     const timer = setTimeout(() => {
       // Long running process, it could take up to 20 seconds
       // depending on number of embedded locations/sublocations.
-      xform.init(editable).then(() => {
+      _xform.init(editable).then(() => {
         if (isSubscribed) {
           // user has abandoned this page
-          setXform(xform);
+          xform.current = _xform;
           setEditable(editable);
           setUpdatedAssignment(null);
           setLoading(false);
-          setPageInfo(xform.getPageInfo());
+          setPageInfo(_xform.getPageInfo());
         }
       });
     });
@@ -141,16 +142,16 @@ export const EnketoEditableForm = (props: Props) => {
   }, [originalAssignment]);
 
   const handleNext = async () => {
-    if (xform) {
+    if (xform.current) {
       if (editable) {
-        const valid = await xform.validateCurrentPage();
+        const valid = await xform.current.validateCurrentPage();
         if (valid) {
-          xform.goToNextPage();
+          xform.current.goToNextPage();
         } else {
           setShowValidationConfirmation(true);
         }
       } else {
-        xform.goToNextPage();
+        xform.current.goToNextPage();
       }
     }
     // Save form after advancing to the next page
@@ -158,14 +159,14 @@ export const EnketoEditableForm = (props: Props) => {
   };
 
   const forceNextPage = () => {
-    if (xform) {
-      xform.goToNextPage();
+    if (xform.current) {
+      xform.current.goToNextPage();
       setShowValidationConfirmation(false);
     }
   };
 
   const saveForm = async (redirect = false, finalized = false) => {
-    if (xform && (formTouched || finalized)) {
+    if (xform.current && (formTouched || finalized)) {
       // If the user is trying to finalize (submit) the form
       // Ensure the entire form is valid
       if (finalized) {
@@ -174,7 +175,7 @@ export const EnketoEditableForm = (props: Props) => {
         // Give the browser some time to render this state change
         await new Promise((resolve) => setTimeout(resolve, 10));
 
-        const valid = await xform.validateEverything();
+        const valid = await xform.current.validateEverything();
         if (!valid) {
           // If the form is invalid, we don't want to submit it
           // But we can still save it.
@@ -188,8 +189,12 @@ export const EnketoEditableForm = (props: Props) => {
 
       setStatus({ type: 'saving' });
       setTimeout(async () => {
+        if (!xform.current) {
+          return;
+        }
+
         const t0 = performance.now();
-        const { data, files } = xform.getData();
+        const { data, files } = xform.current.getData();
         const t1 = performance.now();
         console.log('getData time: ' + (t1 - t0) + 'ms');
 
