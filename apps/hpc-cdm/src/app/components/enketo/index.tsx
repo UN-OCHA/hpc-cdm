@@ -67,20 +67,20 @@ export const EnketoEditableForm = (props: Props) => {
     isFormModified
   );
 
-  const unMount = () => {
-    if (xform.current) {
-      xform.current.resetView();
-    }
-    // Clears enketo cache or something going on there which slows down
-    // form re-init/getData.
-    navigate(0);
-  };
-
   useEffect(() => {
+    const unMount = () => {
+      if (xform.current) {
+        xform.current.resetView();
+      }
+      // Clears enketo cache or something going on there which slows down
+      // form re-init/getData.
+      navigate(0);
+    };
+
     return () => {
       unMount();
     };
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     let isSubscribed = true; // to cancel form initialization
