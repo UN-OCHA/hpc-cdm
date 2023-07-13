@@ -1,4 +1,4 @@
-FROM public.ecr.aws/unocha/nodejs-builder:16-alpine AS builder
+FROM public.ecr.aws/unocha/nodejs-builder:18-alpine AS builder
 WORKDIR /srv/src
 COPY . .
 ARG ENVIRONMENT=production
