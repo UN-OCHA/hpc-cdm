@@ -12,29 +12,9 @@
       "commitSha": "HPC_ACTIONS_COMMIT_SHA",
       "treeSha": "HPC_ACTIONS_TREE_SHA"
     },
-    "repository": "public.ecr.aws/unocha/hpc-cdm",
+    "repository": "public.ecr.aws/unocha/hpc-ftsadmin",
     "skipLogin": true
   },
   "ci": ["./.github/ci.sh"],
-  "mergebackLabels": ["mergeback"],
-  "deployments": {
-    "environments": [
-      {
-        "branch": "env/prod",
-        "environment": "prod"
-      },
-      {
-        "branch": "env/stage",
-        "environment": "stage"
-      },
-      {
-        "branch": "env/red.dev",
-        "environment": "reddev"
-      },
-      {
-        "branch": "env/blue.dev",
-        "environment": "bluedev"
-      }
-    ]
-  }
+  "mergebackLabels": ["mergeback"]
 }

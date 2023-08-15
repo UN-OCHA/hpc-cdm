@@ -4,7 +4,7 @@ COPY . .
 ARG ENVIRONMENT=production
 RUN npm run remove-unneeded-deps && \
     npm install && \
-    npm run build hpc-cdm -- --output-path=/srv/src/dist --configuration=$ENVIRONMENT
+    npm run build hpc-ftsadmin -- --output-path=/srv/src/dist --configuration=$ENVIRONMENT
 
 FROM public.ecr.aws/unocha/nginx:stable-beagle
 
