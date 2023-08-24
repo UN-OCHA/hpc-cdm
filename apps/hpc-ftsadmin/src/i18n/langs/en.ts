@@ -10,3 +10,27 @@ const LANGUAGE: Language = {
 };
 
 export default LANGUAGE;
+
+/* ADD IT!
+,
+    "flowsFilter": {
+      "title": "Flows Filter",
+      "flowDetails": {
+        "title": "Flow Details",
+        "flowId": { "label": "Flow ID", "placeholder": "" },
+        "fundingAmountUSD": {
+          "label": "Funding Amount in USD",
+          "placeholder": ""
+        },
+        "keywords": { "label": "Keyword(s)", "placeholder": "Keyword(s)" }
+      },
+      "sourceDetails": {
+        "title": "Source Details",
+        "organisations": { "label": "Flow ID", "placeholder": "" },
+        "fundingAmountUSD": {
+          "label": "Funding Amount in USD",
+          "placeholder": ""
+        },
+        "keywords": { "label": "Keyword(s)", "placeholder": "Keyword(s)" }
+      }
+    */

@@ -151,6 +151,35 @@ const FLOW_SEARCH_RESULT = t.intersection([
   }),
 ]);
 
+const COMPANY_GRAPHQL = t.type({
+  id: t.string,
+  name: t.string,
+});
+const PLAN_GRAPHQL = t.type({
+  name: t.string,
+  years: t.union([t.array(t.number), t.null]),
+});
+const SOURCE_GRAPHQL = t.type({
+  organizations: t.union([t.array(COMPANY_GRAPHQL), t.null]),
+});
+const DESTINATION_GRAPHQL = t.type({
+  organizations: t.union([t.array(COMPANY_GRAPHQL), t.null]),
+  locations: t.union([t.array(COMPANY_GRAPHQL), t.null]),
+  plans: t.union([t.array(PLAN_GRAPHQL), t.null]),
+});
+const FLOW_OBJECT_GRAPHQL = t.type({
+  source: SOURCE_GRAPHQL,
+  destination: DESTINATION_GRAPHQL,
+});
+const FLOW_SEARCH_GRAPHQL_RESULT = t.type({
+  id: t.string,
+  versionID: t.string,
+  amountUSD: t.number,
+  updatedAt: t.string,
+  activeStatus: t.boolean,
+  restricted: t.boolean,
+  flowObjects: FLOW_OBJECT_GRAPHQL,
+});
 const CREATED_BY_OR_LAST_UPDATED_BY = t.type({
   name: t.string,
 });
@@ -198,6 +227,49 @@ const FLOW = t.intersection([
 ]);
 
 export type Flow = t.TypeOf<typeof FLOW>;
+const FLOW_GRAPHQL = t.intersection([
+  t.type({
+    id: t.number,
+    versionID: t.number,
+    amountUSD: t.string,
+    flowDate: t.string,
+    decisionDate: t.union([t.string, t.null]),
+    firstReportedDate: t.string,
+    activeStatus: t.boolean,
+    restricted: t.boolean,
+    newMoney: t.boolean,
+    description: t.string,
+    notes: t.string,
+    versionStartDate: t.string,
+    createdAt: t.string,
+    updatedAt: t.string,
+    meta: t.type({
+      language: t.string,
+    }),
+    createdBy: t.union([CREATED_BY_OR_LAST_UPDATED_BY, t.null]),
+    lastUpdatedBy: t.union([CREATED_BY_OR_LAST_UPDATED_BY, t.null]),
+  }),
+  t.partial({
+    budgetYear: t.union([t.string, t.null]),
+    origAmount: t.union([t.string, t.null]),
+    origCurrency: t.union([t.string, t.null]),
+    exchangeRate: t.union([t.string, t.null]),
+    versionEndDate: t.union([t.string, t.null]),
+    deletedAt: t.union([t.string, t.null]),
+    legacy: t.union([
+      t.type({
+        createdAt: t.string,
+        legacyID: t.number,
+        objectID: t.number,
+        objectType: t.string,
+        updatedAt: t.string,
+      }),
+      t.null,
+    ]),
+  }),
+]);
+
+export type FlowGraphQL = t.TypeOf<typeof FLOW_GRAPHQL>;
 
 export const GET_FLOW_PARAMS = t.type({
   id: INTEGER_FROM_STRING,
@@ -211,12 +283,24 @@ export type GetFlowResult = t.TypeOf<typeof GET_FLOW_RESULT>;
 
 export type FlowSearchResult = t.TypeOf<typeof FLOW_SEARCH_RESULT>;
 
+export type FlowSearchGraphQLResult = t.TypeOf<
+  typeof FLOW_SEARCH_GRAPHQL_RESULT
+>;
+
 export const SEARCH_FLOWS_RESULT = t.type({
   flows: t.array(FLOW_SEARCH_RESULT),
   flowCount: t.string,
 });
 
 export type SearchFlowsResult = t.TypeOf<typeof SEARCH_FLOWS_RESULT>;
+
+export const SEARCH_FLOWS_GRAPHQL_RESULT = t.type({
+  searchFlow: t.array(FLOW_SEARCH_GRAPHQL_RESULT),
+});
+
+export type SearchFlowsGraphQLResult = t.TypeOf<
+  typeof SEARCH_FLOWS_GRAPHQL_RESULT
+>;
 
 export const SEARCH_FLOWS_PARAMS = t.type({
   flowSearch: t.partial({
@@ -235,10 +319,35 @@ export const SEARCH_FLOWS_PARAMS = t.type({
     offset: t.number,
   }),
 });
-
 export type SearchFlowsParams = t.TypeOf<typeof SEARCH_FLOWS_PARAMS>;
+
+const FILTERS = t.type({
+  destinationCountryName: t.array(t.string),
+  destinationOrganizationId: t.array(t.number),
+  destinationUsageYers: t.array(t.number),
+  amountUSD: t.number,
+  flowId: t.number,
+  keywords: t.array(t.string),
+  sourceCountryName: t.array(t.string),
+  sourceOrganizationId: t.array(t.number),
+  sourceUsageYers: t.array(t.number),
+});
+export const SEARCH_FLOWS_GRAPHQL_PARAMS = t.type({
+  flowSearch: t.partial({
+    filters: FILTERS,
+    limit: t.number,
+    offset: t.number,
+  }),
+});
+export type SearchFlowsGraphQlParams = t.TypeOf<
+  typeof SEARCH_FLOWS_GRAPHQL_PARAMS
+>;
 
 export interface Model {
   getFlow(params: GetFlowParams): Promise<GetFlowResult>;
+  getFlowGraphQL(params: GetFlowParams): Promise<GetFlowResult>;
   searchFlows(params: SearchFlowsParams): Promise<SearchFlowsResult>;
+  searchFlowsGraphQL(
+    params: SearchFlowsGraphQlParams
+  ): Promise<SearchFlowsGraphQLResult>;
 }

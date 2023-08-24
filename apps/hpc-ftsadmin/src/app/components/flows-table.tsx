@@ -25,6 +25,7 @@ import {
 import { LanguageKey, t } from '../../i18n';
 import { Strings } from '../../i18n/iface';
 import { AppContext, getEnv } from '../context';
+import tw from 'twin.macro';
 
 type HeaderId =
   | 'flow.id'
@@ -82,6 +83,9 @@ export default function FlowsTable(props: FlowsTableProps) {
     orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
   });
 
+  const StyledLoader = tw(C.Loader)`
+  text-center
+  `;
   const loader = dataLoader([query], () =>
     env.model.flows.searchFlows({
       flowSearch: {
@@ -164,7 +168,7 @@ export default function FlowsTable(props: FlowsTableProps) {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <C.Loader
+        <StyledLoader
           loader={loader}
           strings={{
             ...t.get(lang, (s) => s.components.loader),
@@ -470,7 +474,7 @@ export default function FlowsTable(props: FlowsTableProps) {
               </Table>
             </TableContainer>
           )}
-        </C.Loader>
+        </StyledLoader>
       )}
     </AppContext.Consumer>
   );

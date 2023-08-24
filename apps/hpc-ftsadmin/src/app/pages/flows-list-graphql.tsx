@@ -1,10 +1,11 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
-import FlowsTable, { FlowsTableProps } from '../components/flows-table';
+import { FlowsTableProps } from '../components/flows-table';
 import PageMeta from '../components/page-meta';
 import { AppContext, getEnv } from '../context';
 import tw from 'twin.macro';
 import { useState } from 'react';
+import FlowsTableGraphQl from '../components/flows-tableGraphQL';
 import FilterTable from '../components/filter-table';
 
 interface Props {
@@ -92,7 +93,7 @@ export default (props: Props) => {
                 text="Filters"
                 onClick={() => setOpen(!isOpen)}
               />
-              <FlowsTable {...flowsTableProps} />
+              <FlowsTableGraphQl {...flowsTableProps} />
             </div>
           </Container>
         </div>

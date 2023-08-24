@@ -6,12 +6,14 @@ import {
   Model,
   forms,
   flows,
+  organizations,
   operations,
   reportingWindows,
   access,
   errors,
   util as dataUtil,
 } from '@unocha/hpc-data';
+import { method } from 'lodash';
 
 interface URLInterface {
   new (url: string): {
@@ -411,6 +413,113 @@ export class LiveModel implements Model {
             data: params,
           },
           resultType: flows.SEARCH_FLOWS_RESULT,
+        }),
+      getFlowGraphQL: (params) =>
+        this.call({
+          pathname: `/v4/graphql`,
+          method: 'POST',
+          body: {
+            type: 'raw',
+            data: `{
+              flow(id: ${params}) {
+                  createdAt
+                  updatedAt
+                  deletedAt
+                  id
+                  versionID
+                  amountUSD
+                  flowDate
+                  decisionDate
+                  firstReportedDate
+                  budgetYear
+                  origAmount
+                  origCurrency
+                  exchangeRate
+                  activeStatus
+                  newMoney
+                  restricted
+                  description
+                  notes
+                  versionStartDate
+                  versionEndDate
+                  createdBy
+                  lastUpdatedBy
+              }
+          }`,
+            contentType: 'application/json; charset=utf-8',
+          },
+          resultType: flows.GET_FLOW_RESULT,
+        }),
+      searchFlowsGraphQL: (params) => {
+        const query = `{
+          searchFlow(offset: ${params.flowSearch.offset}, limit: ${params.flowSearch.limit}){
+            createdAt
+            updatedAt
+            deletedAt 
+            id 
+            versionID 
+            amountUSD 
+            flowDate 
+            decisionDate 
+            firstReportedDate
+            budgetYear 
+            origAmount 
+            origCurrency 
+            exchangeRate 
+            activeStatus 
+            newMoney 
+            restricted 
+            description 
+            notes 
+            versionStartDate 
+            versionEndDate 
+            createdBy 
+            lastUpdatedBy 
+            flowObjects{ 
+              source{ 
+                organizations{
+                  id
+                  name
+                } 
+              } 
+              destination{
+                organizations{
+                  id
+                  name
+                }
+                locations{
+                  id
+                  name 
+                } 
+                plans{
+                  name     
+                  years 
+                }  
+              }  
+            }  
+          }
+        }`;
+        return this.call({
+          pathname: `/v4/graphql`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: {
+              query: query,
+            },
+          },
+          resultType: flows.SEARCH_FLOWS_GRAPHQL_RESULT,
+        });
+      },
+    };
+  }
+
+  get organizations(): organizations.Model {
+    return {
+      getAutocompleteOrganizations: (params) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/organization/${params.query}`,
+          resultType: organizations.GET_ORGANIZATIONS_AUTOCOMPLETE_RESULT,
         }),
     };
   }
