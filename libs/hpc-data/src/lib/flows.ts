@@ -322,15 +322,15 @@ export const SEARCH_FLOWS_PARAMS = t.type({
 export type SearchFlowsParams = t.TypeOf<typeof SEARCH_FLOWS_PARAMS>;
 
 const FILTERS = t.type({
-  destinationCountryName: t.array(t.string),
-  destinationOrganizationId: t.array(t.number),
-  destinationUsageYers: t.array(t.number),
-  amountUSD: t.number,
-  flowId: t.number,
-  keywords: t.array(t.string),
-  sourceCountryName: t.array(t.string),
-  sourceOrganizationId: t.array(t.number),
-  sourceUsageYers: t.array(t.number),
+  destinationCountryName: t.union([t.array(t.string), t.null]),
+  destinationOrganization: t.union([t.array(t.string), t.null]),
+  destinationUsageYears: t.union([t.array(t.string), t.null]),
+  amountUSD: t.union([t.number, t.null]),
+  flowId: t.union([t.string, t.null]),
+  keywords: t.union([t.array(t.string), t.null]),
+  sourceCountryName: t.union([t.array(t.string), t.null]),
+  sourceOrganization: t.union([t.array(t.string), t.null]),
+  sourceUsageYears: t.union([t.array(t.string), t.null]),
 });
 export const SEARCH_FLOWS_GRAPHQL_PARAMS = t.type({
   flowSearch: t.partial({

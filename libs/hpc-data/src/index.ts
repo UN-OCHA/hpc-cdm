@@ -2,6 +2,7 @@ import * as access from './lib/access';
 import * as errors from './lib/errors';
 import * as flows from './lib/flows';
 import * as forms from './lib/forms';
+import * as locations from './lib/locations';
 import * as organizations from './lib/organizations';
 import * as operations from './lib/operations';
 import * as reportingWindows from './lib/reporting-windows';
@@ -10,6 +11,7 @@ import * as util from './lib/util';
 export interface Model {
   access: access.Model;
   flows: flows.Model;
+  locations: locations.Model;
   organizations: organizations.Model;
   operations: operations.Model;
   reportingWindows: reportingWindows.Model;
@@ -20,6 +22,7 @@ export {
   errors,
   flows,
   forms,
+  locations,
   organizations,
   operations,
   reportingWindows,

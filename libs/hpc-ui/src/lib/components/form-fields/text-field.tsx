@@ -29,9 +29,6 @@ const TextFieldWrapper = ({
     placeholder: placeholder,
     size: 'small',
     type: type,
-    InputProps: {
-      style: tw`text-lg`,
-    },
     inputProps:
       type === 'number'
         ? {

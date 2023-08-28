@@ -1,6 +1,7 @@
 import {
   Box,
   Chip,
+  FormControl,
   InputLabel,
   MenuItem,
   OutlinedInput,
@@ -23,7 +24,7 @@ const MultiSelect = ({
   placeholder,
   ...otherProps
 }: {
-  options: { value: string | number; name: string }[];
+  options: { value: string; name: string }[];
   name: string;
   label: string;
   placeholder?: string;
@@ -53,7 +54,7 @@ const MultiSelect = ({
     placeholder: placeholder,
     size: 'small',
     onChange: handleChange,
-    input: <OutlinedInput id="select-multiple-chip" label="Chip" />,
+    input: <OutlinedInput id="select-multiple-chip" label={label} />,
     renderValue: (selected) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
         {selected.map((value) => (
@@ -62,9 +63,11 @@ const MultiSelect = ({
       </Box>
     ),
   };
-
+  if (meta && meta.touched && meta.error) {
+    multiSelectConfig.error = true;
+  }
   return (
-    <>
+    <FormControl sx={{ width: '100%' }}>
       <InputLabel id={`${label.toLowerCase().replace(' ', '-').trim()}-label`}>
         {label}
       </InputLabel>
@@ -75,7 +78,7 @@ const MultiSelect = ({
           </MenuItem>
         ))}
       </StyledSelect>
-    </>
+    </FormControl>
   );
 };
 

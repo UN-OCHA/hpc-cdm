@@ -2,14 +2,16 @@ import { C } from '@unocha/hpc-ui';
 import { Form, Formik } from 'formik';
 
 import { Environment } from '../../environments/interface';
-import { number, object } from 'yup';
+import { array, number, object, string } from 'yup';
 import Section from './section';
 import tw from 'twin.macro';
+import { flows } from '@unocha/hpc-data';
 
 interface Props {
   isOpen: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   environment: Environment;
+  setFilters: any;
 }
 
 const StyledDiv = tw.div`
@@ -41,32 +43,48 @@ export const FilterTable = (props: Props) => {
       sourceDetailsOrganizations,
       sourceDetailsUsageYears,
     } = values;
-    console.log(values);
-    /* const queryParams: SearchFlowsGraphQlParams = {
+    const queryParams: flows.SearchFlowsGraphQlParams = {
       flowSearch: {
         filters: {
-          flowId: parseInt(flowDetailsFlowId),
+          flowId: flowDetailsFlowId,
           keywords: flowDetailsKeywords,
           amountUSD: parseInt(flowDetailsAmountUSD),
           destinationCountryName: destinationDetailsCountry,
-          destinationOrganizationId: destinationDetailsOrganizations.map((id) =>
-            parseInt(id)
-          ),
-          destinationUsageYers: destinationDetailsUsageYears,
+          destinationOrganization: destinationDetailsOrganizations,
+          destinationUsageYears: destinationDetailsUsageYears,
           sourceCountryName: sourceDetailsCountry,
-          sourceOrganizationId: sourceDetailsOrganizations.map((id) =>
-            parseInt(id)
-          ),
-          sourceUsageYers: sourceDetailsUsageYears,
+          sourceOrganization: sourceDetailsOrganizations,
+          sourceUsageYears: sourceDetailsUsageYears,
         },
       },
-    }; */
+    };
+    props.setFilters(queryParams);
   };
 
   const FORM_VALIDATION = object().shape({
-    flowDetailsFlowId: number(),
-    flowDetailsAmountUSD: number(),
+    flowDetailsFlowId: number()
+      .positive()
+      .integer()
+      .typeError('Only positive integers are accepted'),
+    flowDetailsAmountUSD: number()
+      .positive()
+      .typeError('Only positive integers are accepted'),
+    flowDetailsKeywords: array(string()),
+    sourceDetailsOrganizations: array(string()),
+    sourceDetailsCountry: array(string()),
+    sourceDetailsUsageYears: array(number()),
+    destinationDetailsOrganizations: array(string()),
+    destinationDetailsCountry: array(string()),
+    destinationDetailsUsageYears: array(number()),
   });
+
+  const yearsSelect = () => {
+    const selectOptions: string[] = [];
+    for (let i = 1900; i < 2100; i++) {
+      selectOptions.push(i.toString());
+    }
+    return selectOptions;
+  };
   return (
     <C.SearchFilter
       title="Search Filter"
@@ -111,67 +129,55 @@ export const FilterTable = (props: Props) => {
             />
           </Section>
           <Section title="Source Details" name="sourceDetails">
-            <C.AutocompleteSelect
+            <C.AsyncAutocompleteSelect
               label="Organization(s)"
               name="sourceDetailsOrganizations"
               fnPromise={
                 props.environment.model.organizations
                   .getAutocompleteOrganizations
               }
+              isMulti
             />
-            <C.MultiSelectWrapper
+            <C.AsyncAutocompleteSelect
               label="Country"
               name="sourceDetailsCountry"
-              options={[
-                { name: 'Spain', value: 'Spain' },
-                { name: 'France', value: 'France' },
-              ]}
+              fnPromise={
+                props.environment.model.locations.getAutocompleteLocations
+              }
+              isMulti
             />
 
-            <C.MultiSelectWrapper
+            <C.AutocompleteSelect
               label="Usage Year(s)"
               name="sourceDetailsUsageYears"
-              options={[
-                { name: '2020', value: 2020 },
-                { name: '2021', value: 2021 },
-                { name: '2022', value: 2022 },
-                { name: '2023', value: 2023 },
-                { name: '2024', value: 2024 },
-                { name: '2025', value: 2025 },
-                { name: '2026', value: 2026 },
-              ]}
+              options={yearsSelect()}
+              isMulti
             />
           </Section>
           <Section title="Destination Details" name="destinationDetails">
-            <C.AutocompleteSelect
+            <C.AsyncAutocompleteSelect
               label="Organization(s)"
               name="destinationDetailsOrganizations"
               fnPromise={
                 props.environment.model.organizations
                   .getAutocompleteOrganizations
               }
+              isMulti
             />
-            <C.MultiSelectWrapper
+            <C.AsyncAutocompleteSelect
               label="Country"
               name="destinationDetailsCountry"
-              options={[
-                { name: 'Spain', value: 'Spain' },
-                { name: 'France', value: 'France' },
-              ]}
+              fnPromise={
+                props.environment.model.locations.getAutocompleteLocations
+              }
+              isMulti
             />
 
-            <C.MultiSelectWrapper
+            <C.AutocompleteSelect
               label="Usage Year(s)"
               name="destinationDetailsUsageYears"
-              options={[
-                { name: '2020', value: 2020 },
-                { name: '2021', value: 2021 },
-                { name: '2022', value: 2022 },
-                { name: '2023', value: 2023 },
-                { name: '2024', value: 2024 },
-                { name: '2025', value: 2025 },
-                { name: '2026', value: 2026 },
-              ]}
+              options={yearsSelect()}
+              isMulti
             />
           </Section>
           <StyledDiv>

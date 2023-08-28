@@ -47,6 +47,7 @@ export interface FlowsTableProps {
     label: keyof Strings['components']['flowsTable']['headers'];
   }[];
   flowList: flows.FlowList;
+  filters?: flows.SearchFlowsGraphQlParams;
 }
 
 export default function FlowsTable(props: FlowsTableProps) {

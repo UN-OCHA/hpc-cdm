@@ -6,6 +6,7 @@ import {
   Model,
   forms,
   flows,
+  locations,
   organizations,
   operations,
   reportingWindows,
@@ -13,7 +14,6 @@ import {
   errors,
   util as dataUtil,
 } from '@unocha/hpc-data';
-import { method } from 'lodash';
 
 interface URLInterface {
   new (url: string): {
@@ -451,8 +451,19 @@ export class LiveModel implements Model {
           resultType: flows.GET_FLOW_RESULT,
         }),
       searchFlowsGraphQL: (params) => {
+        const filters = params.flowSearch.filters;
+        const filtersParams = `{${
+          filters?.flowId ? `id:"${params.flowSearch.filters?.flowId}"` : ''
+        }${
+          filters?.amountUSD
+            ? `, amountUSD:${params.flowSearch.filters?.amountUSD}`
+            : ''
+        }}`;
         const query = `{
-          searchFlow(offset: ${params.flowSearch.offset}, limit: ${params.flowSearch.limit}){
+          searchFlow(offset: ${params.flowSearch.offset}, limit: ${
+          params.flowSearch.limit
+        }${params.flowSearch.filters ? `, filters:${filtersParams}` : ''}
+        ){
             createdAt
             updatedAt
             deletedAt 
@@ -514,6 +525,15 @@ export class LiveModel implements Model {
     };
   }
 
+  get locations(): locations.Model {
+    return {
+      getAutocompleteLocations: (params) =>
+        this.call({
+          pathname: `/v1/location/autocomplete/${params.query}`,
+          resultType: locations.GET_LOCATIONS_AUTOCOMPLETE_RESULT,
+        }),
+    };
+  }
   get organizations(): organizations.Model {
     return {
       getAutocompleteOrganizations: (params) =>

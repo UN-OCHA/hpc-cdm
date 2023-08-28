@@ -7,6 +7,7 @@ import tw from 'twin.macro';
 import { useState } from 'react';
 import FlowsTableGraphQl from '../components/flows-tableGraphQL';
 import FilterTable from '../components/filter-table';
+import { flows } from '@unocha/hpc-data';
 
 interface Props {
   className?: string;
@@ -17,6 +18,7 @@ flex
 `;
 
 export default (props: Props) => {
+  const [filters, setFilters] = useState<flows.SearchFlowsGraphQlParams>();
   const flowsTableProps: FlowsTableProps = {
     headers: [
       {
@@ -70,6 +72,7 @@ export default (props: Props) => {
       },
     ],
     flowList: 'all',
+    filters: filters,
   };
 
   const [isOpen, setOpen] = useState(false);
@@ -83,7 +86,12 @@ export default (props: Props) => {
         >
           <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
           <Container>
-            <FilterTable isOpen={isOpen} setOpen={setOpen} environment={env} />
+            <FilterTable
+              isOpen={isOpen}
+              setOpen={setOpen}
+              environment={env}
+              setFilters={setFilters}
+            />
             <div>
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.flows.title)}

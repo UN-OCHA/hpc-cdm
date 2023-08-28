@@ -2,7 +2,7 @@ import { CLASSES, combineClasses } from './lib/classes';
 import { BaseStyling } from './lib/styling';
 import { css, styled, THEME, ThemeProvider } from './lib/theme';
 import type { Theme } from './lib/theme';
-import { dataLoader } from './lib/util';
+import { dataLoader, useDataLoader } from './lib/util';
 import type { DataLoaderState } from './lib/util';
 import { Translations } from './lib/i18n';
 
@@ -10,6 +10,7 @@ import AcceptableUseNotification from './lib/components/acceptable-use-notificat
 import * as actionableButton from './lib/components/actionable-button';
 import ActionableDropdown from './lib/components/actionable-dropdown';
 import AutocompleteSelect from './lib/components/form-fields/autocomplete-field';
+import AsyncAutocompleteSelect from './lib/components/form-fields/async-autocomplete-field';
 import { Button, ButtonLink, ButtonSubmit } from './lib/components/button';
 import DevEnvWarning from './lib/components/development-environment-warning';
 import ErrorMessage from './lib/components/error-message';
@@ -39,6 +40,7 @@ const COMPONENTS = {
   ActionableDropdown,
   ActionableIconButton: actionableButton.ActionableIconButton,
   AutocompleteSelect,
+  AsyncAutocompleteSelect,
   Button,
   ButtonLink,
   ButtonSubmit,
@@ -76,6 +78,7 @@ export {
   COMPONENTS as C,
   css,
   dataLoader,
+  useDataLoader,
   ICONS,
   styled,
   THEME,

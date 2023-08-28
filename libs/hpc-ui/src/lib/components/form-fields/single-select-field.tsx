@@ -18,7 +18,7 @@ const SingleSelect = ({
   label,
   ...otherProps
 }: {
-  options: { value: string | number; name: string }[];
+  options: { value: string; name: string }[];
   name: string;
   label: string;
 }) => {
@@ -38,6 +38,9 @@ const SingleSelect = ({
     onChange: handleChange,
     size: 'small',
   };
+  if (meta && meta.touched && meta.error) {
+    singleSelectConfig.error = true;
+  }
   return (
     <StyledSelect {...singleSelectConfig}>
       {options.map((value) => (

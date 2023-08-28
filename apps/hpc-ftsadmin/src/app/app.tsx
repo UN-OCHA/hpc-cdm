@@ -125,11 +125,12 @@ export const App = () => {
                             label: t.t(lang, (s) => s.navigation.flows),
                             path: paths.flows(),
                           },
+                          /*
                           {
                             label: t.t(lang, (s) => s.navigation.pendingFlows),
                             path: paths.pendingFlows(),
                           },
-
+                          */
                           // TEMPORAL
                           {
                             label: 'Flows GraphQL',
