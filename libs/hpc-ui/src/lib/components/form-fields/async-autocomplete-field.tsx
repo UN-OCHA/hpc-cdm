@@ -38,10 +38,14 @@ const AsyncAutocompleteSelect = ({
   const [inputValue, setInputValue] = useState('');
   const { setFieldValue } = useFormikContext();
   const [field, meta] = useField(name);
-  const [options, setOptions] = useState<readonly string[]>([]);
-  const [data, setData] = useState<readonly string[]>([]);
+  const [options, setOptions] = useState<
+    readonly { label: string; id: number }[]
+  >([]);
+  const [data, setData] = useState<readonly { label: string; id: number }[]>(
+    []
+  );
   const [isFetch, setIsFetch] = useState(false);
-  const loading = open && !isFetch;
+  const loading = open && !isFetch && inputValue.length >= 3;
 
   useEffect(() => {
     let active = true;
@@ -53,7 +57,9 @@ const AsyncAutocompleteSelect = ({
     }
     if (data.length > 0 && inputValue.length > 3) {
       setOptions(
-        data.filter((x) => x.toUpperCase().includes(inputValue.toUpperCase()))
+        data.filter((x) =>
+          x.label.toUpperCase().includes(inputValue.toUpperCase())
+        )
       );
     }
 
@@ -63,9 +69,9 @@ const AsyncAutocompleteSelect = ({
     (async () => {
       try {
         const response = await fnPromise({ query: inputValue });
-        const parsedResponse = response.map(
-          (organization) => organization.name
-        );
+        const parsedResponse = response.map((responseValue) => {
+          return { label: responseValue.name, id: responseValue.id };
+        });
         setData(parsedResponse);
         if (active) {
           setOptions(parsedResponse);
@@ -90,7 +96,7 @@ const AsyncAutocompleteSelect = ({
   }, [open]);
 
   const configAutocomplete: AutocompleteProps<
-    string,
+    { label: string; id: number },
     boolean,
     boolean,
     boolean
@@ -106,9 +112,9 @@ const AsyncAutocompleteSelect = ({
       setOpen(false);
     },
     open: open,
-    isOptionEqualToValue: (option, value) => option === value,
+    isOptionEqualToValue: (option, value) => option.id === value.id,
     options: options,
-    getOptionLabel: (op) => op,
+    getOptionLabel: (op) => (typeof op === 'string' ? op : op.label),
     filterSelectedOptions: true,
     filterOptions: (x) => x,
     ChipProps: { size: 'small' },
@@ -137,7 +143,9 @@ const AsyncAutocompleteSelect = ({
       />
     ),
   };
-
+  if (meta && meta.error && meta.touched) {
+    console.log(meta.error);
+  }
   return <StyledAutocomplete {...configAutocomplete} />;
 };
 

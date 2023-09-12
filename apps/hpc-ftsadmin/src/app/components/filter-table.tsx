@@ -3,15 +3,16 @@ import { Form, Formik } from 'formik';
 
 import { Environment } from '../../environments/interface';
 import { array, number, object, string } from 'yup';
-import Section from './section';
+
 import tw from 'twin.macro';
 import { flows } from '@unocha/hpc-data';
+import React from 'react';
 
 interface Props {
   isOpen: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   environment: Environment;
-  setFilters: any;
+  setFilters: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const StyledDiv = tw.div`
@@ -23,11 +24,11 @@ export const FilterTable = (props: Props) => {
     flowDetailsFlowId: string;
     flowDetailsAmountUSD: string;
     flowDetailsKeywords: string[];
-    sourceDetailsOrganizations: string[];
-    sourceDetailsCountry: string[];
+    sourceDetailsOrganizations: { label: string; id: string }[];
+    sourceDetailsCountry: { label: string; id: string }[];
     sourceDetailsUsageYears: string[];
-    destinationDetailsOrganizations: string[];
-    destinationDetailsCountry: string[];
+    destinationDetailsOrganizations: { label: string; id: string }[];
+    destinationDetailsCountry: { label: string; id: string }[];
     destinationDetailsUsageYears: string[];
   }
 
@@ -49,15 +50,18 @@ export const FilterTable = (props: Props) => {
           flowId: flowDetailsFlowId,
           keywords: flowDetailsKeywords,
           amountUSD: parseInt(flowDetailsAmountUSD),
-          destinationCountryName: destinationDetailsCountry,
-          destinationOrganization: destinationDetailsOrganizations,
+          destinationCountries: destinationDetailsCountry.map((x) => `${x.id}`),
+          destinationOrganizations: destinationDetailsOrganizations.map(
+            (x) => `${x.id}`
+          ),
           destinationUsageYears: destinationDetailsUsageYears,
-          sourceCountryName: sourceDetailsCountry,
-          sourceOrganization: sourceDetailsOrganizations,
+          sourceCountries: sourceDetailsCountry.map((x) => `${x.id}`),
+          sourceOrganizations: sourceDetailsOrganizations.map((x) => `${x.id}`),
           sourceUsageYears: sourceDetailsUsageYears,
         },
       },
     };
+    console.log(queryParams);
     props.setFilters(queryParams);
   };
 
@@ -70,11 +74,19 @@ export const FilterTable = (props: Props) => {
       .positive()
       .typeError('Only positive integers are accepted'),
     flowDetailsKeywords: array(string()),
-    sourceDetailsOrganizations: array(string()),
-    sourceDetailsCountry: array(string()),
+    sourceDetailsOrganizations: array().of(
+      object().shape({ label: string(), id: string() })
+    ),
+    sourceDetailsCountry: array().of(
+      object().shape({ label: string(), id: string() })
+    ),
     sourceDetailsUsageYears: array(number()),
-    destinationDetailsOrganizations: array(string()),
-    destinationDetailsCountry: array(string()),
+    destinationDetailsOrganizations: array().of(
+      object().shape({ label: string(), id: string() })
+    ),
+    destinationDetailsCountry: array().of(
+      object().shape({ label: string(), id: string() })
+    ),
     destinationDetailsUsageYears: array(number()),
   });
 
@@ -107,7 +119,7 @@ export const FilterTable = (props: Props) => {
         onSubmit={handleSubmit}
       >
         <Form>
-          <Section title="Flow Details" name="flowDetails">
+          <C.Section title="Flow Details">
             <C.TextFieldWrapper
               label="Flow Id"
               name="flowDetailsFlowId"
@@ -127,8 +139,15 @@ export const FilterTable = (props: Props) => {
                 { name: 'dos', value: '2' },
               ]}
             />
-          </Section>
-          <Section title="Source Details" name="sourceDetails">
+            <C.Section title="Show More" type="secondary">
+              <C.TextFieldWrapper
+                label="Amount USD"
+                name="flowDetailsAmountUSD"
+                type="text"
+              />
+            </C.Section>
+          </C.Section>
+          <C.Section title="Source Details">
             <C.AsyncAutocompleteSelect
               label="Organization(s)"
               name="sourceDetailsOrganizations"
@@ -153,8 +172,8 @@ export const FilterTable = (props: Props) => {
               options={yearsSelect()}
               isMulti
             />
-          </Section>
-          <Section title="Destination Details" name="destinationDetails">
+          </C.Section>
+          <C.Section title="Destination Details">
             <C.AsyncAutocompleteSelect
               label="Organization(s)"
               name="destinationDetailsOrganizations"
@@ -179,7 +198,7 @@ export const FilterTable = (props: Props) => {
               options={yearsSelect()}
               isMulti
             />
-          </Section>
+          </C.Section>
           <StyledDiv>
             <C.ButtonSubmit color="primary" text="Search" />
           </StyledDiv>

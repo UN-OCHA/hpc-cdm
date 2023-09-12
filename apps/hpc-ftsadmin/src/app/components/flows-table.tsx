@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import { flows } from '@unocha/hpc-data';
-import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
+import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
 import { MdInfoOutline } from 'react-icons/md';
 import {
   createEnumParam,
@@ -26,6 +26,7 @@ import { LanguageKey, t } from '../../i18n';
 import { Strings } from '../../i18n/iface';
 import { AppContext, getEnv } from '../context';
 import tw from 'twin.macro';
+import { useEffect } from 'react';
 
 type HeaderId =
   | 'flow.id'
@@ -49,6 +50,113 @@ export interface FlowsTableProps {
   flowList: flows.FlowList;
   filters?: flows.SearchFlowsGraphQlParams;
 }
+const StyledLoader = tw(C.Loader)`
+  text-center
+  `;
+interface ParsedFilters {
+  flowId?: number;
+  amountUSD?: number;
+  flowObjects: flows.FlowObject[];
+  categories: flows.FlowCategory[];
+}
+
+const parseFilters = (props: FlowsTableProps): ParsedFilters | undefined => {
+  if (!props.filters?.flowSearch.filters) {
+    return undefined;
+  }
+  const { filters } = props.filters?.flowSearch;
+  const {
+    amountUSD,
+    destinationCountries,
+    destinationOrganizations,
+    destinationUsageYears,
+    flowId,
+    keywords,
+    sourceCountries,
+    sourceOrganizations,
+    sourceUsageYears,
+  } = filters;
+
+  const parseFlowObject = (
+    values: string[] | undefined,
+    refDirection: 'source' | 'destination',
+    objectType: 'location' | 'organization' | 'usageYear'
+  ): flows.FlowObject[] => {
+    if (!values) {
+      return [];
+    }
+
+    return values.map((value) => ({
+      objectID: parseInt(value),
+      refDirection,
+      objectType,
+    }));
+  };
+  const parseCategories = (values: string[] | undefined) => {
+    if (!values) {
+      return [];
+    }
+
+    return values.map((value) => ({
+      name: value,
+      group: 'keywords',
+    }));
+  };
+
+  const parsedDestinationCountries = parseFlowObject(
+    destinationCountries,
+    'destination',
+    'location'
+  );
+
+  const parsedDestinationOrganizations = parseFlowObject(
+    destinationOrganizations,
+    'destination',
+    'organization'
+  );
+
+  const parsedDestinationUsageYears = parseFlowObject(
+    destinationUsageYears,
+    'destination',
+    'usageYear'
+  );
+
+  const parsedSourceCountries = parseFlowObject(
+    sourceCountries,
+    'source',
+    'location'
+  );
+
+  const parsedSourceOrganizations = parseFlowObject(
+    sourceOrganizations,
+    'source',
+    'organization'
+  );
+
+  const parsedSourceUsageYears = parseFlowObject(
+    sourceUsageYears,
+    'source',
+    'usageYear'
+  );
+
+  const categories = parseCategories(keywords);
+
+  const flowObjects: flows.FlowObject[] = [
+    ...parsedDestinationCountries,
+    ...parsedDestinationOrganizations,
+    ...parsedDestinationUsageYears,
+    ...parsedSourceCountries,
+    ...parsedSourceOrganizations,
+    ...parsedSourceUsageYears,
+  ];
+
+  return {
+    ...(flowId !== undefined ? { flowID: parseInt(flowId) } : {}),
+    ...(amountUSD !== undefined ? { amountUSD } : {}),
+    categories,
+    flowObjects,
+  };
+};
 
 export default function FlowsTable(props: FlowsTableProps) {
   const env = getEnv();
@@ -84,10 +192,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
   });
 
-  const StyledLoader = tw(C.Loader)`
-  text-center
-  `;
-  const loader = dataLoader([query], () =>
+  const [state, load] = useDataLoader([query], () =>
     env.model.flows.searchFlows({
       flowSearch: {
         limit: query.rowsPerPage,
@@ -96,9 +201,14 @@ export default function FlowsTable(props: FlowsTableProps) {
         orderBy: query.orderBy,
         orderDir: query.orderDir,
         flowList: props.flowList,
+        ...parseFilters(props),
       },
     })
   );
+
+  useEffect(() => {
+    load();
+  }, [props.filters]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setQuery({
@@ -170,7 +280,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     <AppContext.Consumer>
       {({ lang }) => (
         <StyledLoader
-          loader={loader}
+          loader={state}
           strings={{
             ...t.get(lang, (s) => s.components.loader),
             notFound: {

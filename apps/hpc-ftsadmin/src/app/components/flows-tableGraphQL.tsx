@@ -48,6 +48,9 @@ export interface FlowsTableProps {
   flowList: flows.FlowList;
   filters?: flows.SearchFlowsGraphQlParams;
 }
+const StyledLoader = tw(C.Loader)`
+text-center
+`;
 
 export default function FlowsTableGraphQl(props: FlowsTableProps) {
   const env = getEnv();
@@ -92,10 +95,6 @@ export default function FlowsTableGraphQl(props: FlowsTableProps) {
       },
     })
   );
-
-  const StyledLoader = tw(C.Loader)`
-    text-center
-    `;
 
   useEffect(() => {
     load();

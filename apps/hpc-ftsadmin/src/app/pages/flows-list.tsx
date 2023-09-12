@@ -70,7 +70,7 @@ export default (props: Props) => {
         label: 'details',
       },
     ],
-    flowList: 'all',
+    flowList: filters ? 'search' : 'all',
     filters: filters,
   };
 

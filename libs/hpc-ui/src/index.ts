@@ -25,6 +25,7 @@ import PageTitle from './lib/components/page-title';
 import * as sidebarNavigation from './lib/components/sidebar-navigation';
 import SearchFilter from './lib/components/search-filter';
 import SecondaryNavigation from './lib/components/secondary-navigation';
+import Section from './lib/components/section';
 import SingleSelect from './lib/components/form-fields/single-select-field';
 import TertiaryNavigation from './lib/components/tertiary-navigation';
 import TextFieldWrapper from './lib/components/form-fields/text-field';
@@ -57,6 +58,7 @@ const COMPONENTS = {
   SidebarNavigation: sidebarNavigation.default,
   SingleSelect,
   SearchFilter,
+  Section,
   SecondaryNavigation,
   TertiaryNavigation,
   TextFieldWrapper,

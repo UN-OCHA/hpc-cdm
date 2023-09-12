@@ -67,7 +67,7 @@ const MultiSelect = ({
     multiSelectConfig.error = true;
   }
   return (
-    <FormControl sx={{ width: '100%' }}>
+    <FormControl sx={{ width: '100%' }} size="small">
       <InputLabel id={`${label.toLowerCase().replace(' ', '-').trim()}-label`}>
         {label}
       </InputLabel>

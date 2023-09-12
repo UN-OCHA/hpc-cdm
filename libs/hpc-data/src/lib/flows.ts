@@ -56,6 +56,7 @@ const FLOW_CATEGORY = t.intersection([
     }),
   }),
 ]);
+export type FlowCategory = t.TypeOf<typeof FLOW_CATEGORY>;
 
 const FLOW_ORGANIZATION = t.type({
   objectID: t.number,
@@ -307,6 +308,8 @@ export const SEARCH_FLOWS_PARAMS = t.type({
     activeStatus: t.type({
       name: t.string,
     }),
+    flowId: t.number,
+    amountUSD: t.number,
     flowList: FLOW_LIST,
     active: t.boolean,
     orderBy: t.string,
@@ -322,15 +325,15 @@ export const SEARCH_FLOWS_PARAMS = t.type({
 export type SearchFlowsParams = t.TypeOf<typeof SEARCH_FLOWS_PARAMS>;
 
 const FILTERS = t.type({
-  destinationCountryName: t.union([t.array(t.string), t.null]),
-  destinationOrganization: t.union([t.array(t.string), t.null]),
-  destinationUsageYears: t.union([t.array(t.string), t.null]),
-  amountUSD: t.union([t.number, t.null]),
-  flowId: t.union([t.string, t.null]),
-  keywords: t.union([t.array(t.string), t.null]),
-  sourceCountryName: t.union([t.array(t.string), t.null]),
-  sourceOrganization: t.union([t.array(t.string), t.null]),
-  sourceUsageYears: t.union([t.array(t.string), t.null]),
+  destinationCountries: t.array(t.string),
+  destinationOrganizations: t.array(t.string),
+  destinationUsageYears: t.array(t.string),
+  amountUSD: t.number,
+  flowId: t.string,
+  keywords: t.array(t.string),
+  sourceCountries: t.array(t.string),
+  sourceOrganizations: t.array(t.string),
+  sourceUsageYears: t.array(t.string),
 });
 export const SEARCH_FLOWS_GRAPHQL_PARAMS = t.type({
   flowSearch: t.partial({
