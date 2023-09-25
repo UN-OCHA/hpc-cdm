@@ -11,7 +11,10 @@ import * as actionableButton from './lib/components/actionable-button';
 import ActionableDropdown from './lib/components/actionable-dropdown';
 import AutocompleteSelect from './lib/components/form-fields/autocomplete-field';
 import AsyncAutocompleteSelect from './lib/components/form-fields/async-autocomplete-field';
+import AsyncMultiSelect from './lib/components/form-fields/async-multi-select-field';
+import AsyncSingleSelect from './lib/components/form-fields/async-single-select-field';
 import { Button, ButtonLink, ButtonSubmit } from './lib/components/button';
+import CheckBox from './lib/components/form-fields/checkbox';
 import DevEnvWarning from './lib/components/development-environment-warning';
 import ErrorMessage from './lib/components/error-message';
 import Header from './lib/components/header';
@@ -42,9 +45,12 @@ const COMPONENTS = {
   ActionableIconButton: actionableButton.ActionableIconButton,
   AutocompleteSelect,
   AsyncAutocompleteSelect,
+  AsyncMultiSelect,
+  AsyncSingleSelect,
   Button,
   ButtonLink,
   ButtonSubmit,
+  CheckBox,
   DevEnvWarning,
   ErrorMessage,
   Header,

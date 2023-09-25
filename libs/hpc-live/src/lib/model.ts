@@ -13,6 +13,12 @@ import {
   access,
   errors,
   util as dataUtil,
+  categories,
+  plans,
+  projects,
+  emergencies,
+  globalClusters,
+  usageYears,
 } from '@unocha/hpc-data';
 
 interface URLInterface {
@@ -397,6 +403,27 @@ export class LiveModel implements Model {
     };
   }
 
+  get categories(): categories.Model {
+    return {
+      getCategories: (params) =>
+        this.call({
+          pathname: '/v2/category',
+          queryParams: {
+            group: params.query,
+          },
+          resultType: categories.GET_CATEGORIES_RESULT,
+        }),
+    };
+  }
+  get emergencies(): emergencies.Model {
+    return {
+      getAutocompleteEmergencies: (params) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/emergency/${params.query}`,
+          resultType: emergencies.GET_EMERGENCIES_AUTOCOMPLETE_RESULT,
+        }),
+    };
+  }
   get flows(): flows.Model {
     return {
       getFlow: (params) =>
@@ -420,7 +447,7 @@ export class LiveModel implements Model {
           method: 'POST',
           body: {
             type: 'raw',
-            data: `{
+            data: ` query Flow{
               flow(id: ${params}) {
                   createdAt
                   updatedAt
@@ -524,7 +551,15 @@ export class LiveModel implements Model {
       },
     };
   }
-
+  get globalClusters(): globalClusters.Model {
+    return {
+      getGlobalClusters: () =>
+        this.call({
+          pathname: '/v1/global-cluster',
+          resultType: globalClusters.GET_GLOBAL_CLUSTERS_RESULT,
+        }),
+    };
+  }
   get locations(): locations.Model {
     return {
       getAutocompleteLocations: (params) =>
@@ -563,7 +598,24 @@ export class LiveModel implements Model {
         }),
     };
   }
-
+  get plans(): plans.Model {
+    return {
+      getAutocompletePlans: (params) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/plan/${params.query}`,
+          resultType: plans.GET_PLANS_AUTOCOMPLETE_RESULT,
+        }),
+    };
+  }
+  get projects(): projects.Model {
+    return {
+      getAutocompleteProjects: (params) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/project/${params.query}`,
+          resultType: projects.GET_PROJECTS_AUTOCOMPLETE_RESULT,
+        }),
+    };
+  }
   get reportingWindows(): reportingWindows.Model {
     /**
      * Remove all the files from the map that aren't one of these.
@@ -703,6 +755,15 @@ export class LiveModel implements Model {
           return handleAssignmentResult(result);
         }
       },
+    };
+  }
+  get usageYears(): usageYears.Model {
+    return {
+      getUsageYears: () =>
+        this.call({
+          pathname: '/v1/fts/usage-year',
+          resultType: usageYears.GET_USAGE_YEARS_RESULT,
+        }),
     };
   }
 

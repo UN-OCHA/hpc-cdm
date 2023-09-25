@@ -15,6 +15,9 @@ interface Props {
 const Container = tw.div`
 flex
 `;
+const LandingContainer = tw.div`
+w-full
+`;
 
 export default (props: Props) => {
   const [filters, setFilters] = useState<flows.SearchFlowsGraphQlParams>();
@@ -74,7 +77,6 @@ export default (props: Props) => {
     filters: filters,
   };
 
-  const [isOpen, setOpen] = useState(false);
   const env = getEnv();
 
   return (
@@ -85,23 +87,13 @@ export default (props: Props) => {
         >
           <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
           <Container>
-            <FilterTable
-              isOpen={isOpen}
-              setOpen={setOpen}
-              environment={env}
-              setFilters={setFilters}
-            />
-            <div>
+            <FilterTable environment={env} setFilters={setFilters} />
+            <LandingContainer>
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.flows.title)}
               </C.PageTitle>
-              <C.Button
-                color="primary"
-                text="Filters"
-                onClick={() => setOpen(!isOpen)}
-              />
               <FlowsTable {...flowsTableProps} />
-            </div>
+            </LandingContainer>
           </Container>
         </div>
       )}

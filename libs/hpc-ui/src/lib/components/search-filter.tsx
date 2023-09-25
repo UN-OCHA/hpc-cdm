@@ -1,14 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '../theme';
 import tw from 'twin.macro';
-import { Drawer } from '@mui/material';
-import { Button } from './button';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { Drawer, IconButton, Tooltip } from '@mui/material';
 import { organizations } from '@unocha/hpc-data';
 interface Props {
   className?: string;
   title?: string;
-  isOpen: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   children: React.ReactNode;
 }
 
@@ -42,50 +40,83 @@ const Title = styled.h2`
 `;
 
 const FlexDiv = tw.div`
-flex
-flex-wrap
-justify-between
-items-center
+  flex
+  flex-wrap
+  justify-between
+  items-center
 `;
 const StyledDrawer = styled(Drawer)`
-  ${({ open }) => (!open ? tw`w-0 opacity-0` : tw`w-1/4 opacity-100`)}
+  ${({ open }) => (!open ? tw`w-0 opacity-0 me-0` : tw`w-1/4 opacity-100`)}
   ${tw`
-me-8
-z-0
-[&>div]:relative
-[&>div]:border-y-0
-[&>div]:border-s-0
-[&>div]:border-e
-[&>div]:w-full
-transition-all
+  z-0
+  overflow-y-visible
+  h-[85vh]
+  [&>div]:relative
+  [&>div]:border-y-0
+  [&>div]:border-s-0
+  [&>div]:border-e
+  [&>div]:w-full
+  transition-all
 `}
 `;
 
-export const SearchFilter = ({
-  className,
-  title,
-  isOpen,
-  setOpen,
-  children,
-}: Props) => {
+const HideDrawerButton = styled.button`
+  ${({ autoFocus }) => (!autoFocus ? tw`-ms-[15px] ` : tw`me-8`)}
+  ${tw`
+  sticky
+  cursor-pointer
+  flex
+  [&>svg]:self-center
+  self-center
+  h-16
+  transition-all
+  border-solid
+  border-s-0
+  border-y
+  border-e
+  border-unocha-primary-dark2
+  rounded-e-md
+  bg-unocha-primary-normal
+  p-0
+`}
+`;
+
+export const SearchFilter = ({ className, title, children }: Props) => {
+  const [isOpen, setOpen] = useState(false);
   return (
-    <StyledDrawer
-      variant="persistent"
-      anchor="left"
-      open={isOpen}
-      elevation={0}
-      PaperProps={{
-        variant: 'outlined',
-      }}
-    >
-      <Container className={className}>
-        <FlexDiv>
-          {title && <Title>{title}</Title>}
-          <Button color="primary" text="X" onClick={() => setOpen(false)} />
-        </FlexDiv>
-        {children}
-      </Container>
-    </StyledDrawer>
+    <>
+      <StyledDrawer
+        variant="persistent"
+        anchor="left"
+        open={isOpen}
+        elevation={0}
+        PaperProps={{
+          variant: 'outlined',
+        }}
+      >
+        <Container className={className}>
+          <FlexDiv>
+            {title && <Title>{title}</Title>}
+            <IconButton aria-label="close" onClick={() => setOpen(false)}>
+              <ChevronLeftIcon />
+            </IconButton>
+          </FlexDiv>
+          {children}
+        </Container>
+      </StyledDrawer>
+      <Tooltip title="Filters">
+        <HideDrawerButton onClick={() => setOpen(!isOpen)} autoFocus={isOpen}>
+          <ChevronLeftIcon
+            sx={{
+              transition: 'all .3s',
+              transform: 'initial',
+              rotate: isOpen ? '0deg' : '180deg',
+              color: 'white',
+            }}
+          />
+        </HideDrawerButton>
+      </Tooltip>
+    </>
   );
 };
 

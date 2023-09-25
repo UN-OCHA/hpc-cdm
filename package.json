@@ -118,6 +118,7 @@
     "yup": "^1.2.0"
   },
   "dependencies": {
+    "@mui/icons-material": "^5.14.9",
     "formik": "^2.4.3",
     "twin.macro": "^3.3.1"
   },

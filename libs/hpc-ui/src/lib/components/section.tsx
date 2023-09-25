@@ -33,7 +33,7 @@ const SectionContainer = styled.details(
   ({ type }: { type: 'primary' | 'secondary' }) => [
     tw`open:[&>summary]:mb-6`,
     type === 'primary'
-      ? tw`p-4 hover:bg-slate-100 open:hover:bg-white`
+      ? tw`p-4 hover:bg-unocha-panel-bgHover open:hover:bg-white`
       : tw`p-0 w-full`,
   ]
 );
