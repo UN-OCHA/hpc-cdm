@@ -75,6 +75,11 @@ const AsyncAutocompleteSelect = ({
   ): result is usageYears.GetUsageYearsResult {
     return usageYears.GET_USAGE_YEARS_RESULT.is(result);
   }
+  function isOrganizationsResult(
+    result: APIAutocompleteResult
+  ): result is organizations.GetOrganizationsAutocompleteResult {
+    return organizations.GET_ORGANIZATIONS_AUTOCOMPLETE_RESULT.is(result);
+  }
 
   useEffect(() => {
     let active = true;
@@ -90,7 +95,7 @@ const AsyncAutocompleteSelect = ({
     }
     if (
       (data.length > 0 &&
-        (inputValue.length > 3 || category || !isAutocompleteAPI) &&
+        (inputValue.length >= 3 || category || !isAutocompleteAPI) &&
         (!isUsageYear || inputValue.length > 0)) ||
       (isUsageYear &&
         inputValue.length === 0 &&
@@ -119,6 +124,12 @@ const AsyncAutocompleteSelect = ({
           if (isUsageYearsResult(response)) {
             return {
               label: (responseValue as usageYears.UsageYear).year,
+              id: responseValue.id,
+            };
+          } else if (isOrganizationsResult(response)) {
+            const org = responseValue as organizations.Organization;
+            return {
+              label: `${org.name} [${org.abbreviation}]`,
               id: responseValue.id,
             };
           } else {

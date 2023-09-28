@@ -100,7 +100,7 @@ const TRANSFERRED_ENTITY = t.type({
 
 const INFERRED_ENTITY = t.type({
   key: t.string,
-  valueId: t.number,
+  valueId: t.union([t.number, t.null]),
   reason: t.string,
 });
 
@@ -350,6 +350,7 @@ const FILTERS = t.type({
   sourceEmergencies: t.array(t.string),
   includeChildrenOfParkedFlows: t.boolean,
 });
+export type FlowFilters = t.TypeOf<typeof FILTERS>;
 export const SEARCH_FLOWS_GRAPHQL_PARAMS = t.type({
   flowSearch: t.partial({
     filters: FILTERS,

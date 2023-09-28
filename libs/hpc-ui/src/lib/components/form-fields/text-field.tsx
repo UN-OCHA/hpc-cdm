@@ -1,11 +1,41 @@
 import { TextField, TextFieldProps } from '@mui/material';
 import { useField } from 'formik';
 import tw from 'twin.macro';
+import { NumericFormat, NumericFormatProps } from 'react-number-format';
+import React from 'react';
 
 const StyledTextField = tw(TextField)`
 min-w-[10rem]
 w-full
 `;
+interface CustomProps {
+  onChange: (event: { target: { name: string; value: string } }) => void;
+  name: string;
+  itemType: 'number' | 'currency';
+}
+const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
+  function NumericFormatCustom(props, ref) {
+    const { onChange, name, itemType, ...others } = props;
+    return (
+      <NumericFormat
+        {...others}
+        name={name}
+        getInputRef={ref}
+        onValueChange={(values) => {
+          onChange({
+            target: {
+              name: props.name,
+              value: values.value,
+            },
+          });
+        }}
+        thousandSeparator={itemType === 'currency'}
+        valueIsNumericString
+        prefix={itemType === 'currency' ? '$ ' : ''}
+      />
+    );
+  }
+);
 
 const TextFieldWrapper = ({
   type,
@@ -14,7 +44,7 @@ const TextFieldWrapper = ({
   placeholder,
   ...otherProps
 }: {
-  type: 'text' | 'number';
+  type: 'text' | 'number' | 'currency';
   name: string;
   label: string;
   placeholder?: string;
@@ -28,14 +58,14 @@ const TextFieldWrapper = ({
     id: name,
     placeholder: placeholder,
     size: 'small',
-    type: type,
-    inputProps:
-      type === 'number'
+    type: 'text',
+    InputProps:
+      type === 'number' || type === 'currency'
         ? {
-            inputMode: 'numeric',
-            pattern: '[0-9]*',
+            inputComponent: NumericFormatCustom as any,
           }
         : undefined,
+    inputProps: { itemType: type },
   };
   if (meta && meta.touched && meta.error) {
     configTextField.error = true;

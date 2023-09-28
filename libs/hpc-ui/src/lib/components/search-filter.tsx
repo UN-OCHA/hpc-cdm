@@ -26,9 +26,8 @@ interface FieldConfig {
   selectFields?: { value: string | number; name: string }[];
 }
 
-const Container = styled.div`
-  padding: 1rem;
-  border-inline-end: 1px;
+const Container = tw.div`
+  p-4
 `;
 
 const Title = styled.h2`
@@ -46,11 +45,13 @@ const FlexDiv = tw.div`
   items-center
 `;
 const StyledDrawer = styled(Drawer)`
-  ${({ open }) => (!open ? tw`w-0 opacity-0 me-0` : tw`w-1/4 opacity-100`)}
+  ${({ open }) => (!open ? tw`w-0 opacity-0` : tw`w-1/4 opacity-100`)}
   ${tw`
+  sticky
+  top-0
   z-0
   overflow-y-visible
-  h-[85vh]
+  h-screen
   [&>div]:relative
   [&>div]:border-y-0
   [&>div]:border-s-0
@@ -61,13 +62,12 @@ const StyledDrawer = styled(Drawer)`
 `;
 
 const HideDrawerButton = styled.button`
-  ${({ autoFocus }) => (!autoFocus ? tw`-ms-[15px] ` : tw`me-8`)}
+  ${({ autoFocus }) => (!autoFocus ? tw`-ms-[15px] ` : tw`me-4`)}
   ${tw`
   sticky
+  top-1/2
   cursor-pointer
-  flex
   [&>svg]:self-center
-  self-center
   h-16
   transition-all
   border-solid

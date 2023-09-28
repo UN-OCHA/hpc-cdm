@@ -1,15 +1,28 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
-import FlowsTable, { FlowsTableProps } from '../components/flows-table';
+import FlowsTable, {
+  FlowsTableProps,
+  HeaderId,
+} from '../components/flows-table';
 import PageMeta from '../components/page-meta';
 import { AppContext } from '../context';
+import { flows } from '@unocha/hpc-data';
+import { Strings } from '../../i18n/iface';
 
 interface Props {
   className?: string;
 }
+interface FlowsTableNoFilterProps {
+  headers: {
+    id: HeaderId;
+    sortable?: boolean;
+    label: keyof Strings['components']['flowsTable']['headers'];
+  }[];
+  flowList: flows.FlowList;
+}
 
 export default (props: Props) => {
-  const flowsTableProps: FlowsTableProps = {
+  const flowsTableProps: FlowsTableNoFilterProps = {
     headers: [
       {
         id: 'flow.id',

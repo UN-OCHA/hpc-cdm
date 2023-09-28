@@ -5,37 +5,35 @@ import React from 'react';
 
 import { C } from '@unocha/hpc-ui';
 import { Environment } from '../../environments/interface';
-import { flows } from '@unocha/hpc-data';
-import { formValueToId, formValueToLabel } from '../utils/mapFunctions';
 
 interface Props {
   environment: Environment;
-  setFilters: React.Dispatch<React.SetStateAction<any>>;
+  setFilters: React.Dispatch<React.SetStateAction<FormValues>>;
 }
-interface FormValues {
-  flowDetailsFlowId: string;
-  flowDetailsAmountUSD: string;
-  flowDetailsKeywords: { label: string; id: string }[];
-  flowDetailsFlowStatus: string;
-  flowDetailsFlowType: string;
-  flowDetailsFlowActiveStatus: string;
-  flowDetailsFlowReporterReferenceCode: string;
-  flowDetailsFlowSourceSystemId: string;
-  flowDetailsFlowLegacyId: string;
-  sourceDetailsOrganizations: { label: string; id: string }[];
-  sourceDetailsCountry: { label: string; id: string }[];
-  sourceDetailsUsageYears: { label: string; id: string }[];
-  sourceDetailsProjects: { label: string; id: string }[];
-  sourceDetailsPlans: { label: string; id: string }[];
-  sourceDetailsGlobalClusters: { label: string; id: string }[];
-  sourceDetailsEmergencies: { label: string; id: string }[];
-  destinationDetailsOrganizations: { label: string; id: string }[];
-  destinationDetailsCountry: { label: string; id: string }[];
-  destinationDetailsUsageYears: { label: string; id: string }[];
-  destinationDetailsProjects: { label: string; id: string }[];
-  destinationDetailsPlans: { label: string; id: string }[];
-  destinationDetailsGlobalClusters: { label: string; id: string }[];
-  destinationDetailsEmergencies: { label: string; id: string }[];
+export interface FormValues {
+  flowId: string;
+  amountUSD: string;
+  keywords: { label: string; id: string }[];
+  flowStatus: string;
+  flowType: string;
+  flowActiveStatus: string;
+  reporterReferenceCode: string;
+  sourceSystemId: string;
+  flowLegacyId: string;
+  sourceOrganizations: { label: string; id: string }[];
+  sourceCountries: { label: string; id: string }[];
+  sourceUsageYears: { label: string; id: string }[];
+  sourceProjects: { label: string; id: string }[];
+  sourcePlans: { label: string; id: string }[];
+  sourceGlobalClusters: { label: string; id: string }[];
+  sourceEmergencies: { label: string; id: string }[];
+  destinationOrganizations: { label: string; id: string }[];
+  destinationCountries: { label: string; id: string }[];
+  destinationUsageYears: { label: string; id: string }[];
+  destinationProjects: { label: string; id: string }[];
+  destinationPlans: { label: string; id: string }[];
+  destinationGlobalClusters: { label: string; id: string }[];
+  destinationEmergencies: { label: string; id: string }[];
   includeChildrenOfParkedFlows: boolean;
 }
 
@@ -50,118 +48,44 @@ gap-x-4
 export const FilterTable = (props: Props) => {
   const { environment, setFilters } = props;
   const handleSubmit = (values: FormValues) => {
-    const {
-      destinationDetailsCountry,
-      destinationDetailsOrganizations,
-      destinationDetailsUsageYears,
-      destinationDetailsProjects,
-      destinationDetailsPlans,
-      destinationDetailsGlobalClusters,
-      destinationDetailsEmergencies,
-      flowDetailsAmountUSD,
-      flowDetailsFlowId,
-      flowDetailsKeywords,
-      flowDetailsFlowStatus,
-      flowDetailsFlowType,
-      flowDetailsFlowActiveStatus,
-      flowDetailsFlowReporterReferenceCode,
-      flowDetailsFlowSourceSystemId,
-      flowDetailsFlowLegacyId,
-      sourceDetailsCountry,
-      sourceDetailsOrganizations,
-      sourceDetailsUsageYears,
-      sourceDetailsProjects,
-      sourceDetailsPlans,
-      sourceDetailsGlobalClusters,
-      sourceDetailsEmergencies,
-      includeChildrenOfParkedFlows,
-    } = values;
-    const queryParams: flows.SearchFlowsGraphQlParams = {
-      flowSearch: {
-        filters: {
-          flowId: flowDetailsFlowId,
-          keywords: formValueToLabel(flowDetailsKeywords),
-          amountUSD:
-            flowDetailsAmountUSD === '' ? null : parseInt(flowDetailsAmountUSD), // FIX NaN and null problem
-          flowStatus: flowDetailsFlowStatus,
-          flowType: flowDetailsFlowType,
-          flowActiveStatus: flowDetailsFlowActiveStatus,
-          reporterReferenceCode:
-            flowDetailsFlowReporterReferenceCode === ''
-              ? null
-              : parseInt(flowDetailsFlowReporterReferenceCode),
-          sourceSystemId:
-            flowDetailsFlowSourceSystemId === ''
-              ? null
-              : parseInt(flowDetailsFlowSourceSystemId),
-          flowLegacyId:
-            flowDetailsFlowLegacyId === ''
-              ? null
-              : parseInt(flowDetailsFlowLegacyId),
-          destinationCountries: formValueToId(destinationDetailsCountry),
-          destinationOrganizations: formValueToId(
-            destinationDetailsOrganizations
-          ),
-          destinationProjects: formValueToId(destinationDetailsProjects),
-          destinationPlans: formValueToId(destinationDetailsPlans),
-          destinationGlobalClusters: formValueToId(
-            destinationDetailsGlobalClusters
-          ),
-          destinationEmergencies: formValueToId(destinationDetailsEmergencies),
-          destinationUsageYears: formValueToId(destinationDetailsUsageYears),
-          sourceCountries: formValueToId(sourceDetailsCountry),
-          sourceOrganizations: formValueToId(sourceDetailsOrganizations),
-          sourceUsageYears: formValueToId(sourceDetailsUsageYears),
-          sourceProjects: formValueToId(sourceDetailsProjects),
-          sourcePlans: formValueToId(sourceDetailsPlans),
-          sourceGlobalClusters: formValueToId(sourceDetailsGlobalClusters),
-          sourceEmergencies: formValueToId(sourceDetailsEmergencies),
-          includeChildrenOfParkedFlows,
-        },
-      },
-    };
-
-    console.log(queryParams);
-    setFilters(queryParams);
+    setFilters(values);
   };
 
   const FORM_VALIDATION = object().shape({
-    flowDetailsFlowId: number()
+    flowId: number()
       .positive()
       .integer()
       .typeError('Only positive integers are accepted'),
-    flowDetailsAmountUSD: number()
+    amountUSD: number()
       .positive()
       .typeError('Only positive integers are accepted'),
-    flowDetailsKeywords: array().of(
-      object().shape({ label: string(), id: string() })
-    ),
-    flowDetailsFlowStatus: string(),
-    flowDetailsFlowReporterReferenceCode: number()
+    keywords: array().of(object().shape({ label: string(), id: string() })),
+    flowStatus: string(),
+    reporterReferenceCode: number()
       .positive()
       .typeError('Only positive integers are accepted'),
-    flowDetailsFlowSourceSystemId: number()
+    sourceSystemId: number()
       .positive()
       .typeError('Only positive integers are accepted'),
-    flowDetailsFlowLegacyId: number()
+    flowLegacyId: number()
       .positive()
       .typeError('Only positive integers are accepted'),
-    sourceDetailsOrganizations: array().of(
+    sourceOrganizations: array().of(
       object().shape({ label: string(), id: string() })
     ),
-    sourceDetailsCountry: array().of(
+    sourceCountries: array().of(
       object().shape({ label: string(), id: string() })
     ),
-    sourceDetailsUsageYears: array().of(
+    sourceUsageYears: array().of(
       object().shape({ label: string(), id: string() })
     ),
-    destinationDetailsOrganizations: array().of(
+    destinationOrganizations: array().of(
       object().shape({ label: string(), id: string() })
     ),
-    destinationDetailsCountry: array().of(
+    destinationCountries: array().of(
       object().shape({ label: string(), id: string() })
     ),
-    destinationDetailsUsageYears: array().of(
+    destinationUsageYears: array().of(
       object().shape({ label: string(), id: string() })
     ),
   });
@@ -170,29 +94,29 @@ export const FilterTable = (props: Props) => {
     <C.SearchFilter title="Filters">
       <Formik
         initialValues={{
-          flowDetailsFlowId: '',
-          flowDetailsAmountUSD: '',
-          flowDetailsKeywords: [],
-          flowDetailsFlowStatus: '',
-          flowDetailsFlowType: '',
-          flowDetailsFlowActiveStatus: '',
-          flowDetailsFlowReporterReferenceCode: '',
-          flowDetailsFlowSourceSystemId: '',
-          flowDetailsFlowLegacyId: '',
-          sourceDetailsOrganizations: [],
-          sourceDetailsCountry: [],
-          sourceDetailsUsageYears: [],
-          sourceDetailsProjects: [],
-          sourceDetailsPlans: [],
-          sourceDetailsGlobalClusters: [],
-          sourceDetailsEmergencies: [],
-          destinationDetailsOrganizations: [],
-          destinationDetailsCountry: [],
-          destinationDetailsUsageYears: [],
-          destinationDetailsProjects: [],
-          destinationDetailsPlans: [],
-          destinationDetailsGlobalClusters: [],
-          destinationDetailsEmergencies: [],
+          flowId: '',
+          amountUSD: '',
+          keywords: [],
+          flowStatus: '',
+          flowType: '',
+          flowActiveStatus: '',
+          reporterReferenceCode: '',
+          sourceSystemId: '',
+          flowLegacyId: '',
+          sourceOrganizations: [],
+          sourceCountries: [],
+          sourceUsageYears: [],
+          sourceProjects: [],
+          sourcePlans: [],
+          sourceGlobalClusters: [],
+          sourceEmergencies: [],
+          destinationOrganizations: [],
+          destinationCountries: [],
+          destinationUsageYears: [],
+          destinationProjects: [],
+          destinationPlans: [],
+          destinationGlobalClusters: [],
+          destinationEmergencies: [],
           includeChildrenOfParkedFlows: true,
         }}
         validationSchema={FORM_VALIDATION}
@@ -209,20 +133,15 @@ export const FilterTable = (props: Props) => {
               />
             </StyledDiv>
             <C.Section title="Flow Details">
-              <C.TextFieldWrapper
-                label="Flow Id"
-                name="flowDetailsFlowId"
-                type="text"
-              />
+              <C.TextFieldWrapper label="Flow Id" name="flowId" type="number" />
               <C.TextFieldWrapper
                 label="Amount USD"
-                name="flowDetailsAmountUSD"
-                type="number"
+                name="amountUSD"
+                type="currency"
               />
-
               <C.AsyncAutocompleteSelect
                 label="Keywords"
-                name="flowDetailsKeywords"
+                name="keywords"
                 fnPromise={environment.model.categories.getCategories}
                 category="keywords"
                 isMulti
@@ -231,21 +150,21 @@ export const FilterTable = (props: Props) => {
               <C.Section title="Show More" type="secondary">
                 <C.AsyncSingleSelect
                   label="Flow Status"
-                  name="flowDetailsFlowStatus"
+                  name="flowStatus"
                   fnPromise={environment.model.categories.getCategories}
                   category="flowStatus"
                   hasNameValue
                 />
                 <C.AsyncSingleSelect
                   label="Flow Type"
-                  name="flowDetailsFlowType"
+                  name="flowType"
                   fnPromise={environment.model.categories.getCategories}
                   category="flowType"
                   hasNameValue
                 />
                 <C.SingleSelect
                   label="Flow Active Status"
-                  name="flowDetailsFlowActiveStatus"
+                  name="flowActiveStatus"
                   options={[
                     { name: 'Active', value: 'Active' },
                     { name: 'All', value: 'All' },
@@ -254,17 +173,17 @@ export const FilterTable = (props: Props) => {
                 />
                 <C.TextFieldWrapper
                   label="Reporter Reference Code"
-                  name="flowDetailsFlowReporterReferenceCode"
+                  name="reporterReferenceCode"
                   type="number"
                 />
                 <C.TextFieldWrapper
                   label="Source System ID"
-                  name="flowDetailsFlowSourceSystemId"
+                  name="sourceSystemId"
                   type="number"
                 />
                 <C.TextFieldWrapper
                   label="Flow Legacy ID"
-                  name="flowDetailsFlowLegacyId"
+                  name="flowLegacyId"
                   type="number"
                 />
               </C.Section>
@@ -272,7 +191,7 @@ export const FilterTable = (props: Props) => {
             <C.Section title="Source Details">
               <C.AsyncAutocompleteSelect
                 label="Organization(s)"
-                name="sourceDetailsOrganizations"
+                name="sourceOrganizations"
                 fnPromise={
                   environment.model.organizations.getAutocompleteOrganizations
                 }
@@ -280,14 +199,14 @@ export const FilterTable = (props: Props) => {
               />
               <C.AsyncAutocompleteSelect
                 label="Country"
-                name="sourceDetailsCountry"
+                name="sourceCountries"
                 fnPromise={environment.model.locations.getAutocompleteLocations}
                 isMulti
               />
 
               <C.AsyncAutocompleteSelect
                 label="Usage Year(s)"
-                name="sourceDetailsUsageYears"
+                name="sourceUsageYears"
                 fnPromise={environment.model.usageYears.getUsageYears}
                 isMulti
                 isAutocompleteAPI={false}
@@ -295,26 +214,26 @@ export const FilterTable = (props: Props) => {
               <C.Section title="Show more" type="secondary">
                 <C.AsyncAutocompleteSelect
                   label="Project(s)"
-                  name="sourceDetailsProjects"
+                  name="sourceProjects"
                   fnPromise={environment.model.projects.getAutocompleteProjects}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
                   label="Plan(s)"
-                  name="sourceDetailsPlans"
+                  name="sourcePlans"
                   fnPromise={environment.model.plans.getAutocompletePlans}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
                   label="Global Cluster(s)"
-                  name="sourceDetailsGlobalClusters"
+                  name="sourceGlobalClusters"
                   fnPromise={environment.model.globalClusters.getGlobalClusters}
                   isMulti
                   isAutocompleteAPI={false}
                 />
                 <C.AsyncAutocompleteSelect
                   label="Emergency(ies)"
-                  name="sourceDetailsEmergencies"
+                  name="sourceEmergencies"
                   fnPromise={
                     environment.model.emergencies.getAutocompleteEmergencies
                   }
@@ -325,7 +244,7 @@ export const FilterTable = (props: Props) => {
             <C.Section title="Destination Details">
               <C.AsyncAutocompleteSelect
                 label="Organization(s)"
-                name="destinationDetailsOrganizations"
+                name="destinationOrganizations"
                 fnPromise={
                   environment.model.organizations.getAutocompleteOrganizations
                 }
@@ -333,14 +252,14 @@ export const FilterTable = (props: Props) => {
               />
               <C.AsyncAutocompleteSelect
                 label="Country"
-                name="destinationDetailsCountry"
+                name="destinationCountries"
                 fnPromise={environment.model.locations.getAutocompleteLocations}
                 isMulti
               />
 
               <C.AsyncAutocompleteSelect
                 label="Usage Year(s)"
-                name="destinationDetailsUsageYears"
+                name="destinationUsageYears"
                 fnPromise={environment.model.usageYears.getUsageYears}
                 isMulti
                 isAutocompleteAPI={false}
@@ -348,26 +267,26 @@ export const FilterTable = (props: Props) => {
               <C.Section title="Show more" type="secondary">
                 <C.AsyncAutocompleteSelect
                   label="Project(s)"
-                  name="destinationDetailsProjects"
+                  name="destinationProjects"
                   fnPromise={environment.model.projects.getAutocompleteProjects}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
                   label="Plan(s)"
-                  name="destinationDetailsPlans"
+                  name="destinationPlans"
                   fnPromise={environment.model.plans.getAutocompletePlans}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
                   label="Global Cluster(s)"
-                  name="destinationDetailsGlobalClusters"
+                  name="destinationGlobalClusters"
                   fnPromise={environment.model.globalClusters.getGlobalClusters}
                   isMulti
                   isAutocompleteAPI={false}
                 />
                 <C.AsyncAutocompleteSelect
                   label="Emergency(ies)"
-                  name="destinationDetailsEmergencies"
+                  name="destinationEmergencies"
                   fnPromise={
                     environment.model.emergencies.getAutocompleteEmergencies
                   }

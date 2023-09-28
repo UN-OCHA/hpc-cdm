@@ -5,8 +5,7 @@ import PageMeta from '../components/page-meta';
 import { AppContext, getEnv } from '../context';
 import tw from 'twin.macro';
 import { useState } from 'react';
-import FilterTable from '../components/filter-table';
-import { flows } from '@unocha/hpc-data';
+import FilterTable, { FormValues } from '../components/filter-table';
 
 interface Props {
   className?: string;
@@ -20,7 +19,34 @@ w-full
 `;
 
 export default (props: Props) => {
-  const [filters, setFilters] = useState<flows.SearchFlowsGraphQlParams>();
+  const filtersInitialValues: FormValues = {
+    flowId: '',
+    amountUSD: '',
+    keywords: [],
+    flowStatus: '',
+    flowType: '',
+    flowActiveStatus: '',
+    reporterReferenceCode: '',
+    sourceSystemId: '',
+    flowLegacyId: '',
+    sourceOrganizations: [],
+    sourceCountries: [],
+    sourceUsageYears: [],
+    sourceProjects: [],
+    sourcePlans: [],
+    sourceGlobalClusters: [],
+    sourceEmergencies: [],
+    destinationOrganizations: [],
+    destinationCountries: [],
+    destinationUsageYears: [],
+    destinationProjects: [],
+    destinationPlans: [],
+    destinationGlobalClusters: [],
+    destinationEmergencies: [],
+    includeChildrenOfParkedFlows: true,
+  };
+  const [filters, setFilters] = useState<FormValues>(filtersInitialValues);
+
   const flowsTableProps: FlowsTableProps = {
     headers: [
       {
