@@ -8,6 +8,16 @@ import PageMeta from '../components/page-meta';
 import { AppContext } from '../context';
 import { flows } from '@unocha/hpc-data';
 import { Strings } from '../../i18n/iface';
+import {
+  JsonParam,
+  NumberParam,
+  createEnumParam,
+  decodeNumber,
+  useQueryParams,
+  withDefault,
+} from 'use-query-params';
+import { FORM_INITIAL_VALUES } from './flows-list';
+import { encodeFilters } from '../utils/parseFilters';
 
 interface Props {
   className?: string;
@@ -22,64 +32,97 @@ interface FlowsTableNoFilterProps {
 }
 
 export default (props: Props) => {
-  const flowsTableProps: FlowsTableNoFilterProps = {
-    headers: [
+  const headers: {
+    id: HeaderId;
+    sortable?: boolean;
+    label: keyof Strings['components']['flowsTable']['headers'];
+  }[] = [
+    {
+      id: 'flow.id',
+      sortable: true,
+      label: 'id',
+    },
+    {
+      id: 'flow.updatedAt',
+      sortable: true,
+      label: 'updatedCreated',
+    },
+    {
+      id: 'externalReference.systemID',
+      sortable: true,
+      label: 'dataProvider',
+    },
+    {
+      id: 'flow.amountUSD',
+      sortable: true,
+      label: 'amountUSD',
+    },
+    {
+      id: 'source.organization.name',
+      sortable: true,
+      label: 'sourceOrganization',
+    },
+    {
+      id: 'destination.organization.name',
+      sortable: true,
+      label: 'destinationOrganization',
+    },
+    {
+      id: 'destination.planVersion.name',
+      sortable: true,
+      label: 'destinationPlan',
+    },
+    {
+      id: 'destination.location.name',
+      sortable: true,
+      label: 'destinationCountry',
+    },
+    {
+      id: 'destination.usageYear.year',
+      sortable: true,
+      label: 'destinationYear',
+    },
+    {
+      id: 'details',
+      label: 'details',
+    },
+  ];
+  const [query, setQuery] = useQueryParams({
+    page: withDefault(NumberParam, 0),
+    rowsPerPage: withDefault(
       {
-        id: 'flow.id',
-        sortable: true,
-        label: 'id',
+        ...NumberParam,
+        decode: (string) => {
+          // prevent user requesting more than max number of rows
+          const number = decodeNumber(string);
+          return number && Math.min(number, Math.max(...[10, 25, 50, 100]));
+        },
       },
-      {
-        id: 'flow.versionID',
-        sortable: true,
-        label: 'status',
-      },
-      {
-        id: 'flow.updatedAt',
-        sortable: true,
-        label: 'updatedCreated',
-      },
-      {
-        id: 'externalReference.systemID',
-        sortable: true,
-        label: 'dataProvider',
-      },
-      {
-        id: 'flow.amountUSD',
-        sortable: true,
-        label: 'amountUSD',
-      },
-      {
-        id: 'source.organization.name',
-        sortable: true,
-        label: 'sourceOrganization',
-      },
-      {
-        id: 'destination.organization.name',
-        sortable: true,
-        label: 'destinationOrganization',
-      },
-      {
-        id: 'destination.planVersion.name',
-        sortable: true,
-        label: 'destinationPlan',
-      },
-      {
-        id: 'destination.location.name',
-        sortable: true,
-        label: 'destinationCountry',
-      },
-      {
-        id: 'destination.usageYear.year',
-        sortable: true,
-        label: 'destinationYear',
-      },
-      {
-        id: 'details',
-        label: 'details',
-      },
-    ],
-    flowList: 'pending',
+      50
+    ),
+    orderBy: withDefault(
+      createEnumParam(
+        // Same as filter then map but this is acceptable to typescript
+        headers.reduce((acc, curr) => {
+          if (curr.sortable) {
+            return [...acc, curr.id];
+          }
+
+          return acc;
+        }, [] as string[])
+      ),
+      'flow.updatedAt'
+    ),
+    orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
+    filters: withDefault(JsonParam, encodeFilters(FORM_INITIAL_VALUES)),
+  });
+
+  const flowsTableProps: FlowsTableProps = {
+    headers: headers,
+    flowList: 'all',
+    rowsPerPageOption: [10, 25, 50, 100],
+    query: query,
+    setQuery: setQuery,
   };
 
   return (

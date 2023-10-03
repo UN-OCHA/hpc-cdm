@@ -1,14 +1,18 @@
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikState } from 'formik';
 import { array, number, object, string } from 'yup';
 import tw from 'twin.macro';
 import React from 'react';
 
 import { C } from '@unocha/hpc-ui';
 import { Environment } from '../../environments/interface';
+import { Query } from './flows-table';
+import { FORM_INITIAL_VALUES } from '../pages/flows-list';
+import { decodeFilters, encodeFilters } from '../utils/parseFilters';
 
 interface Props {
   environment: Environment;
-  setFilters: React.Dispatch<React.SetStateAction<FormValues>>;
+  query: Query;
+  setQuery: (newQuery: Query) => void;
 }
 export interface FormValues {
   flowId: string;
@@ -44,13 +48,8 @@ lg:flex
 justify-end
 gap-x-4 
 `;
-
 export const FilterTable = (props: Props) => {
-  const { environment, setFilters } = props;
-  const handleSubmit = (values: FormValues) => {
-    setFilters(values);
-  };
-
+  const { environment, setQuery, query } = props;
   const FORM_VALIDATION = object().shape({
     flowId: number()
       .positive()
@@ -89,36 +88,24 @@ export const FilterTable = (props: Props) => {
       object().shape({ label: string(), id: string() })
     ),
   });
-
+  const handleSubmit = (values: FormValues) => {
+    setQuery({ ...query, page: 0, filters: encodeFilters(values) });
+  };
+  const handleResetForm = (
+    formikResetForm: (nextState?: Partial<FormikState<FormValues>>) => void
+  ) => {
+    formikResetForm();
+    setQuery({
+      ...query,
+      page: 0,
+      filters: encodeFilters(FORM_INITIAL_VALUES),
+    });
+  };
   return (
     <C.SearchFilter title="Filters">
       <Formik
-        initialValues={{
-          flowId: '',
-          amountUSD: '',
-          keywords: [],
-          flowStatus: '',
-          flowType: '',
-          flowActiveStatus: '',
-          reporterReferenceCode: '',
-          sourceSystemId: '',
-          flowLegacyId: '',
-          sourceOrganizations: [],
-          sourceCountries: [],
-          sourceUsageYears: [],
-          sourceProjects: [],
-          sourcePlans: [],
-          sourceGlobalClusters: [],
-          sourceEmergencies: [],
-          destinationOrganizations: [],
-          destinationCountries: [],
-          destinationUsageYears: [],
-          destinationProjects: [],
-          destinationPlans: [],
-          destinationGlobalClusters: [],
-          destinationEmergencies: [],
-          includeChildrenOfParkedFlows: true,
-        }}
+        enableReinitialize
+        initialValues={decodeFilters(query.filters)}
         validationSchema={FORM_VALIDATION}
         onSubmit={handleSubmit}
       >
@@ -128,7 +115,7 @@ export const FilterTable = (props: Props) => {
               <C.ButtonSubmit color="primary" text="Search" />
               <C.Button
                 color="neutral"
-                onClick={() => resetForm()}
+                onClick={() => handleResetForm(resetForm)}
                 text="Clear Fields"
               />
             </StyledDiv>
@@ -298,13 +285,12 @@ export const FilterTable = (props: Props) => {
               label="Include children of matching parked flows"
               name="includeChildrenOfParkedFlows"
               size="small"
-              defaultChecked
             />
             <StyledDiv>
               <C.ButtonSubmit color="primary" text="Search" />
               <C.Button
                 color="neutral"
-                onClick={() => resetForm()}
+                onClick={() => handleResetForm(resetForm)}
                 text="Clear Fields"
               />
             </StyledDiv>

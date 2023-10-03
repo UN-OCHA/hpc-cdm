@@ -9,12 +9,10 @@ const CheckBox = ({
   name,
   label,
   size,
-  defaultChecked,
   ...otherProps
 }: {
   name: string;
   label: string;
-  defaultChecked?: boolean;
   size?: 'small' | 'medium';
 }) => {
   const [field, meta] = useField(name);
@@ -26,9 +24,9 @@ const CheckBox = ({
     id: name,
     control: (
       <Checkbox
+        checked={field.value}
         name="includeChildrenOfParkedFlows"
         size={size}
-        defaultChecked={defaultChecked}
       />
     ),
   };

@@ -13,30 +13,26 @@ import {
   TableSortLabel,
   Tooltip,
 } from '@mui/material';
-import { categories, flows } from '@unocha/hpc-data';
+import { flows } from '@unocha/hpc-data';
 import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
 import { MdInfoOutline } from 'react-icons/md';
-import {
-  createEnumParam,
-  decodeNumber,
-  NumberParam,
-  useQueryParams,
-  withDefault,
-  JsonParam,
-} from 'use-query-params';
+
 import { LanguageKey, t } from '../../i18n';
 import { Strings } from '../../i18n/iface';
 import { AppContext, getEnv } from '../context';
 import tw from 'twin.macro';
 import { useEffect, useState } from 'react';
-import {
-  camelCaseToTitle,
-  formValueToId,
-  formValueToLabel,
-} from '../utils/mapFunctions';
+import { camelCaseToTitle } from '../utils/mapFunctions';
 import { FormValues } from './filter-table';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import _ from 'lodash';
+import {
+  decodeFilters,
+  encodeFilters,
+  parseFilters,
+} from '../utils/parseFilters';
+import { FORM_INITIAL_VALUES } from '../pages/flows-list';
+
 export type HeaderId =
   | 'flow.id'
   | 'flow.versionID'
@@ -50,14 +46,23 @@ export type HeaderId =
   | 'destination.usageYear.year'
   | 'details';
 
+export type Query = {
+  page: number;
+  rowsPerPage: number;
+  orderBy: string;
+  orderDir: string;
+  filters: string;
+};
 export interface FlowsTableProps {
   headers: {
     id: HeaderId;
     sortable?: boolean;
     label: keyof Strings['components']['flowsTable']['headers'];
   }[];
-  flowList: flows.FlowList;
-  filters?: FormValues;
+  flowList?: flows.FlowList;
+  rowsPerPageOption: number[];
+  query: Query;
+  setQuery: (newQuery: Query) => void;
 }
 const StyledLoader = tw(C.Loader)`
   mx-auto
@@ -66,7 +71,7 @@ const ChipDiv = tw.div`
 relative
 w-full
 `;
-interface ParsedFilters {
+export interface ParsedFilters {
   flowId?: number;
   amountUSD?: number;
   sourceSystemId?: number;
@@ -77,311 +82,27 @@ interface ParsedFilters {
   categories?: flows.FlowCategory[];
   includeChildrenOfParkedFlows?: boolean;
 }
-
-const parseFilters = (
-  props: FlowsTableProps
-): [FormValues, ParsedFilters] | undefined => {
-  if (!props.filters) return;
-  const typedFormFields: flows.FlowFilters = {
-    flowId: props.filters.flowId,
-    keywords: formValueToLabel(props.filters.keywords),
-    amountUSD:
-      props.filters.amountUSD === '' ? null : parseInt(props.filters.amountUSD),
-    flowStatus: props.filters.flowStatus,
-    flowType: props.filters.flowType,
-    flowActiveStatus: props.filters.flowActiveStatus,
-    reporterReferenceCode:
-      props.filters.reporterReferenceCode === ''
-        ? null
-        : parseInt(props.filters.reporterReferenceCode),
-    sourceSystemId:
-      props.filters.sourceSystemId === ''
-        ? null
-        : parseInt(props.filters.sourceSystemId),
-    flowLegacyId:
-      props.filters.flowLegacyId === ''
-        ? null
-        : parseInt(props.filters.flowLegacyId),
-    destinationCountries: formValueToId(props.filters.destinationCountries),
-    destinationOrganizations: formValueToId(
-      props.filters.destinationOrganizations
-    ),
-    destinationProjects: formValueToId(props.filters.destinationProjects),
-    destinationPlans: formValueToId(props.filters.destinationPlans),
-    destinationGlobalClusters: formValueToId(
-      props.filters.destinationGlobalClusters
-    ),
-    destinationEmergencies: formValueToId(props.filters.destinationEmergencies),
-    destinationUsageYears: formValueToId(props.filters.destinationUsageYears),
-    sourceCountries: formValueToId(props.filters.sourceCountries),
-    sourceOrganizations: formValueToId(props.filters.sourceOrganizations),
-    sourceUsageYears: formValueToId(props.filters.sourceUsageYears),
-    sourceProjects: formValueToId(props.filters.sourceProjects),
-    sourcePlans: formValueToId(props.filters.sourcePlans),
-    sourceGlobalClusters: formValueToId(props.filters.sourceGlobalClusters),
-    sourceEmergencies: formValueToId(props.filters.sourceEmergencies),
-    includeChildrenOfParkedFlows: props.filters.includeChildrenOfParkedFlows,
-  };
-  const {
-    amountUSD,
-    destinationCountries,
-    destinationEmergencies,
-    destinationGlobalClusters,
-    destinationOrganizations,
-    destinationPlans,
-    destinationProjects,
-    destinationUsageYears,
-    flowActiveStatus,
-    flowId,
-    flowLegacyId,
-    flowStatus,
-    flowType,
-    includeChildrenOfParkedFlows,
-    keywords,
-    reporterReferenceCode,
-    sourceCountries,
-    sourceEmergencies,
-    sourceGlobalClusters,
-    sourceOrganizations,
-    sourcePlans,
-    sourceProjects,
-    sourceSystemId,
-    sourceUsageYears,
-  } = typedFormFields;
-  const parseCategories = (
-    categories: {
-      values: string | undefined;
-      group: categories.CategoryGroup;
-    }[]
-  ) => {
-    const res: { name: string; group: string }[] = [];
-    categories.map((category) => {
-      if (category.values) {
-        res.push({ name: category.values, group: category.group });
-      }
-    });
-    return res;
-  };
-
-  const parseFlowObjects = (
-    flowObjects: {
-      values: string[] | undefined;
-      refDirection: 'source' | 'destination';
-      objectType:
-        | 'location'
-        | 'organization'
-        | 'usageYear'
-        | 'project'
-        | 'plan'
-        | 'globalCluster'
-        | 'emergency';
-    }[]
-  ): flows.FlowObject[] => {
-    const res: flows.FlowObject[] = [];
-
-    flowObjects.map((flows) => {
-      if (flows.values) {
-        res.push(
-          ...flows.values.map((value) => ({
-            objectID: parseInt(value),
-            refDirection: flows.refDirection,
-            objectType: flows.objectType,
-          }))
-        );
-      }
-    });
-    return res;
-  };
-
-  const parsedKeywords: { values: string; group: 'keywords' }[] = keywords.map(
-    (keyword) => {
-      return { values: keyword, group: 'keywords' };
-    }
-  );
-  const categories = parseCategories([
-    ...parsedKeywords,
-    { values: flowStatus, group: 'flowStatus' },
-    { values: flowType, group: 'flowType' },
-  ]);
-
-  const flowObjects: flows.FlowObject[] = parseFlowObjects([
-    {
-      values: destinationCountries,
-      refDirection: 'destination',
-      objectType: 'location',
-    },
-    {
-      values: destinationOrganizations,
-      refDirection: 'destination',
-      objectType: 'organization',
-    },
-    {
-      values: destinationUsageYears,
-      refDirection: 'destination',
-      objectType: 'usageYear',
-    },
-    {
-      values: destinationProjects,
-      refDirection: 'destination',
-      objectType: 'project',
-    },
-    {
-      values: destinationPlans,
-      refDirection: 'destination',
-      objectType: 'plan',
-    },
-    {
-      values: destinationGlobalClusters,
-      refDirection: 'destination',
-      objectType: 'globalCluster',
-    },
-    {
-      values: destinationEmergencies,
-      refDirection: 'destination',
-      objectType: 'emergency',
-    },
-    {
-      values: sourceCountries,
-      refDirection: 'source',
-      objectType: 'location',
-    },
-    {
-      values: sourceOrganizations,
-      refDirection: 'source',
-      objectType: 'organization',
-    },
-    {
-      values: sourceUsageYears,
-      refDirection: 'source',
-      objectType: 'usageYear',
-    },
-    {
-      values: sourceProjects,
-      refDirection: 'source',
-      objectType: 'project',
-    },
-    {
-      values: sourcePlans,
-      refDirection: 'source',
-      objectType: 'plan',
-    },
-    {
-      values: sourceGlobalClusters,
-      refDirection: 'source',
-      objectType: 'globalCluster',
-    },
-    {
-      values: sourceEmergencies,
-      refDirection: 'source',
-      objectType: 'emergency',
-    },
-  ]);
-
-  return [
-    props.filters,
-    {
-      ...(flowActiveStatus !== ''
-        ? { activeStatus: { name: flowActiveStatus } }
-        : {}),
-      ...(flowId !== '' ? { flowID: parseInt(flowId) } : {}),
-      ...(amountUSD !== null ? { amountUSD: amountUSD } : {}),
-      ...(flowLegacyId !== null ? { legacyID: `${flowLegacyId}` } : {}),
-      ...(reporterReferenceCode !== null
-        ? { reporterRefCode: `${reporterReferenceCode}` }
-        : {}),
-      ...(sourceSystemId !== null
-        ? { sourceSystemID: `${sourceSystemId}` }
-        : {}),
-      ...(categories.length > 0 ? { categories: categories } : {}),
-      ...(flowObjects.length > 0 ? { flowObjects: flowObjects } : {}),
-      includeChildrenOfParkedFlows,
-    },
-  ];
-};
-
 interface ActiveFilter {
   label: string;
-  fieldName: string;
+  fieldName: keyof FormValues;
   value: string;
 }
 export default function FlowsTable(props: FlowsTableProps) {
   const env = getEnv();
+  let firstRender = true;
   const chipSpacing = { m: 0.5 };
-  const rowsPerPageOptions = [10, 25, 50, 100];
-  const filtersObject = parseFilters(props);
+  const rowsPerPageOptions = props.rowsPerPageOption;
   const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>([]);
+  const filters = decodeFilters(props.query.filters);
+  const [query, setQuery] = [props.query, props.setQuery];
 
-  const [query, setQuery] = useQueryParams({
-    page: withDefault(NumberParam, 0),
-    rowsPerPage: withDefault(
-      {
-        ...NumberParam,
-        decode: (string) => {
-          // prevent user requesting more than max number of rows
-          const number = decodeNumber(string);
-          return number && Math.min(number, Math.max(...rowsPerPageOptions));
-        },
-      },
-      50
-    ),
-    orderBy: withDefault(
-      createEnumParam(
-        // Same as filter then map but this is acceptable to typescript
-        props.headers.reduce((acc, curr) => {
-          if (curr.sortable) {
-            return [...acc, curr.id];
-          }
-
-          return acc;
-        }, [] as string[])
-      ),
-      'flow.updatedAt'
-    ),
-    orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
-    filters: JsonParam,
-  });
-
-  useEffect(() => {
-    if (filtersObject?.[0]) {
-      const filters = filtersObject[0];
-      const attributes: ActiveFilter[] = [];
-      let key: keyof FormValues;
-      for (key in filters) {
-        const fieldValue = filters[key];
-        if (
-          !(
-            (Array.isArray(fieldValue) && fieldValue.length === 0) ||
-            fieldValue === false ||
-            fieldValue === '' ||
-            fieldValue === null
-          )
-        ) {
-          let typedFieldValue = '';
-          if (typeof fieldValue === 'string') {
-            typedFieldValue = typedFieldValue.concat(fieldValue);
-          } else if (Array.isArray(fieldValue)) {
-            typedFieldValue = fieldValue.map((x) => x.label).join(',');
-          } else if (typeof fieldValue === 'boolean') {
-            typedFieldValue = typedFieldValue.concat(fieldValue.toString());
-          }
-          attributes.push({
-            label: camelCaseToTitle(key),
-            fieldName: key,
-            value: typedFieldValue,
-          });
-        }
-        setActiveFilters(attributes);
-
-        setQuery({
-          ...query,
-          page: 0,
-          filters: JSON.stringify(filtersObject[1]),
-        });
-      }
-    }
-
-    load();
-  }, [props.filters, setQuery]);
+  const handleFlowList = () => {
+    return props.flowList
+      ? props.flowList
+      : _.isEqual(decodeFilters(query.filters), FORM_INITIAL_VALUES)
+      ? 'all'
+      : 'search';
+  };
 
   const [state, load] = useDataLoader([query], () =>
     env.model.flows.searchFlows({
@@ -390,11 +111,64 @@ export default function FlowsTable(props: FlowsTableProps) {
         offset: query.page * query.rowsPerPage,
         orderBy: query.orderBy,
         orderDir: query.orderDir,
-        flowList: props.flowList,
-        ...JSON.parse(query.filters),
+        flowList: handleFlowList(),
+        ...parseFilters(decodeFilters(query.filters)),
       },
     })
   );
+  useEffect(() => {
+    const attributes: ActiveFilter[] = [];
+    let key: keyof FormValues;
+    for (key in filters) {
+      const fieldValue = filters[key];
+      if (
+        !(
+          (Array.isArray(fieldValue) && fieldValue.length === 0) ||
+          fieldValue === false ||
+          fieldValue === '' ||
+          fieldValue === null
+        )
+      ) {
+        let typedFieldValue = '';
+        if (typeof fieldValue === 'string') {
+          typedFieldValue = typedFieldValue.concat(fieldValue);
+        } else if (Array.isArray(fieldValue)) {
+          typedFieldValue = fieldValue.map((x) => x.label).join('<||>');
+        } else if (typeof fieldValue === 'boolean') {
+          typedFieldValue = typedFieldValue.concat(fieldValue.toString());
+        }
+        attributes.push({
+          label: camelCaseToTitle(key),
+          fieldName: key,
+          value: typedFieldValue,
+        });
+      }
+
+      setActiveFilters(attributes);
+    }
+    if (!firstRender) {
+      const didFiltersChange = _.isEqual(activeFilters, attributes);
+      setQuery({
+        ...query,
+        page: didFiltersChange ? 0 : query.page,
+        filters: encodeFilters(filters),
+      });
+      load();
+    }
+    if (firstRender) {
+      firstRender = false;
+    }
+  }, [query]);
+
+  const handleChipDelete = (fieldName: keyof FormValues) => {
+    const formValues: FormValues = decodeFilters(query.filters);
+    if (fieldName === 'includeChildrenOfParkedFlows') {
+      formValues[fieldName] = false;
+    } else {
+      (formValues[fieldName] as any) = FORM_INITIAL_VALUES[fieldName];
+    }
+    setQuery({ ...query, page: 0, filters: encodeFilters(formValues) });
+  };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setQuery({
@@ -480,16 +254,18 @@ export default function FlowsTable(props: FlowsTableProps) {
               <ChipDiv>
                 {activeFilters.map((activeFilter) => (
                   <Tooltip
+                    key={activeFilter.fieldName}
                     title={
                       <div style={{ textAlign: 'left', width: 'auto' }}>
-                        {activeFilter.value.split(',').map((x) => (
+                        {activeFilter.value.split('<||>').map((x) => (
                           <li
+                            key={x}
                             style={{
                               textAlign: 'left',
                               marginTop: '0',
                               marginBottom: '0',
                               listStyle:
-                                activeFilter.value.split(',').length > 1
+                                activeFilter.value.split('<||>').length > 1
                                   ? 'inherit'
                                   : 'none',
                             }}
@@ -506,11 +282,25 @@ export default function FlowsTable(props: FlowsTableProps) {
                       label={activeFilter.label}
                       size="small"
                       color="primary"
-                      onDelete={() => console.log('close')}
+                      onDelete={() =>
+                        handleChipDelete(
+                          activeFilter.fieldName as keyof FormValues
+                        )
+                      }
                       deleteIcon={<CancelRoundedIcon />}
                     />
                   </Tooltip>
                 ))}
+                <TablePagination
+                  sx={{ display: 'block' }}
+                  rowsPerPageOptions={rowsPerPageOptions}
+                  component="td"
+                  count={parseInt(data.flowCount)}
+                  rowsPerPage={query.rowsPerPage}
+                  page={query.page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
               </ChipDiv>
 
               <Box sx={{ overflowX: 'auto' }}>
@@ -526,21 +316,10 @@ export default function FlowsTable(props: FlowsTableProps) {
                   <Table size="small">
                     <TableHead>
                       <TableRow>
-                        <TablePagination
-                          rowsPerPageOptions={rowsPerPageOptions}
-                          component="td"
-                          count={parseInt(data.flowCount)}
-                          rowsPerPage={query.rowsPerPage}
-                          page={query.page}
-                          onPageChange={handleChangePage}
-                          onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
-                      </TableRow>
-                      <TableRow>
                         {props.headers.map((header) => (
                           <TableCell
                             size="small"
-                            key={header.label}
+                            key={`${header.id}_${header.label}`}
                             data-test={`header-${header.label}`}
                             {...(header.sortable &&
                               query.orderBy === header.id && {
@@ -598,6 +377,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               case 'flow.id':
                                 return (
                                   <TableCell
+                                    key={`${row.id}v${row.versionID}_flow.id`}
                                     size="small"
                                     component="th"
                                     scope="row"
@@ -609,6 +389,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               case 'flow.versionID':
                                 return (
                                   <TableCell
+                                    key={`${row.id}v${row.versionID}_flow.versionID`}
                                     component="th"
                                     size="small"
                                     scope="row"
@@ -624,6 +405,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               case 'flow.updatedAt':
                                 return (
                                   <TableCell
+                                    key={`${row.id}v${row.versionID}_flow.updatedAt`}
                                     size="small"
                                     data-test="flows-table-updated"
                                   >
@@ -635,6 +417,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               case 'externalReference.systemID':
                                 return (
                                   <TableCell
+                                    key={`${row.id}v${row.versionID}_externalReference.systemID`}
                                     size="small"
                                     data-test="flows-table-external-reference"
                                   >
@@ -644,6 +427,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               case 'flow.amountUSD':
                                 return (
                                   <TableCell
+                                    key={`${row.id}v${row.versionID}_flow.amountUSD`}
                                     size="small"
                                     data-test="flows-table-amount-usd"
                                   >
@@ -665,6 +449,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               case 'source.organization.name':
                                 return (
                                   <TableCell
+                                    key={`${row.id}v${row.versionID}_source.organization.name`}
                                     size="small"
                                     data-test="flows-table-source-organization"
                                   >
@@ -700,6 +485,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               case 'destination.organization.name':
                                 return (
                                   <TableCell
+                                    key={`${row.id}v${row.versionID}_destination.organization.name`}
                                     size="small"
                                     data-test="flows-table-destination-organization"
                                   >
@@ -722,6 +508,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               case 'destination.planVersion.name':
                                 return (
                                   <TableCell
+                                    key={`${row.id}v${row.versionID}_destination.planVersion.name`}
                                     size="small"
                                     data-test="flows-table-plans"
                                   >
@@ -735,6 +522,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               case 'destination.location.name':
                                 return (
                                   <TableCell
+                                    key={`${row.id}v${row.versionID}_destination.location.name`}
                                     size="small"
                                     data-test="flows-table-locations"
                                   >
@@ -748,6 +536,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               case 'destination.usageYear.year':
                                 return (
                                   <TableCell
+                                    key={`${row.id}v${row.versionID}_destination.usageYear.year`}
                                     size="small"
                                     data-test="flows-table-years"
                                   >
@@ -764,6 +553,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               case 'details':
                                 return (
                                   <TableCell
+                                    key={`${row.id}v${row.versionID}_details`}
                                     size="small"
                                     data-test="flows-table-details"
                                   >
@@ -843,23 +633,21 @@ export default function FlowsTable(props: FlowsTableProps) {
                         </TableRow>
                       ))}
                     </TableBody>
-                    <TableFooter>
-                      <TableRow>
-                        <TablePagination
-                          data-test="flows-table-pagination"
-                          rowsPerPageOptions={rowsPerPageOptions}
-                          component="td"
-                          count={parseInt(data.flowCount)}
-                          rowsPerPage={query.rowsPerPage}
-                          page={query.page}
-                          onPageChange={handleChangePage}
-                          onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
-                      </TableRow>
-                    </TableFooter>
+                    <TableFooter></TableFooter>
                   </Table>
                 </TableContainer>
               </Box>
+              <TablePagination
+                sx={{ display: 'block' }}
+                data-test="flows-table-pagination"
+                rowsPerPageOptions={rowsPerPageOptions}
+                component="td"
+                count={parseInt(data.flowCount)}
+                rowsPerPage={query.rowsPerPage}
+                page={query.page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </>
           )}
         </StyledLoader>
