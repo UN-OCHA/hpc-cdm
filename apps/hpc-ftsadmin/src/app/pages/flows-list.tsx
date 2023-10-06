@@ -2,7 +2,7 @@ import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
 import FlowsTable, {
   FlowsTableProps,
-  HeaderId,
+  HeaderID,
 } from '../components/flows-table';
 import PageMeta from '../components/page-meta';
 import { AppContext, getEnv } from '../context';
@@ -30,15 +30,15 @@ const LandingContainer = tw.div`
 w-full
 `;
 export const FORM_INITIAL_VALUES: FormValues = {
-  flowId: '',
+  flowID: '',
   amountUSD: '',
   keywords: [],
   flowStatus: '',
   flowType: '',
   flowActiveStatus: '',
   reporterReferenceCode: '',
-  sourceSystemId: '',
-  flowLegacyId: '',
+  sourceSystemID: '',
+  flowLegacyID: '',
   sourceOrganizations: [],
   sourceCountries: [],
   sourceUsageYears: [],
@@ -59,7 +59,7 @@ export const FORM_INITIAL_VALUES: FormValues = {
 export default (props: Props) => {
   const rowsPerPageOptions = [10, 25, 50, 100];
   const tableHeaders: {
-    id: HeaderId;
+    id: HeaderID;
     sortable?: boolean;
     label: keyof Strings['components']['flowsTable']['headers'];
   }[] = [

@@ -480,7 +480,7 @@ export class LiveModel implements Model {
       searchFlowsGraphQL: (params) => {
         const filters = params.flowSearch.filters;
         const filtersParams = `{${
-          filters?.flowId ? `id:"${params.flowSearch.filters?.flowId}"` : ''
+          filters?.flowID ? `id:"${params.flowSearch.filters?.flowID}"` : ''
         }${
           filters?.amountUSD
             ? `, amountUSD:${params.flowSearch.filters?.amountUSD}`

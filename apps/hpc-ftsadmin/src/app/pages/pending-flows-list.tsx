@@ -2,7 +2,7 @@ import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
 import FlowsTable, {
   FlowsTableProps,
-  HeaderId,
+  HeaderID,
 } from '../components/flows-table';
 import PageMeta from '../components/page-meta';
 import { AppContext } from '../context';
@@ -24,7 +24,7 @@ interface Props {
 }
 interface FlowsTableNoFilterProps {
   headers: {
-    id: HeaderId;
+    id: HeaderID;
     sortable?: boolean;
     label: keyof Strings['components']['flowsTable']['headers'];
   }[];
@@ -33,7 +33,7 @@ interface FlowsTableNoFilterProps {
 
 export default (props: Props) => {
   const headers: {
-    id: HeaderId;
+    id: HeaderID;
     sortable?: boolean;
     label: keyof Strings['components']['flowsTable']['headers'];
   }[] = [

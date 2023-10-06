@@ -1,4 +1,4 @@
-export const formValueToId = (
+export const formValueToID = (
   items: { label: string; id: string }[]
 ): string[] => {
   return items.map((item) => item.id);

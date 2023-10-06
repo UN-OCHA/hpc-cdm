@@ -29,11 +29,12 @@ import _ from 'lodash';
 import {
   decodeFilters,
   encodeFilters,
+  parseActiveFilters,
   parseFilters,
 } from '../utils/parseFilters';
 import { FORM_INITIAL_VALUES } from '../pages/flows-list';
 
-export type HeaderId =
+export type HeaderID =
   | 'flow.id'
   | 'flow.versionID'
   | 'flow.updatedAt'
@@ -55,7 +56,7 @@ export type Query = {
 };
 export interface FlowsTableProps {
   headers: {
-    id: HeaderId;
+    id: HeaderID;
     sortable?: boolean;
     label: keyof Strings['components']['flowsTable']['headers'];
   }[];
@@ -72,34 +73,35 @@ relative
 w-full
 `;
 export interface ParsedFilters {
-  flowId?: number;
+  flowID?: number;
   amountUSD?: number;
-  sourceSystemId?: number;
+  sourceSystemID?: number;
   flowActiveStatus?: { activeStatus: { name: string } };
   reporterReferenceCode?: number;
-  flowLegacyId?: number;
+  flowLegacyID?: number;
   flowObjects?: flows.FlowObject[];
   categories?: flows.FlowCategory[];
   includeChildrenOfParkedFlows?: boolean;
 }
-interface ActiveFilter {
+export interface ActiveFilter {
   label: string;
   fieldName: keyof FormValues;
-  value: string;
+  displayValue: string;
+  value: string | boolean | { label: string; id: string }[] | undefined;
 }
 export default function FlowsTable(props: FlowsTableProps) {
   const env = getEnv();
   let firstRender = true;
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
-  const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>([]);
   const filters = decodeFilters(props.query.filters);
+  const { activeFormValues, attributes } = parseActiveFilters(filters);
   const [query, setQuery] = [props.query, props.setQuery];
 
   const handleFlowList = () => {
     return props.flowList
       ? props.flowList
-      : _.isEqual(decodeFilters(query.filters), FORM_INITIAL_VALUES)
+      : _.isEqual(filters, FORM_INITIAL_VALUES)
       ? 'all'
       : 'search';
   };
@@ -112,62 +114,22 @@ export default function FlowsTable(props: FlowsTableProps) {
         orderBy: query.orderBy,
         orderDir: query.orderDir,
         flowList: handleFlowList(),
-        ...parseFilters(decodeFilters(query.filters)),
+        ...parseFilters(activeFormValues),
       },
     })
   );
   useEffect(() => {
-    const attributes: ActiveFilter[] = [];
-    let key: keyof FormValues;
-    for (key in filters) {
-      const fieldValue = filters[key];
-      if (
-        !(
-          (Array.isArray(fieldValue) && fieldValue.length === 0) ||
-          fieldValue === false ||
-          fieldValue === '' ||
-          fieldValue === null
-        )
-      ) {
-        let typedFieldValue = '';
-        if (typeof fieldValue === 'string') {
-          typedFieldValue = typedFieldValue.concat(fieldValue);
-        } else if (Array.isArray(fieldValue)) {
-          typedFieldValue = fieldValue.map((x) => x.label).join('<||>');
-        } else if (typeof fieldValue === 'boolean') {
-          typedFieldValue = typedFieldValue.concat(fieldValue.toString());
-        }
-        attributes.push({
-          label: camelCaseToTitle(key),
-          fieldName: key,
-          value: typedFieldValue,
-        });
-      }
-
-      setActiveFilters(attributes);
-    }
     if (!firstRender) {
-      const didFiltersChange = _.isEqual(activeFilters, attributes);
-      setQuery({
-        ...query,
-        page: didFiltersChange ? 0 : query.page,
-        filters: encodeFilters(filters),
-      });
       load();
     }
     if (firstRender) {
       firstRender = false;
     }
-  }, [query]);
+  }, [query.filters]);
 
   const handleChipDelete = (fieldName: keyof FormValues) => {
-    const formValues: FormValues = decodeFilters(query.filters);
-    if (fieldName === 'includeChildrenOfParkedFlows') {
-      formValues[fieldName] = false;
-    } else {
-      (formValues[fieldName] as any) = FORM_INITIAL_VALUES[fieldName];
-    }
-    setQuery({ ...query, page: 0, filters: encodeFilters(formValues) });
+    activeFormValues[fieldName] = undefined;
+    setQuery({ ...query, page: 0, filters: encodeFilters(activeFormValues) });
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -187,7 +149,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     });
   };
 
-  const handleSort = (newSort: HeaderId) => {
+  const handleSort = (newSort: HeaderID) => {
     const changeDir = newSort === query.orderBy;
 
     if (changeDir) {
@@ -252,12 +214,12 @@ export default function FlowsTable(props: FlowsTableProps) {
           {(data) => (
             <>
               <ChipDiv>
-                {activeFilters.map((activeFilter) => (
+                {attributes.map((activeFilter) => (
                   <Tooltip
                     key={activeFilter.fieldName}
                     title={
                       <div style={{ textAlign: 'left', width: 'auto' }}>
-                        {activeFilter.value.split('<||>').map((x) => (
+                        {activeFilter.displayValue.split('<||>').map((x) => (
                           <li
                             key={x}
                             style={{
@@ -265,7 +227,8 @@ export default function FlowsTable(props: FlowsTableProps) {
                               marginTop: '0',
                               marginBottom: '0',
                               listStyle:
-                                activeFilter.value.split('<||>').length > 1
+                                activeFilter.displayValue.split('<||>').length >
+                                1
                                   ? 'inherit'
                                   : 'none',
                             }}

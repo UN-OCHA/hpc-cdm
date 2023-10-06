@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { styled } from '../theme';
 import tw from 'twin.macro';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -44,9 +44,7 @@ const FlexDiv = tw.div`
   justify-between
   items-center
 `;
-const StyledDrawer = styled(Drawer)`
-  ${({ open }) => (!open ? tw`w-0 opacity-0` : tw`w-1/4 opacity-100`)}
-  ${tw`
+const StyledDrawer = tw(Drawer)`
   sticky
   top-0
   z-0
@@ -57,8 +55,14 @@ const StyledDrawer = styled(Drawer)`
   [&>div]:border-s-0
   [&>div]:border-e
   [&>div]:w-full
-  transition-all
-`}
+`;
+const Dragger = tw.div`
+  cursor-col-resize
+  -me-[1px]
+  hover:bg-unocha-pallete-gray-light2
+  duration-150
+  sticky
+  z-10
 `;
 
 const HideDrawerButton = styled.button`
@@ -83,6 +87,35 @@ const HideDrawerButton = styled.button`
 
 export const SearchFilter = ({ className, title, children }: Props) => {
   const [isOpen, setOpen] = useState(false);
+
+  const defaultDrawerWidth = 280;
+  const minDrawerWidth = 260;
+  const maxDrawerWidth = 600;
+
+  const [drawerWidth, setDrawerWidth] = React.useState(defaultDrawerWidth);
+  const [isDragging, setIsDragging] = React.useState(false);
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault();
+    setIsDragging(true);
+
+    document.addEventListener('mouseup', handleMouseUp, true);
+    document.addEventListener('mousemove', handleMouseMove, true);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    document.removeEventListener('mouseup', handleMouseUp, true);
+    document.removeEventListener('mousemove', handleMouseMove, true);
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    const newWidth = e.clientX - document.body.offsetLeft;
+    if (newWidth > minDrawerWidth && newWidth < maxDrawerWidth) {
+      setDrawerWidth(newWidth);
+    }
+  }, []);
+
   return (
     <>
       <StyledDrawer
@@ -90,8 +123,19 @@ export const SearchFilter = ({ className, title, children }: Props) => {
         anchor="left"
         open={isOpen}
         elevation={0}
+        sx={{
+          width: isOpen ? drawerWidth : 0,
+          transitionProperty: !isDragging ? 'all' : undefined,
+          transitionTimingFunction: !isDragging
+            ? 'cubic-bezier(0.4, 0, 0.2, 1)'
+            : undefined,
+          transitionDuration: !isDragging ? '150ms' : undefined,
+        }}
         PaperProps={{
           variant: 'outlined',
+          style: {
+            width: isDragging ? drawerWidth : undefined,
+          },
         }}
       >
         <Container className={className}>
@@ -104,6 +148,10 @@ export const SearchFilter = ({ className, title, children }: Props) => {
           {children}
         </Container>
       </StyledDrawer>
+      <Dragger
+        onMouseDown={(e) => handleMouseDown(e)}
+        style={{ width: isOpen ? '3px' : '0px' }}
+      />
       <Tooltip title="Filters">
         <HideDrawerButton onClick={() => setOpen(!isOpen)} autoFocus={isOpen}>
           <ChevronLeftIcon

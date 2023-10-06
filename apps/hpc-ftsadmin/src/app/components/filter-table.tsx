@@ -7,7 +7,12 @@ import { C } from '@unocha/hpc-ui';
 import { Environment } from '../../environments/interface';
 import { Query } from './flows-table';
 import { FORM_INITIAL_VALUES } from '../pages/flows-list';
-import { decodeFilters, encodeFilters } from '../utils/parseFilters';
+import {
+  decodeFilters,
+  encodeFilters,
+  parseActiveFilters,
+  parseInitialValues,
+} from '../utils/parseFilters';
 
 interface Props {
   environment: Environment;
@@ -15,30 +20,30 @@ interface Props {
   setQuery: (newQuery: Query) => void;
 }
 export interface FormValues {
-  flowId: string;
-  amountUSD: string;
-  keywords: { label: string; id: string }[];
-  flowStatus: string;
-  flowType: string;
-  flowActiveStatus: string;
-  reporterReferenceCode: string;
-  sourceSystemId: string;
-  flowLegacyId: string;
-  sourceOrganizations: { label: string; id: string }[];
-  sourceCountries: { label: string; id: string }[];
-  sourceUsageYears: { label: string; id: string }[];
-  sourceProjects: { label: string; id: string }[];
-  sourcePlans: { label: string; id: string }[];
-  sourceGlobalClusters: { label: string; id: string }[];
-  sourceEmergencies: { label: string; id: string }[];
-  destinationOrganizations: { label: string; id: string }[];
-  destinationCountries: { label: string; id: string }[];
-  destinationUsageYears: { label: string; id: string }[];
-  destinationProjects: { label: string; id: string }[];
-  destinationPlans: { label: string; id: string }[];
-  destinationGlobalClusters: { label: string; id: string }[];
-  destinationEmergencies: { label: string; id: string }[];
-  includeChildrenOfParkedFlows: boolean;
+  flowID?: string;
+  amountUSD?: string;
+  keywords?: { label: string; id: string }[];
+  flowStatus?: string;
+  flowType?: string;
+  flowActiveStatus?: string;
+  reporterReferenceCode?: string;
+  sourceSystemID?: string;
+  flowLegacyID?: string;
+  sourceOrganizations?: { label: string; id: string }[];
+  sourceCountries?: { label: string; id: string }[];
+  sourceUsageYears?: { label: string; id: string }[];
+  sourceProjects?: { label: string; id: string }[];
+  sourcePlans?: { label: string; id: string }[];
+  sourceGlobalClusters?: { label: string; id: string }[];
+  sourceEmergencies?: { label: string; id: string }[];
+  destinationOrganizations?: { label: string; id: string }[];
+  destinationCountries?: { label: string; id: string }[];
+  destinationUsageYears?: { label: string; id: string }[];
+  destinationProjects?: { label: string; id: string }[];
+  destinationPlans?: { label: string; id: string }[];
+  destinationGlobalClusters?: { label: string; id: string }[];
+  destinationEmergencies?: { label: string; id: string }[];
+  includeChildrenOfParkedFlows?: boolean;
 }
 
 const StyledDiv = tw.div`
@@ -51,7 +56,7 @@ gap-x-4
 export const FilterTable = (props: Props) => {
   const { environment, setQuery, query } = props;
   const FORM_VALIDATION = object().shape({
-    flowId: number()
+    flowID: number()
       .positive()
       .integer()
       .typeError('Only positive integers are accepted'),
@@ -63,10 +68,10 @@ export const FilterTable = (props: Props) => {
     reporterReferenceCode: number()
       .positive()
       .typeError('Only positive integers are accepted'),
-    sourceSystemId: number()
+    sourceSystemID: number()
       .positive()
       .typeError('Only positive integers are accepted'),
-    flowLegacyId: number()
+    flowLegacyID: number()
       .positive()
       .typeError('Only positive integers are accepted'),
     sourceOrganizations: array().of(
@@ -89,7 +94,11 @@ export const FilterTable = (props: Props) => {
     ),
   });
   const handleSubmit = (values: FormValues) => {
-    setQuery({ ...query, page: 0, filters: encodeFilters(values) });
+    setQuery({
+      ...query,
+      page: 0,
+      filters: encodeFilters(parseActiveFilters(values).activeFormValues),
+    });
   };
   const handleResetForm = (
     formikResetForm: (nextState?: Partial<FormikState<FormValues>>) => void
@@ -98,14 +107,16 @@ export const FilterTable = (props: Props) => {
     setQuery({
       ...query,
       page: 0,
-      filters: encodeFilters(FORM_INITIAL_VALUES),
+      filters: encodeFilters(
+        parseActiveFilters(FORM_INITIAL_VALUES).activeFormValues
+      ),
     });
   };
   return (
     <C.SearchFilter title="Filters">
       <Formik
         enableReinitialize
-        initialValues={decodeFilters(query.filters)}
+        initialValues={parseInitialValues(decodeFilters(query.filters))}
         validationSchema={FORM_VALIDATION}
         onSubmit={handleSubmit}
       >
@@ -120,7 +131,7 @@ export const FilterTable = (props: Props) => {
               />
             </StyledDiv>
             <C.Section title="Flow Details">
-              <C.TextFieldWrapper label="Flow Id" name="flowId" type="number" />
+              <C.TextFieldWrapper label="Flow ID" name="flowID" type="number" />
               <C.TextFieldWrapper
                 label="Amount USD"
                 name="amountUSD"
@@ -165,12 +176,12 @@ export const FilterTable = (props: Props) => {
                 />
                 <C.TextFieldWrapper
                   label="Source System ID"
-                  name="sourceSystemId"
+                  name="sourceSystemID"
                   type="number"
                 />
                 <C.TextFieldWrapper
                   label="Flow Legacy ID"
-                  name="flowLegacyId"
+                  name="flowLegacyID"
                   type="number"
                 />
               </C.Section>

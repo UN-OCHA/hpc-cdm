@@ -308,7 +308,7 @@ export const SEARCH_FLOWS_PARAMS = t.type({
     activeStatus: t.type({
       name: t.string,
     }),
-    flowId: t.number,
+    flowID: t.number,
     amountUSD: t.number,
     flowList: FLOW_LIST,
     active: t.boolean,
@@ -324,7 +324,7 @@ export const SEARCH_FLOWS_PARAMS = t.type({
 });
 export type SearchFlowsParams = t.TypeOf<typeof SEARCH_FLOWS_PARAMS>;
 
-const FILTERS = t.type({
+const FILTERS = t.partial({
   destinationCountries: t.array(t.string),
   destinationOrganizations: t.array(t.string),
   destinationUsageYears: t.array(t.string),
@@ -332,14 +332,14 @@ const FILTERS = t.type({
   destinationPlans: t.array(t.string),
   destinationGlobalClusters: t.array(t.string),
   destinationEmergencies: t.array(t.string),
-  amountUSD: t.union([t.number, t.null]),
-  flowId: t.string,
+  amountUSD: t.number,
+  flowID: t.string,
   flowStatus: t.string,
   flowType: t.string,
   flowActiveStatus: t.string,
-  reporterReferenceCode: t.union([t.number, t.null]),
-  sourceSystemId: t.union([t.number, t.null]),
-  flowLegacyId: t.union([t.number, t.null]),
+  reporterReferenceCode: t.number,
+  sourceSystemID: t.number,
+  flowLegacyID: t.number,
   keywords: t.array(t.string),
   sourceCountries: t.array(t.string),
   sourceOrganizations: t.array(t.string),
@@ -350,6 +350,7 @@ const FILTERS = t.type({
   sourceEmergencies: t.array(t.string),
   includeChildrenOfParkedFlows: t.boolean,
 });
+
 export type FlowFilters = t.TypeOf<typeof FILTERS>;
 export const SEARCH_FLOWS_GRAPHQL_PARAMS = t.type({
   flowSearch: t.partial({

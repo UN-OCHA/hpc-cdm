@@ -1,185 +1,153 @@
 import { categories, flows } from '@unocha/hpc-data';
 import { FormValues } from '../components/filter-table';
-import { ParsedFilters } from '../components/flows-table';
-import { formValueToId, formValueToLabel } from './mapFunctions';
+import { ActiveFilter, ParsedFilters } from '../components/flows-table';
+import {
+  camelCaseToTitle,
+  formValueToID,
+  formValueToLabel,
+} from './mapFunctions';
 import { FORM_INITIAL_VALUES } from '../pages/flows-list';
 
 export const parseFilters = (
   filters: FormValues
 ): ParsedFilters | undefined => {
   if (!filters) return;
-  const typedFormFields: flows.FlowFilters = {
-    flowId: filters.flowId,
-    keywords: formValueToLabel(filters.keywords),
-    amountUSD: filters.amountUSD === '' ? null : parseInt(filters.amountUSD),
-    flowStatus: filters.flowStatus,
-    flowType: filters.flowType,
-    flowActiveStatus: filters.flowActiveStatus,
-    reporterReferenceCode:
-      filters.reporterReferenceCode === ''
-        ? null
-        : parseInt(filters.reporterReferenceCode),
-    sourceSystemId:
-      filters.sourceSystemId === '' ? null : parseInt(filters.sourceSystemId),
-    flowLegacyId:
-      filters.flowLegacyId === '' ? null : parseInt(filters.flowLegacyId),
-    destinationCountries: formValueToId(filters.destinationCountries),
-    destinationOrganizations: formValueToId(filters.destinationOrganizations),
-    destinationProjects: formValueToId(filters.destinationProjects),
-    destinationPlans: formValueToId(filters.destinationPlans),
-    destinationGlobalClusters: formValueToId(filters.destinationGlobalClusters),
-    destinationEmergencies: formValueToId(filters.destinationEmergencies),
-    destinationUsageYears: formValueToId(filters.destinationUsageYears),
-    sourceCountries: formValueToId(filters.sourceCountries),
-    sourceOrganizations: formValueToId(filters.sourceOrganizations),
-    sourceUsageYears: formValueToId(filters.sourceUsageYears),
-    sourceProjects: formValueToId(filters.sourceProjects),
-    sourcePlans: formValueToId(filters.sourcePlans),
-    sourceGlobalClusters: formValueToId(filters.sourceGlobalClusters),
-    sourceEmergencies: formValueToId(filters.sourceEmergencies),
-    includeChildrenOfParkedFlows: filters.includeChildrenOfParkedFlows,
-  };
-  const {
-    amountUSD,
-    destinationCountries,
-    destinationEmergencies,
-    destinationGlobalClusters,
-    destinationOrganizations,
-    destinationPlans,
-    destinationProjects,
-    destinationUsageYears,
-    flowActiveStatus,
-    flowId,
-    flowLegacyId,
-    flowStatus,
-    flowType,
-    includeChildrenOfParkedFlows,
-    keywords,
-    reporterReferenceCode,
-    sourceCountries,
-    sourceEmergencies,
-    sourceGlobalClusters,
-    sourceOrganizations,
-    sourcePlans,
-    sourceProjects,
-    sourceSystemId,
-    sourceUsageYears,
-  } = typedFormFields;
 
-  const parsedKeywords: { values: string; group: 'keywords' }[] = keywords.map(
-    (keyword) => {
-      return { values: keyword, group: 'keywords' };
+  const res: ParsedFilters = {};
+  const typedFormFields: flows.FlowFilters = {};
+
+  let key: keyof FormValues;
+  for (key in filters) {
+    if (key.includes('destination') || key.includes('source')) {
+      typedFormFields[key] = formValueToID(
+        filters[key] as { label: string; id: string }[]
+      ) as any;
+    } else if (['flowID', 'amountUSD'].includes(key)) {
+      const value = parseInt(filters[key] as string) as any;
+      typedFormFields[key] = value;
+      res[key as keyof ParsedFilters] = value;
+    } else if (key === 'keywords') {
+      typedFormFields[key] = formValueToLabel(
+        filters[key] as { label: string; id: string }[]
+      );
+    } else {
+      typedFormFields[key] = filters[key] as any;
+      if (key === 'flowActiveStatus') {
+        res.flowActiveStatus = {
+          activeStatus: { name: filters[key] as string },
+        };
+      } else {
+        res[key as keyof ParsedFilters] = filters[key] as any;
+      }
     }
-  );
-  const categories = parseCategories([
-    ...parsedKeywords,
-    { values: flowStatus, group: 'flowStatus' },
-    { values: flowType, group: 'flowType' },
-  ]);
+  }
 
-  const flowObjects: flows.FlowObject[] = parseFlowObjects([
+  const parsedKeywords: { values: string; group: 'keywords' }[] | undefined =
+    typedFormFields.keywords?.map((keyword) => {
+      return { values: keyword, group: 'keywords' };
+    });
+  let categoriesList: {
+    values: string | undefined;
+    group: categories.CategoryGroup;
+  }[] = [
+    { values: typedFormFields.flowStatus, group: 'flowStatus' },
+    { values: typedFormFields.flowType, group: 'flowType' },
+  ];
+  if (parsedKeywords) categoriesList = [...categoriesList, ...parsedKeywords];
+  res.categories = parseCategories(categoriesList);
+  res.flowObjects = parseFlowObjects([
     {
-      values: destinationCountries,
+      values: typedFormFields.destinationCountries,
       refDirection: 'destination',
       objectType: 'location',
     },
     {
-      values: destinationOrganizations,
+      values: typedFormFields.destinationOrganizations,
       refDirection: 'destination',
       objectType: 'organization',
     },
     {
-      values: destinationUsageYears,
+      values: typedFormFields.destinationUsageYears,
       refDirection: 'destination',
       objectType: 'usageYear',
     },
     {
-      values: destinationProjects,
+      values: typedFormFields.destinationProjects,
       refDirection: 'destination',
       objectType: 'project',
     },
     {
-      values: destinationPlans,
+      values: typedFormFields.destinationPlans,
       refDirection: 'destination',
       objectType: 'plan',
     },
     {
-      values: destinationGlobalClusters,
+      values: typedFormFields.destinationGlobalClusters,
       refDirection: 'destination',
       objectType: 'globalCluster',
     },
     {
-      values: destinationEmergencies,
+      values: typedFormFields.destinationEmergencies,
       refDirection: 'destination',
       objectType: 'emergency',
     },
     {
-      values: sourceCountries,
+      values: typedFormFields.sourceCountries,
       refDirection: 'source',
       objectType: 'location',
     },
     {
-      values: sourceOrganizations,
+      values: typedFormFields.sourceOrganizations,
       refDirection: 'source',
       objectType: 'organization',
     },
     {
-      values: sourceUsageYears,
+      values: typedFormFields.sourceUsageYears,
       refDirection: 'source',
       objectType: 'usageYear',
     },
     {
-      values: sourceProjects,
+      values: typedFormFields.sourceProjects,
       refDirection: 'source',
       objectType: 'project',
     },
     {
-      values: sourcePlans,
+      values: typedFormFields.sourcePlans,
       refDirection: 'source',
       objectType: 'plan',
     },
     {
-      values: sourceGlobalClusters,
+      values: typedFormFields.sourceGlobalClusters,
       refDirection: 'source',
       objectType: 'globalCluster',
     },
     {
-      values: sourceEmergencies,
+      values: typedFormFields.sourceEmergencies,
       refDirection: 'source',
       objectType: 'emergency',
     },
   ]);
 
-  return {
-    ...(flowActiveStatus !== ''
-      ? { activeStatus: { name: flowActiveStatus } }
-      : {}),
-    ...(flowId !== '' ? { flowID: parseInt(flowId) } : {}),
-    ...(amountUSD !== null ? { amountUSD: amountUSD } : {}),
-    ...(flowLegacyId !== null ? { legacyID: `${flowLegacyId}` } : {}),
-    ...(reporterReferenceCode !== null
-      ? { reporterRefCode: `${reporterReferenceCode}` }
-      : {}),
-    ...(sourceSystemId !== null ? { sourceSystemID: `${sourceSystemId}` } : {}),
-    ...(categories.length > 0 ? { categories: categories } : {}),
-    ...(flowObjects.length > 0 ? { flowObjects: flowObjects } : {}),
-    includeChildrenOfParkedFlows,
-  };
+  return res;
 };
 
 const parseCategories = (
-  categories: {
-    values: string | undefined;
-    group: categories.CategoryGroup;
-  }[]
+  categories:
+    | {
+        values: string | undefined;
+        group: categories.CategoryGroup;
+      }[]
+    | undefined
 ) => {
-  const res: { name: string; group: string }[] = [];
-  categories.map((category) => {
-    if (category.values) {
-      res.push({ name: category.values, group: category.group });
-    }
-  });
-  return res;
+  if (categories) {
+    const res: { name: string; group: string }[] = [];
+    categories.map((category) => {
+      if (category.values) {
+        res.push({ name: category.values, group: category.group });
+      }
+    });
+    return res;
+  }
 };
 
 const parseFlowObjects = (
@@ -221,10 +189,55 @@ export const decodeFilters = (stringFilters: string): FormValues => {
     const res: FormValues = JSON.parse(stringFilters);
     return res;
   } catch (err) {
-    console.error(
+    console.warn(
       err,
       '<||> Error parsing query to JSON. Reseting to initial Values...'
     );
     return FORM_INITIAL_VALUES;
   }
+};
+
+export const parseActiveFilters = (filters: FormValues) => {
+  const attributes: ActiveFilter[] = [];
+  const activeFormValues: FormValues = {};
+  let key: keyof FormValues;
+  for (key in filters) {
+    const fieldValue = filters[key];
+    if (
+      !(
+        (Array.isArray(fieldValue) && fieldValue.length === 0) ||
+        fieldValue === false ||
+        fieldValue === '' ||
+        fieldValue === null
+      )
+    ) {
+      let displayValue = '';
+
+      if (typeof fieldValue === 'string') {
+        displayValue = displayValue.concat(fieldValue);
+      } else if (Array.isArray(fieldValue)) {
+        displayValue = fieldValue.map((x) => x.label).join('<||>');
+      } else if (typeof fieldValue === 'boolean') {
+        displayValue = displayValue.concat(fieldValue.toString());
+      }
+      activeFormValues[key] = fieldValue as any;
+      attributes.push({
+        label: camelCaseToTitle(key),
+        fieldName: key,
+        displayValue: displayValue,
+        value: fieldValue,
+      });
+    }
+  }
+  return { activeFormValues, attributes };
+};
+
+export const parseInitialValues = (filters: FormValues) => {
+  let key: keyof FormValues;
+  for (key in FORM_INITIAL_VALUES) {
+    filters[key] = (
+      filters[key] ? filters[key] : FORM_INITIAL_VALUES[key]
+    ) as any;
+  }
+  return filters;
 };
