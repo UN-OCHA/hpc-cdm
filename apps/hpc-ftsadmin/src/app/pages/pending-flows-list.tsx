@@ -5,8 +5,7 @@ import FlowsTable, {
   HeaderID,
 } from '../components/flows-table';
 import PageMeta from '../components/page-meta';
-import { AppContext } from '../context';
-import { flows } from '@unocha/hpc-data';
+import { AppContext, getEnv } from '../context';
 import { Strings } from '../../i18n/iface';
 import {
   JsonParam,
@@ -16,20 +15,21 @@ import {
   useQueryParams,
   withDefault,
 } from 'use-query-params';
-import { FORM_INITIAL_VALUES } from './flows-list';
 import { encodeFilters } from '../utils/parseFilters';
+import FilterPendingFlowsTable, {
+  PENDING_FLOWS_FILTER_INITIAL_VALUES,
+} from '../components/filter-pending-flows-table';
+import tw from 'twin.macro';
 
 interface Props {
   className?: string;
 }
-interface FlowsTableNoFilterProps {
-  headers: {
-    id: HeaderID;
-    sortable?: boolean;
-    label: keyof Strings['components']['flowsTable']['headers'];
-  }[];
-  flowList: flows.FlowList;
-}
+const Container = tw.div`
+flex
+`;
+const LandingContainer = tw.div`
+w-full
+`;
 
 export default (props: Props) => {
   const headers: {
@@ -114,16 +114,22 @@ export default (props: Props) => {
       'flow.updatedAt'
     ),
     orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
-    filters: withDefault(JsonParam, encodeFilters(FORM_INITIAL_VALUES)),
+    filters: withDefault(
+      JsonParam,
+      encodeFilters(PENDING_FLOWS_FILTER_INITIAL_VALUES)
+    ),
   });
 
   const flowsTableProps: FlowsTableProps = {
     headers: headers,
-    flowList: 'all',
+    flowList: 'pending',
+    initialValues: PENDING_FLOWS_FILTER_INITIAL_VALUES,
     rowsPerPageOption: [10, 25, 50, 100],
     query: query,
     setQuery: setQuery,
   };
+
+  const env = getEnv();
 
   return (
     <AppContext.Consumer>
@@ -131,11 +137,20 @@ export default (props: Props) => {
         <div
           className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
         >
-          <PageMeta title={[t.t(lang, (s) => s.routes.pendingFlows.title)]} />
-          <C.PageTitle>
-            {t.t(lang, (s) => s.routes.pendingFlows.title)}
-          </C.PageTitle>
-          <FlowsTable {...flowsTableProps} />
+          <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
+          <Container>
+            <FilterPendingFlowsTable
+              environment={env}
+              setQuery={setQuery}
+              query={query}
+            />
+            <LandingContainer>
+              <C.PageTitle>
+                {t.t(lang, (s) => s.routes.pendingFlows.title)}
+              </C.PageTitle>
+              <FlowsTable {...flowsTableProps} />
+            </LandingContainer>
+          </Container>
         </div>
       )}
     </AppContext.Consumer>

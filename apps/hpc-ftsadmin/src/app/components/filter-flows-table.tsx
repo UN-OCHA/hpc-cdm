@@ -6,7 +6,6 @@ import React from 'react';
 import { C } from '@unocha/hpc-ui';
 import { Environment } from '../../environments/interface';
 import { Query } from './flows-table';
-import { FORM_INITIAL_VALUES } from '../pages/flows-list';
 import {
   decodeFilters,
   encodeFilters,
@@ -19,14 +18,14 @@ interface Props {
   query: Query;
   setQuery: (newQuery: Query) => void;
 }
-export interface FormValues {
+export interface FlowsFilterValues {
   flowID?: string;
   amountUSD?: string;
   keywords?: { label: string; id: string }[];
   flowStatus?: string;
   flowType?: string;
   flowActiveStatus?: string;
-  reporterReferenceCode?: string;
+  reporterRefCode?: string;
   sourceSystemID?: string;
   flowLegacyID?: string;
   sourceOrganizations?: { label: string; id: string }[];
@@ -45,6 +44,32 @@ export interface FormValues {
   destinationEmergencies?: { label: string; id: string }[];
   includeChildrenOfParkedFlows?: boolean;
 }
+export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
+  flowID: '',
+  amountUSD: '',
+  keywords: [],
+  flowStatus: '',
+  flowType: '',
+  flowActiveStatus: '',
+  reporterRefCode: '',
+  sourceSystemID: '',
+  flowLegacyID: '',
+  sourceOrganizations: [],
+  sourceCountries: [],
+  sourceUsageYears: [],
+  sourceProjects: [],
+  sourcePlans: [],
+  sourceGlobalClusters: [],
+  sourceEmergencies: [],
+  destinationOrganizations: [],
+  destinationCountries: [],
+  destinationUsageYears: [],
+  destinationProjects: [],
+  destinationPlans: [],
+  destinationGlobalClusters: [],
+  destinationEmergencies: [],
+  includeChildrenOfParkedFlows: false,
+};
 
 const StyledDiv = tw.div`
 my-6
@@ -53,7 +78,7 @@ lg:flex
 justify-end
 gap-x-4 
 `;
-export const FilterTable = (props: Props) => {
+export const FilterFlowsTable = (props: Props) => {
   const { environment, setQuery, query } = props;
   const FORM_VALIDATION = object().shape({
     flowID: number()
@@ -65,7 +90,7 @@ export const FilterTable = (props: Props) => {
       .typeError('Only positive integers are accepted'),
     keywords: array().of(object().shape({ label: string(), id: string() })),
     flowStatus: string(),
-    reporterReferenceCode: number()
+    reporterRefCode: number()
       .positive()
       .typeError('Only positive integers are accepted'),
     sourceSystemID: number()
@@ -93,7 +118,7 @@ export const FilterTable = (props: Props) => {
       object().shape({ label: string(), id: string() })
     ),
   });
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = (values: FlowsFilterValues) => {
     setQuery({
       ...query,
       page: 0,
@@ -101,14 +126,16 @@ export const FilterTable = (props: Props) => {
     });
   };
   const handleResetForm = (
-    formikResetForm: (nextState?: Partial<FormikState<FormValues>>) => void
+    formikResetForm: (
+      nextState?: Partial<FormikState<FlowsFilterValues>>
+    ) => void
   ) => {
     formikResetForm();
     setQuery({
       ...query,
       page: 0,
       filters: encodeFilters(
-        parseActiveFilters(FORM_INITIAL_VALUES).activeFormValues
+        parseActiveFilters(FLOWS_FILTER_INITIAL_VALUES).activeFormValues
       ),
     });
   };
@@ -116,7 +143,10 @@ export const FilterTable = (props: Props) => {
     <C.SearchFilter title="Filters">
       <Formik
         enableReinitialize
-        initialValues={parseInitialValues(decodeFilters(query.filters))}
+        initialValues={parseInitialValues(
+          decodeFilters(query.filters, FLOWS_FILTER_INITIAL_VALUES),
+          FLOWS_FILTER_INITIAL_VALUES
+        )}
         validationSchema={FORM_VALIDATION}
         onSubmit={handleSubmit}
       >
@@ -171,7 +201,7 @@ export const FilterTable = (props: Props) => {
                 />
                 <C.TextFieldWrapper
                   label="Reporter Reference Code"
-                  name="reporterReferenceCode"
+                  name="reporterRefCode"
                   type="number"
                 />
                 <C.TextFieldWrapper
@@ -311,4 +341,4 @@ export const FilterTable = (props: Props) => {
     </C.SearchFilter>
   );
 };
-export default FilterTable;
+export default FilterFlowsTable;

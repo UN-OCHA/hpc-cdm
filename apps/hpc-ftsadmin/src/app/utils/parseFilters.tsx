@@ -1,22 +1,22 @@
 import { categories, flows } from '@unocha/hpc-data';
-import { FormValues } from '../components/filter-table';
+import { FlowsFilterValues } from '../components/filter-flows-table';
 import { ActiveFilter, ParsedFilters } from '../components/flows-table';
 import {
   camelCaseToTitle,
   formValueToID,
   formValueToLabel,
 } from './mapFunctions';
-import { FORM_INITIAL_VALUES } from '../pages/flows-list';
+import { PendingFlowsFilterValues } from '../components/filter-pending-flows-table';
 
 export const parseFilters = (
-  filters: FormValues
+  filters: FlowsFilterValues | PendingFlowsFilterValues
 ): ParsedFilters | undefined => {
   if (!filters) return;
 
   const res: ParsedFilters = {};
   const typedFormFields: flows.FlowFilters = {};
 
-  let key: keyof FormValues;
+  let key: keyof typeof filters;
   for (key in filters) {
     if (key.includes('destination') || key.includes('source')) {
       typedFormFields[key] = formValueToID(
@@ -26,13 +26,15 @@ export const parseFilters = (
       const value = parseInt(filters[key] as string) as any;
       typedFormFields[key] = value;
       res[key as keyof ParsedFilters] = value;
-    } else if (key === 'keywords') {
-      typedFormFields[key] = formValueToLabel(
+    } else if ((key as keyof FlowsFilterValues) === 'keywords') {
+      typedFormFields.keywords = formValueToLabel(
         filters[key] as { label: string; id: string }[]
       );
+    } else if ((key as keyof PendingFlowsFilterValues) === 'status') {
+      res.status = { status: filters[key] as string };
     } else {
       typedFormFields[key] = filters[key] as any;
-      if (key === 'flowActiveStatus') {
+      if ((key as keyof FlowsFilterValues) === 'flowActiveStatus') {
         res.flowActiveStatus = {
           activeStatus: { name: filters[key] as string },
         };
@@ -180,27 +182,34 @@ const parseFlowObjects = (
   return res;
 };
 
-export const encodeFilters = (filters: FormValues) => {
+export const encodeFilters = (
+  filters: FlowsFilterValues | PendingFlowsFilterValues
+) => {
   return JSON.stringify(filters);
 };
 
-export const decodeFilters = (stringFilters: string): FormValues => {
+export const decodeFilters = (
+  stringFilters: string,
+  initialValues: FlowsFilterValues | PendingFlowsFilterValues
+): FlowsFilterValues => {
   try {
-    const res: FormValues = JSON.parse(stringFilters);
+    const res: FlowsFilterValues = JSON.parse(stringFilters);
     return res;
   } catch (err) {
     console.warn(
       err,
       '<||> Error parsing query to JSON. Reseting to initial Values...'
     );
-    return FORM_INITIAL_VALUES;
+    return initialValues;
   }
 };
 
-export const parseActiveFilters = (filters: FormValues) => {
+export const parseActiveFilters = (
+  filters: FlowsFilterValues | PendingFlowsFilterValues
+) => {
   const attributes: ActiveFilter[] = [];
-  const activeFormValues: FormValues = {};
-  let key: keyof FormValues;
+  const activeFormValues: FlowsFilterValues = {};
+  let key: keyof typeof filters;
   for (key in filters) {
     const fieldValue = filters[key];
     if (
@@ -232,12 +241,13 @@ export const parseActiveFilters = (filters: FormValues) => {
   return { activeFormValues, attributes };
 };
 
-export const parseInitialValues = (filters: FormValues) => {
-  let key: keyof FormValues;
-  for (key in FORM_INITIAL_VALUES) {
-    filters[key] = (
-      filters[key] ? filters[key] : FORM_INITIAL_VALUES[key]
-    ) as any;
+export const parseInitialValues = (
+  filters: FlowsFilterValues | PendingFlowsFilterValues,
+  initialValues: typeof filters
+) => {
+  let key: keyof typeof filters;
+  for (key in initialValues) {
+    filters[key] = (filters[key] ? filters[key] : initialValues[key]) as any;
   }
   return filters;
 };

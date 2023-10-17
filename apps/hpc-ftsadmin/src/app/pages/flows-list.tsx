@@ -7,7 +7,9 @@ import FlowsTable, {
 import PageMeta from '../components/page-meta';
 import { AppContext, getEnv } from '../context';
 import tw from 'twin.macro';
-import FilterTable, { FormValues } from '../components/filter-table';
+import FilterFlowsTable, {
+  FLOWS_FILTER_INITIAL_VALUES,
+} from '../components/filter-flows-table';
 import {
   JsonParam,
   NumberParam,
@@ -29,33 +31,6 @@ flex
 const LandingContainer = tw.div`
 w-full
 `;
-export const FORM_INITIAL_VALUES: FormValues = {
-  flowID: '',
-  amountUSD: '',
-  keywords: [],
-  flowStatus: '',
-  flowType: '',
-  flowActiveStatus: '',
-  reporterReferenceCode: '',
-  sourceSystemID: '',
-  flowLegacyID: '',
-  sourceOrganizations: [],
-  sourceCountries: [],
-  sourceUsageYears: [],
-  sourceProjects: [],
-  sourcePlans: [],
-  sourceGlobalClusters: [],
-  sourceEmergencies: [],
-  destinationOrganizations: [],
-  destinationCountries: [],
-  destinationUsageYears: [],
-  destinationProjects: [],
-  destinationPlans: [],
-  destinationGlobalClusters: [],
-  destinationEmergencies: [],
-  includeChildrenOfParkedFlows: false,
-};
-
 export default (props: Props) => {
   const rowsPerPageOptions = [10, 25, 50, 100];
   const tableHeaders: {
@@ -140,12 +115,13 @@ export default (props: Props) => {
       'flow.updatedAt'
     ),
     orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
-    filters: withDefault(JsonParam, encodeFilters(FORM_INITIAL_VALUES)),
+    filters: withDefault(JsonParam, encodeFilters(FLOWS_FILTER_INITIAL_VALUES)),
   });
 
   const flowsTableProps: FlowsTableProps = {
     headers: tableHeaders,
     rowsPerPageOption: rowsPerPageOptions,
+    initialValues: FLOWS_FILTER_INITIAL_VALUES,
     query: query,
     setQuery: setQuery,
   };
@@ -160,7 +136,11 @@ export default (props: Props) => {
         >
           <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
           <Container>
-            <FilterTable environment={env} setQuery={setQuery} query={query} />
+            <FilterFlowsTable
+              environment={env}
+              setQuery={setQuery}
+              query={query}
+            />
             <LandingContainer>
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.flows.title)}
