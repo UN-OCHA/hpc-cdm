@@ -19,6 +19,7 @@ import { Z_INDEX } from './layout';
 import PageFlowsList from './pages/flows-list';
 import PageNotFound from './pages/not-found';
 import PageNotLoggedIn from './pages/not-logged-in';
+import PagePendingFlowsList from './pages/pending-flows-list';
 import * as paths from './paths';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
@@ -91,10 +92,7 @@ export const App = () => {
         loader={loadEnv}
         strings={{
           ...t.get(lang, (s) => s.components.loader),
-          notFound: {
-            ...t.get(lang, (s) => s.components.notFound),
-            ...t.get(lang, (s) => s.routes.operations.notFound),
-          },
+          notFound: t.get(lang, (s) => s.components.notFound),
         }}
       >
         {(context) => {
@@ -125,6 +123,10 @@ export const App = () => {
                           {
                             label: t.t(lang, (s) => s.navigation.flows),
                             path: paths.flows(),
+                          },
+                          {
+                            label: t.t(lang, (s) => s.navigation.pendingFlows),
+                            path: paths.pendingFlows(),
                           },
                         ]}
                         className={CLASSES.CONTAINER.FLUID}
@@ -174,6 +176,10 @@ export const App = () => {
                         <Route
                           path={paths.flows()}
                           element={<PageFlowsList />}
+                        />
+                        <Route
+                          path={paths.pendingFlows()}
+                          element={<PagePendingFlowsList />}
                         />
                         <Route element={<PageNotFound />} />
                       </Routes>

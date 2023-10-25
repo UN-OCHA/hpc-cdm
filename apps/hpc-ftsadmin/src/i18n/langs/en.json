@@ -42,6 +42,34 @@
     "unsupportedBrowser": {
       "title": "Unsupported Browser!",
       "info": "Unfortunately, your current browser is not supported. Please switch to either Firefox or Google Chrome. To do this, simply copy the form address (URL) above, then open Firefox or Chrome, and paste the address into the browser."
+    },
+    "flowsTable": {
+      "headers": {
+        "id": "ID",
+        "status": "Status",
+        "updatedCreated": "Updated/Created",
+        "dataProvider": "Data Provider",
+        "amountUSD": "Amount USD",
+        "sourceOrganization": "Source Organization",
+        "destinationOrganization": "Destination Organization",
+        "destinationPlan": "Destination Plan",
+        "destinationCountry": "Destination Country",
+        "destinationYear": "Destination Year",
+        "details": "Details"
+      },
+      "update": "Update",
+      "new": "New",
+      "restricted": "restricted",
+      "inactive": "inactive",
+      "child": "child",
+      "parent": "parent",
+      "notFound": {
+        "title": "Flows not found",
+        "info": "We were unable to load flows"
+      },
+      "reportTooltip": "reported by {organization} on {date} via {channel}",
+      "parkedSource": "Parked source",
+      "sortBy": "Sort by"
     }
   },
   "navigation": {
@@ -53,11 +81,11 @@
     "help": "Help"
   },
   "routes": {
-    "operations": {
-      "notFound": {
-        "title": "Operation not found",
-        "info": "We were unable to find the operation you were looking for"
-      }
+    "flows": {
+      "title": "Search funding flows"
+    },
+    "pendingFlows": {
+      "title": "Search pending flows"
     }
   }
 }

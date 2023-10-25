@@ -1,5 +1,6 @@
 const HOME = '/';
 const FLOWS = '/flows';
+const PENDING_FLOWS = '/pending-flows';
 
 const replacePlaceholders = (
   path: string,
@@ -14,3 +15,5 @@ const replacePlaceholders = (
 export const home = () => replacePlaceholders(HOME, {});
 
 export const flows = () => replacePlaceholders(FLOWS, {});
+
+export const pendingFlows = () => replacePlaceholders(PENDING_FLOWS, {});
