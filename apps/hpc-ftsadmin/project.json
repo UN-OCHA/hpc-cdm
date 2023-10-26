@@ -14,7 +14,6 @@
         "index": "apps/hpc-ftsadmin/src/index.html",
         "baseHref": "/",
         "main": "apps/hpc-ftsadmin/src/main.tsx",
-        "polyfills": "apps/hpc-ftsadmin/src/polyfills.ts",
         "tsConfig": "apps/hpc-ftsadmin/tsconfig.app.json",
         "assets": [
           "apps/hpc-ftsadmin/src/favicon.ico",
