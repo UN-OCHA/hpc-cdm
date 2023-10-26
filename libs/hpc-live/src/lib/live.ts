@@ -3,7 +3,7 @@ import {
   User,
   OidcMetadata,
   WebStorageStateStore,
-} from 'oidc-client';
+} from 'oidc-client-ts';
 
 import { config, Session } from '@unocha/hpc-core';
 
@@ -105,14 +105,14 @@ export class LiveBrowserClient {
     await userManager
       .signinRedirectCallback()
       .then((user) => {
-        const redirectTo = user.state || document.location.pathname;
+        const redirectTo = (user.state as string) || document.location.pathname;
         if (history.replaceState) {
           history.replaceState(null, document.title, redirectTo);
           // TODO: interact directly with React Router history to get it to reload
           // the route without needing to reload the page
           window.location.reload();
         } else {
-          window.location = redirectTo;
+          window.location.href = redirectTo;
         }
       })
       .catch(() => {
@@ -131,7 +131,8 @@ export class LiveBrowserClient {
 
     // When user logs in/out in a different tab, log in/out in current tab as well
     window.addEventListener('storage', (e) => {
-      // This is how oidc-client creates its storage keys
+      // This is how oidc-client-ts creates its storage keys
+      // https://github.com/authts/oidc-client-ts/blob/5f6925f84141c4b25aa25c3583b365457f6d66fa/src/UserManager.ts#L661-L663
       const keyPart = `user:${this.config.hpcAuthUrl}:${this.config.hpcAuthClientId}`;
       if (e.key?.indexOf(keyPart) !== -1) {
         // Reload the window to have new session from different tab applied to current one
