@@ -549,6 +549,16 @@ export class LiveModel implements Model {
           resultType: flows.SEARCH_FLOWS_GRAPHQL_RESULT,
         });
       },
+      bulkRejectPendingFlows: (params) =>
+        this.call({
+          pathname: `/v1/flow/bulkupdatestatus/87`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.BULK_REJECT_PENDING_FLOWS_RESULT,
+        }),
     };
   }
   get globalClusters(): globalClusters.Model {

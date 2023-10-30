@@ -26,7 +26,7 @@ const SectionTitle = styled.summary(
       font-bold
       text-2xl
       text-unocha-pallete-blue-dark2`
-      : tw`text-right [&>svg]:ms-2 text-unocha-pallete-blue-normal text-xl `,
+      : tw`text-right [&>svg]:ms-2 text-unocha-pallete-blue text-xl `,
   ]
 );
 const SectionContainer = styled.details(

@@ -22,21 +22,25 @@ module.exports = {
             orange: {
               dark2: '#b44d0e',
               dark1: '#d05b10',
-              normal: '#e16856',
+              DEFAULT: '#e16856',
+              light: '#FF9E5F',
             },
             yellow: {
-              normal: '#FFC000',
+              DEFAULT: '#FFC000',
+              dark: '#E6A300',
+              light: '#FFD966',
             },
             blue: {
               dark2: '#025995',
-              normal: '#026cb6',
+              DEFAULT: '#026cb6',
               light: '#96c3e1',
             },
             green: {
+              DEFAULT: '#2e7d32',
               light: '#afdfb0',
             },
             gray: {
-              normal: '#333333',
+              DEFAULT: '#333333',
               light: '#6f7e94',
               light1: '#999999',
               light2: '#d1d1d1',
@@ -47,13 +51,32 @@ module.exports = {
           },
           primary: {
             dark2: '#025995',
-            normal: '#026cb6',
+            DEFAULT: '#026cb6',
             light: '#96c3e1',
           },
           secondary: {
             dark2: '#b44d0e',
             dark1: '#d05b10',
-            normal: '#e16856',
+            DEFAULT: '#e16856',
+            light: '#FF9E5F',
+          },
+          error: {
+            DEFAULT: '#990000',
+            light: '#ffb3b3',
+          },
+          warning: {
+            DEFAULT: '#FFC000',
+            dark: '#E6A300',
+            light: '#FFD966',
+          },
+          text: {
+            DEFAULT: '#333333',
+            light: '#6f7e94',
+            link: '#b44d0e',
+            error: {
+              DEFAULT: '#990000',
+              light: '#ffb3b3',
+            },
           },
           text: '#333333',
           textLight: '#6f7e94',

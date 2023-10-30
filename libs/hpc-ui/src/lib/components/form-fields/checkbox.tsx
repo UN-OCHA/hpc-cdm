@@ -23,9 +23,9 @@ const CheckBox = ({
   const [field, meta] = useField(name);
   const { setFieldValue } = useFormikContext();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) {
+    if (onChange && value) {
       const values = onChange(event);
-      setFieldValue(name, [...values, value]);
+      setFieldValue(name, values);
     } else {
       setFieldValue(name, !field.value);
     }

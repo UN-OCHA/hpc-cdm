@@ -364,6 +364,28 @@ export type SearchFlowsGraphQlParams = t.TypeOf<
   typeof SEARCH_FLOWS_GRAPHQL_PARAMS
 >;
 
+export const BULK_REJECT_PENDING_FLOWS_PARAMS = t.type({
+  flows: t.array(
+    t.type({
+      id: t.number,
+      versionID: t.number,
+    })
+  ),
+});
+export type BulkRejectPendingFlowsParams = t.TypeOf<
+  typeof BULK_REJECT_PENDING_FLOWS_PARAMS
+>;
+
+export const BULK_REJECT_PENDING_FLOWS_RESULT = t.array(
+  t.type({
+    id: t.number,
+    versionID: t.number,
+  })
+);
+
+export type BulkRejectPendingFlowsResults = t.TypeOf<
+  typeof BULK_REJECT_PENDING_FLOWS_RESULT
+>;
 export interface Model {
   getFlow(params: GetFlowParams): Promise<GetFlowResult>;
   getFlowGraphQL(params: GetFlowParams): Promise<GetFlowResult>;
@@ -371,4 +393,7 @@ export interface Model {
   searchFlowsGraphQL(
     params: SearchFlowsGraphQlParams
   ): Promise<SearchFlowsGraphQLResult>;
+  bulkRejectPendingFlows(
+    params: BulkRejectPendingFlowsParams
+  ): Promise<BulkRejectPendingFlowsResults>;
 }

@@ -16,6 +16,7 @@ import AsyncSingleSelect from './lib/components/form-fields/async-single-select-
 import { Button, ButtonLink, ButtonSubmit } from './lib/components/button';
 import CheckBox from './lib/components/form-fields/checkbox';
 import DevEnvWarning from './lib/components/development-environment-warning';
+import DraggableList from './lib/components/draggable-list';
 import ErrorMessage from './lib/components/error-message';
 import Header from './lib/components/header';
 import List from './lib/components/list';
@@ -52,6 +53,7 @@ const COMPONENTS = {
   ButtonSubmit,
   CheckBox,
   DevEnvWarning,
+  DraggableList,
   ErrorMessage,
   Header,
   List,

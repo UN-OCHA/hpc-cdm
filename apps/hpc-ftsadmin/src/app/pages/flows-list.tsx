@@ -19,7 +19,7 @@ import {
   withDefault,
 } from 'use-query-params';
 import { Strings } from '../../i18n/iface';
-import { encodeFilters } from '../utils/parseFilters';
+import { encodeFilters } from '../utils/parse-filters';
 
 interface Props {
   className?: string;
@@ -127,7 +127,6 @@ export default (props: Props) => {
   };
 
   const env = getEnv();
-
   return (
     <AppContext.Consumer>
       {({ lang }) => (

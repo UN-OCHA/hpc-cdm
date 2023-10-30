@@ -10,7 +10,7 @@ import {
   encodeFilters,
   parseActiveFilters,
   parseInitialValues,
-} from '../utils/parseFilters';
+} from '../utils/parse-filters';
 
 interface Props {
   environment: Environment;

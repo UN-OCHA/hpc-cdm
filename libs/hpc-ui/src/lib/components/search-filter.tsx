@@ -80,7 +80,7 @@ const HideDrawerButton = styled.button`
   border-e
   border-unocha-primary-dark2
   rounded-e-md
-  bg-unocha-primary-normal
+  bg-unocha-primary
   p-0
 `}
 `;
@@ -122,7 +122,6 @@ export const SearchFilter = ({ className, title, children }: Props) => {
         variant="persistent"
         anchor="left"
         open={isOpen}
-        elevation={0}
         sx={{
           width: isOpen ? drawerWidth : 0,
           transitionProperty: !isDragging ? 'all' : undefined,

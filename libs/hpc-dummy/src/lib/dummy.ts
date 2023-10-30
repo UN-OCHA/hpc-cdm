@@ -740,6 +740,12 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
+        bulkRejectPendingFlows: dummyEndpoint(
+          'flows.bulkRejectPendingFlows',
+          async () => {
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       globalClusters: {
         getGlobalClusters: dummyEndpoint(

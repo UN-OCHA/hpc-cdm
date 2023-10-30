@@ -20,7 +20,7 @@ const StyledSelect = tw(Select)`
   w-full
   `;
 const Loading = tw(MenuItem)`
-text-unocha-pallete-gray-normal
+text-unocha-pallete-gray
   opacity-75!
 `;
 const CircularProgressBox = tw.div`

@@ -15,7 +15,7 @@ import {
   useQueryParams,
   withDefault,
 } from 'use-query-params';
-import { encodeFilters } from '../utils/parseFilters';
+import { encodeFilters } from '../utils/parse-filters';
 import FilterPendingFlowsTable, {
   PENDING_FLOWS_FILTER_INITIAL_VALUES,
 } from '../components/filter-pending-flows-table';

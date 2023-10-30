@@ -5,7 +5,7 @@ import {
   camelCaseToTitle,
   formValueToID,
   formValueToLabel,
-} from './mapFunctions';
+} from './map-functions';
 import { PendingFlowsFilterValues } from '../components/filter-pending-flows-table';
 
 export const parseFilters = (
