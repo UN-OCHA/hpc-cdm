@@ -64,7 +64,7 @@ const parseString = (lang: string, str: string): ParsedTranslation => {
  */
 export class Translations<
   LanguageKey extends string,
-  Strings
+  Strings,
 > extends i18n.Translations<LanguageKey, Strings> {
   /**
    * A mapping from language -> string -> ParsedTranslation

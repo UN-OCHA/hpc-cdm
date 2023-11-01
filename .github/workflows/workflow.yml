@@ -8,14 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.HPC_ECR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.HPC_ECR_AWS_SECRET_ACCESS_KEY }}
@@ -23,7 +23,7 @@ jobs:
 
       - name: Login to Public ECR
         if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: public.ecr.aws
           username: ${{ secrets.HPC_ECR_AWS_ACCESS_KEY_ID }}
