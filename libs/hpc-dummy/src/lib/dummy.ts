@@ -1826,6 +1826,12 @@ export class Dummy {
             ];
           }
         ),
+        getAutocompleteProjectsGraphQL: dummyEndpoint(
+          'projects.getAutocompleteProjectsGraphQL',
+          async (params: projects.GetProjectsAutocompleteParams) => {
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       reportingWindows: {
         getAssignmentsForOperation: dummyEndpoint(

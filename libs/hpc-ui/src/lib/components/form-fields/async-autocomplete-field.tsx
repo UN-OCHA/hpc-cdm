@@ -33,7 +33,8 @@ type APIAutocompleteResult =
   | plans.GetPlansAutocompleteResult
   | projects.GetProjectsAutocompleteResult
   | globalClusters.GetGlobalClustersResult
-  | usageYears.GetUsageYearsResult;
+  | usageYears.GetUsageYearsResult
+  | projects.GetProjectsAutocompleteGraphQLResult;
 
 const AsyncAutocompleteSelect = ({
   name,
@@ -120,25 +121,49 @@ const AsyncAutocompleteSelect = ({
           query: category ? category : inputValue,
         });
 
-        const parsedResponse = response.map((responseValue) => {
-          if (isUsageYearsResult(response)) {
-            return {
-              label: (responseValue as usageYears.UsageYear).year,
-              id: responseValue.id,
-            };
-          } else if (isOrganizationsResult(response)) {
-            const org = responseValue as organizations.Organization;
-            return {
-              label: `${org.name} [${org.abbreviation}]`,
-              id: responseValue.id,
-            };
-          } else {
-            return {
-              label: (responseValue as { id: number; name: string }).name,
-              id: responseValue.id,
-            };
-          }
-        });
+        let parsedResponse;
+
+        if ('getProjects' in response) {
+          parsedResponse = response.getProjects.map((responseValue: any) => {
+            if (isUsageYearsResult(response)) {
+              return {
+                label: (responseValue as usageYears.UsageYear).year,
+                id: responseValue.id,
+              };
+            } else if (isOrganizationsResult(response)) {
+              const org = responseValue as organizations.Organization;
+              return {
+                label: `${org.name} [${org.abbreviation}]`,
+                id: responseValue.id,
+              };
+            } else {
+              return {
+                label: (responseValue as { id: number; name: string }).name,
+                id: responseValue.id,
+              };
+            }
+          });
+        } else {
+          parsedResponse = response.map((responseValue: any) => {
+            if (isUsageYearsResult(response)) {
+              return {
+                label: (responseValue as usageYears.UsageYear).year,
+                id: responseValue.id,
+              };
+            } else if (isOrganizationsResult(response)) {
+              const org = responseValue as organizations.Organization;
+              return {
+                label: `${org.name} [${org.abbreviation}]`,
+                id: responseValue.id,
+              };
+            } else {
+              return {
+                label: (responseValue as { id: number; name: string }).name,
+                id: responseValue.id,
+              };
+            }
+          });
+        }
 
         setData(parsedResponse);
         if (active) {

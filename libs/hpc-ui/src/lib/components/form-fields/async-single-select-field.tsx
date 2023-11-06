@@ -65,7 +65,7 @@ const AsyncSingleSelect = ({
     (async () => {
       try {
         const response = await fnPromise({ query: category });
-        const parsedResponse = response.map((responseValue) => {
+        const parsedResponse = response.map((responseValue: any) => {
           return { label: responseValue.name, id: responseValue.id };
         });
         setOptions(parsedResponse);

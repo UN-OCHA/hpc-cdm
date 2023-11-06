@@ -21,6 +21,7 @@ import PageNotFound from './pages/not-found';
 import PageNotLoggedIn from './pages/not-logged-in';
 import PagePendingFlowsList from './pages/pending-flows-list';
 import * as paths from './paths';
+import FlowEdit from './pages/flow-edit';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
   const warning = env.getDevHeaderWarning(lang);
@@ -167,6 +168,12 @@ export const App = () => {
                               ]
                             : []),
                         ]}
+                        actionButtons={[
+                          {
+                            label: t.t(lang, (s) => s.navigation.newFlow),
+                            path: paths.newFlow(),
+                          },
+                        ]}
                       />
                       <Routes>
                         <Route
@@ -181,6 +188,7 @@ export const App = () => {
                           path={paths.pendingFlows()}
                           element={<PagePendingFlowsList />}
                         />
+                        <Route path={paths.newFlow()} element={<FlowEdit />} />
                         <Route element={<PageNotFound />} />
                       </Routes>
                     </LoggedInContainer>

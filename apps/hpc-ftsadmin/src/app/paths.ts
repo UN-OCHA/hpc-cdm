@@ -2,6 +2,7 @@ const HOME = '/';
 const FLOWS = '/flows';
 const FLOWSGRAPHQL = '/flowsGraphql';
 const PENDING_FLOWS = '/pending-flows';
+const NEW_FLOW = '/flows/add';
 
 const replacePlaceholders = (
   path: string,
@@ -20,3 +21,5 @@ export const flows = () => replacePlaceholders(FLOWS, {});
 export const flowsGrahQl = () => replacePlaceholders(FLOWSGRAPHQL, {});
 
 export const pendingFlows = () => replacePlaceholders(PENDING_FLOWS, {});
+
+export const newFlow = () => replacePlaceholders(NEW_FLOW, {});

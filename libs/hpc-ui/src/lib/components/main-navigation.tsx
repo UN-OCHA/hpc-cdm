@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import React from 'react';
 
 import {
   List as MUIList,
@@ -8,6 +9,8 @@ import {
 import { CLASSES, combineClasses } from '../classes';
 import HpcLogo from '../assets/logos/hpc';
 import { styled } from '../theme';
+import { Button } from './button';
+import { MdAdd } from 'react-icons/md';
 
 const CLS = {
   HEADER: 'header',
@@ -19,6 +22,7 @@ const CLS = {
   TABS: 'tabs',
   SELECTED: 'selected',
   HAS_EXTERNAL_LINKS: 'has-external-links',
+  ACTION_BUTTONS: 'action-buttons',
 } as const;
 
 interface Props {
@@ -44,6 +48,15 @@ interface Props {
     | false
   >;
   className?: string;
+  actionButtons?: Array<
+    | {
+        path: string;
+        label: string;
+      }
+    | null
+    | undefined
+    | false
+  >;
 }
 
 const HEADER_HEIGHT_PX = 60;
@@ -112,6 +125,10 @@ const Nav = styled.nav`
       white-space: nowrap;
     }
 
+    .${CLS.ACTION_BUTTONS} {
+      margin-left: 15px;
+    }
+
     > .${CLS.TABS} {
       display: flex;
       margin: 0;
@@ -153,7 +170,7 @@ const Nav = styled.nav`
 `;
 
 export default (props: Props) => {
-  const { tabs, externalLinks, appTitle, homeLink } = props;
+  const { tabs, externalLinks, appTitle, homeLink, actionButtons } = props;
 
   const loc = useLocation();
   const tabElements = tabs && (
@@ -193,6 +210,30 @@ export default (props: Props) => {
     </MUIList>
   );
 
+  const actionButtonElements = actionButtons && (
+    <div className={CLS.ACTION_BUTTONS}>
+      {actionButtons.map((link, i) => {
+        if (!link) {
+          return null;
+        }
+        return (
+          <React.Fragment key={i}>
+            <Link to={link.path}>
+              <Button
+                color="primary"
+                onClick={() => {
+                  return true;
+                }}
+                startIcon={MdAdd}
+                text={link.label}
+              />
+            </Link>
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+
   return (
     <Nav>
       <div
@@ -219,6 +260,7 @@ export default (props: Props) => {
         </div>
         <div className={CLASSES.FLEX.GROW} />
         {tabElements}
+        {actionButtonElements}
       </div>
     </Nav>
   );

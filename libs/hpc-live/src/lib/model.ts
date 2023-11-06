@@ -405,7 +405,7 @@ export class LiveModel implements Model {
 
   get categories(): categories.Model {
     return {
-      getCategories: (params) =>
+      getCategories: (params: any) =>
         this.call({
           pathname: '/v2/category',
           queryParams: {
@@ -623,6 +623,53 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v1/object/autocomplete/project/${params.query}`,
           resultType: projects.GET_PROJECTS_AUTOCOMPLETE_RESULT,
+        }),
+      getAutocompleteProjectsGraphQL: (params) =>
+        this.call({
+          pathname: `/v4/graphql`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: {
+              query: `{getProjects(autocomplete:"${params.query}"){
+                id
+                createdAt
+                updatedAt
+                code
+                currentPublishedVersionId
+                creatorParticipantId
+                latestVersionId
+                implementationStatus
+                pdf{
+                  anonymous{
+                    generatedAt
+                    file{
+                      fileHash
+                    }
+                  }
+                  withComments{
+                    generatedAt
+                    file{
+                      fileHash
+                    }
+                  }
+                  commentsOnly{
+                    generatedAt
+                    file{
+                      fileHash
+                    }
+                  }
+                }
+                sourceProjectId
+                name
+                version
+                projectVersionCode
+                visible
+              }
+            }`,
+            },
+          },
+          resultType: projects.GET_PROJECTS_AUTOCOMPLETE_GRAPHQL_RESULT,
         }),
     };
   }

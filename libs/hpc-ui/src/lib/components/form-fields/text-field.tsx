@@ -42,12 +42,16 @@ const TextFieldWrapper = ({
   name,
   label,
   placeholder,
+  multiline,
+  rows,
   ...otherProps
 }: {
   type: 'text' | 'number' | 'currency';
   name: string;
   label: string;
   placeholder?: string;
+  multiline?: boolean;
+  rows?: number;
 }) => {
   const [field, meta] = useField(name);
 
@@ -57,6 +61,8 @@ const TextFieldWrapper = ({
     label: label,
     id: name,
     placeholder: placeholder,
+    multiline: multiline,
+    rows: rows,
     size: 'small',
     type: 'text',
     InputProps:

@@ -120,6 +120,7 @@
   },
   "dependencies": {
     "@mui/icons-material": "^5.14.9",
+    "@mui/x-date-pickers": "^6.16.2",
     "formik": "^2.4.3",
     "react-beautiful-dnd": "^13.1.1",
     "react-number-format": "^5.3.1",

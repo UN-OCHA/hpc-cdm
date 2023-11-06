@@ -46,14 +46,27 @@ export const GET_PROJECTS_AUTOCOMPLETE_PARAMS = t.type({
 export type GetProjectsAutocompleteParams = t.TypeOf<
   typeof GET_PROJECTS_AUTOCOMPLETE_PARAMS
 >;
+export type GetProjectsAutocompleteGraphQLParams = t.TypeOf<
+  typeof GET_PROJECTS_AUTOCOMPLETE_PARAMS
+>;
 
 export const GET_PROJECTS_AUTOCOMPLETE_RESULT = t.array(PROJECT);
 export type GetProjectsAutocompleteResult = t.TypeOf<
   typeof GET_PROJECTS_AUTOCOMPLETE_RESULT
 >;
+export type GetProjectsAutocompleteGraphQLResult = t.TypeOf<
+  typeof GET_PROJECTS_AUTOCOMPLETE_GRAPHQL_RESULT
+>;
+
+export const GET_PROJECTS_AUTOCOMPLETE_GRAPHQL_RESULT = t.type({
+  getProjects: t.array(PROJECT),
+});
 
 export interface Model {
   getAutocompleteProjects(
     params: GetProjectsAutocompleteParams
   ): Promise<GetProjectsAutocompleteResult>;
+  getAutocompleteProjectsGraphQL(
+    params: GetProjectsAutocompleteGraphQLParams
+  ): Promise<GetProjectsAutocompleteGraphQLResult>;
 }

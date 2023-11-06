@@ -78,7 +78,8 @@
     "rpm": "Response Planning Module",
     "prism": "Online Projects System",
     "ftsWebsite": "FTS Website",
-    "help": "Help"
+    "help": "Help",
+    "newFlow": "New Flow"
   },
   "routes": {
     "flows": {
@@ -86,6 +87,9 @@
     },
     "pendingFlows": {
       "title": "Search pending flows"
+    },
+    "newFlow": {
+      "title": "Add Funding Flow"
     }
   }
 }

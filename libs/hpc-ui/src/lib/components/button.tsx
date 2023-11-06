@@ -96,6 +96,7 @@ const BaseButton = (props: Props) => {
   return behaviour.type === 'button' ? (
     <button
       className={className}
+      type={behaviour.type}
       onClick={behaviour.onClick}
       ref={ref as React.RefObject<HTMLButtonElement>}
     >

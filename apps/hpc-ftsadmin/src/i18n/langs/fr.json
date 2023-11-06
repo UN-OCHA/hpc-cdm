@@ -78,7 +78,8 @@
     "rpm": "Module de planification des interventions",
     "prism": "Système de projets en ligne",
     "ftsWebsite": "Site web FTS",
-    "help": "Aide"
+    "help": "Aide",
+    "newFlow": "Nouveau flux"
   },
   "routes": {
     "flows": {
@@ -86,6 +87,9 @@
     },
     "pendingFlows": {
       "title": "Recherche de flux en attente"
+    },
+    "newFlow": {
+      "title": "Ajouter un flux de financement"
     }
   }
 }
