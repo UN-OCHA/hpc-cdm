@@ -1,25 +1,25 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
-import FlowsTable, {
-  FlowsTableProps,
-  HeaderID,
-} from '../components/flows-table';
+import FlowsTable, { FlowsTableProps } from '../components/flows-table';
 import PageMeta from '../components/page-meta';
 import { AppContext, getEnv } from '../context';
-import { Strings } from '../../i18n/iface';
 import {
   JsonParam,
   NumberParam,
+  StringParam,
   createEnumParam,
   decodeNumber,
   useQueryParams,
   withDefault,
 } from 'use-query-params';
-import { encodeFilters } from '../utils/parse-filters';
 import FilterPendingFlowsTable, {
   PENDING_FLOWS_FILTER_INITIAL_VALUES,
 } from '../components/filter-pending-flows-table';
 import tw from 'twin.macro';
+import {
+  DEFAULT_TABLE_HEADERS,
+  encodeTableHeaders,
+} from '../utils/table-headers';
 
 interface Props {
   className?: string;
@@ -32,61 +32,6 @@ w-full
 `;
 
 export default (props: Props) => {
-  const headers: {
-    id: HeaderID;
-    sortable?: boolean;
-    label: keyof Strings['components']['flowsTable']['headers'];
-  }[] = [
-    {
-      id: 'flow.id',
-      sortable: true,
-      label: 'id',
-    },
-    {
-      id: 'flow.updatedAt',
-      sortable: true,
-      label: 'updatedCreated',
-    },
-    {
-      id: 'externalReference.systemID',
-      sortable: true,
-      label: 'dataProvider',
-    },
-    {
-      id: 'flow.amountUSD',
-      sortable: true,
-      label: 'amountUSD',
-    },
-    {
-      id: 'source.organization.name',
-      sortable: true,
-      label: 'sourceOrganization',
-    },
-    {
-      id: 'destination.organization.name',
-      sortable: true,
-      label: 'destinationOrganization',
-    },
-    {
-      id: 'destination.planVersion.name',
-      sortable: true,
-      label: 'destinationPlan',
-    },
-    {
-      id: 'destination.location.name',
-      sortable: true,
-      label: 'destinationCountry',
-    },
-    {
-      id: 'destination.usageYear.year',
-      sortable: true,
-      label: 'destinationYear',
-    },
-    {
-      id: 'details',
-      label: 'details',
-    },
-  ];
   const [query, setQuery] = useQueryParams({
     page: withDefault(NumberParam, 0),
     rowsPerPage: withDefault(
@@ -103,9 +48,9 @@ export default (props: Props) => {
     orderBy: withDefault(
       createEnumParam(
         // Same as filter then map but this is acceptable to typescript
-        headers.reduce((acc, curr) => {
+        DEFAULT_TABLE_HEADERS.reduce((acc, curr) => {
           if (curr.sortable) {
-            return [...acc, curr.id];
+            return [...acc, curr.identifierID];
           }
 
           return acc;
@@ -114,14 +59,12 @@ export default (props: Props) => {
       'flow.updatedAt'
     ),
     orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
-    filters: withDefault(
-      JsonParam,
-      encodeFilters(PENDING_FLOWS_FILTER_INITIAL_VALUES)
-    ),
+    filters: withDefault(JsonParam, JSON.stringify({})),
+    tableHeaders: withDefault(StringParam, encodeTableHeaders([])), //  Default value of table headers
   });
 
   const flowsTableProps: FlowsTableProps = {
-    headers: headers,
+    headers: DEFAULT_TABLE_HEADERS,
     flowList: 'pending',
     initialValues: PENDING_FLOWS_FILTER_INITIAL_VALUES,
     rowsPerPageOption: [10, 25, 50, 100],
@@ -143,6 +86,7 @@ export default (props: Props) => {
               environment={env}
               setQuery={setQuery}
               query={query}
+              lang={lang}
             />
             <LandingContainer>
               <C.PageTitle>

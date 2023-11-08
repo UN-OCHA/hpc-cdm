@@ -9,7 +9,6 @@ import {
   SelectChangeEvent,
   SelectProps,
 } from '@mui/material';
-import { categories } from '@unocha/hpc-data';
 import { useField, useFormikContext } from 'formik';
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from 'react';
@@ -36,25 +35,19 @@ const AsyncSingleSelect = ({
   name,
   label,
   fnPromise,
-  category,
   hasNameValue,
   ...otherProps
 }: {
   name: string;
   label: string;
-  fnPromise: ({
-    query,
-  }: {
-    query: string;
-  }) => Promise<categories.GetCategoriesResult>;
-  category: categories.CategoryGroup;
+  fnPromise: () => Promise<{ label: string; id: string | number }[]>;
   hasNameValue?: boolean;
 }) => {
   const { setFieldValue } = useFormikContext<string>();
-  const [field, meta] = useField(name);
+  const [field, meta] = useField<string | number>(name);
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<
-    readonly { label: string; id: number }[]
+    readonly { label: string; id: string | number }[]
   >([]);
   const loading = open && options.length === 0;
 
@@ -64,23 +57,20 @@ const AsyncSingleSelect = ({
     }
     (async () => {
       try {
-        const response = await fnPromise({ query: category });
-        const parsedResponse = response.map((responseValue) => {
-          return { label: responseValue.name, id: responseValue.id };
-        });
-        setOptions(parsedResponse);
+        const response = await fnPromise();
+        setOptions(response);
       } catch (error) {
         console.error(error);
       }
     })();
   }, [loading]);
-  const handleChange = (event: SelectChangeEvent<number>) => {
+  const handleChange = (event: SelectChangeEvent<string | number>) => {
     const {
       target: { value },
     } = event;
     setFieldValue(name, value);
   };
-  const singleSelectConfig: SelectProps<number> = {
+  const singleSelectConfig: SelectProps<string | number> = {
     ...field,
     ...otherProps,
     labelId: `${label.toLowerCase().replace(' ', '-').trim()}-label`,
@@ -102,7 +92,6 @@ const AsyncSingleSelect = ({
             ) : null}
           </CircularProgressBox>
         }
-        id="select-single-chip"
         label={label}
       />
     ),

@@ -52,7 +52,7 @@
         "amountUSD": "Montant USD",
         "sourceOrganization": "Organisation source",
         "destinationOrganization": "Organisation de destination",
-        "destinationPlan": "Destination Plan",
+        "destinationPlan": "Plan de destination",
         "destinationCountry": "Pays de destination",
         "destinationYear": "Année de destination",
         "details": "Détails"
@@ -69,7 +69,49 @@
       },
       "reportTooltip": "signalé par {organization} le {date} via {channel}",
       "parkedSource": "Source stationnée",
-      "sortBy": "Trier par"
+      "sortBy": "Trier par",
+      "rejectPendingFlows": "Rejeter les flux en attente",
+      "tableSettings": {
+        "title": "Paramètres du tableau",
+        "save": "Enregistrer",
+        "info": "Quitter sans cliquer 'Enregistrer' ne mettra pas à jour le tableau"
+      }
+    },
+    "flowsFilter": {
+      "title": "Filtres",
+      "button": {
+        "primary": "Rechercher",
+        "secondary": "Effacer les champs"
+      },
+      "filters": {
+        "flowDetails": "Détails de la transaction",
+        "sourceDetails": "Détails de la source",
+        "destinationDetails": "Détails de la destination",
+        "includeChildrenParkedFlows": "Inclure les enfants des transactions en attente correspondantes",
+        "flowID": "ID de la transaction",
+        "amountUSD": "Montant en USD",
+        "keywords": "Mots-clés",
+        "flowStatus": "Statut de la transaction",
+        "flowType": "Type de transaction",
+        "flowActiveStatus": "Statut actif de la transaction",
+        "reporterReferenceCode": "Code de référence du rapporteur",
+        "sourceSystemID": "ID du système source",
+        "flowLegacyID": "ID de transaction hérité",
+        "organizations": "Organisme(s)",
+        "countries": "Pays",
+        "usageYears": "Année(s) d'utilisation",
+        "projects": "Projet(s)",
+        "plans": "Plan(s)",
+        "globalClusters": "Cluster(s) mondial(aux)",
+        "emergencies": "Urgence(s)",
+        "dataProvider": "Fournisseur de données",
+        "details": "Détails",
+        "status": "État"
+      },
+      "showMore": "Afficher plus",
+      "tooltips": {
+        "filters": "Filtres"
+      }
     }
   },
   "navigation": {

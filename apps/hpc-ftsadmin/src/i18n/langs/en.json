@@ -69,7 +69,49 @@
       },
       "reportTooltip": "reported by {organization} on {date} via {channel}",
       "parkedSource": "Parked source",
-      "sortBy": "Sort by"
+      "sortBy": "Sort by",
+      "rejectPendingFlows": "Reject Pending Flows",
+      "tableSettings": {
+        "title": "Table Settings",
+        "save": "Save",
+        "info": "Leaving without clicking the 'Save' button will not update the table"
+      }
+    },
+    "flowsFilter": {
+      "title": "Filters",
+      "button": {
+        "primary": "Search",
+        "secondary": "Clear Fields"
+      },
+      "filters": {
+        "flowDetails": "Flow Details",
+        "sourceDetails": "Source Details",
+        "destinationDetails": "Destination Details",
+        "includeChildrenParkedFlows": "Include children of matching parked flows",
+        "flowID": "Flow ID",
+        "amountUSD": "Amount USD",
+        "keywords": "Keywords",
+        "flowStatus": "Flow Status",
+        "flowType": "Flow Type",
+        "flowActiveStatus": "Flow Active Status",
+        "reporterReferenceCode": "Reporter Reference Code",
+        "sourceSystemID": "Source System ID",
+        "flowLegacyID": "Flow Legacy ID",
+        "organizations": "Organization(s)",
+        "countries": "Country(ies)",
+        "usageYears": "Usage Year(s)",
+        "projects": "Project(s)",
+        "plans": "Plan(s)",
+        "globalClusters": "Global Cluster(s)",
+        "emergencies": "Emergency(ies)",
+        "dataProvider": "Data Provider",
+        "details": "Details",
+        "status": "Status"
+      },
+      "showMore": "Show More",
+      "tooltips": {
+        "filters": "Filters"
+      }
     }
   },
   "navigation": {

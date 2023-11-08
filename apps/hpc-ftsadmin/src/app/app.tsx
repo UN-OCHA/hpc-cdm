@@ -17,6 +17,7 @@ import PageMeta from './components/page-meta';
 import { AppContext, contextFromEnv } from './context';
 import { Z_INDEX } from './layout';
 import PageFlowsList from './pages/flows-list';
+import PageFlowsGraphQLList from './pages/flows-list-graphQL';
 import PageNotFound from './pages/not-found';
 import PageNotLoggedIn from './pages/not-logged-in';
 import PagePendingFlowsList from './pages/pending-flows-list';
@@ -125,6 +126,10 @@ export const App = () => {
                             path: paths.flows(),
                           },
                           {
+                            label: 'Flows GraphQL',
+                            path: paths.flowsGrahQl(),
+                          },
+                          {
                             label: t.t(lang, (s) => s.navigation.pendingFlows),
                             path: paths.pendingFlows(),
                           },
@@ -176,6 +181,10 @@ export const App = () => {
                         <Route
                           path={paths.flows()}
                           element={<PageFlowsList />}
+                        />
+                        <Route
+                          path={paths.flowsGrahQl()}
+                          element={<PageFlowsGraphQLList />}
                         />
                         <Route
                           path={paths.pendingFlows()}

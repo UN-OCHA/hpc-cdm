@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Chip,
   IconButton,
@@ -42,12 +41,6 @@ import {
   decodeTableHeaders,
   encodeTableHeaders,
 } from '../utils/table-headers';
-import { Strings } from '../../i18n/iface';
-import { util } from '@unocha/hpc-core';
-import {
-  InfoSettings,
-  LocalStorageFTSAdminKey,
-} from '../utils/local-storage-type';
 
 export type Query = {
   page: number;
@@ -67,35 +60,34 @@ export interface FlowsTableProps {
   setQuery: (newQuery: Query) => void;
 }
 const StyledLoader = tw(C.Loader)`
-  mx-auto
-  `;
+    mx-auto
+    `;
 const ChipDiv = tw.div`
-relative
-w-full
-`;
+  relative
+  w-full
+  `;
 const TopRowContainer = tw.div`
-flex
-justify-end
-`;
+  flex
+  justify-end
+  `;
 const ConfigButton = tw(IconButton)`
-h-min
-self-center
-`;
+  h-min
+  self-center
+  `;
 const ChipFilterValues = tw.div`
-bg-unocha-secondary-light
-inline-flex
-mx-1
-px-2
-rounded-full
-`;
+  bg-unocha-secondary-light
+  inline-flex
+  mx-1
+  px-2
+  rounded-full
+  `;
 const RejectPendingFlowsButton = tw(C.ButtonSubmit)`
-mt-8
-`;
+  mt-8
+  `;
 export interface ParsedFilters {
   flowID?: number;
   amountUSD?: number;
   sourceSystemID?: number;
-  dataProvider?: { systemID: string };
   flowActiveStatus?: { activeStatus: { name: string } };
   status?: { status: string };
   reporterRefCode?: number;
@@ -105,12 +97,12 @@ export interface ParsedFilters {
   includeChildrenOfParkedFlows?: boolean;
 }
 export interface ActiveFilter {
-  label: keyof Strings['components']['flowsFilter']['filters'];
+  label: string;
   fieldName: keyof FlowsFilterValues;
   displayValue: string;
   value: string | boolean | { label: string; id: string }[] | undefined;
 }
-export default function FlowsTable(props: FlowsTableProps) {
+export default function FlowsTableGraphQL(props: FlowsTableProps) {
   const env = getEnv();
   let firstRender = true;
   const chipSpacing = { m: 0.5 };
@@ -119,12 +111,7 @@ export default function FlowsTable(props: FlowsTableProps) {
   const { activeFormValues, attributes } = parseActiveFilters(filters);
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
-  const [tableInfoDisplay, setTableInfoDisplay] = useState(
-    util.getLocalStorageItem<InfoSettings, LocalStorageFTSAdminKey>(
-      'infoSettings',
-      { tableSettings: true }
-    ).tableSettings
-  );
+
   const handleFlowList = () => {
     return props.flowList
       ? props.flowList
@@ -134,15 +121,10 @@ export default function FlowsTable(props: FlowsTableProps) {
   };
 
   const [state, load] = useDataLoader([query], () =>
-    env.model.flows.searchFlows({
-      flowSearch: {
-        limit: query.rowsPerPage,
-        offset: query.page * query.rowsPerPage,
-        orderBy: query.orderBy,
-        orderDir: query.orderDir,
-        flowList: handleFlowList(),
-        ...parseFilters(activeFormValues),
-      },
+    env.model.flows.searchFlowsGraphQL({
+      limit: query.rowsPerPage,
+      sortField: query.orderBy,
+      sortOrder: query.orderDir,
     })
   );
   useEffect(() => {
@@ -152,14 +134,6 @@ export default function FlowsTable(props: FlowsTableProps) {
       firstRender = false;
     }
   }, [query.filters]);
-
-  const handleTableSettingsInfoClose = () => {
-    util.setLocalStorageItem<InfoSettings, LocalStorageFTSAdminKey>(
-      'infoSettings',
-      { tableSettings: false }
-    );
-    setTableInfoDisplay(false);
-  };
 
   const handleChipDelete = (fieldName: keyof FlowsFilterValues) => {
     activeFormValues[fieldName] = undefined;
@@ -236,14 +210,14 @@ export default function FlowsTable(props: FlowsTableProps) {
     data,
   }: {
     lang: LanguageKey;
-    data: flows.SearchFlowsResult;
+    data: flows.SearchFlowsGraphQLResult;
   }) => {
     const [selectedRows, setSelectedRows] = useState<
       { id: number; versionID: number }[]
     >([]);
     const handleCheckboxChange = (
       event: React.ChangeEvent<HTMLInputElement>,
-      row: flows.FlowSearchResult
+      row: flows.FlowGraphQL
     ) => {
       const isChecked = event.target.checked;
       if (isChecked) {
@@ -264,7 +238,8 @@ export default function FlowsTable(props: FlowsTableProps) {
 
     return (
       <>
-        {data.flows.map((row) => (
+        {console.log(data)}
+        {data.searchFlows.flows.map((row) => (
           <TableRow
             key={`${row.id}v${row.versionID}`}
             sx={{
@@ -340,7 +315,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-external-reference"
                     >
-                      {row.externalReference?.systemID || '--'}
+                      {row.externalReferences?.at(0)?.systemID || '--'}
                     </TableCell>
                   );
                 case 'flow.amountUSD':
@@ -372,25 +347,12 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-source-organization"
                     >
-                      {row.parkedParentSource && (
-                        <>
-                          <strong>
-                            {t.t(
-                              lang,
-                              (s) => s.components.flowsTable.parkedSource
-                            )}
-                            : {row.parkedParentSource.OrgName}
-                          </strong>
-                          <br />
-                        </>
-                      )}
                       {row.organizations &&
                         row.organizations
                           .filter((org) => org.refDirection === 'source')
                           .map((org, index) => (
                             <span key={`source_${row.id}_${index}`}>
                               {org.name}
-                              {renderReportDetail(org, row, lang)}
                             </span>
                           ))}
                     </TableCell>
@@ -408,7 +370,6 @@ export default function FlowsTable(props: FlowsTableProps) {
                           .map((org, index) => (
                             <span key={`destination_${row.id}_${index}`}>
                               {org.name}
-                              {renderReportDetail(org, row, lang)}
                             </span>
                           ))}
                     </TableCell>
@@ -448,7 +409,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                     >
                       {row.usageYears &&
                         row.usageYears
-                          .filter((year) => year.refDirection === 'destination')
+                          .filter((year) => year.direction === 'destination')
                           .map((year) => year.year)
                           .join(', ')}
                     </TableCell>
@@ -493,26 +454,6 @@ export default function FlowsTable(props: FlowsTableProps) {
                           size="small"
                         />
                       )}
-                      {row.parentIDs && (
-                        <Chip
-                          sx={chipSpacing}
-                          label={[
-                            t.t(lang, (s) => s.components.flowsTable.child),
-                          ]}
-                          size="small"
-                          color="primary"
-                        />
-                      )}
-                      {row.childIDs && (
-                        <Chip
-                          sx={chipSpacing}
-                          label={[
-                            t.t(lang, (s) => s.components.flowsTable.parent),
-                          ]}
-                          size="small"
-                          color="primary"
-                        />
-                      )}
                     </TableCell>
                   );
                 default:
@@ -529,7 +470,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     data,
   }: {
     lang: LanguageKey;
-    data: flows.SearchFlowsResult;
+    data: flows.SearchFlowsGraphQLResult;
   }) => {
     return (
       <Table size="small">
@@ -598,7 +539,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     flowList,
   }: {
     lang: LanguageKey;
-    data: flows.SearchFlowsResult;
+    data: flows.SearchFlowsGraphQLResult;
     flowList?: flows.FlowList;
   }) => {
     if (flowList === 'pending') {
@@ -622,10 +563,7 @@ export default function FlowsTable(props: FlowsTableProps) {
             <TableComponent lang={lang} data={data} />
             <RejectPendingFlowsButton
               color="primary"
-              text={t.t(
-                lang,
-                (s) => s.components.flowsTable.rejectPendingFlows
-              )}
+              text="Reject Selected Flows"
             />
           </Form>
         </Formik>
@@ -653,14 +591,14 @@ export default function FlowsTable(props: FlowsTableProps) {
                   <Tooltip
                     key={activeFilter.fieldName}
                     title={
-                      <div style={{ textAlign: 'start', width: 'auto' }}>
+                      <div style={{ textAlign: 'left', width: 'auto' }}>
                         {activeFilter.displayValue
                           .split('<||>')
                           .map((filter) => (
                             <li
                               key={filter}
                               style={{
-                                textAlign: 'start',
+                                textAlign: 'left',
                                 marginTop: '0',
                                 marginBottom: '0',
                                 listStyle:
@@ -684,16 +622,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       }}
                       label={
                         <div>
-                          <span>
-                            {t.t(
-                              lang,
-                              (s) =>
-                                s.components.flowsFilter.filters[
-                                  activeFilter.label
-                                ]
-                            )}
-                            :
-                          </span>
+                          <span>{activeFilter.label}: </span>
                           <div
                             style={{
                               display: 'inline-block',
@@ -705,8 +634,8 @@ export default function FlowsTable(props: FlowsTableProps) {
                               .map((filter, index) => (
                                 <ChipFilterValues key={index}>
                                   <EllipsisText maxWidth={400}>
-                                    {/\[(.*)\]/.test(filter) // We do this in order to shorten organization names
-                                      ? filter.match(/\[(.*)\]/)?.[1]
+                                    {/\[.*\]/.test(filter) // We do this in order to shorten organization names
+                                      ? filter.match(/\[.*\]/)?.[0]
                                       : filter}
                                   </EllipsisText>
                                 </ChipFilterValues>
@@ -721,7 +650,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                           activeFilter.fieldName as keyof FlowsFilterValues
                         )
                       }
-                      deleteIcon={<CancelRoundedIcon sx={tw`-ms-1! me-1!`} />}
+                      deleteIcon={<CancelRoundedIcon />}
                     />
                   </Tooltip>
                 ))}
@@ -778,21 +707,6 @@ export default function FlowsTable(props: FlowsTableProps) {
                           width: '400px',
                           height: 'fit-content',
                         }}
-                        children={
-                          <Alert
-                            severity="info"
-                            onClose={handleTableSettingsInfoClose}
-                            sx={{
-                              display: tableInfoDisplay ? 'flex' : 'none',
-                              ...tw`mx-8 mt-4`,
-                            }}
-                          >
-                            {t.t(
-                              lang,
-                              (s) => s.components.flowsTable.tableSettings.info
-                            )}
-                          </Alert>
-                        }
                       />
                     </Box>
                   </Modal>
@@ -800,7 +714,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                     sx={{ display: 'block' }}
                     rowsPerPageOptions={rowsPerPageOptions}
                     component="div"
-                    count={parseInt(data.flowCount)}
+                    count={data.searchFlows.total}
                     rowsPerPage={query.rowsPerPage}
                     page={query.page}
                     onPageChange={handleChangePage}
@@ -831,7 +745,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                 data-test="flows-table-pagination"
                 rowsPerPageOptions={rowsPerPageOptions}
                 component="div"
-                count={parseInt(data.flowCount)}
+                count={data.searchFlows.total}
                 rowsPerPage={query.rowsPerPage}
                 page={query.page}
                 onPageChange={handleChangePage}

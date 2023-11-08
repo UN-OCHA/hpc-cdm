@@ -48,3 +48,38 @@ export const hashFileInBrowser = async (data: ArrayBuffer): Promise<string> => {
   const digest = await crypto.subtle.digest('SHA-256', data);
   return arrayBufferToHex(digest);
 };
+
+export const setLocalStorageItem = <T, K extends string>(
+  key: K,
+  value: T
+): void => {
+  try {
+    const serializedValue = JSON.stringify(value);
+    localStorage.setItem(key, serializedValue);
+  } catch (error) {
+    console.error(`Error setting ${key} in localStorage: ${error}`);
+  }
+};
+
+export const getLocalStorageItem = <T, K extends string>(
+  key: K,
+  defaultValue: T
+): T => {
+  try {
+    const item = localStorage.getItem(key);
+    if (item === null) {
+      return defaultValue;
+    }
+
+    const parsedValue = JSON.parse(item) as T;
+    if (typeof parsedValue === 'undefined') {
+      console.error(`Corrupted data in localStorage for ${key}`);
+      return defaultValue;
+    }
+
+    return parsedValue;
+  } catch (error) {
+    console.error(`Error getting ${key} from localStorage: ${error}`);
+    return defaultValue;
+  }
+};

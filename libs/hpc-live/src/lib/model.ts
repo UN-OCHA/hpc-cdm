@@ -17,6 +17,7 @@ import {
   plans,
   projects,
   emergencies,
+  systems,
   globalClusters,
   usageYears,
 } from '@unocha/hpc-data';
@@ -424,6 +425,15 @@ export class LiveModel implements Model {
         }),
     };
   }
+  get systems(): systems.Model {
+    return {
+      getSystems: () =>
+        this.call({
+          pathname: '/v1/external/systems',
+          resultType: systems.GET_SYSTEMS_RESULT,
+        }),
+    };
+  }
   get flows(): flows.Model {
     return {
       getFlow: (params) =>
@@ -478,63 +488,100 @@ export class LiveModel implements Model {
           resultType: flows.GET_FLOW_RESULT,
         }),
       searchFlowsGraphQL: (params) => {
-        const filters = params.flowSearch.filters;
-        const filtersParams = `{${
-          filters?.flowID ? `id:"${params.flowSearch.filters?.flowID}"` : ''
-        }${
-          filters?.amountUSD
-            ? `, amountUSD:${params.flowSearch.filters?.amountUSD}`
-            : ''
-        }}`;
-        const query = `{
-          searchFlow(offset: ${params.flowSearch.offset}, limit: ${
-          params.flowSearch.limit
-        }${params.flowSearch.filters ? `, filters:${filtersParams}` : ''}
-        ){
-            createdAt
-            updatedAt
-            deletedAt 
-            id 
-            versionID 
-            amountUSD 
-            flowDate 
-            decisionDate 
-            firstReportedDate
-            budgetYear 
-            origAmount 
-            origCurrency 
-            exchangeRate 
-            activeStatus 
-            newMoney 
-            restricted 
-            description 
-            notes 
-            versionStartDate 
-            versionEndDate 
-            createdBy 
-            lastUpdatedBy 
-            flowObjects{ 
-              source{ 
-                organizations{
-                  id
-                  name
-                } 
-              } 
-              destination{
-                organizations{
-                  id
-                  name
+        const query = `query {
+          searchFlows(${params.limit ? 'limit: ' + params.limit : ''}, ${
+          params.sortOrder ? 'sortOrder: ' + '"' + params.sortOrder + '"' : ''
+        }, ${
+          params.sortField ? 'sortField: ' + '"' + params.sortField + '"' : ''
+        }) {
+            total
+            flows {
+              id
+              updatedAt
+              amountUSD
+              versionID
+              activeStatus
+              restricted
+              categories {
+                id
+                name
+                group
+                createdAt
+                updatedAt
+                description
+                parentID
+                code
+                includeTotals
+                categoryRef {
+                  objectID
+                  versionID
+                  objectType
+                  categoryID
+                  updatedAt
                 }
-                locations{
-                  id
-                  name 
-                } 
-                plans{
-                  name     
-                  years 
-                }  
-              }  
-            }  
+              }
+        
+              organizations {
+                id
+                name
+                refDirection
+              }
+        
+              plans {
+                id
+                name
+              }
+        
+              usageYears {
+                year
+                direction
+              }
+              childIDs
+              parentIDs
+              origAmount
+              origCurrency
+              locations{
+                id
+                name
+              }
+              externalReferences {
+                systemID
+                flowID
+                externalRecordID
+                externalRecordDate
+                versionID
+                createdAt
+                updatedAt
+              }
+              reportDetails {
+                id
+                flowID
+                versionID
+                contactInfo
+                refCode
+                organizationID
+                source
+                date
+                verified
+                updatedAt
+                createdAt
+              }
+              parkedParentSource{
+                orgName
+                organization
+              }
+              cursor
+            }
+        
+            startCursor
+        
+            hasNextPage
+        
+            endCursor
+        
+            hasPreviousPage
+        
+            pageSize
           }
         }`;
         return this.call({

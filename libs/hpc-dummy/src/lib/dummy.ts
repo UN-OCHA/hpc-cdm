@@ -736,7 +736,7 @@ export class Dummy {
         ),
         searchFlowsGraphQL: dummyEndpoint(
           'flows.searchFlowsGraphQL',
-          async (params: flows.SearchFlowsParams) => {
+          async (params: flows.SearchFlowsGraphQlParams) => {
             throw new errors.NotFoundError();
           }
         ),
@@ -1945,6 +1945,14 @@ export class Dummy {
             return this.getAssignmentResult(assignmentId);
           }
         ),
+      },
+      systems: {
+        getSystems: dummyEndpoint('external.systems', async () => [
+          { systemID: 'EDRIS' },
+          { systemID: 'IATI' },
+          { systemID: 'CERF' },
+          { systemID: 'OCT' },
+        ]),
       },
       usageYears: {
         getUsageYears: dummyEndpoint(

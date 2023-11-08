@@ -1,12 +1,41 @@
 import { categories, flows } from '@unocha/hpc-data';
 import { FlowsFilterValues } from '../components/filter-flows-table';
 import { ActiveFilter, ParsedFilters } from '../components/flows-table';
-import {
-  camelCaseToTitle,
-  formValueToID,
-  formValueToLabel,
-} from './map-functions';
+import { formValueToID, formValueToLabel } from './map-functions';
 import { PendingFlowsFilterValues } from '../components/filter-pending-flows-table';
+import { Strings } from '../../i18n/iface';
+
+export const MAP_FILTER_VALUES_TO_I18: Record<
+  keyof FlowsFilterValues | keyof PendingFlowsFilterValues,
+  keyof Strings['components']['flowsFilter']['filters']
+> = {
+  amountUSD: 'amountUSD',
+  destinationCountries: 'countries',
+  destinationEmergencies: 'emergencies',
+  destinationGlobalClusters: 'globalClusters',
+  destinationOrganizations: 'organizations',
+  destinationPlans: 'plans',
+  destinationProjects: 'projects',
+  destinationUsageYears: 'usageYears',
+  sourceCountries: 'countries',
+  sourceEmergencies: 'emergencies',
+  sourceGlobalClusters: 'globalClusters',
+  sourceOrganizations: 'organizations',
+  sourcePlans: 'plans',
+  sourceProjects: 'projects',
+  sourceUsageYears: 'usageYears',
+  flowActiveStatus: 'flowActiveStatus',
+  dataProvider: 'dataProvider',
+  flowID: 'flowID',
+  flowLegacyID: 'flowLegacyID',
+  flowStatus: 'flowStatus',
+  flowType: 'flowType',
+  includeChildrenOfParkedFlows: 'includeChildrenParkedFlows',
+  keywords: 'keywords',
+  reporterRefCode: 'reporterReferenceCode',
+  sourceSystemID: 'sourceSystemID',
+  status: 'status',
+};
 
 export const parseFilters = (
   filters: FlowsFilterValues | PendingFlowsFilterValues
@@ -38,6 +67,8 @@ export const parseFilters = (
         res.flowActiveStatus = {
           activeStatus: { name: filters[key] as string },
         };
+      } else if ((key as keyof PendingFlowsFilterValues) === 'dataProvider') {
+        res.dataProvider = { systemID: filters[key] as string };
       } else {
         res[key as keyof ParsedFilters] = filters[key] as any;
       }
@@ -231,7 +262,7 @@ export const parseActiveFilters = (
       }
       activeFormValues[key] = fieldValue as any;
       attributes.push({
-        label: camelCaseToTitle(key),
+        label: MAP_FILTER_VALUES_TO_I18[key],
         fieldName: key,
         displayValue: displayValue,
         value: fieldValue,

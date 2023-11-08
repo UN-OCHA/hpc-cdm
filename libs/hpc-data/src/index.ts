@@ -1,6 +1,7 @@
 import * as access from './lib/access';
 import * as categories from './lib/categories';
 import * as emergencies from './lib/emergencies';
+import * as systems from './lib/systems';
 import * as errors from './lib/errors';
 import * as flows from './lib/flows';
 import * as forms from './lib/forms';
@@ -20,6 +21,7 @@ export interface Model {
   projects: projects.Model;
   plans: plans.Model;
   globalClusters: globalClusters.Model;
+  systems: systems.Model;
   emergencies: emergencies.Model;
   flows: flows.Model;
   locations: locations.Model;
@@ -45,4 +47,5 @@ export {
   reportingWindows,
   usageYears,
   util,
+  systems,
 };

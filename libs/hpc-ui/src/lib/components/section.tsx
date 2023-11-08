@@ -18,6 +18,7 @@ const SectionTitle = styled.summary(
   duration-500
   list-none
   cursor-pointer
+  [&::-webkit-details-marker]:hidden
   `,
     type === 'primary'
       ? tw`flex

@@ -12,9 +12,11 @@ import {
   parseActiveFilters,
   parseInitialValues,
 } from '../utils/parse-filters';
+import { LanguageKey, t } from '../../i18n';
 
 interface Props {
   environment: Environment;
+  lang: LanguageKey;
   query: Query;
   setQuery: (newQuery: Query) => void;
 }
@@ -79,7 +81,7 @@ justify-end
 gap-x-4 
 `;
 export const FilterFlowsTable = (props: Props) => {
-  const { environment, setQuery, query } = props;
+  const { environment, setQuery, query, lang } = props;
   const FORM_VALIDATION = object().shape({
     flowID: number()
       .positive()
@@ -140,7 +142,7 @@ export const FilterFlowsTable = (props: Props) => {
     });
   };
   return (
-    <C.SearchFilter title="Filters">
+    <C.SearchFilter title={t.t(lang, (s) => s.components.flowsFilter.title)}>
       <Formik
         enableReinitialize
         initialValues={parseInitialValues(
@@ -153,45 +155,101 @@ export const FilterFlowsTable = (props: Props) => {
         {({ resetForm }) => (
           <Form>
             <StyledDiv>
-              <C.ButtonSubmit color="primary" text="Search" />
+              <C.ButtonSubmit
+                color="primary"
+                text={t.t(lang, (s) => s.components.flowsFilter.button.primary)}
+              />
               <C.Button
                 color="neutral"
                 onClick={() => handleResetForm(resetForm)}
-                text="Clear Fields"
+                text={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.button.secondary
+                )}
               />
             </StyledDiv>
-            <C.Section title="Flow Details">
-              <C.TextFieldWrapper label="Flow ID" name="flowID" type="number" />
+            <C.Section
+              title={t.t(
+                lang,
+                (s) => s.components.flowsFilter.filters.flowDetails
+              )}
+            >
               <C.TextFieldWrapper
-                label="Amount USD"
+                label={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.filters.flowID
+                )}
+                name="flowID"
+                type="number"
+              />
+              <C.TextFieldWrapper
+                label={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.filters.amountUSD
+                )}
                 name="amountUSD"
                 type="currency"
               />
               <C.AsyncAutocompleteSelect
-                label="Keywords"
+                label={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.filters.keywords
+                )}
                 name="keywords"
                 fnPromise={environment.model.categories.getCategories}
                 category="keywords"
                 isMulti
                 isAutocompleteAPI={false}
               />
-              <C.Section title="Show More" type="secondary">
+              <C.Section
+                title={t.t(lang, (s) => s.components.flowsFilter.showMore)}
+                type="secondary"
+              >
                 <C.AsyncSingleSelect
-                  label="Flow Status"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.flowStatus
+                  )}
                   name="flowStatus"
-                  fnPromise={environment.model.categories.getCategories}
-                  category="flowStatus"
+                  fnPromise={async () => {
+                    const response =
+                      await environment.model.categories.getCategories({
+                        query: 'flowStatus',
+                      });
+                    return response.map((responseValue) => {
+                      return {
+                        label: responseValue.name,
+                        id: responseValue.id,
+                      };
+                    });
+                  }}
                   hasNameValue
                 />
                 <C.AsyncSingleSelect
-                  label="Flow Type"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.flowType
+                  )}
                   name="flowType"
-                  fnPromise={environment.model.categories.getCategories}
-                  category="flowType"
+                  fnPromise={async () => {
+                    const response =
+                      await environment.model.categories.getCategories({
+                        query: 'flowType',
+                      });
+                    return response.map((responseValue) => {
+                      return {
+                        label: responseValue.name,
+                        id: responseValue.id,
+                      };
+                    });
+                  }}
                   hasNameValue
                 />
                 <C.SingleSelect
-                  label="Flow Active Status"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.flowActiveStatus
+                  )}
                   name="flowActiveStatus"
                   options={[
                     { name: 'Active', value: 'Active' },
@@ -200,25 +258,43 @@ export const FilterFlowsTable = (props: Props) => {
                   ]}
                 />
                 <C.TextFieldWrapper
-                  label="Reporter Reference Code"
+                  label={t.t(
+                    lang,
+                    (s) =>
+                      s.components.flowsFilter.filters.reporterReferenceCode
+                  )}
                   name="reporterRefCode"
                   type="number"
                 />
                 <C.TextFieldWrapper
-                  label="Source System ID"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.sourceSystemID
+                  )}
                   name="sourceSystemID"
                   type="number"
                 />
                 <C.TextFieldWrapper
-                  label="Flow Legacy ID"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.flowLegacyID
+                  )}
                   name="flowLegacyID"
                   type="number"
                 />
               </C.Section>
             </C.Section>
-            <C.Section title="Source Details">
+            <C.Section
+              title={t.t(
+                lang,
+                (s) => s.components.flowsFilter.filters.sourceDetails
+              )}
+            >
               <C.AsyncAutocompleteSelect
-                label="Organization(s)"
+                label={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.filters.organizations
+                )}
                 name="sourceOrganizations"
                 fnPromise={
                   environment.model.organizations.getAutocompleteOrganizations
@@ -226,41 +302,62 @@ export const FilterFlowsTable = (props: Props) => {
                 isMulti
               />
               <C.AsyncAutocompleteSelect
-                label="Country"
+                label={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.filters.countries
+                )}
                 name="sourceCountries"
                 fnPromise={environment.model.locations.getAutocompleteLocations}
                 isMulti
               />
 
               <C.AsyncAutocompleteSelect
-                label="Usage Year(s)"
+                label={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.filters.usageYears
+                )}
                 name="sourceUsageYears"
                 fnPromise={environment.model.usageYears.getUsageYears}
                 isMulti
                 isAutocompleteAPI={false}
               />
-              <C.Section title="Show more" type="secondary">
+              <C.Section
+                title={t.t(lang, (s) => s.components.flowsFilter.showMore)}
+                type="secondary"
+              >
                 <C.AsyncAutocompleteSelect
-                  label="Project(s)"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.projects
+                  )}
                   name="sourceProjects"
                   fnPromise={environment.model.projects.getAutocompleteProjects}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
-                  label="Plan(s)"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.plans
+                  )}
                   name="sourcePlans"
                   fnPromise={environment.model.plans.getAutocompletePlans}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
-                  label="Global Cluster(s)"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.globalClusters
+                  )}
                   name="sourceGlobalClusters"
                   fnPromise={environment.model.globalClusters.getGlobalClusters}
                   isMulti
                   isAutocompleteAPI={false}
                 />
                 <C.AsyncAutocompleteSelect
-                  label="Emergency(ies)"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.emergencies
+                  )}
                   name="sourceEmergencies"
                   fnPromise={
                     environment.model.emergencies.getAutocompleteEmergencies
@@ -269,9 +366,17 @@ export const FilterFlowsTable = (props: Props) => {
                 />
               </C.Section>
             </C.Section>
-            <C.Section title="Destination Details">
+            <C.Section
+              title={t.t(
+                lang,
+                (s) => s.components.flowsFilter.filters.destinationDetails
+              )}
+            >
               <C.AsyncAutocompleteSelect
-                label="Organization(s)"
+                label={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.filters.organizations
+                )}
                 name="destinationOrganizations"
                 fnPromise={
                   environment.model.organizations.getAutocompleteOrganizations
@@ -279,41 +384,62 @@ export const FilterFlowsTable = (props: Props) => {
                 isMulti
               />
               <C.AsyncAutocompleteSelect
-                label="Country"
+                label={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.filters.countries
+                )}
                 name="destinationCountries"
                 fnPromise={environment.model.locations.getAutocompleteLocations}
                 isMulti
               />
 
               <C.AsyncAutocompleteSelect
-                label="Usage Year(s)"
+                label={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.filters.usageYears
+                )}
                 name="destinationUsageYears"
                 fnPromise={environment.model.usageYears.getUsageYears}
                 isMulti
                 isAutocompleteAPI={false}
               />
-              <C.Section title="Show more" type="secondary">
+              <C.Section
+                title={t.t(lang, (s) => s.components.flowsFilter.showMore)}
+                type="secondary"
+              >
                 <C.AsyncAutocompleteSelect
-                  label="Project(s)"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.projects
+                  )}
                   name="destinationProjects"
                   fnPromise={environment.model.projects.getAutocompleteProjects}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
-                  label="Plan(s)"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.plans
+                  )}
                   name="destinationPlans"
                   fnPromise={environment.model.plans.getAutocompletePlans}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
-                  label="Global Cluster(s)"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.globalClusters
+                  )}
                   name="destinationGlobalClusters"
                   fnPromise={environment.model.globalClusters.getGlobalClusters}
                   isMulti
                   isAutocompleteAPI={false}
                 />
                 <C.AsyncAutocompleteSelect
-                  label="Emergency(ies)"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.flowsFilter.filters.emergencies
+                  )}
                   name="destinationEmergencies"
                   fnPromise={
                     environment.model.emergencies.getAutocompleteEmergencies
@@ -323,16 +449,26 @@ export const FilterFlowsTable = (props: Props) => {
               </C.Section>
             </C.Section>
             <C.CheckBox
-              label="Include children of matching parked flows"
+              label={t.t(
+                lang,
+                (s) =>
+                  s.components.flowsFilter.filters.includeChildrenParkedFlows
+              )}
               name="includeChildrenOfParkedFlows"
               size="small"
             />
             <StyledDiv>
-              <C.ButtonSubmit color="primary" text="Search" />
+              <C.ButtonSubmit
+                color="primary"
+                text={t.t(lang, (s) => s.components.flowsFilter.button.primary)}
+              />
               <C.Button
                 color="neutral"
                 onClick={() => handleResetForm(resetForm)}
-                text="Clear Fields"
+                text={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.button.secondary
+                )}
               />
             </StyledDiv>
           </Form>

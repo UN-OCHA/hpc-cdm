@@ -1,5 +1,5 @@
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { Paper, Switch, Typography } from '@mui/material';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import tw from 'twin.macro';
@@ -7,20 +7,29 @@ import { ButtonSubmit } from './button';
 
 export interface DraggableListProps {
   title: string;
-  possibleValues: string[];
-  activeValues: string[];
+  queryValues: DraggableListItemProps[];
+  buttonText: string;
+  onClick: (elements: DraggableListItemProps[]) => any;
   sx?: React.CSSProperties;
   innerRef?: React.ForwardedRef<HTMLDivElement>;
   elevation?: number;
+  children?: ReactNode;
 }
 
-type DraggableListItemProps = { value: string; active: boolean };
+type DraggableListItemProps = {
+  id: number;
+  displayLabel: string;
+  active: boolean;
+};
 
 const PaperContainer = tw(Paper)`
-p-8
+pt-8
+relative
 `;
 const StyledDiv = tw.div`
 mt-12
+pb-4
+px-8
 flex
 flex-col
 `;
@@ -36,7 +45,7 @@ flex items-center gap-x-4
 `;
 
 const SaveButtonWrapper = tw.div`
-mt-4 text-end
+py-4 px-8 text-end sticky bg-white bottom-0 shadow-md shadow-black
 `;
 const DraggableListItem = ({
   item,
@@ -48,9 +57,9 @@ const DraggableListItem = ({
   const [active, setActive] = useState(item.active);
   return (
     <Draggable
-      draggableId={item.value}
+      draggableId={item.id.toString()}
       index={index}
-      key={item.value}
+      key={item.id}
       isDragDisabled={!active}
     >
       {(provided) => (
@@ -61,7 +70,7 @@ const DraggableListItem = ({
         >
           <DragIconContainer>
             <DragIndicatorIcon color={active ? 'primary' : 'disabled'} />
-            <TextContainer>{item.value}</TextContainer>
+            <TextContainer>{item.displayLabel}</TextContainer>
           </DragIconContainer>
           <Switch
             color="primary"
@@ -90,20 +99,16 @@ const reorder = (
 };
 const DraggableList = ({
   title,
-  possibleValues,
-  activeValues,
+  queryValues,
+  buttonText,
+  onClick,
   sx,
   innerRef,
   elevation,
+  children,
 }: DraggableListProps) => {
-  const [values, setValues] = React.useState<DraggableListItemProps[]>(
-    possibleValues.map((possibleValue) => {
-      return {
-        value: possibleValue,
-        active: activeValues.includes(possibleValue),
-      };
-    })
-  );
+  const [values, setValues] =
+    React.useState<DraggableListItemProps[]>(queryValues);
   const onDragEnd = (result: any) => {
     if (!result.destination) {
       return;
@@ -120,29 +125,28 @@ const DraggableList = ({
   return (
     <PaperContainer ref={innerRef} sx={sx} elevation={elevation}>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Typography variant="h5">Table Settings</Typography>
+        <Typography sx={tw`px-8`} variant="h5">
+          {title}
+        </Typography>
+        {children}
         <Droppable droppableId={title.replace(' ', '').toLowerCase()}>
           {(provided) => (
             <StyledDiv {...provided.droppableProps} ref={provided.innerRef}>
               {values.map((value, index) => (
-                <DraggableListItem
-                  item={value}
-                  index={index}
-                  key={value.value}
-                />
+                <DraggableListItem item={value} index={index} key={value.id} />
               ))}
               {provided.placeholder}
             </StyledDiv>
           )}
         </Droppable>
-        <SaveButtonWrapper>
-          <ButtonSubmit
-            onClick={() => console.log(values)}
-            color="primary"
-            text="Save"
-          />
-        </SaveButtonWrapper>
       </DragDropContext>
+      <SaveButtonWrapper>
+        <ButtonSubmit
+          onClick={() => onClick(values)}
+          color="primary"
+          text={buttonText}
+        />
+      </SaveButtonWrapper>
     </PaperContainer>
   );
 };

@@ -1,0 +1,133 @@
+{
+  "title": "FTS Admin",
+  "user": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión"
+  },
+  "errors": {
+    "unableToLoadFTSAdmin": "No se pudo cargar el FTS Admin"
+  },
+  "common": {
+    "devEnvironmentWarnings": {
+      "dummy": "Esta es una instancia de demostración del FTS Admin. La información que ingrese aquí solo se almacenará en su navegador y no se enviará a nuestro servidor",
+      "dev": "Esta es una instancia de prueba del FTS Admin. La información que ingrese aquí se eliminará periódicamente."
+    }
+  },
+  "components": {
+    "appTitle": {
+      "primary": "Módulo de Datos de FTS"
+    },
+    "acceptableUseNotification": {
+      "login": "Haga clic aquí para iniciar sesión",
+      "title": "Aviso de Uso Aceptable",
+      "p1": "El acceso no autorizado a este Sistema de Computadoras de las Naciones Unidas está prohibido según el ST/SGB/2004/15 (\"Uso de recursos de tecnología de la información y comunicación y datos\" del 29 de noviembre de 2004).",
+      "p2": "Los usuarios autorizados deben asegurarse de que su uso de los recursos de Tecnología de la Información y Comunicación (TIC) y los datos de TIC sea consistente con sus obligaciones como miembros del personal o cualquier otra obligación que pueda aplicarse a ellos.",
+      "p3": "Todo uso de los recursos de TIC y datos de TIC está sujeto a monitoreo e investigación según lo establecido en ST/SGB/2004/15.",
+      "p4": "El uso de este sistema por parte de cualquier usuario, autorizado o no autorizado, constituye el consentimiento a las regulaciones y reglas aplicables de las Naciones Unidas."
+    },
+    "dialogs": {
+      "okay": "Confirmar",
+      "cancel": "Cancelar"
+    },
+    "notFound": {
+      "title": "Página no encontrada",
+      "info": "No pudimos encontrar la página que estabas buscando",
+      "back": "Volver"
+    },
+    "loader": {
+      "loading": "Cargando...",
+      "error": "Error:",
+      "retry": "Reintentar"
+    },
+    "unsupportedBrowser": {
+      "title": "Navegador no compatible",
+      "info": "Lamentablemente, tu navegador actual no es compatible. Cambia a Firefox o Google Chrome. Para hacerlo, simplemente copia la dirección del formulario (URL) de arriba, luego abre Firefox o Chrome y pega la dirección en el navegador."
+    },
+    "flowsTable": {
+      "headers": {
+        "id": "ID",
+        "status": "Estado",
+        "updatedCreated": "Actualizado/ Creado",
+        "dataProvider": "Proveedor de datos",
+        "amountUSD": "Cantidad USD",
+        "sourceOrganization": "Organización de origen",
+        "destinationOrganization": "Organización de destino",
+        "destinationPlan": "Plan de destino",
+        "destinationCountry": "País de destino",
+        "destinationYear": "Año de destino",
+        "details": "Detalles"
+      },
+      "update": "Actualizar",
+      "new": "Nuevo",
+      "restricted": "Restringido",
+      "inactive": "Inactivo",
+      "child": "Hijo",
+      "parent": "Padre",
+      "notFound": {
+        "title": "Flujos no encontrados",
+        "info": "No pudimos cargar los flujos"
+      },
+      "reportTooltip": "informado por {organization} el {date} a través de {channel}",
+      "parkedSource": "Origen estacionado",
+      "sortBy": "Ordenar por",
+      "rejectPendingFlows": "Rechazar flujos pendientes",
+      "tableSettings": {
+        "title": "Configuración de la tabla",
+        "save": "Guardar",
+        "info": "Salir sin pulsar 'Guardar' no actualizará la tabla"
+      }
+    },
+    "flowsFilter": {
+      "title": "Filtros",
+      "button": {
+        "primary": "Buscar",
+        "secondary": "Borrar campos"
+      },
+      "filters": {
+        "flowDetails": "Detalles del flujo",
+        "sourceDetails": "Detalles del origen",
+        "destinationDetails": "Detalles del destino",
+        "includeChildrenParkedFlows": "Incluir hijos de flujos estacionados coincidentes",
+        "flowID": "ID del flujo",
+        "amountUSD": "Monto en USD",
+        "keywords": "Palabras clave",
+        "flowStatus": "Estado del flujo",
+        "flowType": "Tipo de flujo",
+        "flowActiveStatus": "Estado activo del flujo",
+        "reporterReferenceCode": "Código de referencia del informante",
+        "sourceSystemID": "ID del sistema de origen",
+        "flowLegacyID": "ID del flujo heredado",
+        "organizations": "Organización(es)",
+        "countries": "País(es)",
+        "usageYears": "Año(s) de uso",
+        "projects": "Proyecto(s)",
+        "plans": "Plan(es)",
+        "globalClusters": "Grupo(s) global(es)",
+        "emergencies": "Emergencia(s)",
+        "dataProvider": "Proveedor de datos",
+        "details": "Detalles",
+        "status": "Estado"
+      },
+      "showMore": "Ver más",
+      "tooltips": {
+        "filters": "Filtros"
+      }
+    }
+  },
+  "navigation": {
+    "flows": "Flujos",
+    "pendingFlows": "Flujos Pendientes",
+    "rpm": "Módulo de Planificación de Respuesta",
+    "prism": "Sistema de Proyectos en Línea",
+    "ftsWebsite": "Sitio web de FTS",
+    "help": "Ayuda"
+  },
+  "routes": {
+    "flows": {
+      "title": "Buscar flujos de financiamiento"
+    },
+    "pendingFlows": {
+      "title": "Buscar flujos pendientes"
+    }
+  }
+}

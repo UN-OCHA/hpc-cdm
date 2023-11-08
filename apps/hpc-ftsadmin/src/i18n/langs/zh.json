@@ -1,0 +1,133 @@
+{
+  "title": "FTS管理",
+  "user": {
+    "login": "登录",
+    "logout": "登出"
+  },
+  "errors": {
+    "unableToLoadFTSAdmin": "无法加载FTS管理"
+  },
+  "common": {
+    "devEnvironmentWarnings": {
+      "dummy": "这是FTS管理的演示实例，您在此输入的信息将仅存储在您的浏览器中，不会发送到我们的服务器",
+      "dev": "这是FTS管理的测试实例，您在此输入的信息将定期删除。"
+    }
+  },
+  "components": {
+    "appTitle": {
+      "primary": "FTS数据模块"
+    },
+    "acceptableUseNotification": {
+      "login": "点击这里登录",
+      "title": "可接受使用通知",
+      "p1": "未经授权访问联合国计算机系统，违反了ST/SGB/2004/15（2004年11月29日的“信息和通信技术资源和数据的使用”）。",
+      "p2": "授权用户应确保他们对信息和通信技术（ICT）资源和ICT数据的使用与他们作为工作人员的义务或其他可能适用于他们的义务一致。",
+      "p3": "所有对ICT资源和ICT数据的使用都受ST/SGB/2004/15规定的监测和调查的监督。",
+      "p4": "任何用户，无论是否经过授权，使用本系统即表示同意适用的联合国法规和规则。"
+    },
+    "dialogs": {
+      "okay": "确认",
+      "cancel": "取消"
+    },
+    "notFound": {
+      "title": "页面未找到",
+      "info": "我们无法找到您寻找的页面",
+      "back": "返回"
+    },
+    "loader": {
+      "loading": "加载中...",
+      "error": "错误：",
+      "retry": "重试"
+    },
+    "unsupportedBrowser": {
+      "title": "不支持的浏览器！",
+      "info": "很抱歉，您当前的浏览器不受支持。请切换到Firefox或Google Chrome。要做到这一点，只需复制上面的表单地址（URL），然后打开Firefox或Chrome，粘贴该地址到浏览器中。"
+    },
+    "flowsTable": {
+      "headers": {
+        "id": "ID",
+        "status": "状态",
+        "updatedCreated": "已更新/已创建",
+        "dataProvider": "数据提供者",
+        "amountUSD": "金额（美元）",
+        "sourceOrganization": "来源组织",
+        "destinationOrganization": "目标组织",
+        "destinationPlan": "目标计划",
+        "destinationCountry": "目标国家",
+        "destinationYear": "目标年度",
+        "details": "详情"
+      },
+      "update": "更新",
+      "new": "新建",
+      "restricted": "受限制",
+      "inactive": "不活跃",
+      "child": "子级",
+      "parent": "父级",
+      "notFound": {
+        "title": "未找到流程",
+        "info": "我们无法加载流程"
+      },
+      "reportTooltip": "由{organization}于{date}通过{channel}报告",
+      "parkedSource": "停放源",
+      "sortBy": "排序方式",
+      "rejectPendingFlows": "拒绝待处理流程",
+      "tableSettings": {
+        "title": "表格设置",
+        "save": "保存",
+        "info": "未单击“保存”按钮而离开将不会更新表格"
+      }
+    },
+    "flowsFilter": {
+      "title": "筛选",
+      "button": {
+        "primary": "搜索",
+        "secondary": "清除字段"
+      },
+      "filters": {
+        "flowDetails": "流程详情",
+        "sourceDetails": "来源详情",
+        "destinationDetails": "目标详情",
+        "includeChildrenParkedFlows": "包括匹配停放流程的子级",
+        "flowID": "流程ID",
+        "amountUSD": "金额（美元）",
+        "keywords": "关键词",
+        "flowStatus": "流程状态",
+        "flowType": "流程类型",
+        "flowActiveStatus": "流程活动状态",
+        "reporterReferenceCode": "报告参考代码",
+        "sourceSystemID": "来源系统ID",
+        "flowLegacyID": "流程传承ID",
+        "organizations": "组织",
+        "countries": "国家",
+        "usageYears": "使用年度",
+        "projects": "项目",
+        "plans": "计划",
+        "globalClusters": "全球集群",
+        "emergencies": "紧急情况",
+        "dataProvider": "数据提供者",
+        "details": "详情",
+        "status": "状态"
+      },
+      "showMore": "查看更多",
+      "tooltips": {
+        "filters": "筛选"
+      }
+    }
+  },
+  "navigation": {
+    "flows": "流程",
+    "pendingFlows": "待处理流程",
+    "rpm": "响应计划模块",
+    "prism": "在线项目系统",
+    "ftsWebsite": "FTS网站",
+    "help": "帮助"
+  },
+  "routes": {
+    "flows": {
+      "title": "搜索资金流程"
+    },
+    "pendingFlows": {
+      "title": "搜索待处理流程"
+    }
+  }
+}

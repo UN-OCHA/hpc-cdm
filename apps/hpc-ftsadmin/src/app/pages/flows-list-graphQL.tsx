@@ -1,6 +1,6 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
-import FlowsTable, { FlowsTableProps } from '../components/flows-table';
+import { FlowsTableProps } from '../components/flows-table';
 import PageMeta from '../components/page-meta';
 import { AppContext, getEnv } from '../context';
 import tw from 'twin.macro';
@@ -20,6 +20,7 @@ import {
   DEFAULT_TABLE_HEADERS,
   encodeTableHeaders,
 } from '../utils/table-headers';
+import FlowsTableGraphQL from '../components/flows-table-graphQL';
 
 interface Props {
   className?: string;
@@ -92,7 +93,7 @@ export default (props: Props) => {
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.flows.title)}
               </C.PageTitle>
-              <FlowsTable {...flowsTableProps} />
+              <FlowsTableGraphQL {...flowsTableProps} />
             </LandingContainer>
           </Container>
         </div>
