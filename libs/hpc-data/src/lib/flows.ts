@@ -271,11 +271,12 @@ export type SearchFlowsResult = t.TypeOf<typeof SEARCH_FLOWS_RESULT>;
 const FlowLocation = t.type({
   id: t.number,
   name: t.string,
+  direction: t.string,
 });
 
 const FlowOrganization = t.type({
   id: t.number,
-  refDirection: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
+  direction: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
   name: t.string,
 });
 

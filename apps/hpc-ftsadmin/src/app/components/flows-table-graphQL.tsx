@@ -349,7 +349,7 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                     >
                       {row.organizations &&
                         row.organizations
-                          .filter((org) => org.refDirection === 'source')
+                          .filter((org) => org.direction === 'source')
                           .map((org, index) => (
                             <span key={`source_${row.id}_${index}`}>
                               {org.name}
@@ -366,7 +366,7 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                     >
                       {row.organizations &&
                         row.organizations
-                          .filter((org) => org.refDirection === 'destination')
+                          .filter((org) => org.direction === 'destination')
                           .map((org, index) => (
                             <span key={`destination_${row.id}_${index}`}>
                               {org.name}
@@ -395,6 +395,9 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                     >
                       {row.locations?.length
                         ? row.locations
+                            .filter(
+                              (location) => location.direction === 'destination'
+                            )
                             .map((location) => location.name)
                             .join(', ')
                         : '--'}

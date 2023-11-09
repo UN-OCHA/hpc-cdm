@@ -524,7 +524,7 @@ export class LiveModel implements Model {
               organizations {
                 id
                 name
-                refDirection
+                direction
               }
         
               plans {
@@ -543,6 +543,7 @@ export class LiveModel implements Model {
               locations{
                 id
                 name
+                direction
               }
               externalReferences {
                 systemID
