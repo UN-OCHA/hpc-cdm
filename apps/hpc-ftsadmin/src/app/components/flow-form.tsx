@@ -244,6 +244,7 @@ export const FlowForm = (props: Props) => {
                     label="Plan"
                     name="sourcePlans"
                     fnPromise={environment.model.plans.getAutocompletePlans}
+                    isMulti
                   />
                   <C.AsyncAutocompleteSelect
                     label="Project"
@@ -303,6 +304,7 @@ export const FlowForm = (props: Props) => {
                     label="Plan"
                     name="destinationPlans"
                     fnPromise={environment.model.plans.getAutocompletePlans}
+                    isMulti
                   />
                   <C.AsyncAutocompleteSelect
                     label="Emergency(ies)"
