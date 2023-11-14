@@ -3,13 +3,10 @@ import { array, number, object, string } from 'yup';
 import tw from 'twin.macro';
 import React, { useState } from 'react';
 
-import { C } from '@unocha/hpc-ui';
+import { C, dialogs } from '@unocha/hpc-ui';
 import { Environment } from '../../environments/interface';
 import { MdClose, MdAdd } from 'react-icons/md';
 import Fade from '@mui/material/Fade';
-// import { confirm } from 'libs/hpc-ui/src/lib/components/dialogs';
-// import confirm from '@unocha/hpc-ui/src/lib/components/dialogs';
-
 interface Props {
   environment: Environment;
   selectedStep: string;
@@ -91,6 +88,7 @@ mb-[8px]
 `;
 export const FlowForm = (props: Props) => {
   const { environment, selectedStep } = props;
+  const { confirm } = dialogs;
   const [showComponents, setShowComponents] = useState({
     sourceEmergencies: false,
     sourcePlans: false,
@@ -462,7 +460,7 @@ export const FlowForm = (props: Props) => {
               )}
             </StyledFullSection>
           </Fade>
-          {/* <Fade in={selectedStep === 'linkedFlows'}>
+          <Fade in={selectedStep === 'linkedFlows'}>
             <StyledFullSection>
               <C.FormSection title="Linked Flows">
                 <StyledRow>
@@ -499,7 +497,7 @@ export const FlowForm = (props: Props) => {
                 </StyledRow>
               </C.FormSection>
             </StyledFullSection>
-          </Fade> */}
+          </Fade>
           <Fade in={selectedStep === 'reportingDetails'}>
             <StyledFullSection>
               {selectedStep === 'reportingDetails' && (
