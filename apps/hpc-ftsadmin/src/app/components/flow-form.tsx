@@ -6,11 +6,13 @@ import React, { useState } from 'react';
 import { C } from '@unocha/hpc-ui';
 import { Environment } from '../../environments/interface';
 import { MdClose, MdAdd } from 'react-icons/md';
+import Fade from '@mui/material/Fade';
 // import { confirm } from 'libs/hpc-ui/src/lib/components/dialogs';
 // import confirm from '@unocha/hpc-ui/src/lib/components/dialogs';
 
 interface Props {
   environment: Environment;
+  selectedStep: string;
 }
 export interface FormValues {
   amountUSD: string;
@@ -58,13 +60,11 @@ w-1/2
 `;
 const StyledFullSection = tw.div`
 w-full
-mt-4
 `;
 const StyledRow = tw.div`
 flex
 gap-4
 w-full
-mt-4
 `;
 const StyledFormRow = tw.div`
 flex
@@ -90,7 +90,7 @@ mt-[16px]
 mb-[8px]
 `;
 export const FlowForm = (props: Props) => {
-  const { environment } = props;
+  const { environment, selectedStep } = props;
   const [showComponents, setShowComponents] = useState({
     sourceEmergencies: false,
     sourcePlans: false,
@@ -189,500 +189,401 @@ export const FlowForm = (props: Props) => {
     >
       {({ resetForm }) => (
         <Form>
-          <StyledDiv>
-            <C.ButtonSubmit color="primary" text="Create & View All" />
-            <C.Button
-              color="neutral"
-              onClick={() => {
-                return true;
-              }}
-              text="Create"
-            />
-          </StyledDiv>
-          <StyledAnchorDiv>
-            <StyledAnchor href="flows" target="_blank">
-              Find Similar Flows
-            </StyledAnchor>
-          </StyledAnchorDiv>
-          <StyledRow>
-            <StyledHalfSection>
-              <C.FormSection title="Funding Source(s) Ⓢ">
-                <C.AsyncAutocompleteSelect
-                  label="Organization(s)"
-                  name="sourceOrganizations"
-                  fnPromise={
-                    environment.model.organizations.getAutocompleteOrganizations
-                  }
-                  isMulti
-                />
-                <C.AsyncAutocompleteSelect
-                  label="Usage Year(s)"
-                  name="sourceUsageYears"
-                  fnPromise={environment.model.usageYears.getUsageYears}
-                  isMulti
-                  isAutocompleteAPI={false}
-                />
-                <C.AsyncAutocompleteSelect
-                  label="Country(ies) (Admin level 0)"
-                  name="sourceCountries"
-                  fnPromise={
-                    environment.model.locations.getAutocompleteLocations
-                  }
-                  isMulti
-                />
-                {showComponents.sourceEmergencies && (
-                  <StyledFormRow>
-                    <C.AsyncAutocompleteSelect
-                      label="Emergency(ies)"
-                      name="sourceEmergencies"
-                      fnPromise={
-                        environment.model.emergencies.getAutocompleteEmergencies
-                      }
-                      isMulti
-                    />
-                    <C.Button
-                      onClick={() => toggleSection('sourceEmergencies', false)}
-                      color="primary"
-                      startIcon={MdClose}
-                    ></C.Button>
-                  </StyledFormRow>
-                )}
-                {showComponents.sourceGlobalClusters && (
-                  <StyledFormRow>
-                    <C.AsyncAutocompleteSelect
-                      label="Global Cluster(s)"
-                      name="sourceGlobalClusters"
-                      fnPromise={
-                        environment.model.globalClusters.getGlobalClusters
-                      }
-                      isMulti
-                      isAutocompleteAPI={false}
-                    />
-                    <C.Button
-                      onClick={() =>
-                        toggleSection('sourceGlobalClusters', false)
-                      }
-                      color="primary"
-                      startIcon={MdClose}
-                    ></C.Button>
-                  </StyledFormRow>
-                )}
-                {showComponents.sourcePlans && (
-                  <StyledFormRow>
-                    <C.AsyncAutocompleteSelect
-                      label="Plan"
-                      name="sourcePlans"
-                      fnPromise={environment.model.plans.getAutocompletePlans}
-                      isMulti
-                    />
-                    <C.Button
-                      onClick={() => toggleSection('sourcePlans', false)}
-                      color="primary"
-                      startIcon={MdClose}
-                    ></C.Button>
-                  </StyledFormRow>
-                )}
-                {showComponents.sourceProjects && (
-                  <StyledFormRow>
-                    <C.AsyncAutocompleteSelect
-                      label="Project"
-                      name="sourceProjects"
-                      fnPromise={
-                        environment.model.projects
-                          .getAutocompleteProjectsGraphQL
-                      }
-                      isMulti
-                    />
-                    <C.Button
-                      onClick={() => toggleSection('sourceProjects', false)}
-                      color="primary"
-                      startIcon={MdClose}
-                    ></C.Button>
-                  </StyledFormRow>
-                )}
-                <div>
-                  <label>Add:</label>
-                  <StyledFormRow>
-                    {!showComponents.sourceEmergencies && (
-                      <C.Button
-                        onClick={() => toggleSection('sourceEmergencies', true)}
-                        color="primary"
-                        text="Emergency(ies)"
-                      />
-                    )}
-                    {!showComponents.sourceGlobalClusters && (
-                      <C.Button
-                        onClick={() =>
-                          toggleSection('sourceGlobalClusters', true)
-                        }
-                        color="primary"
-                        text="Global cluster(s)"
-                      />
-                    )}
-                    {!showComponents.sourcePlans && (
-                      <C.Button
-                        onClick={() => toggleSection('sourcePlans', true)}
-                        color="primary"
-                        text="Plan(s)"
-                      />
-                    )}
-                    {!showComponents.sourceProjects && (
-                      <C.Button
-                        onClick={() => toggleSection('sourceProjects', true)}
-                        color="primary"
-                        text="Project(s)"
-                      />
-                    )}
-                  </StyledFormRow>
-                </div>
-              </C.FormSection>
-            </StyledHalfSection>
-            <StyledHalfSection>
-              <C.FormSection title="Funding Destination(s) Ⓢ">
-                <C.AsyncAutocompleteSelect
-                  label="Organization(s)"
-                  name="destinationOrganizations"
-                  fnPromise={
-                    environment.model.organizations.getAutocompleteOrganizations
-                  }
-                  isMulti
-                />
-                <C.AsyncAutocompleteSelect
-                  label="Usage Year(s)"
-                  name="destinationUsageYears"
-                  fnPromise={environment.model.usageYears.getUsageYears}
-                  isMulti
-                  isAutocompleteAPI={false}
-                />
-                <C.AsyncAutocompleteSelect
-                  label="Country(ies) (Admin level 0)"
-                  name="destinationCountries"
-                  fnPromise={
-                    environment.model.locations.getAutocompleteLocations
-                  }
-                  isMulti
-                />
-                <C.AsyncAutocompleteSelect
-                  label="Global Cluster(s)"
-                  name="destinationGlobalClusters"
-                  fnPromise={environment.model.globalClusters.getGlobalClusters}
-                  isMulti
-                  isAutocompleteAPI={false}
-                />
-                <C.AsyncAutocompleteSelect
-                  label="Plan"
-                  name="destinationPlans"
-                  fnPromise={environment.model.plans.getAutocompletePlans}
-                  isMulti
-                />
-                {showComponents.destinationEmergencies && (
-                  <StyledFormRow>
-                    <C.AsyncAutocompleteSelect
-                      label="Emergency(ies)"
-                      name="destinationEmergencies"
-                      fnPromise={
-                        environment.model.emergencies.getAutocompleteEmergencies
-                      }
-                      isMulti
-                    />
-                    <C.Button
-                      onClick={() =>
-                        toggleSection('destinationEmergencies', false)
-                      }
-                      color="primary"
-                      startIcon={MdClose}
-                    ></C.Button>
-                  </StyledFormRow>
-                )}
-                {showComponents.destinationProjects && (
-                  <StyledFormRow>
-                    <C.AsyncAutocompleteSelect
-                      label="Project"
-                      name="destinationProjects"
-                      fnPromise={
-                        environment.model.projects.getAutocompleteProjects
-                      }
-                      isMulti
-                    />
-                    <C.Button
-                      onClick={() =>
-                        toggleSection('destinationProjects', false)
-                      }
-                      color="primary"
-                      startIcon={MdClose}
-                    ></C.Button>
-                  </StyledFormRow>
-                )}
-                <div>
-                  <label>Add:</label>
-                  <StyledFormRow>
-                    {!showComponents.destinationEmergencies && (
-                      <C.Button
-                        onClick={() =>
-                          toggleSection('destinationEmergencies', true)
-                        }
-                        color="primary"
-                        text="Emergency(ies)"
-                      />
-                    )}
-                    {!showComponents.destinationProjects && (
-                      <C.Button
-                        onClick={() =>
-                          toggleSection('destinationProjects', true)
-                        }
-                        color="primary"
-                        text="Project(s)"
-                      />
-                    )}
-                  </StyledFormRow>
-                </div>
-              </C.FormSection>
-            </StyledHalfSection>
-          </StyledRow>
-          <StyledFullSection>
-            <C.FormSection title="Flow">
-              <StyledRow>
-                <StyledHalfSection>
-                  <C.CheckBox
-                    label="Is this flow new money?"
-                    name="includeChildrenOfParkedFlows"
-                    size="small"
-                  />
-                  <StyledFormRow>
-                    <C.TextFieldWrapper
-                      label="Funding Amount in USD"
-                      name="amountUSD"
-                      type="currency"
-                    />
-                  </StyledFormRow>
-                  <C.Section title="Original Currency" type="secondary">
-                    <C.TextFieldWrapper
-                      label="Funding Amount (original currency)"
-                      name="amountOriginal"
-                      type="currency"
-                    />
-                    <C.TextFieldWrapper
-                      label="Exchange Rate Used"
-                      name="exchangeRateUsed"
-                      type="text"
-                    />
-                    <StyledAnchorDiv>
-                      <StyledAnchor
-                        href="https://treasury.un.org/operationalrates/OperationalRates.php"
-                        target="_blank"
-                      >
-                        UN Treasury rates
-                      </StyledAnchor>
-                    </StyledAnchorDiv>
-                    <C.Button
-                      onClick={() => {
-                        return true;
-                      }}
-                      color="primary"
-                      text="Calculate the exchange rate"
-                    ></C.Button>
-                  </C.Section>
-                  <C.TextFieldWrapper
-                    label="Funding Flow Description"
-                    placeholder="1-2 sentences for flow name"
-                    name="flowDescription"
-                    multiline
-                    rows={2}
-                    type="text"
-                  />
-                  <StyledFormRow>
-                    <C.DatePicker name="firstReported" label="First Reported" />
-                    <C.DatePicker name="decisionDate" label="Decision Dateⓢ" />
-                    <C.TextFieldWrapper
-                      label="Donor Budget Year"
-                      name="budgetYear"
-                      type="number"
-                    />
-                  </StyledFormRow>
-                </StyledHalfSection>
-                <StyledHalfSection>
-                  <C.AsyncSingleSelect
-                    label="Flow Type"
-                    name="flowType"
-                    fnPromise={environment.model.categories.getCategories}
-                    category="flowType"
-                    hasNameValue
-                  />
-                  <C.AsyncSingleSelect
-                    label="Flow Status"
-                    name="flowStatus"
-                    fnPromise={environment.model.categories.getCategories}
-                    category="flowStatus"
-                    hasNameValue
-                  />
-                  <C.DatePicker name="flowDate" label="Flow Date" />
-                  <C.AsyncSingleSelect
-                    label="Contribution Type"
-                    name="contributionType"
-                    fnPromise={environment.model.categories.getCategories}
-                    category="contributionType"
-                    hasNameValue
-                  />
-                  <C.AsyncSingleSelect
-                    label="Gb Earmarking"
-                    name="earmarkingType"
-                    fnPromise={environment.model.categories.getCategories}
-                    category="earmarkingType"
-                    hasNameValue
-                  />
-                  <C.AsyncSingleSelect
-                    label="Aid Modality"
-                    name="method"
-                    fnPromise={environment.model.categories.getCategories}
-                    category="method"
-                    hasNameValue
-                  />
+          <Fade in={selectedStep === 'fundingSources'}>
+            <StyledFullSection>
+              {selectedStep === 'fundingSources' && (
+                <C.FormSection title="Funding Source(s)">
                   <C.AsyncAutocompleteSelect
-                    label="Keywords"
-                    name="keywords"
-                    fnPromise={environment.model.categories.getCategories}
-                    category="keywords"
-                    isMulti
-                    isAutocompleteAPI={false}
-                  />
-                  <C.AsyncSingleSelect
-                    label="Beneficiary Group"
-                    name="beneficiaryGroup"
-                    fnPromise={environment.model.categories.getCategories}
-                    category="beneficiaryGroup"
-                    hasNameValue
-                  />
-                </StyledHalfSection>
-              </StyledRow>
-              <StyledRow>
-                <C.TextFieldWrapper
-                  label="Notes"
-                  name="notes"
-                  multiline
-                  rows={4}
-                  type="text"
-                />
-              </StyledRow>
-            </C.FormSection>
-          </StyledFullSection>
-          {/* <StyledFullSection>
-            <C.FormSection title="Linked Flows">
-              <StyledRow>
-                <C.Button
-                  onClick={() => {
-                    confirm({
-                      title: 'Confirm Action',
-                      message: 'Are you sure you want to proceed?',
-                      buttonConfirm: 'Yes',
-                      buttonCancel: 'No',
-                    }).then((result: any) => {
-                      if (result) {
-                        console.log('Yes');
-                        // User clicked 'Yes'
-                      } else {
-                        console.log('No');
-                        // User clicked 'No'
-                      }
-                    });
-                    return true;
-                  }}
-                  color="primary"
-                  text="Add Parent Flow"
-                  startIcon={MdAdd}
-                />
-                <C.Button
-                  onClick={() => {
-                    return true;
-                  }}
-                  color="primary"
-                  text="Add Child Flow"
-                  startIcon={MdAdd}
-                />
-              </StyledRow>
-            </C.FormSection>
-          </StyledFullSection> */}
-          <StyledFullSection>
-            <C.FormSection title="Reporting Details">
-              <StyledRow>
-                <StyledHalfSection>
-                  <C.RadioGroup
-                    name="reportSource"
-                    options={[
-                      { value: 'primary', label: 'Primary' },
-                      { value: 'secondary', label: 'Secondary' },
-                    ]}
-                    label="Report Source"
-                    row
-                  />
-                  <C.AsyncAutocompleteSelect
-                    label="Reported By Organization"
-                    name="reportedOrganization"
-                    placeholder="Reported by Organization"
+                    label="Organization(s)"
+                    name="sourceOrganizations"
                     fnPromise={
                       environment.model.organizations
                         .getAutocompleteOrganizations
                     }
+                    isMulti
                   />
-                  <C.AsyncSingleSelect
-                    label="Reported Channel"
-                    name="reportChannel"
-                    fnPromise={environment.model.categories.getCategories}
-                    category="reportChannel"
-                    hasNameValue
+                  <StyledRow>
+                    <StyledHalfSection>
+                      <C.AsyncAutocompleteSelect
+                        label="Usage Year(s)"
+                        name="sourceUsageYears"
+                        fnPromise={environment.model.usageYears.getUsageYears}
+                        isMulti
+                        isAutocompleteAPI={false}
+                      />
+                    </StyledHalfSection>
+                    <StyledHalfSection>
+                      <C.AsyncAutocompleteSelect
+                        label="Country(ies) (Admin level 0)"
+                        name="sourceCountries"
+                        fnPromise={
+                          environment.model.locations.getAutocompleteLocations
+                        }
+                        isMulti
+                      />
+                    </StyledHalfSection>
+                  </StyledRow>
+                  <C.AsyncAutocompleteSelect
+                    label="Emergency(ies)"
+                    name="sourceEmergencies"
+                    fnPromise={
+                      environment.model.emergencies.getAutocompleteEmergencies
+                    }
+                    isMulti
                   />
-                  <C.TextFieldWrapper
-                    label="Source System Record Id"
-                    name="sourceSystemRecordId"
-                    type="text"
+                  <C.AsyncAutocompleteSelect
+                    label="Global Cluster(s)"
+                    name="sourceGlobalClusters"
+                    fnPromise={
+                      environment.model.globalClusters.getGlobalClusters
+                    }
+                    isMulti
+                    isAutocompleteAPI={false}
                   />
-                  <StyledFieldset>
+                  <C.AsyncAutocompleteSelect
+                    label="Plan"
+                    name="sourcePlans"
+                    fnPromise={environment.model.plans.getAutocompletePlans}
+                  />
+                  <C.AsyncAutocompleteSelect
+                    label="Project"
+                    name="sourceProjects"
+                    fnPromise={
+                      environment.model.projects.getAutocompleteProjectsGraphQL
+                    }
+                    isMulti
+                  />
+                </C.FormSection>
+              )}
+            </StyledFullSection>
+          </Fade>
+          <Fade in={selectedStep === 'fundingDestinations'}>
+            <StyledFullSection>
+              {selectedStep === 'fundingDestinations' && (
+                <C.FormSection title="Funding Destination(s)">
+                  <C.AsyncAutocompleteSelect
+                    label="Organization(s)"
+                    name="destinationOrganizations"
+                    fnPromise={
+                      environment.model.organizations
+                        .getAutocompleteOrganizations
+                    }
+                    isMulti
+                  />
+                  <StyledRow>
+                    <StyledHalfSection>
+                      <C.AsyncAutocompleteSelect
+                        label="Usage Year(s)"
+                        name="destinationUsageYears"
+                        fnPromise={environment.model.usageYears.getUsageYears}
+                        isMulti
+                        isAutocompleteAPI={false}
+                      />
+                    </StyledHalfSection>
+                    <StyledHalfSection>
+                      <C.AsyncAutocompleteSelect
+                        label="Country(ies) (Admin level 0)"
+                        name="destinationCountries"
+                        fnPromise={
+                          environment.model.locations.getAutocompleteLocations
+                        }
+                        isMulti
+                      />
+                    </StyledHalfSection>
+                  </StyledRow>
+                  <C.AsyncAutocompleteSelect
+                    label="Global Cluster(s)"
+                    name="destinationGlobalClusters"
+                    fnPromise={
+                      environment.model.globalClusters.getGlobalClusters
+                    }
+                    isMulti
+                  />
+                  <C.AsyncAutocompleteSelect
+                    label="Plan"
+                    name="destinationPlans"
+                    fnPromise={environment.model.plans.getAutocompletePlans}
+                  />
+                  <C.AsyncAutocompleteSelect
+                    label="Emergency(ies)"
+                    name="destinationEmergencies"
+                    fnPromise={
+                      environment.model.emergencies.getAutocompleteEmergencies
+                    }
+                    isMulti
+                  />
+                  <C.AsyncAutocompleteSelect
+                    label="Project"
+                    name="destinationProjects"
+                    fnPromise={
+                      environment.model.projects.getAutocompleteProjects
+                    }
+                    isMulti
+                  />
+                </C.FormSection>
+              )}
+            </StyledFullSection>
+          </Fade>
+          <Fade in={selectedStep === 'flows'}>
+            <StyledFullSection>
+              {selectedStep === 'flows' && (
+                <C.FormSection title="Flow">
+                  <StyledRow>
+                    <StyledHalfSection>
+                      <C.CheckBox
+                        label="Is this flow new money?"
+                        name="includeChildrenOfParkedFlows"
+                        size="small"
+                      />
+                      <StyledFormRow>
+                        <C.TextFieldWrapper
+                          label="Funding Amount in USD"
+                          name="amountUSD"
+                          type="currency"
+                        />
+                      </StyledFormRow>
+                      <C.Section title="Original Currency" type="secondary">
+                        <C.TextFieldWrapper
+                          label="Funding Amount (original currency)"
+                          name="amountOriginal"
+                          type="currency"
+                        />
+                        <C.TextFieldWrapper
+                          label="Exchange Rate Used"
+                          name="exchangeRateUsed"
+                          type="text"
+                        />
+                        <StyledAnchorDiv>
+                          <StyledAnchor
+                            href="https://treasury.un.org/operationalrates/OperationalRates.php"
+                            target="_blank"
+                          >
+                            UN Treasury rates
+                          </StyledAnchor>
+                        </StyledAnchorDiv>
+                        <C.Button
+                          onClick={() => {
+                            return true;
+                          }}
+                          color="primary"
+                          text="Calculate the exchange rate"
+                        ></C.Button>
+                      </C.Section>
+                      <C.TextFieldWrapper
+                        label="Funding Flow Description"
+                        placeholder="1-2 sentences for flow name"
+                        name="flowDescription"
+                        multiline
+                        rows={2}
+                        type="text"
+                      />
+                      <StyledFormRow>
+                        <C.DatePicker
+                          name="firstReported"
+                          label="First Reported"
+                        />
+                        <C.DatePicker
+                          name="decisionDate"
+                          label="Decision Dateⓢ"
+                        />
+                        <C.TextFieldWrapper
+                          label="Donor Budget Year"
+                          name="budgetYear"
+                          type="number"
+                        />
+                      </StyledFormRow>
+                    </StyledHalfSection>
+                    <StyledHalfSection>
+                      <C.AsyncSingleSelect
+                        label="Flow Type"
+                        name="flowType"
+                        fnPromise={environment.model.categories.getCategories}
+                        category="flowType"
+                        hasNameValue
+                      />
+                      <C.AsyncSingleSelect
+                        label="Flow Status"
+                        name="flowStatus"
+                        fnPromise={environment.model.categories.getCategories}
+                        category="flowStatus"
+                        hasNameValue
+                      />
+                      <C.DatePicker name="flowDate" label="Flow Date" />
+                      <C.AsyncSingleSelect
+                        label="Contribution Type"
+                        name="contributionType"
+                        fnPromise={environment.model.categories.getCategories}
+                        category="contributionType"
+                        hasNameValue
+                      />
+                      <C.AsyncSingleSelect
+                        label="Gb Earmarking"
+                        name="earmarkingType"
+                        fnPromise={environment.model.categories.getCategories}
+                        category="earmarkingType"
+                        hasNameValue
+                      />
+                      <C.AsyncSingleSelect
+                        label="Aid Modality"
+                        name="method"
+                        fnPromise={environment.model.categories.getCategories}
+                        category="method"
+                        hasNameValue
+                      />
+                      <C.AsyncAutocompleteSelect
+                        label="Keywords"
+                        name="keywords"
+                        fnPromise={environment.model.categories.getCategories}
+                        category="keywords"
+                        isMulti
+                        isAutocompleteAPI={false}
+                      />
+                      <C.AsyncSingleSelect
+                        label="Beneficiary Group"
+                        name="beneficiaryGroup"
+                        fnPromise={environment.model.categories.getCategories}
+                        category="beneficiaryGroup"
+                        hasNameValue
+                      />
+                    </StyledHalfSection>
+                  </StyledRow>
+                  <StyledRow>
                     <C.TextFieldWrapper
-                      label="Title"
-                      name="reportFileTitle"
+                      label="Notes"
+                      name="notes"
+                      multiline
+                      rows={4}
                       type="text"
                     />
-                    <C.FileUpload />
-                    <C.TextFieldWrapper
-                      label="Title"
-                      name="reportUrlTitle"
-                      type="text"
-                    />
-                    <C.TextFieldWrapper
-                      label="URL"
-                      name="reportUrl"
-                      type="text"
-                    />
-                  </StyledFieldset>
-                </StyledHalfSection>
-                <StyledHalfSection>
-                  <StyledRadioDiv>
-                    <C.RadioGroup
-                      name="verified"
-                      options={[
-                        { value: 'verified', label: 'Verified' },
-                        { value: 'unverified', label: 'Unverified' },
-                      ]}
-                      label="Verified"
-                      row
-                    />
-                  </StyledRadioDiv>
-                  <C.DatePicker name="reportedDate" label="Date Reported" />
-                  <C.TextFieldWrapper
-                    label="Reporter Reference Code"
-                    name="reporterReferenceCode"
-                    type="text"
+                  </StyledRow>
+                </C.FormSection>
+              )}
+            </StyledFullSection>
+          </Fade>
+          {/* <Fade in={selectedStep === 'linkedFlows'}>
+            <StyledFullSection>
+              <C.FormSection title="Linked Flows">
+                <StyledRow>
+                  <C.Button
+                    onClick={() => {
+                      confirm({
+                        title: 'Confirm Action',
+                        message: 'Are you sure you want to proceed?',
+                        buttonConfirm: 'Yes',
+                        buttonCancel: 'No',
+                      }).then((result: any) => {
+                        if (result) {
+                          console.log('Yes');
+                          // User clicked 'Yes'
+                        } else {
+                          console.log('No');
+                          // User clicked 'No'
+                        }
+                      });
+                      return true;
+                    }}
+                    color="primary"
+                    text="Add Parent Flow"
+                    startIcon={MdAdd}
                   />
-                  <C.TextFieldWrapper
-                    label="Reporter Contact Information"
-                    name="reporterContactInformation"
-                    multiline
-                    rows={4}
-                    type="text"
+                  <C.Button
+                    onClick={() => {
+                      return true;
+                    }}
+                    color="primary"
+                    text="Add Child Flow"
+                    startIcon={MdAdd}
                   />
-                </StyledHalfSection>
-              </StyledRow>
-            </C.FormSection>
-          </StyledFullSection>
+                </StyledRow>
+              </C.FormSection>
+            </StyledFullSection>
+          </Fade> */}
+          <Fade in={selectedStep === 'reportingDetails'}>
+            <StyledFullSection>
+              {selectedStep === 'reportingDetails' && (
+                <C.FormSection title="Reporting Details">
+                  <StyledRow>
+                    <StyledHalfSection>
+                      <C.RadioGroup
+                        name="reportSource"
+                        options={[
+                          { value: 'primary', label: 'Primary' },
+                          { value: 'secondary', label: 'Secondary' },
+                        ]}
+                        label="Report Source"
+                        row
+                      />
+                      <C.AsyncAutocompleteSelect
+                        label="Reported By Organization"
+                        name="reportedOrganization"
+                        placeholder="Reported by Organization"
+                        fnPromise={
+                          environment.model.organizations
+                            .getAutocompleteOrganizations
+                        }
+                      />
+                      <C.AsyncSingleSelect
+                        label="Reported Channel"
+                        name="reportChannel"
+                        fnPromise={environment.model.categories.getCategories}
+                        category="reportChannel"
+                        hasNameValue
+                      />
+                      <C.TextFieldWrapper
+                        label="Source System Record Id"
+                        name="sourceSystemRecordId"
+                        type="text"
+                      />
+                      <StyledFieldset>
+                        <C.TextFieldWrapper
+                          label="Title"
+                          name="reportFileTitle"
+                          type="text"
+                        />
+                        <C.FileUpload />
+                        <C.TextFieldWrapper
+                          label="Title"
+                          name="reportUrlTitle"
+                          type="text"
+                        />
+                        <C.TextFieldWrapper
+                          label="URL"
+                          name="reportUrl"
+                          type="text"
+                        />
+                      </StyledFieldset>
+                    </StyledHalfSection>
+                    <StyledHalfSection>
+                      <StyledRadioDiv>
+                        <C.RadioGroup
+                          name="verified"
+                          options={[
+                            { value: 'verified', label: 'Verified' },
+                            { value: 'unverified', label: 'Unverified' },
+                          ]}
+                          label="Verified"
+                          row
+                        />
+                      </StyledRadioDiv>
+                      <C.DatePicker name="reportedDate" label="Date Reported" />
+                      <C.TextFieldWrapper
+                        label="Reporter Reference Code"
+                        name="reporterReferenceCode"
+                        type="text"
+                      />
+                      <C.TextFieldWrapper
+                        label="Reporter Contact Information"
+                        name="reporterContactInformation"
+                        multiline
+                        rows={4}
+                        type="text"
+                      />
+                    </StyledHalfSection>
+                  </StyledRow>
+                </C.FormSection>
+              )}
+            </StyledFullSection>
+          </Fade>
         </Form>
       )}
     </Formik>

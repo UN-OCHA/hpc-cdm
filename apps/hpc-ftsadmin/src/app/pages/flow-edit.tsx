@@ -4,7 +4,9 @@ import PageMeta from '../components/page-meta';
 import { AppContext, getEnv } from '../context';
 import tw from 'twin.macro';
 import { useState } from 'react';
+import { Route } from 'react-router-dom';
 import FlowForm, { FormValues } from '../components/flow-form';
+import SetupProcess from '../components/setup-process';
 
 interface Props {
   className?: string;
@@ -14,9 +16,21 @@ const Container = tw.div`
 flex
 `;
 const LandingContainer = tw.div`
-w-full
+w-3/4
 `;
 
+const SidebarContainer = tw.div`
+w-1/4
+`;
+
+const StyledAnchor = tw.a`
+underline
+`;
+
+const StyledAnchorDiv = tw.span`
+text-2xl
+float-right
+`;
 export default (props: Props) => {
   const filtersInitialValues: FormValues = {
     // flowId: '',
@@ -53,7 +67,8 @@ export default (props: Props) => {
   };
 
   const env = getEnv();
-
+  const [selectedStep, setSelectedStep] = useState('fundingSources');
+  console.log(selectedStep);
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -61,12 +76,23 @@ export default (props: Props) => {
           className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
         >
           <PageMeta title={[t.t(lang, (s) => s.routes.newFlow.title)]} />
+          <C.PageTitle>
+            {t.t(lang, (s) => s.routes.newFlow.title)}
+            <StyledAnchorDiv>
+              <StyledAnchor href="flows" target="_blank">
+                Find Similar Flows
+              </StyledAnchor>
+            </StyledAnchorDiv>
+          </C.PageTitle>
           <Container>
+            <SidebarContainer>
+              <SetupProcess
+                selectedStep={selectedStep}
+                setSelectedStep={(s: string) => setSelectedStep(s)}
+              />
+            </SidebarContainer>
             <LandingContainer>
-              <C.PageTitle>
-                {t.t(lang, (s) => s.routes.newFlow.title)}
-              </C.PageTitle>
-              <FlowForm environment={env} />
+              <FlowForm environment={env} selectedStep={selectedStep} />
             </LandingContainer>
           </Container>
         </div>
