@@ -164,7 +164,10 @@ const AsyncAutocompleteSelect = ({
                 label: `${org.name} [${org.abbreviation}]`,
                 id: responseValue.id,
               };
-            } else if (isCurrenciesResult(response)) {
+            } else if (
+              isCurrenciesResult(response) &&
+              responseValue.planId === undefined
+            ) {
               return {
                 label: (responseValue as currencies.Currency).code,
                 id: responseValue.id,
@@ -189,7 +192,10 @@ const AsyncAutocompleteSelect = ({
                 label: `${org.name} [${org.abbreviation}]`,
                 id: responseValue.id,
               };
-            } else if (isCurrenciesResult(response)) {
+            } else if (
+              isCurrenciesResult(response) &&
+              responseValue.planId === undefined
+            ) {
               return {
                 label: (responseValue as currencies.Currency).code,
                 id: responseValue.id,
@@ -202,7 +208,6 @@ const AsyncAutocompleteSelect = ({
             }
           });
         }
-
         setData(parsedResponse);
         if (active) {
           if (isUsageYearsResult(response)) {

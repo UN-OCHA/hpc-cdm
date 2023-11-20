@@ -89,8 +89,10 @@ w-full
 const StyledFieldset = tw.fieldset`
 w-full
 box-border
+rounded-xl
 mt-[16px]
 mb-[8px]
+border-gray-100
 `;
 const StyledCurrencyRow = tw.div`
 w-1/4
@@ -227,8 +229,8 @@ export const FlowForm = (props: Props) => {
     const fetchedPlan = await environment.model.plans.getPlan(plan[0].id);
     setObjectsWithArray(
       fetchedPlan,
-      ['sourceUsageYears', 'sourceEmergencies'],
-      ['years', 'emergencies'],
+      ['sourceUsageYears', 'sourceEmergencies', 'destinationUsageYears'],
+      ['years', 'emergencies', 'years'],
       setFieldValue
     );
 
@@ -276,6 +278,7 @@ export const FlowForm = (props: Props) => {
     (id: string, setFieldValue: any) => Promise<any>
   > = {
     sourcePlans: fetchPlanDetails,
+    destinationPlans: fetchPlanDetails,
     sourceEmergencies: fetchEmergencyDetails,
     sourceProjects: fetchProjectDetails,
     sourceOrganizations: fetchOrganizationDetails,
@@ -492,6 +495,9 @@ export const FlowForm = (props: Props) => {
                     label="Plan"
                     name="destinationPlans"
                     fnPromise={environment.model.plans.getAutocompletePlans}
+                    onChange={(event, value) => {
+                      updateFlowObjects(event, value, setFieldValue);
+                    }}
                     isMulti
                   />
                   <C.AsyncAutocompleteSelect
@@ -537,7 +543,7 @@ export const FlowForm = (props: Props) => {
                           <C.TextFieldWrapper
                             label="Funding Amount (original currency)"
                             name="amountOriginal"
-                            type="currency"
+                            type="number"
                           />
                           <StyledCurrencyRow>
                             <C.AsyncAutocompleteSelect
@@ -553,7 +559,7 @@ export const FlowForm = (props: Props) => {
                         <C.TextFieldWrapper
                           label="Exchange Rate Used"
                           name="exchangeRateUsed"
-                          type="text"
+                          type="number"
                         />
                         <StyledAnchorDiv>
                           <StyledAnchor
@@ -590,12 +596,14 @@ export const FlowForm = (props: Props) => {
                           label="Decision Dateⓢ"
                           enableButton={isEdit}
                         />
+                      </StyledFormRow>
+                      <StyledHalfSection>
                         <C.TextFieldWrapper
                           label="Donor Budget Year"
                           name="budgetYear"
                           type="number"
                         />
-                      </StyledFormRow>
+                      </StyledHalfSection>
                     </StyledHalfSection>
                     <StyledHalfSection>
                       <C.AsyncSingleSelect
@@ -670,40 +678,42 @@ export const FlowForm = (props: Props) => {
           </Fade>
           <Fade in={selectedStep === 'linkedFlows'}>
             <StyledFullSection>
-              <C.FormSection title="Linked Flows">
-                <StyledRow>
-                  <C.Button
-                    onClick={() => {
-                      return true;
-                      confirm({
-                        title: 'Confirm Action',
-                        message: 'Are you sure you want to proceed?',
-                        buttonConfirm: 'Yes',
-                        buttonCancel: 'No',
-                      }).then((result: any) => {
-                        if (result) {
-                          console.log('Yes');
-                          // User clicked 'Yes'
-                        } else {
-                          console.log('No');
-                          // User clicked 'No'
-                        }
-                      });
-                    }}
-                    color="primary"
-                    text="Add Parent Flow"
-                    startIcon={MdAdd}
-                  />
-                  <C.Button
-                    onClick={() => {
-                      return true;
-                    }}
-                    color="primary"
-                    text="Add Child Flow"
-                    startIcon={MdAdd}
-                  />
-                </StyledRow>
-              </C.FormSection>
+              {selectedStep === 'linkedFlows' && (
+                <C.FormSection title="Linked Flows">
+                  <StyledRow>
+                    <C.Button
+                      onClick={() => {
+                        return true;
+                        confirm({
+                          title: 'Confirm Action',
+                          message: 'Are you sure you want to proceed?',
+                          buttonConfirm: 'Yes',
+                          buttonCancel: 'No',
+                        }).then((result: any) => {
+                          if (result) {
+                            console.log('Yes');
+                            // User clicked 'Yes'
+                          } else {
+                            console.log('No');
+                            // User clicked 'No'
+                          }
+                        });
+                      }}
+                      color="primary"
+                      text="Add Parent Flow"
+                      startIcon={MdAdd}
+                    />
+                    <C.Button
+                      onClick={() => {
+                        return true;
+                      }}
+                      color="primary"
+                      text="Add Child Flow"
+                      startIcon={MdAdd}
+                    />
+                  </StyledRow>
+                </C.FormSection>
+              )}
             </StyledFullSection>
           </Fade>
           <Fade in={selectedStep === 'reportingDetails'}>
