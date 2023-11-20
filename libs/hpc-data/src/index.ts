@@ -13,6 +13,7 @@ import * as projects from './lib/projects';
 import * as reportingWindows from './lib/reporting-windows';
 import * as usageYears from './lib/usageYears';
 import * as currencies from './lib/currencies';
+import * as governingEntities from './lib/governing-entity';
 import * as util from './lib/util';
 
 export interface Model {
@@ -29,6 +30,7 @@ export interface Model {
   reportingWindows: reportingWindows.Model;
   usageYears: usageYears.Model;
   currencies: currencies.Model;
+  governingEntities: governingEntities.Model;
 }
 
 export {
@@ -47,5 +49,6 @@ export {
   reportingWindows,
   usageYears,
   currencies,
+  governingEntities,
   util,
 };

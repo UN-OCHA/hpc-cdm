@@ -257,20 +257,40 @@ export const FlowForm = (props: Props) => {
   //   }
   // };
 
-  const fetchEmergencyDetails = async (emergency: any) => {
-    console.log('B');
+  const fetchEmergencyDetails = async (emergency: any, setFieldValue: any) => {
+    const fetchedEmergency = await environment.model.emergencies.getEmergency(
+      emergency[0].id
+    );
+    setObjectsWithArray(
+      fetchedEmergency,
+      ['location'],
+      ['locations'],
+      setFieldValue
+    );
   };
-  const fetchProjectDetails = async (project: any) => {
-    console.log('C');
+  const fetchProjectDetails = async (project: any, setFieldValue: any) => {
+    const fetchedProject = await environment.model.projects.getProject(
+      project[0].id
+    );
+    console.log(fetchedProject);
   };
-  const fetchOrganizationDetails = async (organization: any) => {
-    console.log('D');
+  const fetchOrganizationDetails = async (
+    organization: any,
+    setFieldValue: any
+  ) => {
+    const fetchedOrganization =
+      await environment.model.organizations.getOrganization(organization[0].id);
+    console.log(fetchedOrganization);
   };
-  const fetchAssociatedGoverningEntity = async (globalCluster: any) => {
-    console.log('E');
-  };
-  const fetchAssociatedGlobalCluster = async (governingEntity: any) => {
-    console.log('F');
+  const fetchAssociatedGoverningEntity = async (
+    globalCluster: any,
+    setFieldValue: any
+  ) => {
+    const fetchedGoverningEntities =
+      await environment.model.governingEntities.getAllPlanGoverningEntities(
+        globalCluster[0].id
+      );
+    console.log(fetchedGoverningEntities);
   };
 
   const dictExecutedForEachObject: Record<
@@ -388,6 +408,9 @@ export const FlowForm = (props: Props) => {
                       environment.model.organizations
                         .getAutocompleteOrganizations
                     }
+                    onChange={(event, value) => {
+                      updateFlowObjects(event, value, setFieldValue);
+                    }}
                     isMulti
                   />
                   <StyledRow>
@@ -417,6 +440,9 @@ export const FlowForm = (props: Props) => {
                     fnPromise={
                       environment.model.emergencies.getAutocompleteEmergencies
                     }
+                    onChange={(event, value) => {
+                      updateFlowObjects(event, value, setFieldValue);
+                    }}
                     isMulti
                   />
                   <C.AsyncAutocompleteSelect
@@ -425,6 +451,9 @@ export const FlowForm = (props: Props) => {
                     fnPromise={
                       environment.model.globalClusters.getGlobalClusters
                     }
+                    onChange={(event, value) => {
+                      updateFlowObjects(event, value, setFieldValue);
+                    }}
                     isMulti
                     isAutocompleteAPI={false}
                   />
@@ -441,8 +470,11 @@ export const FlowForm = (props: Props) => {
                     label="Project"
                     name="sourceProjects"
                     fnPromise={
-                      environment.model.projects.getAutocompleteProjectsGraphQL
+                      environment.model.projects.getAutocompleteProjects
                     }
+                    onChange={(event, value) => {
+                      updateFlowObjects(event, value, setFieldValue);
+                    }}
                     isMulti
                   />
                 </C.FormSection>

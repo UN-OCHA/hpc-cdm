@@ -20,7 +20,7 @@ const ORGANIZATION_CATEGORY = t.type({
   }),
 });
 export type OrganizationCategory = t.TypeOf<typeof ORGANIZATION_CATEGORY>;
-const ORGANIZATION = t.type({
+export const ORGANIZATION = t.type({
   id: t.number,
   name: t.string,
   nativeName: t.union([t.string, t.null]),
@@ -55,8 +55,19 @@ export type GetOrganizationsAutocompleteResult = t.TypeOf<
   typeof GET_ORGANIZATIONS_AUTOCOMPLETE_RESULT
 >;
 
+export const GET_ORGANIZATION_PARAMS = t.type({
+  id: t.number,
+});
+
+export type GetOrganizationParams = t.TypeOf<typeof GET_ORGANIZATION_PARAMS>;
+
+export type GetOrganizationResult = t.TypeOf<typeof ORGANIZATION>;
+
 export interface Model {
   getAutocompleteOrganizations(
     params: GetOrganizationsAutocompleteParams
   ): Promise<GetOrganizationsAutocompleteResult>;
+  getOrganization(
+    params: GetOrganizationParams
+  ): Promise<GetOrganizationResult>;
 }

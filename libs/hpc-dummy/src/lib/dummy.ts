@@ -16,6 +16,7 @@ import {
   globalClusters,
   usageYears,
   currencies,
+  governingEntities,
 } from '@unocha/hpc-data';
 import isEqual from 'lodash/isEqual';
 
@@ -618,6 +619,14 @@ export class Dummy {
             ];
           }
         ),
+        getEmergency: dummyEndpoint(
+          'emergencies.getEmergency',
+          async (
+            params: emergencies.GetEmergencyParams
+          ): Promise<emergencies.GetEmergencyResult> => {
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       flows: {
         getFlow: dummyEndpoint('flows.getFlow', async () => {
@@ -1036,6 +1045,14 @@ export class Dummy {
           }
         ),
       },
+      governingEntities: {
+        getAllPlanGoverningEntities: dummyEndpoint(
+          'governingEntities.getAllPlanGoverningEntities',
+          async (params: governingEntities.GetGoverningEntityParams) => {
+            throw new errors.NotFoundError();
+          }
+        ),
+      },
       locations: {
         getAutocompleteLocations: dummyEndpoint(
           'locations.getAutocompleteLocations',
@@ -1172,6 +1189,12 @@ export class Dummy {
                 ],
               },
             ];
+          }
+        ),
+        getOrganization: dummyEndpoint(
+          'organizations.getOrganization',
+          async (params: organizations.GetOrganizationParams) => {
+            throw new errors.NotFoundError();
           }
         ),
       },
@@ -1836,6 +1859,12 @@ export class Dummy {
         getAutocompleteProjectsGraphQL: dummyEndpoint(
           'projects.getAutocompleteProjectsGraphQL',
           async (params: projects.GetProjectsAutocompleteParams) => {
+            throw new errors.NotFoundError();
+          }
+        ),
+        getProject: dummyEndpoint(
+          'projects.getProject',
+          async (params: projects.GetProjectParams) => {
             throw new errors.NotFoundError();
           }
         ),

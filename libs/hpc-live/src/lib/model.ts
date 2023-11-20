@@ -20,6 +20,7 @@ import {
   globalClusters,
   usageYears,
   currencies,
+  governingEntities,
 } from '@unocha/hpc-data';
 
 interface URLInterface {
@@ -425,6 +426,11 @@ export class LiveModel implements Model {
           pathname: `/v1/object/autocomplete/emergency/${params.query}`,
           resultType: emergencies.GET_EMERGENCIES_AUTOCOMPLETE_RESULT,
         }),
+      getEmergency: (id) =>
+        this.call({
+          pathname: `/v1/emergency/${id}`,
+          resultType: emergencies.EMERGENCY_DETAIL,
+        }),
     };
   }
   get flows(): flows.Model {
@@ -573,6 +579,15 @@ export class LiveModel implements Model {
         }),
     };
   }
+  get governingEntities(): governingEntities.Model {
+    return {
+      getAllPlanGoverningEntities: (id) =>
+        this.call({
+          pathname: `/v1/governingEntity?excludeAttachments=true&planId=${id}`,
+          resultType: governingEntities.GOVERNING_ENTITY_DETAIL,
+        }),
+    };
+  }
   get locations(): locations.Model {
     return {
       getAutocompleteLocations: (params) =>
@@ -588,6 +603,11 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v1/object/autocomplete/organization/${params.query}`,
           resultType: organizations.GET_ORGANIZATIONS_AUTOCOMPLETE_RESULT,
+        }),
+      getOrganization: (id) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/id/organization/${id}`,
+          resultType: organizations.ORGANIZATION,
         }),
     };
   }
@@ -678,6 +698,11 @@ export class LiveModel implements Model {
             },
           },
           resultType: projects.GET_PROJECTS_AUTOCOMPLETE_GRAPHQL_RESULT,
+        }),
+      getProject: (id) =>
+        this.call({
+          pathname: `/v2/project/${id}`,
+          resultType: projects.PROJECT,
         }),
     };
   }

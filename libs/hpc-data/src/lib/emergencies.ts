@@ -1,4 +1,6 @@
 import * as t from 'io-ts';
+import { CATEGORY } from './categories';
+import { LOCATION } from './locations';
 
 export const EMERGENCY = t.type({
   id: t.number,
@@ -11,6 +13,21 @@ export const EMERGENCY = t.type({
   restricted: t.boolean,
   createdAt: t.string,
   updatedAt: t.string,
+});
+
+export const EMERGENCY_DETAIL = t.type({
+  id: t.number,
+  name: t.string,
+  description: t.union([t.string, t.null]),
+  date: t.string,
+  glideId: t.union([t.string, t.null]),
+  levelThree: t.union([t.boolean, t.null]),
+  active: t.boolean,
+  restricted: t.boolean,
+  createdAt: t.string,
+  updatedAt: t.string,
+  categories: t.array(CATEGORY),
+  locations: t.array(LOCATION),
 });
 
 export type Emergency = t.TypeOf<typeof EMERGENCY>;
@@ -27,8 +44,17 @@ export type GetEmergenciesAutocompleteResult = t.TypeOf<
   typeof GET_EMERGENCIES_AUTOCOMPLETE_RESULT
 >;
 
+export const GET_EMERGENCY_PARAMS = t.type({
+  id: t.number,
+});
+
+export type GetEmergencyParams = t.TypeOf<typeof GET_EMERGENCY_PARAMS>;
+
+export type GetEmergencyResult = t.TypeOf<typeof EMERGENCY_DETAIL>;
+
 export interface Model {
   getAutocompleteEmergencies(
     params: GetEmergenciesAutocompleteParams
   ): Promise<GetEmergenciesAutocompleteResult>;
+  getEmergency(params: GetEmergencyParams): Promise<GetEmergencyResult>;
 }

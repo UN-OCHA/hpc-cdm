@@ -21,7 +21,7 @@ const PDF = t.type({
   ]),
 });
 
-const PROJECT = t.type({
+export const PROJECT = t.type({
   id: t.number,
   createdAt: t.string,
   updatedAt: t.string,
@@ -62,6 +62,14 @@ export const GET_PROJECTS_AUTOCOMPLETE_GRAPHQL_RESULT = t.type({
   getProjects: t.array(PROJECT),
 });
 
+export const GET_PROJECT_PARAMS = t.type({
+  id: t.number,
+});
+
+export type GetProjectParams = t.TypeOf<typeof GET_PROJECT_PARAMS>;
+
+export type GetProjectResult = t.TypeOf<typeof PROJECT>;
+
 export interface Model {
   getAutocompleteProjects(
     params: GetProjectsAutocompleteParams
@@ -69,4 +77,5 @@ export interface Model {
   getAutocompleteProjectsGraphQL(
     params: GetProjectsAutocompleteGraphQLParams
   ): Promise<GetProjectsAutocompleteGraphQLResult>;
+  getProject(params: GetProjectParams): Promise<GetProjectResult>;
 }

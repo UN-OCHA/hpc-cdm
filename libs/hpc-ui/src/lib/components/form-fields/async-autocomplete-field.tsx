@@ -32,6 +32,17 @@ const StyledAutocomplete = tw(Autocomplete)`
     min-w-[10rem]
     w-full`;
 
+const YellowTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: '#ffec1a',
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+  },
+}));
+
 type APIAutocompleteResult =
   | organizations.GetOrganizationsAutocompleteResult
   | locations.GetLocationsAutocompleteResult
@@ -82,17 +93,6 @@ const AsyncAutocompleteSelect = ({
     !isFetch &&
     (!isAutocompleteAPI || inputValue.length >= 3 || category !== undefined);
   const actualYear = new Date().getFullYear();
-
-  const YellowTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: '#ffec1a',
-      color: 'rgba(0, 0, 0, 0.87)',
-      boxShadow: theme.shadows[1],
-      fontSize: 11,
-    },
-  }));
 
   function isUsageYearsResult(
     result: APIAutocompleteResult
