@@ -41,7 +41,6 @@ const SectionContainer = styled.details(
 const Container = tw.div`
   flex
   flex-wrap
-  gap-8
   `;
 const Section = ({ title, type, children }: SectionProps) => {
   const [open, setOpen] = React.useState(type !== 'primary');

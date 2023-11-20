@@ -3,7 +3,13 @@ import {
   AutocompleteProps,
   CircularProgress,
   TextField,
+  IconButton,
+  Tooltip,
+  TooltipProps,
+  tooltipClasses,
 } from '@mui/material';
+import ShareIcon from '@mui/icons-material/Share';
+import { styled } from '@mui/material/styles';
 import { useField, useFormikContext } from 'formik';
 import {
   categories,
@@ -14,6 +20,7 @@ import {
   plans,
   projects,
   usageYears,
+  currencies,
 } from '@unocha/hpc-data';
 import React, { useEffect, useState } from 'react';
 import tw from 'twin.macro';
@@ -34,7 +41,8 @@ type APIAutocompleteResult =
   | projects.GetProjectsAutocompleteResult
   | globalClusters.GetGlobalClustersResult
   | usageYears.GetUsageYearsResult
-  | projects.GetProjectsAutocompleteGraphQLResult;
+  | projects.GetProjectsAutocompleteGraphQLResult
+  | currencies.GetCurrenciesResult;
 
 const AsyncAutocompleteSelect = ({
   name,
@@ -44,6 +52,7 @@ const AsyncAutocompleteSelect = ({
   isMulti,
   category,
   isAutocompleteAPI,
+  onChange,
   ...otherProps
 }: {
   name: string;
@@ -53,9 +62,11 @@ const AsyncAutocompleteSelect = ({
   category?: string;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
+  onChange?: (name: string, value: any) => void;
 }) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [multipleValuesSelected, setMultipleValueSelected] = useState(false);
   const { setFieldValue } = useFormikContext();
   const [field, meta] = useField(name);
   const [options, setOptions] = useState<
@@ -71,6 +82,18 @@ const AsyncAutocompleteSelect = ({
     !isFetch &&
     (!isAutocompleteAPI || inputValue.length >= 3 || category !== undefined);
   const actualYear = new Date().getFullYear();
+
+  const YellowTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: '#ffec1a',
+      color: 'rgba(0, 0, 0, 0.87)',
+      boxShadow: theme.shadows[1],
+      fontSize: 11,
+    },
+  }));
+
   function isUsageYearsResult(
     result: APIAutocompleteResult
   ): result is usageYears.GetUsageYearsResult {
@@ -80,6 +103,11 @@ const AsyncAutocompleteSelect = ({
     result: APIAutocompleteResult
   ): result is organizations.GetOrganizationsAutocompleteResult {
     return organizations.GET_ORGANIZATIONS_AUTOCOMPLETE_RESULT.is(result);
+  }
+  function isCurrenciesResult(
+    result: APIAutocompleteResult
+  ): result is currencies.GetCurrenciesResult {
+    return currencies.GET_CURRENCIES_RESULT.is(result);
   }
 
   useEffect(() => {
@@ -136,6 +164,11 @@ const AsyncAutocompleteSelect = ({
                 label: `${org.name} [${org.abbreviation}]`,
                 id: responseValue.id,
               };
+            } else if (isCurrenciesResult(response)) {
+              return {
+                label: (responseValue as currencies.Currency).code,
+                id: responseValue.id,
+              };
             } else {
               return {
                 label: (responseValue as { id: number; name: string }).name,
@@ -154,6 +187,11 @@ const AsyncAutocompleteSelect = ({
               const org = responseValue as organizations.Organization;
               return {
                 label: `${org.name} [${org.abbreviation}]`,
+                id: responseValue.id,
+              };
+            } else if (isCurrenciesResult(response)) {
+              return {
+                label: (responseValue as currencies.Currency).code,
                 id: responseValue.id,
               };
             } else {
@@ -225,7 +263,11 @@ const AsyncAutocompleteSelect = ({
     ChipProps: { size: 'small' },
     onChange: (_, newValue) => {
       // For multiple selections, newValue will be an array of selected values
+      if (onChange) {
+        onChange(name, newValue);
+      }
       setFieldValue(name, newValue);
+      setMultipleValueSelected(Array.isArray(newValue) && newValue.length > 1);
     },
     onInputChange: (event, newInputValue) => {
       setInputValue(newInputValue);
@@ -249,6 +291,13 @@ const AsyncAutocompleteSelect = ({
             <React.Fragment>
               {loading ? <CircularProgress color="inherit" size={20} /> : null}
               {params.InputProps.endAdornment}
+              {multipleValuesSelected && (
+                <YellowTooltip title="Shared will be reported as possible funding for each of the selected values. Overlap will be reported as direct funding for each of the selected values.">
+                  <IconButton type="button" size="small" aria-label="share">
+                    <ShareIcon />
+                  </IconButton>
+                </YellowTooltip>
+              )}
             </React.Fragment>
           ),
         }}

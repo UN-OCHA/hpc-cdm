@@ -26,9 +26,10 @@ export type CategoryGroup =
   | 'responseType'
   | 'planIndicated'
   | 'earmarkingType'
+  | 'origCurrency'
   | 'organizationLevel';
 
-const CATEGORY = t.type({
+export const CATEGORY = t.type({
   id: t.number,
   name: t.string,
   description: t.union([t.string, t.null]),

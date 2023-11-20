@@ -1,18 +1,21 @@
-import { Form, Formik } from 'formik';
+import { Form, Formik, useFormikContext } from 'formik';
 import { array, number, object, string } from 'yup';
 import tw from 'twin.macro';
-import React, { useState } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 
 import { C, dialogs } from '@unocha/hpc-ui';
 import { Environment } from '../../environments/interface';
 import { MdClose, MdAdd } from 'react-icons/md';
 import Fade from '@mui/material/Fade';
+import { usageYears } from '@unocha/hpc-data';
+
 interface Props {
   environment: Environment;
   selectedStep: string;
+  isEdit: boolean;
 }
 export interface FormValues {
-  amountUSD: string;
+  amountUSD: number;
   keywords: { label: string; id: string }[];
   flowStatus: string;
   flowType: string;
@@ -28,6 +31,9 @@ export interface FormValues {
   reportSource: string;
   reportChannel: string;
   verified: string;
+  origCurrency: string;
+  amountOriginal: number;
+  exchangeRateUsed: number;
   sourceOrganizations: { label: string; id: string }[];
   sourceCountries: { label: string; id: string }[];
   sourceUsageYears: { label: string; id: string }[];
@@ -86,9 +92,13 @@ box-border
 mt-[16px]
 mb-[8px]
 `;
+const StyledCurrencyRow = tw.div`
+w-1/4
+`;
 export const FlowForm = (props: Props) => {
-  const { environment, selectedStep } = props;
+  const { environment, selectedStep, isEdit } = props;
   const { confirm } = dialogs;
+  // const { values, setFieldValue } = useFormikContext<FormValues>();
   const [showComponents, setShowComponents] = useState({
     sourceEmergencies: false,
     sourcePlans: false,
@@ -101,12 +111,185 @@ export const FlowForm = (props: Props) => {
   const handleSubmit = (values: FormValues) => {
     console.log(values);
   };
+  const [objects, setObjects] = useState<Record<string, any[]>>({});
+  const [showingTypes, setShowingTypes] = useState<string[]>([]);
+  const [showAnonymizedOrganization, setShowAnonymizedOrganization] =
+    useState(false);
+  const formikRef = useRef(null);
 
-  const toggleSection = (section: string, flag: boolean) => {
-    setShowComponents((prevState) => ({
-      ...prevState,
-      [section]: flag,
-    }));
+  const setObjectsWithArray = (
+    fetchedObject: any,
+    objectKeys: string[],
+    settingArrayKeys: string[],
+    setFieldValue: any
+  ) => {
+    const newObjects = { ...objects };
+    const newShowingTypes = [...showingTypes];
+    objectKeys.forEach((key, i) => {
+      if (fetchedObject[settingArrayKeys[i]]) {
+        newObjects[key] = checkIfExistingAndCopy(
+          newObjects[key],
+          fetchedObject,
+          settingArrayKeys[i]
+        );
+      }
+
+      if (
+        newObjects[key] &&
+        newObjects[key].length &&
+        newShowingTypes.indexOf(key) === -1
+      ) {
+        newShowingTypes.push(key);
+      }
+
+      // if (key === 'location') {
+      // } else if (key === 'plan') {
+      //   newObjects[key].forEach((plan: any) => {
+      //     plan.name = plan.planVersion.name;
+      //     fetchPlanDetails(plan, setFieldValue);
+      //   });
+      // } else if (key === 'governingEntity') {
+      // } else if (key === 'organization') {
+      //   const hasCollectiveOrg = newObjects[key].some((org: any) => org.collectiveInd);
+      //   setShowAnonymizedOrganization(hasCollectiveOrg);
+      // }
+      const parsedResponse = newObjects[key].map((responseValue: any) => {
+        if (settingArrayKeys[i] === 'years') {
+          return {
+            label: (responseValue as usageYears.UsageYear).year,
+            id: responseValue.id,
+          };
+        } else {
+          return {
+            label: (responseValue as { id: number; name: string }).name,
+            id: responseValue.id,
+          };
+        }
+      });
+      setFieldValue(newShowingTypes[i], parsedResponse);
+    });
+
+    setObjects(newObjects);
+    setShowingTypes(newShowingTypes);
+  };
+
+  const checkIfExistingAndCopy = (
+    existingObjects: any[],
+    object: any,
+    key: string
+  ): any[] => {
+    let newObjects = object[key];
+    if (key === 'locations') {
+      newObjects = newObjects.filter(function (location: any) {
+        return location.adminLevel === 0;
+      });
+      if (existingObjects && existingObjects.length) {
+        existingObjects = existingObjects.filter(function (location) {
+          return location.adminLevel === 0;
+        });
+      }
+    }
+
+    if (existingObjects && existingObjects.length) {
+      const existingObjectsIds = existingObjects.map(function (o) {
+        return o.id;
+      });
+      if (Array.isArray(newObjects)) {
+        newObjects.forEach(function (obj) {
+          if (existingObjectsIds.indexOf(obj.id) === -1) {
+            obj.suggested = true;
+            existingObjects.push(obj);
+          }
+        });
+      } else {
+        if (existingObjectsIds.indexOf(newObjects.id) === -1) {
+          newObjects.suggested = true;
+          existingObjects.push(newObjects);
+        }
+      }
+    } else {
+      if (newObjects) {
+        if (Array.isArray(newObjects)) {
+          newObjects.forEach(function (obj) {
+            obj.suggested = true;
+          });
+          existingObjects = newObjects;
+        } else {
+          newObjects.suggested = true;
+          existingObjects = [newObjects];
+        }
+      }
+    }
+    return existingObjects;
+  };
+
+  const fetchPlanDetails = async (plan: any, setFieldValue: any) => {
+    const fetchedPlan = await environment.model.plans.getPlan(plan[0].id);
+    setObjectsWithArray(
+      fetchedPlan,
+      ['sourceUsageYears', 'sourceEmergencies'],
+      ['years', 'emergencies'],
+      setFieldValue
+    );
+
+    // checkFieldClusters(true);
+    // broadcastPlanSelected(fetchedPlan);
+    // setPlan(fetchedPlan); // Update the state with the fetched plan
+  };
+
+  // const handleCalculateExchangeRate = () => {
+  //   const { amountOriginal, amountUSD } = values;
+
+  //   // Check if both values are present, if not, calculate the missing one
+  //   if (amountOriginal && amountUSD) {
+  //     const exchangeRateUsed = amountOriginal / amountUSD;
+  //     setFieldValue('exchangeRateUsed', exchangeRateUsed);
+  //   } else if (amountOriginal && !amountUSD) {
+  //     const calculatedAmountUSD = amountOriginal / values.exchangeRateUsed;
+  //     setFieldValue('amountUSD', calculatedAmountUSD);
+  //   } else if (!amountOriginal && amountUSD) {
+  //     const calculatedAmountOriginal = amountUSD * values.exchangeRateUsed;
+  //     setFieldValue('amountOriginal', calculatedAmountOriginal);
+  //   } else {
+  //     console.warn('Both original amount and USD amount are missing.');
+  //   }
+  // };
+
+  const fetchEmergencyDetails = async (emergency: any) => {
+    console.log('B');
+  };
+  const fetchProjectDetails = async (project: any) => {
+    console.log('C');
+  };
+  const fetchOrganizationDetails = async (organization: any) => {
+    console.log('D');
+  };
+  const fetchAssociatedGoverningEntity = async (globalCluster: any) => {
+    console.log('E');
+  };
+  const fetchAssociatedGlobalCluster = async (governingEntity: any) => {
+    console.log('F');
+  };
+
+  const dictExecutedForEachObject: Record<
+    string,
+    (id: string, setFieldValue: any) => Promise<any>
+  > = {
+    sourcePlans: fetchPlanDetails,
+    sourceEmergencies: fetchEmergencyDetails,
+    sourceProjects: fetchProjectDetails,
+    sourceOrganizations: fetchOrganizationDetails,
+    sourceGlobalClusters: fetchAssociatedGoverningEntity,
+  };
+
+  const updateFlowObjects = async (
+    objectType: string,
+    flowObject: any,
+    setFieldValue: any
+  ) => {
+    if (flowObject.length > 0 && dictExecutedForEachObject[objectType]) {
+      await dictExecutedForEachObject[objectType](flowObject, setFieldValue);
+    }
   };
 
   const FORM_VALIDATION = object().shape({
@@ -151,7 +334,9 @@ export const FlowForm = (props: Props) => {
   return (
     <Formik
       initialValues={{
-        amountUSD: '',
+        amountUSD: 0,
+        amountOriginal: 0,
+        exchangeRateUsed: 0,
         keywords: [],
         flowStatus: '',
         flowType: '',
@@ -181,11 +366,13 @@ export const FlowForm = (props: Props) => {
         reportSource: 'primary',
         reportChannel: '',
         verified: 'verified',
+        origCurrency: '',
       }}
+      innerRef={formikRef}
       validationSchema={FORM_VALIDATION}
       onSubmit={handleSubmit}
     >
-      {({ resetForm }) => (
+      {({ resetForm, setFieldValue }) => (
         <Form>
           <Fade in={selectedStep === 'fundingSources'}>
             <StyledFullSection>
@@ -243,6 +430,9 @@ export const FlowForm = (props: Props) => {
                     name="sourcePlans"
                     fnPromise={environment.model.plans.getAutocompletePlans}
                     isMulti
+                    onChange={(event, value) => {
+                      updateFlowObjects(event, value, setFieldValue);
+                    }}
                   />
                   <C.AsyncAutocompleteSelect
                     label="Project"
@@ -343,11 +533,23 @@ export const FlowForm = (props: Props) => {
                         />
                       </StyledFormRow>
                       <C.Section title="Original Currency" type="secondary">
-                        <C.TextFieldWrapper
-                          label="Funding Amount (original currency)"
-                          name="amountOriginal"
-                          type="currency"
-                        />
+                        <StyledRow>
+                          <C.TextFieldWrapper
+                            label="Funding Amount (original currency)"
+                            name="amountOriginal"
+                            type="currency"
+                          />
+                          <StyledCurrencyRow>
+                            <C.AsyncAutocompleteSelect
+                              label="Currency"
+                              name="origCurrency"
+                              fnPromise={
+                                environment.model.currencies.getCurrencies
+                              }
+                              isAutocompleteAPI={false}
+                            />
+                          </StyledCurrencyRow>
+                        </StyledRow>
                         <C.TextFieldWrapper
                           label="Exchange Rate Used"
                           name="exchangeRateUsed"
@@ -381,10 +583,12 @@ export const FlowForm = (props: Props) => {
                         <C.DatePicker
                           name="firstReported"
                           label="First Reported"
+                          enableButton={isEdit}
                         />
                         <C.DatePicker
                           name="decisionDate"
                           label="Decision Dateⓢ"
+                          enableButton={isEdit}
                         />
                         <C.TextFieldWrapper
                           label="Donor Budget Year"
@@ -408,7 +612,11 @@ export const FlowForm = (props: Props) => {
                         category="flowStatus"
                         hasNameValue
                       />
-                      <C.DatePicker name="flowDate" label="Flow Date" />
+                      <C.DatePicker
+                        name="flowDate"
+                        label="Flow Date"
+                        enableButton={isEdit}
+                      />
                       <C.AsyncSingleSelect
                         label="Contribution Type"
                         name="contributionType"
@@ -466,6 +674,7 @@ export const FlowForm = (props: Props) => {
                 <StyledRow>
                   <C.Button
                     onClick={() => {
+                      return true;
                       confirm({
                         title: 'Confirm Action',
                         message: 'Are you sure you want to proceed?',
@@ -480,7 +689,6 @@ export const FlowForm = (props: Props) => {
                           // User clicked 'No'
                         }
                       });
-                      return true;
                     }}
                     color="primary"
                     text="Add Parent Flow"
@@ -565,7 +773,11 @@ export const FlowForm = (props: Props) => {
                           row
                         />
                       </StyledRadioDiv>
-                      <C.DatePicker name="reportedDate" label="Date Reported" />
+                      <C.DatePicker
+                        name="reportedDate"
+                        label="Date Reported"
+                        enableButton={isEdit}
+                      />
                       <C.TextFieldWrapper
                         label="Reporter Reference Code"
                         name="reporterReferenceCode"

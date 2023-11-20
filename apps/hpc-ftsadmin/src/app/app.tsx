@@ -188,7 +188,10 @@ export const App = () => {
                           path={paths.pendingFlows()}
                           element={<PagePendingFlowsList />}
                         />
-                        <Route path={paths.newFlow()} element={<FlowEdit />} />
+                        <Route
+                          path={paths.newFlow()}
+                          element={<FlowEdit isEdit={false} />}
+                        />
                         <Route element={<PageNotFound />} />
                       </Routes>
                     </LoggedInContainer>

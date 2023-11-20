@@ -56,13 +56,11 @@ export default function SetupProcess({
 
   function handleClickStep(id: string) {
     setSelectedStep(id);
-    // navigate(id);
   }
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
   }
-  console.log(processData, selectedStep);
   return (
     <Container maxWidth="md">
       <Card variant="outlined">
@@ -121,7 +119,7 @@ export default function SetupProcess({
               disabled={!(completedProcess.length === 3)}
               fullWidth
             >
-              Submit
+              Create
             </Button>
           </Box>
         </CardContent>

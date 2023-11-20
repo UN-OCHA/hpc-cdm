@@ -10,6 +10,7 @@ import SetupProcess from '../components/setup-process';
 
 interface Props {
   className?: string;
+  isEdit: boolean;
 }
 
 const Container = tw.div`
@@ -34,7 +35,9 @@ float-right
 export default (props: Props) => {
   const filtersInitialValues: FormValues = {
     // flowId: '',
-    amountUSD: '',
+    amountUSD: 0,
+    amountOriginal: 0,
+    exchangeRateUsed: 0,
     keywords: [],
     flowStatus: '',
     flowType: '',
@@ -47,6 +50,7 @@ export default (props: Props) => {
     reportSource: '',
     reportChannel: '',
     verified: '',
+    origCurrency: '',
     earmarkingType: '',
     method: '',
     beneficiaryGroup: '',
@@ -68,7 +72,6 @@ export default (props: Props) => {
 
   const env = getEnv();
   const [selectedStep, setSelectedStep] = useState('fundingSources');
-  console.log(selectedStep);
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -92,7 +95,11 @@ export default (props: Props) => {
               />
             </SidebarContainer>
             <LandingContainer>
-              <FlowForm environment={env} selectedStep={selectedStep} />
+              <FlowForm
+                environment={env}
+                selectedStep={selectedStep}
+                isEdit={props.isEdit}
+              />
             </LandingContainer>
           </Container>
         </div>

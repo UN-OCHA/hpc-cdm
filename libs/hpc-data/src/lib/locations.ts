@@ -17,7 +17,7 @@ const LOCATION_BUILDER = {
   itosSync: t.boolean,
 };
 
-const LOCATION = t.type({
+export const LOCATION = t.type({
   ...LOCATION_BUILDER,
   children: t.array(t.type(LOCATION_BUILDER)),
 });

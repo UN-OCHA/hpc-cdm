@@ -1,5 +1,8 @@
 import * as t from 'io-ts';
-
+import { CATEGORY } from './categories';
+import { EMERGENCY } from './emergencies';
+import { LOCATION } from './locations';
+import { USAGE_YEAR } from './usageYears';
 export const PLAN = t.type({
   id: t.number,
   restricted: t.boolean,
@@ -23,22 +26,48 @@ export const PLAN = t.type({
   latestTaggedVersion: t.boolean,
   versionTags: t.union([t.array(t.string), t.null]),
 });
+
+export const PLAN_DETAIL = t.type({
+  categories: t.array(CATEGORY),
+  createdAt: t.string,
+  emergencies: t.array(EMERGENCY),
+  governingEntities: t.array(EMERGENCY),
+  id: t.number,
+  locations: t.array(LOCATION),
+  planVersion: t.array(EMERGENCY),
+  restricted: t.boolean,
+  revisionState: t.null,
+  updatedAt: t.string,
+  years: t.array(USAGE_YEAR),
+});
+
 export type Plan = t.TypeOf<typeof PLAN>;
 
 export const GET_PLANS_AUTOCOMPLETE_PARAMS = t.type({
   query: t.string,
 });
+
+export const GET_PLAN_PARAMS = t.type({
+  id: t.number,
+});
+
 export type GetPlansAutocompleteParams = t.TypeOf<
   typeof GET_PLANS_AUTOCOMPLETE_PARAMS
 >;
 
 export const GET_PLANS_AUTOCOMPLETE_RESULT = t.array(PLAN);
+
 export type GetPlansAutocompleteResult = t.TypeOf<
   typeof GET_PLANS_AUTOCOMPLETE_RESULT
 >;
+
+export type GetPlanParams = t.TypeOf<typeof GET_PLAN_PARAMS>;
+
+export type GetPlanResult = t.TypeOf<typeof PLAN_DETAIL>;
 
 export interface Model {
   getAutocompletePlans(
     params: GetPlansAutocompleteParams
   ): Promise<GetPlansAutocompleteResult>;
+  getPlan(params: GetPlanParams): Promise<GetPlanResult>;
 }

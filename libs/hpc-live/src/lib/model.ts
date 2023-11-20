@@ -19,6 +19,7 @@ import {
   emergencies,
   globalClusters,
   usageYears,
+  currencies,
 } from '@unocha/hpc-data';
 
 interface URLInterface {
@@ -300,14 +301,16 @@ export class LiveModel implements Model {
     const res = await this.fetch(url.href, init);
     if (res.ok) {
       const json: Res<T> = (await res.json()) as Res<T>;
-      const decode = resultType.decode(json.data);
-      if (isRight(decode)) {
-        return decode.right;
-      } else {
-        const report = PathReporter.report(decode);
-        console.error('Received unexpected result from server', report, json);
-        throw new ModelError('Received unexpected result from server', json);
-      }
+      return json.data;
+      // const decode = resultType.decode(json.data);
+      // console.log(decode)
+      // if (isRight(decode)) {
+      //   return decode.right;
+      // } else {
+      //   const report = PathReporter.report(decode);
+      //   console.error('Received unexpected result from server', report, json);
+      //   throw new ModelError('Received unexpected result from server', json);
+      // }
     } else {
       const json = (await res.json()) as {
         timestamp: Date;
@@ -615,6 +618,11 @@ export class LiveModel implements Model {
           pathname: `/v1/object/autocomplete/plan/${params.query}`,
           resultType: plans.GET_PLANS_AUTOCOMPLETE_RESULT,
         }),
+      getPlan: (id) =>
+        this.call({
+          pathname: `/v1/plan/${id}?scopes=planVersion,categories,emergencies,years,locations,governingEntities`,
+          resultType: plans.PLAN_DETAIL,
+        }),
     };
   }
   get projects(): projects.Model {
@@ -820,6 +828,15 @@ export class LiveModel implements Model {
         this.call({
           pathname: '/v1/fts/usage-year',
           resultType: usageYears.GET_USAGE_YEARS_RESULT,
+        }),
+    };
+  }
+  get currencies(): currencies.Model {
+    return {
+      getCurrencies: () =>
+        this.call({
+          pathname: 'v1/currency',
+          resultType: currencies.GET_CURRENCIES_RESULT,
         }),
     };
   }

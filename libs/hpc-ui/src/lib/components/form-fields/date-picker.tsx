@@ -19,20 +19,22 @@ ml-8
 const DatePicker = ({
   name,
   label,
+  enableButton,
   ...otherProps
 }: {
   name: string;
   label: string;
+  enableButton?: boolean;
 }) => {
   const [field, , helpers] = useField(name);
-
+  enableButton = enableButton ?? true;
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <StyledDatePicker>
         <BaseDatePicker
           {...field}
           {...otherProps}
-          value={field.value}
+          value={enableButton ? field.value : dayjs()}
           onChange={(date) => {
             helpers.setValue(date);
           }}
@@ -47,17 +49,18 @@ const DatePicker = ({
             ),
           }}
         />
-        {}
-        <StyledLink
-          component="button"
-          variant="body2"
-          onClick={() => {
-            helpers.setValue(dayjs());
-          }}
-          sx={{ height: '100%', lineHeight: '40px' }}
-        >
-          Today
-        </StyledLink>
+        {enableButton && (
+          <StyledLink
+            component="button"
+            variant="body2"
+            onClick={() => {
+              helpers.setValue(dayjs());
+            }}
+            sx={{ height: '100%', lineHeight: '40px' }}
+          >
+            Today
+          </StyledLink>
+        )}
       </StyledDatePicker>
     </LocalizationProvider>
   );

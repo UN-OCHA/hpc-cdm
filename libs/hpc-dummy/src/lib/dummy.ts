@@ -15,6 +15,7 @@ import {
   projects,
   globalClusters,
   usageYears,
+  currencies,
 } from '@unocha/hpc-data';
 import isEqual from 'lodash/isEqual';
 
@@ -1589,6 +1590,12 @@ export class Dummy {
             ];
           }
         ),
+        getPlan: dummyEndpoint(
+          'plans.getPlan',
+          async (params: plans.GetPlanParams): Promise<plans.GetPlanResult> => {
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       projects: {
         getAutocompleteProjects: dummyEndpoint(
@@ -2222,6 +2229,117 @@ export class Dummy {
                 year: '2043',
                 createdAt: '2016-02-23T15:03:31.073Z',
                 updatedAt: '2016-02-23T15:03:31.073Z',
+              },
+            ];
+          }
+        ),
+      },
+      currencies: {
+        getCurrencies: dummyEndpoint(
+          'currencies.getCurrencies',
+          async (): Promise<currencies.GetCurrenciesResult> => {
+            return [
+              {
+                id: 2,
+                code: 'ADP',
+                createdAt: '2017-01-14T00:52:05.157Z',
+                updatedAt: '2017-01-14T00:52:05.157Z',
+              },
+              {
+                id: 1,
+                code: 'AED',
+                createdAt: '2017-01-14T00:52:05.157Z',
+                updatedAt: '2017-01-14T00:52:05.157Z',
+              },
+              {
+                id: 3,
+                code: 'AFA',
+                createdAt: '2017-01-14T00:52:05.157Z',
+                updatedAt: '2017-01-14T00:52:05.157Z',
+              },
+              {
+                id: 7,
+                code: 'AFN',
+                createdAt: '2017-01-14T00:52:05.167Z',
+                updatedAt: '2017-01-14T00:52:05.167Z',
+              },
+              {
+                id: 8,
+                code: 'ALL',
+                createdAt: '2017-01-14T00:52:05.167Z',
+                updatedAt: '2017-01-14T00:52:05.167Z',
+              },
+              {
+                id: 4,
+                code: 'AMD',
+                createdAt: '2017-01-14T00:52:05.167Z',
+                updatedAt: '2017-01-14T00:52:05.167Z',
+              },
+              {
+                id: 5,
+                code: 'ANG',
+                createdAt: '2017-01-14T00:52:05.167Z',
+                updatedAt: '2017-01-14T00:52:05.167Z',
+              },
+              {
+                id: 6,
+                code: 'AOA',
+                createdAt: '2017-01-14T00:52:05.167Z',
+                updatedAt: '2017-01-14T00:52:05.167Z',
+              },
+              {
+                id: 9,
+                code: 'AON',
+                createdAt: '2017-01-14T00:52:05.181Z',
+                updatedAt: '2017-01-14T00:52:05.181Z',
+              },
+              {
+                id: 10,
+                code: 'AOR',
+                createdAt: '2017-01-14T00:52:05.181Z',
+                updatedAt: '2017-01-14T00:52:05.181Z',
+              },
+              {
+                id: 11,
+                code: 'ARS',
+                createdAt: '2017-01-14T00:52:05.181Z',
+                updatedAt: '2017-01-14T00:52:05.181Z',
+              },
+              {
+                id: 12,
+                code: 'ATS',
+                createdAt: '2017-01-14T00:52:05.181Z',
+                updatedAt: '2017-01-14T00:52:05.181Z',
+              },
+              {
+                id: 13,
+                code: 'AUD',
+                createdAt: '2017-01-14T00:52:05.181Z',
+                updatedAt: '2017-01-14T00:52:05.181Z',
+              },
+              {
+                id: 14,
+                code: 'AWG',
+                createdAt: '2017-01-14T00:52:05.193Z',
+                updatedAt: '2017-01-14T00:52:05.193Z',
+              },
+              {
+                id: 15,
+                code: 'AZM',
+                createdAt: '2017-01-14T00:52:05.194Z',
+                updatedAt: '2017-01-14T00:52:05.194Z',
+              },
+              {
+                id: 16,
+                code: 'BAD',
+                createdAt: '2017-01-14T00:52:05.194Z',
+                updatedAt: '2017-01-14T00:52:05.194Z',
+              },
+              {
+                id: 17,
+                code: 'BAM',
+                createdAt: '2017-01-14T00:52:05.194Z',
+                updatedAt: '2017-01-14T00:52:05.194Z',
               },
             ];
           }
