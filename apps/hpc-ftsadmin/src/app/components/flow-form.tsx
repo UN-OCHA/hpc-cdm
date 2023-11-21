@@ -95,8 +95,7 @@ mb-[8px]
 border-gray-100
 `;
 const StyledCurrencyRow = tw.div`
-w-1/4
-`;
+w-1/2`;
 export const FlowForm = (props: Props) => {
   const { environment, selectedStep, isEdit } = props;
   const { confirm } = dialogs;
@@ -168,6 +167,7 @@ export const FlowForm = (props: Props) => {
           };
         }
       });
+      console.log(newShowingTypes[i], parsedResponse);
       setFieldValue(newShowingTypes[i], parsedResponse);
     });
 
@@ -233,10 +233,20 @@ export const FlowForm = (props: Props) => {
       ['years', 'emergencies', 'years'],
       setFieldValue
     );
-
-    // checkFieldClusters(true);
-    // broadcastPlanSelected(fetchedPlan);
-    // setPlan(fetchedPlan); // Update the state with the fetched plan
+    console.log(fetchedPlan);
+    if (fetchedPlan.locations) {
+      const countries = fetchedPlan.locations.filter(function (loc) {
+        return loc.adminLevel === 0;
+      });
+      if (countries.length === 1) {
+        setObjectsWithArray(
+          { locations: countries },
+          ['sourceCountries'],
+          ['locations'],
+          setFieldValue
+        );
+      }
+    }
   };
 
   // const handleCalculateExchangeRate = () => {

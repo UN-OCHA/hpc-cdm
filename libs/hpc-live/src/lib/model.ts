@@ -583,7 +583,12 @@ export class LiveModel implements Model {
     return {
       getAllPlanGoverningEntities: (id) =>
         this.call({
-          pathname: `/v1/governingEntity?excludeAttachments=true&planId=${id}`,
+          method: 'GET',
+          pathname: `/v1/governingEntity`,
+          queryParams: {
+            excludeAttachments: 'true',
+            planId: id.toString(),
+          },
           resultType: governingEntities.GOVERNING_ENTITY_DETAIL,
         }),
     };
@@ -640,7 +645,12 @@ export class LiveModel implements Model {
         }),
       getPlan: (id) =>
         this.call({
-          pathname: `/v1/plan/${id}?scopes=planVersion,categories,emergencies,years,locations,governingEntities`,
+          method: 'GET',
+          pathname: `/v1/plan/${id}`,
+          queryParams: {
+            scopes:
+              'planVersion,categories,emergencies,years,locations,governingEntities',
+          },
           resultType: plans.PLAN_DETAIL,
         }),
     };
