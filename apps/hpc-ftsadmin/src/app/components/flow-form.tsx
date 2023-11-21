@@ -118,6 +118,23 @@ export const FlowForm = (props: Props) => {
     useState(false);
   const formikRef = useRef(null);
 
+  const handleCalculateExchangeRate = (values: any, setFieldValue: any) => {
+    const { amountOriginal, amountUSD } = values;
+
+    if (amountOriginal && amountUSD) {
+      const exchangeRateUsed = amountOriginal / amountUSD;
+      setFieldValue('exchangeRateUsed', exchangeRateUsed.toFixed(4));
+    } else if (amountOriginal && !amountUSD) {
+      const calculatedAmountUSD = amountOriginal / values.exchangeRateUsed;
+      setFieldValue('amountUSD', calculatedAmountUSD.toFixed(4));
+    } else if (!amountOriginal && amountUSD) {
+      const calculatedAmountOriginal = amountUSD * values.exchangeRateUsed;
+      setFieldValue('amountOriginal', calculatedAmountOriginal.toFixed(4));
+    } else {
+      console.warn('Both original amount and USD amount are missing.');
+    }
+  };
+
   const setObjectsWithArray = (
     fetchedObject: any,
     objectKeys: string[],
@@ -143,22 +160,17 @@ export const FlowForm = (props: Props) => {
         newShowingTypes.push(key);
       }
 
-      // if (key === 'location') {
-      // } else if (key === 'plan') {
-      //   newObjects[key].forEach((plan: any) => {
-      //     plan.name = plan.planVersion.name;
-      //     fetchPlanDetails(plan, setFieldValue);
-      //   });
-      // } else if (key === 'governingEntity') {
-      // } else if (key === 'organization') {
-      //   const hasCollectiveOrg = newObjects[key].some((org: any) => org.collectiveInd);
-      //   setShowAnonymizedOrganization(hasCollectiveOrg);
-      // }
       const parsedResponse = newObjects[key].map((responseValue: any) => {
         if (settingArrayKeys[i] === 'years') {
           return {
             label: (responseValue as usageYears.UsageYear).year,
             id: responseValue.id,
+          };
+        } else if (settingArrayKeys[i] === 'plans') {
+          return {
+            label: (responseValue.planVersion as { id: number; name: string })
+              .name,
+            id: responseValue.planVersion.id,
           };
         } else {
           return {
@@ -167,7 +179,6 @@ export const FlowForm = (props: Props) => {
           };
         }
       });
-      console.log(newShowingTypes[i], parsedResponse);
       setFieldValue(newShowingTypes[i], parsedResponse);
     });
 
@@ -225,74 +236,162 @@ export const FlowForm = (props: Props) => {
     return existingObjects;
   };
 
-  const fetchPlanDetails = async (plan: any, setFieldValue: any) => {
+  const fetchPlanDetails = async (
+    objectType: string,
+    plan: any,
+    setFieldValue: any
+  ) => {
     const fetchedPlan = await environment.model.plans.getPlan(plan[0].id);
-    setObjectsWithArray(
-      fetchedPlan,
-      ['sourceUsageYears', 'sourceEmergencies', 'destinationUsageYears'],
-      ['years', 'emergencies', 'years'],
-      setFieldValue
-    );
-    console.log(fetchedPlan);
+    if (objectType === 'sourcePlans') {
+      setObjectsWithArray(
+        fetchedPlan,
+        ['sourceUsageYears', 'sourceEmergencies'],
+        ['years', 'emergencies'],
+        setFieldValue
+      );
+    }
+    if (objectType === 'destinationPlans') {
+      setObjectsWithArray(
+        fetchedPlan,
+        ['destinationUsageYears', 'destinationEmergencies'],
+        ['years', 'emergencies'],
+        setFieldValue
+      );
+    }
     if (fetchedPlan.locations) {
       const countries = fetchedPlan.locations.filter(function (loc) {
         return loc.adminLevel === 0;
       });
       if (countries.length === 1) {
+        if (objectType === 'sourcePlans') {
+          setObjectsWithArray(
+            { locations: countries },
+            ['sourceCountries'],
+            ['locations'],
+            setFieldValue
+          );
+        }
+        if (objectType === 'destinationPlans') {
+          setObjectsWithArray(
+            { locations: countries },
+            ['destinationCountries'],
+            ['locations'],
+            setFieldValue
+          );
+        }
+      }
+    }
+  };
+
+  const fetchEmergencyDetails = async (
+    objectType: string,
+    emergency: any,
+    setFieldValue: any
+  ) => {
+    if (objectType === 'destinationEmergencies') {
+      const fetchedEmergency = await environment.model.emergencies.getEmergency(
+        emergency[0].id
+      );
+      if (fetchedEmergency.locations.length <= 1) {
         setObjectsWithArray(
-          { locations: countries },
-          ['sourceCountries'],
+          fetchedEmergency,
+          ['destinationCountries'],
           ['locations'],
           setFieldValue
         );
       }
     }
   };
+  const fetchProjectDetails = async (
+    objectType: string,
+    project: any,
+    setFieldValue: any
+  ) => {
+    if (objectType === 'destinationProjects') {
+      const fetchedCategories =
+        await environment.model.categories.getCategories({
+          query: 'earmarkingType',
+        });
+      const category = fetchedCategories.filter(
+        (item) => item.name === 'Earmarked'
+      );
+      setFieldValue('earmarkingType', {
+        id: category[0],
+        label: category[0].name,
+      });
+    } else {
+      const fetchedProject = await environment.model.projects.getProject(
+        project[0].id
+      );
+      const publishedVersion = fetchedProject.projectVersions.filter(function (
+        version
+      ) {
+        return version.id === fetchedProject.currentPublishedVersionId;
+      })[0];
 
-  // const handleCalculateExchangeRate = () => {
-  //   const { amountOriginal, amountUSD } = values;
+      const overridingClusters = publishedVersion.governingEntities.filter(
+        function (cluster) {
+          return cluster.overriding;
+        }
+      );
 
-  //   // Check if both values are present, if not, calculate the missing one
-  //   if (amountOriginal && amountUSD) {
-  //     const exchangeRateUsed = amountOriginal / amountUSD;
-  //     setFieldValue('exchangeRateUsed', exchangeRateUsed);
-  //   } else if (amountOriginal && !amountUSD) {
-  //     const calculatedAmountUSD = amountOriginal / values.exchangeRateUsed;
-  //     setFieldValue('amountUSD', calculatedAmountUSD);
-  //   } else if (!amountOriginal && amountUSD) {
-  //     const calculatedAmountOriginal = amountUSD * values.exchangeRateUsed;
-  //     setFieldValue('amountOriginal', calculatedAmountOriginal);
-  //   } else {
-  //     console.warn('Both original amount and USD amount are missing.');
-  //   }
-  // };
-
-  const fetchEmergencyDetails = async (emergency: any, setFieldValue: any) => {
-    const fetchedEmergency = await environment.model.emergencies.getEmergency(
-      emergency[0].id
-    );
-    setObjectsWithArray(
-      fetchedEmergency,
-      ['location'],
-      ['locations'],
-      setFieldValue
-    );
-  };
-  const fetchProjectDetails = async (project: any, setFieldValue: any) => {
-    const fetchedProject = await environment.model.projects.getProject(
-      project[0].id
-    );
-    console.log(fetchedProject);
+      if (overridingClusters.length > 0) {
+        publishedVersion.governingEntities = overridingClusters;
+      }
+      setObjectsWithArray(
+        publishedVersion,
+        [
+          'sourcePlans',
+          'sourceCountries',
+          'sourceGoverningEntities',
+          'sourceGlobalClusters',
+          'sourceOrganizations',
+        ],
+        [
+          'plans',
+          'locations',
+          'governingEntities',
+          'globalClusters',
+          'organizations',
+        ],
+        setFieldValue
+      );
+    }
   };
   const fetchOrganizationDetails = async (
+    objectType: string,
     organization: any,
     setFieldValue: any
   ) => {
-    const fetchedOrganization =
-      await environment.model.organizations.getOrganization(organization[0].id);
-    console.log(fetchedOrganization);
+    const fetchedOrg = await environment.model.organizations.getOrganization(
+      organization[0].id
+    );
+    const isGovernment = fetchedOrg[0].categories.some(function (category) {
+      return (
+        category.group === 'organizationType' &&
+        /**
+         * 114 = Governments
+         * 123 = Country-based UN Pooled Funds
+         */
+        [114, 123].includes(category.id)
+      );
+    });
+    if (isGovernment && objectType === 'sourceOrganizations') {
+      objects.sourceCountries = checkIfExistingAndCopy(
+        objects.location,
+        fetchedOrg[0],
+        'locations'
+      );
+      setObjectsWithArray(
+        objects,
+        ['sourceCountries'],
+        ['locations'],
+        setFieldValue
+      );
+    }
   };
   const fetchAssociatedGoverningEntity = async (
+    objectType: string,
     globalCluster: any,
     setFieldValue: any
   ) => {
@@ -305,12 +404,13 @@ export const FlowForm = (props: Props) => {
 
   const dictExecutedForEachObject: Record<
     string,
-    (id: string, setFieldValue: any) => Promise<any>
+    (objectType: string, flowObject: any, setFieldValue: any) => Promise<any>
   > = {
     sourcePlans: fetchPlanDetails,
     destinationPlans: fetchPlanDetails,
-    sourceEmergencies: fetchEmergencyDetails,
+    destinationEmergencies: fetchEmergencyDetails,
     sourceProjects: fetchProjectDetails,
+    destinationProjects: fetchProjectDetails,
     sourceOrganizations: fetchOrganizationDetails,
     sourceGlobalClusters: fetchAssociatedGoverningEntity,
   };
@@ -321,8 +421,39 @@ export const FlowForm = (props: Props) => {
     setFieldValue: any
   ) => {
     if (flowObject.length > 0 && dictExecutedForEachObject[objectType]) {
-      await dictExecutedForEachObject[objectType](flowObject, setFieldValue);
+      await dictExecutedForEachObject[objectType](
+        objectType,
+        flowObject,
+        setFieldValue
+      );
     }
+  };
+
+  const FORM_SETTINGS = {
+    organization: {
+      behavior: 'shared',
+    },
+    project: {
+      behavior: 'overlap',
+    },
+    usageYear: {
+      behavior: 'shared',
+    },
+    location: {
+      behavior: 'shared',
+    },
+    globalCluster: {
+      behavior: 'shared',
+    },
+    emergency: {
+      behavior: 'overlap',
+    },
+    governingEntity: {
+      behavior: 'shared',
+    },
+    plan: {
+      behavior: 'overlap',
+    },
   };
 
   const FORM_VALIDATION = object().shape({
@@ -405,7 +536,7 @@ export const FlowForm = (props: Props) => {
       validationSchema={FORM_VALIDATION}
       onSubmit={handleSubmit}
     >
-      {({ resetForm, setFieldValue }) => (
+      {({ resetForm, values, setFieldValue }) => (
         <Form>
           <Fade in={selectedStep === 'fundingSources'}>
             <StyledFullSection>
@@ -418,6 +549,7 @@ export const FlowForm = (props: Props) => {
                       environment.model.organizations
                         .getAutocompleteOrganizations
                     }
+                    behavior={FORM_SETTINGS.organization.behavior}
                     onChange={(event, value) => {
                       updateFlowObjects(event, value, setFieldValue);
                     }}
@@ -430,6 +562,7 @@ export const FlowForm = (props: Props) => {
                         name="sourceUsageYears"
                         fnPromise={environment.model.usageYears.getUsageYears}
                         isMulti
+                        behavior={FORM_SETTINGS.usageYear.behavior}
                         isAutocompleteAPI={false}
                       />
                     </StyledHalfSection>
@@ -440,6 +573,7 @@ export const FlowForm = (props: Props) => {
                         fnPromise={
                           environment.model.locations.getAutocompleteLocations
                         }
+                        behavior={FORM_SETTINGS.location.behavior}
                         isMulti
                       />
                     </StyledHalfSection>
@@ -453,6 +587,7 @@ export const FlowForm = (props: Props) => {
                     onChange={(event, value) => {
                       updateFlowObjects(event, value, setFieldValue);
                     }}
+                    behavior={FORM_SETTINGS.emergency.behavior}
                     isMulti
                   />
                   <C.AsyncAutocompleteSelect
@@ -464,6 +599,7 @@ export const FlowForm = (props: Props) => {
                     onChange={(event, value) => {
                       updateFlowObjects(event, value, setFieldValue);
                     }}
+                    behavior={FORM_SETTINGS.globalCluster.behavior}
                     isMulti
                     isAutocompleteAPI={false}
                   />
@@ -472,6 +608,7 @@ export const FlowForm = (props: Props) => {
                     name="sourcePlans"
                     fnPromise={environment.model.plans.getAutocompletePlans}
                     isMulti
+                    behavior={FORM_SETTINGS.plan.behavior}
                     onChange={(event, value) => {
                       updateFlowObjects(event, value, setFieldValue);
                     }}
@@ -482,6 +619,7 @@ export const FlowForm = (props: Props) => {
                     fnPromise={
                       environment.model.projects.getAutocompleteProjects
                     }
+                    behavior={FORM_SETTINGS.project.behavior}
                     onChange={(event, value) => {
                       updateFlowObjects(event, value, setFieldValue);
                     }}
@@ -502,6 +640,7 @@ export const FlowForm = (props: Props) => {
                       environment.model.organizations
                         .getAutocompleteOrganizations
                     }
+                    behavior={FORM_SETTINGS.organization.behavior}
                     isMulti
                   />
                   <StyledRow>
@@ -511,6 +650,7 @@ export const FlowForm = (props: Props) => {
                         name="destinationUsageYears"
                         fnPromise={environment.model.usageYears.getUsageYears}
                         isMulti
+                        behavior={FORM_SETTINGS.usageYear.behavior}
                         isAutocompleteAPI={false}
                       />
                     </StyledHalfSection>
@@ -521,6 +661,7 @@ export const FlowForm = (props: Props) => {
                         fnPromise={
                           environment.model.locations.getAutocompleteLocations
                         }
+                        behavior={FORM_SETTINGS.location.behavior}
                         isMulti
                       />
                     </StyledHalfSection>
@@ -531,6 +672,7 @@ export const FlowForm = (props: Props) => {
                     fnPromise={
                       environment.model.globalClusters.getGlobalClusters
                     }
+                    behavior={FORM_SETTINGS.globalCluster.behavior}
                     isMulti
                   />
                   <C.AsyncAutocompleteSelect
@@ -540,6 +682,7 @@ export const FlowForm = (props: Props) => {
                     onChange={(event, value) => {
                       updateFlowObjects(event, value, setFieldValue);
                     }}
+                    behavior={FORM_SETTINGS.plan.behavior}
                     isMulti
                   />
                   <C.AsyncAutocompleteSelect
@@ -548,6 +691,9 @@ export const FlowForm = (props: Props) => {
                     fnPromise={
                       environment.model.emergencies.getAutocompleteEmergencies
                     }
+                    onChange={(event, value) => {
+                      updateFlowObjects(event, value, setFieldValue);
+                    }}
                     isMulti
                   />
                   <C.AsyncAutocompleteSelect
@@ -556,6 +702,10 @@ export const FlowForm = (props: Props) => {
                     fnPromise={
                       environment.model.projects.getAutocompleteProjects
                     }
+                    behavior={FORM_SETTINGS.project.behavior}
+                    onChange={(event, value) => {
+                      updateFlowObjects(event, value, setFieldValue);
+                    }}
                     isMulti
                   />
                 </C.FormSection>
@@ -613,7 +763,7 @@ export const FlowForm = (props: Props) => {
                         </StyledAnchorDiv>
                         <C.Button
                           onClick={() => {
-                            return true;
+                            handleCalculateExchangeRate(values, setFieldValue);
                           }}
                           color="primary"
                           text="Calculate the exchange rate"
@@ -674,12 +824,12 @@ export const FlowForm = (props: Props) => {
                         category="contributionType"
                         hasNameValue
                       />
-                      <C.AsyncSingleSelect
+                      <C.AsyncAutocompleteSelect
                         label="Gb Earmarking"
                         name="earmarkingType"
                         fnPromise={environment.model.categories.getCategories}
                         category="earmarkingType"
-                        hasNameValue
+                        isAutocompleteAPI={false}
                       />
                       <C.AsyncSingleSelect
                         label="Aid Modality"

@@ -9,8 +9,9 @@ import {
   tooltipClasses,
 } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
+import JoinInnerIcon from '@mui/icons-material/JoinInner';
 import { styled } from '@mui/material/styles';
-import { useField, useFormikContext } from 'formik';
+import { useField, useFormikContext, FormikValues } from 'formik';
 import {
   categories,
   emergencies,
@@ -63,6 +64,7 @@ const AsyncAutocompleteSelect = ({
   isMulti,
   category,
   isAutocompleteAPI,
+  behavior,
   onChange,
   ...otherProps
 }: {
@@ -73,12 +75,13 @@ const AsyncAutocompleteSelect = ({
   category?: string;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
+  behavior?: string;
   onChange?: (name: string, value: any) => void;
 }) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [multipleValuesSelected, setMultipleValueSelected] = useState(false);
-  const { setFieldValue } = useFormikContext();
+  const { values, setFieldValue } = useFormikContext<FormikValues>();
   const [field, meta] = useField(name);
   const [options, setOptions] = useState<
     readonly { label: string; id: number }[]
@@ -236,6 +239,12 @@ const AsyncAutocompleteSelect = ({
   }, [loading, inputValue]);
 
   useEffect(() => {
+    setMultipleValueSelected(
+      Array.isArray(values[name]) && values[name].length > 1
+    );
+  }, [values, name, setMultipleValueSelected]);
+
+  useEffect(() => {
     if (!open && !category && isAutocompleteAPI) {
       setOptions([]);
       setData([]);
@@ -298,9 +307,26 @@ const AsyncAutocompleteSelect = ({
               {params.InputProps.endAdornment}
               {multipleValuesSelected && (
                 <YellowTooltip title="Shared will be reported as possible funding for each of the selected values. Overlap will be reported as direct funding for each of the selected values.">
-                  <IconButton type="button" size="small" aria-label="share">
-                    <ShareIcon />
-                  </IconButton>
+                  <div>
+                    {behavior === 'shared' && (
+                      <IconButton
+                        type="button"
+                        size="small"
+                        aria-label="Shared behavior"
+                      >
+                        <ShareIcon />
+                      </IconButton>
+                    )}
+                    {behavior === 'overlap' && (
+                      <IconButton
+                        type="button"
+                        size="small"
+                        aria-label="Overlap behavior"
+                      >
+                        <JoinInnerIcon />
+                      </IconButton>
+                    )}
+                  </div>
                 </YellowTooltip>
               )}
             </React.Fragment>

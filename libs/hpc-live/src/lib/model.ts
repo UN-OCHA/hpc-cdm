@@ -612,7 +612,7 @@ export class LiveModel implements Model {
       getOrganization: (id) =>
         this.call({
           pathname: `/v1/object/autocomplete/id/organization/${id}`,
-          resultType: organizations.ORGANIZATION,
+          resultType: organizations.GET_ORGANIZATION_RESULT,
         }),
     };
   }
@@ -712,7 +712,7 @@ export class LiveModel implements Model {
       getProject: (id) =>
         this.call({
           pathname: `/v2/project/${id}`,
-          resultType: projects.PROJECT,
+          resultType: projects.PROJECT_DETAIL,
         }),
     };
   }

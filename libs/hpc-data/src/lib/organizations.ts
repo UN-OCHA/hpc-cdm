@@ -61,7 +61,9 @@ export const GET_ORGANIZATION_PARAMS = t.type({
 
 export type GetOrganizationParams = t.TypeOf<typeof GET_ORGANIZATION_PARAMS>;
 
-export type GetOrganizationResult = t.TypeOf<typeof ORGANIZATION>;
+export const GET_ORGANIZATION_RESULT = t.array(ORGANIZATION);
+
+export type GetOrganizationResult = t.TypeOf<typeof GET_ORGANIZATION_RESULT>;
 
 export interface Model {
   getAutocompleteOrganizations(
