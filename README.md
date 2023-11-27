@@ -50,10 +50,10 @@ Then navigate to to <http://localhost:4200/>
   interacting with
 - Run the docker container:
   ```
-  docker-compose up -d
+  docker compose up -d
   ```
 
-Docker-compose will run the image and map port `80` of the image to `4200` of
+Docker compose will run the image and map port `80` of the image to `4200` of
 the host, to match the ports when running using the other methods above.
 
 So visit to <http://localhost:4200/> test the image is running correctly.
