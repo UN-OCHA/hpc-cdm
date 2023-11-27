@@ -99,25 +99,29 @@ w-1/2`;
 export const FlowForm = (props: Props) => {
   const { environment, selectedStep, isEdit } = props;
   const { confirm } = dialogs;
-  // const { values, setFieldValue } = useFormikContext<FormValues>();
-  const [showComponents, setShowComponents] = useState({
-    sourceEmergencies: false,
-    sourcePlans: false,
-    sourceGlobalClusters: false,
-    sourceProjects: false,
-    destinationEmergencies: false,
-    destinationProjects: false,
-  });
 
   const handleSubmit = (values: FormValues) => {
     console.log(values);
   };
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
-  const [showAnonymizedOrganization, setShowAnonymizedOrganization] =
-    useState(false);
+  // let buttonText = 'Calculate the Exchange Rate';
+
   const formikRef = useRef(null);
 
+  // const handleButtonLabel = (values: any) => {
+  //   const { amountOriginal, amountUSD } = values;
+
+  //   if (amountOriginal && amountUSD) {
+  //     buttonText = 'Calculate the Exchange Rate';
+  //   } else if (amountOriginal && !amountUSD) {
+  //     buttonText = 'Calculate the funding amount in USD';
+  //   } else if (!amountOriginal && amountUSD) {
+  //     buttonText = 'Calculate funding amount in its original currency';
+  //   } else {
+  //     console.warn('Both original amount and USD amount are missing.');
+  //   }
+  // };
   const handleCalculateExchangeRate = (values: any, setFieldValue: any) => {
     const { amountOriginal, amountUSD } = values;
 
@@ -728,6 +732,10 @@ export const FlowForm = (props: Props) => {
                           label="Funding Amount in USD"
                           name="amountUSD"
                           type="currency"
+                          thousandSeparator
+                          // onChange={() => {
+                          //   handleButtonLabel(values);
+                          // }}
                         />
                       </StyledFormRow>
                       <C.Section title="Original Currency" type="secondary">
@@ -736,6 +744,10 @@ export const FlowForm = (props: Props) => {
                             label="Funding Amount (original currency)"
                             name="amountOriginal"
                             type="number"
+                            // onChange={() => {
+                            //   handleButtonLabel(values);
+                            // }}
+                            thousandSeparator
                           />
                           <StyledCurrencyRow>
                             <C.AsyncAutocompleteSelect
@@ -752,6 +764,10 @@ export const FlowForm = (props: Props) => {
                           label="Exchange Rate Used"
                           name="exchangeRateUsed"
                           type="number"
+                          thousandSeparator
+                          // onChange={() => {
+                          //   handleButtonLabel(values);
+                          // }}
                         />
                         <StyledAnchorDiv>
                           <StyledAnchor
@@ -766,7 +782,7 @@ export const FlowForm = (props: Props) => {
                             handleCalculateExchangeRate(values, setFieldValue);
                           }}
                           color="primary"
-                          text="Calculate the exchange rate"
+                          text={buttonText}
                         ></C.Button>
                       </C.Section>
                       <C.TextFieldWrapper

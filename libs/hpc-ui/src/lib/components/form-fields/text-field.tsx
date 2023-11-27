@@ -1,4 +1,4 @@
-import { TextField, TextFieldProps } from '@mui/material';
+import { TextField, TextFieldProps, InputAdornment } from '@mui/material';
 import { useField } from 'formik';
 import tw from 'twin.macro';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
@@ -12,10 +12,11 @@ interface CustomProps {
   onChange: (event: { target: { name: string; value: string } }) => void;
   name: string;
   itemType: 'number' | 'currency';
+  thousandSeparator: boolean;
 }
 const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
   function NumericFormatCustom(props, ref) {
-    const { onChange, name, itemType, ...others } = props;
+    const { onChange, name, itemType, thousandSeparator, ...others } = props;
     return (
       <NumericFormat
         {...others}
@@ -29,9 +30,8 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
             },
           });
         }}
-        thousandSeparator={itemType === 'currency'}
+        thousandSeparator={thousandSeparator}
         valueIsNumericString
-        prefix={itemType === 'currency' ? '$ ' : ''}
       />
     );
   }
@@ -44,6 +44,7 @@ const TextFieldWrapper = ({
   placeholder,
   multiline,
   rows,
+  thousandSeparator,
   ...otherProps
 }: {
   type: 'text' | 'number' | 'currency';
@@ -51,10 +52,10 @@ const TextFieldWrapper = ({
   label: string;
   placeholder?: string;
   multiline?: boolean;
+  thousandSeparator?: boolean;
   rows?: number;
 }) => {
   const [field, meta] = useField(name);
-
   const configTextField: TextFieldProps = {
     ...field,
     ...otherProps,
@@ -69,9 +70,16 @@ const TextFieldWrapper = ({
       type === 'number' || type === 'currency'
         ? {
             inputComponent: NumericFormatCustom as any,
+            startAdornment:
+              type === 'currency' ? (
+                <InputAdornment position="start">$</InputAdornment>
+              ) : null,
+            inputProps: {
+              itemType: type,
+              thousandSeparator: thousandSeparator,
+            },
           }
         : undefined,
-    inputProps: { itemType: type },
   };
   if (meta && meta.touched && meta.error) {
     configTextField.error = true;
