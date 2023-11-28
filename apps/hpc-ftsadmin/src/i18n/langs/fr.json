@@ -83,40 +83,124 @@
         "primary": "Rechercher",
         "secondary": "Effacer les champs"
       },
-      "filters": {
-        "flowDetails": "Détails de la transaction",
+      "headers": {
+        "flowDetails": "Détails du flux",
         "sourceDetails": "Détails de la source",
-        "destinationDetails": "Détails de la destination",
-        "includeChildrenParkedFlows": "Inclure les enfants des transactions en attente correspondantes",
-        "flowID": "ID de la transaction",
+        "destinationDetails": "Détails de la destination"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "Inclure les enfants des flux de stationnement correspondants",
+        "flowID": "ID du flux",
         "amountUSD": "Montant en USD",
         "keywords": "Mots-clés",
-        "flowStatus": "Statut de la transaction",
-        "flowType": "Type de transaction",
-        "flowActiveStatus": "Statut actif de la transaction",
-        "reporterReferenceCode": "Code de référence du rapporteur",
+        "flowStatus": "État du flux",
+        "flowType": "Type de flux",
+        "flowActiveStatus": "État actif du flux",
+        "reporterRefCode": "Code de référence du déclarant",
         "sourceSystemID": "ID du système source",
-        "flowLegacyID": "ID de transaction hérité",
-        "organizations": "Organisme(s)",
-        "countries": "Pays",
-        "usageYears": "Année(s) d'utilisation",
-        "projects": "Projet(s)",
-        "plans": "Plan(s)",
-        "globalClusters": "Cluster(s) mondial(aux)",
-        "emergencies": "Urgence(s)",
-        "dataProvider": "Fournisseur de données",
-        "details": "Détails",
-        "status": "État"
+        "legacyID": "ID du flux hérité",
+        "sourceOrganizations": "Organisation(s) source",
+        "sourceCountries": "Pays(s) source(s)",
+        "sourceUsageYears": "Année(s) d'utilisation source",
+        "sourceProjects": "Projet(s) source(s)",
+        "sourcePlans": "Plan(s) source(s)",
+        "sourceGlobalClusters": "Regroupement(s) mondial(aux) source(s)",
+        "sourceEmergencies": "Urgence(s) source(s)",
+        "destinationOrganizations": "Organisation(s) de destination",
+        "destinationCountries": "Pays(s) de destination",
+        "destinationUsageYears": "Année(s) d'utilisation de la destination",
+        "destinationProjects": "Projet(s) de destination",
+        "destinationPlans": "Plan(s) de destination",
+        "destinationGlobalClusters": "Regroupement(s) mondial(aux) de destination",
+        "destinationEmergencies": "Urgence(s) de destination"
       },
       "showMore": "Afficher plus",
       "tooltips": {
         "filters": "Filtres"
+      }
+    },
+    "pendingFlowsFilter": {
+      "title": "Filtres",
+      "button": {
+        "primary": "Rechercher",
+        "secondary": "Effacer les champs"
+      },
+      "headers": {
+        "flowDetails": "Détails du flux",
+        "sourceDetails": "Détails de la source",
+        "destinationDetails": "Détails de la destination"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "Inclure les enfants des flux de stationnement correspondants",
+        "status": "Statut",
+        "dataProvider": "Fournisseur de données",
+        "flowType": "Type de flux",
+        "reporterRefCode": "Code de référence du déclarant",
+        "sourceOrganizations": "Organisation(s) source",
+        "sourceCountries": "Pays(s) source(s)",
+        "destinationOrganizations": "Organisation(s) de destination",
+        "destinationCountries": "Pays(s) de destination",
+        "destinationUsageYears": "Année(s) d'utilisation de la destination",
+        "details": "Détails"
+      },
+      "showMore": "Afficher plus",
+      "tooltips": {
+        "filters": "Filtres"
+      }
+    },
+    "organizationsFilter": {
+      "title": "Filtres",
+      "button": {
+        "primary": "Rechercher",
+        "secondary": "Effacer les champs"
+      },
+      "headers": {
+        "organizationDetails": "Détails de l'organisation"
+      },
+      "filters": {
+        "organizationName": "Nom de l'organisation",
+        "active": "Actif",
+        "addedModifiedSince": "Ajouté/Modifié depuis",
+        "country": "Pays(s)",
+        "organizationType": "Type d'organisation",
+        "parentOrganization": "Organisation mère"
+      },
+      "showMore": "Afficher plus",
+      "tooltips": {
+        "filters": "Filtres"
+      }
+    },
+    "organizationTable": {
+      "headers": {
+        "id": "ID",
+        "name": "Organisation",
+        "abbreviation": "Abbréviation",
+        "type": "Type",
+        "subType": "Sous-type",
+        "location": "Emplacement",
+        "createdBy": "Créé par",
+        "updatedBy": "Mis à jour par"
+      },
+      "update": "Mettre à jour",
+      "new": "Nouveau",
+      "restricted": "Restreint",
+      "inactive": "Inactif",
+      "notFound": {
+        "title": "Organisations non trouvées",
+        "info": "Nous n'avons pas pu charger les organisations"
+      },
+      "sortBy": "Trier par",
+      "tableSettings": {
+        "title": "Paramètres du tableau",
+        "save": "Enregistrer",
+        "info": "Quitter sans cliquer sur le bouton 'Enregistrer' ne mettra pas à jour le tableau"
       }
     }
   },
   "navigation": {
     "flows": "Flux",
     "pendingFlows": "Flux en attente",
+    "organizations": "Organisations",
     "rpm": "Module de planification des interventions",
     "prism": "Système de projets en ligne",
     "ftsWebsite": "Site web FTS",

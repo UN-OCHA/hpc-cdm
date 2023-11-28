@@ -1,37 +1,37 @@
 {
-  "title": "FTS管理",
+  "title": "FTS 管理员",
   "user": {
     "login": "登录",
     "logout": "登出"
   },
   "errors": {
-    "unableToLoadFTSAdmin": "无法加载FTS管理"
+    "unableToLoadFTSAdmin": "无法加载 FTS 管理员"
   },
   "common": {
     "devEnvironmentWarnings": {
-      "dummy": "这是FTS管理的演示实例，您在此输入的信息将仅存储在您的浏览器中，不会发送到我们的服务器",
-      "dev": "这是FTS管理的测试实例，您在此输入的信息将定期删除。"
+      "dummy": "这是 FTS 管理员的演示实例，您在此输入的信息将仅存储在您的浏览器中，不会发送到我们的服务器",
+      "dev": "这是 FTS 管理员的测试实例，您在此输入的信息将定期删除"
     }
   },
   "components": {
     "appTitle": {
-      "primary": "FTS数据模块"
+      "primary": "FTS 数据模块"
     },
     "acceptableUseNotification": {
       "login": "点击这里登录",
       "title": "可接受使用通知",
-      "p1": "未经授权访问联合国计算机系统，违反了ST/SGB/2004/15（2004年11月29日的“信息和通信技术资源和数据的使用”）。",
-      "p2": "授权用户应确保他们对信息和通信技术（ICT）资源和ICT数据的使用与他们作为工作人员的义务或其他可能适用于他们的义务一致。",
-      "p3": "所有对ICT资源和ICT数据的使用都受ST/SGB/2004/15规定的监测和调查的监督。",
-      "p4": "任何用户，无论是否经过授权，使用本系统即表示同意适用的联合国法规和规则。"
+      "p1": "禁止未经授权访问这台联合国计算机系统，根据 ST/SGB/2004/15（2004年11月29日《信息和通信技术资源和数据使用》）规定",
+      "p2": "授权用户应确保他们对信息和通信技术（ICT）资源和ICT数据的使用与他们作为工作人员的义务或可能适用于他们的其他义务一致",
+      "p3": "所有对ICT资源和ICT数据的使用均受ST/SGB/2004/15规定的监控和调查",
+      "p4": "任何用户（经授权或未经授权）对该系统的使用均构成对适用的联合国法规和规则的同意"
     },
     "dialogs": {
       "okay": "确认",
       "cancel": "取消"
     },
     "notFound": {
-      "title": "页面未找到",
-      "info": "我们无法找到您寻找的页面",
+      "title": "找不到页面",
+      "info": "我们找不到您要查找的页面",
       "back": "返回"
     },
     "loader": {
@@ -40,91 +40,178 @@
       "retry": "重试"
     },
     "unsupportedBrowser": {
-      "title": "不支持的浏览器！",
-      "info": "很抱歉，您当前的浏览器不受支持。请切换到Firefox或Google Chrome。要做到这一点，只需复制上面的表单地址（URL），然后打开Firefox或Chrome，粘贴该地址到浏览器中。"
+      "title": "不受支持的浏览器！",
+      "info": "很抱歉，您当前的浏览器不受支持。请切换到 Firefox 或 Google Chrome。要执行此操作，只需复制上面的表单地址（URL），然后打开 Firefox 或 Chrome，并将地址粘贴到浏览器中。"
     },
     "flowsTable": {
       "headers": {
         "id": "ID",
         "status": "状态",
-        "updatedCreated": "已更新/已创建",
+        "updatedCreated": "更新/创建",
         "dataProvider": "数据提供者",
         "amountUSD": "金额（美元）",
-        "sourceOrganization": "来源组织",
+        "sourceOrganization": "源组织",
         "destinationOrganization": "目标组织",
         "destinationPlan": "目标计划",
         "destinationCountry": "目标国家",
-        "destinationYear": "目标年度",
+        "destinationYear": "目标年份",
         "details": "详情"
       },
       "update": "更新",
       "new": "新建",
-      "restricted": "受限制",
-      "inactive": "不活跃",
-      "child": "子级",
-      "parent": "父级",
+      "restricted": "受限",
+      "inactive": "不活动",
+      "child": "子项",
+      "parent": "父项",
       "notFound": {
-        "title": "未找到流程",
-        "info": "我们无法加载流程"
+        "title": "未找到资金流",
+        "info": "我们无法加载资金流"
       },
-      "reportTooltip": "由{organization}于{date}通过{channel}报告",
-      "parkedSource": "停放源",
+      "reportTooltip": "由 {organization} 于 {date} 通过 {channel} 报告",
+      "parkedSource": "停车源",
       "sortBy": "排序方式",
-      "rejectPendingFlows": "拒绝待处理流程",
+      "rejectPendingFlows": "拒绝待处理的资金流",
       "tableSettings": {
         "title": "表格设置",
         "save": "保存",
-        "info": "未单击“保存”按钮而离开将不会更新表格"
+        "info": "离开而没有点击 '保存' 按钮将不会更新表格"
       }
     },
     "flowsFilter": {
-      "title": "筛选",
+      "title": "筛选器",
       "button": {
         "primary": "搜索",
         "secondary": "清除字段"
       },
+      "headers": {
+        "flowDetails": "资金流详情",
+        "sourceDetails": "源详情",
+        "destinationDetails": "目标详情"
+      },
       "filters": {
-        "flowDetails": "流程详情",
-        "sourceDetails": "来源详情",
-        "destinationDetails": "目标详情",
-        "includeChildrenParkedFlows": "包括匹配停放流程的子级",
-        "flowID": "流程ID",
+        "includeChildrenOfParkedFlows": "包括匹配的停车流的子项",
+        "flowID": "资金流ID",
         "amountUSD": "金额（美元）",
         "keywords": "关键词",
-        "flowStatus": "流程状态",
-        "flowType": "流程类型",
-        "flowActiveStatus": "流程活动状态",
-        "reporterReferenceCode": "报告参考代码",
-        "sourceSystemID": "来源系统ID",
-        "flowLegacyID": "流程传承ID",
-        "organizations": "组织",
-        "countries": "国家",
-        "usageYears": "使用年度",
-        "projects": "项目",
-        "plans": "计划",
-        "globalClusters": "全球集群",
-        "emergencies": "紧急情况",
+        "flowStatus": "资金流状态",
+        "flowType": "资金流类型",
+        "flowActiveStatus": "资金流活动状态",
+        "reporterRefCode": "报告者参考代码",
+        "sourceSystemID": "源系统ID",
+        "legacyID": "资金流传统ID",
+        "sourceOrganizations": "组织（源）",
+        "sourceCountries": "国家（源）",
+        "sourceUsageYears": "使用年份（源）",
+        "sourceProjects": "项目（源）",
+        "sourcePlans": "计划（源）",
+        "sourceGlobalClusters": "全球集群（源）",
+        "sourceEmergencies": "紧急情况（源）",
+        "destinationOrganizations": "组织（目标）",
+        "destinationCountries": "国家（目标）",
+        "destinationUsageYears": "使用年份（目标）",
+        "destinationProjects": "项目（目标）",
+        "destinationPlans": "计划（目标）",
+        "destinationGlobalClusters": "全球集群（目标）",
+        "destinationEmergencies": "紧急情况（目标）",
         "dataProvider": "数据提供者",
         "details": "详情",
         "status": "状态"
       },
-      "showMore": "查看更多",
+      "showMore": "显示更多",
       "tooltips": {
-        "filters": "筛选"
+        "filters": "筛选器"
+      }
+    },
+    "pendingFlowsFilter": {
+      "title": "筛选器",
+      "button": {
+        "primary": "搜索",
+        "secondary": "清除字段"
+      },
+      "headers": {
+        "flowDetails": "资金流详情",
+        "sourceDetails": "源详情",
+        "destinationDetails": "目标详情"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "包括匹配的停车流的子项",
+        "status": "状态",
+        "dataProvider": "数据提供者",
+        "flowType": "资金流类型",
+        "reporterRefCode": "报告者参考代码",
+        "sourceOrganizations": "组织（源）",
+        "sourceCountries": "国家（源）",
+        "destinationOrganizations": "组织（目标）",
+        "destinationCountries": "国家（目标）",
+        "destinationUsageYears": "使用年份（目标）",
+        "details": "详情"
+      },
+      "showMore": "显示更多",
+      "tooltips": {
+        "filters": "筛选器"
+      }
+    },
+    "organizationsFilter": {
+      "title": "筛选器",
+      "button": {
+        "primary": "搜索",
+        "secondary": "清除字段"
+      },
+      "headers": {
+        "organizationDetails": "组织详情"
+      },
+      "filters": {
+        "organizationName": "组织名称",
+        "active": "活跃",
+        "addedModifiedSince": "添加/修改自",
+        "country": "国家",
+        "organizationType": "组织类型",
+        "parentOrganization": "母公司"
+      },
+      "showMore": "显示更多",
+      "tooltips": {
+        "filters": "筛选器"
+      }
+    },
+    "organizationTable": {
+      "headers": {
+        "id": "ID",
+        "name": "组织",
+        "abbreviation": "缩写",
+        "type": "类型",
+        "subType": "子类型",
+        "location": "位置",
+        "createdBy": "创建者",
+        "updatedBy": "更新者"
+      },
+      "update": "更新",
+      "new": "新建",
+      "restricted": "受限",
+      "inactive": "不活跃",
+      "notFound": {
+        "title": "找不到组织",
+        "info": "我们无法加载组织"
+      },
+      "sortBy": "排序方式",
+      "tableSettings": {
+        "title": "表格设置",
+        "save": "保存",
+        "info": "离开而没有点击 '保存' 按钮将不会更新表格"
       }
     }
   },
   "navigation": {
-    "flows": "流程",
-    "pendingFlows": "待处理流程",
-    "rpm": "响应计划模块",
+    "flows": "资金流",
+    "pendingFlows": "待处理的资金流",
+    "organizations": "组织",
+    "rpm": "响应规划模块",
     "prism": "在线项目系统",
-    "ftsWebsite": "FTS网站",
+    "ftsWebsite": "FTS 网站",
     "help": "帮助"
   },
   "routes": {
     "flows": {
-      "title": "搜索资金流程"
+      "title": "搜索资金流"
     },
     "pendingFlows": {
       "title": "搜索待处理流程"

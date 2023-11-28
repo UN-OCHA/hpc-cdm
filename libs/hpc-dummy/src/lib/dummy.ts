@@ -1070,7 +1070,7 @@ export class Dummy {
           'organizations.getAutocompleteOrganizations',
           async (
             params: organizations.GetOrganizationsAutocompleteParams
-          ): Promise<organizations.GetOrganizationsAutocompleteResult> => {
+          ): Promise<organizations.GetOrganizationsResult> => {
             // Implement the dummy data retrieval logic here
             // Replace the following line with the actual implementation
             return [
@@ -1171,6 +1171,35 @@ export class Dummy {
                 ],
               },
             ];
+          }
+        ),
+        searchOrganizations: dummyEndpoint(
+          'organizations.searchOrganizations',
+          async (
+            params: organizations.SearchOrganizationParams
+          ): Promise<organizations.SearchOrnganizationResult> => {
+            return {
+              count: '1',
+              organizations: [
+                {
+                  id: 9093,
+                  name: 'Association pour le Secours et le Développement',
+                  nativeName: '',
+                  abbreviation: 'ASD',
+                  active: true,
+                  categories: [
+                    {
+                      name: 'NGOs',
+                      group: 'organizationType',
+                      parentID: null,
+                    },
+                  ],
+                  locations: [],
+                  create: [],
+                  update: [],
+                },
+              ],
+            };
           }
         ),
       },

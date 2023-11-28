@@ -28,19 +28,22 @@ import _ from 'lodash';
 import {
   decodeFilters,
   encodeFilters,
+  parseFormFiltersRebuilt,
+  parseFlowFilters,
   parseActiveFilters,
-  parseFilters,
 } from '../utils/parse-filters';
 import { FLOWS_FILTER_INITIAL_VALUES } from '../components/filter-flows-table';
 import { Form, Formik } from 'formik';
 import { PendingFlowsFilterValues } from './filter-pending-flows-table';
 import EllipsisText from '../utils/ellipsis-text';
 import {
-  HeaderID,
+  FlowHeaderID,
   TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
 } from '../utils/table-headers';
+import { downloadExcel } from '../utils/download-excel';
+import DownloadIcon from '@mui/icons-material/Download';
 
 export type Query = {
   page: number;
@@ -51,7 +54,7 @@ export type Query = {
   tableHeaders: string;
 };
 export interface FlowsTableProps {
-  headers: TableHeadersProps[];
+  headers: TableHeadersProps<FlowHeaderID>[];
   initialValues: FlowsFilterValues | PendingFlowsFilterValues;
   flowList?: flows.FlowList;
   graphQL?: boolean;
@@ -91,7 +94,7 @@ export interface ParsedFilters {
   flowActiveStatus?: { activeStatus: { name: string } };
   status?: { status: string };
   reporterRefCode?: number;
-  flowLegacyID?: number;
+  legacyID?: number;
   flowObjects?: flows.FlowObject[];
   categories?: flows.FlowCategory[];
   includeChildrenOfParkedFlows?: boolean;
@@ -157,7 +160,7 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
     });
   };
 
-  const handleSort = (newSort: HeaderID) => {
+  const handleSort = (newSort: FlowHeaderID) => {
     const changeDir = newSort === query.orderBy;
 
     if (changeDir) {
@@ -175,14 +178,14 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
   };
 
   const renderReportDetail = (
-    org: flows.FlowOrganization,
-    row: flows.FlowSearchResult,
+    org: flows.FlowOrganizationGraphQl,
+    row: flows.FlowGraphQL,
     lang: LanguageKey
   ) => {
     const rd =
       row.reportDetails &&
-      row.reportDetails.filter((rd) => rd.organizationID === org.objectID);
-
+      row.reportDetails.filter((rd) => rd.organizationID === org.id);
+    console.log(row.reportDetails);
     return (
       rd &&
       rd.length > 0 &&
@@ -347,12 +350,29 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-source-organization"
                     >
+                      {row.parkedParentSource &&
+                        row.parkedParentSource.length > 0 && (
+                          <>
+                            <strong>
+                              {t.t(
+                                lang,
+                                (s) => s.components.flowsTable.parkedSource
+                              )}
+                              :{' '}
+                              {row.parkedParentSource.map(
+                                (parkedOrg) => parkedOrg.orgName
+                              )}
+                            </strong>
+                            <br />
+                          </>
+                        )}
                       {row.organizations &&
                         row.organizations
                           .filter((org) => org.direction === 'source')
                           .map((org, index) => (
                             <span key={`source_${row.id}_${index}`}>
                               {org.name}
+                              {renderReportDetail(org, row, lang)}
                             </span>
                           ))}
                     </TableCell>
@@ -370,6 +390,7 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                           .map((org, index) => (
                             <span key={`destination_${row.id}_${index}`}>
                               {org.name}
+                              {renderReportDetail(org, row, lang)}
                             </span>
                           ))}
                     </TableCell>
@@ -457,6 +478,26 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                           size="small"
                         />
                       )}
+                      {row.parentIDs && row.parentIDs.length > 0 && (
+                        <Chip
+                          sx={chipSpacing}
+                          label={[
+                            t.t(lang, (s) => s.components.flowsTable.child),
+                          ]}
+                          size="small"
+                          color="primary"
+                        />
+                      )}
+                      {row.childIDs && row.childIDs.length > 0 && (
+                        <Chip
+                          sx={chipSpacing}
+                          label={[
+                            t.t(lang, (s) => s.components.flowsTable.parent),
+                          ]}
+                          size="small"
+                          color="primary"
+                        />
+                      )}
                     </TableCell>
                   );
                 default:
@@ -480,7 +521,11 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
         <TableHead>
           <TableRow>
             {props.flowList === 'pending' && <TableCell size="small" />}
-            {decodeTableHeaders(query.tableHeaders, lang).map((header) => {
+            {(
+              decodeTableHeaders(query.tableHeaders, lang) as Array<
+                TableHeadersProps<FlowHeaderID>
+              >
+            ).map((header) => {
               if (!header.active) {
                 return;
               }
@@ -658,6 +703,15 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                   </Tooltip>
                 ))}
                 <TopRowContainer>
+                  <C.AsyncIconButton
+                    fnPromise={() =>
+                      downloadExcel<flows.FlowGraphQL>(
+                        data.searchFlows.flows,
+                        'export'
+                      )
+                    }
+                    IconComponent={DownloadIcon}
+                  />
                   <ConfigButton
                     size="small"
                     onClick={() => setOpenSettings(!openSettings)}
@@ -667,19 +721,9 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                   <Modal
                     open={openSettings}
                     onClose={() => setOpenSettings(!openSettings)}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
+                    sx={tw`flex items-center justify-center`}
                   >
-                    <Box
-                      sx={{
-                        maxHeight: '70vh',
-                        overflowY: 'scroll',
-                        borderRadius: '10px',
-                      }}
-                    >
+                    <Box sx={tw`max-h-[70vh] overflow-y-scroll rounded-xl`}>
                       <C.DraggableList
                         title={t.t(
                           lang,
@@ -692,6 +736,7 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                         queryValues={decodeTableHeaders(
                           query.tableHeaders,
                           lang,
+                          'flows',
                           setQuery,
                           query
                         )}
@@ -700,6 +745,7 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                             ...query,
                             tableHeaders: encodeTableHeaders(
                               element as any, // TO DO: remove any
+                              'flows',
                               setQuery,
                               query
                             ),

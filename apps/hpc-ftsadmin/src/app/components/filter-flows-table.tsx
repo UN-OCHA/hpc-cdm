@@ -1,18 +1,26 @@
 import { Form, Formik, FormikState } from 'formik';
 import { array, number, object, string } from 'yup';
 import tw from 'twin.macro';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { C } from '@unocha/hpc-ui';
 import { Environment } from '../../environments/interface';
 import { Query } from './flows-table';
 import {
+  FormObjectValue,
   decodeFilters,
   encodeFilters,
   parseActiveFilters,
+  parseFormFiltersRebuilt,
   parseInitialValues,
 } from '../utils/parse-filters';
 import { LanguageKey, t } from '../../i18n';
+import {
+  InfoSettings,
+  LocalStorageFTSAdminKey,
+} from '../utils/local-storage-type';
+import { util } from '@unocha/hpc-core';
+import { Alert } from '@mui/material';
 
 interface Props {
   environment: Environment;
@@ -21,33 +29,33 @@ interface Props {
   setQuery: (newQuery: Query) => void;
 }
 export interface FlowsFilterValues {
-  flowID?: string;
+  flowID?: string[];
   amountUSD?: string;
-  keywords?: { label: string; id: string }[];
+  keywords?: Array<FormObjectValue>;
   flowStatus?: string;
   flowType?: string;
   flowActiveStatus?: string;
   reporterRefCode?: string;
   sourceSystemID?: string;
-  flowLegacyID?: string;
-  sourceOrganizations?: { label: string; id: string }[];
-  sourceCountries?: { label: string; id: string }[];
-  sourceUsageYears?: { label: string; id: string }[];
-  sourceProjects?: { label: string; id: string }[];
-  sourcePlans?: { label: string; id: string }[];
-  sourceGlobalClusters?: { label: string; id: string }[];
-  sourceEmergencies?: { label: string; id: string }[];
-  destinationOrganizations?: { label: string; id: string }[];
-  destinationCountries?: { label: string; id: string }[];
-  destinationUsageYears?: { label: string; id: string }[];
-  destinationProjects?: { label: string; id: string }[];
-  destinationPlans?: { label: string; id: string }[];
-  destinationGlobalClusters?: { label: string; id: string }[];
-  destinationEmergencies?: { label: string; id: string }[];
+  legacyID?: string;
+  sourceOrganizations?: Array<FormObjectValue>;
+  sourceCountries?: Array<FormObjectValue>;
+  sourceUsageYears?: Array<FormObjectValue>;
+  sourceProjects?: Array<FormObjectValue>;
+  sourcePlans?: Array<FormObjectValue>;
+  sourceGlobalClusters?: Array<FormObjectValue>;
+  sourceEmergencies?: Array<FormObjectValue>;
+  destinationOrganizations?: Array<FormObjectValue>;
+  destinationCountries?: Array<FormObjectValue>;
+  destinationUsageYears?: Array<FormObjectValue>;
+  destinationProjects?: Array<FormObjectValue>;
+  destinationPlans?: Array<FormObjectValue>;
+  destinationGlobalClusters?: Array<FormObjectValue>;
+  destinationEmergencies?: Array<FormObjectValue>;
   includeChildrenOfParkedFlows?: boolean;
 }
 export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
-  flowID: '',
+  flowID: [],
   amountUSD: '',
   keywords: [],
   flowStatus: '',
@@ -55,7 +63,7 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   flowActiveStatus: '',
   reporterRefCode: '',
   sourceSystemID: '',
-  flowLegacyID: '',
+  legacyID: '',
   sourceOrganizations: [],
   sourceCountries: [],
   sourceUsageYears: [],
@@ -82,11 +90,22 @@ gap-x-4
 `;
 export const FilterFlowsTable = (props: Props) => {
   const { environment, setQuery, query, lang } = props;
+
+  const [tableInfoDisplay, setTableInfoDisplay] = useState(
+    util.getLocalStorageItem('infoSettings', true)
+  );
+  const handleTableSettingsInfoClose = () => {
+    util.setLocalStorageItem<InfoSettings, LocalStorageFTSAdminKey>(
+      'infoSettings',
+      { filterCommaSeparate: false }
+    );
+    setTableInfoDisplay(false);
+  };
+
   const FORM_VALIDATION = object().shape({
-    flowID: number()
-      .positive()
-      .integer()
-      .typeError('Only positive integers are accepted'),
+    flowID: array(number().positive().integer()).typeError(
+      'Only positive integers are accepted'
+    ),
     amountUSD: number()
       .positive()
       .typeError('Only positive integers are accepted'),
@@ -98,7 +117,7 @@ export const FilterFlowsTable = (props: Props) => {
     sourceSystemID: number()
       .positive()
       .typeError('Only positive integers are accepted'),
-    flowLegacyID: number()
+    legacyID: number()
       .positive()
       .typeError('Only positive integers are accepted'),
     sourceOrganizations: array().of(
@@ -171,16 +190,26 @@ export const FilterFlowsTable = (props: Props) => {
             <C.Section
               title={t.t(
                 lang,
-                (s) => s.components.flowsFilter.filters.flowDetails
+                (s) => s.components.flowsFilter.headers.flowDetails
               )}
             >
-              <C.TextFieldWrapper
+              <Alert
+                severity="info"
+                onClose={handleTableSettingsInfoClose}
+                sx={{
+                  display: tableInfoDisplay ? 'flex' : 'none',
+                  ...tw` mt-4`,
+                }}
+              >
+                Using ',' sepparated values will create multiple values. Copy
+                and paste also works with this functionality
+              </Alert>
+              <C.MultiTextField
                 label={t.t(
                   lang,
                   (s) => s.components.flowsFilter.filters.flowID
                 )}
                 name="flowID"
-                type="number"
               />
               <C.TextFieldWrapper
                 label={t.t(
@@ -260,8 +289,7 @@ export const FilterFlowsTable = (props: Props) => {
                 <C.TextFieldWrapper
                   label={t.t(
                     lang,
-                    (s) =>
-                      s.components.flowsFilter.filters.reporterReferenceCode
+                    (s) => s.components.flowsFilter.filters.reporterRefCode
                   )}
                   name="reporterRefCode"
                   type="number"
@@ -277,9 +305,9 @@ export const FilterFlowsTable = (props: Props) => {
                 <C.TextFieldWrapper
                   label={t.t(
                     lang,
-                    (s) => s.components.flowsFilter.filters.flowLegacyID
+                    (s) => s.components.flowsFilter.filters.legacyID
                   )}
-                  name="flowLegacyID"
+                  name="legacyID"
                   type="number"
                 />
               </C.Section>
@@ -287,13 +315,13 @@ export const FilterFlowsTable = (props: Props) => {
             <C.Section
               title={t.t(
                 lang,
-                (s) => s.components.flowsFilter.filters.sourceDetails
+                (s) => s.components.flowsFilter.headers.sourceDetails
               )}
             >
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.flowsFilter.filters.organizations
+                  (s) => s.components.flowsFilter.filters.sourceOrganizations
                 )}
                 name="sourceOrganizations"
                 fnPromise={
@@ -304,7 +332,7 @@ export const FilterFlowsTable = (props: Props) => {
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.flowsFilter.filters.countries
+                  (s) => s.components.flowsFilter.filters.sourceCountries
                 )}
                 name="sourceCountries"
                 fnPromise={environment.model.locations.getAutocompleteLocations}
@@ -314,7 +342,7 @@ export const FilterFlowsTable = (props: Props) => {
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.flowsFilter.filters.usageYears
+                  (s) => s.components.flowsFilter.filters.sourceUsageYears
                 )}
                 name="sourceUsageYears"
                 fnPromise={environment.model.usageYears.getUsageYears}
@@ -328,7 +356,7 @@ export const FilterFlowsTable = (props: Props) => {
                 <C.AsyncAutocompleteSelect
                   label={t.t(
                     lang,
-                    (s) => s.components.flowsFilter.filters.projects
+                    (s) => s.components.flowsFilter.filters.sourceProjects
                   )}
                   name="sourceProjects"
                   fnPromise={environment.model.projects.getAutocompleteProjects}
@@ -337,7 +365,7 @@ export const FilterFlowsTable = (props: Props) => {
                 <C.AsyncAutocompleteSelect
                   label={t.t(
                     lang,
-                    (s) => s.components.flowsFilter.filters.plans
+                    (s) => s.components.flowsFilter.filters.sourcePlans
                   )}
                   name="sourcePlans"
                   fnPromise={environment.model.plans.getAutocompletePlans}
@@ -346,7 +374,7 @@ export const FilterFlowsTable = (props: Props) => {
                 <C.AsyncAutocompleteSelect
                   label={t.t(
                     lang,
-                    (s) => s.components.flowsFilter.filters.globalClusters
+                    (s) => s.components.flowsFilter.filters.sourceGlobalClusters
                   )}
                   name="sourceGlobalClusters"
                   fnPromise={environment.model.globalClusters.getGlobalClusters}
@@ -356,7 +384,7 @@ export const FilterFlowsTable = (props: Props) => {
                 <C.AsyncAutocompleteSelect
                   label={t.t(
                     lang,
-                    (s) => s.components.flowsFilter.filters.emergencies
+                    (s) => s.components.flowsFilter.filters.sourceEmergencies
                   )}
                   name="sourceEmergencies"
                   fnPromise={
@@ -369,13 +397,14 @@ export const FilterFlowsTable = (props: Props) => {
             <C.Section
               title={t.t(
                 lang,
-                (s) => s.components.flowsFilter.filters.destinationDetails
+                (s) => s.components.flowsFilter.headers.destinationDetails
               )}
             >
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.flowsFilter.filters.organizations
+                  (s) =>
+                    s.components.flowsFilter.filters.destinationOrganizations
                 )}
                 name="destinationOrganizations"
                 fnPromise={
@@ -386,7 +415,7 @@ export const FilterFlowsTable = (props: Props) => {
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.flowsFilter.filters.countries
+                  (s) => s.components.flowsFilter.filters.destinationCountries
                 )}
                 name="destinationCountries"
                 fnPromise={environment.model.locations.getAutocompleteLocations}
@@ -396,7 +425,7 @@ export const FilterFlowsTable = (props: Props) => {
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.flowsFilter.filters.usageYears
+                  (s) => s.components.flowsFilter.filters.destinationUsageYears
                 )}
                 name="destinationUsageYears"
                 fnPromise={environment.model.usageYears.getUsageYears}
@@ -410,7 +439,7 @@ export const FilterFlowsTable = (props: Props) => {
                 <C.AsyncAutocompleteSelect
                   label={t.t(
                     lang,
-                    (s) => s.components.flowsFilter.filters.projects
+                    (s) => s.components.flowsFilter.filters.destinationProjects
                   )}
                   name="destinationProjects"
                   fnPromise={environment.model.projects.getAutocompleteProjects}
@@ -419,7 +448,7 @@ export const FilterFlowsTable = (props: Props) => {
                 <C.AsyncAutocompleteSelect
                   label={t.t(
                     lang,
-                    (s) => s.components.flowsFilter.filters.plans
+                    (s) => s.components.flowsFilter.filters.destinationPlans
                   )}
                   name="destinationPlans"
                   fnPromise={environment.model.plans.getAutocompletePlans}
@@ -428,7 +457,8 @@ export const FilterFlowsTable = (props: Props) => {
                 <C.AsyncAutocompleteSelect
                   label={t.t(
                     lang,
-                    (s) => s.components.flowsFilter.filters.globalClusters
+                    (s) =>
+                      s.components.flowsFilter.filters.destinationGlobalClusters
                   )}
                   name="destinationGlobalClusters"
                   fnPromise={environment.model.globalClusters.getGlobalClusters}
@@ -438,7 +468,8 @@ export const FilterFlowsTable = (props: Props) => {
                 <C.AsyncAutocompleteSelect
                   label={t.t(
                     lang,
-                    (s) => s.components.flowsFilter.filters.emergencies
+                    (s) =>
+                      s.components.flowsFilter.filters.destinationEmergencies
                   )}
                   name="destinationEmergencies"
                   fnPromise={
@@ -452,7 +483,7 @@ export const FilterFlowsTable = (props: Props) => {
               label={t.t(
                 lang,
                 (s) =>
-                  s.components.flowsFilter.filters.includeChildrenParkedFlows
+                  s.components.flowsFilter.filters.includeChildrenOfParkedFlows
               )}
               name="includeChildrenOfParkedFlows"
               size="small"

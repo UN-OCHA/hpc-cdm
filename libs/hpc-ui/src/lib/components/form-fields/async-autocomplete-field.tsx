@@ -26,7 +26,7 @@ const StyledAutocomplete = tw(Autocomplete)`
     w-full`;
 
 type APIAutocompleteResult =
-  | organizations.GetOrganizationsAutocompleteResult
+  | organizations.GetOrganizationsResult
   | locations.GetLocationsAutocompleteResult
   | categories.GetCategoriesResult
   | emergencies.GetEmergenciesAutocompleteResult
@@ -77,8 +77,8 @@ const AsyncAutocompleteSelect = ({
   }
   function isOrganizationsResult(
     result: APIAutocompleteResult
-  ): result is organizations.GetOrganizationsAutocompleteResult {
-    return organizations.GET_ORGANIZATIONS_AUTOCOMPLETE_RESULT.is(result);
+  ): result is organizations.GetOrganizationsResult {
+    return organizations.GET_ORGANIZATIONS_RESULT.is(result);
   }
 
   useEffect(() => {

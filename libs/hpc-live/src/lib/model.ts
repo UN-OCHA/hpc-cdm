@@ -530,6 +530,7 @@ export class LiveModel implements Model {
               plans {
                 id
                 name
+                direction
               }
         
               usageYears {
@@ -561,6 +562,7 @@ export class LiveModel implements Model {
                 contactInfo
                 refCode
                 organizationID
+                channel
                 source
                 date
                 verified
@@ -632,7 +634,17 @@ export class LiveModel implements Model {
       getAutocompleteOrganizations: (params) =>
         this.call({
           pathname: `/v1/object/autocomplete/organization/${params.query}`,
-          resultType: organizations.GET_ORGANIZATIONS_AUTOCOMPLETE_RESULT,
+          resultType: organizations.GET_ORGANIZATIONS_RESULT,
+        }),
+      searchOrganizations: (params) =>
+        this.call({
+          pathname: '/v1/organization/search',
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: organizations.SEARCH_ORGANIZATION_RESULT,
         }),
     };
   }

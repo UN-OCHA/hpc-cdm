@@ -1,4 +1,6 @@
 import * as t from 'io-ts';
+import { CATEGORY } from './categories';
+import { LOCATION } from './locations';
 
 const ORGANIZATION_CATEGORY = t.type({
   id: t.number,
@@ -41,6 +43,40 @@ const ORGANIZATION = t.type({
 
 export type Organization = t.TypeOf<typeof ORGANIZATION>;
 
+const UPDATED_CREATED_BY = t.type({
+  participantName: t.string,
+  date: t.string,
+  endpointId: t.number,
+});
+export type UpdatedCreatedBy = t.TypeOf<typeof UPDATED_CREATED_BY>;
+const SEARCH_ORGANIZATION = t.type({
+  id: t.number,
+  name: t.string,
+  nativeName: t.union([t.string, t.null]),
+  abbreviation: t.string,
+  active: t.boolean,
+  categories: t.array(
+    t.type({
+      name: t.string,
+      group: t.string,
+      parentID: t.union([t.number, t.null]),
+    })
+  ),
+  locations: t.array(
+    t.type({
+      id: t.number,
+      name: t.string,
+      parentID: t.union([t.number, t.null]),
+    })
+  ),
+  create: t.array(UPDATED_CREATED_BY),
+  update: t.array(UPDATED_CREATED_BY),
+});
+export type SearchOrganiation = t.TypeOf<typeof SEARCH_ORGANIZATION>;
+
+export const SEARCH_ORGANIZATIONS = t.array(SEARCH_ORGANIZATION);
+export type SearchOrganiations = t.TypeOf<typeof SEARCH_ORGANIZATIONS>;
+
 export const GET_ORGANIZATIONS_AUTOCOMPLETE_PARAMS = t.type({
   query: t.string,
 });
@@ -49,14 +85,44 @@ export type GetOrganizationsAutocompleteParams = t.TypeOf<
   typeof GET_ORGANIZATIONS_AUTOCOMPLETE_PARAMS
 >;
 
-export const GET_ORGANIZATIONS_AUTOCOMPLETE_RESULT = t.array(ORGANIZATION);
+export const GET_ORGANIZATIONS_RESULT = t.array(ORGANIZATION);
 
-export type GetOrganizationsAutocompleteResult = t.TypeOf<
-  typeof GET_ORGANIZATIONS_AUTOCOMPLETE_RESULT
+export type GetOrganizationsResult = t.TypeOf<typeof GET_ORGANIZATIONS_RESULT>;
+
+export const SEARCH_ORGANIZATION_PARAMS = t.type({
+  search: t.partial({
+    status: t.string,
+    date: t.string,
+    locations: t.array(LOCATION),
+    verified: t.string,
+    parentOrganization: ORGANIZATION,
+    organizationType: CATEGORY,
+    organization: t.type({
+      name: t.string,
+    }),
+    orderBy: t.string,
+    orderDir: t.union([t.string, t.null]),
+    limit: t.number,
+    offset: t.number,
+  }),
+});
+export type SearchOrganizationParams = t.TypeOf<
+  typeof SEARCH_ORGANIZATION_PARAMS
 >;
 
+export const SEARCH_ORGANIZATION_RESULT = t.type({
+  count: t.string,
+  organizations: SEARCH_ORGANIZATIONS,
+});
+
+export type SearchOrnganizationResult = t.TypeOf<
+  typeof SEARCH_ORGANIZATION_RESULT
+>;
 export interface Model {
   getAutocompleteOrganizations(
     params: GetOrganizationsAutocompleteParams
-  ): Promise<GetOrganizationsAutocompleteResult>;
+  ): Promise<GetOrganizationsResult>;
+  searchOrganizations(
+    params: SearchOrganizationParams
+  ): Promise<SearchOrnganizationResult>;
 }

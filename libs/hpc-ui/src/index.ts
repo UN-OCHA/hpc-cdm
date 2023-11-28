@@ -12,6 +12,7 @@ import ActionableDropdown from './lib/components/actionable-dropdown';
 import AutocompleteSelect from './lib/components/form-fields/autocomplete-field';
 import AsyncAutocompleteSelect from './lib/components/form-fields/async-autocomplete-field';
 import AsyncMultiSelect from './lib/components/form-fields/async-multi-select-field';
+import AsyncIconButton from './lib/components/async-icon-button';
 import AsyncSingleSelect from './lib/components/form-fields/async-single-select-field';
 import { Button, ButtonLink, ButtonSubmit } from './lib/components/button';
 import CheckBox from './lib/components/form-fields/checkbox';
@@ -23,6 +24,7 @@ import List from './lib/components/list';
 import ListItem from './lib/components/list-item';
 import Loader from './lib/components/loader';
 import MainNavigation from './lib/components/main-navigation';
+import MultiTextField from './lib/components/form-fields/multi-text-field';
 import MultiSelect from './lib/components/form-fields/multi-select-field';
 import NotFound from './lib/components/not-found';
 import PageTitle from './lib/components/page-title';
@@ -46,6 +48,7 @@ const COMPONENTS = {
   ActionableIconButton: actionableButton.ActionableIconButton,
   AutocompleteSelect,
   AsyncAutocompleteSelect,
+  AsyncIconButton,
   AsyncMultiSelect,
   AsyncSingleSelect,
   Button,
@@ -61,6 +64,7 @@ const COMPONENTS = {
   Loader,
   MainNavigation,
   MultiSelectWrapper: MultiSelect,
+  MultiTextField,
   NotFound,
   PageTitle,
   SidebarNavigation: sidebarNavigation.default,

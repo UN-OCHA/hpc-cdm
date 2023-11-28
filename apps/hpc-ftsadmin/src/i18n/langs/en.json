@@ -83,40 +83,125 @@
         "primary": "Search",
         "secondary": "Clear Fields"
       },
-      "filters": {
+      "headers": {
         "flowDetails": "Flow Details",
         "sourceDetails": "Source Details",
-        "destinationDetails": "Destination Details",
-        "includeChildrenParkedFlows": "Include children of matching parked flows",
+        "destinationDetails": "Destination Details"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "Include children of matching parked flows",
         "flowID": "Flow ID",
         "amountUSD": "Amount USD",
         "keywords": "Keywords",
         "flowStatus": "Flow Status",
         "flowType": "Flow Type",
         "flowActiveStatus": "Flow Active Status",
-        "reporterReferenceCode": "Reporter Reference Code",
+        "reporterRefCode": "Reporter Reference Code",
         "sourceSystemID": "Source System ID",
-        "flowLegacyID": "Flow Legacy ID",
-        "organizations": "Organization(s)",
-        "countries": "Country(ies)",
-        "usageYears": "Usage Year(s)",
-        "projects": "Project(s)",
-        "plans": "Plan(s)",
-        "globalClusters": "Global Cluster(s)",
-        "emergencies": "Emergency(ies)",
-        "dataProvider": "Data Provider",
-        "details": "Details",
-        "status": "Status"
+        "legacyID": "Flow Legacy ID",
+        "sourceOrganizations": "Organization(s)",
+        "sourceCountries": "Country(ies)",
+        "sourceUsageYears": "Usage Year(s)",
+        "sourceProjects": "Project(s)",
+        "sourcePlans": "Plan(s)",
+        "sourceGlobalClusters": "Global Cluster(s)",
+        "sourceEmergencies": "Emergency(ies)",
+        "destinationOrganizations": "Organization(s)",
+        "destinationCountries": "Country(ies)",
+        "destinationUsageYears": "Usage Year(s)",
+        "destinationProjects": "Project(s)",
+        "destinationPlans": "Plan(s)",
+        "destinationGlobalClusters": "Global Cluster(s)",
+        "destinationEmergencies": "Emergency(ies)"
       },
       "showMore": "Show More",
       "tooltips": {
         "filters": "Filters"
+      }
+    },
+    "pendingFlowsFilter": {
+      "title": "Filters",
+      "button": {
+        "primary": "Search",
+        "secondary": "Clear Fields"
+      },
+      "headers": {
+        "flowDetails": "Flow Details",
+        "sourceDetails": "Source Details",
+        "destinationDetails": "Destination Details"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "Include children of matching parked flows",
+        "status": "Status",
+        "dataProvider": "Data Provider",
+        "flowType": "Flow Type",
+        "reporterRefCode": "Reporter Reference Code",
+        "sourceOrganizations": "Organization(s)",
+        "sourceCountries": "Country(ies)",
+        "destinationOrganizations": "Organization(s)",
+        "destinationCountries": "Country(ies)",
+        "destinationUsageYears": "Usage Year(s)",
+
+        "details": "Details"
+      },
+      "showMore": "Show More",
+      "tooltips": {
+        "filters": "Filters"
+      }
+    },
+    "organizationsFilter": {
+      "title": "Filters",
+      "button": {
+        "primary": "Search",
+        "secondary": "Clear Fields"
+      },
+      "headers": {
+        "organizationDetails": "OrganizationDetails"
+      },
+      "filters": {
+        "organizationName": "Organization Name",
+        "active": "Active",
+        "addedModifiedSince": "Added/Modified Since",
+        "country": "Country(ies)",
+        "organizationType": "Organization Type",
+        "parentOrganization": "Parent Organization"
+      },
+      "showMore": "Show More",
+      "tooltips": {
+        "filters": "Filters"
+      }
+    },
+    "organizationTable": {
+      "headers": {
+        "id": "ID",
+        "name": "Organization",
+        "abbreviation": "Abbreviation",
+        "type": "Type",
+        "subType": "SubType",
+        "location": "Location",
+        "createdBy": "Created By",
+        "updatedBy": "Updated By"
+      },
+      "update": "Update",
+      "new": "New",
+      "restricted": "restricted",
+      "inactive": "inactive",
+      "notFound": {
+        "title": "Organizations not found",
+        "info": "We were unable to load organizations"
+      },
+      "sortBy": "Sort by",
+      "tableSettings": {
+        "title": "Table Settings",
+        "save": "Save",
+        "info": "Leaving without clicking the 'Save' button will not update the table"
       }
     }
   },
   "navigation": {
     "flows": "Flows",
     "pendingFlows": "Pending Flows",
+    "organizations": "Organizations",
     "rpm": "Response Planning Module",
     "prism": "Online Projects System",
     "ftsWebsite": "FTS Website",

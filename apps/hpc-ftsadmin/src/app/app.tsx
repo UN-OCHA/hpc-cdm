@@ -21,6 +21,7 @@ import PageFlowsGraphQLList from './pages/flows-list-graphQL';
 import PageNotFound from './pages/not-found';
 import PageNotLoggedIn from './pages/not-logged-in';
 import PagePendingFlowsList from './pages/pending-flows-list';
+import PageOrganizationsList from './pages/organization-list';
 import * as paths from './paths';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
@@ -133,6 +134,10 @@ export const App = () => {
                             label: t.t(lang, (s) => s.navigation.pendingFlows),
                             path: paths.pendingFlows(),
                           },
+                          {
+                            label: t.t(lang, (s) => s.navigation.organizations),
+                            path: paths.organizations(),
+                          },
                         ]}
                         className={CLASSES.CONTAINER.FLUID}
                         externalLinks={[
@@ -189,6 +194,10 @@ export const App = () => {
                         <Route
                           path={paths.pendingFlows()}
                           element={<PagePendingFlowsList />}
+                        />
+                        <Route
+                          path={paths.organizations()}
+                          element={<PageOrganizationsList />}
                         />
                         <Route element={<PageNotFound />} />
                       </Routes>

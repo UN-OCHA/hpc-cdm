@@ -25,19 +25,22 @@ import tw from 'twin.macro';
 import React, { useEffect, useState } from 'react';
 import { FlowsFilterValues } from './filter-flows-table';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+import DownloadIcon from '@mui/icons-material/Download';
 import _ from 'lodash';
 import {
+  FormObjectValue,
   decodeFilters,
   encodeFilters,
   parseActiveFilters,
-  parseFilters,
+  parseFlowFilters,
 } from '../utils/parse-filters';
 import { FLOWS_FILTER_INITIAL_VALUES } from '../components/filter-flows-table';
 import { Form, Formik } from 'formik';
 import { PendingFlowsFilterValues } from './filter-pending-flows-table';
 import EllipsisText from '../utils/ellipsis-text';
 import {
-  HeaderID,
+  FlowHeaderID,
+  OrganizationHeaderID,
   TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
@@ -48,6 +51,7 @@ import {
   InfoSettings,
   LocalStorageFTSAdminKey,
 } from '../utils/local-storage-type';
+import { downloadExcel } from '../utils/download-excel';
 
 export type Query = {
   page: number;
@@ -58,7 +62,7 @@ export type Query = {
   tableHeaders: string;
 };
 export interface FlowsTableProps {
-  headers: TableHeadersProps[];
+  headers: TableHeadersProps<FlowHeaderID>[];
   initialValues: FlowsFilterValues | PendingFlowsFilterValues;
   flowList?: flows.FlowList;
   graphQL?: boolean;
@@ -77,9 +81,10 @@ const TopRowContainer = tw.div`
 flex
 justify-end
 `;
-const ConfigButton = tw(IconButton)`
+const TableHeaderButton = tw(IconButton)`
 h-min
 self-center
+mx-2
 `;
 const ChipFilterValues = tw.div`
 bg-unocha-secondary-light
@@ -92,14 +97,14 @@ const RejectPendingFlowsButton = tw(C.ButtonSubmit)`
 mt-8
 `;
 export interface ParsedFilters {
-  flowID?: number;
+  flowID?: number[];
   amountUSD?: number;
   sourceSystemID?: number;
   dataProvider?: { systemID: string };
   flowActiveStatus?: { activeStatus: { name: string } };
   status?: { status: string };
   reporterRefCode?: number;
-  flowLegacyID?: number;
+  legacyID?: number;
   flowObjects?: flows.FlowObject[];
   categories?: flows.FlowCategory[];
   includeChildrenOfParkedFlows?: boolean;
@@ -108,7 +113,7 @@ export interface ActiveFilter {
   label: keyof Strings['components']['flowsFilter']['filters'];
   fieldName: keyof FlowsFilterValues;
   displayValue: string;
-  value: string | boolean | { label: string; id: string }[] | undefined;
+  value: string | boolean | Array<FormObjectValue> | undefined;
 }
 export default function FlowsTable(props: FlowsTableProps) {
   const env = getEnv();
@@ -141,7 +146,7 @@ export default function FlowsTable(props: FlowsTableProps) {
         orderBy: query.orderBy,
         orderDir: query.orderDir,
         flowList: handleFlowList(),
-        ...parseFilters(activeFormValues),
+        ...parseFlowFilters(activeFormValues),
       },
     })
   );
@@ -183,7 +188,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     });
   };
 
-  const handleSort = (newSort: HeaderID) => {
+  const handleSort = (newSort: FlowHeaderID | OrganizationHeaderID) => {
     const changeDir = newSort === query.orderBy;
 
     if (changeDir) {
@@ -536,7 +541,11 @@ export default function FlowsTable(props: FlowsTableProps) {
         <TableHead>
           <TableRow>
             {props.flowList === 'pending' && <TableCell size="small" />}
-            {decodeTableHeaders(query.tableHeaders, lang).map((header) => {
+            {(
+              decodeTableHeaders(query.tableHeaders, lang, 'flows') as Array<
+                TableHeadersProps<FlowHeaderID>
+              >
+            ).map((header) => {
               if (!header.active) {
                 return;
               }
@@ -726,12 +735,21 @@ export default function FlowsTable(props: FlowsTableProps) {
                   </Tooltip>
                 ))}
                 <TopRowContainer>
-                  <ConfigButton
+                  <C.AsyncIconButton
+                    fnPromise={() =>
+                      downloadExcel<flows.FlowSearchResult>(
+                        data.flows,
+                        'export'
+                      )
+                    }
+                    IconComponent={DownloadIcon}
+                  />
+                  <TableHeaderButton
                     size="small"
                     onClick={() => setOpenSettings(!openSettings)}
                   >
                     <SettingsIcon />
-                  </ConfigButton>
+                  </TableHeaderButton>
                   <Modal
                     open={openSettings}
                     onClose={() => setOpenSettings(!openSettings)}
@@ -760,6 +778,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                         queryValues={decodeTableHeaders(
                           query.tableHeaders,
                           lang,
+                          'flows',
                           setQuery,
                           query
                         )}
@@ -768,6 +787,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                             ...query,
                             tableHeaders: encodeTableHeaders(
                               element as any, // TO DO: remove any
+                              'flows',
                               setQuery,
                               query
                             ),

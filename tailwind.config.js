@@ -60,6 +60,10 @@ module.exports = {
             DEFAULT: '#e16856',
             light: '#FF9E5F',
           },
+          success: {
+            DEFAULT: '#2e7d32',
+            light: '#afdfb0',
+          },
           error: {
             DEFAULT: '#990000',
             light: '#ffb3b3',

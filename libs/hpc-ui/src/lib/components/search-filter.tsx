@@ -22,7 +22,7 @@ interface FieldConfig {
   hasAutocomplete?: boolean;
   fnPromise?: ({
     query,
-  }: organizations.GetOrganizationsAutocompleteParams) => Promise<organizations.GetOrganizationsAutocompleteResult>;
+  }: organizations.GetOrganizationsAutocompleteParams) => Promise<organizations.GetOrganizationsResult>;
   selectFields?: { value: string | number; name: string }[];
 }
 

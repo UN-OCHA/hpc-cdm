@@ -78,47 +78,131 @@
         "info": "المغادرة دون النقر على زر 'حفظ' لن يحدث تحديثا للجدول"
       }
     },
+
     "flowsFilter": {
       "title": "المرشحات",
       "button": {
-        "primary": "بحث",
+        "primary": "البحث",
         "secondary": "مسح الحقول"
       },
-      "filters": {
+      "headers": {
         "flowDetails": "تفاصيل التدفق",
         "sourceDetails": "تفاصيل المصدر",
-        "destinationDetails": "تفاصيل الوجهة",
-        "includeChildrenParkedFlows": "تضمين أطفال التدفقات المتوقفة المتطابقة",
+        "destinationDetails": "تفاصيل الوجهة"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "تضمين أطفال التدفق المتطابق",
         "flowID": "معرف التدفق",
         "amountUSD": "المبلغ بالدولار الأمريكي",
         "keywords": "الكلمات الرئيسية",
         "flowStatus": "حالة التدفق",
         "flowType": "نوع التدفق",
-        "flowActiveStatus": "الحالة النشطة للتدفق",
-        "reporterReferenceCode": "رمز المرجع للمبلغ",
+        "flowActiveStatus": "حالة التدفق النشطة",
+        "reporterRefCode": "رمز مرجعي للمبلغ",
         "sourceSystemID": "معرف نظام المصدر",
-        "flowLegacyID": "المعرف الأصلي للتدفق",
-        "organizations": "المؤسسة(المؤسسات)",
-        "countries": "البلد(البلدان)",
-        "usageYears": "سنة(سنوات) الاستخدام",
-        "projects": "المشروع(المشاريع)",
-        "plans": "الخطة(الخطط)",
-        "globalClusters": "المجموعة(المجموعات) العالمية",
-        "emergencies": "الحالة(الحالات) الطارئة",
-        "dataProvider": "مزود البيانات",
-        "details": "التفاصيل",
-        "status": "الحالة"
+        "legacyID": "معرف التدفق القديم",
+        "sourceOrganizations": "المنظمة(ات) المصدرة",
+        "sourceCountries": "البلدان المصدرة",
+        "sourceUsageYears": "سنوات الاستخدام المصدرة",
+        "sourceProjects": "المشروعات المصدرة",
+        "sourcePlans": "الخطط المصدرة",
+        "sourceGlobalClusters": "المجموعات العالمية المصدرة",
+        "sourceEmergencies": "الحالات الطارئة المصدرة",
+        "destinationOrganizations": "المنظمة(ات) الوجهة",
+        "destinationCountries": "البلدان الوجهة",
+        "destinationUsageYears": "سنوات الاستخدام الوجهة",
+        "destinationProjects": "المشروعات الوجهة",
+        "destinationPlans": "الخطط الوجهة",
+        "destinationGlobalClusters": "المجموعات العالمية الوجهة",
+        "destinationEmergencies": "الحالات الطارئة الوجهة"
       },
       "showMore": "عرض المزيد",
-
       "tooltips": {
         "filters": "المرشحات"
+      }
+    },
+    "pendingFlowsFilter": {
+      "title": "المرشحات",
+      "button": {
+        "primary": "البحث",
+        "secondary": "مسح الحقول"
+      },
+      "headers": {
+        "flowDetails": "تفاصيل التدفق",
+        "sourceDetails": "تفاصيل المصدر",
+        "destinationDetails": "تفاصيل الوجهة"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "تضمين أطفال التدفق المتطابق",
+        "status": "الحالة",
+        "dataProvider": "مزود البيانات",
+        "flowType": "نوع التدفق",
+        "reporterRefCode": "رمز مرجعي للمبلغ",
+        "sourceOrganizations": "المنظمة(ات) المصدرة",
+        "sourceCountries": "البلدان المصدرة",
+        "destinationOrganizations": "المنظمة(ات) الوجهة",
+        "destinationCountries": "البلدان الوجهة",
+        "destinationUsageYears": "سنوات الاستخدام الوجهة",
+        "details": "تفاصيل"
+      },
+      "showMore": "عرض المزيد",
+      "tooltips": {
+        "filters": "المرشحات"
+      }
+    },
+    "organizationsFilter": {
+      "title": "المرشحات",
+      "button": {
+        "primary": "البحث",
+        "secondary": "مسح الحقول"
+      },
+      "headers": {
+        "organizationDetails": "تفاصيل المنظمة"
+      },
+      "filters": {
+        "organizationName": "اسم المنظمة",
+        "active": "نشط",
+        "addedModifiedSince": "تمت الإضافة/التعديل منذ",
+        "country": "البلد(ان)",
+        "organizationType": "نوع المنظمة",
+        "parentOrganization": "المنظمة الأم"
+      },
+      "showMore": "عرض المزيد",
+      "tooltips": {
+        "filters": "المرشحات"
+      }
+    },
+    "organizationTable": {
+      "headers": {
+        "id": "المعرف",
+        "name": "المنظمة",
+        "abbreviation": "الاختصار",
+        "type": "النوع",
+        "subType": "النوع الفرعي",
+        "location": "الموقع",
+        "createdBy": "تم الإنشاء بواسطة",
+        "updatedBy": "تم التحديث بواسطة"
+      },
+      "update": "تحديث",
+      "new": "جديد",
+      "restricted": "مقيد",
+      "inactive": "غير نشط",
+      "notFound": {
+        "title": "لم يتم العثور على منظمات",
+        "info": "لم نتمكن من تحميل المنظمات"
+      },
+      "sortBy": "ترتيب حسب",
+      "tableSettings": {
+        "title": "إعدادات الجدول",
+        "save": "حفظ",
+        "info": "المغادرة دون النقر على زر 'حفظ' لن يحدث تحديثا للجدول"
       }
     }
   },
   "navigation": {
     "flows": "التدفقات",
     "pendingFlows": "التدفقات المعلقة",
+    "organizations": "المنظمات",
     "rpm": "وحدة تخطيط الاستجابة",
     "prism": "نظام المشاريع عبر الإنترنت",
     "ftsWebsite": "موقع FTS",

@@ -280,6 +280,7 @@ const FlowOrganization = t.type({
   name: t.string,
 });
 
+export type FlowOrganizationGraphQl = t.TypeOf<typeof FlowOrganization>;
 const FlowUsageYear = t.type({
   year: t.string,
   direction: t.string,
@@ -299,6 +300,7 @@ const FlowReportDetail = t.type({
   source: t.string,
   date: t.string,
   verified: t.boolean,
+  channel: t.union([t.string, t.null]),
   updatedAt: t.string,
   contactInfo: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
   sourceID: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
@@ -335,6 +337,7 @@ const FlowCategory = t.type({
 const FlowPlan = t.type({
   id: t.number,
   name: t.string,
+  direction: t.string,
 });
 
 const FLOW_GRAPHQL = t.type({
@@ -355,7 +358,7 @@ const FLOW_GRAPHQL = t.type({
   origCurrency: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
   externalReferences: t.array(FlowExternalReference),
   reportDetails: t.array(FlowReportDetail),
-  parkedParentSource: t.array(FlowParkedParentSource),
+  parkedParentSource: t.union([t.array(FlowParkedParentSource), t.null]),
   cursor: t.number,
 });
 
@@ -384,7 +387,7 @@ export const SEARCH_FLOWS_PARAMS = t.type({
     activeStatus: t.type({
       name: t.string,
     }),
-    flowID: t.number,
+    flowID: t.array(t.number),
     amountUSD: t.number,
     flowList: FLOW_LIST,
     active: t.boolean,
@@ -416,7 +419,7 @@ const FILTERS = t.partial({
   status: t.string,
   reporterRefCode: t.number,
   sourceSystemID: t.number,
-  flowLegacyID: t.number,
+  legacyID: t.number,
   keywords: t.array(t.string),
   sourceCountries: t.array(t.string),
   sourceOrganizations: t.array(t.string),

@@ -17,7 +17,7 @@ import FilterPendingFlowsTable, {
 } from '../components/filter-pending-flows-table';
 import tw from 'twin.macro';
 import {
-  DEFAULT_TABLE_HEADERS,
+  DEFAULT_FLOW_TABLE_HEADERS,
   encodeTableHeaders,
 } from '../utils/table-headers';
 
@@ -48,7 +48,7 @@ export default (props: Props) => {
     orderBy: withDefault(
       createEnumParam(
         // Same as filter then map but this is acceptable to typescript
-        DEFAULT_TABLE_HEADERS.reduce((acc, curr) => {
+        DEFAULT_FLOW_TABLE_HEADERS.reduce((acc, curr) => {
           if (curr.sortable) {
             return [...acc, curr.identifierID];
           }
@@ -64,7 +64,7 @@ export default (props: Props) => {
   });
 
   const flowsTableProps: FlowsTableProps = {
-    headers: DEFAULT_TABLE_HEADERS,
+    headers: DEFAULT_FLOW_TABLE_HEADERS,
     flowList: 'pending',
     initialValues: PENDING_FLOWS_FILTER_INITIAL_VALUES,
     rowsPerPageOption: [10, 25, 50, 100],

@@ -1,11 +1,12 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
-import FlowsTable, { FlowsTableProps } from '../components/flows-table';
+import FlowsTable, { FlowsTableProps, Query } from '../components/flows-table';
 import PageMeta from '../components/page-meta';
 import { AppContext, getEnv } from '../context';
 import tw from 'twin.macro';
 import FilterFlowsTable, {
   FLOWS_FILTER_INITIAL_VALUES,
+  FlowsFilterValues,
 } from '../components/filter-flows-table';
 import {
   JsonParam,
@@ -18,13 +19,25 @@ import {
 } from 'use-query-params';
 import {
   DEFAULT_FLOW_TABLE_HEADERS,
+  DEFAULT_ORGANIZATION_TABLE_HEADERS,
+  OrganizationHeaderID,
+  TableHeadersProps,
   encodeTableHeaders,
 } from '../utils/table-headers';
+import OrganizationTable from '../components/organizations-table';
 
 interface Props {
   className?: string;
 }
 
+export interface OrganizationTableProps {
+  headers: TableHeadersProps<OrganizationHeaderID>[];
+  initialValues: FlowsFilterValues;
+  graphQL?: boolean;
+  rowsPerPageOption: number[];
+  query: Query;
+  setQuery: (newQuery: Query) => void;
+}
 const Container = tw.div`
 flex
 `;
@@ -50,7 +63,7 @@ export default (props: Props) => {
     orderBy: withDefault(
       createEnumParam(
         // Same as filter then map but this is acceptable to typescript
-        DEFAULT_FLOW_TABLE_HEADERS.reduce((acc, curr) => {
+        DEFAULT_ORGANIZATION_TABLE_HEADERS.reduce((acc, curr) => {
           if (curr.sortable) {
             return [...acc, curr.identifierID];
           }
@@ -58,15 +71,18 @@ export default (props: Props) => {
           return acc;
         }, [] as string[])
       ),
-      'flow.updatedAt'
+      'organization.name'
     ),
-    orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
+    orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'ASC'),
     filters: withDefault(JsonParam, JSON.stringify({})),
-    tableHeaders: withDefault(StringParam, encodeTableHeaders([])), //  Default value of table headers
+    tableHeaders: withDefault(
+      StringParam,
+      encodeTableHeaders([], 'organizations')
+    ),
   });
 
-  const flowsTableProps: FlowsTableProps = {
-    headers: DEFAULT_FLOW_TABLE_HEADERS,
+  const flowsTableProps: OrganizationTableProps = {
+    headers: DEFAULT_ORGANIZATION_TABLE_HEADERS,
     rowsPerPageOption: rowsPerPageOptions,
     initialValues: FLOWS_FILTER_INITIAL_VALUES,
     query: query,
@@ -92,7 +108,7 @@ export default (props: Props) => {
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.flows.title)}
               </C.PageTitle>
-              <FlowsTable {...flowsTableProps} />
+              <OrganizationTable {...flowsTableProps} />
             </LandingContainer>
           </Container>
         </div>

@@ -9,7 +9,6 @@ import {
   FormObjectValue,
   decodeFilters,
   encodeFilters,
-  parseActiveFilters,
   parseFormFiltersRebuilt,
   parseInitialValues,
 } from '../utils/parse-filters';
@@ -21,28 +20,22 @@ interface Props {
   setQuery: (newQuery: Query) => void;
   lang: LanguageKey;
 }
-export interface PendingFlowsFilterValues {
-  status?: string;
-  dataProvider?: string;
-  reporterRefCode?: string;
-  sourceOrganizations?: Array<FormObjectValue>;
-  sourceCountries?: Array<FormObjectValue>;
-  destinationOrganizations?: Array<FormObjectValue>;
-  destinationCountries?: Array<FormObjectValue>;
-  destinationUsageYears?: Array<FormObjectValue>;
-  includeChildrenOfParkedFlows?: boolean;
+export interface OrganizationFilterValues {
+  organizationName?: string;
+  organizationType?: Array<FormObjectValue>;
+  parentOrganization?: Array<FormObjectValue>;
+  country?: Array<FormObjectValue>;
+  addedModifiedSince?: string;
+  active?: string;
 }
 
-export const PENDING_FLOWS_FILTER_INITIAL_VALUES: PendingFlowsFilterValues = {
-  status: '',
-  dataProvider: '',
-  reporterRefCode: '',
-  sourceOrganizations: [],
-  sourceCountries: [],
-  destinationOrganizations: [],
-  destinationCountries: [],
-  destinationUsageYears: [],
-  includeChildrenOfParkedFlows: false,
+export const ORGANIZATIONS_FILTER_INITIAL_VALUES: OrganizationFilterValues = {
+  organizationName: '',
+  organizationType: [],
+  parentOrganization: [],
+  country: [],
+  addedModifiedSince: '',
+  active: '',
 };
 const StyledDiv = tw.div`
 my-6
@@ -54,29 +47,17 @@ gap-x-4
 export const FilterPendingFlowsTable = (props: Props) => {
   const { environment, setQuery, query, lang } = props;
   const FORM_VALIDATION = object().shape({
-    id: array(number()).typeError('numbers'),
-    flowStatus: string(),
-    dataProvider: string(),
-    reporterRefCode: number()
-      .positive()
-      .typeError('Only positive integers are accepted'),
-    sourceOrganizations: array().of(
-      object().shape({ label: string(), id: string() })
-    ),
-    sourceCountries: array().of(
-      object().shape({ label: string(), id: string() })
-    ),
+    name: string(),
+    organizationType: object().shape({ label: string(), id: string() }),
+    parentOrganization: object().shape({ label: string(), id: string() }),
+    country: array().of(object().shape({ label: string(), id: string() })),
     destinationOrganizations: array().of(
       object().shape({ label: string(), id: string() })
     ),
-    destinationCountries: array().of(
-      object().shape({ label: string(), id: string() })
-    ),
-    destinationUsageYears: array().of(
-      object().shape({ label: string(), id: string() })
-    ),
-  });
-  const handleSubmit = (values: PendingFlowsFilterValues) => {
+    addedModifiedSince: string(),
+    active: string().matches(/active|inactive|both/),
+  }); /* 
+  const handleSubmit = (values: OrganizationFilterValues) => {
     setQuery({
       ...query,
       page: 0,
@@ -85,7 +66,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
   };
   const handleResetForm = (
     formikResetForm: (
-      nextState?: Partial<FormikState<PendingFlowsFilterValues>>
+      nextState?: Partial<FormikState<OrganizationFilterValues>>
     ) => void
   ) => {
     formikResetForm();
@@ -96,10 +77,10 @@ export const FilterPendingFlowsTable = (props: Props) => {
         parseActiveFilters(PENDING_FLOWS_FILTER_INITIAL_VALUES).activeFormValues
       ),
     });
-  };
+  }; */
   return (
     <C.SearchFilter title={t.t(lang, (s) => s.components.flowsFilter.title)}>
-      <Formik
+      {/*  <Formik
         enableReinitialize
         initialValues={parseInitialValues(
           decodeFilters(query.filters, PENDING_FLOWS_FILTER_INITIAL_VALUES),
@@ -125,10 +106,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
               />
             </StyledDiv>
             <C.Section
-              title={t.t(
-                lang,
-                (s) => s.components.pendingFlowsFilter.filters.details
-              )}
+              title={t.t(lang, (s) => s.components.flowsFilter.filters.details)}
             >
               <C.MultiTextField
                 name="id"
@@ -138,7 +116,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
               <C.SingleSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.pendingFlowsFilter.filters.status
+                  (s) => s.components.flowsFilter.filters.status
                 )}
                 name="status"
                 options={[
@@ -149,7 +127,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
               <C.AsyncSingleSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.pendingFlowsFilter.filters.flowType
+                  (s) => s.components.flowsFilter.filters.flowType
                 )}
                 name="dataProvider"
                 fnPromise={async () => {
@@ -165,7 +143,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
               <C.TextFieldWrapper
                 label={t.t(
                   lang,
-                  (s) => s.components.pendingFlowsFilter.filters.reporterRefCode
+                  (s) => s.components.flowsFilter.filters.reporterRefCode
                 )}
                 name="reporterRefCode"
                 type="number"
@@ -174,14 +152,13 @@ export const FilterPendingFlowsTable = (props: Props) => {
             <C.Section
               title={t.t(
                 lang,
-                (s) => s.components.pendingFlowsFilter.headers.sourceDetails
+                (s) => s.components.flowsFilter.filters.sourceDetails
               )}
             >
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) =>
-                    s.components.pendingFlowsFilter.filters.sourceOrganizations
+                  (s) => s.components.flowsFilter.filters.organizations
                 )}
                 name="sourceOrganizations"
                 fnPromise={
@@ -192,7 +169,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.pendingFlowsFilter.filters.sourceCountries
+                  (s) => s.components.flowsFilter.filters.countries
                 )}
                 name="sourceCountries"
                 fnPromise={environment.model.locations.getAutocompleteLocations}
@@ -202,16 +179,13 @@ export const FilterPendingFlowsTable = (props: Props) => {
             <C.Section
               title={t.t(
                 lang,
-                (s) =>
-                  s.components.pendingFlowsFilter.headers.destinationDetails
+                (s) => s.components.flowsFilter.filters.destinationDetails
               )}
             >
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) =>
-                    s.components.pendingFlowsFilter.filters
-                      .destinationOrganizations
+                  (s) => s.components.flowsFilter.filters.organizations
                 )}
                 name="destinationOrganizations"
                 fnPromise={
@@ -222,8 +196,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) =>
-                    s.components.pendingFlowsFilter.filters.destinationCountries
+                  (s) => s.components.flowsFilter.filters.countries
                 )}
                 name="destinationCountries"
                 fnPromise={environment.model.locations.getAutocompleteLocations}
@@ -232,9 +205,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) =>
-                    s.components.pendingFlowsFilter.filters
-                      .destinationUsageYears
+                  (s) => s.components.flowsFilter.filters.usageYears
                 )}
                 name="destinationUsageYears"
                 fnPromise={environment.model.usageYears.getUsageYears}
@@ -246,8 +217,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
               label={t.t(
                 lang,
                 (s) =>
-                  s.components.pendingFlowsFilter.filters
-                    .includeChildrenOfParkedFlows
+                  s.components.flowsFilter.filters.includeChildrenOfParkedFlows
               )}
               name="includeChildrenOfParkedFlows"
               size="small"
@@ -268,7 +238,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
             </StyledDiv>
           </Form>
         )}
-      </Formik>
+      </Formik> */}
     </C.SearchFilter>
   );
 };

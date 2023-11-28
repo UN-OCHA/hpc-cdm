@@ -17,7 +17,7 @@ import {
   withDefault,
 } from 'use-query-params';
 import {
-  DEFAULT_TABLE_HEADERS,
+  DEFAULT_FLOW_TABLE_HEADERS,
   encodeTableHeaders,
 } from '../utils/table-headers';
 import FlowsTableGraphQL from '../components/flows-table-graphQL';
@@ -51,7 +51,7 @@ export default (props: Props) => {
     orderBy: withDefault(
       createEnumParam(
         // Same as filter then map but this is acceptable to typescript
-        DEFAULT_TABLE_HEADERS.reduce((acc, curr) => {
+        DEFAULT_FLOW_TABLE_HEADERS.reduce((acc, curr) => {
           if (curr.sortable) {
             return [...acc, curr.identifierID];
           }
@@ -67,7 +67,7 @@ export default (props: Props) => {
   });
 
   const flowsTableProps: FlowsTableProps = {
-    headers: DEFAULT_TABLE_HEADERS,
+    headers: DEFAULT_FLOW_TABLE_HEADERS,
     rowsPerPageOption: rowsPerPageOptions,
     initialValues: FLOWS_FILTER_INITIAL_VALUES,
     query: query,

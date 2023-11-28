@@ -18,8 +18,8 @@ export interface DraggableListProps {
 
 type DraggableListItemProps = {
   id: number;
-  displayLabel: string;
-  active: boolean;
+  displayLabel?: string;
+  active?: boolean;
 };
 
 const PaperContainer = tw(Paper)`

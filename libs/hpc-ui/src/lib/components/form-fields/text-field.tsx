@@ -13,29 +13,30 @@ interface CustomProps {
   name: string;
   itemType: 'number' | 'currency';
 }
-const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
-  function NumericFormatCustom(props, ref) {
-    const { onChange, name, itemType, ...others } = props;
-    return (
-      <NumericFormat
-        {...others}
-        name={name}
-        getInputRef={ref}
-        onValueChange={(values) => {
-          onChange({
-            target: {
-              name: props.name,
-              value: values.value,
-            },
-          });
-        }}
-        thousandSeparator={itemType === 'currency'}
-        valueIsNumericString
-        prefix={itemType === 'currency' ? '$ ' : ''}
-      />
-    );
-  }
-);
+export const NumericFormatCustom = React.forwardRef<
+  NumericFormatProps,
+  CustomProps
+>(function NumericFormatCustom(props, ref) {
+  const { onChange, name, itemType, ...others } = props;
+  return (
+    <NumericFormat
+      {...others}
+      name={name}
+      getInputRef={ref}
+      onValueChange={(values) => {
+        onChange({
+          target: {
+            name: props.name,
+            value: values.value,
+          },
+        });
+      }}
+      thousandSeparator={itemType === 'currency'}
+      valueIsNumericString
+      prefix={itemType === 'currency' ? '$ ' : ''}
+    />
+  );
+});
 
 const TextFieldWrapper = ({
   type,
