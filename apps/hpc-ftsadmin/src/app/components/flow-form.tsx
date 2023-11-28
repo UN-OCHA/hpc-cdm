@@ -105,7 +105,7 @@ export const FlowForm = (props: Props) => {
   };
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
-  // let buttonText = 'Calculate the Exchange Rate';
+  const buttonText = 'Calculate The Exchange Rate';
 
   const formikRef = useRef(null);
 
@@ -169,17 +169,20 @@ export const FlowForm = (props: Props) => {
           return {
             label: (responseValue as usageYears.UsageYear).year,
             id: responseValue.id,
+            isAutoFilled: true,
           };
         } else if (settingArrayKeys[i] === 'plans') {
           return {
             label: (responseValue.planVersion as { id: number; name: string })
               .name,
             id: responseValue.planVersion.id,
+            isAutoFilled: true,
           };
         } else {
           return {
             label: (responseValue as { id: number; name: string }).name,
             id: responseValue.id,
+            isAutoFilled: true,
           };
         }
       });

@@ -7,6 +7,7 @@ import {
   Tooltip,
   TooltipProps,
   tooltipClasses,
+  Chip,
 } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
 import JoinInnerIcon from '@mui/icons-material/JoinInner';
@@ -253,7 +254,7 @@ const AsyncAutocompleteSelect = ({
   }, [open]);
 
   const configAutocomplete: AutocompleteProps<
-    { label: string; id: number },
+    { label: string; id: number; isAutoFilled?: boolean },
     boolean,
     boolean,
     boolean
@@ -293,6 +294,15 @@ const AsyncAutocompleteSelect = ({
           {option.label}
         </li>
       );
+    },
+    renderTags: (value, getTagProps) => {
+      return value.map((option, index) => (
+        <Chip
+          label={option.label}
+          {...getTagProps({ index })}
+          sx={option?.isAutoFilled ? { bgcolor: '#FFCC00' } : {}}
+        />
+      ));
     },
     renderInput: (params) => (
       <StyledTextField
