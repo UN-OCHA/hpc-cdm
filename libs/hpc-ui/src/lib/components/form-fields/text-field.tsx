@@ -23,10 +23,17 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
         name={name}
         getInputRef={ref}
         onValueChange={(values) => {
+          let value = values.value;
+          if (
+            (itemType === 'number' || itemType === 'currency') &&
+            value === ''
+          ) {
+            value = '0';
+          }
           onChange({
             target: {
               name: props.name,
-              value: values.value,
+              value: value,
             },
           });
         }}
