@@ -358,13 +358,11 @@ export interface ParsedFlowsFilter {
     direction: 'source' | 'destination';
     objectType: FlowObjectTypes;
   }>;
-  flowCategoryFilters: {
-    pending?: boolean;
-    categoryFilters: Array<{
-      id: number;
-      group: categories.CategoryGroup;
-    }>;
-  };
+  pending?: boolean;
+  flowCategoryFilters: Array<{
+    id: number;
+    group: categories.CategoryGroup;
+  }>;
   includeChildrenOfParkedFlows?: boolean;
 }
 export const parseFlowFilters = (
@@ -374,10 +372,8 @@ export const parseFlowFilters = (
   const res: ParsedFlowsFilter = {
     flowFilters: {},
     flowObjectFilters: [],
-    flowCategoryFilters: {
-      pending: pending,
-      categoryFilters: [],
-    },
+    pending: pending,
+    flowCategoryFilters: [],
   };
 
   for (const key in filters) {
@@ -449,8 +445,8 @@ export const parseFlowFilters = (
             return { id: parseInt(keyword.value), group: 'keywords' };
           });
 
-          res.flowCategoryFilters.categoryFilters = [
-            ...res.flowCategoryFilters.categoryFilters,
+          res.flowCategoryFilters = [
+            ...res.flowCategoryFilters,
             ...(parsedCategories ? parsedCategories : []),
           ];
           break;

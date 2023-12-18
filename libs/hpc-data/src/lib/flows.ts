@@ -1,7 +1,6 @@
 import * as t from 'io-ts';
 
 import { INTEGER_FROM_STRING } from './util';
-import { updateAt } from 'fp-ts/lib/ReadonlyNonEmptyArray';
 
 const FLOW_REF_DIRECTION = t.keyof({
   source: null,
@@ -394,10 +393,8 @@ const FLOW_FILTERS = t.partial({
   flowObjectFilters: t.array(
     t.type({ objectID: t.number, direction: t.string, objectType: t.string })
   ),
-  flowCategoryFilters: t.partial({
-    pending: t.boolean,
-    categoryFilters: t.array(t.type({ id: t.number, group: t.string })),
-  }),
+  flowCategoryFilters: t.array(t.type({ id: t.number, group: t.string })),
+  pending: t.boolean,
   includeChildrenOfParkedFlows: t.boolean,
 });
 const AbortSignalType = new t.Type<AbortSignal, AbortSignal, unknown>(

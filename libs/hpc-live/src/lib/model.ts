@@ -551,17 +551,18 @@ export class LiveModel implements Model {
             : ''
         }
         ${
-          params.flowObjectFilters
+          params.flowObjectFilters && params.flowObjectFilters.length > 0
             ? 'flowObjectFilters: ' +
               parseFilterToGraphQL(params.flowObjectFilters)
             : ''
         }
         ${
-          params.flowCategoryFilters
+          params.flowCategoryFilters && params.flowCategoryFilters.length > 0
             ? 'flowCategoryFilters: ' +
               parseFilterToGraphQL(params.flowCategoryFilters)
             : ''
         }
+        ${params.pending ? 'pending: ' + params.pending : ''}
         ${
           params.includeChildrenOfParkedFlows
             ? 'includeChildrenOfParkedFlows: true'
@@ -686,23 +687,25 @@ export class LiveModel implements Model {
         }),
       getTotalAmountUSD: (params) => {
         const query = `query{
-            searchFlowsTotalAmountUSD(${
-              params.flowFilters
+            searchFlowsTotalAmountUSD( ${
+              params.flowFilters && JSON.stringify(params.flowFilters) !== '{}'
                 ? 'flowFilters: ' + parseFilterToGraphQL(params.flowFilters)
                 : ''
             }
             ${
-              params.flowObjectFilters
+              params.flowObjectFilters && params.flowObjectFilters.length > 0
                 ? 'flowObjectFilters: ' +
                   parseFilterToGraphQL(params.flowObjectFilters)
                 : ''
             }
             ${
-              params.flowCategoryFilters
+              params.flowCategoryFilters &&
+              params.flowCategoryFilters.length > 0
                 ? 'flowCategoryFilters: ' +
                   parseFilterToGraphQL(params.flowCategoryFilters)
                 : ''
             }
+            ${params.pending ? 'pending: ' + params.pending : ''}
             ${
               params.includeChildrenOfParkedFlows
                 ? 'includeChildrenOfParkedFlows: true'
