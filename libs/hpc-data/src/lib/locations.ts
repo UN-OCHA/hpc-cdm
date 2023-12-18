@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 
-const LOCATION_BUILDER = {
+export const LOCATION_BUILDER = {
   id: t.number,
   externalId: t.union([t.string, t.null]),
   name: t.string,

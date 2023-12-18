@@ -18,75 +18,53 @@ import { flows } from '@unocha/hpc-data';
 import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
 import { MdInfoOutline } from 'react-icons/md';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { LanguageKey, t } from '../../i18n';
-import { AppContext, getEnv } from '../context';
+import { LanguageKey, t } from '../../../i18n';
+import { AppContext, getEnv } from '../../context';
 import tw from 'twin.macro';
 import React, { useEffect, useState } from 'react';
-import { FlowsFilterValues } from './filter-flows-table';
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
-import _ from 'lodash';
+import { FlowsFilterValuesREST } from '../filters/filter-flows-REST-table';
 import {
   decodeFilters,
   encodeFilters,
-  parseFormFiltersRebuilt,
+  parseFormFilters,
   parseFlowFilters,
-  parseActiveFilters,
-} from '../utils/parse-filters';
-import { FLOWS_FILTER_INITIAL_VALUES } from '../components/filter-flows-table';
+  isKey,
+  FilterKeys,
+} from '../../utils/parse-filters';
 import { Form, Formik } from 'formik';
-import { PendingFlowsFilterValues } from './filter-pending-flows-table';
-import EllipsisText from '../utils/ellipsis-text';
+import { PendingFlowsFilterValues } from '../filters/filter-pending-flows-table';
 import {
   FlowHeaderID,
   TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
-} from '../utils/table-headers';
-import { downloadExcel } from '../utils/download-excel';
+} from '../../utils/table-headers';
+import { downloadExcel } from '../../utils/download-excel';
 import DownloadIcon from '@mui/icons-material/Download';
+import {
+  ChipDiv,
+  Query,
+  RejectPendingFlowsButton,
+  RenderChipsRow,
+  StyledLoader,
+  TableHeaderButton,
+  TableRowClick,
+  TopRowContainer,
+  TotalAmountUSD,
+} from './table-utils';
+import { useNavigate } from 'react-router-dom';
+import * as paths from '../../paths';
 
-export type Query = {
-  page: number;
-  rowsPerPage: number;
-  orderBy: string;
-  orderDir: string;
-  filters: string;
-  tableHeaders: string;
-};
 export interface FlowsTableProps {
   headers: TableHeadersProps<FlowHeaderID>[];
-  initialValues: FlowsFilterValues | PendingFlowsFilterValues;
-  flowList?: flows.FlowList;
-  graphQL?: boolean;
+  initialValues: FlowsFilterValuesREST | PendingFlowsFilterValues;
   rowsPerPageOption: number[];
   query: Query;
   setQuery: (newQuery: Query) => void;
+  abortSignal?: AbortSignal;
+  pending?: boolean;
 }
-const StyledLoader = tw(C.Loader)`
-    mx-auto
-    `;
-const ChipDiv = tw.div`
-  relative
-  w-full
-  `;
-const TopRowContainer = tw.div`
-  flex
-  justify-end
-  `;
-const ConfigButton = tw(IconButton)`
-  h-min
-  self-center
-  `;
-const ChipFilterValues = tw.div`
-  bg-unocha-secondary-light
-  inline-flex
-  mx-1
-  px-2
-  rounded-full
-  `;
-const RejectPendingFlowsButton = tw(C.ButtonSubmit)`
-  mt-8
-  `;
+
 export interface ParsedFilters {
   flowID?: number;
   amountUSD?: number;
@@ -99,55 +77,67 @@ export interface ParsedFilters {
   categories?: flows.FlowCategory[];
   includeChildrenOfParkedFlows?: boolean;
 }
-export interface ActiveFilter {
-  label: string;
-  fieldName: keyof FlowsFilterValues;
-  displayValue: string;
-  value: string | boolean | { label: string; id: string }[] | undefined;
-}
-export default function FlowsTableGraphQL(props: FlowsTableProps) {
+
+export default function FlowsTable(props: FlowsTableProps) {
   const env = getEnv();
-  let firstRender = true;
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
   const filters = decodeFilters(props.query.filters, props.initialValues);
-  const { activeFormValues, attributes } = parseActiveFilters(filters);
+  const attributes = parseFormFilters(filters, props.initialValues);
+  const [totalAmountUSD, setTotalAmountUSD] = useState<string>();
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
-
-  const handleFlowList = () => {
-    return props.flowList
-      ? props.flowList
-      : _.isEqual(filters, FLOWS_FILTER_INITIAL_VALUES)
-      ? 'all'
-      : 'search';
-  };
-
+  const parsedFilters = parseFlowFilters(attributes, props.pending);
+  const navigate = useNavigate();
+  console.log(query.prevPageCursor);
   const [state, load] = useDataLoader([query], () =>
-    env.model.flows.searchFlowsGraphQL({
+    env.model.flows.searchFlows({
       limit: query.rowsPerPage,
       sortField: query.orderBy,
       sortOrder: query.orderDir,
+      ...parsedFilters,
+      signal: props.abortSignal,
+      prevPageCursor: query.prevPageCursor,
+      nextPageCursor: query.nextPageCursor,
     })
   );
+
   useEffect(() => {
-    if (!firstRender) {
-      load();
-    } else {
-      firstRender = false;
-    }
+    setTotalAmountUSD(undefined);
   }, [query.filters]);
 
-  const handleChipDelete = (fieldName: keyof FlowsFilterValues) => {
-    activeFormValues[fieldName] = undefined;
-    setQuery({ ...query, page: 0, filters: encodeFilters(activeFormValues) });
+  const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
+    if (isKey(filters, fieldName)) {
+      filters[fieldName] = undefined;
+      setQuery({
+        ...query,
+        page: 0,
+        filters: encodeFilters(filters, props.initialValues),
+      });
+    }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setQuery({
-      ...query,
-      page: newPage,
-    });
+  const handleChangePage = (
+    event: unknown,
+    newPage: number,
+    prevPageCursor: string,
+    nextPageCursor: string
+  ) => {
+    if (newPage > props.query.page) {
+      setQuery({
+        ...query,
+        prevPageCursor: undefined,
+        nextPageCursor: nextPageCursor,
+        page: newPage,
+      });
+    } else {
+      setQuery({
+        ...query,
+        prevPageCursor: prevPageCursor,
+        nextPageCursor: undefined,
+        page: newPage,
+      });
+    }
   };
 
   const handleChangeRowsPerPage = (
@@ -171,21 +161,20 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
     } else {
       setQuery({
         ...query,
-        orderBy: newSort,
+        orderBy: newSort.split('.').at(1) ?? 'id',
         orderDir: 'DESC',
       });
     }
   };
 
   const renderReportDetail = (
-    org: flows.FlowOrganizationGraphQl,
-    row: flows.FlowGraphQL,
+    org: flows.FlowOrganization,
+    row: flows.Flow,
     lang: LanguageKey
   ) => {
     const rd =
       row.reportDetails &&
       row.reportDetails.filter((rd) => rd.organizationID === org.id);
-    console.log(row.reportDetails);
     return (
       rd &&
       rd.length > 0 &&
@@ -213,14 +202,14 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
     data,
   }: {
     lang: LanguageKey;
-    data: flows.SearchFlowsGraphQLResult;
+    data: flows.SearchFlowsResult;
   }) => {
     const [selectedRows, setSelectedRows] = useState<
       { id: number; versionID: number }[]
     >([]);
     const handleCheckboxChange = (
       event: React.ChangeEvent<HTMLInputElement>,
-      row: flows.FlowGraphQL
+      row: flows.Flow
     ) => {
       const isChecked = event.target.checked;
       if (isChecked) {
@@ -238,12 +227,11 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
         return filteredRows;
       }
     };
-
     return (
       <>
-        {console.log(data)}
         {data.searchFlows.flows.map((row) => (
-          <TableRow
+          <TableRowClick
+            onClick={() => navigate(paths.flow(row.id))}
             key={`${row.id}v${row.versionID}`}
             sx={{
               backgroundColor: selectedRows.map((x) => x.id).includes(row.id)
@@ -251,12 +239,13 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                 : undefined,
             }}
           >
-            {props.flowList === 'pending' && (
+            {props.pending && (
               <TableCell
                 size="small"
                 component="th"
                 scope="row"
                 data-test="flows-table-checkbox"
+                onClick={(e) => e.stopPropagation()}
               >
                 <C.CheckBox
                   name="flows"
@@ -370,10 +359,16 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                         row.organizations
                           .filter((org) => org.direction === 'source')
                           .map((org, index) => (
-                            <span key={`source_${row.id}_${index}`}>
-                              {org.name}
-                              {renderReportDetail(org, row, lang)}
-                            </span>
+                            <Tooltip
+                              title={org.name}
+                              placement="top"
+                              followCursor={true}
+                            >
+                              <span key={`source_${row.id}_${index}`}>
+                                {org.abbreviation}
+                                {renderReportDetail(org, row, lang)}
+                              </span>
+                            </Tooltip>
                           ))}
                     </TableCell>
                   );
@@ -388,10 +383,16 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                         row.organizations
                           .filter((org) => org.direction === 'destination')
                           .map((org, index) => (
-                            <span key={`destination_${row.id}_${index}`}>
-                              {org.name}
-                              {renderReportDetail(org, row, lang)}
-                            </span>
+                            <Tooltip
+                              title={org.name}
+                              placement="top"
+                              followCursor={true}
+                            >
+                              <span key={`destination_${row.id}_${index}`}>
+                                {org.abbreviation}
+                                {renderReportDetail(org, row, lang)}
+                              </span>
+                            </Tooltip>
                           ))}
                     </TableCell>
                   );
@@ -504,7 +505,7 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
                   return null;
               }
             })}
-          </TableRow>
+          </TableRowClick>
         ))}
       </>
     );
@@ -514,13 +515,13 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
     data,
   }: {
     lang: LanguageKey;
-    data: flows.SearchFlowsGraphQLResult;
+    data: flows.SearchFlowsResult;
   }) => {
     return (
       <Table size="small">
         <TableHead>
           <TableRow>
-            {props.flowList === 'pending' && <TableCell size="small" />}
+            {props.pending && <TableCell size="small" />}
             {(
               decodeTableHeaders(query.tableHeaders, lang) as Array<
                 TableHeadersProps<FlowHeaderID>
@@ -581,16 +582,16 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
       </Table>
     );
   };
-  const CustomTable = ({
+  const FormWrapper = ({
     lang,
     data,
-    flowList,
+    pending,
   }: {
     lang: LanguageKey;
-    data: flows.SearchFlowsGraphQLResult;
-    flowList?: flows.FlowList;
+    data: flows.SearchFlowsResult;
+    pending?: boolean;
   }) => {
-    if (flowList === 'pending') {
+    if (pending) {
       const PENDING_FLOWS_INITIAL_VALUES: {
         flows: { id: number; versionID: number }[];
       } = {
@@ -632,176 +633,140 @@ export default function FlowsTableGraphQL(props: FlowsTableProps) {
             },
           }}
         >
-          {(data) => (
-            <>
-              <ChipDiv>
-                {attributes.map((activeFilter) => (
-                  <Tooltip
-                    key={activeFilter.fieldName}
-                    title={
-                      <div style={{ textAlign: 'left', width: 'auto' }}>
-                        {activeFilter.displayValue
-                          .split('<||>')
-                          .map((filter) => (
-                            <li
-                              key={filter}
-                              style={{
-                                textAlign: 'left',
-                                marginTop: '0',
-                                marginBottom: '0',
-                                listStyle:
-                                  activeFilter.displayValue.split('<||>')
-                                    .length > 1
-                                    ? 'inherit'
-                                    : 'none',
-                              }}
-                            >
-                              {filter}
-                            </li>
-                          ))}
-                      </div>
-                    }
-                  >
-                    <Chip
-                      key={`chip_${activeFilter.fieldName}`}
-                      sx={{
-                        ...chipSpacing,
-                        position: 'relative',
-                      }}
-                      label={
-                        <div>
-                          <span>{activeFilter.label}: </span>
-                          <div
-                            style={{
-                              display: 'inline-block',
-                              maxWidth: '1000px',
-                            }}
-                          >
-                            {activeFilter.displayValue
-                              .split('<||>')
-                              .map((filter, index) => (
-                                <ChipFilterValues key={index}>
-                                  <EllipsisText maxWidth={400}>
-                                    {/\[.*\]/.test(filter) // We do this in order to shorten organization names
-                                      ? filter.match(/\[.*\]/)?.[0]
-                                      : filter}
-                                  </EllipsisText>
-                                </ChipFilterValues>
-                              ))}
-                          </div>
-                        </div>
-                      }
-                      size="small"
-                      color="primary"
-                      onDelete={() =>
-                        handleChipDelete(
-                          activeFilter.fieldName as keyof FlowsFilterValues
+          {(data) => {
+            return (
+              <>
+                <ChipDiv>
+                  <RenderChipsRow
+                    lang={lang}
+                    chipSpacing={chipSpacing}
+                    handleChipDelete={handleChipDelete}
+                    parsedFilters={attributes}
+                    tableType="flowsFilter"
+                  />
+                  <TopRowContainer>
+                    <TotalAmountUSD
+                      abortSignal={props.abortSignal}
+                      parsedFilters={parsedFilters}
+                      lang={lang}
+                      setAmount={setTotalAmountUSD}
+                      amount={totalAmountUSD}
+                    />
+                    <C.AsyncIconButton
+                      fnPromise={() =>
+                        downloadExcel<flows.Flow>(
+                          data.searchFlows.flows,
+                          'export'
                         )
                       }
-                      deleteIcon={<CancelRoundedIcon />}
+                      IconComponent={DownloadIcon}
                     />
-                  </Tooltip>
-                ))}
-                <TopRowContainer>
-                  <C.AsyncIconButton
-                    fnPromise={() =>
-                      downloadExcel<flows.FlowGraphQL>(
-                        data.searchFlows.flows,
-                        'export'
-                      )
-                    }
-                    IconComponent={DownloadIcon}
-                  />
-                  <ConfigButton
-                    size="small"
-                    onClick={() => setOpenSettings(!openSettings)}
-                  >
-                    <SettingsIcon />
-                  </ConfigButton>
-                  <Modal
-                    open={openSettings}
-                    onClose={() => setOpenSettings(!openSettings)}
-                    sx={tw`flex items-center justify-center`}
-                  >
-                    <Box sx={tw`max-h-[70vh] overflow-y-scroll rounded-xl`}>
-                      <C.DraggableList
-                        title={t.t(
-                          lang,
-                          (s) => s.components.flowsTable.tableSettings.title
-                        )}
-                        buttonText={t.t(
-                          lang,
-                          (s) => s.components.flowsTable.tableSettings.save
-                        )}
-                        queryValues={decodeTableHeaders(
-                          query.tableHeaders,
-                          lang,
-                          'flows',
-                          setQuery,
-                          query
-                        )}
-                        onClick={(element) =>
-                          setQuery({
-                            ...query,
-                            tableHeaders: encodeTableHeaders(
-                              element as any, // TO DO: remove any
-                              'flows',
-                              setQuery,
-                              query
-                            ),
-                          })
-                        }
-                        elevation={6}
-                        sx={{
-                          width: '400px',
-                          height: 'fit-content',
-                        }}
-                      />
-                    </Box>
-                  </Modal>
-                  <TablePagination
-                    sx={{ display: 'block' }}
-                    rowsPerPageOptions={rowsPerPageOptions}
-                    component="div"
-                    count={data.searchFlows.total}
-                    rowsPerPage={query.rowsPerPage}
-                    page={query.page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                  />
-                </TopRowContainer>
-              </ChipDiv>
 
-              <Box sx={{ overflowX: 'auto' }}>
-                <TableContainer
-                  sx={{
-                    width: '100%',
-                    display: 'table',
-                    tableLayout: 'fixed',
-                    lineHeight: '1.35',
-                    fontSize: '1.32rem',
-                  }}
-                >
-                  <CustomTable
-                    lang={lang}
-                    data={data}
-                    flowList={props.flowList}
-                  />
-                </TableContainer>
-              </Box>
-              <TablePagination
-                sx={{ display: 'block' }}
-                data-test="flows-table-pagination"
-                rowsPerPageOptions={rowsPerPageOptions}
-                component="div"
-                count={data.searchFlows.total}
-                rowsPerPage={query.rowsPerPage}
-                page={query.page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </>
-          )}
+                    <TableHeaderButton
+                      size="small"
+                      onClick={() => setOpenSettings(!openSettings)}
+                    >
+                      <SettingsIcon />
+                    </TableHeaderButton>
+                    <Modal
+                      open={openSettings}
+                      onClose={() => setOpenSettings(!openSettings)}
+                      sx={tw`flex items-center justify-center`}
+                    >
+                      <Box sx={tw`max-h-[70vh] overflow-y-scroll rounded-xl`}>
+                        <C.DraggableList
+                          title={t.t(
+                            lang,
+                            (s) => s.components.flowsTable.tableSettings.title
+                          )}
+                          buttonText={t.t(
+                            lang,
+                            (s) => s.components.flowsTable.tableSettings.save
+                          )}
+                          queryValues={decodeTableHeaders(
+                            query.tableHeaders,
+                            lang,
+                            'flows',
+                            setQuery,
+                            query
+                          )}
+                          onClick={(element) =>
+                            setQuery({
+                              ...query,
+                              tableHeaders: encodeTableHeaders(
+                                element as any, // TO DO: remove any
+                                'flows',
+                                setQuery,
+                                query
+                              ),
+                            })
+                          }
+                          elevation={6}
+                          sx={{
+                            width: '400px',
+                            height: 'fit-content',
+                          }}
+                        />
+                      </Box>
+                    </Modal>
+                    <TablePagination
+                      sx={{ display: 'block' }}
+                      rowsPerPageOptions={rowsPerPageOptions}
+                      component="div"
+                      count={data.searchFlows.total}
+                      rowsPerPage={query.rowsPerPage}
+                      page={query.page}
+                      onPageChange={(event, newPage) =>
+                        handleChangePage(
+                          event,
+                          newPage,
+                          data.searchFlows.prevPageCursor,
+                          data.searchFlows.nextPageCursor
+                        )
+                      }
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                  </TopRowContainer>
+                </ChipDiv>
+
+                <Box sx={{ overflowX: 'auto' }}>
+                  <TableContainer
+                    sx={{
+                      width: '100%',
+                      display: 'table',
+                      tableLayout: 'fixed',
+                      lineHeight: '1.35',
+                      fontSize: '1.32rem',
+                    }}
+                  >
+                    <FormWrapper
+                      lang={lang}
+                      data={data}
+                      pending={props.pending}
+                    />
+                  </TableContainer>
+                </Box>
+                <TablePagination
+                  sx={{ display: 'block' }}
+                  data-test="flows-table-pagination"
+                  rowsPerPageOptions={rowsPerPageOptions}
+                  component="div"
+                  count={data.searchFlows.total}
+                  rowsPerPage={query.rowsPerPage}
+                  page={query.page}
+                  onPageChange={(event, newPage) =>
+                    handleChangePage(
+                      event,
+                      newPage,
+                      data.searchFlows.prevPageCursor,
+                      data.searchFlows.nextPageCursor
+                    )
+                  }
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </>
+            );
+          }}
         </StyledLoader>
       )}
     </AppContext.Consumer>

@@ -27,7 +27,7 @@ const MultiTextField = ({
   placeholder?: string;
   type?: 'text' | 'currency';
 }) => {
-  const { setFieldValue } = useFormikContext<Array<string>>();
+  const { setFieldValue } = useFormikContext<string[]>();
   const [field, meta] = useField<string[]>(name);
   const [inputValue, setInputValue] = useState('');
   useEffect(() => setInputValue(''), [field.value]);

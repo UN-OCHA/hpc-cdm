@@ -3,23 +3,20 @@ import { array, number, object, string } from 'yup';
 import tw from 'twin.macro';
 
 import { C } from '@unocha/hpc-ui';
-import { Environment } from '../../environments/interface';
-import { Query } from './flows-table';
 import {
   FormObjectValue,
   decodeFilters,
   encodeFilters,
-  parseActiveFilters,
-  parseFormFiltersRebuilt,
-  parseInitialValues,
-} from '../utils/parse-filters';
-import { LanguageKey, t } from '../../i18n';
+} from '../../utils/parse-filters';
+import { t } from '../../../i18n';
+import { Query } from '../tables/table-utils';
+import { useContext } from 'react';
+import { AppContext } from '../../context';
 
 interface Props {
-  environment: Environment;
   query: Query;
   setQuery: (newQuery: Query) => void;
-  lang: LanguageKey;
+  handleAbortController: () => void;
 }
 export interface PendingFlowsFilterValues {
   status?: string;
@@ -52,9 +49,11 @@ justify-end
 gap-x-4 
 `;
 export const FilterPendingFlowsTable = (props: Props) => {
-  const { environment, setQuery, query, lang } = props;
+  const { setQuery, query, handleAbortController } = props;
+  const { lang, env } = useContext(AppContext);
+  const environment = env();
+
   const FORM_VALIDATION = object().shape({
-    id: array(number()).typeError('numbers'),
     flowStatus: string(),
     dataProvider: string(),
     reporterRefCode: number()
@@ -77,10 +76,17 @@ export const FilterPendingFlowsTable = (props: Props) => {
     ),
   });
   const handleSubmit = (values: PendingFlowsFilterValues) => {
+    const encodedFilters = encodeFilters(
+      values,
+      PENDING_FLOWS_FILTER_INITIAL_VALUES
+    );
+    if (query.filters !== encodedFilters) {
+      handleAbortController();
+    }
     setQuery({
       ...query,
       page: 0,
-      filters: encodeFilters(parseActiveFilters(values).activeFormValues),
+      filters: encodedFilters,
     });
   };
   const handleResetForm = (
@@ -88,21 +94,26 @@ export const FilterPendingFlowsTable = (props: Props) => {
       nextState?: Partial<FormikState<PendingFlowsFilterValues>>
     ) => void
   ) => {
+    const encodedFilters = encodeFilters(
+      {},
+      PENDING_FLOWS_FILTER_INITIAL_VALUES
+    );
     formikResetForm();
+    if (query.filters !== encodedFilters) {
+      handleAbortController();
+    }
     setQuery({
       ...query,
       page: 0,
-      filters: encodeFilters(
-        parseActiveFilters(PENDING_FLOWS_FILTER_INITIAL_VALUES).activeFormValues
-      ),
+      filters: encodedFilters,
     });
   };
   return (
     <C.SearchFilter title={t.t(lang, (s) => s.components.flowsFilter.title)}>
       <Formik
         enableReinitialize
-        initialValues={parseInitialValues(
-          decodeFilters(query.filters, PENDING_FLOWS_FILTER_INITIAL_VALUES),
+        initialValues={decodeFilters(
+          query.filters,
           PENDING_FLOWS_FILTER_INITIAL_VALUES
         )}
         validationSchema={FORM_VALIDATION}
@@ -130,11 +141,6 @@ export const FilterPendingFlowsTable = (props: Props) => {
                 (s) => s.components.pendingFlowsFilter.filters.details
               )}
             >
-              <C.MultiTextField
-                name="id"
-                label="Flows ID Test"
-                type="currency"
-              />
               <C.SingleSelect
                 label={t.t(
                   lang,
@@ -142,8 +148,8 @@ export const FilterPendingFlowsTable = (props: Props) => {
                 )}
                 name="status"
                 options={[
-                  { name: 'New', value: 'New' },
-                  { name: 'Update', value: 'Update' },
+                  { displayLabel: 'New', value: 'New' },
+                  { displayLabel: 'Update', value: 'Update' },
                 ]}
               />
               <C.AsyncSingleSelect
@@ -156,8 +162,8 @@ export const FilterPendingFlowsTable = (props: Props) => {
                   const response = await environment.model.systems.getSystems();
                   return response.map((responseValue) => {
                     return {
-                      label: responseValue.systemID,
-                      id: responseValue.systemID,
+                      displayLabel: responseValue.systemID,
+                      value: responseValue.systemID,
                     };
                   });
                 }}
@@ -192,7 +198,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.pendingFlowsFilter.filters.sourceCountries
+                  (s) => s.components.pendingFlowsFilter.filters.sourceLocations
                 )}
                 name="sourceCountries"
                 fnPromise={environment.model.locations.getAutocompleteLocations}
@@ -223,7 +229,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                 label={t.t(
                   lang,
                   (s) =>
-                    s.components.pendingFlowsFilter.filters.destinationCountries
+                    s.components.pendingFlowsFilter.filters.destinationLocations
                 )}
                 name="destinationCountries"
                 fnPromise={environment.model.locations.getAutocompleteLocations}

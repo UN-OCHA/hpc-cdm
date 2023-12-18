@@ -1,221 +1,152 @@
 import { categories, flows } from '@unocha/hpc-data';
-import { FlowsFilterValues } from '../components/filter-flows-table';
-import { ActiveFilter, ParsedFilters } from '../components/flows-table';
+import { FlowsFilterValuesREST } from '../components/filters/filter-flows-REST-table';
 import { formValueToID, formValueToLabel } from './map-functions';
-import { PendingFlowsFilterValues } from '../components/filter-pending-flows-table';
+import { PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
 import { Strings } from '../../i18n/iface';
-import { OrganizationFilterValues } from '../components/filter-organization-table';
+import { OrganizationFilterValues } from '../components/filters/filter-organization-table';
+import { Dayjs } from 'dayjs';
 
-export const MAP_FILTER_FLOW_VALUES_TO_I18: Record<
-  keyof FlowsFilterValues,
-  keyof Strings['components']['flowsFilter']['filters']
-> = {
-  amountUSD: 'amountUSD',
-  destinationCountries: 'destinationCountries',
-  destinationEmergencies: 'destinationEmergencies',
-  destinationGlobalClusters: 'destinationGlobalClusters',
-  destinationOrganizations: 'destinationOrganizations',
-  destinationPlans: 'destinationPlans',
-  destinationProjects: 'destinationProjects',
-  destinationUsageYears: 'destinationUsageYears',
-  sourceCountries: 'sourceCountries',
-  sourceEmergencies: 'sourceEmergencies',
-  sourceGlobalClusters: 'sourceGlobalClusters',
-  sourceOrganizations: 'sourceOrganizations',
-  sourcePlans: 'sourcePlans',
-  sourceProjects: 'sourceProjects',
-  sourceUsageYears: 'sourceUsageYears',
-  flowActiveStatus: 'flowActiveStatus',
-  flowID: 'flowID',
-  legacyID: 'legacyID',
-  flowStatus: 'flowStatus',
-  flowType: 'flowType',
-  includeChildrenOfParkedFlows: 'includeChildrenOfParkedFlows',
-  keywords: 'keywords',
-  reporterRefCode: 'reporterRefCode',
-  sourceSystemID: 'sourceSystemID',
-};
-export const MAP_FILTER_ORGANIZATION_VALUES_TO_I18: Record<
-  keyof OrganizationFilterValues,
-  keyof Strings['components']['organizationsFilter']['filters']
-> = {
-  organizationName: 'organizationName',
-  active: 'active',
-  addedModifiedSince: 'addedModifiedSince',
-  country: 'country',
-  organizationType: 'organizationType',
-  parentOrganization: 'parentOrganization',
+export type Filters =
+  | FlowsFilterValuesREST
+  | PendingFlowsFilterValues
+  | OrganizationFilterValues;
+export type FilterKeys =
+  | keyof Strings['components']['flowsFilter']['filters']
+  | keyof Strings['components']['pendingFlowsFilter']['filters']
+  | keyof Strings['components']['organizationsFilter']['filters'];
+
+export type FormObjectValue = { displayLabel: string; value: string };
+export type FilterValues =
+  | string
+  | string[]
+  | boolean
+  | FormObjectValue
+  | null
+  | Array<FormObjectValue>
+  | Dayjs;
+
+export type Filter<T extends FilterKeys> = {
+  [key in T]?: {
+    value: FilterValues;
+    displayValue: string;
+  };
 };
 
-export const parseFlowFilters = (
-  filters: FlowsFilterValues | PendingFlowsFilterValues
-): ParsedFilters | undefined => {
-  if (!filters) return;
-
-  const res: ParsedFilters = {};
-  const typedFormFields: flows.FlowFilters = {};
-
-  let key: keyof typeof filters;
-  for (key in filters) {
-    if (key.includes('destination') || key.includes('source')) {
-      typedFormFields[key] = formValueToID(
-        filters[key] as Array<FormObjectValue>
-      ) as any;
-    } else if (key.includes('amountUSD')) {
-      const value = parseInt(filters[key] as string) as any;
-      typedFormFields[key] = value;
-      res[key as keyof ParsedFilters] = value;
-    } else if (['flowID'].includes(key)) {
-      const value = (filters[key] as unknown as string[]).map((x) =>
-        parseInt(x)
-      ) as any;
-      typedFormFields[key] = value;
-      res[key as keyof ParsedFilters] = value;
-    } else if ((key as keyof FlowsFilterValues) === 'keywords') {
-      // NOT CHANGED
-      typedFormFields.keywords = formValueToLabel(
-        filters[key] as Array<FormObjectValue>
-      );
-    } else if ((key as keyof PendingFlowsFilterValues) === 'status') {
-      res.status = { status: filters[key] as string };
-    } else {
-      typedFormFields[key] = filters[key] as any;
-      if ((key as keyof FlowsFilterValues) === 'flowActiveStatus') {
-        res.flowActiveStatus = {
-          activeStatus: { name: filters[key] as string },
-        };
-      } else if ((key as keyof PendingFlowsFilterValues) === 'dataProvider') {
-        res.dataProvider = { systemID: filters[key] as string };
-      } else {
-        res[key as keyof ParsedFilters] = filters[key] as any;
-      }
-    }
+const parseInInitialValues = <T extends Filters>(
+  filters: T,
+  initialValues: T
+) => {
+  for (const key in initialValues) {
+    filters[key] = filters[key] ? filters[key] : initialValues[key];
   }
-
-  const parsedKeywords: { values: string; group: 'keywords' }[] | undefined =
-    typedFormFields.keywords?.map((keyword) => {
-      return { values: keyword, group: 'keywords' };
-    });
-  let categoriesList: {
-    values: string | undefined;
-    group: categories.CategoryGroup;
-  }[] = [
-    { values: typedFormFields.flowStatus, group: 'flowStatus' },
-    { values: typedFormFields.flowType, group: 'flowType' },
-  ];
-  if (parsedKeywords) categoriesList = [...categoriesList, ...parsedKeywords];
-  res.categories = parseCategories(categoriesList);
-  res.flowObjects = parseFlowObjects([
-    {
-      values: typedFormFields.destinationCountries,
-      refDirection: 'destination',
-      objectType: 'location',
-    },
-    {
-      values: typedFormFields.destinationOrganizations,
-      refDirection: 'destination',
-      objectType: 'organization',
-    },
-    {
-      values: typedFormFields.destinationUsageYears,
-      refDirection: 'destination',
-      objectType: 'usageYear',
-    },
-    {
-      values: typedFormFields.destinationProjects,
-      refDirection: 'destination',
-      objectType: 'project',
-    },
-    {
-      values: typedFormFields.destinationPlans,
-      refDirection: 'destination',
-      objectType: 'plan',
-    },
-    {
-      values: typedFormFields.destinationGlobalClusters,
-      refDirection: 'destination',
-      objectType: 'globalCluster',
-    },
-    {
-      values: typedFormFields.destinationEmergencies,
-      refDirection: 'destination',
-      objectType: 'emergency',
-    },
-    {
-      values: typedFormFields.sourceCountries,
-      refDirection: 'source',
-      objectType: 'location',
-    },
-    {
-      values: typedFormFields.sourceOrganizations,
-      refDirection: 'source',
-      objectType: 'organization',
-    },
-    {
-      values: typedFormFields.sourceUsageYears,
-      refDirection: 'source',
-      objectType: 'usageYear',
-    },
-    {
-      values: typedFormFields.sourceProjects,
-      refDirection: 'source',
-      objectType: 'project',
-    },
-    {
-      values: typedFormFields.sourcePlans,
-      refDirection: 'source',
-      objectType: 'plan',
-    },
-    {
-      values: typedFormFields.sourceGlobalClusters,
-      refDirection: 'source',
-      objectType: 'globalCluster',
-    },
-    {
-      values: typedFormFields.sourceEmergencies,
-      refDirection: 'source',
-      objectType: 'emergency',
-    },
-  ]);
-
+  return filters;
+};
+export const parseOutInitialValues = <T extends Filters>(
+  filters: T,
+  initialValues: T
+) => {
+  const res: T = {} as T;
+  for (const key in filters) {
+    if (JSON.stringify(filters[key]) !== JSON.stringify(initialValues[key]))
+      res[key] = filters[key];
+  }
   return res;
 };
-
-export const parseActiveFilters = (
-  filters: FlowsFilterValues | PendingFlowsFilterValues
+export const encodeFilters = <T extends Filters>(
+  filters: T,
+  initialValue: T
 ) => {
-  const attributes: ActiveFilter[] = [];
-  const activeFormValues: FlowsFilterValues = {};
-  let key: keyof typeof filters;
-  for (key in filters) {
-    const fieldValue = filters[key];
-    if (
-      !(
-        (Array.isArray(fieldValue) && fieldValue.length === 0) ||
-        fieldValue === false ||
-        fieldValue === '' ||
-        fieldValue === null
-      )
-    ) {
-      let displayValue = '';
+  const cleanedFilters = parseOutInitialValues(filters, initialValue);
+  return JSON.stringify(cleanedFilters);
+};
 
-      if (typeof fieldValue === 'string') {
-        displayValue = displayValue.concat(fieldValue);
-      } else if (Array.isArray(fieldValue)) {
-        displayValue = fieldValue.map((x) => x.displayLabel).join('<||>');
-      } else if (typeof fieldValue === 'boolean') {
-        displayValue = displayValue.concat(fieldValue.toString());
-      }
-      activeFormValues[key] = fieldValue as any;
-      attributes.push({
-        label: MAP_FILTER_FLOW_VALUES_TO_I18[key],
-        fieldName: key,
-        displayValue: displayValue,
-        value: fieldValue,
-      });
-    }
+export const decodeFilters = <T extends Filters>(
+  stringFilters: string,
+  initialValues: T
+): T => {
+  try {
+    const res: T = parseInInitialValues<T>(
+      JSON.parse(stringFilters),
+      initialValues
+    );
+    return res;
+  } catch (err) {
+    console.warn(
+      err,
+      'Error parsing query to JSON. Reseting to initial Values...'
+    );
+    return initialValues;
   }
-  return { activeFormValues, attributes };
+};
+
+type ParsedFlowFiltersREST = {
+  flowID?: number[];
+  amountUSD?: number;
+  sourceSystemID?: string;
+  dataProvider?: { systemID: string };
+  flowActiveStatus?: { activeStatus: { name: string } };
+  status?: { status: string };
+  reporterRefCode?: string;
+  legacyID?: string;
+  flowObjects?: flows.FlowObject[];
+  categories?: flows.FlowCategory[];
+  includeChildrenOfParkedFlows?: boolean;
+};
+
+function instanceOfFormObjectValue(
+  object: NonNullable<unknown>
+): object is FormObjectValue {
+  try {
+    return (
+      typeof object !== 'string' &&
+      typeof object !== 'boolean' &&
+      typeof object !== 'number' &&
+      'displayLabel' in object &&
+      'value' in object
+    );
+  } catch {
+    console.warn('Unsuportted value supplied to function');
+    return false;
+  }
+}
+export function isKey<T extends object>(x: T, k: PropertyKey): k is keyof T {
+  return k in x;
+}
+
+function isFlowObjectTypes(value: string): value is FlowObjectTypes {
+  return [
+    'location',
+    'emergency',
+    'globalCluster',
+    'organization',
+    'plan',
+    'project',
+    'usageYear',
+  ].includes(value);
+}
+export const extractDirectionObject = (
+  inputString: FilterKeys
+): {
+  direction: 'source' | 'destination';
+  object: FlowObjectTypes;
+} | null => {
+  const match = inputString.match(
+    /^(source|destination)(Locations|Emergencies|GlobalClusters|Organizations|Plans|Projects|UsageYears)$/
+  );
+
+  if (match) {
+    let singularObject = match[2].replace(/ies$/, 'y');
+    singularObject = singularObject.replace(/s$/, '');
+    const direction = match[1];
+    const lowerCaseSingularObject =
+      singularObject.charAt(0).toLowerCase() + singularObject.slice(1);
+    return (direction === 'destination' || direction === 'source') &&
+      isFlowObjectTypes(lowerCaseSingularObject)
+      ? { direction: direction, object: lowerCaseSingularObject }
+      : null;
+  } else {
+    return null;
+  }
 };
 
 const parseCategories = (
@@ -241,7 +172,7 @@ type FlowObjectTypes =
   | 'location'
   | 'organization'
   | 'usageYear'
-  | 'country'
+  | 'location'
   | 'project'
   | 'plan'
   | 'globalCluster'
@@ -265,169 +196,59 @@ const parseFlowObject = (flowObject: {
   return res;
 };
 
-// OLD VERSION
-const parseFlowObjects = (
-  flowObjects: {
-    values: string[] | undefined;
-    refDirection: 'source' | 'destination';
-    objectType:
-      | 'location'
-      | 'organization'
-      | 'usageYear'
-      | 'project'
-      | 'plan'
-      | 'globalCluster'
-      | 'emergency';
-  }[]
-): flows.FlowObject[] => {
-  const res: flows.FlowObject[] = [];
+export const parseFormFilters = <
+  T extends FilterKeys,
+  K extends {
+    [x in T]?: FilterValues | undefined;
+  }
+>(
+  filters: K,
+  initialValues: K
+): Filter<T> => {
+  const cleanedFilters = parseOutInitialValues(filters, initialValues);
+  const parsedFormValue: Filter<T> = {};
+  for (const key in cleanedFilters) {
+    const fieldValue = cleanedFilters[key];
 
-  flowObjects.map((flows) => {
-    if (flows.values) {
-      res.push(
-        ...flows.values.map((value) => ({
-          objectID: parseInt(value),
-          refDirection: flows.refDirection,
-          objectType: flows.objectType,
-        }))
-      );
+    if (fieldValue !== null && fieldValue !== undefined) {
+      const displayValue = Array.isArray(fieldValue)
+        ? fieldValue
+            .map((x) => (typeof x === 'string' ? x : x.displayLabel))
+            .join('<||>')
+        : instanceOfFormObjectValue(fieldValue)
+        ? fieldValue.displayLabel
+        : fieldValue.toString();
+
+      if (
+        JSON.stringify(parsedFormValue[key]?.value) !==
+        JSON.stringify(fieldValue)
+      ) {
+        parsedFormValue[key as unknown as T] = {
+          displayValue: displayValue,
+          value: fieldValue,
+        };
+      }
     }
-  });
-  return res;
-};
-
-export const encodeFilters = (
-  filters: FlowsFilterValues | PendingFlowsFilterValues
-) => {
-  return JSON.stringify(filters);
-};
-
-export const decodeFilters = (
-  stringFilters: string,
-  initialValues: FlowsFilterValues | PendingFlowsFilterValues
-): FlowsFilterValues => {
-  try {
-    const res: FlowsFilterValues = JSON.parse(stringFilters);
-    return res;
-  } catch (err) {
-    console.warn(
-      err,
-      '<||> Error parsing query to JSON. Reseting to initial Values...'
-    );
-    return initialValues;
   }
+  return parsedFormValue;
 };
 
-export const parseInitialValues = (
-  filters: FlowsFilterValues | PendingFlowsFilterValues,
-  initialValues: typeof filters
-) => {
-  let key: keyof typeof filters;
-  for (key in initialValues) {
-    filters[key] = (filters[key] ? filters[key] : initialValues[key]) as any;
-  }
-  return filters;
-};
-
-export type FormObjectValue = { displayLabel: string; value: string };
-type FilterKeys =
-  | keyof Strings['components']['flowsFilter']['filters']
-  | keyof Strings['components']['organizationsFilter']['filters'];
-
-export type RebuiltFilter<T extends FilterKeys> = {
-  [key in T]: {
-    value:
-      | string
-      | string[]
-      | boolean
-      | number
-      | FormObjectValue
-      | Array<FormObjectValue>
-      | undefined;
-    active?: boolean;
-    displayValue?: string;
-  };
-};
-
-type ParsedFlowFilters = {
-  flowID?: number[];
-  amountUSD?: number;
-  sourceSystemID?: string;
-  dataProvider?: { systemID: string };
-  flowActiveStatus?: { activeStatus: { name: string } };
-  status?: { status: string };
-  reporterRefCode?: string;
-  legacyID?: string;
-  flowObjects?: flows.FlowObject[];
-  categories?: flows.FlowCategory[];
-  includeChildrenOfParkedFlows?: boolean;
-};
-
-function isKey<T extends object>(x: T, k: PropertyKey): k is keyof T {
-  return k in x;
-}
-function extractDirectionObject(
-  inputString:
-    | 'destinationCountries'
-    | 'destinationEmergencies'
-    | 'destinationGlobalClusters'
-    | 'destinationOrganizations'
-    | 'destinationPlans'
-    | 'destinationProjects'
-    | 'destinationUsageYears'
-    | 'sourceCountries'
-    | 'sourceEmergencies'
-    | 'sourceGlobalClusters'
-    | 'sourceOrganizations'
-    | 'sourcePlans'
-    | 'sourceProjects'
-    | 'sourceUsageYears'
-): {
-  direction: 'source' | 'destination';
-  object: FlowObjectTypes;
-} | null {
-  const match = inputString.match(
-    /^(source|destination)(Countries|Emergencies|GlobalClusters|Organizations|Plans|Projects|UsageYears)$/
-  );
-
-  if (match) {
-    let singularObject = match[2].replace(/ies$/, 'y');
-    singularObject = singularObject.replace(/s$/, ''); // Remove 's' at the end for singular form
-    const direction = match[1];
-    // Additional rules for specific cases
-
-    const lowerCaseSingularObject =
-      singularObject.charAt(0).toLowerCase() + singularObject.slice(1); // Convert first character to lowercase
-    return (direction === 'destination' || direction === 'source') &&
-      (lowerCaseSingularObject === 'country' ||
-        lowerCaseSingularObject === 'emergency' ||
-        lowerCaseSingularObject === 'globalCluster' ||
-        lowerCaseSingularObject === 'organization' ||
-        lowerCaseSingularObject === 'plan' ||
-        lowerCaseSingularObject === 'project' ||
-        lowerCaseSingularObject === 'usageYear')
-      ? { direction: direction, object: lowerCaseSingularObject }
-      : null;
-  } else {
-    return null;
-  }
-}
-
-export const parseFlowFiltersRebuilt = (
-  filters: RebuiltFilter<keyof Strings['components']['flowsFilter']['filters']>
-): ParsedFlowFilters => {
-  const res: ParsedFlowFilters = {};
+export const parseFlowFiltersREST = (
+  filters: Filter<keyof Strings['components']['flowsFilter']['filters']>
+): ParsedFlowFiltersREST => {
+  const res: ParsedFlowFiltersREST = {};
+  console.log(filters);
   for (const key in filters) {
     if (isKey(filters, key)) {
       switch (key) {
-        case 'destinationCountries':
+        case 'destinationLocations':
         case 'destinationEmergencies':
         case 'destinationGlobalClusters':
         case 'destinationOrganizations':
         case 'destinationPlans':
         case 'destinationProjects':
         case 'destinationUsageYears':
-        case 'sourceCountries':
+        case 'sourceLocations':
         case 'sourceEmergencies':
         case 'sourceGlobalClusters':
         case 'sourceOrganizations':
@@ -436,21 +257,26 @@ export const parseFlowFiltersRebuilt = (
         case 'sourceUsageYears': {
           const extractedDetails = extractDirectionObject(key);
           if (extractedDetails) {
-            res.flowObjects = parseFlowObject({
-              values: formValueToID(filters[key].value as FormObjectValue[]),
-              objectType: extractedDetails.object,
-              refDirection: extractedDetails.direction,
-            });
+            res.flowObjects = [
+              ...(res.flowObjects ? res.flowObjects : []),
+              ...parseFlowObject({
+                values: formValueToID(
+                  filters[key]?.value as Array<FormObjectValue>
+                ),
+                objectType: extractedDetails.object,
+                refDirection: extractedDetails.direction,
+              }),
+            ];
           }
           break;
         }
         case 'amountUSD': {
-          const amountUSD = parseInt(filters.amountUSD.value as string);
+          const amountUSD = parseInt(filters.amountUSD?.value as string);
           res.amountUSD = amountUSD;
           break;
         }
         case 'flowID': {
-          const ids = (filters.flowID.value as string[]).map((x) =>
+          const ids = (filters.flowID?.value as string[]).map((x) =>
             parseInt(x)
           );
           res.flowID = ids;
@@ -458,14 +284,14 @@ export const parseFlowFiltersRebuilt = (
         }
         case 'flowActiveStatus': {
           res.flowActiveStatus = {
-            activeStatus: { name: filters.flowActiveStatus.value as string },
+            activeStatus: { name: filters.flowActiveStatus?.value as string },
           };
           break;
         }
         case 'keywords': {
           const parsedCategories = parseCategories(
             formValueToLabel(
-              filters.keywords.value as Array<FormObjectValue>
+              filters.keywords?.value as Array<FormObjectValue>
             ).map(
               (
                 keyword
@@ -484,7 +310,7 @@ export const parseFlowFiltersRebuilt = (
           res.categories = [
             ...(res.categories ? res.categories : []),
             {
-              name: filters.flowStatus.value as string,
+              name: filters.flowStatus?.value as string,
               group: 'flowStatus',
             },
           ];
@@ -494,7 +320,7 @@ export const parseFlowFiltersRebuilt = (
           res.categories = [
             ...(res.categories ? res.categories : []),
             {
-              name: filters.flowType.value as string,
+              name: filters.flowType?.value as string,
               group: 'flowStatus',
             },
           ];
@@ -502,12 +328,12 @@ export const parseFlowFiltersRebuilt = (
           break;
         }
         case 'includeChildrenOfParkedFlows': {
-          res.includeChildrenOfParkedFlows = filters[key].value as boolean;
+          res.includeChildrenOfParkedFlows = filters[key]?.value as boolean;
           break;
         }
         default: {
-          const remainingKey: keyof ParsedFlowFilters = key;
-          res[remainingKey] = filters[key].value as string;
+          const remainingKey: keyof ParsedFlowFiltersREST = key;
+          res[remainingKey] = filters[key]?.value as string;
           break;
         }
       }
@@ -516,39 +342,172 @@ export const parseFlowFiltersRebuilt = (
   return res;
 };
 
-export const parseFormFiltersRebuilt = <
-  T extends FilterKeys,
-  K extends {
-    [x in T]: string | string[] | Array<FormObjectValue> | boolean;
-  }
->(
-  filters: K,
-  initialValue: K
-): RebuiltFilter<T> => {
-  const parsedFormValue: RebuiltFilter<T> = Object.fromEntries(
-    Object.entries(initialValue).map(([key, value]) => [
-      key,
-      { value: value, active: false },
-    ])
-  ) as RebuiltFilter<T>;
-  for (const key in filters) {
-    const fieldValue = filters[key];
-    const displayValue = Array.isArray(fieldValue)
-      ? fieldValue
-          .map((x) => (typeof x === 'string' ? x : x.displayLabel))
-          .join('<||>')
-      : fieldValue.toString();
+export interface ParsedFlowsFilter {
+  flowFilters: {
+    id?: number[];
+    activeStatus?: boolean;
+    status?: string;
+    type?: string;
+    amountUSD?: number;
+    reporterRefCode?: number;
+    sourceSystemID?: number;
+    legacyID?: number;
+  };
+  flowObjectFilters: Array<{
+    objectID: number;
+    direction: 'source' | 'destination';
+    objectType: FlowObjectTypes;
+  }>;
+  flowCategoryFilters: {
+    pending?: boolean;
+    categoryFilters: Array<{
+      id: number;
+      group: categories.CategoryGroup;
+    }>;
+  };
+  includeChildrenOfParkedFlows?: boolean;
+}
+export const parseFlowFilters = (
+  filters: Filter<keyof Strings['components']['flowsFilter']['filters']>,
+  pending?: boolean
+): ParsedFlowsFilter => {
+  const res: ParsedFlowsFilter = {
+    flowFilters: {},
+    flowObjectFilters: [],
+    flowCategoryFilters: {
+      pending: pending,
+      categoryFilters: [],
+    },
+  };
 
-    if (
-      isKey(parsedFormValue, key) &&
-      parsedFormValue[key].value !== fieldValue
-    ) {
-      parsedFormValue[key] = {
-        active: true,
-        displayValue: displayValue,
-        value: fieldValue,
-      };
+  for (const key in filters) {
+    if (isKey(filters, key)) {
+      switch (key) {
+        case 'destinationLocations':
+        case 'destinationEmergencies':
+        case 'destinationGlobalClusters':
+        case 'destinationOrganizations':
+        case 'destinationPlans':
+        case 'destinationProjects':
+        case 'destinationUsageYears':
+        case 'sourceLocations':
+        case 'sourceEmergencies':
+        case 'sourceGlobalClusters':
+        case 'sourceOrganizations':
+        case 'sourcePlans':
+        case 'sourceProjects':
+        case 'sourceUsageYears': {
+          const extractedDetails = extractDirectionObject(key);
+          if (extractedDetails) {
+            res.flowObjectFilters = [
+              ...res.flowObjectFilters,
+              ...(filters[key]?.value as Array<FormObjectValue>).map(
+                (flowObject) => ({
+                  objectID: parseInt(flowObject.value),
+                  direction: extractedDetails.direction,
+                  objectType: extractedDetails.object,
+                })
+              ),
+            ];
+          }
+          break;
+        }
+        case 'reporterRefCode':
+        case 'legacyID':
+        case 'sourceSystemID':
+        case 'amountUSD': {
+          const parsedValue = parseInt(filters[key]?.value as string);
+          res.flowFilters[key] = parsedValue;
+          break;
+        }
+        case 'flowID': {
+          const ids = (filters.flowID?.value as string[]).map((x) =>
+            parseInt(x)
+          );
+          res.flowFilters.id = ids;
+          break;
+        }
+        case 'flowType':
+        case 'flowStatus': {
+          const parsedName = key === 'flowStatus' ? 'status' : 'type';
+          res.flowFilters[parsedName] = filters[key]?.value as string;
+          break;
+        }
+        case 'includeChildrenOfParkedFlows': {
+          res.includeChildrenOfParkedFlows = filters
+            .includeChildrenOfParkedFlows?.value as boolean;
+          break;
+        }
+        case 'flowActiveStatus': {
+          res.flowFilters.activeStatus = filters[key]?.value as boolean;
+          break;
+        }
+        case 'keywords': {
+          const parsedCategories = (
+            filters.keywords?.value as Array<FormObjectValue>
+          ).map((keyword): { id: number; group: categories.CategoryGroup } => {
+            return { id: parseInt(keyword.value), group: 'keywords' };
+          });
+
+          res.flowCategoryFilters.categoryFilters = [
+            ...res.flowCategoryFilters.categoryFilters,
+            ...(parsedCategories ? parsedCategories : []),
+          ];
+          break;
+        }
+      }
     }
   }
-  return parsedFormValue;
+  return res;
+};
+
+interface ParsedOrganizationFilters {
+  status?: string;
+  date?: string;
+  locations?: Array<{ name: string; id: number }>;
+  verified?: string;
+  parentOrganization?: { name: string; id: number };
+  organizationType?: { name: string; id: number };
+  organization?: { name: string };
+}
+
+export const parseOrganizationFilters = (
+  filters: Filter<keyof Strings['components']['organizationsFilter']['filters']>
+): ParsedOrganizationFilters => {
+  const res: ParsedOrganizationFilters = {};
+  console.log(filters);
+  for (const key in filters) {
+    if (isKey(filters, key)) {
+      switch (key) {
+        case 'parentOrganization':
+        case 'organizationType': {
+          const val = filters[key]?.value as FormObjectValue;
+          res[key] = {
+            name: val.displayLabel,
+            id: parseInt(val.value),
+          };
+          break;
+        }
+        case 'locations': {
+          const locations = filters.locations
+            ?.value as OrganizationFilterValues['locations'];
+          if (locations) {
+            res[key] = [
+              { name: locations.displayLabel, id: parseInt(locations.value) },
+            ];
+          }
+          break;
+        }
+        case 'organization': {
+          res.organization = { name: filters?.organization?.value as string };
+          break;
+        }
+        default: {
+          res[key] = filters[key]?.value as string;
+          break;
+        }
+      }
+    }
+  }
+  return res;
 };

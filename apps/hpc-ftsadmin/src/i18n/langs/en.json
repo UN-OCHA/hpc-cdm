@@ -34,6 +34,11 @@
       "info": "We were unable to find the page you were looking for",
       "back": "Go back"
     },
+    "invalidRouteParam": {
+      "title": "Invalid route",
+      "info": "Non-integer ID detected in URL",
+      "back": "Go back"
+    },
     "loader": {
       "loading": "Loading...",
       "error": "Error:",
@@ -67,6 +72,7 @@
         "title": "Flows not found",
         "info": "We were unable to load flows"
       },
+      "totalAmount": "Total Amount: ",
       "reportTooltip": "reported by {organization} on {date} via {channel}",
       "parkedSource": "Parked source",
       "sortBy": "Sort by",
@@ -99,20 +105,20 @@
         "reporterRefCode": "Reporter Reference Code",
         "sourceSystemID": "Source System ID",
         "legacyID": "Flow Legacy ID",
-        "sourceOrganizations": "Organization(s)",
-        "sourceCountries": "Country(ies)",
-        "sourceUsageYears": "Usage Year(s)",
-        "sourceProjects": "Project(s)",
-        "sourcePlans": "Plan(s)",
-        "sourceGlobalClusters": "Global Cluster(s)",
-        "sourceEmergencies": "Emergency(ies)",
-        "destinationOrganizations": "Organization(s)",
-        "destinationCountries": "Country(ies)",
-        "destinationUsageYears": "Usage Year(s)",
-        "destinationProjects": "Project(s)",
-        "destinationPlans": "Plan(s)",
-        "destinationGlobalClusters": "Global Cluster(s)",
-        "destinationEmergencies": "Emergency(ies)"
+        "sourceOrganizations": "Source Organization(s)",
+        "sourceLocations": "Source Country(ies)",
+        "sourceUsageYears": "Source Usage Year(s)",
+        "sourceProjects": "Source Project(s)",
+        "sourcePlans": "Source Plan(s)",
+        "sourceGlobalClusters": "Source Global Cluster(s)",
+        "sourceEmergencies": "Source Emergency(ies)",
+        "destinationOrganizations": "Destination Organization(s)",
+        "destinationLocations": "Destination Country(ies)",
+        "destinationUsageYears": "Destination Usage Year(s)",
+        "destinationProjects": "Destination Project(s)",
+        "destinationPlans": "Destination Plan(s)",
+        "destinationGlobalClusters": "Destination Global Cluster(s)",
+        "destinationEmergencies": "Destination Emergency(ies)"
       },
       "showMore": "Show More",
       "tooltips": {
@@ -136,11 +142,11 @@
         "dataProvider": "Data Provider",
         "flowType": "Flow Type",
         "reporterRefCode": "Reporter Reference Code",
-        "sourceOrganizations": "Organization(s)",
-        "sourceCountries": "Country(ies)",
-        "destinationOrganizations": "Organization(s)",
-        "destinationCountries": "Country(ies)",
-        "destinationUsageYears": "Usage Year(s)",
+        "sourceOrganizations": "Source Organization(s)",
+        "sourceLocations": "Source Country(ies)",
+        "destinationOrganizations": "Destination Organization(s)",
+        "destinationLocations": "Destination Country(ies)",
+        "destinationUsageYears": "Destination Usage Year(s)",
 
         "details": "Details"
       },
@@ -156,13 +162,13 @@
         "secondary": "Clear Fields"
       },
       "headers": {
-        "organizationDetails": "OrganizationDetails"
+        "organizationDetails": "Organization Details"
       },
       "filters": {
-        "organizationName": "Organization Name",
-        "active": "Active",
-        "addedModifiedSince": "Added/Modified Since",
-        "country": "Country(ies)",
+        "organization": "Organization Name",
+        "status": "Active",
+        "date": "Added/Modified Since",
+        "locations": "Country(ies)",
         "organizationType": "Organization Type",
         "parentOrganization": "Parent Organization"
       },
@@ -213,6 +219,9 @@
     },
     "pendingFlows": {
       "title": "Search pending flows"
+    },
+    "organizations": {
+      "title": "Organizations"
     }
   }
 }

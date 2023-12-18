@@ -16,13 +16,15 @@ import { LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
 import PageMeta from './components/page-meta';
 import { AppContext, contextFromEnv } from './context';
 import { Z_INDEX } from './layout';
-import PageFlowsList from './pages/flows-list';
-import PageFlowsGraphQLList from './pages/flows-list-graphQL';
+import PageFlowsListREST from './pages/flows/flows-list-REST';
+import PageFlowsList from './pages/flows/flows-list';
 import PageNotFound from './pages/not-found';
 import PageNotLoggedIn from './pages/not-logged-in';
-import PagePendingFlowsList from './pages/pending-flows-list';
-import PageOrganizationsList from './pages/organization-list';
+import PagePendingFlowsList from './pages/flows/pending-flows-list';
+import PageOrganizationsList from './pages/organizations/organization-list';
+import PageOrganization from './pages/organizations/organization';
 import * as paths from './paths';
+import { RouteParamsValidator } from './components/route-params-validator';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
   const warning = env.getDevHeaderWarning(lang);
@@ -127,8 +129,8 @@ export const App = () => {
                             path: paths.flows(),
                           },
                           {
-                            label: 'Flows GraphQL',
-                            path: paths.flowsGrahQl(),
+                            label: 'Flows REST',
+                            path: paths.flowsREST(),
                           },
                           {
                             label: t.t(lang, (s) => s.navigation.pendingFlows),
@@ -188,8 +190,8 @@ export const App = () => {
                           element={<PageFlowsList />}
                         />
                         <Route
-                          path={paths.flowsGrahQl()}
-                          element={<PageFlowsGraphQLList />}
+                          path={paths.flowsREST()}
+                          element={<PageFlowsListREST />}
                         />
                         <Route
                           path={paths.pendingFlows()}
@@ -198,6 +200,19 @@ export const App = () => {
                         <Route
                           path={paths.organizations()}
                           element={<PageOrganizationsList />}
+                        />
+                        <Route
+                          path={paths.organizationRoot()}
+                          element={
+                            <RouteParamsValidator
+                              element={<PageOrganization />}
+                              routeParam="id"
+                            />
+                          }
+                        />
+                        <Route
+                          path={paths.addOrganization()}
+                          element={<PageOrganization />}
                         />
                         <Route element={<PageNotFound />} />
                       </Routes>

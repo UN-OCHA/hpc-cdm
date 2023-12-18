@@ -11,23 +11,30 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useField, useFormikContext } from 'formik';
 import tw from 'twin.macro';
+import { FormObjectValue } from './types/types';
 
 const StyledSelect = tw(Select)`
 min-w-[10rem]
 w-full
 `;
 const StyledIconButton = tw(IconButton)`
-  me-6`;
+me-6
+`;
+
+interface SingleSelectProps {
+  options: Array<FormObjectValue>;
+  name: string;
+  label: string;
+  readonly?: boolean;
+}
+
 const SingleSelect = ({
   options,
   name,
   label,
+  readonly,
   ...otherProps
-}: {
-  options: { value: string; name: string }[];
-  name: string;
-  label: string;
-}) => {
+}: SingleSelectProps) => {
   const { setFieldValue } = useFormikContext<string>();
   const [field, meta] = useField(name);
 
@@ -43,15 +50,17 @@ const SingleSelect = ({
     ...otherProps,
     labelId: `${label.toLowerCase().replace(' ', '-').trim()}-label`,
     label: label,
+    inputProps: { readOnly: readonly },
     input: (
       <OutlinedInput
         endAdornment={
-          field.value !== '' && (
+          field.value !== '' &&
+          !readonly && (
             <StyledIconButton
               onClick={() => setFieldValue(name, '')}
               size="small"
             >
-              <CloseIcon fontSize="small" />
+              && <CloseIcon fontSize="small" />
             </StyledIconButton>
           )
         }
@@ -72,8 +81,11 @@ const SingleSelect = ({
       </InputLabel>
       <StyledSelect {...singleSelectConfig}>
         {options.map((value) => (
-          <MenuItem key={value.value} value={value.value}>
-            {value.name}
+          <MenuItem
+            key={`${value.displayLabel}_${value.value}`}
+            value={value as any}
+          >
+            {value.displayLabel}
           </MenuItem>
         ))}
       </StyledSelect>

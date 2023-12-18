@@ -17,6 +17,7 @@ import {
 } from '@unocha/hpc-data';
 import React, { useEffect, useState } from 'react';
 import tw from 'twin.macro';
+import { FormObjectValue } from './types/types';
 
 const StyledTextField = tw(TextField)`
     min-w-[10rem]
@@ -35,6 +36,15 @@ type APIAutocompleteResult =
   | globalClusters.GetGlobalClustersResult
   | usageYears.GetUsageYearsResult;
 
+type AsyncAutocompleteSelectProps = {
+  name: string;
+  label: string;
+  placeholder?: string;
+  fnPromise: ({ query }: { query: string }) => Promise<APIAutocompleteResult>;
+  category?: categories.CategoryGroup;
+  isMulti?: boolean;
+  isAutocompleteAPI?: boolean;
+};
 const AsyncAutocompleteSelect = ({
   name,
   label,
@@ -44,25 +54,13 @@ const AsyncAutocompleteSelect = ({
   category,
   isAutocompleteAPI,
   ...otherProps
-}: {
-  name: string;
-  label: string;
-  placeholder?: string;
-  fnPromise: ({ query }: { query: string }) => Promise<APIAutocompleteResult>;
-  category?: string;
-  isMulti?: boolean;
-  isAutocompleteAPI?: boolean;
-}) => {
+}: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const { setFieldValue } = useFormikContext();
-  const [field, meta] = useField(name);
-  const [options, setOptions] = useState<
-    readonly { label: string; id: number }[]
-  >([]);
-  const [data, setData] = useState<readonly { label: string; id: number }[]>(
-    []
-  );
+  const { setFieldValue } = useFormikContext<Array<FormObjectValue>>();
+  const [field, meta] = useField<Array<FormObjectValue>>(name);
+  const [options, setOptions] = useState<Array<FormObjectValue>>([]);
+  const [data, setData] = useState<Array<FormObjectValue>>([]);
   const [isFetch, setIsFetch] = useState(false);
   const [isUsageYear, setisUsageYear] = useState(false);
   const loading =
@@ -99,15 +97,21 @@ const AsyncAutocompleteSelect = ({
         (!isUsageYear || inputValue.length > 0)) ||
       (isUsageYear &&
         inputValue.length === 0 &&
-        options.at(0)?.label !== (actualYear - 5).toString() &&
-        options.at(-1)?.label !== (actualYear + 5).toString())
+        options.at(0)?.displayLabel !== (actualYear - 5).toString() &&
+        options.at(-1)?.displayLabel !== (actualYear + 5).toString())
     ) {
       setOptions(
         data
           .filter((x) =>
-            x.label.toUpperCase().includes(inputValue.toUpperCase())
+            x.displayLabel.toUpperCase().includes(inputValue.toUpperCase())
           )
-          .sort((a, b) => (a.label < b.label ? -1 : a.label > b.label ? 1 : 0))
+          .sort((a, b) =>
+            a.displayLabel < b.displayLabel
+              ? -1
+              : a.displayLabel > b.displayLabel
+              ? 1
+              : 0
+          )
       );
     }
 
@@ -123,19 +127,20 @@ const AsyncAutocompleteSelect = ({
         const parsedResponse = response.map((responseValue) => {
           if (isUsageYearsResult(response)) {
             return {
-              label: (responseValue as usageYears.UsageYear).year,
-              id: responseValue.id,
+              displayLabel: (responseValue as usageYears.UsageYear).year,
+              value: responseValue.id,
             };
           } else if (isOrganizationsResult(response)) {
             const org = responseValue as organizations.Organization;
             return {
-              label: `${org.name} [${org.abbreviation}]`,
-              id: responseValue.id,
+              displayLabel: `${org.name} [${org.abbreviation}]`,
+              value: responseValue.id,
             };
           } else {
             return {
-              label: (responseValue as { id: number; name: string }).name,
-              id: responseValue.id,
+              displayLabel: (responseValue as { id: number; name: string })
+                .name,
+              value: responseValue.id,
             };
           }
         });
@@ -146,7 +151,7 @@ const AsyncAutocompleteSelect = ({
             setisUsageYear(true);
 
             const preOptions = parsedResponse.filter((item) => {
-              const year = parseInt(item.label, 10);
+              const year = parseInt(item.displayLabel, 10);
               if (year >= actualYear - 5 && year <= actualYear + 5) {
                 return item;
               }
@@ -176,7 +181,7 @@ const AsyncAutocompleteSelect = ({
   }, [open]);
 
   const configAutocomplete: AutocompleteProps<
-    { label: string; id: number },
+    FormObjectValue,
     boolean,
     boolean,
     boolean
@@ -192,9 +197,9 @@ const AsyncAutocompleteSelect = ({
       setOpen(false);
     },
     open: open,
-    isOptionEqualToValue: (option, value) => option.id === value.id,
+    isOptionEqualToValue: (option, value) => option.value === value.value,
     options: options,
-    getOptionLabel: (op) => (typeof op === 'string' ? op : op.label),
+    getOptionLabel: (op) => (typeof op === 'string' ? op : op.displayLabel),
     filterSelectedOptions: true,
     filterOptions: (x) => x,
     ChipProps: { size: 'small' },
@@ -208,8 +213,8 @@ const AsyncAutocompleteSelect = ({
     loading: loading,
     renderOption: (props, option) => {
       return (
-        <li {...props} key={option.id}>
-          {option.label}
+        <li {...props} key={option.value}>
+          {option.displayLabel}
         </li>
       );
     },

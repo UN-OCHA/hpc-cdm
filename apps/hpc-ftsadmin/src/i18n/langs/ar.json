@@ -34,6 +34,11 @@
       "info": "لم نتمكن من العثور على الصفحة التي كنت تبحث عنها",
       "back": "العودة"
     },
+    "invalidRouteParam": {
+      "title": "مسار غير صالح",
+      "info": "تم اكتشاف رقم تعريف غير صحيح في عنوان URL",
+      "back": "العودة"
+    },
     "loader": {
       "loading": "جاري التحميل...",
       "error": "خطأ:",
@@ -70,7 +75,7 @@
       "reportTooltip": "مُبلغ عنها من قبل {organization} في {date} عبر {channel}",
       "parkedSource": "المصدر المتوقف",
       "sortBy": "الترتيب حسب",
-
+      "totalAmount": "المبلغ الإجمالي: ",
       "rejectPendingFlows": "رفض الأنسجة المعلقة",
       "tableSettings": {
         "title": "إعدادات الجدول",
@@ -102,14 +107,14 @@
         "sourceSystemID": "معرف نظام المصدر",
         "legacyID": "معرف التدفق القديم",
         "sourceOrganizations": "المنظمة(ات) المصدرة",
-        "sourceCountries": "البلدان المصدرة",
+        "sourceLocations": "البلدان المصدرة",
         "sourceUsageYears": "سنوات الاستخدام المصدرة",
         "sourceProjects": "المشروعات المصدرة",
         "sourcePlans": "الخطط المصدرة",
         "sourceGlobalClusters": "المجموعات العالمية المصدرة",
         "sourceEmergencies": "الحالات الطارئة المصدرة",
         "destinationOrganizations": "المنظمة(ات) الوجهة",
-        "destinationCountries": "البلدان الوجهة",
+        "destinationLocations": "البلدان الوجهة",
         "destinationUsageYears": "سنوات الاستخدام الوجهة",
         "destinationProjects": "المشروعات الوجهة",
         "destinationPlans": "الخطط الوجهة",
@@ -139,9 +144,9 @@
         "flowType": "نوع التدفق",
         "reporterRefCode": "رمز مرجعي للمبلغ",
         "sourceOrganizations": "المنظمة(ات) المصدرة",
-        "sourceCountries": "البلدان المصدرة",
+        "sourceLocations": "البلدان المصدرة",
         "destinationOrganizations": "المنظمة(ات) الوجهة",
-        "destinationCountries": "البلدان الوجهة",
+        "destinationLocations": "البلدان الوجهة",
         "destinationUsageYears": "سنوات الاستخدام الوجهة",
         "details": "تفاصيل"
       },
@@ -160,10 +165,10 @@
         "organizationDetails": "تفاصيل المنظمة"
       },
       "filters": {
-        "organizationName": "اسم المنظمة",
-        "active": "نشط",
-        "addedModifiedSince": "تمت الإضافة/التعديل منذ",
-        "country": "البلد(ان)",
+        "organization": "اسم المنظمة",
+        "status": "نشط",
+        "date": "تمت الإضافة/التعديل منذ",
+        "locations": "البلد(ان)",
         "organizationType": "نوع المنظمة",
         "parentOrganization": "المنظمة الأم"
       },
@@ -214,6 +219,9 @@
     },
     "pendingFlows": {
       "title": "البحث في التدفقات المعلقة"
+    },
+    "organizations": {
+      "title": "المؤسسات"
     }
   }
 }

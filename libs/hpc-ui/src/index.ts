@@ -16,6 +16,7 @@ import AsyncIconButton from './lib/components/async-icon-button';
 import AsyncSingleSelect from './lib/components/form-fields/async-single-select-field';
 import { Button, ButtonLink, ButtonSubmit } from './lib/components/button';
 import CheckBox from './lib/components/form-fields/checkbox';
+import DatePicker from './lib/components/form-fields/date-picker';
 import DevEnvWarning from './lib/components/development-environment-warning';
 import DraggableList from './lib/components/draggable-list';
 import ErrorMessage from './lib/components/error-message';
@@ -33,6 +34,7 @@ import SearchFilter from './lib/components/search-filter';
 import SecondaryNavigation from './lib/components/secondary-navigation';
 import Section from './lib/components/section';
 import SingleSelect from './lib/components/form-fields/single-select-field';
+import Switch from './lib/components/form-fields/switch';
 import TertiaryNavigation from './lib/components/tertiary-navigation';
 import TextFieldWrapper from './lib/components/form-fields/text-field';
 import Toolbar from './lib/components/toolbar';
@@ -55,6 +57,7 @@ const COMPONENTS = {
   ButtonLink,
   ButtonSubmit,
   CheckBox,
+  DatePicker,
   DevEnvWarning,
   DraggableList,
   ErrorMessage,
@@ -72,6 +75,7 @@ const COMPONENTS = {
   SearchFilter,
   Section,
   SecondaryNavigation,
+  Switch,
   TertiaryNavigation,
   TextFieldWrapper,
   Toolbar,

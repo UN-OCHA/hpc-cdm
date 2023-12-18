@@ -21,7 +21,6 @@ import {
   globalClusters,
   usageYears,
 } from '@unocha/hpc-data';
-
 interface URLInterface {
   new (url: string): {
     pathname: string;
@@ -33,13 +32,13 @@ interface URLInterface {
 }
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH';
-
 interface RequestInit {
   method?: HttpMethod;
   headers: {
     [id: string]: string;
   };
   body?: string | ArrayBuffer;
+  signal?: AbortSignal;
 }
 
 interface Response {
@@ -222,6 +221,45 @@ export const LIVE_TYPES = {
   },
 } as const;
 
+function parseFilterToGraphQL(obj: Record<string, any>): string {
+  const keyValuePairs: string[] = [];
+
+  if (Array.isArray(obj)) {
+    // If the input is an array, apply the function to each element and return the result in square brackets
+    const arrayValues = obj.map((element: any) =>
+      parseFilterToGraphQL(element)
+    );
+    return `[${arrayValues.join(', ')}]`;
+  }
+  for (const key in obj) {
+    if (
+      Object.prototype.hasOwnProperty.call(obj, key) &&
+      obj[key] !== undefined
+    ) {
+      let valueString: string;
+
+      if (Array.isArray(obj[key])) {
+        // If the value is an array, stringify the entire array
+        valueString = `${key}: [${obj[key]
+          .map((element: any) => JSON.stringify(element))
+          .join(', ')}]`;
+      } else if (typeof obj[key] === 'object') {
+        // If the value is an object, call the function recursively
+        valueString = `${key}: ${parseFilterToGraphQL(obj[key])}`;
+      } else {
+        // Otherwise, use the value as is
+        valueString = `${key}: ${
+          typeof obj[key] === 'string' ? `"${obj[key]}"` : obj[key].toString()
+        }`;
+      }
+
+      keyValuePairs.push(valueString);
+    }
+  }
+
+  return `{${keyValuePairs.join(', ')}}`;
+}
+
 export class LiveModel implements Model {
   private readonly config: Config;
   private readonly URL: URLInterface;
@@ -270,6 +308,7 @@ export class LiveModel implements Model {
     queryParams,
     resultType,
     body,
+    signal,
   }: {
     method?: HttpMethod;
     pathname: string;
@@ -287,8 +326,10 @@ export class LiveModel implements Model {
           data: string | ArrayBuffer;
           contentType: string;
         };
+    signal?: AbortSignal;
   }) => {
     const { url, init } = this.baseFetchInit({ pathname, method, queryParams });
+    init.signal = signal;
     if (body) {
       if (body.type === 'json') {
         init.body = JSON.stringify(body.data);
@@ -436,12 +477,12 @@ export class LiveModel implements Model {
   }
   get flows(): flows.Model {
     return {
-      getFlow: (params) =>
+      getFlowREST: (params) =>
         this.call({
           pathname: `/v2/flow/${params.id}`,
           resultType: flows.GET_FLOW_RESULT,
         }),
-      searchFlows: (params) =>
+      searchFlowsREST: (params) =>
         this.call({
           pathname: `/v2/flow/search`,
           method: 'POST',
@@ -449,9 +490,9 @@ export class LiveModel implements Model {
             type: 'json',
             data: params,
           },
-          resultType: flows.SEARCH_FLOWS_RESULT,
+          resultType: flows.SEARCH_FLOWS_RESULT_REST,
         }),
-      getFlowGraphQL: (params) =>
+      getFlow: (params) =>
         this.call({
           pathname: `/v4/graphql`,
           method: 'POST',
@@ -487,13 +528,46 @@ export class LiveModel implements Model {
           },
           resultType: flows.GET_FLOW_RESULT,
         }),
-      searchFlowsGraphQL: (params) => {
+      searchFlows: (params) => {
         const query = `query {
           searchFlows(${params.limit ? 'limit: ' + params.limit : ''}, ${
           params.sortOrder ? 'sortOrder: ' + '"' + params.sortOrder + '"' : ''
         }, ${
           params.sortField ? 'sortField: ' + '"' + params.sortField + '"' : ''
-        }) {
+        }
+        ${
+          params.prevPageCursor
+            ? 'prevPageCursor: ' + '"' + params.prevPageCursor + '"'
+            : ''
+        }
+        ${
+          params.nextPageCursor
+            ? 'nextPageCursor: ' + '"' + params.nextPageCursor + '"'
+            : ''
+        }
+        ${
+          params.flowFilters && JSON.stringify(params.flowFilters) !== '{}'
+            ? 'flowFilters: ' + parseFilterToGraphQL(params.flowFilters)
+            : ''
+        }
+        ${
+          params.flowObjectFilters
+            ? 'flowObjectFilters: ' +
+              parseFilterToGraphQL(params.flowObjectFilters)
+            : ''
+        }
+        ${
+          params.flowCategoryFilters
+            ? 'flowCategoryFilters: ' +
+              parseFilterToGraphQL(params.flowCategoryFilters)
+            : ''
+        }
+        ${
+          params.includeChildrenOfParkedFlows
+            ? 'includeChildrenOfParkedFlows: true'
+            : 'includeChildrenOfParkedFlows: false'
+        }
+        ) {
             total
             flows {
               id
@@ -525,6 +599,7 @@ export class LiveModel implements Model {
                 id
                 name
                 direction
+                abbreviation
               }
         
               plans {
@@ -573,14 +648,13 @@ export class LiveModel implements Model {
                 orgName
                 organization
               }
-              cursor
             }
         
-            startCursor
+            prevPageCursor
         
             hasNextPage
         
-            endCursor
+            nextPageCursor
         
             hasPreviousPage
         
@@ -596,7 +670,8 @@ export class LiveModel implements Model {
               query: query,
             },
           },
-          resultType: flows.SEARCH_FLOWS_GRAPHQL_RESULT,
+          signal: params.signal,
+          resultType: flows.SEARCH_FLOWS_RESULT,
         });
       },
       bulkRejectPendingFlows: (params) =>
@@ -609,6 +684,47 @@ export class LiveModel implements Model {
           },
           resultType: flows.BULK_REJECT_PENDING_FLOWS_RESULT,
         }),
+      getTotalAmountUSD: (params) => {
+        const query = `query{
+            searchFlowsTotalAmountUSD(${
+              params.flowFilters
+                ? 'flowFilters: ' + parseFilterToGraphQL(params.flowFilters)
+                : ''
+            }
+            ${
+              params.flowObjectFilters
+                ? 'flowObjectFilters: ' +
+                  parseFilterToGraphQL(params.flowObjectFilters)
+                : ''
+            }
+            ${
+              params.flowCategoryFilters
+                ? 'flowCategoryFilters: ' +
+                  parseFilterToGraphQL(params.flowCategoryFilters)
+                : ''
+            }
+            ${
+              params.includeChildrenOfParkedFlows
+                ? 'includeChildrenOfParkedFlows: true'
+                : 'includeChildrenOfParkedFlows: false'
+            }){
+              totalAmountUSD
+              flowsCount
+            }
+          }`;
+        return this.call({
+          pathname: `/v4/graphql`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: {
+              query: query,
+            },
+          },
+          resultType: flows.GET_TOTAL_AMOUNT_USD_RESULT,
+          signal: params.signal,
+        });
+      },
     };
   }
   get globalClusters(): globalClusters.Model {
@@ -645,6 +761,32 @@ export class LiveModel implements Model {
             data: params,
           },
           resultType: organizations.SEARCH_ORGANIZATION_RESULT,
+        }),
+      getOrganization: (params) =>
+        this.call({
+          pathname: `/v1/organization/id/${params.id}`,
+          method: 'GET',
+          resultType: organizations.ORGANIZATION,
+        }),
+      createOrganization: (params) =>
+        this.call({
+          pathname: '/v1/organization/create',
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: organizations.CREATE_ORGANIZATION_RESULT,
+        }),
+      updateOrganization: (params) =>
+        this.call({
+          pathname: `/v1/organization/update/${params.id}`,
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data: { organization: { ...params } },
+          },
+          resultType: organizations.UPDATE_ORGANIZATION_RESULT,
         }),
     };
   }

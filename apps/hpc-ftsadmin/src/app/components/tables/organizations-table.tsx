@@ -1,8 +1,5 @@
 import {
-  Alert,
   Box,
-  Chip,
-  IconButton,
   Modal,
   Table,
   TableBody,
@@ -13,126 +10,88 @@ import {
   TablePagination,
   TableRow,
   TableSortLabel,
-  Tooltip,
 } from '@mui/material';
-import { flows, organizations } from '@unocha/hpc-data';
-import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
-import { MdInfoOutline } from 'react-icons/md';
+import { organizations } from '@unocha/hpc-data';
+import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { LanguageKey, t } from '../../i18n';
-import { AppContext, getEnv } from '../context';
-import tw from 'twin.macro';
-import React, { useEffect, useState } from 'react';
-import { FlowsFilterValues } from './filter-flows-table';
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+import { LanguageKey, t } from '../../../i18n';
+import { AppContext, getEnv } from '../../context';
+import React, { useState } from 'react';
 import DownloadIcon from '@mui/icons-material/Download';
-import _ from 'lodash';
 import {
   decodeFilters,
   encodeFilters,
-  parseFormFiltersRebuilt,
-  parseFlowFilters,
-} from '../utils/parse-filters';
-import { FLOWS_FILTER_INITIAL_VALUES } from '../components/filter-flows-table';
-import { Form, Formik } from 'formik';
-import { PendingFlowsFilterValues } from './filter-pending-flows-table';
-import EllipsisText from '../utils/ellipsis-text';
+  FilterKeys,
+  isKey,
+  parseFormFilters,
+  parseOrganizationFilters,
+} from '../../utils/parse-filters';
 import {
-  FlowHeaderID,
   OrganizationHeaderID,
   TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
-} from '../utils/table-headers';
-import { Strings } from '../../i18n/iface';
-import { util } from '@unocha/hpc-core';
+} from '../../utils/table-headers';
+import { Strings } from '../../../i18n/iface';
+import { downloadExcel } from '../../utils/download-excel';
+import { parseUpdatedCreatedBy } from '../../utils/map-functions';
+import { OrganizationFilterValues } from '../filters/filter-organization-table';
 import {
-  InfoSettings,
-  LocalStorageFTSAdminKey,
-} from '../utils/local-storage-type';
-import { downloadExcel } from '../utils/download-excel';
-import { parseUpdatedCreatedBy } from '../utils/map-functions';
+  ChipDiv,
+  Query,
+  RenderChipsRow,
+  StyledLoader,
+  TableHeaderButton,
+  TableRowClick,
+  TopRowContainer,
+} from './table-utils';
+import { Link, useNavigate } from 'react-router-dom';
+import * as paths from '../../paths';
 
-export type Query = {
-  page: number;
-  rowsPerPage: number;
-  orderBy: string;
-  orderDir: string;
-  filters: string;
-  tableHeaders: string;
-};
 export interface OrganizationTableProps {
   headers: TableHeadersProps<OrganizationHeaderID>[];
-  initialValues: FlowsFilterValues | PendingFlowsFilterValues;
-  flowList?: flows.FlowList;
-  graphQL?: boolean;
+  initialValues: OrganizationFilterValues;
   rowsPerPageOption: number[];
   query: Query;
   setQuery: (newQuery: Query) => void;
 }
-const StyledLoader = tw(C.Loader)`
-    mx-auto
-    `;
-const ChipDiv = tw.div`
-  relative
-  w-full
-  `;
-const TopRowContainer = tw.div`
-  flex
-  justify-end
-  `;
-const TableHeaderButton = tw(IconButton)`
-  h-min
-  self-center
-  mx-2
-  `;
-const ChipFilterValues = tw.div`
-  bg-unocha-secondary-light
-  inline-flex
-  mx-1
-  px-2
-  rounded-full
-  `;
 
-export interface ActiveFilter {
-  label: keyof Strings['components']['flowsFilter']['filters'];
-  fieldName: keyof FlowsFilterValues;
-  displayValue: string;
-  value: string | boolean | { label: string; id: string }[] | undefined;
-}
 export default function OrganizationTable(props: OrganizationTableProps) {
   const env = getEnv();
-  let firstRender = true;
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
-  /* const filters = decodeFilters(props.query.filters, props.initialValues);
-  const attributes = parseFormFilters(filters); */
+  const filters = decodeFilters(props.query.filters, props.initialValues);
+
+  const parsedFilters = parseFormFilters<
+    keyof Strings['components']['organizationsFilter']['filters'],
+    OrganizationFilterValues
+  >(filters, props.initialValues);
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
-
-  const [state, load] = useDataLoader([query], () =>
+  const navigate = useNavigate();
+  const state = dataLoader([query], () =>
     env.model.organizations.searchOrganizations({
       search: {
         limit: query.rowsPerPage,
         offset: query.page * query.rowsPerPage,
         orderBy: query.orderBy,
         orderDir: query.orderDir,
+        ...parseOrganizationFilters(parsedFilters),
       },
     })
   );
 
-  useEffect(() => {
-    if (!firstRender) {
-      load();
-    } else {
-      firstRender = false;
+  const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
+    console.log(fieldName);
+    if (isKey(filters, fieldName)) {
+      filters[fieldName] = undefined;
+      setQuery({
+        ...query,
+        page: 0,
+        filters: encodeFilters(filters, props.initialValues),
+      });
     }
-  }, [query.filters]);
-
-  /* const handleChipDelete = (fieldName: keyof FlowsFilterValues) => {
-    activeFormValues[fieldName] = undefined;
-    setQuery({ ...query, page: 0, filters: encodeFilters(activeFormValues) });
-  }; */
+  };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setQuery({
@@ -177,11 +136,14 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     return (
       <>
         {data.organizations.map((row) => (
-          <TableRow key={`${row.id}`}>
+          <TableRowClick
+            key={`${row.id}`}
+            onClick={() => navigate(paths.organization(row.id))}
+          >
             {decodeTableHeaders(query.tableHeaders, lang, 'organizations').map(
               (column) => {
                 if (!column.active) {
-                  return;
+                  return null;
                 }
                 switch (column.identifierID) {
                   case 'organization.id':
@@ -229,8 +191,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                           const res = row.categories.filter(
                             (cat) =>
                               cat.group === 'organizationType' &&
-                              cat.parentID === null &&
-                              cat.name
+                              cat.parentID === null
                           );
                           return res.length > 0 ? res.map((x) => x.name) : '--';
                         })()}
@@ -247,8 +208,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                           const res = row.categories.filter(
                             (cat) =>
                               cat.group === 'organizationType' &&
-                              cat.parentID !== null &&
-                              cat.name
+                              cat.parentID !== null
                           );
                           return res.length > 0 ? res.map((x) => x.name) : '--';
                         })()}
@@ -292,7 +252,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                 }
               }
             )}
-          </TableRow>
+          </TableRowClick>
         ))}
       </>
     );
@@ -316,7 +276,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
               ) as TableHeadersProps<OrganizationHeaderID>[]
             ).map((header) => {
               if (!header.active) {
-                return;
+                return null;
               }
               return (
                 <TableCell
@@ -375,15 +335,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
       </Table>
     );
   };
-  const CustomTable = ({
-    lang,
-    data,
-  }: {
-    lang: LanguageKey;
-    data: organizations.SearchOrnganizationResult;
-  }) => {
-    return <TableComponent lang={lang} data={data} />;
-  };
+
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -400,83 +352,15 @@ export default function OrganizationTable(props: OrganizationTableProps) {
           {(data) => (
             <>
               <ChipDiv>
-                {/*  {attributes.map((activeFilter) => (
-                  <Tooltip
-                    key={activeFilter.fieldName}
-                    title={
-                      <div style={{ textAlign: 'start', width: 'auto' }}>
-                        {activeFilter.displayValue
-                          .split('<||>')
-                          .map((filter) => (
-                            <li
-                              key={filter}
-                              style={{
-                                textAlign: 'start',
-                                marginTop: '0',
-                                marginBottom: '0',
-                                listStyle:
-                                  activeFilter.displayValue.split('<||>')
-                                    .length > 1
-                                    ? 'inherit'
-                                    : 'none',
-                              }}
-                            >
-                              {filter}
-                            </li>
-                          ))}
-                      </div>
-                    }
-                  >
-                    <Chip
-                      key={`chip_${activeFilter.fieldName}`}
-                      sx={{
-                        ...chipSpacing,
-                        position: 'relative',
-                      }}
-                      label={
-                        <div>
-                          <span>
-                            {t.t(
-                              lang,
-                              (s) =>
-                                s.components.flowsFilter.filters[
-                                  activeFilter.label
-                                ]
-                            )}
-                            :
-                          </span>
-                          <div
-                            style={{
-                              display: 'inline-block',
-                              maxWidth: '1000px',
-                            }}
-                          >
-                            {activeFilter.displayValue
-                              .split('<||>')
-                              .map((filter, index) => (
-                                <ChipFilterValues key={index}>
-                                  <EllipsisText maxWidth={400}>
-                                    {/\[(.*)\]/.test(filter) // We do this in order to shorten organization names
-                                      ? filter.match(/\[(.*)\]/)?.[1]
-                                      : filter}
-                                  </EllipsisText>
-                                </ChipFilterValues>
-                              ))}
-                          </div>
-                        </div>
-                      }
-                      size="small"
-                      color="primary"
-                      onDelete={() =>
-                        handleChipDelete(
-                          activeFilter.fieldName as keyof FlowsFilterValues
-                        )
-                      }
-                      deleteIcon={<CancelRoundedIcon sx={tw`-ms-1! me-1!`} />}
-                    />
-                  </Tooltip>
-                ))} */}
+                <RenderChipsRow
+                  tableType="organizationsFilter"
+                  parsedFilters={parsedFilters}
+                  lang={lang}
+                  chipSpacing={chipSpacing}
+                  handleChipDelete={handleChipDelete}
+                />
                 <TopRowContainer>
+                  <Link to={paths.addOrganization()}>Add Organization</Link>
                   <C.AsyncIconButton
                     fnPromise={() =>
                       downloadExcel<organizations.SearchOrganiation>(
@@ -585,7 +469,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                     fontSize: '1.32rem',
                   }}
                 >
-                  <CustomTable lang={lang} data={data} />
+                  <TableComponent lang={lang} data={data} />
                 </TableContainer>
               </Box>
               <TablePagination

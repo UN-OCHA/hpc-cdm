@@ -19,84 +19,59 @@ import { flows } from '@unocha/hpc-data';
 import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
 import { MdInfoOutline } from 'react-icons/md';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { LanguageKey, t } from '../../i18n';
-import { AppContext, getEnv } from '../context';
+import { LanguageKey, t } from '../../../i18n';
+import { AppContext, getEnv } from '../../context';
 import tw from 'twin.macro';
 import React, { useEffect, useState } from 'react';
-import { FlowsFilterValues } from './filter-flows-table';
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+import { FlowsFilterValuesREST } from '../filters/filter-flows-REST-table';
 import DownloadIcon from '@mui/icons-material/Download';
 import _ from 'lodash';
 import {
+  FilterKeys,
   FormObjectValue,
   decodeFilters,
   encodeFilters,
-  parseActiveFilters,
-  parseFlowFilters,
-} from '../utils/parse-filters';
-import { FLOWS_FILTER_INITIAL_VALUES } from '../components/filter-flows-table';
+  isKey,
+  parseFlowFiltersREST,
+  parseFormFilters,
+  parseOutInitialValues,
+} from '../../utils/parse-filters';
+import { FLOWS_FILTER_INITIAL_VALUES_REST } from '../filters/filter-flows-REST-table';
 import { Form, Formik } from 'formik';
-import { PendingFlowsFilterValues } from './filter-pending-flows-table';
-import EllipsisText from '../utils/ellipsis-text';
+import { PendingFlowsFilterValues } from '../filters/filter-pending-flows-table';
 import {
   FlowHeaderID,
-  OrganizationHeaderID,
   TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
-} from '../utils/table-headers';
-import { Strings } from '../../i18n/iface';
+} from '../../utils/table-headers';
+import { Strings } from '../../../i18n/iface';
 import { util } from '@unocha/hpc-core';
 import {
   InfoSettings,
   LocalStorageFTSAdminKey,
-} from '../utils/local-storage-type';
-import { downloadExcel } from '../utils/download-excel';
+} from '../../utils/local-storage-type';
+import { downloadExcel } from '../../utils/download-excel';
+import {
+  ChipDiv,
+  Query,
+  RejectPendingFlowsButton,
+  RenderChipsRow,
+  StyledLoader,
+  TableHeaderButton,
+  TopRowContainer,
+} from './table-utils';
 
-export type Query = {
-  page: number;
-  rowsPerPage: number;
-  orderBy: string;
-  orderDir: string;
-  filters: string;
-  tableHeaders: string;
-};
-export interface FlowsTableProps {
+export interface FlowsTableRESTProps {
   headers: TableHeadersProps<FlowHeaderID>[];
-  initialValues: FlowsFilterValues | PendingFlowsFilterValues;
+  initialValues: FlowsFilterValuesREST | PendingFlowsFilterValues;
   flowList?: flows.FlowList;
-  graphQL?: boolean;
   rowsPerPageOption: number[];
   query: Query;
   setQuery: (newQuery: Query) => void;
 }
-const StyledLoader = tw(C.Loader)`
-  mx-auto
-  `;
-const ChipDiv = tw.div`
-relative
-w-full
-`;
-const TopRowContainer = tw.div`
-flex
-justify-end
-`;
-const TableHeaderButton = tw(IconButton)`
-h-min
-self-center
-mx-2
-`;
-const ChipFilterValues = tw.div`
-bg-unocha-secondary-light
-inline-flex
-mx-1
-px-2
-rounded-full
-`;
-const RejectPendingFlowsButton = tw(C.ButtonSubmit)`
-mt-8
-`;
-export interface ParsedFilters {
+
+export interface ParsedFiltersREST {
   flowID?: number[];
   amountUSD?: number;
   sourceSystemID?: number;
@@ -109,19 +84,26 @@ export interface ParsedFilters {
   categories?: flows.FlowCategory[];
   includeChildrenOfParkedFlows?: boolean;
 }
-export interface ActiveFilter {
+export interface ActiveFilterREST {
   label: keyof Strings['components']['flowsFilter']['filters'];
-  fieldName: keyof FlowsFilterValues;
+  fieldName: keyof FlowsFilterValuesREST;
   displayValue: string;
   value: string | boolean | Array<FormObjectValue> | undefined;
 }
-export default function FlowsTable(props: FlowsTableProps) {
+export default function FlowsTableREST(props: FlowsTableRESTProps) {
   const env = getEnv();
   let firstRender = true;
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
-  const filters = decodeFilters(props.query.filters, props.initialValues);
-  const { activeFormValues, attributes } = parseActiveFilters(filters);
+  const filters = decodeFilters(
+    props.query.filters,
+    FLOWS_FILTER_INITIAL_VALUES_REST
+  );
+  const flowFilters = parseFormFilters<
+    keyof Strings['components']['flowsFilter']['filters'],
+    FlowsFilterValuesREST
+  >(filters, FLOWS_FILTER_INITIAL_VALUES_REST);
+  console.log(flowFilters);
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
   const [tableInfoDisplay, setTableInfoDisplay] = useState(
@@ -133,20 +115,20 @@ export default function FlowsTable(props: FlowsTableProps) {
   const handleFlowList = () => {
     return props.flowList
       ? props.flowList
-      : _.isEqual(filters, FLOWS_FILTER_INITIAL_VALUES)
+      : _.isEqual(filters, FLOWS_FILTER_INITIAL_VALUES_REST)
       ? 'all'
       : 'search';
   };
 
   const [state, load] = useDataLoader([query], () =>
-    env.model.flows.searchFlows({
+    env.model.flows.searchFlowsREST({
       flowSearch: {
         limit: query.rowsPerPage,
         offset: query.page * query.rowsPerPage,
         orderBy: query.orderBy,
         orderDir: query.orderDir,
         flowList: handleFlowList(),
-        ...parseFlowFilters(activeFormValues),
+        ...parseFlowFiltersREST(flowFilters),
       },
     })
   );
@@ -166,9 +148,16 @@ export default function FlowsTable(props: FlowsTableProps) {
     setTableInfoDisplay(false);
   };
 
-  const handleChipDelete = (fieldName: keyof FlowsFilterValues) => {
-    activeFormValues[fieldName] = undefined;
-    setQuery({ ...query, page: 0, filters: encodeFilters(activeFormValues) });
+  const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
+    console.log(fieldName);
+    if (isKey(filters, fieldName)) {
+      filters[fieldName] = undefined;
+      setQuery({
+        ...query,
+        page: 0,
+        filters: encodeFilters(filters, props.initialValues),
+      });
+    }
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -188,7 +177,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     });
   };
 
-  const handleSort = (newSort: FlowHeaderID | OrganizationHeaderID) => {
+  const handleSort = (newSort: FlowHeaderID) => {
     const changeDir = newSort === query.orderBy;
 
     if (changeDir) {
@@ -206,7 +195,7 @@ export default function FlowsTable(props: FlowsTableProps) {
   };
 
   const renderReportDetail = (
-    org: flows.FlowOrganization,
+    org: flows.FlowOrganizationREST,
     row: flows.FlowSearchResult,
     lang: LanguageKey
   ) => {
@@ -241,7 +230,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     data,
   }: {
     lang: LanguageKey;
-    data: flows.SearchFlowsResult;
+    data: flows.SearchFlowsResultREST;
   }) => {
     const [selectedRows, setSelectedRows] = useState<
       { id: number; versionID: number }[]
@@ -534,7 +523,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     data,
   }: {
     lang: LanguageKey;
-    data: flows.SearchFlowsResult;
+    data: flows.SearchFlowsResultREST;
   }) => {
     return (
       <Table size="small">
@@ -601,13 +590,14 @@ export default function FlowsTable(props: FlowsTableProps) {
       </Table>
     );
   };
-  const CustomTable = ({
+
+  const FormWrapper = ({
     lang,
     data,
     flowList,
   }: {
     lang: LanguageKey;
-    data: flows.SearchFlowsResult;
+    data: flows.SearchFlowsResultREST;
     flowList?: flows.FlowList;
   }) => {
     if (flowList === 'pending') {
@@ -642,6 +632,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     }
     return <TableComponent lang={lang} data={data} />;
   };
+
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -658,82 +649,13 @@ export default function FlowsTable(props: FlowsTableProps) {
           {(data) => (
             <>
               <ChipDiv>
-                {attributes.map((activeFilter) => (
-                  <Tooltip
-                    key={activeFilter.fieldName}
-                    title={
-                      <div style={{ textAlign: 'start', width: 'auto' }}>
-                        {activeFilter.displayValue
-                          .split('<||>')
-                          .map((filter) => (
-                            <li
-                              key={filter}
-                              style={{
-                                textAlign: 'start',
-                                marginTop: '0',
-                                marginBottom: '0',
-                                listStyle:
-                                  activeFilter.displayValue.split('<||>')
-                                    .length > 1
-                                    ? 'inherit'
-                                    : 'none',
-                              }}
-                            >
-                              {filter}
-                            </li>
-                          ))}
-                      </div>
-                    }
-                  >
-                    <Chip
-                      key={`chip_${activeFilter.fieldName}`}
-                      sx={{
-                        ...chipSpacing,
-                        position: 'relative',
-                      }}
-                      label={
-                        <div>
-                          <span>
-                            {t.t(
-                              lang,
-                              (s) =>
-                                s.components.flowsFilter.filters[
-                                  activeFilter.label
-                                ]
-                            )}
-                            :
-                          </span>
-                          <div
-                            style={{
-                              display: 'inline-block',
-                              maxWidth: '1000px',
-                            }}
-                          >
-                            {activeFilter.displayValue
-                              .split('<||>')
-                              .map((filter, index) => (
-                                <ChipFilterValues key={index}>
-                                  <EllipsisText maxWidth={400}>
-                                    {/\[(.*)\]/.test(filter) // We do this in order to shorten organization names
-                                      ? filter.match(/\[(.*)\]/)?.[1]
-                                      : filter}
-                                  </EllipsisText>
-                                </ChipFilterValues>
-                              ))}
-                          </div>
-                        </div>
-                      }
-                      size="small"
-                      color="primary"
-                      onDelete={() =>
-                        handleChipDelete(
-                          activeFilter.fieldName as keyof FlowsFilterValues
-                        )
-                      }
-                      deleteIcon={<CancelRoundedIcon sx={tw`-ms-1! me-1!`} />}
-                    />
-                  </Tooltip>
-                ))}
+                <RenderChipsRow
+                  lang={lang}
+                  tableType="flowsFilter"
+                  chipSpacing={chipSpacing}
+                  handleChipDelete={handleChipDelete}
+                  parsedFilters={flowFilters}
+                />
                 <TopRowContainer>
                   <C.AsyncIconButton
                     fnPromise={() =>
@@ -839,7 +761,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                     fontSize: '1.32rem',
                   }}
                 >
-                  <CustomTable
+                  <FormWrapper
                     lang={lang}
                     data={data}
                     flowList={props.flowList}

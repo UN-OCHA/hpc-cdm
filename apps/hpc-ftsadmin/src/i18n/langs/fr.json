@@ -34,6 +34,11 @@
       "info": "Nous n'avons pas pu trouver la page que vous cherchiez",
       "back": "Retour"
     },
+    "invalidRouteParam": {
+      "title": "Itinéraire invalide",
+      "info": "ID non entier détecté dans l'URL",
+      "back": "Retourner"
+    },
     "loader": {
       "loading": "Chargement...",
       "error": "Erreur:",
@@ -70,6 +75,7 @@
       "reportTooltip": "signalé par {organization} le {date} via {channel}",
       "parkedSource": "Source stationnée",
       "sortBy": "Trier par",
+      "totalAmount": "Montant Total：",
       "rejectPendingFlows": "Rejeter les flux en attente",
       "tableSettings": {
         "title": "Paramètres du tableau",
@@ -100,14 +106,14 @@
         "sourceSystemID": "ID du système source",
         "legacyID": "ID du flux hérité",
         "sourceOrganizations": "Organisation(s) source",
-        "sourceCountries": "Pays(s) source(s)",
+        "sourceLocations": "Pays(s) source(s)",
         "sourceUsageYears": "Année(s) d'utilisation source",
         "sourceProjects": "Projet(s) source(s)",
         "sourcePlans": "Plan(s) source(s)",
         "sourceGlobalClusters": "Regroupement(s) mondial(aux) source(s)",
         "sourceEmergencies": "Urgence(s) source(s)",
         "destinationOrganizations": "Organisation(s) de destination",
-        "destinationCountries": "Pays(s) de destination",
+        "destinationLocations": "Pays(s) de destination",
         "destinationUsageYears": "Année(s) d'utilisation de la destination",
         "destinationProjects": "Projet(s) de destination",
         "destinationPlans": "Plan(s) de destination",
@@ -137,9 +143,9 @@
         "flowType": "Type de flux",
         "reporterRefCode": "Code de référence du déclarant",
         "sourceOrganizations": "Organisation(s) source",
-        "sourceCountries": "Pays(s) source(s)",
+        "sourceLocations": "Pays(s) source(s)",
         "destinationOrganizations": "Organisation(s) de destination",
-        "destinationCountries": "Pays(s) de destination",
+        "destinationLocations": "Pays(s) de destination",
         "destinationUsageYears": "Année(s) d'utilisation de la destination",
         "details": "Détails"
       },
@@ -158,10 +164,10 @@
         "organizationDetails": "Détails de l'organisation"
       },
       "filters": {
-        "organizationName": "Nom de l'organisation",
-        "active": "Actif",
-        "addedModifiedSince": "Ajouté/Modifié depuis",
-        "country": "Pays(s)",
+        "organization": "Nom de l'organisation",
+        "status": "Actif",
+        "date": "Ajouté/Modifié depuis",
+        "locations": "Pays(s)",
         "organizationType": "Type d'organisation",
         "parentOrganization": "Organisation mère"
       },
@@ -212,6 +218,9 @@
     },
     "pendingFlows": {
       "title": "Recherche de flux en attente"
+    },
+    "organizations": {
+      "title": "Organizations"
     }
   }
 }

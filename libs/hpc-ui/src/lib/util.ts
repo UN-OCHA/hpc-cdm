@@ -53,7 +53,6 @@ export function useDataLoader<Deps extends DepsBaseType, Data>(
   const [state, setState] = useState<DataLoaderState<Data>>({
     type: 'loading',
   });
-
   const setData = (data: Data) =>
     setState({
       type: 'success',
@@ -70,6 +69,10 @@ export function useDataLoader<Deps extends DepsBaseType, Data>(
           setState({
             type: 'not-found',
           });
+        } else if (errors.isUserAbortError(err)) {
+          if (state.type !== 'loading') {
+            setState({ type: 'loading' });
+          }
         } else {
           setState({
             type: 'error',
@@ -155,6 +158,10 @@ export function dataLoader<Deps extends DepsBaseType, Data>(
           setState({
             type: 'not-found',
           });
+        } else if (errors.isUserAbortError(err)) {
+          if (state.type !== 'loading') {
+            setState({ type: 'loading' });
+          }
         } else {
           setState({
             type: 'error',

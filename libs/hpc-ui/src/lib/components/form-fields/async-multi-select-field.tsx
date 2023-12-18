@@ -15,6 +15,7 @@ import { categories } from '@unocha/hpc-data';
 import { useField, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
+import { FormObjectValue } from './types/types';
 
 const StyledSelect = tw(Select)`
   min-w-[10rem]
@@ -48,12 +49,10 @@ const AsyncMultiSelect = ({
   category: categories.CategoryGroup;
   placeholder?: string;
 }) => {
-  const [field, meta] = useField<{ label: string; id: number }[]>(name);
+  const [field, meta] = useField<Array<FormObjectValue>>(name);
   const [open, setOpen] = useState(false);
-  const { setFieldValue } = useFormikContext<{ label: string; id: number }[]>();
-  const [options, setOptions] = useState<
-    readonly { label: string; id: number }[]
-  >([]);
+  const { setFieldValue } = useFormikContext<Array<FormObjectValue>>();
+  const [options, setOptions] = useState<Array<FormObjectValue>>([]);
 
   const loading = open && options.length === 0;
 
@@ -64,9 +63,14 @@ const AsyncMultiSelect = ({
     (async () => {
       try {
         const response = await fnPromise({ query: category });
-        const parsedResponse = response.map((responseValue) => {
-          return { label: responseValue.name, id: responseValue.id };
-        });
+        const parsedResponse = response.map(
+          (responseValue): FormObjectValue => {
+            return {
+              displayLabel: responseValue.name,
+              value: responseValue.id,
+            };
+          }
+        );
         setOptions(parsedResponse);
       } catch (error) {
         console.error(error);
@@ -74,24 +78,24 @@ const AsyncMultiSelect = ({
     })();
   }, [loading]);
 
-  const handleChange = (
-    event: SelectChangeEvent<{ label: string; id: number }[]>
-  ) => {
+  const handleChange = (event: SelectChangeEvent<Array<FormObjectValue>>) => {
     const {
       target: { value },
     } = event;
     if (typeof value !== 'string') {
-      const testValue = options.filter((a) => value.some((b) => a.id === b.id));
+      const testValue = options.filter((a) =>
+        value.some((b) => a.value === b.value)
+      );
       if (testValue) {
         setFieldValue(
           name,
-          testValue.map((a) => a.id)
+          testValue.map((a) => a.value)
         );
       }
     }
   };
 
-  const multiSelectConfig: SelectProps<{ label: string; id: number }[]> = {
+  const multiSelectConfig: SelectProps<Array<FormObjectValue>> = {
     ...field,
     ...otherProps,
     multiple: true,
@@ -134,8 +138,8 @@ const AsyncMultiSelect = ({
       <StyledSelect {...multiSelectConfig}>
         {options.length > 0 ? (
           options.map((value) => (
-            <MenuItem key={value.id} value={value.id}>
-              {value.label}
+            <MenuItem key={value.value} value={value.value}>
+              {value.displayLabel}
             </MenuItem>
           ))
         ) : (

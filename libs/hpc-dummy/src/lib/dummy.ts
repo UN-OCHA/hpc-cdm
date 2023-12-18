@@ -619,15 +619,15 @@ export class Dummy {
         ),
       },
       flows: {
+        getFlowREST: dummyEndpoint('flows.getFlowREST', async () => {
+          throw new errors.NotFoundError();
+        }),
         getFlow: dummyEndpoint('flows.getFlow', async () => {
           throw new errors.NotFoundError();
         }),
-        getFlowGraphQL: dummyEndpoint('flows.getFlowGraphQL', async () => {
-          throw new errors.NotFoundError();
-        }),
-        searchFlows: dummyEndpoint(
-          'flows.searchFlows',
-          async (params: flows.SearchFlowsParams) => {
+        searchFlowsREST: dummyEndpoint(
+          'flows.searchFlowsREST',
+          async (params: flows.SearchFlowsRESTParams) => {
             const { flowSearch } = params;
             const { flows } = this.data;
 
@@ -734,9 +734,9 @@ export class Dummy {
             };
           }
         ),
-        searchFlowsGraphQL: dummyEndpoint(
-          'flows.searchFlowsGraphQL',
-          async (params: flows.SearchFlowsGraphQlParams) => {
+        searchFlows: dummyEndpoint(
+          'flows.searchFlows',
+          async (params: flows.SearchFlowsParams) => {
             throw new errors.NotFoundError();
           }
         ),
@@ -744,6 +744,17 @@ export class Dummy {
           'flows.bulkRejectPendingFlows',
           async () => {
             throw new errors.NotFoundError();
+          }
+        ),
+        getTotalAmountUSD: dummyEndpoint(
+          'flows.getTotalAmountUSD',
+          async () => {
+            return {
+              searchFlowsTotalAmountUSD: {
+                totalAmountUSD: '100,639,059.00',
+                flowsCount: 6,
+              },
+            };
           }
         ),
       },
@@ -1197,6 +1208,170 @@ export class Dummy {
                   locations: [],
                   create: [],
                   update: [],
+                },
+              ],
+            };
+          }
+        ),
+        getOrganization: dummyEndpoint(
+          'organizations.getOrganization',
+          async (
+            params: organizations.GetOrganizationParams
+          ): Promise<organizations.GetOrganizationResult> => {
+            return {
+              id: 9093,
+              name: 'Association pour le Secours et le Développement',
+              nativeName: '',
+              abbreviation: 'ASD',
+              url: null,
+              parentID: null,
+              comments:
+                'Développement coordonne ses programmes autour de 6 domaines d’activités : • Nutrition, santé, pratiques de soins • Sécurité alimentaire et moyens d’existence • Eau, assainissement et hygiène • Plaidoyer et sensibilisation • Abris • Education',
+              verified: true,
+              notes: null,
+              active: true,
+              collectiveInd: false,
+              newOrganizationId: null,
+              createdAt: '2017-10-29T20:45:26.233Z',
+              updatedAt: '2019-05-14T12:19:16.995Z',
+              deletedAt: null,
+              categories: [
+                {
+                  id: 118,
+                  name: 'NGOs',
+                  description: null,
+                  parentID: null,
+                  code: null,
+                  group: 'organizationType',
+                  includeTotals: null,
+                  createdAt: '2017-01-13T22:18:02.367Z',
+                  updatedAt: '2022-12-15T15:17:12.866Z',
+                  categoryRef: {
+                    objectID: 9093,
+                    versionID: 1,
+                    objectType: 'organization',
+                    categoryID: 118,
+                    createdAt: '2017-10-29T20:45:26.445Z',
+                    updatedAt: '2017-10-29T20:45:26.445Z',
+                  },
+                },
+                {
+                  id: 1810,
+                  name: 'National NGOs/CSOs',
+                  description: null,
+                  parentID: 1802,
+                  code: null,
+                  group: 'organizationLevel',
+                  includeTotals: null,
+                  createdAt: '2022-12-15T15:17:15.037Z',
+                  updatedAt: '2022-12-15T15:17:15.037Z',
+                  categoryRef: {
+                    objectID: 9093,
+                    versionID: 1,
+                    objectType: 'organization',
+                    categoryID: 1810,
+                    createdAt: '2022-12-15T15:17:25.240Z',
+                    updatedAt: '2022-12-15T15:17:25.240Z',
+                  },
+                },
+                {
+                  id: 1802,
+                  name: 'Local and National Non-State Actors',
+                  description: null,
+                  parentID: null,
+                  code: null,
+                  group: 'organizationLevel',
+                  includeTotals: null,
+                  createdAt: '2022-12-15T15:17:12.799Z',
+                  updatedAt: '2022-12-15T15:17:12.799Z',
+                  categoryRef: {
+                    objectID: 9093,
+                    versionID: 1,
+                    objectType: 'organization',
+                    categoryID: 1802,
+                    createdAt: '2022-12-15T15:17:25.240Z',
+                    updatedAt: '2022-12-15T15:17:25.240Z',
+                  },
+                },
+                {
+                  id: 130,
+                  name: 'National NGOs/CSOs',
+                  description: null,
+                  parentID: 118,
+                  code: null,
+                  group: 'organizationType',
+                  includeTotals: null,
+                  createdAt: '2017-01-13T22:18:02.688Z',
+                  updatedAt: '2022-12-15T15:17:15.025Z',
+                  categoryRef: {
+                    objectID: 9093,
+                    versionID: 1,
+                    objectType: 'organization',
+                    categoryID: 130,
+                    createdAt: '2019-05-14T12:18:30.858Z',
+                    updatedAt: '2019-05-14T12:18:30.858Z',
+                  },
+                },
+              ],
+              locations: [],
+            };
+          }
+        ),
+        createOrganization: dummyEndpoint(
+          'organizations.createOrganization',
+          async (
+            params: organizations.CreateOrganizationParams
+          ): Promise<organizations.CreateOrganizationResult> => {
+            return {
+              id: 9093,
+              name: 'Association pour le Secours et le Développement',
+              nativeName: '',
+              abbreviation: 'ASD',
+              url: null,
+              parentID: null,
+              comments:
+                'Développement coordonne ses programmes autour de 6 domaines d’activités : • Nutrition, santé, pratiques de soins • Sécurité alimentaire et moyens d’existence • Eau, assainissement et hygiène • Plaidoyer et sensibilisation • Abris • Education',
+              verified: true,
+              notes: null,
+              active: true,
+              collectiveInd: false,
+              newOrganizationId: null,
+              createdAt: '2017-10-29T20:45:26.233Z',
+              updatedAt: '2019-05-14T12:19:16.995Z',
+              deletedAt: null,
+              meta: { language: 'en' },
+            };
+          }
+        ),
+        updateOrganization: dummyEndpoint(
+          'organizations.createOrganization',
+          async (
+            params: organizations.UpdateOrganizationParams
+          ): Promise<organizations.UpdateOrganizationResult> => {
+            return {
+              id: 9093,
+              name: 'Association pour le Secours et le Développement',
+              nativeName: '',
+              abbreviation: 'ASD',
+              url: null,
+              parentID: null,
+              comments:
+                'Développement coordonne ses programmes autour de 6 domaines d’activités : • Nutrition, santé, pratiques de soins • Sécurité alimentaire et moyens d’existence • Eau, assainissement et hygiène • Plaidoyer et sensibilisation • Abris • Education',
+              verified: true,
+              notes: null,
+              active: true,
+              collectiveInd: false,
+              newOrganizationId: null,
+              createdAt: '2017-10-29T20:45:26.233Z',
+              updatedAt: '2019-05-14T12:19:16.995Z',
+              deletedAt: null,
+              participantLog: [
+                {
+                  createdAt: '2017-10-29T20:45:26.233Z',
+                  editType: 'created',
+                  participant: {
+                    name: 'HPC Admin',
+                  },
                 },
               ],
             };

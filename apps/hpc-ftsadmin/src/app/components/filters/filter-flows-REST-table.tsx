@@ -4,23 +4,20 @@ import tw from 'twin.macro';
 import React, { useState } from 'react';
 
 import { C } from '@unocha/hpc-ui';
-import { Environment } from '../../environments/interface';
-import { Query } from './flows-table';
+import { Environment } from '../../../environments/interface';
 import {
   FormObjectValue,
   decodeFilters,
   encodeFilters,
-  parseActiveFilters,
-  parseFormFiltersRebuilt,
-  parseInitialValues,
-} from '../utils/parse-filters';
-import { LanguageKey, t } from '../../i18n';
+} from '../../utils/parse-filters';
+import { LanguageKey, t } from '../../../i18n';
 import {
   InfoSettings,
   LocalStorageFTSAdminKey,
-} from '../utils/local-storage-type';
+} from '../../utils/local-storage-type';
 import { util } from '@unocha/hpc-core';
 import { Alert } from '@mui/material';
+import { Query } from '../tables/table-utils';
 
 interface Props {
   environment: Environment;
@@ -28,7 +25,7 @@ interface Props {
   query: Query;
   setQuery: (newQuery: Query) => void;
 }
-export interface FlowsFilterValues {
+export interface FlowsFilterValuesREST {
   flowID?: string[];
   amountUSD?: string;
   keywords?: Array<FormObjectValue>;
@@ -39,14 +36,14 @@ export interface FlowsFilterValues {
   sourceSystemID?: string;
   legacyID?: string;
   sourceOrganizations?: Array<FormObjectValue>;
-  sourceCountries?: Array<FormObjectValue>;
+  sourceLocations?: Array<FormObjectValue>;
   sourceUsageYears?: Array<FormObjectValue>;
   sourceProjects?: Array<FormObjectValue>;
   sourcePlans?: Array<FormObjectValue>;
   sourceGlobalClusters?: Array<FormObjectValue>;
   sourceEmergencies?: Array<FormObjectValue>;
   destinationOrganizations?: Array<FormObjectValue>;
-  destinationCountries?: Array<FormObjectValue>;
+  destinationLocations?: Array<FormObjectValue>;
   destinationUsageYears?: Array<FormObjectValue>;
   destinationProjects?: Array<FormObjectValue>;
   destinationPlans?: Array<FormObjectValue>;
@@ -54,7 +51,7 @@ export interface FlowsFilterValues {
   destinationEmergencies?: Array<FormObjectValue>;
   includeChildrenOfParkedFlows?: boolean;
 }
-export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
+export const FLOWS_FILTER_INITIAL_VALUES_REST: FlowsFilterValuesREST = {
   flowID: [],
   amountUSD: '',
   keywords: [],
@@ -65,14 +62,14 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   sourceSystemID: '',
   legacyID: '',
   sourceOrganizations: [],
-  sourceCountries: [],
+  sourceLocations: [],
   sourceUsageYears: [],
   sourceProjects: [],
   sourcePlans: [],
   sourceGlobalClusters: [],
   sourceEmergencies: [],
   destinationOrganizations: [],
-  destinationCountries: [],
+  destinationLocations: [],
   destinationUsageYears: [],
   destinationProjects: [],
   destinationPlans: [],
@@ -88,7 +85,7 @@ lg:flex
 justify-end
 gap-x-4 
 `;
-export const FilterFlowsTable = (props: Props) => {
+export const FilterFlowsTableREST = (props: Props) => {
   const { environment, setQuery, query, lang } = props;
 
   const [tableInfoDisplay, setTableInfoDisplay] = useState(
@@ -109,7 +106,9 @@ export const FilterFlowsTable = (props: Props) => {
     amountUSD: number()
       .positive()
       .typeError('Only positive integers are accepted'),
-    keywords: array().of(object().shape({ label: string(), id: string() })),
+    keywords: array().of(
+      object().shape({ displayLabel: string(), value: string() })
+    ),
     flowStatus: string(),
     reporterRefCode: number()
       .positive()
@@ -121,52 +120,51 @@ export const FilterFlowsTable = (props: Props) => {
       .positive()
       .typeError('Only positive integers are accepted'),
     sourceOrganizations: array().of(
-      object().shape({ label: string(), id: string() })
+      object().shape({ displayLabel: string(), value: string() })
     ),
-    sourceCountries: array().of(
-      object().shape({ label: string(), id: string() })
+    sourceLocations: array().of(
+      object().shape({ displayLabel: string(), value: string() })
     ),
     sourceUsageYears: array().of(
-      object().shape({ label: string(), id: string() })
+      object().shape({ displayLabel: string(), value: string() })
     ),
     destinationOrganizations: array().of(
-      object().shape({ label: string(), id: string() })
+      object().shape({ displayLabel: string(), value: string() })
     ),
-    destinationCountries: array().of(
-      object().shape({ label: string(), id: string() })
+    destinationLocations: array().of(
+      object().shape({ displayLabel: string(), value: string() })
     ),
     destinationUsageYears: array().of(
-      object().shape({ label: string(), id: string() })
+      object().shape({ displayLabel: string(), value: string() })
     ),
   });
-  const handleSubmit = (values: FlowsFilterValues) => {
+  const handleSubmit = (values: FlowsFilterValuesREST) => {
+    console.log('aqui: ', values);
     setQuery({
       ...query,
       page: 0,
-      filters: encodeFilters(parseActiveFilters(values).activeFormValues),
+      filters: encodeFilters(values, FLOWS_FILTER_INITIAL_VALUES_REST),
     });
   };
   const handleResetForm = (
     formikResetForm: (
-      nextState?: Partial<FormikState<FlowsFilterValues>>
+      nextState?: Partial<FormikState<FlowsFilterValuesREST>>
     ) => void
   ) => {
     formikResetForm();
     setQuery({
       ...query,
       page: 0,
-      filters: encodeFilters(
-        parseActiveFilters(FLOWS_FILTER_INITIAL_VALUES).activeFormValues
-      ),
+      filters: encodeFilters({}, FLOWS_FILTER_INITIAL_VALUES_REST),
     });
   };
   return (
     <C.SearchFilter title={t.t(lang, (s) => s.components.flowsFilter.title)}>
       <Formik
         enableReinitialize
-        initialValues={parseInitialValues(
-          decodeFilters(query.filters, FLOWS_FILTER_INITIAL_VALUES),
-          FLOWS_FILTER_INITIAL_VALUES
+        initialValues={decodeFilters(
+          query.filters,
+          FLOWS_FILTER_INITIAL_VALUES_REST
         )}
         validationSchema={FORM_VALIDATION}
         onSubmit={handleSubmit}
@@ -245,10 +243,10 @@ export const FilterFlowsTable = (props: Props) => {
                       await environment.model.categories.getCategories({
                         query: 'flowStatus',
                       });
-                    return response.map((responseValue) => {
+                    return response.map((responseValue): FormObjectValue => {
                       return {
-                        label: responseValue.name,
-                        id: responseValue.id,
+                        displayLabel: responseValue.name,
+                        value: responseValue.id.toString(),
                       };
                     });
                   }}
@@ -267,8 +265,8 @@ export const FilterFlowsTable = (props: Props) => {
                       });
                     return response.map((responseValue) => {
                       return {
-                        label: responseValue.name,
-                        id: responseValue.id,
+                        displayLabel: responseValue.name,
+                        value: responseValue.id.toString(),
                       };
                     });
                   }}
@@ -281,9 +279,9 @@ export const FilterFlowsTable = (props: Props) => {
                   )}
                   name="flowActiveStatus"
                   options={[
-                    { name: 'Active', value: 'Active' },
-                    { name: 'All', value: 'All' },
-                    { name: 'Inactive', value: 'Inactive' },
+                    { displayLabel: 'Active', value: 'Active' },
+                    { displayLabel: 'All', value: 'All' },
+                    { displayLabel: 'Inactive', value: 'Inactive' },
                   ]}
                 />
                 <C.TextFieldWrapper
@@ -332,9 +330,9 @@ export const FilterFlowsTable = (props: Props) => {
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.flowsFilter.filters.sourceCountries
+                  (s) => s.components.flowsFilter.filters.sourceLocations
                 )}
-                name="sourceCountries"
+                name="sourceLocations"
                 fnPromise={environment.model.locations.getAutocompleteLocations}
                 isMulti
               />
@@ -415,9 +413,9 @@ export const FilterFlowsTable = (props: Props) => {
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.flowsFilter.filters.destinationCountries
+                  (s) => s.components.flowsFilter.filters.destinationLocations
                 )}
-                name="destinationCountries"
+                name="destinationLocations"
                 fnPromise={environment.model.locations.getAutocompleteLocations}
                 isMulti
               />
@@ -508,4 +506,4 @@ export const FilterFlowsTable = (props: Props) => {
     </C.SearchFilter>
   );
 };
-export default FilterFlowsTable;
+export default FilterFlowsTableREST;

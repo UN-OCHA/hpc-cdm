@@ -1,11 +1,8 @@
 import { LanguageKey, t } from '../../i18n';
 import { Strings } from '../../i18n/iface';
-import { Query } from '../components/flows-table';
+import { Query } from '../components/tables/table-utils';
 
 export type TableType = 'flows' | 'organizations';
-type TableHeadersType<T extends TableType> = T extends 'flows'
-  ? FlowHeaderID
-  : OrganizationHeaderID;
 export type FlowHeaderID =
   | 'flow.id'
   | 'flow.versionID'
@@ -281,31 +278,28 @@ export const decodeTableHeaders = (
     return defaultDecodeTableHeaders(lang, table);
   }
   try {
-    return queryParam.split('_').map((x) => ({
-      id: Math.abs(parseInt(x)),
-      label:
+    return queryParam.split('_').map((x) => {
+      const possibleValues =
         table === 'flows'
-          ? POSSIBLE_FLOW_HEADER_VALUES[Math.abs(parseInt(x))].label
-          : POSSIBLE_ORGANIZATION_VALUES[Math.abs(parseInt(x))].label,
-      displayLabel: t.t(lang, (s) =>
-        table === 'flows'
-          ? s.components.flowsTable.headers[
-              POSSIBLE_FLOW_HEADER_VALUES[Math.abs(parseInt(x))].label
-            ]
-          : s.components.organizationTable.headers[
-              POSSIBLE_ORGANIZATION_VALUES[Math.abs(parseInt(x))].label
-            ]
-      ),
-      active: parseInt(x) > 0,
-      identifierID:
-        table === 'flows'
-          ? POSSIBLE_FLOW_HEADER_VALUES[Math.abs(parseInt(x))].identifierID
-          : POSSIBLE_ORGANIZATION_VALUES[Math.abs(parseInt(x))].identifierID,
-      sortable:
-        table === 'flows'
-          ? POSSIBLE_FLOW_HEADER_VALUES[Math.abs(parseInt(x))].sortable
-          : POSSIBLE_ORGANIZATION_VALUES[Math.abs(parseInt(x))].sortable,
-    }));
+          ? POSSIBLE_FLOW_HEADER_VALUES[Math.abs(parseInt(x))]
+          : POSSIBLE_ORGANIZATION_VALUES[Math.abs(parseInt(x))];
+      return {
+        id: Math.abs(parseInt(x)),
+        label: possibleValues.label,
+        displayLabel: t.t(lang, (s) =>
+          table === 'flows'
+            ? s.components.flowsTable.headers[
+                POSSIBLE_FLOW_HEADER_VALUES[Math.abs(parseInt(x))].label
+              ]
+            : s.components.organizationTable.headers[
+                POSSIBLE_ORGANIZATION_VALUES[Math.abs(parseInt(x))].label
+              ]
+        ),
+        active: parseInt(x) > 0,
+        identifierID: possibleValues.identifierID,
+        sortable: possibleValues.sortable,
+      };
+    });
   } catch (error) {
     console.error(error);
     const errorDefaultTableHeaders = defaultEncodeTableHeaders(table);

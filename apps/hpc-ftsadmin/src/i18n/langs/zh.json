@@ -34,6 +34,11 @@
       "info": "我们找不到您要查找的页面",
       "back": "返回"
     },
+    "invalidRouteParam": {
+      "title": "无效路由",
+      "info": "在URL中检测到非整数ID",
+      "back": "返回"
+    },
     "loader": {
       "loading": "加载中...",
       "error": "错误：",
@@ -69,6 +74,7 @@
       },
       "reportTooltip": "由 {organization} 于 {date} 通过 {channel} 报告",
       "parkedSource": "停车源",
+      "totalAmount": "总金额：",
       "sortBy": "排序方式",
       "rejectPendingFlows": "拒绝待处理的资金流",
       "tableSettings": {
@@ -100,14 +106,14 @@
         "sourceSystemID": "源系统ID",
         "legacyID": "资金流传统ID",
         "sourceOrganizations": "组织（源）",
-        "sourceCountries": "国家（源）",
+        "sourceLocations": "国家（源）",
         "sourceUsageYears": "使用年份（源）",
         "sourceProjects": "项目（源）",
         "sourcePlans": "计划（源）",
         "sourceGlobalClusters": "全球集群（源）",
         "sourceEmergencies": "紧急情况（源）",
         "destinationOrganizations": "组织（目标）",
-        "destinationCountries": "国家（目标）",
+        "destinationLocations": "国家（目标）",
         "destinationUsageYears": "使用年份（目标）",
         "destinationProjects": "项目（目标）",
         "destinationPlans": "计划（目标）",
@@ -140,9 +146,9 @@
         "flowType": "资金流类型",
         "reporterRefCode": "报告者参考代码",
         "sourceOrganizations": "组织（源）",
-        "sourceCountries": "国家（源）",
+        "sourceLocations": "国家（源）",
         "destinationOrganizations": "组织（目标）",
-        "destinationCountries": "国家（目标）",
+        "destinationLocations": "国家（目标）",
         "destinationUsageYears": "使用年份（目标）",
         "details": "详情"
       },
@@ -161,10 +167,10 @@
         "organizationDetails": "组织详情"
       },
       "filters": {
-        "organizationName": "组织名称",
-        "active": "活跃",
-        "addedModifiedSince": "添加/修改自",
-        "country": "国家",
+        "organization": "组织名称",
+        "status": "活跃",
+        "date": "添加/修改自",
+        "locations": "国家",
         "organizationType": "组织类型",
         "parentOrganization": "母公司"
       },
@@ -215,6 +221,9 @@
     },
     "pendingFlows": {
       "title": "搜索待处理流程"
+    },
+    "organizations": {
+      "title": "组织机构"
     }
   }
 }

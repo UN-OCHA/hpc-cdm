@@ -38,18 +38,21 @@ export const NumericFormatCustom = React.forwardRef<
   );
 });
 
+interface TextFieldWrapperProps {
+  type: 'text' | 'number' | 'currency';
+  name: string;
+  label: string;
+  placeholder?: string;
+  textarea?: boolean;
+}
 const TextFieldWrapper = ({
   type,
   name,
   label,
   placeholder,
+  textarea,
   ...otherProps
-}: {
-  type: 'text' | 'number' | 'currency';
-  name: string;
-  label: string;
-  placeholder?: string;
-}) => {
+}: TextFieldWrapperProps) => {
   const [field, meta] = useField(name);
 
   const configTextField: TextFieldProps = {
@@ -57,6 +60,7 @@ const TextFieldWrapper = ({
     ...otherProps,
     label: label,
     id: name,
+    multiline: textarea,
     placeholder: placeholder,
     size: 'small',
     type: 'text',

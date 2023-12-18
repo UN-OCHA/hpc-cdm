@@ -59,41 +59,24 @@ const FLOW_CATEGORY = t.intersection([
 ]);
 export type FlowCategory = t.TypeOf<typeof FLOW_CATEGORY>;
 
-const FLOW_ORGANIZATION = t.type({
+const FLOW_ORGANIZATION_REST = t.type({
   objectID: t.number,
   refDirection: FLOW_REF_DIRECTION,
   name: t.string,
 });
-const FLOW_GRAPHQL_ORGANIZATION = t.type({
-  id: t.number,
-  refDirection: t.union([FLOW_REF_DIRECTION, t.null]),
-  name: t.string,
-});
-export type FlowOrganization = t.TypeOf<typeof FLOW_ORGANIZATION>;
+export type FlowOrganizationREST = t.TypeOf<typeof FLOW_ORGANIZATION_REST>;
 
 const FLOW_LOCATION = t.type({
   name: t.string,
 });
 
-const FLOW_GRAPHQL_LOCATION = t.type({
-  id: t.number,
-  name: t.string,
-});
 const FLOW_PLAN = t.type({
   name: t.string,
 });
 
-const FLOW_GRAPHQL_PLAN = t.type({
-  id: t.number,
-  name: t.string,
-});
 const FLOW_USAGE_YEAR = t.type({
   year: t.string,
   refDirection: FLOW_REF_DIRECTION,
-});
-const FLOW_GRAPHQL_USAGE_YEAR = t.type({
-  year: t.string,
-  direction: FLOW_REF_DIRECTION,
 });
 
 const FLOW_REPORT_DETAIL = t.intersection([
@@ -110,18 +93,6 @@ const FLOW_REPORT_DETAIL = t.intersection([
   }),
 ]);
 
-const FLOW_REPORT_DETAIL_GRAPHQL = t.intersection([
-  t.type({
-    id: t.number,
-    source: t.string,
-  }),
-  t.partial({
-    date: t.union([t.string, t.null]),
-    verified: t.boolean,
-    versionID: t.number,
-    updateAt: t.string,
-  }),
-]);
 const TRANSFERRED_ENTITY = t.type({
   key: t.string,
   valueId: t.number,
@@ -153,28 +124,7 @@ const FLOW_EXTERNAL_REFERENCE = t.intersection([
   }),
 ]);
 
-const FLOW_EXTERNAL_REFERENCE_GRAPHQL = t.intersection([
-  t.type({
-    id: t.number,
-    systemID: t.string,
-    flowID: t.number,
-  }),
-  t.partial({
-    externalRecordID: t.string,
-    externalRecordDate: t.string,
-    updateAt: t.string,
-    versionID: t.union([t.number, t.null]),
-    importInformation: t.union([
-      t.partial({
-        inferred: t.union([t.array(INFERRED_ENTITY), t.null]),
-        transferred: t.union([t.array(TRANSFERRED_ENTITY), t.null]),
-      }),
-      t.null,
-    ]),
-  }),
-]);
-
-const FLOW_SEARCH_RESULT = t.intersection([
+const FLOW_SEARCH_RESULT_REST = t.intersection([
   t.type({
     id: t.number,
     versionID: t.number,
@@ -187,7 +137,7 @@ const FLOW_SEARCH_RESULT = t.intersection([
     childIDs: t.union([t.array(t.number), t.null]),
     parentIDs: t.union([t.array(t.number), t.null]),
     categories: t.union([t.array(FLOW_CATEGORY), t.null]),
-    organizations: t.union([t.array(FLOW_ORGANIZATION), t.null]),
+    organizations: t.union([t.array(FLOW_ORGANIZATION_REST), t.null]),
     plans: t.union([t.array(FLOW_PLAN), t.null]),
     locations: t.union([t.array(FLOW_LOCATION), t.null]),
     usageYears: t.union([t.array(FLOW_USAGE_YEAR), t.null]),
@@ -206,7 +156,7 @@ const CREATED_BY_OR_LAST_UPDATED_BY = t.type({
   name: t.string,
 });
 
-const FLOW = t.intersection([
+const FLOW_REST = t.intersection([
   t.type({
     id: t.number,
     versionID: t.number,
@@ -248,7 +198,7 @@ const FLOW = t.intersection([
   }),
 ]);
 
-export type Flow = t.TypeOf<typeof FLOW>;
+export type FlowREST = t.TypeOf<typeof FLOW_REST>;
 
 export const GET_FLOW_PARAMS = t.type({
   id: INTEGER_FROM_STRING,
@@ -256,31 +206,33 @@ export const GET_FLOW_PARAMS = t.type({
 
 export type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
 
-export const GET_FLOW_RESULT = FLOW;
+export const GET_FLOW_RESULT = FLOW_REST;
 
 export type GetFlowResult = t.TypeOf<typeof GET_FLOW_RESULT>;
 
-export type FlowSearchResult = t.TypeOf<typeof FLOW_SEARCH_RESULT>;
+export type FlowSearchResult = t.TypeOf<typeof FLOW_SEARCH_RESULT_REST>;
 
-export const SEARCH_FLOWS_RESULT = t.type({
-  flows: t.array(FLOW_SEARCH_RESULT),
+export const SEARCH_FLOWS_RESULT_REST = t.type({
+  flows: t.array(FLOW_SEARCH_RESULT_REST),
   flowCount: t.string,
 });
 
-export type SearchFlowsResult = t.TypeOf<typeof SEARCH_FLOWS_RESULT>;
+export type SearchFlowsResultREST = t.TypeOf<typeof SEARCH_FLOWS_RESULT_REST>;
 const FlowLocation = t.type({
   id: t.number,
   name: t.string,
   direction: t.string,
 });
 
+// NEW CODE FROM HERE
 const FlowOrganization = t.type({
   id: t.number,
   direction: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
   name: t.string,
+  abbreviation: t.string,
 });
 
-export type FlowOrganizationGraphQl = t.TypeOf<typeof FlowOrganization>;
+export type FlowOrganization = t.TypeOf<typeof FlowOrganization>;
 const FlowUsageYear = t.type({
   year: t.string,
   direction: t.string,
@@ -340,7 +292,7 @@ const FlowPlan = t.type({
   direction: t.string,
 });
 
-const FLOW_GRAPHQL = t.type({
+const FLOW = t.type({
   id: t.number,
   versionID: t.number,
   amountUSD: t.string,
@@ -359,30 +311,27 @@ const FLOW_GRAPHQL = t.type({
   externalReferences: t.array(FlowExternalReference),
   reportDetails: t.array(FlowReportDetail),
   parkedParentSource: t.union([t.array(FlowParkedParentSource), t.null]),
-  cursor: t.number,
 });
 
-const FLOW_GRAPHQL_RESULT = t.array(FLOW_GRAPHQL);
-export type FlowGraphQL = t.TypeOf<typeof FLOW_GRAPHQL>;
-export type FlowGraphQLResult = t.TypeOf<typeof FLOW_GRAPHQL_RESULT>;
+const FLOW_RESULT = t.array(FLOW);
+export type Flow = t.TypeOf<typeof FLOW>;
+export type FlowResult = t.TypeOf<typeof FLOW_RESULT>;
 
-export const SEARCH_FLOWS_GRAPHQL_RESULT = t.type({
+export const SEARCH_FLOWS_RESULT = t.type({
   searchFlows: t.type({
     total: t.number,
-    flows: FLOW_GRAPHQL_RESULT,
-    startCursor: t.number,
-    endCursor: t.number,
+    flows: FLOW_RESULT,
+    prevPageCursor: t.string,
+    nextPageCursor: t.string,
     hasNextPage: t.boolean,
     hasPreviousPage: t.boolean,
     pageSize: t.number,
   }),
 });
 
-export type SearchFlowsGraphQLResult = t.TypeOf<
-  typeof SEARCH_FLOWS_GRAPHQL_RESULT
->;
+export type SearchFlowsResult = t.TypeOf<typeof SEARCH_FLOWS_RESULT>;
 
-export const SEARCH_FLOWS_PARAMS = t.type({
+export const SEARCH_FLOWS_REST_PARAMS = t.type({
   flowSearch: t.partial({
     activeStatus: t.type({
       name: t.string,
@@ -401,7 +350,7 @@ export const SEARCH_FLOWS_PARAMS = t.type({
     offset: t.number,
   }),
 });
-export type SearchFlowsParams = t.TypeOf<typeof SEARCH_FLOWS_PARAMS>;
+export type SearchFlowsRESTParams = t.TypeOf<typeof SEARCH_FLOWS_REST_PARAMS>;
 
 const FILTERS = t.partial({
   destinationCountries: t.array(t.string),
@@ -431,16 +380,44 @@ const FILTERS = t.partial({
   includeChildrenOfParkedFlows: t.boolean,
 });
 
+const FLOW_FILTERS = t.partial({
+  flowFilters: t.partial({
+    id: t.array(t.number),
+    activeStatus: t.boolean,
+    status: t.string,
+    amountUSD: t.number,
+    type: t.string,
+    reporterRefCode: t.number,
+    sourceSystemID: t.number,
+    legacyID: t.number,
+  }),
+  flowObjectFilters: t.array(
+    t.type({ objectID: t.number, direction: t.string, objectType: t.string })
+  ),
+  flowCategoryFilters: t.partial({
+    pending: t.boolean,
+    categoryFilters: t.array(t.type({ id: t.number, group: t.string })),
+  }),
+  includeChildrenOfParkedFlows: t.boolean,
+});
+const AbortSignalType = new t.Type<AbortSignal, AbortSignal, unknown>(
+  'AbortSignal',
+  (input: unknown): input is AbortSignal => input instanceof AbortSignal,
+  (input, context) =>
+    input instanceof AbortSignal ? t.success(input) : t.failure(input, context),
+  t.identity
+);
 export type FlowFilters = t.TypeOf<typeof FILTERS>;
-export const SEARCH_FLOWS_GRAPHQL_PARAMS = t.partial({
+export const SEARCH_FLOWS_PARAMS = t.partial({
   limit: t.number,
-  beforeCursor: t.number,
+  prevPageCursor: t.string,
+  nextPageCursor: t.string,
   sortOrder: t.string,
   sortField: t.string,
+  ...FLOW_FILTERS.props,
+  signal: AbortSignalType,
 });
-export type SearchFlowsGraphQlParams = t.TypeOf<
-  typeof SEARCH_FLOWS_GRAPHQL_PARAMS
->;
+export type SearchFlowsParams = t.TypeOf<typeof SEARCH_FLOWS_PARAMS>;
 
 export const BULK_REJECT_PENDING_FLOWS_PARAMS = t.type({
   flows: t.array(
@@ -464,14 +441,36 @@ export const BULK_REJECT_PENDING_FLOWS_RESULT = t.array(
 export type BulkRejectPendingFlowsResults = t.TypeOf<
   typeof BULK_REJECT_PENDING_FLOWS_RESULT
 >;
+
+export const GET_TOTAL_AMOUNT_USD_PARAMS = t.partial({
+  ...FLOW_FILTERS.props,
+  signal: AbortSignalType,
+});
+export type GetTotalAmountUSDParams = t.TypeOf<
+  typeof GET_TOTAL_AMOUNT_USD_PARAMS
+>;
+
+export const GET_TOTAL_AMOUNT_USD_RESULT = t.type({
+  searchFlowsTotalAmountUSD: t.type({
+    totalAmountUSD: t.string,
+    flowsCount: t.number,
+  }),
+});
+export type GetTotalAmountUSDResult = t.TypeOf<
+  typeof GET_TOTAL_AMOUNT_USD_RESULT
+>;
+
 export interface Model {
+  getFlowREST(params: GetFlowParams): Promise<GetFlowResult>;
   getFlow(params: GetFlowParams): Promise<GetFlowResult>;
-  getFlowGraphQL(params: GetFlowParams): Promise<GetFlowResult>;
+  searchFlowsREST(
+    params: SearchFlowsRESTParams
+  ): Promise<SearchFlowsResultREST>;
   searchFlows(params: SearchFlowsParams): Promise<SearchFlowsResult>;
-  searchFlowsGraphQL(
-    params: SearchFlowsGraphQlParams
-  ): Promise<SearchFlowsGraphQLResult>;
   bulkRejectPendingFlows(
     params: BulkRejectPendingFlowsParams
   ): Promise<BulkRejectPendingFlowsResults>;
+  getTotalAmountUSD(
+    params: GetTotalAmountUSDParams
+  ): Promise<GetTotalAmountUSDResult>;
 }

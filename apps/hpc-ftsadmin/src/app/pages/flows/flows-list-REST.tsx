@@ -1,12 +1,14 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
-import { t } from '../../i18n';
-import FlowsTable, { FlowsTableProps } from '../components/flows-table';
-import PageMeta from '../components/page-meta';
-import { AppContext, getEnv } from '../context';
+import { t } from '../../../i18n';
+import FlowsTableREST, {
+  FlowsTableRESTProps,
+} from '../../components/tables/flows-table-REST';
+import PageMeta from '../../components/page-meta';
+import { AppContext, getEnv } from '../../context';
 import tw from 'twin.macro';
-import FilterFlowsTable, {
-  FLOWS_FILTER_INITIAL_VALUES,
-} from '../components/filter-flows-table';
+import FilterFlowsTableREST, {
+  FLOWS_FILTER_INITIAL_VALUES_REST,
+} from '../../components/filters/filter-flows-REST-table';
 import {
   JsonParam,
   NumberParam,
@@ -19,7 +21,7 @@ import {
 import {
   DEFAULT_FLOW_TABLE_HEADERS,
   encodeTableHeaders,
-} from '../utils/table-headers';
+} from '../../utils/table-headers';
 
 interface Props {
   className?: string;
@@ -63,12 +65,14 @@ export default (props: Props) => {
     orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
     filters: withDefault(JsonParam, JSON.stringify({})),
     tableHeaders: withDefault(StringParam, encodeTableHeaders([])), //  Default value of table headers
+    prevPageCursor: withDefault(StringParam, ''),
+    nextPageCursor: withDefault(StringParam, ''),
   });
 
-  const flowsTableProps: FlowsTableProps = {
+  const flowsTableProps: FlowsTableRESTProps = {
     headers: DEFAULT_FLOW_TABLE_HEADERS,
     rowsPerPageOption: rowsPerPageOptions,
-    initialValues: FLOWS_FILTER_INITIAL_VALUES,
+    initialValues: FLOWS_FILTER_INITIAL_VALUES_REST,
     query: query,
     setQuery: setQuery,
   };
@@ -82,7 +86,7 @@ export default (props: Props) => {
         >
           <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
           <Container>
-            <FilterFlowsTable
+            <FilterFlowsTableREST
               environment={env}
               setQuery={setQuery}
               query={query}
@@ -92,7 +96,7 @@ export default (props: Props) => {
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.flows.title)}
               </C.PageTitle>
-              <FlowsTable {...flowsTableProps} />
+              <FlowsTableREST {...flowsTableProps} />
             </LandingContainer>
           </Container>
         </div>

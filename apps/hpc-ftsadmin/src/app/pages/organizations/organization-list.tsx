@@ -1,13 +1,8 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
-import { t } from '../../i18n';
-import FlowsTable, { FlowsTableProps, Query } from '../components/flows-table';
-import PageMeta from '../components/page-meta';
-import { AppContext, getEnv } from '../context';
+import { t } from '../../../i18n';
+import PageMeta from '../../components/page-meta';
+import { AppContext, getEnv } from '../../context';
 import tw from 'twin.macro';
-import FilterFlowsTable, {
-  FLOWS_FILTER_INITIAL_VALUES,
-  FlowsFilterValues,
-} from '../components/filter-flows-table';
 import {
   JsonParam,
   NumberParam,
@@ -18,26 +13,20 @@ import {
   withDefault,
 } from 'use-query-params';
 import {
-  DEFAULT_FLOW_TABLE_HEADERS,
   DEFAULT_ORGANIZATION_TABLE_HEADERS,
-  OrganizationHeaderID,
-  TableHeadersProps,
   encodeTableHeaders,
-} from '../utils/table-headers';
-import OrganizationTable from '../components/organizations-table';
+} from '../../utils/table-headers';
+import OrganizationTable, {
+  OrganizationTableProps,
+} from '../../components/tables/organizations-table';
+import FilterOrganizationsTable, {
+  ORGANIZATIONS_FILTER_INITIAL_VALUES,
+} from '../../components/filters/filter-organization-table';
 
 interface Props {
   className?: string;
 }
 
-export interface OrganizationTableProps {
-  headers: TableHeadersProps<OrganizationHeaderID>[];
-  initialValues: FlowsFilterValues;
-  graphQL?: boolean;
-  rowsPerPageOption: number[];
-  query: Query;
-  setQuery: (newQuery: Query) => void;
-}
 const Container = tw.div`
 flex
 `;
@@ -79,12 +68,14 @@ export default (props: Props) => {
       StringParam,
       encodeTableHeaders([], 'organizations')
     ),
+    prevPageCursor: withDefault(StringParam, ''),
+    nextPageCursor: withDefault(StringParam, ''),
   });
 
-  const flowsTableProps: OrganizationTableProps = {
+  const organizationTableProps: OrganizationTableProps = {
     headers: DEFAULT_ORGANIZATION_TABLE_HEADERS,
     rowsPerPageOption: rowsPerPageOptions,
-    initialValues: FLOWS_FILTER_INITIAL_VALUES,
+    initialValues: ORGANIZATIONS_FILTER_INITIAL_VALUES,
     query: query,
     setQuery: setQuery,
   };
@@ -98,7 +89,7 @@ export default (props: Props) => {
         >
           <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
           <Container>
-            <FilterFlowsTable
+            <FilterOrganizationsTable
               environment={env}
               setQuery={setQuery}
               query={query}
@@ -106,9 +97,9 @@ export default (props: Props) => {
             />
             <LandingContainer>
               <C.PageTitle>
-                {t.t(lang, (s) => s.routes.flows.title)}
+                {t.t(lang, (s) => s.routes.organizations.title)}
               </C.PageTitle>
-              <OrganizationTable {...flowsTableProps} />
+              <OrganizationTable {...organizationTableProps} />
             </LandingContainer>
           </Container>
         </div>

@@ -1,12 +1,9 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
-import { t } from '../../i18n';
-import { FlowsTableProps } from '../components/flows-table';
-import PageMeta from '../components/page-meta';
-import { AppContext, getEnv } from '../context';
+import { t } from '../../../i18n';
+import PageMeta from '../../components/page-meta';
+import { AppContext, getEnv } from '../../context';
 import tw from 'twin.macro';
-import FilterFlowsTable, {
-  FLOWS_FILTER_INITIAL_VALUES,
-} from '../components/filter-flows-table';
+
 import {
   JsonParam,
   NumberParam,
@@ -19,8 +16,14 @@ import {
 import {
   DEFAULT_FLOW_TABLE_HEADERS,
   encodeTableHeaders,
-} from '../utils/table-headers';
-import FlowsTableGraphQL from '../components/flows-table-graphQL';
+} from '../../utils/table-headers';
+import FlowsTable, {
+  FlowsTableProps,
+} from '../../components/tables/flows-table';
+import FilterFlowsTable, {
+  FLOWS_FILTER_INITIAL_VALUES,
+} from '../../components/filters/filter-flows-table';
+import { useCallback, useEffect, useState } from 'react';
 
 interface Props {
   className?: string;
@@ -34,6 +37,29 @@ w-full
 `;
 export default (props: Props) => {
   const rowsPerPageOptions = [10, 25, 50, 100];
+  const [abortController, setAbortController] = useState<AbortController>(
+    new AbortController()
+  );
+
+  const handleAbortController = useCallback(() => {
+    // Abort the ongoing requests
+    abortController.abort();
+
+    // Create a new AbortController for the next requests
+    const newAbortController = new AbortController();
+    setAbortController(newAbortController);
+
+    // Perform actions with the updated filter values
+
+    // Pass the new AbortSignal to FlowsTableGraphQL
+    // This can be part of your state or directly passed as a prop
+  }, [abortController]);
+
+  useEffect(() => {
+    return () => {
+      handleAbortController();
+    };
+  }, []);
 
   const [query, setQuery] = useQueryParams({
     page: withDefault(NumberParam, 0),
@@ -59,11 +85,13 @@ export default (props: Props) => {
           return acc;
         }, [] as string[])
       ),
-      'flow.updatedAt'
+      'updatedAt'
     ),
     orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
     filters: withDefault(JsonParam, JSON.stringify({})),
     tableHeaders: withDefault(StringParam, encodeTableHeaders([])), //  Default value of table headers
+    prevPageCursor: withDefault(StringParam, undefined),
+    nextPageCursor: withDefault(StringParam, undefined),
   });
 
   const flowsTableProps: FlowsTableProps = {
@@ -72,9 +100,9 @@ export default (props: Props) => {
     initialValues: FLOWS_FILTER_INITIAL_VALUES,
     query: query,
     setQuery: setQuery,
+    abortSignal: abortController.signal,
   };
 
-  const env = getEnv();
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -84,16 +112,15 @@ export default (props: Props) => {
           <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
           <Container>
             <FilterFlowsTable
-              environment={env}
               setQuery={setQuery}
               query={query}
-              lang={lang}
+              handleAbortController={handleAbortController}
             />
             <LandingContainer>
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.flows.title)}
               </C.PageTitle>
-              <FlowsTableGraphQL {...flowsTableProps} />
+              <FlowsTable {...flowsTableProps} />
             </LandingContainer>
           </Container>
         </div>

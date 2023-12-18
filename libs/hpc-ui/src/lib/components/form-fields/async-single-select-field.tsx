@@ -13,6 +13,7 @@ import { useField, useFormikContext } from 'formik';
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
+import { FormObjectValue } from './types/types';
 
 const StyledSelect = tw(Select)`
   min-w-[10rem]
@@ -36,21 +37,21 @@ const AsyncSingleSelect = ({
   label,
   fnPromise,
   hasNameValue,
+  returnObject,
   ...otherProps
 }: {
   name: string;
   label: string;
-  fnPromise: () => Promise<{ label: string; id: string | number }[]>;
+  fnPromise: () => Promise<Array<FormObjectValue>>;
   hasNameValue?: boolean;
+  returnObject?: boolean;
 }) => {
   const { setFieldValue } = useFormikContext<string>();
-  const [field, meta] = useField<string | number>(name);
+  const [field, meta] = useField<string | number | FormObjectValue>(name);
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState<
-    readonly { label: string; id: string | number }[]
-  >([]);
+  const [options, setOptions] = useState<Array<FormObjectValue>>([]);
   const loading = open && options.length === 0;
-
+  const fieldValue = field.value;
   useEffect(() => {
     if (!loading) {
       return undefined;
@@ -64,13 +65,20 @@ const AsyncSingleSelect = ({
       }
     })();
   }, [loading]);
-  const handleChange = (event: SelectChangeEvent<string | number>) => {
+  const handleChange = (
+    event: SelectChangeEvent<string | number | FormObjectValue>
+  ) => {
     const {
       target: { value },
     } = event;
-    setFieldValue(name, value);
+    console.log(value);
+    if (returnObject) {
+      setFieldValue(name, value);
+    } else {
+      setFieldValue(name, value);
+    }
   };
-  const singleSelectConfig: SelectProps<string | number> = {
+  const singleSelectConfig: SelectProps<string | number | FormObjectValue> = {
     ...field,
     ...otherProps,
     labelId: `${label.toLowerCase().replace(' ', '-').trim()}-label`,
@@ -79,14 +87,22 @@ const AsyncSingleSelect = ({
       <OutlinedInput
         endAdornment={
           <CircularProgressBox>
-            {field.value !== '' && (
-              <StyledIconButton
-                onClick={() => setFieldValue(name, '')}
-                size="small"
-              >
-                <CloseIcon fontSize="small" />
-              </StyledIconButton>
-            )}
+            {field.value !== '' ||
+              (typeof fieldValue !== 'string' &&
+                typeof fieldValue !== 'number' &&
+                fieldValue.value !== '' && (
+                  <StyledIconButton
+                    onClick={() =>
+                      setFieldValue(
+                        name,
+                        returnObject ? { displayLabel: '', value: '' } : ''
+                      )
+                    }
+                    size="small"
+                  >
+                    <CloseIcon fontSize="small" />
+                  </StyledIconButton>
+                ))}
             {loading ? (
               <CircularProgress sx={tw`me-6`} color="inherit" size={20} />
             ) : null}
@@ -110,11 +126,19 @@ const AsyncSingleSelect = ({
       <StyledSelect {...singleSelectConfig}>
         {options.length > 0 ? (
           options.map((value) => (
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
             <MenuItem
-              key={value.id}
-              value={hasNameValue ? value.label : value.id}
+              key={value.value}
+              value={
+                returnObject
+                  ? value
+                  : hasNameValue
+                  ? value.displayLabel
+                  : value.value
+              }
             >
-              {value.label}
+              {value.displayLabel}
             </MenuItem>
           ))
         ) : (
