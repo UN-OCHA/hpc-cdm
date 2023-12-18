@@ -1,3 +1,4 @@
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   CircularProgress,
   FormControl,
@@ -10,9 +11,8 @@ import {
   SelectProps,
 } from '@mui/material';
 import { categories } from '@unocha/hpc-data';
-import { useField, useFormikContext } from 'formik';
+import { useField, useFormikContext, ErrorMessage } from 'formik';
 import CloseIcon from '@mui/icons-material/Close';
-import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
 
 const StyledSelect = tw(Select)`
@@ -31,6 +31,12 @@ const CircularProgressBox = tw.div`
 `;
 const StyledIconButton = tw(IconButton)`
   me-6`;
+
+const FormikError = ({ name }: { name: string }) => (
+  <ErrorMessage name={name}>
+    {(msg) => <div style={{ color: 'red', marginTop: '0.5rem' }}>{msg}</div>}
+  </ErrorMessage>
+);
 
 const AsyncSingleSelect = ({
   name,
@@ -51,12 +57,21 @@ const AsyncSingleSelect = ({
   hasNameValue?: boolean;
 }) => {
   const { setFieldValue } = useFormikContext<string>();
-  const [field, meta] = useField(name);
+  const [field, meta, helpers] = useField(name);
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<
     readonly { label: string; id: number }[]
   >([]);
   const loading = open && options.length === 0;
+
+  const onBlur = useCallback(() => helpers.setTouched(true), [helpers]);
+  const errorMsg = useMemo(
+    () =>
+      meta.touched && Boolean(meta.error)
+        ? meta.touched && (meta.error as string)
+        : null,
+    [meta.touched, meta.error]
+  );
 
   useEffect(() => {
     if (!loading) {
@@ -87,6 +102,9 @@ const AsyncSingleSelect = ({
     onChange: handleChange,
     input: (
       <OutlinedInput
+        onBlur={onBlur}
+        error={!!errorMsg}
+        value={field.value}
         endAdornment={
           <CircularProgressBox>
             {field.value !== '' && (
@@ -110,6 +128,14 @@ const AsyncSingleSelect = ({
     onClose: () => setOpen(false),
     size: 'small',
   };
+
+  // useEffect(() => {
+  //   if (options.length > 0) {
+  //     console.log('@@@@2')
+  //     helpers.setValue(field.value);
+  //   }
+  // }, [options, field]);
+
   if (meta && meta.touched && meta.error) {
     singleSelectConfig.error = true;
   }
@@ -134,6 +160,7 @@ const AsyncSingleSelect = ({
           </Loading>
         )}
       </StyledSelect>
+      <FormikError name={name} />
     </FormControl>
   );
 };

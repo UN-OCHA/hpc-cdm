@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   Autocomplete,
   AutocompleteProps,
@@ -24,7 +25,6 @@ import {
   usageYears,
   currencies,
 } from '@unocha/hpc-data';
-import React, { useEffect, useState } from 'react';
 import tw from 'twin.macro';
 
 const StyledTextField = tw(TextField)`
@@ -83,7 +83,7 @@ const AsyncAutocompleteSelect = ({
   const [inputValue, setInputValue] = useState('');
   const [multipleValuesSelected, setMultipleValueSelected] = useState(false);
   const { values, setFieldValue } = useFormikContext<FormikValues>();
-  const [field, meta] = useField(name);
+  const [field, meta, helpers] = useField(name);
   const [options, setOptions] = useState<
     readonly { label: string; id: number }[]
   >([]);
@@ -113,6 +113,14 @@ const AsyncAutocompleteSelect = ({
   ): result is currencies.GetCurrenciesResult {
     return currencies.GET_CURRENCIES_RESULT.is(result);
   }
+  const onBlur = useCallback(() => helpers.setTouched(true), [helpers]);
+  const errorMsg = useMemo(
+    () =>
+      meta.touched && Boolean(meta.error)
+        ? meta.touched && (meta.error as string)
+        : null,
+    [meta.touched, meta.error]
+  );
 
   useEffect(() => {
     let active = true;
@@ -304,13 +312,17 @@ const AsyncAutocompleteSelect = ({
         />
       ));
     },
+    onBlur,
     renderInput: (params) => (
       <StyledTextField
         {...params}
         size="small"
         label={label}
+        error={!!errorMsg}
+        helperText={errorMsg}
         InputProps={{
           ...params.InputProps,
+
           endAdornment: (
             <React.Fragment>
               {loading ? <CircularProgress color="inherit" size={20} /> : null}

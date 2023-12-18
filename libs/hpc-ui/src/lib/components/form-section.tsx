@@ -1,6 +1,5 @@
 import tw from 'twin.macro';
-import React from 'react';
-import { styled } from '../theme';
+import React, { useMemo } from 'react';
 import {
   Container,
   Card,
@@ -14,17 +13,18 @@ export interface SectionProps {
   children: React.ReactNode;
 }
 
-const StyledCardHeader = tw(CardHeader)`
-  bg-unocha-primary-light
-`;
-
 const FormSection = ({ title, children }: SectionProps) => {
+  const containerInlineStyle = useMemo(
+    () => ({
+      maxWidth: 'none',
+    }),
+    []
+  );
+
   return (
-    <Container maxWidth="lg">
+    <Container style={containerInlineStyle}>
       <Card variant="outlined">
-        <StyledCardHeader
-          title={<Typography variant="h5">{title}</Typography>}
-        />
+        <CardHeader title={<Typography variant="h5">{title}</Typography>} />
         <CardContent>{children}</CardContent>
       </Card>
     </Container>
