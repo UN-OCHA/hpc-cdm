@@ -51,6 +51,9 @@ const SingleSelect = ({
     labelId: `${label.toLowerCase().replace(' ', '-').trim()}-label`,
     label: label,
     inputProps: { readOnly: readonly },
+    renderValue: (value) => {
+      return (value as unknown as FormObjectValue).displayLabel;
+    },
     input: (
       <OutlinedInput
         endAdornment={
@@ -60,7 +63,7 @@ const SingleSelect = ({
               onClick={() => setFieldValue(name, '')}
               size="small"
             >
-              && <CloseIcon fontSize="small" />
+              <CloseIcon fontSize="small" />
             </StyledIconButton>
           )
         }

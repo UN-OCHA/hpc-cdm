@@ -18,6 +18,7 @@ import { Button, ButtonLink, ButtonSubmit } from './lib/components/button';
 import CheckBox from './lib/components/form-fields/checkbox';
 import DatePicker from './lib/components/form-fields/date-picker';
 import DevEnvWarning from './lib/components/development-environment-warning';
+import Divider from './lib/components/divider';
 import DraggableList from './lib/components/draggable-list';
 import ErrorMessage from './lib/components/error-message';
 import Header from './lib/components/header';
@@ -59,6 +60,7 @@ const COMPONENTS = {
   CheckBox,
   DatePicker,
   DevEnvWarning,
+  Divider,
   DraggableList,
   ErrorMessage,
   Header,

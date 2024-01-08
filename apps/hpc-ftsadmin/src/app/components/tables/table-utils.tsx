@@ -1,11 +1,6 @@
 import tw from 'twin.macro';
 import { LanguageKey, t } from '../../../i18n';
-import {
-  FilterKeys,
-  ParsedFlowsFilter,
-  Filter,
-  isKey,
-} from '../../utils/parse-filters';
+import { FilterKeys, Filter, isKey } from '../../utils/parse-filters';
 import EllipsisText from '../../utils/ellipsis-text';
 import {
   Chip,
@@ -17,6 +12,7 @@ import {
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import { C, dataLoader } from '@unocha/hpc-ui';
 import { getEnv } from '../../context';
+import { flows } from '@unocha/hpc-data';
 
 export type Query = {
   page: number;
@@ -157,7 +153,7 @@ font-bold
 `;
 interface TotalAmountUSDProps {
   lang: LanguageKey;
-  parsedFilters: ParsedFlowsFilter;
+  parsedFilters: flows.FlowFilters;
   abortSignal?: AbortSignal;
   setAmount: (value: string) => void;
   amount?: string;

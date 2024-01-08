@@ -60,7 +60,11 @@
         "destinationPlan": "目标计划",
         "destinationCountry": "目标国家",
         "destinationYear": "目标年份",
-        "details": "详情"
+        "details": "详情",
+        "exchangeRate": "汇率",
+        "flowDate": "流动日期",
+        "newMoney": "新货币",
+        "decisionDate": "决策日期"
       },
       "update": "更新",
       "new": "新建",
@@ -77,6 +81,7 @@
       "totalAmount": "总金额：",
       "sortBy": "排序方式",
       "rejectPendingFlows": "拒绝待处理的资金流",
+      "downloadDisabled": "仅允许下载最多50,000个流",
       "tableSettings": {
         "title": "表格设置",
         "save": "保存",
@@ -96,6 +101,7 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "包括匹配的停车流的子项",
+        "restricted": "受限",
         "flowID": "资金流ID",
         "amountUSD": "金额（美元）",
         "keywords": "关键词",
@@ -126,6 +132,19 @@
       "showMore": "显示更多",
       "tooltips": {
         "filters": "筛选器"
+      }
+    },
+    "keywordTable": {
+      "headers": {
+        "id": "ID",
+        "name": "名称",
+        "relatedFlows": "相关流程",
+        "public": "公开"
+      },
+      "modal": {
+        "text": "确定要删除此关键词吗？",
+        "principalButton": "删除",
+        "secondaryButton": "取消"
       }
     },
     "pendingFlowsFilter": {
@@ -204,10 +223,40 @@
         "save": "保存",
         "info": "离开而没有点击 '保存' 按钮将不会更新表格"
       }
+    },
+    "organizationUpdateCreate": {
+      "fields": {
+        "name": "组织名称",
+        "abbreviation": "组织缩写",
+        "nativeName": "另一种语言中的名称",
+        "locations": "国家",
+        "url": "网站URL",
+        "active": "活动",
+        "verified": "已验证",
+        "notes": "备注",
+        "organizationTypes": "组织类型",
+        "organizationLevel": "组织级别",
+        "parent": "母组织",
+        "collectiveInd": "集体组织",
+        "comments": "组织描述"
+      },
+      "errors": {
+        "conflict": "该组织名称已存在",
+        "unknown": "创建/更新组织时发生意外错误",
+        "user_error": "提供的值不正确或组织名称已存在"
+      },
+      "modal": {
+        "text": "您确定要删除此流程吗？所有信息将被删除。",
+        "principalButton": "删除",
+        "secondaryButton": "取消"
+      },
+      "create": "创建",
+      "update": "更新"
     }
   },
   "navigation": {
     "flows": "资金流",
+    "keywords": "关键词",
     "pendingFlows": "待处理的资金流",
     "organizations": "组织",
     "rpm": "响应规划模块",
@@ -218,6 +267,9 @@
   "routes": {
     "flows": {
       "title": "搜索资金流"
+    },
+    "keywords": {
+      "title": "管理关键词"
     },
     "pendingFlows": {
       "title": "搜索待处理流程"

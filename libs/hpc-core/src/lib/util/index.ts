@@ -48,38 +48,42 @@ export const hashFileInBrowser = async (data: ArrayBuffer): Promise<string> => {
   const digest = await crypto.subtle.digest('SHA-256', data);
   return arrayBufferToHex(digest);
 };
-
-export const setLocalStorageItem = <T, K extends string>(
-  key: K,
-  value: T
+/**
+ * Typed function to set localStorage, K must be a type/interface representing the content of your localStorage
+ */
+export const setLocalStorageItem = <K>(
+  key: keyof K,
+  value: K[keyof K]
 ): void => {
   try {
     const serializedValue = JSON.stringify(value);
-    localStorage.setItem(key, serializedValue);
+    localStorage.setItem(key.toString(), serializedValue);
   } catch (error) {
-    console.error(`Error setting ${key} in localStorage: ${error}`);
+    console.error(`Error setting ${key.toString()} in localStorage: ${error}`);
   }
 };
 
-export const getLocalStorageItem = <T, K extends string>(
-  key: K,
-  defaultValue: T
-): T => {
+export const getLocalStorageItem = <K>(
+  key: keyof K,
+  defaultValue: K[keyof K]
+): K[keyof K] => {
   try {
-    const item = localStorage.getItem(key);
+    const item = localStorage.getItem(key.toString());
     if (item === null) {
       return defaultValue;
     }
 
-    const parsedValue = JSON.parse(item) as T;
+    const parsedValue = JSON.parse(item) as K[keyof K];
     if (typeof parsedValue === 'undefined') {
-      console.error(`Corrupted data in localStorage for ${key}`);
+      console.error(`Corrupted data in localStorage for ${key.toString()}`);
       return defaultValue;
     }
 
     return parsedValue;
   } catch (error) {
-    console.error(`Error getting ${key} from localStorage: ${error}`);
+    console.error(
+      `Error getting ${key.toString()} from localStorage: ${error}`
+    );
     return defaultValue;
   }
 };

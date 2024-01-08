@@ -7,6 +7,7 @@ const ORGANIZATIONS = '/organizations';
 const ORGANIZATION = `${ORGANIZATIONS}/:id`;
 const ADD_ORGANIZATION = `${ORGANIZATIONS}/add`;
 const FLOW = `${FLOWS}/:id`;
+const KEYWORDS = '/keywords';
 
 const replacePlaceholders = (
   path: string,
@@ -36,3 +37,5 @@ export const organizationRoot = () => ORGANIZATION + ROOT;
 export const addOrganization = () => replacePlaceholders(ADD_ORGANIZATION, {});
 
 export const flow = (id: number) => replacePlaceholders(FLOW, { id });
+
+export const keywords = () => replacePlaceholders(KEYWORDS, {});

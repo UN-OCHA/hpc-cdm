@@ -1,12 +1,14 @@
-import { categories, flows } from '@unocha/hpc-data';
+import { categories, flows, organizations } from '@unocha/hpc-data';
 import { FlowsFilterValuesREST } from '../components/filters/filter-flows-REST-table';
-import { formValueToID, formValueToLabel } from './map-functions';
 import { PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
 import { Strings } from '../../i18n/iface';
 import { OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { Dayjs } from 'dayjs';
+import { FlowsFilterValues } from '../components/filters/filter-flows-table';
+import { formValueToID, formValueToLabel } from './map-functions';
 
 export type Filters =
+  | FlowsFilterValues
   | FlowsFilterValuesREST
   | PendingFlowsFilterValues
   | OrganizationFilterValues;
@@ -331,6 +333,9 @@ export const parseFlowFiltersREST = (
           res.includeChildrenOfParkedFlows = filters[key]?.value as boolean;
           break;
         }
+        case 'restricted': {
+          break;
+        }
         default: {
           const remainingKey: keyof ParsedFlowFiltersREST = key;
           res[remainingKey] = filters[key]?.value as string;
@@ -342,40 +347,26 @@ export const parseFlowFiltersREST = (
   return res;
 };
 
-export interface ParsedFlowsFilter {
-  flowFilters: {
-    id?: number[];
-    activeStatus?: boolean;
-    status?: string;
-    type?: string;
-    amountUSD?: number;
-    reporterRefCode?: number;
-    sourceSystemID?: number;
-    legacyID?: number;
-  };
-  flowObjectFilters: Array<{
-    objectID: number;
-    direction: 'source' | 'destination';
-    objectType: FlowObjectTypes;
-  }>;
-  pending?: boolean;
-  flowCategoryFilters: Array<{
-    id: number;
-    group: categories.CategoryGroup;
-  }>;
-  includeChildrenOfParkedFlows?: boolean;
-}
+const parseActiveStatus = (
+  activeStatus: 'All' | 'true' | 'false'
+): boolean | undefined => {
+  if (activeStatus === 'true') return true;
+  else if (activeStatus === 'false') return false;
+
+  return undefined;
+};
 export const parseFlowFilters = (
   filters: Filter<keyof Strings['components']['flowsFilter']['filters']>,
   pending?: boolean
-): ParsedFlowsFilter => {
-  const res: ParsedFlowsFilter = {
+): flows.SearchFlowsParams => {
+  const res: flows.SearchFlowsParams = {
     flowFilters: {},
     flowObjectFilters: [],
     pending: pending,
     flowCategoryFilters: [],
   };
-
+  if (!res.flowFilters || !res.flowObjectFilters || !res.flowCategoryFilters)
+    return res;
   for (const key in filters) {
     if (isKey(filters, key)) {
       switch (key) {
@@ -425,17 +416,28 @@ export const parseFlowFilters = (
         }
         case 'flowType':
         case 'flowStatus': {
-          const parsedName = key === 'flowStatus' ? 'status' : 'type';
-          res.flowFilters[parsedName] = filters[key]?.value as string;
+          if (filters[key]) {
+            res[
+              (filters[key]!.value as FormObjectValue).value as 'commitment'
+            ] = true; //TODO: Propperly write this,
+          }
+          break;
+        }
+        case 'restricted': {
+          res.flowFilters.restricted = filters.restricted?.value as boolean;
           break;
         }
         case 'includeChildrenOfParkedFlows': {
-          res.includeChildrenOfParkedFlows = filters
-            .includeChildrenOfParkedFlows?.value as boolean;
+          res[key] = filters[key]?.value as boolean;
           break;
         }
         case 'flowActiveStatus': {
-          res.flowFilters.activeStatus = filters[key]?.value as boolean;
+          res.flowFilters.activeStatus = parseActiveStatus(
+            (filters[key]?.value as FormObjectValue).value as
+              | 'All'
+              | 'false'
+              | 'true'
+          );
           break;
         }
         case 'keywords': {
@@ -457,20 +459,10 @@ export const parseFlowFilters = (
   return res;
 };
 
-interface ParsedOrganizationFilters {
-  status?: string;
-  date?: string;
-  locations?: Array<{ name: string; id: number }>;
-  verified?: string;
-  parentOrganization?: { name: string; id: number };
-  organizationType?: { name: string; id: number };
-  organization?: { name: string };
-}
-
 export const parseOrganizationFilters = (
   filters: Filter<keyof Strings['components']['organizationsFilter']['filters']>
-): ParsedOrganizationFilters => {
-  const res: ParsedOrganizationFilters = {};
+): organizations.SearchOrganizationParams => {
+  const res: organizations.SearchOrganizationParams = { search: {} };
   console.log(filters);
   for (const key in filters) {
     if (isKey(filters, key)) {
@@ -478,7 +470,7 @@ export const parseOrganizationFilters = (
         case 'parentOrganization':
         case 'organizationType': {
           const val = filters[key]?.value as FormObjectValue;
-          res[key] = {
+          res.search[key] = {
             name: val.displayLabel,
             id: parseInt(val.value),
           };
@@ -488,18 +480,20 @@ export const parseOrganizationFilters = (
           const locations = filters.locations
             ?.value as OrganizationFilterValues['locations'];
           if (locations) {
-            res[key] = [
+            res.search[key] = [
               { name: locations.displayLabel, id: parseInt(locations.value) },
             ];
           }
           break;
         }
         case 'organization': {
-          res.organization = { name: filters?.organization?.value as string };
+          res.search.organization = {
+            name: filters?.organization?.value as string,
+          };
           break;
         }
         default: {
-          res[key] = filters[key]?.value as string;
+          res.search[key] = filters[key]?.value as string;
           break;
         }
       }

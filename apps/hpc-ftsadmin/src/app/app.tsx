@@ -18,6 +18,7 @@ import { AppContext, contextFromEnv } from './context';
 import { Z_INDEX } from './layout';
 import PageFlowsListREST from './pages/flows/flows-list-REST';
 import PageFlowsList from './pages/flows/flows-list';
+import PageKeywordsList from './pages/keywords/keyword-list';
 import PageNotFound from './pages/not-found';
 import PageNotLoggedIn from './pages/not-logged-in';
 import PagePendingFlowsList from './pages/flows/pending-flows-list';
@@ -140,6 +141,10 @@ export const App = () => {
                             label: t.t(lang, (s) => s.navigation.organizations),
                             path: paths.organizations(),
                           },
+                          {
+                            label: t.t(lang, (s) => s.navigation.keywords),
+                            path: paths.keywords(),
+                          },
                         ]}
                         className={CLASSES.CONTAINER.FLUID}
                         externalLinks={[
@@ -213,6 +218,10 @@ export const App = () => {
                         <Route
                           path={paths.addOrganization()}
                           element={<PageOrganization />}
+                        />
+                        <Route
+                          path={paths.keywords()}
+                          element={<PageKeywordsList />}
                         />
                         <Route element={<PageNotFound />} />
                       </Routes>

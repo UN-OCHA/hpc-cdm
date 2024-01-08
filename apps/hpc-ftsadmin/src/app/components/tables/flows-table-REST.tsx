@@ -34,7 +34,6 @@ import {
   isKey,
   parseFlowFiltersREST,
   parseFormFilters,
-  parseOutInitialValues,
 } from '../../utils/parse-filters';
 import { FLOWS_FILTER_INITIAL_VALUES_REST } from '../filters/filter-flows-REST-table';
 import { Form, Formik } from 'formik';
@@ -47,10 +46,7 @@ import {
 } from '../../utils/table-headers';
 import { Strings } from '../../../i18n/iface';
 import { util } from '@unocha/hpc-core';
-import {
-  InfoSettings,
-  LocalStorageFTSAdminKey,
-} from '../../utils/local-storage-type';
+import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { downloadExcel } from '../../utils/download-excel';
 import {
   ChipDiv,
@@ -107,10 +103,7 @@ export default function FlowsTableREST(props: FlowsTableRESTProps) {
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
   const [tableInfoDisplay, setTableInfoDisplay] = useState(
-    util.getLocalStorageItem<InfoSettings, LocalStorageFTSAdminKey>(
-      'infoSettings',
-      { tableSettings: true }
-    ).tableSettings
+    util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
   const handleFlowList = () => {
     return props.flowList
@@ -141,10 +134,7 @@ export default function FlowsTableREST(props: FlowsTableRESTProps) {
   }, [query.filters]);
 
   const handleTableSettingsInfoClose = () => {
-    util.setLocalStorageItem<InfoSettings, LocalStorageFTSAdminKey>(
-      'infoSettings',
-      { tableSettings: false }
-    );
+    util.setLocalStorageItem<LocalStorageSchema>('tableSettings', false);
     setTableInfoDisplay(false);
   };
 
@@ -359,7 +349,7 @@ export default function FlowsTableREST(props: FlowsTableRESTProps) {
                         : '--'}
                     </TableCell>
                   );
-                case 'source.organization.name':
+                case 'organization.source.name':
                   return (
                     <TableCell
                       key={`${row.id}v${row.versionID}_source.organization.name`}
@@ -389,7 +379,7 @@ export default function FlowsTableREST(props: FlowsTableRESTProps) {
                           ))}
                     </TableCell>
                   );
-                case 'destination.organization.name':
+                case 'organization.destination.name':
                   return (
                     <TableCell
                       key={`${row.id}v${row.versionID}_destination.organization.name`}
@@ -407,7 +397,7 @@ export default function FlowsTableREST(props: FlowsTableRESTProps) {
                           ))}
                     </TableCell>
                   );
-                case 'destination.planVersion.name':
+                case 'planVersion.destination.name':
                   return (
                     <TableCell
                       key={`${row.id}v${row.versionID}_destination.planVersion.name`}
@@ -419,7 +409,7 @@ export default function FlowsTableREST(props: FlowsTableRESTProps) {
                         : '--'}
                     </TableCell>
                   );
-                case 'destination.location.name':
+                case 'location.destination.name':
                   return (
                     <TableCell
                       key={`${row.id}v${row.versionID}_destination.location.name`}
@@ -433,7 +423,7 @@ export default function FlowsTableREST(props: FlowsTableRESTProps) {
                         : '--'}
                     </TableCell>
                   );
-                case 'destination.usageYear.year':
+                case 'usageYear.destination.year':
                   return (
                     <TableCell
                       key={`${row.id}v${row.versionID}_destination.usageYear.year`}
@@ -701,8 +691,8 @@ export default function FlowsTableREST(props: FlowsTableRESTProps) {
                           query.tableHeaders,
                           lang,
                           'flows',
-                          setQuery,
-                          query
+                          query,
+                          setQuery
                         )}
                         onClick={(element) =>
                           setQuery({
@@ -710,8 +700,8 @@ export default function FlowsTableREST(props: FlowsTableRESTProps) {
                             tableHeaders: encodeTableHeaders(
                               element as any, // TO DO: remove any
                               'flows',
-                              setQuery,
-                              query
+                              query,
+                              setQuery
                             ),
                           })
                         }

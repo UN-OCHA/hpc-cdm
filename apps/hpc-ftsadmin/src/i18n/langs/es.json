@@ -60,7 +60,11 @@
         "destinationPlan": "Plan de destino",
         "destinationCountry": "País de destino",
         "destinationYear": "Año de destino",
-        "details": "Detalles"
+        "details": "Detalles",
+        "exchangeRate": "Tipo de cambio",
+        "flowDate": "Fecha del flujo",
+        "newMoney": "Nueva moneda",
+        "decisionDate": "Fecha de decisión"
       },
       "update": "Actualizar",
       "new": "Nuevo",
@@ -77,6 +81,7 @@
       "sortBy": "Ordenar por",
       "totalAmount": "Monto Total：",
       "rejectPendingFlows": "Rechazar flujos pendientes",
+      "downloadDisabled": "Descarga solo permitida para un máximo de 50.000 flujos",
       "tableSettings": {
         "title": "Configuración de la tabla",
         "save": "Guardar",
@@ -96,6 +101,7 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "Incluir hijos de flujos estacionados coincidentes",
+        "restricted": "Restringido",
         "flowID": "ID del Flujo",
         "amountUSD": "Monto en USD",
         "keywords": "Palabras Clave",
@@ -123,6 +129,19 @@
       "showMore": "Mostrar Más",
       "tooltips": {
         "filters": "Filtros"
+      }
+    },
+    "keywordTable": {
+      "headers": {
+        "id": "ID",
+        "name": "Nombre",
+        "relatedFlows": "Flujos relacionados",
+        "public": "Público"
+      },
+      "modal": {
+        "text": "¿Estás seguro de que quieres eliminar esta Palabra Clave?",
+        "principalButton": "Eliminar",
+        "secondaryButton": "Cancelar"
       }
     },
     "pendingFlowsFilter": {
@@ -201,10 +220,40 @@
         "save": "Guardar",
         "info": "Salir sin hacer clic en el botón 'Guardar' no actualizará la tabla"
       }
+    },
+    "organizationUpdateCreate": {
+      "fields": {
+        "name": "Nombre de la organización",
+        "abbreviation": "Abreviatura de la organización",
+        "nativeName": "Nombre en otro idioma",
+        "locations": "País(es)",
+        "url": "URL del sitio web",
+        "active": "Activo",
+        "verified": "Verificado",
+        "notes": "Comentarios",
+        "organizationTypes": "Tipo de organización",
+        "organizationLevel": "Nivel de organización",
+        "parent": "Organización principal",
+        "collectiveInd": "Organización colectiva",
+        "comments": "Descripción de la organización"
+      },
+      "errors": {
+        "conflict": "El nombre de esta organización ya existe",
+        "unknown": "Error inesperado al crear/actualizar la organización",
+        "user_error": "Valores incorrectos proporcionados o el nombre de la organización ya existe"
+      },
+      "modal": {
+        "text": "¿Estás seguro de que quieres eliminar este flujo? Toda la información sera eliminada.",
+        "principalButton": "Eliminar",
+        "secondaryButton": "Cancelar"
+      },
+      "create": "Crear",
+      "update": "Actualizar"
     }
   },
   "navigation": {
     "flows": "Flujos",
+    "keywords": "Palabras Clave",
     "pendingFlows": "Flujos Pendientes",
     "organizations": "Organizaciones",
     "rpm": "Módulo de Planificación de Respuesta",
@@ -215,6 +264,9 @@
   "routes": {
     "flows": {
       "title": "Buscar flujos de financiamiento"
+    },
+    "keywords": {
+      "title": "Gestionar Palabras Clave"
     },
     "pendingFlows": {
       "title": "Buscar flujos pendientes"

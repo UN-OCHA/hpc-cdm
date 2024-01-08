@@ -11,10 +11,7 @@ import {
   encodeFilters,
 } from '../../utils/parse-filters';
 import { LanguageKey, t } from '../../../i18n';
-import {
-  InfoSettings,
-  LocalStorageFTSAdminKey,
-} from '../../utils/local-storage-type';
+import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { util } from '@unocha/hpc-core';
 import { Alert } from '@mui/material';
 import { Query } from '../tables/table-utils';
@@ -89,13 +86,10 @@ export const FilterFlowsTableREST = (props: Props) => {
   const { environment, setQuery, query, lang } = props;
 
   const [tableInfoDisplay, setTableInfoDisplay] = useState(
-    util.getLocalStorageItem('infoSettings', true)
+    util.getLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', true)
   );
   const handleTableSettingsInfoClose = () => {
-    util.setLocalStorageItem<InfoSettings, LocalStorageFTSAdminKey>(
-      'infoSettings',
-      { filterCommaSeparate: false }
-    );
+    util.setLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', false);
     setTableInfoDisplay(false);
   };
 

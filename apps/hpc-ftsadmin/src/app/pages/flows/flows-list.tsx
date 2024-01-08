@@ -85,7 +85,7 @@ export default (props: Props) => {
           return acc;
         }, [] as string[])
       ),
-      'updatedAt'
+      'flow.updatedAt'
     ),
     orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
     filters: withDefault(JsonParam, JSON.stringify({})),

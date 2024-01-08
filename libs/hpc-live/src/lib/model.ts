@@ -31,7 +31,7 @@ interface URLInterface {
   };
 }
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH';
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 interface RequestInit {
   method?: HttpMethod;
   headers: {
@@ -455,6 +455,31 @@ export class LiveModel implements Model {
           },
           resultType: categories.GET_CATEGORIES_RESULT,
         }),
+      getKeywords: () =>
+        this.call({
+          pathname: '/v2/category',
+          queryParams: {
+            group: 'keywords',
+            scopes: 'relatedCount',
+          },
+          resultType: categories.GET_KEYWORDS_RESULT,
+        }),
+      deleteKeyword: (params) =>
+        this.call({
+          pathname: `/v2/category/${params.id}`,
+          method: 'DELETE',
+          resultType: categories.DELETE_KEYWORD_RESULT,
+        }),
+      updateKeyword: (params) =>
+        this.call({
+          pathname: `/v2/category/${params.id}`,
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data: { data: { ...params } },
+          },
+          resultType: categories.CATEGORY,
+        }),
     };
   }
   get emergencies(): emergencies.Model {
@@ -535,6 +560,13 @@ export class LiveModel implements Model {
         }, ${
           params.sortField ? 'sortField: ' + '"' + params.sortField + '"' : ''
         }
+        ${params.carryover ? 'carryover: true' : ''}
+        ${params.commitment ? 'commitment: true' : ''}
+        ${params.paid ? 'paid: true' : ''}
+        ${params.pledged ? 'pledged: true' : ''}
+        ${params.parked ? 'parked: true' : ''}
+        ${params.pass_through ? 'pass_through: true' : ''}
+        ${params.standard ? 'standard: true' : ''}
         ${
           params.prevPageCursor
             ? 'prevPageCursor: ' + '"' + params.prevPageCursor + '"'
@@ -577,6 +609,10 @@ export class LiveModel implements Model {
               versionID
               activeStatus
               restricted
+              exchangeRate
+              flowDate
+              newMoney
+              decisionDate
               categories {
                 id
                 name
@@ -790,6 +826,12 @@ export class LiveModel implements Model {
             data: { organization: { ...params } },
           },
           resultType: organizations.UPDATE_ORGANIZATION_RESULT,
+        }),
+      deleteOrganization: (params) =>
+        this.call({
+          pathname: `/v1/organization/delete/${params.id}`,
+          method: 'POST',
+          resultType: organizations.DELETE_ORGANIZATION_RESULT,
         }),
     };
   }

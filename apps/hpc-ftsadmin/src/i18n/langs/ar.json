@@ -60,7 +60,11 @@
         "destinationPlan": "الخطة الوجهة",
         "destinationCountry": "البلد الوجهة",
         "destinationYear": "العام الوجهة",
-        "details": "التفاصيل"
+        "details": "التفاصيل",
+        "exchangeRate": "سعر الصرف",
+        "flowDate": "تاريخ التدفق",
+        "newMoney": "عملة جديدة",
+        "decisionDate": "تاريخ القرار"
       },
       "update": "تحديث",
       "new": "جديد",
@@ -77,6 +81,7 @@
       "sortBy": "الترتيب حسب",
       "totalAmount": "المبلغ الإجمالي: ",
       "rejectPendingFlows": "رفض الأنسجة المعلقة",
+      "downloadDisabled": "التنزيل مسموح فقط لأقصى 50،000 تدفق",
       "tableSettings": {
         "title": "إعدادات الجدول",
         "save": "حفظ",
@@ -97,6 +102,7 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "تضمين أطفال التدفق المتطابق",
+        "restricted": "مقيد",
         "flowID": "معرف التدفق",
         "amountUSD": "المبلغ بالدولار الأمريكي",
         "keywords": "الكلمات الرئيسية",
@@ -124,6 +130,19 @@
       "showMore": "عرض المزيد",
       "tooltips": {
         "filters": "المرشحات"
+      }
+    },
+    "keywordTable": {
+      "headers": {
+        "id": "المعرف",
+        "name": "الاسم",
+        "relatedFlows": "التدفقات ذات الصلة",
+        "public": "عام"
+      },
+      "modal": {
+        "text": "هل أنت متأكد أنك تريد حذف هذه الكلمة الرئيسية؟",
+        "principalButton": "حذف",
+        "secondaryButton": "إلغاء"
       }
     },
     "pendingFlowsFilter": {
@@ -202,10 +221,40 @@
         "save": "حفظ",
         "info": "المغادرة دون النقر على زر 'حفظ' لن يحدث تحديثا للجدول"
       }
+    },
+    "organizationUpdateCreate": {
+      "fields": {
+        "name": "اسم المؤسسة",
+        "abbreviation": "اختصار المؤسسة",
+        "nativeName": "الاسم بلغة أخرى",
+        "locations": "البلد(ان)",
+        "url": "رابط الموقع الإلكتروني",
+        "active": "نشط",
+        "verified": "تم التحقق",
+        "notes": "تعليقات",
+        "organizationTypes": "نوع المؤسسة",
+        "organizationLevel": "مستوى المؤسسة",
+        "parent": "المؤسسة الأم",
+        "collectiveInd": "مؤسسة جماعية",
+        "comments": "وصف المؤسسة"
+      },
+      "errors": {
+        "conflict": "اسم هذه المؤسسة موجود بالفعل",
+        "unknown": "خطأ غير متوقع أثناء إنشاء/تحديث المؤسسة",
+        "user_error": "القيم المقدمة غير صحيحة أو اسم المؤسسة موجود بالفعل"
+      },
+      "modal": {
+        "text": "هل أنت متأكد أنك تريد حذف هذا التدفق؟ سيتم حذف جميع المعلومات.",
+        "principalButton": "حذف",
+        "secondaryButton": "إلغاء"
+      },
+      "create": "إنشاء",
+      "update": "تحديث"
     }
   },
   "navigation": {
     "flows": "التدفقات",
+    "keywords": "الكلمات الرئيسية",
     "pendingFlows": "التدفقات المعلقة",
     "organizations": "المنظمات",
     "rpm": "وحدة تخطيط الاستجابة",
@@ -216,6 +265,9 @@
   "routes": {
     "flows": {
       "title": "البحث في التدفقات التمويلية"
+    },
+    "keywords": {
+      "title": "إدارة الكلمات الرئيسية"
     },
     "pendingFlows": {
       "title": "البحث في التدفقات المعلقة"

@@ -216,6 +216,19 @@ export const UPDATE_ORGANIZATION_RESULT = t.intersection([
 export type UpdateOrganizationResult = t.TypeOf<
   typeof UPDATE_ORGANIZATION_RESULT
 >;
+
+const DELETE_ORGANIZATION_PARAMS = t.type({
+  id: t.number,
+});
+export type DeleteOrganizationParams = t.TypeOf<
+  typeof DELETE_ORGANIZATION_PARAMS
+>;
+
+export const DELETE_ORGANIZATION_RESULT = t.undefined;
+
+export type DeleteOrganizationResult = t.TypeOf<
+  typeof DELETE_ORGANIZATION_RESULT
+>;
 export interface Model {
   getAutocompleteOrganizations(
     params: GetOrganizationsAutocompleteParams
@@ -232,4 +245,7 @@ export interface Model {
   updateOrganization(
     params: UpdateOrganizationParams
   ): Promise<UpdateOrganizationResult>;
+  deleteOrganization(
+    params: DeleteOrganizationParams
+  ): Promise<DeleteOrganizationResult>;
 }

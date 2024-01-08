@@ -6,15 +6,19 @@ import {
 import { useField } from 'formik';
 import React from 'react';
 
+type SwitchSize = 'small' | 'medium';
+type SwitchColor = 'primary' | 'error' | 'success';
 const Switch = ({
   name,
   label,
   size,
+  color,
   ...otherProps
 }: {
   name: string;
   label?: string;
-  size?: 'small' | 'medium';
+  color?: SwitchColor;
+  size?: SwitchSize;
 }) => {
   const [field] = useField(name);
 
@@ -23,7 +27,7 @@ const Switch = ({
     ...otherProps,
     label: label,
     id: name,
-    control: <SwitchMUI size={size} defaultChecked={field.value} />,
+    control: <SwitchMUI checked={field.value} size={size} color={color} />,
   };
   return <FormControlLabel {...configCheckBox} />;
 };

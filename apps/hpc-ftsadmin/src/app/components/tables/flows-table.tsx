@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Chip,
   IconButton,
@@ -22,7 +23,6 @@ import { LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
 import tw from 'twin.macro';
 import React, { useEffect, useState } from 'react';
-import { FlowsFilterValuesREST } from '../filters/filter-flows-REST-table';
 import {
   decodeFilters,
   encodeFilters,
@@ -54,10 +54,13 @@ import {
 } from './table-utils';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../paths';
+import { LocalStorageSchema } from '../../utils/local-storage-type';
+import { util } from '@unocha/hpc-core';
+import { FlowsFilterValues } from '../filters/filter-flows-table';
 
 export interface FlowsTableProps {
   headers: TableHeadersProps<FlowHeaderID>[];
-  initialValues: FlowsFilterValuesREST | PendingFlowsFilterValues;
+  initialValues: FlowsFilterValues | PendingFlowsFilterValues;
   rowsPerPageOption: number[];
   query: Query;
   setQuery: (newQuery: Query) => void;
@@ -87,6 +90,9 @@ export default function FlowsTable(props: FlowsTableProps) {
   const [totalAmountUSD, setTotalAmountUSD] = useState<string>();
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
+  const [tableInfoDisplay, setTableInfoDisplay] = useState(
+    util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
+  );
   const parsedFilters = parseFlowFilters(attributes, props.pending);
   const navigate = useNavigate();
   console.log(query.prevPageCursor);
@@ -101,10 +107,14 @@ export default function FlowsTable(props: FlowsTableProps) {
       nextPageCursor: query.nextPageCursor,
     })
   );
-
   useEffect(() => {
     setTotalAmountUSD(undefined);
   }, [query.filters]);
+
+  const handleTableSettingsInfoClose = () => {
+    util.setLocalStorageItem<LocalStorageSchema>('tableSettings', false);
+    setTableInfoDisplay(false);
+  };
 
   const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
     if (isKey(filters, fieldName)) {
@@ -161,7 +171,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     } else {
       setQuery({
         ...query,
-        orderBy: newSort.split('.').at(1) ?? 'id',
+        orderBy: newSort,
         orderDir: 'DESC',
       });
     }
@@ -332,15 +342,15 @@ export default function FlowsTable(props: FlowsTableProps) {
                         : '--'}
                     </TableCell>
                   );
-                case 'source.organization.name':
+                case 'organization.source.name':
                   return (
                     <TableCell
-                      key={`${row.id}v${row.versionID}_source.organization.name`}
+                      key={`${row.id}v${row.versionID}_organization.source.name`}
                       size="small"
                       data-test="flows-table-source-organization"
                     >
                       {row.parkedParentSource &&
-                        row.parkedParentSource.length > 0 && (
+                        row.parkedParentSource.orgName.length > 0 && (
                           <>
                             <strong>
                               {t.t(
@@ -348,8 +358,8 @@ export default function FlowsTable(props: FlowsTableProps) {
                                 (s) => s.components.flowsTable.parkedSource
                               )}
                               :{' '}
-                              {row.parkedParentSource.map(
-                                (parkedOrg) => parkedOrg.orgName
+                              {row.parkedParentSource.orgName.map(
+                                (orgName) => orgName
                               )}
                             </strong>
                             <br />
@@ -372,10 +382,10 @@ export default function FlowsTable(props: FlowsTableProps) {
                           ))}
                     </TableCell>
                   );
-                case 'destination.organization.name':
+                case 'organization.destination.name':
                   return (
                     <TableCell
-                      key={`${row.id}v${row.versionID}_destination.organization.name`}
+                      key={`${row.id}v${row.versionID}organization.destination.name`}
                       size="small"
                       data-test="flows-table-destination-organization"
                     >
@@ -396,10 +406,10 @@ export default function FlowsTable(props: FlowsTableProps) {
                           ))}
                     </TableCell>
                   );
-                case 'destination.planVersion.name':
+                case 'planVersion.destination.name':
                   return (
                     <TableCell
-                      key={`${row.id}v${row.versionID}_destination.planVersion.name`}
+                      key={`${row.id}v${row.versionID}planVersion.destination.name`}
                       size="small"
                       data-test="flows-table-plans"
                     >
@@ -408,10 +418,10 @@ export default function FlowsTable(props: FlowsTableProps) {
                         : '--'}
                     </TableCell>
                   );
-                case 'destination.location.name':
+                case 'location.destination.name':
                   return (
                     <TableCell
-                      key={`${row.id}v${row.versionID}_destination.location.name`}
+                      key={`${row.id}v${row.versionID}location.destination.name`}
                       size="small"
                       data-test="flows-table-locations"
                     >
@@ -425,10 +435,10 @@ export default function FlowsTable(props: FlowsTableProps) {
                         : '--'}
                     </TableCell>
                   );
-                case 'destination.usageYear.year':
+                case 'usageYear.destination.year':
                   return (
                     <TableCell
-                      key={`${row.id}v${row.versionID}_destination.usageYear.year`}
+                      key={`${row.id}v${row.versionID}_usageYear.destination.year`}
                       size="small"
                       data-test="flows-table-years"
                     >
@@ -499,6 +509,52 @@ export default function FlowsTable(props: FlowsTableProps) {
                           color="primary"
                         />
                       )}
+                    </TableCell>
+                  );
+                case 'flow.newMoney':
+                  return (
+                    <TableCell
+                      key={`${row.id}v${row.versionID}_flow.newMoney`}
+                      size="small"
+                      data-test="flows-table-newMoney"
+                    >
+                      {(row.newMoney ?? '--').toString()}
+                    </TableCell>
+                  );
+                case 'flow.decisionDate':
+                  return (
+                    <TableCell
+                      key={`${row.id}v${row.versionID}_flow.decisionDate`}
+                      size="small"
+                      data-test="flows-table-decisionDate"
+                    >
+                      {row.decisionDate
+                        ? Intl.DateTimeFormat().format(
+                            new Date(row.decisionDate)
+                          )
+                        : '--'}
+                    </TableCell>
+                  );
+                case 'flow.exchangeRate':
+                  return (
+                    <TableCell
+                      key={`${row.id}v${row.versionID}_flow.exchangeRate`}
+                      size="small"
+                      data-test="flows-table-exchangeRate"
+                    >
+                      {row.exchangeRate ?? '--'}
+                    </TableCell>
+                  );
+                case 'flow.flowDate':
+                  return (
+                    <TableCell
+                      key={`${row.id}v${row.versionID}_flow.flowDate`}
+                      size="small"
+                      data-test="flows-table-flowDate"
+                    >
+                      {row.flowDate
+                        ? Intl.DateTimeFormat().format(new Date(row.flowDate))
+                        : '--'}
                     </TableCell>
                   );
                 default:
@@ -660,6 +716,14 @@ export default function FlowsTable(props: FlowsTableProps) {
                         )
                       }
                       IconComponent={DownloadIcon}
+                      disabledText={
+                        data.searchFlows.total > 50_000
+                          ? t.t(
+                              lang,
+                              (s) => s.components.flowsTable.downloadDisabled
+                            )
+                          : undefined
+                      }
                     />
 
                     <TableHeaderButton
@@ -687,8 +751,8 @@ export default function FlowsTable(props: FlowsTableProps) {
                             query.tableHeaders,
                             lang,
                             'flows',
-                            setQuery,
-                            query
+                            query,
+                            setQuery
                           )}
                           onClick={(element) =>
                             setQuery({
@@ -696,8 +760,8 @@ export default function FlowsTable(props: FlowsTableProps) {
                               tableHeaders: encodeTableHeaders(
                                 element as any, // TO DO: remove any
                                 'flows',
-                                setQuery,
-                                query
+                                query,
+                                setQuery
                               ),
                             })
                           }
@@ -706,6 +770,22 @@ export default function FlowsTable(props: FlowsTableProps) {
                             width: '400px',
                             height: 'fit-content',
                           }}
+                          children={
+                            <Alert
+                              severity="info"
+                              onClose={handleTableSettingsInfoClose}
+                              sx={{
+                                display: tableInfoDisplay ? 'flex' : 'none',
+                                ...tw`mx-8 mt-4`,
+                              }}
+                            >
+                              {t.t(
+                                lang,
+                                (s) =>
+                                  s.components.flowsTable.tableSettings.info
+                              )}
+                            </Alert>
+                          }
                         />
                       </Box>
                     </Modal>

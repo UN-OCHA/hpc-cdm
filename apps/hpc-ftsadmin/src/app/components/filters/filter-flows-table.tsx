@@ -10,10 +10,7 @@ import {
   encodeFilters,
 } from '../../utils/parse-filters';
 import { t } from '../../../i18n';
-import {
-  InfoSettings,
-  LocalStorageFTSAdminKey,
-} from '../../utils/local-storage-type';
+import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { util } from '@unocha/hpc-core';
 import { Alert } from '@mui/material';
 import { Query } from '../tables/table-utils';
@@ -28,8 +25,8 @@ export interface FlowsFilterValues {
   flowID?: string[];
   amountUSD?: string;
   keywords?: Array<FormObjectValue>;
-  flowStatus?: string;
-  flowType?: string;
+  flowStatus?: FormObjectValue | null;
+  flowType?: FormObjectValue | null;
   flowActiveStatus?: string;
   reporterRefCode?: string;
   sourceSystemID?: string;
@@ -49,13 +46,14 @@ export interface FlowsFilterValues {
   destinationGlobalClusters?: Array<FormObjectValue>;
   destinationEmergencies?: Array<FormObjectValue>;
   includeChildrenOfParkedFlows?: boolean;
+  restricted?: boolean;
 }
 export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   flowID: [],
   amountUSD: '',
   keywords: [],
-  flowStatus: '',
-  flowType: '',
+  flowStatus: null,
+  flowType: null,
   flowActiveStatus: '',
   reporterRefCode: '',
   sourceSystemID: '',
@@ -75,6 +73,7 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   destinationGlobalClusters: [],
   destinationEmergencies: [],
   includeChildrenOfParkedFlows: false,
+  restricted: false,
 };
 
 const StyledDiv = tw.div`
@@ -89,15 +88,17 @@ export const FilterFlowsTable = (props: Props) => {
 
   const { lang, env } = useContext(AppContext);
   const environment = env();
-  const [tableInfoDisplay, setTableInfoDisplay] = useState(
-    util.getLocalStorageItem('infoSettings', true)
+  const [infoAlertDisplay, setInfoAlertDisplay] = useState(
+    util.getLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', true)
   );
-  const handleTableSettingsInfoClose = () => {
-    util.setLocalStorageItem<InfoSettings, LocalStorageFTSAdminKey>(
-      'infoSettings',
-      { filterCommaSeparate: false }
-    );
-    setTableInfoDisplay(false);
+
+  const queryFilters = decodeFilters(
+    query.filters,
+    FLOWS_FILTER_INITIAL_VALUES
+  );
+  const handleInfoAlertClose = () => {
+    util.setLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', false);
+    setInfoAlertDisplay(false);
   };
 
   const FORM_VALIDATION = object().shape({
@@ -110,7 +111,6 @@ export const FilterFlowsTable = (props: Props) => {
     keywords: array().of(
       object().shape({ displayLabel: string(), value: string() })
     ),
-    flowStatus: string(),
     reporterRefCode: number()
       .positive()
       .typeError('Only positive integers are accepted'),
@@ -172,10 +172,7 @@ export const FilterFlowsTable = (props: Props) => {
     <C.SearchFilter title={t.t(lang, (s) => s.components.flowsFilter.title)}>
       <Formik
         enableReinitialize
-        initialValues={decodeFilters(
-          query.filters,
-          FLOWS_FILTER_INITIAL_VALUES
-        )}
+        initialValues={queryFilters}
         validationSchema={FORM_VALIDATION}
         onSubmit={handleSubmit}
       >
@@ -195,6 +192,14 @@ export const FilterFlowsTable = (props: Props) => {
                 )}
               />
             </StyledDiv>
+            <C.Switch
+              name="restricted"
+              label={t.t(
+                lang,
+                (s) => s.components.flowsFilter.filters.restricted
+              )}
+              color="error"
+            />
             <C.Section
               title={t.t(
                 lang,
@@ -203,9 +208,9 @@ export const FilterFlowsTable = (props: Props) => {
             >
               <Alert
                 severity="info"
-                onClose={handleTableSettingsInfoClose}
+                onClose={handleInfoAlertClose}
                 sx={{
-                  display: tableInfoDisplay ? 'flex' : 'none',
+                  display: infoAlertDisplay ? 'flex' : 'none',
                   ...tw` mt-4`,
                 }}
               >
@@ -248,6 +253,7 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.flowStatus
                   )}
                   name="flowStatus"
+                  returnObject
                   fnPromise={async () => {
                     const response =
                       await environment.model.categories.getCategories({
@@ -256,7 +262,9 @@ export const FilterFlowsTable = (props: Props) => {
                     return response.map((responseValue): FormObjectValue => {
                       return {
                         displayLabel: responseValue.name,
-                        value: responseValue.id.toString(),
+                        value: responseValue.name
+                          .toLowerCase()
+                          .replace(' ', '_'),
                       };
                     });
                   }}
@@ -268,6 +276,7 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.flowType
                   )}
                   name="flowType"
+                  returnObject
                   fnPromise={async () => {
                     const response =
                       await environment.model.categories.getCategories({
@@ -276,10 +285,15 @@ export const FilterFlowsTable = (props: Props) => {
                     return response.map((responseValue) => {
                       return {
                         displayLabel: responseValue.name,
-                        value: responseValue.id.toString(),
+                        value: responseValue.name
+                          .toLocaleLowerCase()
+                          .replace(' ', '_'),
                       };
                     });
                   }}
+                  preOptions={
+                    queryFilters.flowType ? [queryFilters.flowType] : undefined
+                  }
                   hasNameValue
                 />
                 <C.SingleSelect

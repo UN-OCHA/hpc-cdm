@@ -529,6 +529,67 @@ export class Dummy {
             ];
           }
         ),
+        getKeywords: dummyEndpoint(
+          'categories.getKeywords',
+          async (): Promise<categories.GetKeywordsResult> => {
+            // Implement the dummy data retrieval logic here
+            // Replace the following line with the actual implementation
+            return [
+              {
+                id: 1158,
+                name: 'Asia 2002',
+                description: null,
+                parentID: null,
+                code: null,
+                group: 'keywords',
+                includeTotals: null,
+                createdAt: '2017-01-14T02:49:28.386Z',
+                updatedAt: '2017-01-14T02:49:28.386Z',
+                refCount: '2',
+              },
+              {
+                id: 137,
+                name: 'Carryover',
+                description: null,
+                parentID: null,
+                code: null,
+                group: 'flowType',
+                includeTotals: null,
+                createdAt: '2017-01-13T22:18:02.844Z',
+                updatedAt: '2017-01-13T22:18:02.844Z',
+                refCount: '5',
+              },
+            ];
+          }
+        ),
+        deleteKeyword: dummyEndpoint(
+          'categories.deleteKeyword',
+          async (
+            params: categories.DeleteKeywordParams
+          ): Promise<categories.DeleteKeywordResult> => {
+            // Implement the dummy data retrieval logic here
+            // Replace the following line with the actual implementation
+            return undefined;
+          }
+        ),
+        updateKeyword: dummyEndpoint(
+          'categories.updateKeyword',
+          async (params: categories.Keyword): Promise<categories.Category> => {
+            // Implement the dummy data retrieval logic here
+            // Replace the following line with the actual implementation
+            return {
+              id: 1158,
+              name: 'Asia 2002',
+              description: null,
+              parentID: null,
+              code: null,
+              group: 'keywords',
+              includeTotals: null,
+              createdAt: '2017-01-14T02:49:28.386Z',
+              updatedAt: '2017-01-14T02:49:28.386Z',
+            };
+          }
+        ),
       },
       emergencies: {
         getAutocompleteEmergencies: dummyEndpoint(
@@ -660,7 +721,7 @@ export class Dummy {
                     returnVal =
                       parseInt(a.amountUSD) > parseInt(b.amountUSD) ? 1 : -1;
                     break;
-                  case 'source.organization.name': {
+                  case 'organization.source.name': {
                     const sourceOrgA = a.organizations?.find(
                       (org) => org.refDirection === 'source'
                     );
@@ -672,7 +733,7 @@ export class Dummy {
                     }
                     break;
                   }
-                  case 'destination.organization.name': {
+                  case 'organization.destination.name': {
                     const destOrgA = a.organizations?.find(
                       (org) => org.refDirection === 'destination'
                     );
@@ -696,7 +757,7 @@ export class Dummy {
                     }
                     break;
                   }
-                  case 'destination.location.name': {
+                  case 'location.destination.name': {
                     const locationA = a.locations && a.locations[0];
                     const locationB = b.locations && b.locations[0];
                     if (!locationA) {
@@ -708,7 +769,7 @@ export class Dummy {
                     }
                     break;
                   }
-                  case 'destination.usageYear.year': {
+                  case 'usageYear.destination.year': {
                     const yearA = a.usageYears?.find(
                       (org) => org.refDirection === 'destination'
                     );
@@ -1344,7 +1405,7 @@ export class Dummy {
           }
         ),
         updateOrganization: dummyEndpoint(
-          'organizations.createOrganization',
+          'organizations.updateOrganization',
           async (
             params: organizations.UpdateOrganizationParams
           ): Promise<organizations.UpdateOrganizationResult> => {
@@ -1375,6 +1436,14 @@ export class Dummy {
                 },
               ],
             };
+          }
+        ),
+        deleteOrganization: dummyEndpoint(
+          'organizations.deleteOrganization',
+          async (
+            params: organizations.DeleteOrganizationParams
+          ): Promise<organizations.DeleteOrganizationResult> => {
+            return undefined;
           }
         ),
       },

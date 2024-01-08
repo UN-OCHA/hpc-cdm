@@ -76,7 +76,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
         offset: query.page * query.rowsPerPage,
         orderBy: query.orderBy,
         orderDir: query.orderDir,
-        ...parseOrganizationFilters(parsedFilters),
+        ...parseOrganizationFilters(parsedFilters).search,
       },
     })
   );
@@ -360,7 +360,12 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                   handleChipDelete={handleChipDelete}
                 />
                 <TopRowContainer>
-                  <Link to={paths.addOrganization()}>Add Organization</Link>
+                  <Link
+                    style={{ alignSelf: 'center' }}
+                    to={paths.addOrganization()}
+                  >
+                    Add Organization
+                  </Link>
                   <C.AsyncIconButton
                     fnPromise={() =>
                       downloadExcel<organizations.SearchOrganiation>(
@@ -407,8 +412,8 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                           query.tableHeaders,
                           lang,
                           'organizations',
-                          setQuery,
-                          query
+                          query,
+                          setQuery
                         )}
                         onClick={(element) =>
                           setQuery({
@@ -416,8 +421,8 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                             tableHeaders: encodeTableHeaders(
                               element as any, // TO DO: remove any
                               'organizations',
-                              setQuery,
-                              query
+                              query,
+                              setQuery
                             ),
                           })
                         }

@@ -5,11 +5,15 @@ import { C } from '@unocha/hpc-ui';
 import { FormObjectValue } from '../utils/parse-filters';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { organizations } from '@unocha/hpc-data';
-import { redirect, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as paths from '../paths';
-
+import { errors } from '@unocha/hpc-data';
+import { Alert, Fade } from '@mui/material';
+import { Strings } from '../../i18n/iface';
+import { array, boolean, object, string } from 'yup';
+import DeleteIcon from '@mui/icons-material/Delete';
 interface Props {
   id?: number;
   load?: () => void;
@@ -48,21 +52,6 @@ export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   collectiveInd: false,
   comments: '',
 };
-
-const Container = tw.div`
-xl:px-40
-xl:gap-x-24
-md:px-32
-md:gap-x-16
-px-20
-gap-x-10
-grid
-grid-cols-2
-`;
-const Column = tw.div`
-col-span-1
-`;
-
 const StyledDiv = tw.div`
 my-6
 me-4
@@ -70,7 +59,18 @@ lg:flex
 justify-end
 gap-x-4 
 `;
+const AlignButton = tw.div`
+self-center
+`;
+const AlertWrapper = tw.div`
+mb-4`;
 
+const InfoText = tw.p`
+mb-0
+mt-6
+italic
+text-unocha-textLight
+`;
 const formToUpdate = (
   values: AddEditOrganizationValues,
   id: number
@@ -105,20 +105,68 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
   const { lang, env } = useContext(AppContext);
   const environment = env();
   const navigate = useNavigate();
+  const type: 'update' | 'create' = id ? 'update' : 'create';
+  const [error, setError] =
+    useState<
+      keyof Strings['components']['organizationUpdateCreate']['errors']
+    >();
+
+  const FORM_VALIDATION = object().shape({
+    name: string().required('Organization Name is a required field'), //TODO: Add i18n support for all fields
+    abbreviation: string().required(),
+    nativeName: string(),
+    locations: array().of(
+      object().shape({ displayLabel: string(), value: string() })
+    ),
+    url: string(),
+    active: boolean(),
+    verified: boolean(),
+    notes: string(),
+    organizationTypes: array()
+      .of(object().shape({ displayLabel: string(), value: string() }))
+      .required(),
+    organizationLevel: object().shape({
+      displayLabel: string(),
+      value: string(),
+    }),
+    parent: object().shape({ displayLabel: string(), value: string() }),
+    collectiveInd: boolean(),
+    comments: string(),
+  });
+
+  useEffect(() => {
+    setTimeout(() => {
+      setError(undefined);
+    }, 5000);
+  }, [error]);
+
   const handleSubmit = async (values: AddEditOrganizationValues) => {
-    try {
-      if (id && load) {
-        await environment.model.organizations
-          .updateOrganization(formToUpdate(values, id))
-          .finally(load);
-      } else {
-        const org = await environment.model.organizations.createOrganization(
-          formToCreate(values)
-        );
-        navigate(paths.organization(org.id));
-      }
-    } catch {
-      console.error('ERROR WHILE UPDATING ORGANIZATION');
+    if (id && load) {
+      await environment.model.organizations
+        .updateOrganization(formToUpdate(values, id))
+        .finally(load)
+        .catch((err) => {
+          window.scrollTo(0, 0);
+          if (errors.isConflictError(err)) {
+            setError(err.code);
+          } else {
+            setError('unknown');
+          }
+        });
+    } else {
+      await environment.model.organizations
+        .createOrganization(formToCreate(values))
+        .then((org) => {
+          navigate(paths.organization(org.id));
+        })
+        .catch((err) => {
+          window.scrollTo(0, 0);
+          if (errors.isUserError(err)) {
+            setError(err.code);
+          } else {
+            setError('unknown');
+          }
+        });
     }
   };
   return (
@@ -128,94 +176,194 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
         initialValues ? initialValues : ADD_EDIT_ORGANIZATION_INITIAL_VALUES
       }
       onSubmit={handleSubmit}
+      validationSchema={FORM_VALIDATION}
     >
       {({ initialValues }) => (
         <Form>
-          <Container>
-            <Column>
-              <C.TextFieldWrapper
-                label="Organization Name"
-                name="name"
-                type="text"
-              />
-              <C.TextFieldWrapper
-                label="Organization Abbreviation"
-                name="abbreviation"
-                type="text"
-              />
-              <C.TextFieldWrapper
-                label="Name in Another Language"
-                name="nativeName"
-                type="text"
-              />
-
-              <C.AsyncAutocompleteSelect
-                label="Country(ies)"
-                name="locations"
-                fnPromise={environment.model.locations.getAutocompleteLocations}
-                isMulti
-              />
-              <C.TextFieldWrapper label="Website URL" name="url" type="text" />
-
-              <C.Switch label="Active" name="active" />
-
-              <C.Switch label="Verified" name="verified" />
-            </Column>
-            <Column>
-              <C.TextFieldWrapper
-                label="Comments"
-                name="notes"
-                type="text"
-                textarea
-              />
-              <C.AsyncAutocompleteSelect
-                label="Organization Type"
-                name="organizationTypes"
-                fnPromise={environment.model.categories.getCategories}
-                category="organizationType"
-                isMulti
-              />
-              <C.SingleSelect
-                label="Organization Level"
-                name="organizationLevel"
-                options={[
-                  initialValues.organizationLevel
-                    ? initialValues.organizationLevel
-                    : { displayLabel: '', value: '' },
-                ]}
-                readonly
-              />
-              <C.AsyncAutocompleteSelect
-                label="Parent Organization"
-                name="parent"
-                fnPromise={
-                  environment.model.organizations.getAutocompleteOrganizations
-                }
-                isAutocompleteAPI
-              />
-              <C.CheckBox
-                name="collectiveInd"
-                label="Collective Organization"
-                size="small"
-              />
-              <C.TextFieldWrapper
-                label="Organization Description"
-                name="comments"
-                type="text"
-                textarea
-              />
-
-              <StyledDiv>
-                <C.ButtonSubmit
-                  color="primary"
-                  text={t.t(
+          <Fade in={!!error}>
+            <AlertWrapper>
+              <Alert
+                severity="error"
+                sx={{
+                  display: 'flex',
+                  ...tw`mx-8 mt-4 transition-all`,
+                }}
+              >
+                {error &&
+                  t.t(
                     lang,
-                    (s) => s.components.flowsFilter.button.primary
+                    (s) => s.components.organizationUpdateCreate.errors[error]
                   )}
-                />
-              </StyledDiv>
-            </Column>
-          </Container>
+              </Alert>
+            </AlertWrapper>
+          </Fade>
+
+          <C.TextFieldWrapper
+            label={t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.fields.name
+            )}
+            name="name"
+            type="text"
+            requiered
+          />
+          <C.TextFieldWrapper
+            label={t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.fields.abbreviation
+            )}
+            name="abbreviation"
+            type="text"
+            requiered
+          />
+          <C.TextFieldWrapper
+            label={t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.fields.nativeName
+            )}
+            name="nativeName"
+            type="text"
+          />
+
+          <C.Divider />
+
+          <C.AsyncAutocompleteSelect
+            label={t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.fields.locations
+            )}
+            name="locations"
+            fnPromise={environment.model.locations.getAutocompleteLocations}
+            isMulti
+          />
+          <C.TextFieldWrapper
+            label={t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.fields.url
+            )}
+            name="url"
+            type="text"
+          />
+
+          <C.Switch
+            label={t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.fields.active
+            )}
+            name="active"
+          />
+
+          <C.Switch
+            label={t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.fields.verified
+            )}
+            name="verified"
+          />
+          <C.TextFieldWrapper
+            label={t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.fields.notes
+            )}
+            name="notes"
+            type="text"
+            textarea
+          />
+
+          <C.Divider />
+
+          <C.AsyncAutocompleteSelect
+            label={t.t(
+              lang,
+              (s) =>
+                s.components.organizationUpdateCreate.fields.organizationTypes
+            )}
+            name="organizationTypes"
+            fnPromise={environment.model.categories.getCategories}
+            category="organizationType"
+            isMulti
+          />
+          <InfoText>
+            This is an only read field that fills based on the "Organization
+            Type"
+          </InfoText>
+          <C.SingleSelect
+            label={t.t(
+              lang,
+              (s) =>
+                s.components.organizationUpdateCreate.fields.organizationLevel
+            )}
+            name="organizationLevel"
+            options={[
+              initialValues.organizationLevel
+                ? initialValues.organizationLevel
+                : { displayLabel: '', value: '' },
+            ]}
+            readonly
+          />
+
+          <C.Divider />
+
+          <C.AsyncAutocompleteSelect
+            label={t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.fields.parent
+            )}
+            name="parent"
+            fnPromise={
+              environment.model.organizations.getAutocompleteOrganizations
+            }
+            isAutocompleteAPI
+          />
+          <InfoText>
+            The Collective Organization setting indicates that the organization
+            is a 'stand-in' for one or more organizations of the same
+            Organization Type (e.g., “Red Cross Organizations”), and is used
+            when the specific organizations are not known or need to be masked
+            for security purposes
+          </InfoText>
+          <C.CheckBox
+            name="collectiveInd"
+            label={t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.fields.collectiveInd
+            )}
+            size="small"
+          />
+          <C.TextFieldWrapper
+            label={t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.fields.comments
+            )}
+            name="comments"
+            type="text"
+            textarea
+          />
+          <C.Divider />
+          <StyledDiv>
+            {id && (
+              <C.AsyncIconButton
+                fnPromise={() =>
+                  environment.model.organizations.deleteOrganization({ id })
+                }
+                IconComponent={DeleteIcon}
+                confirmModal={t.get(
+                  lang,
+                  (s) => s.components.organizationUpdateCreate.modal
+                )}
+                redirectAfterFetch={paths.organizations()}
+              />
+            )}
+            <AlignButton>
+              <C.ButtonSubmit
+                color={error ? 'secondary' : 'primary'}
+                text={t.t(
+                  lang,
+                  (s) => s.components.organizationUpdateCreate[type]
+                )}
+              />
+            </AlignButton>
+          </StyledDiv>
         </Form>
       )}
     </Formik>

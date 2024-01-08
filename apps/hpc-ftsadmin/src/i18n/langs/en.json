@@ -60,7 +60,11 @@
         "destinationPlan": "Destination Plan",
         "destinationCountry": "Destination Country",
         "destinationYear": "Destination Year",
-        "details": "Details"
+        "details": "Details",
+        "exchangeRate": "Exchange Rate",
+        "flowDate": "Flow Date",
+        "newMoney": "New Money",
+        "decisionDate": "Decision Date"
       },
       "update": "Update",
       "new": "New",
@@ -77,6 +81,7 @@
       "parkedSource": "Parked source",
       "sortBy": "Sort by",
       "rejectPendingFlows": "Reject Pending Flows",
+      "downloadDisabled": "Download only allowed for maximum 50.000 flows",
       "tableSettings": {
         "title": "Table Settings",
         "save": "Save",
@@ -96,6 +101,7 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "Include children of matching parked flows",
+        "restricted": "Restricted",
         "flowID": "Flow ID",
         "amountUSD": "Amount USD",
         "keywords": "Keywords",
@@ -123,6 +129,19 @@
       "showMore": "Show More",
       "tooltips": {
         "filters": "Filters"
+      }
+    },
+    "keywordTable": {
+      "headers": {
+        "id": "ID",
+        "name": "Name",
+        "relatedFlows": "Related Flows",
+        "public": "Public"
+      },
+      "modal": {
+        "text": "Are you sure you want to delete this keyword?",
+        "principalButton": "Delete",
+        "secondaryButton": "Cancel"
       }
     },
     "pendingFlowsFilter": {
@@ -202,10 +221,40 @@
         "save": "Save",
         "info": "Leaving without clicking the 'Save' button will not update the table"
       }
+    },
+    "organizationUpdateCreate": {
+      "fields": {
+        "name": "Organization Name",
+        "abbreviation": "Organization Abbreviation",
+        "nativeName": "Name in Another Language",
+        "locations": "Country(ies)",
+        "url": "Website URL",
+        "active": "Active",
+        "verified": "Verified",
+        "notes": "Comments",
+        "organizationTypes": "Organization Type",
+        "organizationLevel": "Organization Level",
+        "parent": "Parent Organization",
+        "collectiveInd": "Collective Organization",
+        "comments": "Organization Description"
+      },
+      "errors": {
+        "conflict": "This organization's name already exists",
+        "unknown": "Unexpected error while creating/updating organization",
+        "user_error": "Incorrect values provided or organization's name already exists"
+      },
+      "modal": {
+        "text": "Are you sure you want to delete this flow? All the information will be deleted.",
+        "principalButton": "Delete",
+        "secondaryButton": "Cancel"
+      },
+      "create": "Create",
+      "update": "Update"
     }
   },
   "navigation": {
     "flows": "Flows",
+    "keywords": "Keywords",
     "pendingFlows": "Pending Flows",
     "organizations": "Organizations",
     "rpm": "Response Planning Module",
@@ -216,6 +265,9 @@
   "routes": {
     "flows": {
       "title": "Search funding flows"
+    },
+    "keywords": {
+      "title": "Manage Keywords"
     },
     "pendingFlows": {
       "title": "Search pending flows"

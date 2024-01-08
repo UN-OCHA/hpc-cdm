@@ -32,26 +32,32 @@ const CircularProgressBox = tw.div`
 const StyledIconButton = tw(IconButton)`
   me-6`;
 
+type AsyncSingleSelectProps = {
+  name: string;
+  label: string;
+  fnPromise: () => Promise<Array<FormObjectValue>>;
+  hasNameValue?: boolean;
+  returnObject?: boolean;
+  preOptions?: Array<FormObjectValue>;
+};
 const AsyncSingleSelect = ({
   name,
   label,
   fnPromise,
   hasNameValue,
   returnObject,
+  preOptions, //TODO: Review how to properly implement already fetch data on refresh. Most likely not working fine
   ...otherProps
-}: {
-  name: string;
-  label: string;
-  fnPromise: () => Promise<Array<FormObjectValue>>;
-  hasNameValue?: boolean;
-  returnObject?: boolean;
-}) => {
+}: AsyncSingleSelectProps) => {
   const { setFieldValue } = useFormikContext<string>();
   const [field, meta] = useField<string | number | FormObjectValue>(name);
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState<Array<FormObjectValue>>([]);
-  const loading = open && options.length === 0;
-  const fieldValue = field.value;
+  const [options, setOptions] = useState<Array<FormObjectValue>>([
+    ...(preOptions ? preOptions : []),
+  ]);
+  const loading =
+    open && (options.length === 0 || (preOptions && options.length === 1));
+  console.log(field.value);
   useEffect(() => {
     if (!loading) {
       return undefined;
@@ -87,22 +93,19 @@ const AsyncSingleSelect = ({
       <OutlinedInput
         endAdornment={
           <CircularProgressBox>
-            {field.value !== '' ||
-              (typeof fieldValue !== 'string' &&
-                typeof fieldValue !== 'number' &&
-                fieldValue.value !== '' && (
-                  <StyledIconButton
-                    onClick={() =>
-                      setFieldValue(
-                        name,
-                        returnObject ? { displayLabel: '', value: '' } : ''
-                      )
-                    }
-                    size="small"
-                  >
-                    <CloseIcon fontSize="small" />
-                  </StyledIconButton>
-                ))}
+            {field.value && (
+              <StyledIconButton
+                onClick={() =>
+                  setFieldValue(
+                    name,
+                    returnObject ? { displayLabel: '', value: '' } : ''
+                  )
+                }
+                size="small"
+              >
+                <CloseIcon fontSize="small" />
+              </StyledIconButton>
+            )}
             {loading ? (
               <CircularProgress sx={tw`me-6`} color="inherit" size={20} />
             ) : null}

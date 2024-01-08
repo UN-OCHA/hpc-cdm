@@ -309,7 +309,11 @@ const FLOW = t.type({
   origCurrency: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
   externalReferences: t.array(FlowExternalReference),
   reportDetails: t.array(FlowReportDetail),
-  parkedParentSource: t.union([t.array(FlowParkedParentSource), t.null]),
+  parkedParentSource: t.union([FlowParkedParentSource, t.null]),
+  newMoney: t.union([t.boolean, t.null]),
+  decisionDate: t.union([t.string, t.null]),
+  flowDate: t.union([t.string, t.null]),
+  exchangeRate: t.union([t.string, t.null]),
 });
 
 const FLOW_RESULT = t.array(FLOW);
@@ -389,14 +393,23 @@ const FLOW_FILTERS = t.partial({
     reporterRefCode: t.number,
     sourceSystemID: t.number,
     legacyID: t.number,
+    restricted: t.boolean,
   }),
   flowObjectFilters: t.array(
     t.type({ objectID: t.number, direction: t.string, objectType: t.string })
   ),
+  commitment: t.boolean,
+  carryover: t.boolean,
+  paid: t.boolean,
+  pledged: t.boolean,
+  parked: t.boolean,
+  pass_through: t.boolean,
+  standard: t.boolean,
   flowCategoryFilters: t.array(t.type({ id: t.number, group: t.string })),
   pending: t.boolean,
   includeChildrenOfParkedFlows: t.boolean,
 });
+export type FlowFilters = t.TypeOf<typeof FLOW_FILTERS>;
 const AbortSignalType = new t.Type<AbortSignal, AbortSignal, unknown>(
   'AbortSignal',
   (input: unknown): input is AbortSignal => input instanceof AbortSignal,
@@ -404,7 +417,7 @@ const AbortSignalType = new t.Type<AbortSignal, AbortSignal, unknown>(
     input instanceof AbortSignal ? t.success(input) : t.failure(input, context),
   t.identity
 );
-export type FlowFilters = t.TypeOf<typeof FILTERS>;
+export type FlowFiltersREST = t.TypeOf<typeof FILTERS>;
 export const SEARCH_FLOWS_PARAMS = t.partial({
   limit: t.number,
   prevPageCursor: t.string,
