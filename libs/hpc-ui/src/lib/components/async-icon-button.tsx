@@ -18,6 +18,7 @@ interface AsyncIconButtonProps {
     principalButton: string;
     secondaryButton?: string;
   };
+  iconSx?: React.CSSProperties;
   redirectAfterFetch?: string;
 }
 
@@ -36,6 +37,7 @@ const AsyncIconButton = ({
   disabledText,
   tooltipText,
   confirmModal,
+  iconSx,
   redirectAfterFetch,
 }: AsyncIconButtonProps) => {
   const [loading, setLoading] = React.useState(false);
@@ -93,11 +95,11 @@ const AsyncIconButton = ({
               }
             >
               {success ? (
-                <CheckIcon />
+                <CheckIcon sx={iconSx} />
               ) : error ? (
-                <ErrorOutlineIcon />
+                <ErrorOutlineIcon sx={iconSx} />
               ) : (
-                <IconComponent />
+                <IconComponent sx={iconSx} />
               )}
             </IconButton>
 

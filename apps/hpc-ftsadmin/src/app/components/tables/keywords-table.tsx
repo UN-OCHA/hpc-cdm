@@ -116,6 +116,7 @@ const EditableRow = ({
   setEntityEdited,
   entityEdited,
 }: EditableRowProps) => {
+  const keywordIconSize = tw`h-8 w-8`;
   const env = getEnv();
   const [isEdit, setEdit] = useState(false);
 
@@ -126,7 +127,7 @@ const EditableRow = ({
           {row.name}
           <Tooltip title="Edit">
             <IconButton size="small" onClick={() => setEdit(true)}>
-              <EditIcon />
+              <EditIcon sx={keywordIconSize} />
             </IconButton>
           </Tooltip>
         </>
@@ -157,7 +158,7 @@ const EditableRow = ({
             <C.ButtonSubmit color="primary" text="Save" />
             <Tooltip title="Cancel">
               <IconButton size="small" onClick={() => setEdit(false)}>
-                <CancelIcon />
+                <CancelIcon sx={keywordIconSize} />
               </IconButton>
             </Tooltip>
           </StyledForm>
@@ -173,6 +174,7 @@ const EditableRow = ({
         confirmModal={t.get(lang, (s) => s.components.keywordTable.modal)}
         redirectAfterFetch={paths.keywords()}
         tooltipText="Delete"
+        iconSx={keywordIconSize}
       />
     </IconContainer>
   );
