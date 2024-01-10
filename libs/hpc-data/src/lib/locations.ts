@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { FLOW_OBJECT } from './flows';
 
 const LOCATION_BUILDER = {
   id: t.number,
@@ -22,7 +23,17 @@ export const LOCATION = t.type({
   children: t.array(t.type(LOCATION_BUILDER)),
 });
 
+export const LOCATION_REST = t.intersection([
+  t.type(LOCATION_BUILDER),
+  t.partial({
+    adminLevel: t.number,
+    flowObject: FLOW_OBJECT,
+    children: t.array(t.type(LOCATION_BUILDER)),
+  }),
+]);
+
 export type Location = t.TypeOf<typeof LOCATION>;
+export type LocationREST = t.TypeOf<typeof LOCATION_REST>;
 
 export const GET_LOCATIONS_AUTOCOMPLETE_PARAMS = t.type({
   query: t.string,

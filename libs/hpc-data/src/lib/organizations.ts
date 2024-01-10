@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { FLOW_OBJECT } from './flows';
 
 const ORGANIZATION_CATEGORY = t.type({
   id: t.number,
@@ -20,24 +21,29 @@ const ORGANIZATION_CATEGORY = t.type({
   }),
 });
 export type OrganizationCategory = t.TypeOf<typeof ORGANIZATION_CATEGORY>;
-export const ORGANIZATION = t.type({
-  id: t.number,
-  name: t.string,
-  nativeName: t.union([t.string, t.null]),
-  abbreviation: t.string,
-  url: t.union([t.string, t.null]),
-  parentID: t.union([t.number, t.null]),
-  comments: t.union([t.string, t.null]),
-  verified: t.boolean,
-  notes: t.union([t.string, t.null]),
-  active: t.boolean,
-  collectiveInd: t.boolean,
-  newOrganizationId: t.union([t.number, t.null]),
-  createdAt: t.string,
-  updatedAt: t.string,
-  deletedAt: t.union([t.string, t.null]),
-  categories: t.array(ORGANIZATION_CATEGORY),
-});
+export const ORGANIZATION = t.intersection([
+  t.type({
+    id: t.number,
+    name: t.string,
+    nativeName: t.union([t.string, t.null]),
+    abbreviation: t.string,
+    url: t.union([t.string, t.null]),
+    parentID: t.union([t.number, t.null]),
+    comments: t.union([t.string, t.null]),
+    verified: t.boolean,
+    notes: t.union([t.string, t.null]),
+    active: t.boolean,
+    collectiveInd: t.boolean,
+    newOrganizationId: t.union([t.number, t.null]),
+    createdAt: t.string,
+    updatedAt: t.string,
+    deletedAt: t.union([t.string, t.null]),
+    categories: t.array(ORGANIZATION_CATEGORY),
+  }),
+  t.partial({
+    flowObject: FLOW_OBJECT,
+  }),
+]);
 
 export type Organization = t.TypeOf<typeof ORGANIZATION>;
 

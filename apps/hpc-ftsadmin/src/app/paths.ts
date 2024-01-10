@@ -3,6 +3,7 @@ const FLOWS = '/flows';
 const FLOWSGRAPHQL = '/flowsGraphql';
 const PENDING_FLOWS = '/pending-flows';
 const NEW_FLOW = '/flows/add';
+const EDIT_FLOW = '/flows/edit/:flowId/version/:versionId';
 
 const replacePlaceholders = (
   path: string,
@@ -23,3 +24,11 @@ export const flowsGrahQl = () => replacePlaceholders(FLOWSGRAPHQL, {});
 export const pendingFlows = () => replacePlaceholders(PENDING_FLOWS, {});
 
 export const newFlow = () => replacePlaceholders(NEW_FLOW, {});
+
+export const editFlowSetting = (flowId: number, versionId: number) =>
+  replacePlaceholders(EDIT_FLOW, {
+    flowId,
+    versionId,
+  });
+
+export const editFlow = () => EDIT_FLOW;

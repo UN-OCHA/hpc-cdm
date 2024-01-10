@@ -192,6 +192,10 @@ export const App = () => {
                           path={paths.newFlow()}
                           element={<FlowEdit isEdit={false} />}
                         />
+                        <Route
+                          path={paths.editFlow()}
+                          element={<FlowEdit isEdit />}
+                        />
                         <Route element={<PageNotFound />} />
                       </Routes>
                     </LoggedInContainer>

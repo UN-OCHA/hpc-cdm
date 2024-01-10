@@ -15,7 +15,7 @@ const FLOW_LIST = t.keyof({
 
 export type FlowList = t.TypeOf<typeof FLOW_LIST>;
 
-const FLOW_OBJECT = t.intersection([
+export const FLOW_OBJECT = t.intersection([
   t.type({
     objectID: t.number,
     refDirection: FLOW_REF_DIRECTION,
@@ -185,7 +185,7 @@ const CREATED_BY_OR_LAST_UPDATED_BY = t.type({
   name: t.string,
 });
 
-const FLOW = t.intersection([
+const FLOW_REST = t.intersection([
   t.type({
     id: t.number,
     versionID: t.number,
@@ -227,7 +227,7 @@ const FLOW = t.intersection([
   }),
 ]);
 
-export type Flow = t.TypeOf<typeof FLOW>;
+export type Flow = t.TypeOf<typeof FLOW_REST>;
 const FLOW_GRAPHQL = t.intersection([
   t.type({
     id: t.number,
@@ -274,11 +274,12 @@ export type FlowGraphQL = t.TypeOf<typeof FLOW_GRAPHQL>;
 
 export const GET_FLOW_PARAMS = t.type({
   id: INTEGER_FROM_STRING,
+  versionId: INTEGER_FROM_STRING,
 });
 
 export type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
 
-export const GET_FLOW_RESULT = FLOW;
+export const GET_FLOW_RESULT = t.unknown; //FLOW_REST;
 
 export type GetFlowResult = t.TypeOf<typeof GET_FLOW_RESULT>;
 
@@ -387,7 +388,7 @@ export type BulkRejectPendingFlowsResults = t.TypeOf<
   typeof BULK_REJECT_PENDING_FLOWS_RESULT
 >;
 export interface Model {
-  getFlow(params: GetFlowParams): Promise<GetFlowResult>;
+  getFlow(params: GetFlowParams): Promise<any>; //Promise<GetFlowResult>
   getFlowGraphQL(params: GetFlowParams): Promise<GetFlowResult>;
   searchFlows(params: SearchFlowsParams): Promise<SearchFlowsResult>;
   searchFlowsGraphQL(

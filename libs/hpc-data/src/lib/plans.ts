@@ -3,6 +3,8 @@ import { CATEGORY } from './categories';
 import { EMERGENCY } from './emergencies';
 import { LOCATION } from './locations';
 import { USAGE_YEAR } from './usageYears';
+import { FLOW_OBJECT } from './flows';
+
 export const PLAN = t.type({
   id: t.number,
   restricted: t.boolean,
@@ -27,19 +29,24 @@ export const PLAN = t.type({
   versionTags: t.union([t.array(t.string), t.null]),
 });
 
-export const PLAN_DETAIL = t.type({
-  categories: t.array(CATEGORY),
-  createdAt: t.string,
-  emergencies: t.array(EMERGENCY),
-  governingEntities: t.array(EMERGENCY),
-  id: t.number,
-  locations: t.array(LOCATION),
-  planVersion: t.array(EMERGENCY),
-  restricted: t.boolean,
-  revisionState: t.null,
-  updatedAt: t.string,
-  years: t.array(USAGE_YEAR),
-});
+export const PLAN_DETAIL = t.intersection([
+  t.type({
+    categories: t.array(CATEGORY),
+    createdAt: t.string,
+    emergencies: t.array(EMERGENCY),
+    governingEntities: t.array(EMERGENCY),
+    id: t.number,
+    locations: t.array(LOCATION),
+    planVersion: PLAN,
+    restricted: t.boolean,
+    revisionState: t.union([t.string, t.null]),
+    updatedAt: t.string,
+    years: t.array(USAGE_YEAR),
+  }),
+  t.partial({
+    flowObject: FLOW_OBJECT,
+  }),
+]);
 
 export type Plan = t.TypeOf<typeof PLAN>;
 

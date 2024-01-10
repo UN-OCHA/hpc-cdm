@@ -437,7 +437,7 @@ export class LiveModel implements Model {
     return {
       getFlow: (params) =>
         this.call({
-          pathname: `/v2/flow/${params.id}`,
+          pathname: `/v1/flow/id/${params.id}/version/${params.versionId}`,
           resultType: flows.GET_FLOW_RESULT,
         }),
       searchFlows: (params) =>

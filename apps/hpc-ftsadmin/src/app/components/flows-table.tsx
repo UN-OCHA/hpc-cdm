@@ -23,6 +23,7 @@ import { Strings } from '../../i18n/iface';
 import { AppContext, getEnv } from '../context';
 import tw from 'twin.macro';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FlowsFilterValues } from './filter-flows-table';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import _ from 'lodash';
@@ -36,6 +37,7 @@ import { FLOWS_FILTER_INITIAL_VALUES } from '../components/filter-flows-table';
 import { Form, Formik } from 'formik';
 import { PendingFlowsFilterValues } from './filter-pending-flows-table';
 import EllipsisText from '../utils/ellipsis-text';
+import { editFlowSetting } from '../paths';
 
 export type HeaderID =
   | 'flow.id'
@@ -121,6 +123,7 @@ export default function FlowsTable(props: FlowsTableProps) {
   const { activeFormValues, attributes } = parseActiveFilters(filters);
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
+  const navigate = useNavigate();
 
   const handleFlowList = () => {
     return props.flowList
@@ -230,6 +233,11 @@ export default function FlowsTable(props: FlowsTableProps) {
     const [selectedRows, setSelectedRows] = useState<
       { id: number; versionID: number }[]
     >([]);
+
+    const handleClickOfRow = (row: flows.FlowSearchResult) => {
+      navigate(editFlowSetting(row.id, row.versionID));
+    };
+
     const handleCheckboxChange = (
       event: React.ChangeEvent<HTMLInputElement>,
       row: flows.FlowSearchResult
@@ -260,7 +268,11 @@ export default function FlowsTable(props: FlowsTableProps) {
               backgroundColor: selectedRows.map((x) => x.id).includes(row.id)
                 ? tw`bg-unocha-primary bg-opacity-10`
                 : undefined,
+              '&:hover': {
+                backgroundColor: tw`bg-unocha-primary bg-opacity-10`,
+              },
             }}
+            onClick={() => handleClickOfRow(row)}
           >
             {props.flowList === 'pending' && (
               <TableCell

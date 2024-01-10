@@ -1,11 +1,16 @@
 import * as t from 'io-ts';
-
-export const USAGE_YEAR = t.type({
-  id: t.number,
-  year: t.string,
-  createdAt: t.string,
-  updatedAt: t.string,
-});
+import { FLOW_OBJECT } from './flows';
+export const USAGE_YEAR = t.intersection([
+  t.type({
+    id: t.number,
+    year: t.string,
+    createdAt: t.string,
+    updatedAt: t.string,
+  }),
+  t.partial({
+    flowObject: FLOW_OBJECT,
+  }),
+]);
 
 export type UsageYear = t.TypeOf<typeof USAGE_YEAR>;
 

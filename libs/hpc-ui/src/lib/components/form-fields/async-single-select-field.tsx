@@ -62,6 +62,7 @@ const AsyncSingleSelect = ({
   const [options, setOptions] = useState<
     readonly { label: string; id: number }[]
   >([]);
+  const [isInitialRender, setIsInitialRender] = useState(true);
   const loading = open && options.length === 0;
 
   const onBlur = useCallback(() => helpers.setTouched(true), [helpers]);
@@ -74,9 +75,10 @@ const AsyncSingleSelect = ({
   );
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && !isInitialRender) {
       return undefined;
     }
+
     (async () => {
       try {
         const response = await fnPromise({ query: category });
@@ -84,17 +86,20 @@ const AsyncSingleSelect = ({
           return { label: responseValue.name, id: responseValue.id };
         });
         setOptions(parsedResponse);
+        setIsInitialRender(false);
       } catch (error) {
         console.error(error);
       }
     })();
   }, [loading]);
+
   const handleChange = (event: SelectChangeEvent<number>) => {
     const {
       target: { value },
     } = event;
     setFieldValue(name, value);
   };
+
   const singleSelectConfig: SelectProps<number> = {
     ...field,
     ...otherProps,
@@ -128,13 +133,6 @@ const AsyncSingleSelect = ({
     onClose: () => setOpen(false),
     size: 'small',
   };
-
-  // useEffect(() => {
-  //   if (options.length > 0) {
-  //     console.log('@@@@2')
-  //     helpers.setValue(field.value);
-  //   }
-  // }, [options, field]);
 
   if (meta && meta.touched && meta.error) {
     singleSelectConfig.error = true;

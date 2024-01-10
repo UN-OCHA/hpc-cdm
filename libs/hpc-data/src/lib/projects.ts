@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { FLOW_OBJECT } from './flows';
 
 const PDF = t.type({
   withComments: t.union([
@@ -205,24 +206,29 @@ const ProjectVersionType = t.type({
   log: t.array(t.unknown),
 });
 
-export const PROJECT_DETAIL = t.type({
-  id: t.number,
-  createdAt: t.string,
-  updatedAt: t.string,
-  code: t.union([t.string, t.null]),
-  currentPublishedVersionId: t.union([t.number, t.null]),
-  creatorParticipantId: t.union([t.number, t.null]),
-  latestVersionId: t.union([t.number, t.null]),
-  implementationStatus: t.union([t.string, t.null]),
-  pdf: t.union([PDF, t.null]),
-  sourceProjectId: t.union([t.number, t.null]),
-  name: t.string,
-  version: t.number,
-  projectVersionCode: t.string,
-  visible: t.boolean,
-  projectVersions: t.array(ProjectVersionType),
-  governingEntities: t.array(t.string),
-});
+export const PROJECT_DETAIL = t.intersection([
+  t.type({
+    id: t.number,
+    createdAt: t.string,
+    updatedAt: t.string,
+    code: t.union([t.string, t.null]),
+    currentPublishedVersionId: t.union([t.number, t.null]),
+    creatorParticipantId: t.union([t.number, t.null]),
+    latestVersionId: t.union([t.number, t.null]),
+    implementationStatus: t.union([t.string, t.null]),
+    pdf: t.union([PDF, t.null]),
+    sourceProjectId: t.union([t.number, t.null]),
+    name: t.string,
+    version: t.number,
+    projectVersionCode: t.string,
+    visible: t.boolean,
+    projectVersions: t.array(ProjectVersionType),
+    governingEntities: t.array(t.string),
+  }),
+  t.partial({
+    flowObject: FLOW_OBJECT,
+  }),
+]);
 
 export type Project = t.TypeOf<typeof PROJECT>;
 

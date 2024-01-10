@@ -92,6 +92,7 @@ const AsyncAutocompleteSelect = ({
   );
   const [isFetch, setIsFetch] = useState(false);
   const [isUsageYear, setisUsageYear] = useState(false);
+  const [isInitialRender, setIsInitialRender] = useState(true);
   const loading =
     open &&
     !isFetch &&
@@ -152,9 +153,10 @@ const AsyncAutocompleteSelect = ({
       );
     }
 
-    if (!loading) {
+    if (!loading && !isInitialRender) {
       return undefined;
     }
+
     (async () => {
       try {
         const response = await fnPromise({
@@ -237,6 +239,7 @@ const AsyncAutocompleteSelect = ({
           }
         }
         setIsFetch(true);
+        setIsInitialRender(false);
       } catch (error) {
         console.error(error);
       }
@@ -260,6 +263,14 @@ const AsyncAutocompleteSelect = ({
       setIsFetch(false);
     }
   }, [open]);
+
+  useEffect(() => {
+    if (field.value && typeof field.value === 'string' && options.length > 0) {
+      helpers.setValue(
+        options.filter((option) => option.label === field.value)[0]
+      );
+    }
+  }, [field.value, options, helpers]);
 
   const configAutocomplete: AutocompleteProps<
     { label: string; id: number; isAutoFilled?: boolean },
