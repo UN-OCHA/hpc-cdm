@@ -51,6 +51,7 @@ import {
   TableRowClick,
   TopRowContainer,
   TotalAmountUSD,
+  handleTableSettingsInfoClose,
 } from './table-utils';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../paths';
@@ -95,7 +96,6 @@ export default function FlowsTable(props: FlowsTableProps) {
   );
   const parsedFilters = parseFlowFilters(attributes, props.pending);
   const navigate = useNavigate();
-  console.log(query.prevPageCursor);
   const [state, load] = useDataLoader([query], () =>
     env.model.flows.searchFlows({
       limit: query.rowsPerPage,
@@ -110,11 +110,6 @@ export default function FlowsTable(props: FlowsTableProps) {
   useEffect(() => {
     setTotalAmountUSD(undefined);
   }, [query.filters]);
-
-  const handleTableSettingsInfoClose = () => {
-    util.setLocalStorageItem<LocalStorageSchema>('tableSettings', false);
-    setTableInfoDisplay(false);
-  };
 
   const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
     if (isKey(filters, fieldName)) {
@@ -269,7 +264,7 @@ export default function FlowsTable(props: FlowsTableProps) {
             )}
             {decodeTableHeaders(query.tableHeaders, lang).map((column) => {
               if (!column.active) {
-                return;
+                return null;
               }
               switch (column.identifierID) {
                 case 'flow.id':
@@ -584,7 +579,7 @@ export default function FlowsTable(props: FlowsTableProps) {
               >
             ).map((header) => {
               if (!header.active) {
-                return;
+                return null;
               }
               return (
                 <TableCell
@@ -773,7 +768,11 @@ export default function FlowsTable(props: FlowsTableProps) {
                           children={
                             <Alert
                               severity="info"
-                              onClose={handleTableSettingsInfoClose}
+                              onClose={() =>
+                                handleTableSettingsInfoClose(
+                                  setTableInfoDisplay
+                                )
+                              }
                               sx={{
                                 display: tableInfoDisplay ? 'flex' : 'none',
                                 ...tw`mx-8 mt-4`,

@@ -21,6 +21,7 @@ import {
   globalClusters,
   usageYears,
 } from '@unocha/hpc-data';
+import { searchFlowsParams } from './utils';
 interface URLInterface {
   new (url: string): {
     pathname: string;
@@ -220,45 +221,6 @@ export const LIVE_TYPES = {
     UPDATE_ASSIGNMENT_BODY_STATE_CHANGE,
   },
 } as const;
-
-function parseFilterToGraphQL(obj: Record<string, any>): string {
-  const keyValuePairs: string[] = [];
-
-  if (Array.isArray(obj)) {
-    // If the input is an array, apply the function to each element and return the result in square brackets
-    const arrayValues = obj.map((element: any) =>
-      parseFilterToGraphQL(element)
-    );
-    return `[${arrayValues.join(', ')}]`;
-  }
-  for (const key in obj) {
-    if (
-      Object.prototype.hasOwnProperty.call(obj, key) &&
-      obj[key] !== undefined
-    ) {
-      let valueString: string;
-
-      if (Array.isArray(obj[key])) {
-        // If the value is an array, stringify the entire array
-        valueString = `${key}: [${obj[key]
-          .map((element: any) => JSON.stringify(element))
-          .join(', ')}]`;
-      } else if (typeof obj[key] === 'object') {
-        // If the value is an object, call the function recursively
-        valueString = `${key}: ${parseFilterToGraphQL(obj[key])}`;
-      } else {
-        // Otherwise, use the value as is
-        valueString = `${key}: ${
-          typeof obj[key] === 'string' ? `"${obj[key]}"` : obj[key].toString()
-        }`;
-      }
-
-      keyValuePairs.push(valueString);
-    }
-  }
-
-  return `{${keyValuePairs.join(', ')}}`;
-}
 
 export class LiveModel implements Model {
   private readonly config: Config;
@@ -553,54 +515,12 @@ export class LiveModel implements Model {
           },
           resultType: flows.GET_FLOW_RESULT,
         }),
+      /**
+       * TODO: Dynamically fetch only necessary fields, Ex: if we don't display 'NewMoney' we shouldn't ask for it
+       */
       searchFlows: (params) => {
         const query = `query {
-          searchFlows(${params.limit ? 'limit: ' + params.limit : ''}, ${
-          params.sortOrder ? 'sortOrder: ' + '"' + params.sortOrder + '"' : ''
-        }, ${
-          params.sortField ? 'sortField: ' + '"' + params.sortField + '"' : ''
-        }
-        ${params.carryover ? 'carryover: true' : ''}
-        ${params.commitment ? 'commitment: true' : ''}
-        ${params.paid ? 'paid: true' : ''}
-        ${params.pledged ? 'pledged: true' : ''}
-        ${params.parked ? 'parked: true' : ''}
-        ${params.pass_through ? 'pass_through: true' : ''}
-        ${params.standard ? 'standard: true' : ''}
-        ${
-          params.prevPageCursor
-            ? 'prevPageCursor: ' + '"' + params.prevPageCursor + '"'
-            : ''
-        }
-        ${
-          params.nextPageCursor
-            ? 'nextPageCursor: ' + '"' + params.nextPageCursor + '"'
-            : ''
-        }
-        ${
-          params.flowFilters && JSON.stringify(params.flowFilters) !== '{}'
-            ? 'flowFilters: ' + parseFilterToGraphQL(params.flowFilters)
-            : ''
-        }
-        ${
-          params.flowObjectFilters && params.flowObjectFilters.length > 0
-            ? 'flowObjectFilters: ' +
-              parseFilterToGraphQL(params.flowObjectFilters)
-            : ''
-        }
-        ${
-          params.flowCategoryFilters && params.flowCategoryFilters.length > 0
-            ? 'flowCategoryFilters: ' +
-              parseFilterToGraphQL(params.flowCategoryFilters)
-            : ''
-        }
-        ${params.pending ? 'pending: ' + params.pending : ''}
-        ${
-          params.includeChildrenOfParkedFlows
-            ? 'includeChildrenOfParkedFlows: true'
-            : 'includeChildrenOfParkedFlows: false'
-        }
-        ) {
+          searchFlows${searchFlowsParams(params)} {
             total
             flows {
               id
@@ -723,30 +643,7 @@ export class LiveModel implements Model {
         }),
       getTotalAmountUSD: (params) => {
         const query = `query{
-            searchFlowsTotalAmountUSD( ${
-              params.flowFilters && JSON.stringify(params.flowFilters) !== '{}'
-                ? 'flowFilters: ' + parseFilterToGraphQL(params.flowFilters)
-                : ''
-            }
-            ${
-              params.flowObjectFilters && params.flowObjectFilters.length > 0
-                ? 'flowObjectFilters: ' +
-                  parseFilterToGraphQL(params.flowObjectFilters)
-                : ''
-            }
-            ${
-              params.flowCategoryFilters &&
-              params.flowCategoryFilters.length > 0
-                ? 'flowCategoryFilters: ' +
-                  parseFilterToGraphQL(params.flowCategoryFilters)
-                : ''
-            }
-            ${params.pending ? 'pending: ' + params.pending : ''}
-            ${
-              params.includeChildrenOfParkedFlows
-                ? 'includeChildrenOfParkedFlows: true'
-                : 'includeChildrenOfParkedFlows: false'
-            }){
+            searchFlowsTotalAmountUSD${searchFlowsParams(params)}{
               totalAmountUSD
               flowsCount
             }

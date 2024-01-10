@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   IconButton,
   Modal,
@@ -36,10 +37,13 @@ import {
   StyledLoader,
   TableHeaderButton,
   TopRowContainer,
+  handleTableSettingsInfoClose,
 } from './table-utils';
 import tw from 'twin.macro';
 
 import { Form, Formik } from 'formik';
+import { util } from '@unocha/hpc-core';
+import { LocalStorageSchema } from '../../utils/local-storage-type';
 
 export type KeywordQuery = {
   orderBy: string;
@@ -104,6 +108,7 @@ const FieldsWrapper = tw.div`
 flex
 gap-x-8
 `;
+
 type EditableRowProps = {
   lang: LanguageKey;
   row: categories.Keyword;
@@ -188,6 +193,9 @@ export default function KeywordTable(props: KeywordTableProps) {
   const [entityEdited, setEntityEdited] = useState(false);
   const state = dataLoader([entityEdited], () =>
     env.model.categories.getKeywords()
+  );
+  const [tableInfoDisplay, setTableInfoDisplay] = useState(
+    util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
 
   const handleSort = (newSort: KeywordHeaderID) => {
@@ -447,23 +455,25 @@ export default function KeywordTable(props: KeywordTableProps) {
                           width: '400px',
                           height: 'fit-content',
                         }}
-                        /*  children={
-                            <Alert
-                              severity="info"
-                              onClose={handleTableSettingsInfoClose}
-                              sx={{
-                                display: tableInfoDisplay ? 'flex' : 'none',
-                                ...tw`mx-8 mt-4`,
-                              }}
-                            >
-                              {t.t(
-                                lang,
-                                (s) =>
-                                  s.components.organizationTable.tableSettings
-                                    .info
-                              )}
-                            </Alert>
-                          } */
+                        children={
+                          <Alert
+                            severity="info"
+                            onClose={() =>
+                              handleTableSettingsInfoClose(setTableInfoDisplay)
+                            }
+                            sx={{
+                              display: tableInfoDisplay ? 'flex' : 'none',
+                              ...tw`mx-8 mt-4`,
+                            }}
+                          >
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.organizationTable.tableSettings
+                                  .info
+                            )}
+                          </Alert>
+                        }
                       />
                     </Box>
                   </Modal>

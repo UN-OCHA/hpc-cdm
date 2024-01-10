@@ -40,6 +40,8 @@ type AsyncSingleSelectProps = {
   returnObject?: boolean;
   preOptions?: Array<FormObjectValue>;
 };
+
+/** FIXME: Component miss-beheaving */
 const AsyncSingleSelect = ({
   name,
   label,
@@ -57,7 +59,6 @@ const AsyncSingleSelect = ({
   ]);
   const loading =
     open && (options.length === 0 || (preOptions && options.length === 1));
-  console.log(field.value);
   useEffect(() => {
     if (!loading) {
       return undefined;
@@ -77,7 +78,6 @@ const AsyncSingleSelect = ({
     const {
       target: { value },
     } = event;
-    console.log(value);
     if (returnObject) {
       setFieldValue(name, value);
     } else {
@@ -129,6 +129,7 @@ const AsyncSingleSelect = ({
       <StyledSelect {...singleSelectConfig}>
         {options.length > 0 ? (
           options.map((value) => (
+            //  TODO: Find a way to add { label:string, value:string } as value, maybe by enconding it to a string or any other method
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
             <MenuItem
@@ -146,7 +147,7 @@ const AsyncSingleSelect = ({
           ))
         ) : (
           <Loading disabled value="">
-            Loading...
+            Loading... {/** TODO: Add i18n support */}
           </Loading>
         )}
       </StyledSelect>

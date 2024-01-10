@@ -80,7 +80,7 @@ export const THEME = {
     fast: '0.2s ease-out',
   },
 } as const;
-
+/** TODO: Unify TailwindCSS and MUI Theme into one file */
 export const MUI_THEME: ThemeOptions = {
   direction: 'ltr',
   components: {

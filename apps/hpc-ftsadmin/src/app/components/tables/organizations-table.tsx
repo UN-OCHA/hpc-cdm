@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Modal,
   Table,
@@ -44,9 +45,13 @@ import {
   TableHeaderButton,
   TableRowClick,
   TopRowContainer,
+  handleTableSettingsInfoClose,
 } from './table-utils';
 import { Link, useNavigate } from 'react-router-dom';
 import * as paths from '../../paths';
+import { util } from '@unocha/hpc-core';
+import { LocalStorageSchema } from '../../utils/local-storage-type';
+import tw from 'twin.macro';
 
 export interface OrganizationTableProps {
   headers: TableHeadersProps<OrganizationHeaderID>[];
@@ -61,7 +66,9 @@ export default function OrganizationTable(props: OrganizationTableProps) {
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
   const filters = decodeFilters(props.query.filters, props.initialValues);
-
+  const [tableInfoDisplay, setTableInfoDisplay] = useState(
+    util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
+  );
   const parsedFilters = parseFormFilters<
     keyof Strings['components']['organizationsFilter']['filters'],
     OrganizationFilterValues
@@ -82,7 +89,6 @@ export default function OrganizationTable(props: OrganizationTableProps) {
   );
 
   const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
-    console.log(fieldName);
     if (isKey(filters, fieldName)) {
       filters[fieldName] = undefined;
       setQuery({
@@ -419,7 +425,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                           setQuery({
                             ...query,
                             tableHeaders: encodeTableHeaders(
-                              element as any, // TO DO: remove any
+                              element as any, // TODO: remove any
                               'organizations',
                               query,
                               setQuery
@@ -431,10 +437,12 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                           width: '400px',
                           height: 'fit-content',
                         }}
-                        /*  children={
+                        children={
                           <Alert
                             severity="info"
-                            onClose={handleTableSettingsInfoClose}
+                            onClose={() =>
+                              handleTableSettingsInfoClose(setTableInfoDisplay)
+                            }
                             sx={{
                               display: tableInfoDisplay ? 'flex' : 'none',
                               ...tw`mx-8 mt-4`,
@@ -447,7 +455,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                                   .info
                             )}
                           </Alert>
-                        } */
+                        }
                       />
                     </Box>
                   </Modal>

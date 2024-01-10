@@ -21,18 +21,18 @@ interface Props {
 }
 export interface OrganizationFilterValues {
   organization?: string;
-  organizationType?: FormObjectValue;
-  parentOrganization?: FormObjectValue;
-  locations?: FormObjectValue;
+  organizationType?: FormObjectValue | null;
+  parentOrganization?: FormObjectValue | null;
+  locations?: FormObjectValue | null;
   date?: Dayjs | null;
   status?: string;
 }
 
 export const ORGANIZATIONS_FILTER_INITIAL_VALUES: OrganizationFilterValues = {
   organization: '',
-  organizationType: { displayLabel: '', value: '' },
-  parentOrganization: { displayLabel: '', value: '' },
-  locations: { displayLabel: '', value: '' },
+  organizationType: null,
+  parentOrganization: null,
+  locations: null,
   date: null,
   status: '',
 };
@@ -70,7 +70,6 @@ export const FilterOrganizationsTable = (props: Props) => {
     status: string().matches(/active|inactive|both/),
   });
 
-  console.log(filters);
   const handleSubmit = (values: OrganizationFilterValues) => {
     setQuery({
       ...query,

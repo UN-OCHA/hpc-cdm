@@ -3,7 +3,13 @@ import { Strings } from '../../i18n/iface';
 import { Query } from '../components/tables/table-utils';
 import { FilterKeys } from './parse-filters';
 
+/** Declare which tables there can be */
 export type TableType = 'flows' | 'organizations' | 'keywords';
+
+/** The nomenclature to define these IDs is to write it like: name of the DB table, and after the dot, the propperty.
+ *  if it's not a DB field, just write down the name
+ */
+
 export type FlowHeaderID =
   | 'flow.id'
   | 'flow.versionID'
@@ -112,10 +118,30 @@ export const POSSIBLE_FLOW_HEADER_VALUES: Record<
     label: 'destinationYear',
   },
   10: { id: 10, identifierID: 'details', label: 'details' },
-  11: { id: 11, identifierID: 'flow.exchangeRate', label: 'exchangeRate' },
-  12: { id: 12, identifierID: 'flow.newMoney', label: 'newMoney' },
-  13: { id: 13, identifierID: 'flow.decisionDate', label: 'decisionDate' },
-  14: { id: 14, identifierID: 'flow.flowDate', label: 'flowDate' },
+  11: {
+    id: 11,
+    identifierID: 'flow.exchangeRate',
+    label: 'exchangeRate',
+    sortable: true,
+  },
+  12: {
+    id: 12,
+    identifierID: 'flow.newMoney',
+    label: 'newMoney',
+    sortable: true,
+  },
+  13: {
+    id: 13,
+    identifierID: 'flow.decisionDate',
+    label: 'decisionDate',
+    sortable: true,
+  },
+  14: {
+    id: 14,
+    identifierID: 'flow.flowDate',
+    label: 'flowDate',
+    sortable: true,
+  },
 };
 
 export const POSSIBLE_ORGANIZATION_VALUES: Record<
@@ -192,7 +218,7 @@ export const POSSIBLE_KEYWORD_VALUES: Record<
   },
 };
 
-/** When adding more new field to POSSIBLE consts that are not default, replace the for loop only for the necessary fields that we want to add as default */
+/** When adding more new field to POSSIBLE consts that are not default, modify as needed */
 
 export const DEFAULT_FLOW_TABLE_HEADERS: TableHeadersProps<FlowHeaderID>[] = [];
 for (let i = 1; i <= 14; i++) {
@@ -217,6 +243,10 @@ export const DEFAULT_KEYWORD_TABLE_HEADERS: TableHeadersProps<KeywordHeaderID>[]
 for (let i = 1; i <= 4; i++) {
   DEFAULT_KEYWORD_TABLE_HEADERS.push(POSSIBLE_KEYWORD_VALUES[i]);
 }
+
+/**
+ * Sets up the default values
+ */
 const defaultEncodeTableHeaders = (table: TableType) => {
   let res = '';
   if (table === 'flows') {
@@ -252,9 +282,6 @@ const defaultEncodeTableHeaders = (table: TableType) => {
 
 /**
  * Encodes the query param to obtain a string suitable for the URL, use it alongside decodeTableHeaders()
- *
- * @param headers
- * @returns string
  */
 export const encodeTableHeaders = (
   headers: {
@@ -290,6 +317,9 @@ export const encodeTableHeaders = (
   }
 };
 
+/**
+ * Sets up the default values
+ */
 const defaultDecodeTableHeaders = (
   lang: LanguageKey,
   table: TableType = 'flows'
@@ -345,9 +375,6 @@ const defaultDecodeTableHeaders = (
 };
 /**
  * Decodes the query param to obtain an ordered list of table headers
- *
- * @param queryParam
- * @returns { id: number; label: string; active: boolean }[]
  */
 export const decodeTableHeaders = (
   queryParam: string,

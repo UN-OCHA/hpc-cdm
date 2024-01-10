@@ -236,7 +236,7 @@ const AsyncAutocompleteSelect = ({
     ),
   };
   if (meta && meta.error && meta.touched) {
-    console.log(meta.error);
+    console.error(meta.error);
   }
   return <StyledAutocomplete {...configAutocomplete} />;
 };

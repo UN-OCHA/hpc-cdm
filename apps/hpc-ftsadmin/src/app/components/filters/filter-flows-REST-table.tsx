@@ -133,7 +133,6 @@ export const FilterFlowsTableREST = (props: Props) => {
     ),
   });
   const handleSubmit = (values: FlowsFilterValuesREST) => {
-    console.log('aqui: ', values);
     setQuery({
       ...query,
       page: 0,

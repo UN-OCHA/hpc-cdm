@@ -99,7 +99,6 @@ export default function FlowsTableREST(props: FlowsTableRESTProps) {
     keyof Strings['components']['flowsFilter']['filters'],
     FlowsFilterValuesREST
   >(filters, FLOWS_FILTER_INITIAL_VALUES_REST);
-  console.log(flowFilters);
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
   const [tableInfoDisplay, setTableInfoDisplay] = useState(
@@ -139,7 +138,6 @@ export default function FlowsTableREST(props: FlowsTableRESTProps) {
   };
 
   const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
-    console.log(fieldName);
     if (isKey(filters, fieldName)) {
       filters[fieldName] = undefined;
       setQuery({

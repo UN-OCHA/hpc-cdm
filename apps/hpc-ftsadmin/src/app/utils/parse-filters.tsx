@@ -7,9 +7,15 @@ import { Dayjs } from 'dayjs';
 import { FlowsFilterValues } from '../components/filters/filter-flows-table';
 import { formValueToID, formValueToLabel } from './map-functions';
 
+/**
+ * The whole idea of this filtering system is to parse every Filter Form to a common type, in this case Filter<T>
+ * that works with any Table component and that can be encoded in the URL. Having this common type let us parse it back to the Filter Form of T
+ * or to the API parsed parameters, in this way we can share URLs and have all necessary info.
+ */
+
 export type Filters =
   | FlowsFilterValues
-  | FlowsFilterValuesREST
+  | FlowsFilterValuesREST //  TODO: When removing the REST part, delete
   | PendingFlowsFilterValues
   | OrganizationFilterValues;
 export type FilterKeys =
@@ -81,6 +87,7 @@ export const decodeFilters = <T extends Filters>(
   }
 };
 
+/** TODO: When removing the REST part, delete */
 type ParsedFlowFiltersREST = {
   flowID?: number[];
   amountUSD?: number;
@@ -235,11 +242,11 @@ export const parseFormFilters = <
   return parsedFormValue;
 };
 
+/** TODO: When removing the REST part, delete and also any unused method that this function used */
 export const parseFlowFiltersREST = (
   filters: Filter<keyof Strings['components']['flowsFilter']['filters']>
 ): ParsedFlowFiltersREST => {
   const res: ParsedFlowFiltersREST = {};
-  console.log(filters);
   for (const key in filters) {
     if (isKey(filters, key)) {
       switch (key) {
@@ -416,10 +423,10 @@ export const parseFlowFilters = (
         }
         case 'flowType':
         case 'flowStatus': {
-          if (filters[key]) {
-            res[
-              (filters[key]!.value as FormObjectValue).value as 'commitment'
-            ] = true; //TODO: Propperly write this,
+          const filterValue = filters[key];
+          if (filterValue) {
+            res[(filterValue.value as FormObjectValue).value as 'commitment'] =
+              true; //FIXME: Propperly write this, this can be 'parked', 'commitment', 'pledged'...
           }
           break;
         }
@@ -463,7 +470,6 @@ export const parseOrganizationFilters = (
   filters: Filter<keyof Strings['components']['organizationsFilter']['filters']>
 ): organizations.SearchOrganizationParams => {
   const res: organizations.SearchOrganizationParams = { search: {} };
-  console.log(filters);
   for (const key in filters) {
     if (isKey(filters, key)) {
       switch (key) {

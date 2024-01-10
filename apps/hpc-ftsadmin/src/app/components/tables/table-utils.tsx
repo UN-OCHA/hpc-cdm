@@ -13,6 +13,8 @@ import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import { C, dataLoader } from '@unocha/hpc-ui';
 import { getEnv } from '../../context';
 import { flows } from '@unocha/hpc-data';
+import { util } from '@unocha/hpc-core';
+import { LocalStorageSchema } from '../../utils/local-storage-type';
 
 export type Query = {
   page: number;
@@ -203,4 +205,12 @@ export const TotalAmountUSD = ({
       )}
     </TotalAmountUSDContainer>
   );
+};
+
+/** Handle function to control the information text in the Draggable List components of tables */
+export const handleTableSettingsInfoClose = (
+  setTableInfoDisplay: React.Dispatch<React.SetStateAction<boolean | undefined>>
+) => {
+  util.setLocalStorageItem<LocalStorageSchema>('tableSettings', false);
+  setTableInfoDisplay(false);
 };
