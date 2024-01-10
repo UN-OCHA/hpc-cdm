@@ -27,6 +27,7 @@ interface Props<T> {
       back: string;
     };
   };
+  customLoadingElement?: React.ReactNode;
 }
 
 const StyledDiv = styled.div`
@@ -38,7 +39,7 @@ const StyledDiv = styled.div`
 `;
 
 export default function Loader<T>(props: Props<T>) {
-  const { children, className, loader, strings } = props;
+  const { children, className, loader, strings, customLoadingElement } = props;
   return loader.type === 'success' ? (
     children(loader.data, { updateLoadedData: loader.update })
   ) : loader.type === 'error' ? (
@@ -51,6 +52,8 @@ export default function Loader<T>(props: Props<T>) {
     </StyledDiv>
   ) : loader.type === 'not-found' ? (
     <NotFound strings={strings.notFound} />
+  ) : customLoadingElement ? (
+    customLoadingElement
   ) : (
     <StyledDiv className={className}>
       <h3>{strings.loading}</h3>
