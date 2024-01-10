@@ -93,7 +93,6 @@ export const App = () => {
           ...t.get(lang, (s) => s.components.loader),
           notFound: {
             ...t.get(lang, (s) => s.components.notFound),
-            ...t.get(lang, (s) => s.routes.operations.notFound),
           },
         }}
       >

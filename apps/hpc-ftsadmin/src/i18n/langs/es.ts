@@ -1,10 +1,10 @@
 import { Language } from '../iface';
-import strings from './ar.json';
+import strings from './es.json';
 
 const LANGUAGE: Language = {
   meta: {
-    name: 'عربى',
-    direction: 'rtl',
+    name: 'Español',
+    direction: 'ltr',
   },
   strings,
 };
