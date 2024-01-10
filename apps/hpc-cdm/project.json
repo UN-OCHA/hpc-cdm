@@ -14,7 +14,7 @@
         "polyfills": "apps/hpc-cdm/src/polyfills.ts",
         "tsConfig": "apps/hpc-cdm/tsconfig.app.json",
         "assets": ["apps/hpc-cdm/src/favicon.ico", "apps/hpc-cdm/src/assets"],
-        "styles": [],
+        "styles": ["node_modules/tailwindcss/tailwind.css"],
         "scripts": [],
         "webpackConfig": "apps/hpc-cdm/webpack.config.js",
         "isolatedConfig": true
