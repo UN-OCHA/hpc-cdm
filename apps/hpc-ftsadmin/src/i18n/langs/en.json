@@ -34,6 +34,11 @@
       "info": "We were unable to find the page you were looking for",
       "back": "Go back"
     },
+    "invalidRouteParam": {
+      "title": "Invalid route",
+      "info": "Non-integer ID detected in URL",
+      "back": "Go back"
+    },
     "loader": {
       "loading": "Loading...",
       "error": "Error:",
@@ -42,22 +47,233 @@
     "unsupportedBrowser": {
       "title": "Unsupported Browser!",
       "info": "Unfortunately, your current browser is not supported. Please switch to either Firefox or Google Chrome. To do this, simply copy the form address (URL) above, then open Firefox or Chrome, and paste the address into the browser."
+    },
+    "flowsTable": {
+      "headers": {
+        "id": "ID",
+        "status": "Status",
+        "updatedCreated": "Updated/ Created",
+        "dataProvider": "Data Provider",
+        "amountUSD": "Amount USD",
+        "sourceOrganization": "Source Organization",
+        "destinationOrganization": "Destination Organization",
+        "destinationPlan": "Destination Plan",
+        "destinationCountry": "Destination Country",
+        "destinationYear": "Destination Year",
+        "details": "Details",
+        "exchangeRate": "Exchange Rate",
+        "flowDate": "Flow Date",
+        "newMoney": "New Money",
+        "decisionDate": "Decision Date"
+      },
+      "update": "Update",
+      "new": "New",
+      "restricted": "restricted",
+      "inactive": "inactive",
+      "child": "child",
+      "parent": "parent",
+      "notFound": {
+        "title": "Flows not found",
+        "info": "We were unable to load flows"
+      },
+      "totalAmount": "Total Amount: ",
+      "reportTooltip": "reported by {organization} on {date} via {channel}",
+      "parkedSource": "Parked source",
+      "sortBy": "Sort by",
+      "rejectPendingFlows": "Reject Pending Flows",
+      "downloadDisabled": "Download only allowed for maximum 50.000 flows",
+      "tableSettings": {
+        "title": "Table Settings",
+        "save": "Save",
+        "info": "Leaving without clicking the 'Save' button will not update the table"
+      }
+    },
+    "flowsFilter": {
+      "title": "Filters",
+      "button": {
+        "primary": "Search",
+        "secondary": "Clear Fields"
+      },
+      "headers": {
+        "flowDetails": "Flow Details",
+        "sourceDetails": "Source Details",
+        "destinationDetails": "Destination Details"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "Include children of matching parked flows",
+        "restricted": "Restricted",
+        "flowID": "Flow ID",
+        "amountUSD": "Amount USD",
+        "keywords": "Keywords",
+        "flowStatus": "Flow Status",
+        "flowType": "Flow Type",
+        "flowActiveStatus": "Flow Active Status",
+        "reporterRefCode": "Reporter Reference Code",
+        "sourceSystemID": "Source System ID",
+        "legacyID": "Flow Legacy ID",
+        "sourceOrganizations": "Source Organization(s)",
+        "sourceLocations": "Source Country(ies)",
+        "sourceUsageYears": "Source Usage Year(s)",
+        "sourceProjects": "Source Project(s)",
+        "sourcePlans": "Source Plan(s)",
+        "sourceGlobalClusters": "Source Global Cluster(s)",
+        "sourceEmergencies": "Source Emergency(ies)",
+        "destinationOrganizations": "Destination Organization(s)",
+        "destinationLocations": "Destination Country(ies)",
+        "destinationUsageYears": "Destination Usage Year(s)",
+        "destinationProjects": "Destination Project(s)",
+        "destinationPlans": "Destination Plan(s)",
+        "destinationGlobalClusters": "Destination Global Cluster(s)",
+        "destinationEmergencies": "Destination Emergency(ies)"
+      },
+      "showMore": "Show More",
+      "tooltips": {
+        "filters": "Filters"
+      }
+    },
+    "keywordTable": {
+      "headers": {
+        "id": "ID",
+        "name": "Name",
+        "relatedFlows": "Related Flows",
+        "public": "Public"
+      },
+      "modal": {
+        "text": "Are you sure you want to delete this keyword?",
+        "principalButton": "Delete",
+        "secondaryButton": "Cancel"
+      }
+    },
+    "pendingFlowsFilter": {
+      "title": "Filters",
+      "button": {
+        "primary": "Search",
+        "secondary": "Clear Fields"
+      },
+      "headers": {
+        "flowDetails": "Flow Details",
+        "sourceDetails": "Source Details",
+        "destinationDetails": "Destination Details"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "Include children of matching parked flows",
+        "status": "Status",
+        "dataProvider": "Data Provider",
+        "flowType": "Flow Type",
+        "reporterRefCode": "Reporter Reference Code",
+        "sourceOrganizations": "Source Organization(s)",
+        "sourceLocations": "Source Country(ies)",
+        "destinationOrganizations": "Destination Organization(s)",
+        "destinationLocations": "Destination Country(ies)",
+        "destinationUsageYears": "Destination Usage Year(s)",
+
+        "details": "Details"
+      },
+      "showMore": "Show More",
+      "tooltips": {
+        "filters": "Filters"
+      }
+    },
+    "organizationsFilter": {
+      "title": "Filters",
+      "button": {
+        "primary": "Search",
+        "secondary": "Clear Fields"
+      },
+      "headers": {
+        "organizationDetails": "Organization Details"
+      },
+      "filters": {
+        "organization": "Organization Name",
+        "status": "Active",
+        "date": "Added/Modified Since",
+        "locations": "Country(ies)",
+        "organizationType": "Organization Type",
+        "parentOrganization": "Parent Organization"
+      },
+      "showMore": "Show More",
+      "tooltips": {
+        "filters": "Filters"
+      }
+    },
+    "organizationTable": {
+      "headers": {
+        "id": "ID",
+        "name": "Organization",
+        "abbreviation": "Abbreviation",
+        "type": "Type",
+        "subType": "SubType",
+        "location": "Location",
+        "createdBy": "Created By",
+        "updatedBy": "Updated By"
+      },
+      "update": "Update",
+      "new": "New",
+      "restricted": "restricted",
+      "inactive": "inactive",
+      "notFound": {
+        "title": "Organizations not found",
+        "info": "We were unable to load organizations"
+      },
+      "sortBy": "Sort by",
+      "tableSettings": {
+        "title": "Table Settings",
+        "save": "Save",
+        "info": "Leaving without clicking the 'Save' button will not update the table"
+      }
+    },
+    "organizationUpdateCreate": {
+      "fields": {
+        "name": "Organization Name",
+        "abbreviation": "Organization Abbreviation",
+        "nativeName": "Name in Another Language",
+        "locations": "Country(ies)",
+        "url": "Website URL",
+        "active": "Active",
+        "verified": "Verified",
+        "notes": "Comments",
+        "organizationTypes": "Organization Type",
+        "organizationLevel": "Organization Level",
+        "parent": "Parent Organization",
+        "collectiveInd": "Collective Organization",
+        "comments": "Organization Description"
+      },
+      "errors": {
+        "conflict": "This organization's name already exists",
+        "unknown": "Unexpected error while creating/updating organization",
+        "user_error": "Incorrect values provided or organization's name already exists"
+      },
+      "modal": {
+        "text": "Are you sure you want to delete this flow? All the information will be deleted.",
+        "principalButton": "Delete",
+        "secondaryButton": "Cancel"
+      },
+      "create": "Create",
+      "update": "Update"
     }
   },
   "navigation": {
     "flows": "Flows",
+    "keywords": "Keywords",
     "pendingFlows": "Pending Flows",
+    "organizations": "Organizations",
     "rpm": "Response Planning Module",
     "prism": "Online Projects System",
     "ftsWebsite": "FTS Website",
     "help": "Help"
   },
   "routes": {
-    "operations": {
-      "notFound": {
-        "title": "Operation not found",
-        "info": "We were unable to find the operation you were looking for"
-      }
+    "flows": {
+      "title": "Search funding flows"
+    },
+    "keywords": {
+      "title": "Manage Keywords"
+    },
+    "pendingFlows": {
+      "title": "Search pending flows"
+    },
+    "organizations": {
+      "title": "Organizations"
     }
   }
 }
