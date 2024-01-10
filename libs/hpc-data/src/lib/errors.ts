@@ -1,4 +1,5 @@
 const NOT_FOUND_ERROR = 'not_found';
+const ABORT_ERROR = 'abort_error';
 const CONFLICT_ERROR = 'conflict';
 const USER_ERROR = 'user_error';
 
@@ -17,9 +18,19 @@ export class NotFoundError extends Error {
   }
 }
 
+export class AbortError extends Error {
+  public readonly code = ABORT_ERROR;
+  public constructor() {
+    super(ABORT_ERROR);
+  }
+}
 export const isNotFoundError = (error: Error): error is NotFoundError =>
   error instanceof NotFoundError ||
   (error && (error as NotFoundError).code === NOT_FOUND_ERROR);
+
+export const isUserAbortError = (error: Error): error is AbortError =>
+  error instanceof AbortError ||
+  (error && (error as AbortError).name === 'AbortError');
 
 export class UserError extends Error {
   public readonly code = USER_ERROR;
