@@ -16,10 +16,16 @@ import { LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
 import PageMeta from './components/page-meta';
 import { AppContext, contextFromEnv } from './context';
 import { Z_INDEX } from './layout';
-import PageFlowsList from './pages/flows-list';
+import PageFlowsListREST from './pages/flows/flows-list-REST';
+import PageFlowsList from './pages/flows/flows-list';
+import PageKeywordsList from './pages/keywords/keyword-list';
 import PageNotFound from './pages/not-found';
 import PageNotLoggedIn from './pages/not-logged-in';
+import PagePendingFlowsList from './pages/flows/pending-flows-list';
+import PageOrganizationsList from './pages/organizations/organization-list';
+import PageOrganization from './pages/organizations/organization';
 import * as paths from './paths';
+import { RouteParamsValidator } from './components/route-params-validator';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
   const warning = env.getDevHeaderWarning(lang);
@@ -91,9 +97,7 @@ export const App = () => {
         loader={loadEnv}
         strings={{
           ...t.get(lang, (s) => s.components.loader),
-          notFound: {
-            ...t.get(lang, (s) => s.components.notFound),
-          },
+          notFound: t.get(lang, (s) => s.components.notFound),
         }}
       >
         {(context) => {
@@ -124,6 +128,22 @@ export const App = () => {
                           {
                             label: t.t(lang, (s) => s.navigation.flows),
                             path: paths.flows(),
+                          },
+                          {
+                            label: 'Flows REST',
+                            path: paths.flowsREST(),
+                          },
+                          {
+                            label: t.t(lang, (s) => s.navigation.pendingFlows),
+                            path: paths.pendingFlows(),
+                          },
+                          {
+                            label: t.t(lang, (s) => s.navigation.organizations),
+                            path: paths.organizations(),
+                          },
+                          {
+                            label: t.t(lang, (s) => s.navigation.keywords),
+                            path: paths.keywords(),
                           },
                         ]}
                         className={CLASSES.CONTAINER.FLUID}
@@ -173,6 +193,35 @@ export const App = () => {
                         <Route
                           path={paths.flows()}
                           element={<PageFlowsList />}
+                        />
+                        <Route
+                          path={paths.flowsREST()}
+                          element={<PageFlowsListREST />}
+                        />
+                        <Route
+                          path={paths.pendingFlows()}
+                          element={<PagePendingFlowsList />}
+                        />
+                        <Route
+                          path={paths.organizations()}
+                          element={<PageOrganizationsList />}
+                        />
+                        <Route
+                          path={paths.organizationRoot()}
+                          element={
+                            <RouteParamsValidator
+                              element={<PageOrganization />}
+                              routeParam="id"
+                            />
+                          }
+                        />
+                        <Route
+                          path={paths.addOrganization()}
+                          element={<PageOrganization />}
+                        />
+                        <Route
+                          path={paths.keywords()}
+                          element={<PageKeywordsList />}
                         />
                         <Route element={<PageNotFound />} />
                       </Routes>
