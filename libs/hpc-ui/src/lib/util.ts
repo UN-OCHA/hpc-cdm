@@ -38,6 +38,73 @@ const hasPrimitivesOnly = (
       typeof v === 'undefined'
   );
 
+export function useDataLoader<Data>(
+  dependencies: [],
+  get: () => Promise<Data>
+): [DataLoaderState<Data>, () => void];
+export function useDataLoader<Deps extends DepsBaseType, Data>(
+  dependencies: Deps,
+  get: (...data: Deps) => Promise<Data>
+): [DataLoaderState<Data>, () => void];
+export function useDataLoader<Deps extends DepsBaseType, Data>(
+  dependencies: Deps,
+  get: (...data: Deps) => Promise<Data>
+) {
+  const [state, setState] = useState<DataLoaderState<Data>>({
+    type: 'loading',
+  });
+  const setData = (data: Data) =>
+    setState({
+      type: 'success',
+      data,
+      update: setData,
+    });
+
+  const load = () => {
+    setState({ type: 'loading' });
+    get(...dependencies)
+      .then(setData)
+      .catch((err: Error) => {
+        if (errors.isNotFoundError(err)) {
+          setState({
+            type: 'not-found',
+          });
+        } else if (errors.isUserAbortError(err)) {
+          if (state.type !== 'loading') {
+            setState({ type: 'loading' });
+          }
+        } else {
+          setState({
+            type: 'error',
+            error: err.message || err.toString(),
+            retry,
+          });
+        }
+      });
+  };
+
+  const retry = () => {
+    setState({ type: 'loading' });
+    load();
+  };
+
+  // Flatten dependencies so that react's reference equality matches no changes
+  let deps: Primitive[];
+  if (hasObjDeps(dependencies)) {
+    deps = [];
+    for (const [key, value] of Object.entries(dependencies[0])) {
+      deps.push(key, value);
+    }
+  } else if (hasPrimitivesOnly(dependencies)) {
+    deps = dependencies;
+  } else {
+    throw new Error('Invalid dependencies');
+  }
+
+  useEffect(load, deps);
+
+  return [state, load]; // Return the load function along with the state
+}
 /* eslint-disable react-hooks/rules-of-hooks, react-hooks/exhaustive-deps */
 /**
  * Using react hooks, return an object that represents an attempt to load data.
@@ -91,6 +158,10 @@ export function dataLoader<Deps extends DepsBaseType, Data>(
           setState({
             type: 'not-found',
           });
+        } else if (errors.isUserAbortError(err)) {
+          if (state.type !== 'loading') {
+            setState({ type: 'loading' });
+          }
         } else {
           setState({
             type: 'error',

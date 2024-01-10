@@ -6,7 +6,9 @@
       {
         "pure": true,
         "ssr": true
-      }
+      },
+      ["babel-plugin-twin", { "debug": false }],
+      "babel-plugin-macros"
     ]
   ]
 }
