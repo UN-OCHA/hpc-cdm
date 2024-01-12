@@ -44,6 +44,7 @@ type AsyncAutocompleteSelectProps = {
   category?: categories.CategoryGroup;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
+  requiered?: boolean;
 };
 const AsyncAutocompleteSelect = ({
   name,
@@ -53,6 +54,7 @@ const AsyncAutocompleteSelect = ({
   isMulti,
   category,
   isAutocompleteAPI,
+  requiered,
   ...otherProps
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
@@ -223,6 +225,7 @@ const AsyncAutocompleteSelect = ({
         {...params}
         size="small"
         label={label}
+        required={requiered}
         InputProps={{
           ...params.InputProps,
           endAdornment: (
@@ -232,12 +235,12 @@ const AsyncAutocompleteSelect = ({
             </React.Fragment>
           ),
         }}
+        error={meta && meta.touched && meta.error ? true : false}
+        helperText={meta && meta.touched && meta.error ? meta.error : undefined}
       />
     ),
   };
-  if (meta && meta.error && meta.touched) {
-    console.error(meta.error);
-  }
+
   return <StyledAutocomplete {...configAutocomplete} />;
 };
 

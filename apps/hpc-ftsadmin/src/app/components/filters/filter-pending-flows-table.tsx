@@ -1,5 +1,4 @@
 import { Form, Formik, FormikState } from 'formik';
-import { array, number, object, string } from 'yup';
 import tw from 'twin.macro';
 
 import { C } from '@unocha/hpc-ui';
@@ -12,7 +11,9 @@ import { t } from '../../../i18n';
 import { Query } from '../tables/table-utils';
 import { useContext } from 'react';
 import { AppContext } from '../../context';
-
+import validateForm from '../../utils/form-validation';
+import * as io from 'io-ts';
+import { util as codecs } from '@unocha/hpc-data';
 interface Props {
   query: Query;
   setQuery: (newQuery: Query) => void;
@@ -53,28 +54,10 @@ export const FilterPendingFlowsTable = (props: Props) => {
   const { lang, env } = useContext(AppContext);
   const environment = env();
 
-  const FORM_VALIDATION = object().shape({
-    flowStatus: string(),
-    dataProvider: string(),
-    reporterRefCode: number()
-      .positive()
-      .typeError('Only positive integers are accepted'),
-    sourceOrganizations: array().of(
-      object().shape({ label: string(), id: string() })
-    ),
-    sourceCountries: array().of(
-      object().shape({ label: string(), id: string() })
-    ),
-    destinationOrganizations: array().of(
-      object().shape({ label: string(), id: string() })
-    ),
-    destinationCountries: array().of(
-      object().shape({ label: string(), id: string() })
-    ),
-    destinationUsageYears: array().of(
-      object().shape({ label: string(), id: string() })
-    ),
+  const FORM_VALIDATION = io.partial({
+    reporterRefCode: codecs.INTEGER_FROM_STRING,
   });
+
   const handleSubmit = (values: PendingFlowsFilterValues) => {
     const encodedFilters = encodeFilters(
       values,
@@ -116,7 +99,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
           query.filters,
           PENDING_FLOWS_FILTER_INITIAL_VALUES
         )}
-        validationSchema={FORM_VALIDATION}
+        validate={(values) => validateForm(values, FORM_VALIDATION)}
         onSubmit={handleSubmit}
       >
         {({ resetForm }) => (

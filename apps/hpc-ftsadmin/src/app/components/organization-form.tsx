@@ -12,8 +12,10 @@ import * as paths from '../paths';
 import { errors } from '@unocha/hpc-data';
 import { Alert, Fade } from '@mui/material';
 import { Strings } from '../../i18n/iface';
-import { array, boolean, object, string } from 'yup';
 import DeleteIcon from '@mui/icons-material/Delete';
+import * as io from 'io-ts';
+import { util as codecs } from '@unocha/hpc-data';
+import validateForm from '../utils/form-validation';
 interface Props {
   id?: number;
   load?: () => void;
@@ -111,27 +113,10 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
       keyof Strings['components']['organizationUpdateCreate']['errors']
     >();
 
-  const FORM_VALIDATION = object().shape({
-    name: string().required('Organization Name is a required field'), //TODO: Add i18n support for all fields
-    abbreviation: string().required(),
-    nativeName: string(),
-    locations: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    url: string(),
-    active: boolean(),
-    verified: boolean(),
-    notes: string(),
-    organizationTypes: array()
-      .of(object().shape({ displayLabel: string(), value: string() }))
-      .required(),
-    organizationLevel: object().shape({
-      displayLabel: string(),
-      value: string(),
-    }),
-    parent: object().shape({ displayLabel: string(), value: string() }),
-    collectiveInd: boolean(),
-    comments: string(),
+  const FORM_VALIDATION = io.partial({
+    name: codecs.NON_EMPTY_STRING,
+    abbreviation: codecs.NON_EMPTY_STRING,
+    organizationTypes: codecs.NON_EMPTY_ARRAY,
   });
 
   useEffect(() => {
@@ -176,7 +161,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
         initialValues ? initialValues : ADD_EDIT_ORGANIZATION_INITIAL_VALUES
       }
       onSubmit={handleSubmit}
-      validationSchema={FORM_VALIDATION}
+      validate={(values) => validateForm(values, FORM_VALIDATION)}
     >
       {({ initialValues }) => (
         <Form>
@@ -282,6 +267,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
             fnPromise={environment.model.categories.getCategories}
             category="organizationType"
             isMulti
+            requiered
           />
           <InfoText>
             This is an only read field that fills based on the "Organization

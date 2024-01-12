@@ -1,5 +1,4 @@
 import { Form, Formik, FormikState } from 'formik';
-import { object, string } from 'yup';
 import tw from 'twin.macro';
 
 import { C } from '@unocha/hpc-ui';
@@ -12,7 +11,8 @@ import {
 import { LanguageKey, t } from '../../../i18n';
 import { Dayjs } from 'dayjs';
 import { Query } from '../tables/table-utils';
-
+import * as io from 'io-ts';
+import validateForm from '../../utils/form-validation';
 interface Props {
   environment: Environment;
   query: Query;
@@ -50,24 +50,8 @@ export const FilterOrganizationsTable = (props: Props) => {
     ORGANIZATIONS_FILTER_INITIAL_VALUES
   );
 
-  const FORM_VALIDATION = object().shape({
-    organization: string(),
-    parentOrganization: object()
-      .shape({
-        displayLabel: string(),
-        value: string(),
-      })
-      .nullable(),
-    locations: object()
-      .shape({ displayLabel: string(), value: string() })
-      .nullable(),
-    organizationType: object()
-      .shape({
-        displayLabel: string(),
-        value: string(),
-      })
-      .nullable(),
-    status: string().matches(/active|inactive|both/),
+  const FORM_VALIDATION = io.partial({
+    organization: io.string,
   });
 
   const handleSubmit = (values: OrganizationFilterValues) => {
@@ -96,7 +80,7 @@ export const FilterOrganizationsTable = (props: Props) => {
       <Formik
         enableReinitialize
         initialValues={filters}
-        validationSchema={FORM_VALIDATION}
+        validate={(values) => validateForm(values, FORM_VALIDATION)}
         onSubmit={handleSubmit}
       >
         {({ resetForm }) => (

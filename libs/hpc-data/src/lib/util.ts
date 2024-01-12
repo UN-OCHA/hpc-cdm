@@ -48,6 +48,75 @@ export const NUMBER_FROM_STRING = new t.Type<number, number>(
 );
 
 /**
+ * Accepts either a positive number, or a string of a positive number, serializes to a number type.
+ */
+export const POSITIVE_NUMBER_FROM_STRING = new t.Type<number, number>(
+  'POSITIVE_NUMBER_FROM_STRING',
+  t.number.is,
+  (v, c) => {
+    if (typeof v === 'number') {
+      return v >= 0 ? t.success(v) : t.failure(v, c);
+    } else if (typeof v === 'string') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return !isNaN(v as any) && !isNaN(parseFloat(v)) && parseFloat(v) >= 0
+        ? t.success(parseFloat(v))
+        : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
+ * Accepts an empty string, serializes to a string type.
+ */
+export const EMPTY_STRING = new t.Type<string, string>(
+  'EMPTY_STRING',
+  t.string.is,
+  (v, c) => {
+    if (typeof v === 'string') {
+      return v === '' ? t.success(v) : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
+ * Accepts any string except an empty string, serializes to a string type.
+ */
+export const NON_EMPTY_STRING = new t.Type<string, string>(
+  'NON_EMPTY_STRING',
+  t.string.is,
+  (v, c) => {
+    if (typeof v === 'string') {
+      return v !== '' ? t.success(v) : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
+ * Accepts any array except an empty array, serializes to an array type.
+ */
+export const NON_EMPTY_ARRAY = new t.Type<Array<unknown>, Array<unknown>>(
+  'NON_EMPTY_ARRAY',
+  t.array(t.unknown).is,
+  (v, c) => {
+    if (Array.isArray(v)) {
+      return v.length > 0 ? t.success(v) : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
  * Accepts either an integer array, or a string of comma separated integers.
  */
 export const INTEGER_ARRAY_FROM_STRING = new t.Type<number[], number[]>(
