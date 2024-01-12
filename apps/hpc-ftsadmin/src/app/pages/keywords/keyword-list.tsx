@@ -4,11 +4,8 @@ import PageMeta from '../../components/page-meta';
 import { AppContext } from '../../context';
 import tw from 'twin.macro';
 import {
-  JsonParam,
-  NumberParam,
   StringParam,
   createEnumParam,
-  decodeNumber,
   useQueryParams,
   withDefault,
 } from 'use-query-params';
