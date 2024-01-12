@@ -1,6 +1,6 @@
 //  TODO: Check if this should be done on backend side, Currently not working propperly
 import * as XLSX from 'xlsx';
-export const downloadExcel = <T,>(
+export const downloadExcel = <T>(
   data: T[],
   fileName: string
 ): Promise<void> => {
