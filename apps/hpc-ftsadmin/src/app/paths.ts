@@ -1,7 +1,7 @@
 const HOME = '/';
 const ROOT = '/*';
 const FLOWS = '/flows';
-const FLOWS_REST = '/flowsREST'; // TO DO: Remove once shown to client
+const FLOWS_REST = '/flowsREST'; // TODO: Remove once shown to client
 const PENDING_FLOWS = '/pending-flows';
 const ORGANIZATIONS = '/organizations';
 const ORGANIZATION = `${ORGANIZATIONS}/:id`;
@@ -23,7 +23,7 @@ export const home = () => replacePlaceholders(HOME, {});
 
 export const flows = () => replacePlaceholders(FLOWS, {});
 
-export const flowsREST = () => replacePlaceholders(FLOWS_REST, {}); // TO DO: Remove once shown to client
+export const flowsREST = () => replacePlaceholders(FLOWS_REST, {}); // TODO: Remove once shown to client
 
 export const pendingFlows = () => replacePlaceholders(PENDING_FLOWS, {});
 
