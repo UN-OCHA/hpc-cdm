@@ -106,15 +106,7 @@ const AsyncIconButton = ({
             {loading && (
               <CircularProgress
                 size={34}
-                sx={{
-                  ...{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    zIndex: 1,
-                  },
-                  ...tw`text-unocha-primary`,
-                }}
+                sx={tw`text-unocha-primary start-0 top-0 z-10 absolute`}
               />
             )}
           </Box>
