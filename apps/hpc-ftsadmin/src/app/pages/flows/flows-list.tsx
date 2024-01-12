@@ -1,7 +1,7 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
 import { t } from '../../../i18n';
 import PageMeta from '../../components/page-meta';
-import { AppContext, getEnv } from '../../context';
+import { AppContext } from '../../context';
 import tw from 'twin.macro';
 
 import {
