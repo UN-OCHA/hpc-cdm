@@ -1,8 +1,8 @@
 import { Form, Formik, FormikState } from 'formik';
-import { array, number, object, string } from 'yup';
 import tw from 'twin.macro';
 import React, { useState } from 'react';
 
+import * as io from 'io-ts';
 import { C } from '@unocha/hpc-ui';
 import { Environment } from '../../../environments/interface';
 import {
@@ -15,7 +15,8 @@ import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { util } from '@unocha/hpc-core';
 import { Alert } from '@mui/material';
 import { Query } from '../tables/table-utils';
-
+import { util as codecs } from '@unocha/hpc-data';
+import validateForm from '../../utils/form-validation';
 interface Props {
   environment: Environment;
   lang: LanguageKey;
@@ -93,44 +94,19 @@ export const FilterFlowsTableREST = (props: Props) => {
     setTableInfoDisplay(false);
   };
 
-  const FORM_VALIDATION = object().shape({
-    flowID: array(number().positive().integer()).typeError(
-      'Only positive integers are accepted'
-    ),
-    amountUSD: number()
-      .positive()
-      .typeError('Only positive integers are accepted'),
-    keywords: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    flowStatus: string(),
-    reporterRefCode: number()
-      .positive()
-      .typeError('Only positive integers are accepted'),
-    sourceSystemID: number()
-      .positive()
-      .typeError('Only positive integers are accepted'),
-    legacyID: number()
-      .positive()
-      .typeError('Only positive integers are accepted'),
-    sourceOrganizations: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    sourceLocations: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    sourceUsageYears: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    destinationOrganizations: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    destinationLocations: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    destinationUsageYears: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
+  const FORM_VALIDATION = io.partial({
+    flowID: io.array(codecs.INTEGER_FROM_STRING),
+    amountUSD: io.union([
+      codecs.POSITIVE_NUMBER_FROM_STRING,
+      codecs.EMPTY_STRING,
+    ]),
+    reporterRefCode: io.union([
+      codecs.INTEGER_FROM_STRING,
+      codecs.EMPTY_STRING,
+    ]),
+    sourceSystemID: io.union([codecs.INTEGER_FROM_STRING, codecs.EMPTY_STRING]),
+    legacyID: io.union([codecs.INTEGER_FROM_STRING, codecs.EMPTY_STRING]),
+    destinationOrganizations: codecs.NON_EMPTY_ARRAY,
   });
   const handleSubmit = (values: FlowsFilterValuesREST) => {
     setQuery({
@@ -159,7 +135,7 @@ export const FilterFlowsTableREST = (props: Props) => {
           query.filters,
           FLOWS_FILTER_INITIAL_VALUES_REST
         )}
-        validationSchema={FORM_VALIDATION}
+        validate={(values) => validateForm(values, FORM_VALIDATION)}
         onSubmit={handleSubmit}
       >
         {({ resetForm }) => (

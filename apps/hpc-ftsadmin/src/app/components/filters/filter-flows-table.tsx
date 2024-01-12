@@ -1,5 +1,5 @@
 import { Form, Formik, FormikState } from 'formik';
-import { array, number, object, string } from 'yup';
+import * as io from 'io-ts';
 import tw from 'twin.macro';
 import React, { useContext, useState } from 'react';
 
@@ -15,6 +15,8 @@ import { util } from '@unocha/hpc-core';
 import { Alert } from '@mui/material';
 import { Query } from '../tables/table-utils';
 import { AppContext } from '../../context';
+import { util as codecs } from '@unocha/hpc-data';
+import validateForm from '../../utils/form-validation';
 
 interface Props {
   query: Query;
@@ -25,8 +27,8 @@ export interface FlowsFilterValues {
   flowID?: string[];
   amountUSD?: string;
   keywords?: Array<FormObjectValue>;
-  flowStatus?: FormObjectValue | null;
-  flowType?: FormObjectValue | null;
+  flowStatus?: FormObjectValue | '';
+  flowType?: FormObjectValue | '';
   flowActiveStatus?: string;
   reporterRefCode?: string;
   sourceSystemID?: string;
@@ -52,8 +54,8 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   flowID: [],
   amountUSD: '',
   keywords: [],
-  flowStatus: null,
-  flowType: null,
+  flowStatus: '',
+  flowType: '',
   flowActiveStatus: '',
   reporterRefCode: '',
   sourceSystemID: '',
@@ -75,6 +77,18 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   includeChildrenOfParkedFlows: false,
   restricted: false,
 };
+
+const FORM_VALIDATION = io.partial({
+  flowID: io.array(codecs.INTEGER_FROM_STRING),
+  amountUSD: io.union([
+    codecs.POSITIVE_NUMBER_FROM_STRING,
+    codecs.EMPTY_STRING,
+  ]),
+  reporterRefCode: io.union([codecs.INTEGER_FROM_STRING, codecs.EMPTY_STRING]),
+  sourceSystemID: io.union([codecs.INTEGER_FROM_STRING, codecs.EMPTY_STRING]),
+  legacyID: io.union([codecs.INTEGER_FROM_STRING, codecs.EMPTY_STRING]),
+  destinationOrganizations: codecs.NON_EMPTY_ARRAY,
+});
 
 const StyledDiv = tw.div`
 my-6
@@ -101,44 +115,6 @@ export const FilterFlowsTable = (props: Props) => {
     setInfoAlertDisplay(false);
   };
 
-  const FORM_VALIDATION = object().shape({
-    flowID: array(number().positive().integer()).typeError(
-      'Only positive integers are accepted'
-    ),
-    amountUSD: number()
-      .positive()
-      .typeError('Only positive integers are accepted'),
-    keywords: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    reporterRefCode: number()
-      .positive()
-      .typeError('Only positive integers are accepted'),
-    sourceSystemID: number()
-      .positive()
-      .typeError('Only positive integers are accepted'),
-    legacyID: number()
-      .positive()
-      .typeError('Only positive integers are accepted'),
-    sourceOrganizations: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    sourceLocations: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    sourceUsageYears: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    destinationOrganizations: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    destinationLocations: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-    destinationUsageYears: array().of(
-      object().shape({ displayLabel: string(), value: string() })
-    ),
-  });
   const handleSubmit = (values: FlowsFilterValues) => {
     const encodedFilters = encodeFilters(values, FLOWS_FILTER_INITIAL_VALUES);
 
@@ -173,7 +149,7 @@ export const FilterFlowsTable = (props: Props) => {
       <Formik
         enableReinitialize
         initialValues={queryFilters}
-        validationSchema={FORM_VALIDATION}
+        validate={(values) => validateForm(values, FORM_VALIDATION)}
         onSubmit={handleSubmit}
       >
         {({ resetForm }) => (
