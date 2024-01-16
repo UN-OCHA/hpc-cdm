@@ -11,12 +11,17 @@ import {
   emergencies,
   projects,
   plans,
+  flows,
 } from '@unocha/hpc-data';
 import { t } from '../../i18n';
 import PageMeta from '../components/page-meta';
 import { AppContext, getEnv } from '../context';
 import tw from 'twin.macro';
-import FlowForm, { FormValues } from '../components/flow-form';
+import FlowForm, {
+  FormValues,
+  ReportDetailType,
+  VersionDataType,
+} from '../components/flow-form';
 
 interface Props {
   className?: string;
@@ -72,32 +77,90 @@ export default (props: Props) => {
     destinationPlans: [],
     destinationGlobalClusters: [],
     destinationEmergencies: [],
-    reportSource: 'primary',
-    reportChannel: '',
-    verified: 'verified',
     origCurrency: '',
-    reportedOrganization: '',
-    reportedDate: dayjs().format('MM/DD/YYYY'),
-    reporterReferenceCode: '',
-    reporterContactInformation: '',
+    reportDetails: [
+      {
+        verified: 'verified',
+        reportSource: 'primary',
+        reporterReferenceCode: '',
+        reportChannel: '',
+        reportedOrganization: '',
+        reportedDate: dayjs().format('MM/DD/YYYY'),
+        reporterContactInformation: '',
+        sourceSystemRecordId: '',
+        reportFiles: [
+          {
+            title: '',
+          },
+        ],
+      },
+    ],
   });
+  const [previousReportDetails, setPreviousReportDetails] = useState<
+    ReportDetailType[]
+  >([]);
+  const [versionData, setVersionData] = useState<VersionDataType[]>([]);
   const [isSetupedInitialValue, setIsSetupedInitialValue] = useState<boolean>(
     !props.isEdit
   );
-
-  const [state] = useDataLoader([flowId, versionId], () =>
-    props.isEdit
-      ? env.model.flows.getFlow({
-          id: parseInt(flowId as string),
-          versionId: parseInt(versionId as string),
-        })
-      : Promise.resolve({})
+  const [latestVersion, setLatestVersion] = useState<number>(
+    parseInt(versionId as string)
   );
 
+  const [state] = useDataLoader([flowId, versionId], () => {
+    if (props.isEdit && parseInt(versionId as string) === latestVersion) {
+      const versionIds = new Array(latestVersion).fill(0);
+      return Promise.all(
+        versionIds.map((_, index) =>
+          env.model.flows.getFlow({
+            id: parseInt(flowId as string),
+            versionId: index + 1,
+          })
+        )
+      );
+    } else {
+      return Promise.resolve([]);
+    }
+  });
+
+  const [fullState] = useDataLoader([flowId, latestVersion], () => {
+    if (props.isEdit && parseInt(versionId as string) !== latestVersion) {
+      const versionIds = new Array(
+        latestVersion - parseInt(versionId as string)
+      ).fill(0);
+      return Promise.all(
+        versionIds.map((_, index) =>
+          env.model.flows.getFlow({
+            id: parseInt(flowId as string),
+            versionId: parseInt(versionId as string) + index + 1,
+          })
+        )
+      );
+    } else {
+      return Promise.resolve([]);
+    }
+  });
+
   useEffect(() => {
-    if (props.isEdit && state.type === 'success') {
-      const data = state.data;
-      console.log('%%%%%%%%', data);
+    if (
+      props.isEdit &&
+      state.type === 'success' &&
+      state.data.length > 0 &&
+      ((parseInt(versionId as string) !== latestVersion &&
+        fullState.type === 'success' &&
+        fullState.data.length > 0) ||
+        parseInt(versionId as string) === latestVersion)
+    ) {
+      const data = state.data[parseInt(versionId as string) - 1];
+      if (
+        data.versions.length !== latestVersion ||
+        fullState.type !== 'success'
+      ) {
+        setLatestVersion(data.versions.length);
+        return undefined;
+      }
+      const fullData = [...state.data, ...fullState.data];
+
       const amountUSD = parseFloat(data.amountUSD);
       const amountOriginal = parseFloat(data.origAmount);
       const exchangeRateUsed = parseFloat(data.exchangeRate);
@@ -120,10 +183,6 @@ export default (props: Props) => {
             id: category.id,
             label: category.name,
           }))[0] ?? '';
-      const reportedOrganization = {
-        id: data.reportDetails[0].organization.id,
-        label: `${data.reportDetails[0].organization.name} [${data.reportDetails[0].organization.abbreviation}]`,
-      };
       const sourceOrganizations = data.organizations
         .filter(
           (organization: organizations.Organization) =>
@@ -225,7 +284,7 @@ export default (props: Props) => {
           )[0];
           return {
             id: project.id,
-            label: `${latestProject.name}[ [${latestProject.code}] ]`,
+            label: `${latestProject.name} [${latestProject.code}]`,
           };
         });
       const destinationProjects = data.projects
@@ -239,7 +298,7 @@ export default (props: Props) => {
           )[0];
           return {
             id: project.id,
-            label: `${latestProject.name}[ [${latestProject.code}] ]`,
+            label: `${latestProject.name} [${latestProject.code}]`,
           };
         });
       const sourcePlans = data.plans
@@ -267,17 +326,6 @@ export default (props: Props) => {
         : null;
       const budgetYear = data.budgetYear ?? '';
       const flowDate = dayjs(data.flowDate).format('MM/DD/YYYY');
-      const reportSource =
-        data.reportDetails[0].source === 'Primary' ? 'primary' : 'secondary';
-      const verified = data.reportDetails[0].verified
-        ? 'verified'
-        : 'unverified';
-      const reportedDate = dayjs(data.reportDetails[0].date).format(
-        'MM/DD/YYYY'
-      );
-      const reporterReferenceCode = data.reportDetails[0].refCode ?? '';
-      const reporterContactInformation =
-        data.reportDetails[0].contactInfo ?? '';
       const notes = data.notes ?? '';
       const flowStatus =
         data.categories.find(
@@ -301,10 +349,77 @@ export default (props: Props) => {
           (category: categories.Category) =>
             category.group === 'beneficiaryGroup'
         )?.name ?? '';
-      const reportChannel =
-        data.reportDetails[0].categories.find(
-          (category: categories.Category) => category.group === 'reportChannel'
-        )?.name ?? '';
+      const reportDetails = data.reportDetails.map(
+        (detail: flows.FlowReportDetail) => ({
+          verified: detail.verified ? 'verified' : 'unverified',
+          reportSource: detail.source === 'Primary' ? 'primary' : 'secondary',
+          reporterReferenceCode: detail.refCode ?? '',
+          reportChannel:
+            detail?.categories?.find(
+              (category: categories.Category) =>
+                category.group === 'reportChannel'
+            )?.name ?? '',
+          reportedOrganization: {
+            id: detail?.organization?.id,
+            label: `${detail?.organization?.name} [${detail?.organization?.abbreviation}]`,
+          },
+          reportedDate: dayjs(detail.date).format('MM/DD/YYYY'),
+          reporterContactInformation: detail.contactInfo ?? '',
+          sourceSystemRecordId: detail.sourceID ?? '',
+          reportFiles: detail?.reportFiles?.map((fileData) => ({
+            title: fileData.title,
+          })),
+        })
+      );
+      const prevReportDetails = state.data.reduce(
+        (details, flowItemData, index) => {
+          if (index < parseInt(versionId as string) - 1) {
+            details = [
+              ...details,
+              ...flowItemData.reportDetails.map(
+                (detail: flows.FlowReportDetail) => ({
+                  verified: detail.verified ? 'verified' : 'unverified',
+                  reportSource:
+                    detail.source === 'Primary' ? 'primary' : 'secondary',
+                  reporterReferenceCode: detail.refCode ?? '',
+                  reportChannel:
+                    detail?.categories?.find(
+                      (category: categories.Category) =>
+                        category.group === 'reportChannel'
+                    )?.name ?? '',
+                  reportedOrganization: {
+                    id: detail?.organization?.id,
+                    label: `${detail?.organization?.name} [${detail?.organization?.abbreviation}]`,
+                  },
+                  reportedDate: dayjs(detail.date).format('MM/DD/YYYY'),
+                  reporterContactInformation: detail.contactInfo ?? '',
+                  sourceSystemRecordId: detail.sourceID ?? '',
+                  reportFiles: detail?.reportFiles?.map((fileData) => ({
+                    title: fileData.title,
+                  })),
+                  versionId: index + 1,
+                })
+              ),
+            ];
+          }
+          return details;
+        },
+        []
+      );
+      const versionDetails = fullData.map((flowItemData, index) => ({
+        versionId: index + 1,
+        flowId: parseInt(flowId as string),
+        createdTime: dayjs(flowItemData.createdAt).format(
+          'D MMMM YYYY [at] h:mm:ss a'
+        ),
+        createdBy: flowItemData.createdBy?.name,
+        updatedTime: dayjs(flowItemData.updated).format(
+          'D MMMM YYYY [at] h:mm:ss a'
+        ),
+        updatedBy: flowItemData.lastUpdatedBy?.name,
+        active: flowItemData.activeStatus,
+        viewing: index + 1 === parseInt(versionId as string),
+      }));
 
       setFlowData({
         amountUSD,
@@ -337,18 +452,14 @@ export default (props: Props) => {
         destinationPlans,
         destinationGlobalClusters,
         destinationEmergencies,
-        reportSource,
-        reportChannel,
-        verified,
         origCurrency,
-        reportedOrganization,
-        reportedDate,
-        reporterReferenceCode,
-        reporterContactInformation,
+        reportDetails,
       });
       setIsSetupedInitialValue(true);
+      setPreviousReportDetails(prevReportDetails);
+      setVersionData(versionDetails);
     }
-  }, [state, props.isEdit]);
+  }, [state, fullState, props.isEdit]);
 
   return (
     <AppContext.Consumer>
@@ -383,6 +494,8 @@ export default (props: Props) => {
                   environment={env}
                   isEdit={props.isEdit}
                   initialValue={flowData}
+                  prevDetails={previousReportDetails}
+                  versionData={versionData}
                 />
               )}
             </div>

@@ -92,7 +92,6 @@ const AsyncAutocompleteSelect = ({
   );
   const [isFetch, setIsFetch] = useState(false);
   const [isUsageYear, setisUsageYear] = useState(false);
-  const [isInitialRender, setIsInitialRender] = useState(true);
   const loading =
     open &&
     !isFetch &&
@@ -113,6 +112,11 @@ const AsyncAutocompleteSelect = ({
     result: APIAutocompleteResult
   ): result is currencies.GetCurrenciesResult {
     return currencies.GET_CURRENCIES_RESULT.is(result);
+  }
+  function isProjectsResult(
+    result: APIAutocompleteResult
+  ): result is projects.GetProjectsAutocompleteResult {
+    return projects.GET_PROJECTS_AUTOCOMPLETE_RESULT.is(result);
   }
   const onBlur = useCallback(() => helpers.setTouched(true), [helpers]);
   const errorMsg = useMemo(
@@ -153,7 +157,7 @@ const AsyncAutocompleteSelect = ({
       );
     }
 
-    if (!loading && !isInitialRender) {
+    if (!loading && !(typeof field.value === 'string')) {
       return undefined;
     }
 
@@ -184,6 +188,13 @@ const AsyncAutocompleteSelect = ({
             ) {
               return {
                 label: (responseValue as currencies.Currency).code,
+                id: responseValue.id,
+              };
+            } else if (isProjectsResult(response)) {
+              return {
+                label: `${(responseValue as projects.Project).name} [${
+                  (responseValue as projects.Project).code
+                }]`,
                 id: responseValue.id,
               };
             } else {
@@ -239,7 +250,6 @@ const AsyncAutocompleteSelect = ({
           }
         }
         setIsFetch(true);
-        setIsInitialRender(false);
       } catch (error) {
         console.error(error);
       }
@@ -248,7 +258,7 @@ const AsyncAutocompleteSelect = ({
     return () => {
       active = false;
     };
-  }, [loading, inputValue]);
+  }, [loading]);
 
   useEffect(() => {
     setMultipleValueSelected(

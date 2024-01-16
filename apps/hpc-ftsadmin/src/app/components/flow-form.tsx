@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FieldArray } from 'formik';
 import { array, number, object, string } from 'yup';
 import tw from 'twin.macro';
+import dayjs from 'dayjs';
 
 import { C, dialogs } from '@unocha/hpc-ui';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@mui/material';
 import { Environment } from '../../environments/interface';
-import { MdAdd } from 'react-icons/md';
+import { MdAdd, MdRemove } from 'react-icons/md';
 import { usageYears } from '@unocha/hpc-data';
 import { isValidDate, isValidYear } from '../utils/validation';
 
@@ -16,6 +26,21 @@ type AutoCompleteSeletionType =
       isAutoFilled?: boolean;
     }
   | string;
+
+export interface ReportDetailType {
+  verified: string;
+  reportSource: string;
+  reporterReferenceCode: string;
+  reportChannel: string;
+  reportedOrganization: AutoCompleteSeletionType;
+  reportedDate: string;
+  reporterContactInformation: string;
+  sourceSystemRecordId: string;
+  reportFiles: {
+    title: string;
+  }[];
+  versionId?: number;
+}
 
 export interface FormValues {
   amountUSD: number;
@@ -31,12 +56,6 @@ export interface FormValues {
   earmarkingType: AutoCompleteSeletionType;
   method: string;
   beneficiaryGroup: string;
-  reportSource: string;
-  reportChannel: string;
-  verified: string;
-  reportedDate: string;
-  reporterReferenceCode: string;
-  reporterContactInformation: string;
   origCurrency: AutoCompleteSeletionType;
   amountOriginal: number;
   exchangeRateUsed: number;
@@ -55,13 +74,26 @@ export interface FormValues {
   destinationPlans: AutoCompleteSeletionType[];
   destinationGlobalClusters: AutoCompleteSeletionType[];
   destinationEmergencies: AutoCompleteSeletionType[];
-  reportedOrganization: AutoCompleteSeletionType;
+  reportDetails: ReportDetailType[];
+}
+
+export interface VersionDataType {
+  versionId: number;
+  flowId: number;
+  createdTime: string;
+  createdBy: string | null;
+  updatedTime: string;
+  updatedBy: string | null;
+  active: boolean;
+  viewing: boolean;
 }
 
 interface Props {
   environment: Environment;
   isEdit: boolean;
   initialValue: FormValues;
+  prevDetails?: ReportDetailType[];
+  versionData?: VersionDataType[];
 }
 
 const StyledLayoutRow = tw.div`
@@ -107,9 +139,24 @@ border-gray-100
 const StyledCurrencyRow = tw.div`
 w-1/2
 `;
+const StyledAddReportDetailButton = tw(C.Button)`
+ml-[25px]
+mb-6
+`;
+
+const initialReportDetail = {
+  verified: 'verified',
+  reportSource: 'primary',
+  reporterReferenceCode: '',
+  reportChannel: '',
+  reportedOrganization: '',
+  reportedDate: dayjs().format('MM/DD/YYYY'),
+  reporterContactInformation: '',
+  sourceSystemRecordId: '',
+};
 
 export const FlowForm = (props: Props) => {
-  const { environment, initialValue, isEdit } = props;
+  const { environment, initialValue, isEdit, prevDetails, versionData } = props;
   const { confirm } = dialogs;
 
   const handleSubmit = (values: FormValues) => {
@@ -531,15 +578,39 @@ export const FlowForm = (props: Props) => {
       ),
     flowStatus: string().required(),
     method: string().required(),
-    reporterReferenceCode: number()
-      .positive()
-      .typeError('Only positive integers are accepted'),
+
     sourceSystemId: number()
       .positive()
       .typeError('Only positive integers are accepted'),
     flowLegacyId: number()
       .positive()
       .typeError('Only positive integers are accepted'),
+    reportDetails: array()
+      .of(
+        object().shape({
+          verified: string().required(),
+          reportSource: string().required(),
+          reporterReferenceCode: number()
+            .positive()
+            .typeError('Only positive integers are accepted'),
+          reportChannel: string(),
+          reportedOrganization: object()
+            .shape({ label: string(), id: string() })
+            .required(),
+          reportedDate: string()
+            .nullable()
+            .required()
+            .test('validate-format-date', 'Date entered is invalid', (value) =>
+              isValidDate(value ?? '')
+            ),
+          reporterContactInformation: string(),
+          sourceSystemRecordId: string(),
+        })
+      )
+      .min(
+        1,
+        'Report detail information is required and should have at least 1'
+      ),
   });
 
   return (
@@ -549,7 +620,6 @@ export const FlowForm = (props: Props) => {
       onSubmit={handleSubmit}
     >
       {({ values, setFieldValue }) => {
-        console.log('@@@@@', values);
         return (
           <Form>
             <StyledLayoutRow>
@@ -558,7 +628,7 @@ export const FlowForm = (props: Props) => {
                   <C.FormSection title="Funding Source(s)" isLeftSection>
                     <C.AsyncAutocompleteSelect
                       label="Organization(s)"
-                      name=" "
+                      name="sourceOrganizations"
                       fnPromise={
                         environment.model.organizations
                           .getAutocompleteOrganizations
@@ -909,88 +979,205 @@ export const FlowForm = (props: Props) => {
                 </StyledRow>
               </C.FormSection>
             </StyledFullSection>
-            <StyledFullSection>
-              <C.FormSection title="Reporting Details">
-                <StyledRow>
-                  <StyledHalfSection>
-                    <C.RadioGroup
-                      name="reportSource"
-                      options={[
-                        { value: 'primary', label: 'Primary' },
-                        { value: 'secondary', label: 'Secondary' },
-                      ]}
-                      label="Report Source"
-                      row
-                    />
-                    <C.AsyncAutocompleteSelect
-                      label="Reported By Organization"
-                      name="reportedOrganization"
-                      placeholder="Reported by Organization"
-                      fnPromise={
-                        environment.model.organizations
-                          .getAutocompleteOrganizations
+            <FieldArray name="reportDetails">
+              {({ remove, push }) => (
+                <>
+                  {values.reportDetails.length > 0 &&
+                    values.reportDetails.map((_, index) => (
+                      <StyledFullSection key={index}>
+                        <C.FormSection title="Reporting Details">
+                          <StyledRow>
+                            <StyledHalfSection>
+                              <C.RadioGroup
+                                name={`reportDetails[${index}].reportSource`}
+                                options={[
+                                  { value: 'primary', label: 'Primary' },
+                                  { value: 'secondary', label: 'Secondary' },
+                                ]}
+                                label="Report Source"
+                                row
+                              />
+                              <C.AsyncAutocompleteSelect
+                                label="Reported By Organization"
+                                name={`reportDetails[${index}].reportedOrganization`}
+                                placeholder="Reported by Organization"
+                                fnPromise={
+                                  environment.model.organizations
+                                    .getAutocompleteOrganizations
+                                }
+                              />
+                              <C.AsyncSingleSelect
+                                label="Reported Channel"
+                                name={`reportDetails[${index}].reportChannel`}
+                                fnPromise={
+                                  environment.model.categories.getCategories
+                                }
+                                category="reportChannel"
+                                hasNameValue
+                              />
+                              <C.TextFieldWrapper
+                                label="Source System Record Id"
+                                name={`reportDetails[${index}].sourceSystemRecordId`}
+                                type="text"
+                              />
+                              <StyledFieldset>
+                                <C.TextFieldWrapper
+                                  label="Title"
+                                  name={`reportDetails[${index}].reportFileTitle`}
+                                  type="text"
+                                />
+                                <C.FileUpload />
+                                <C.TextFieldWrapper
+                                  label="Title"
+                                  name={`reportDetails[${index}].reportUrlTitle`}
+                                  type="text"
+                                />
+                                <C.TextFieldWrapper
+                                  label="URL"
+                                  name={`reportDetails[${index}].reportUrl`}
+                                  type="text"
+                                />
+                              </StyledFieldset>
+                              {values.reportDetails.length > 1 && (
+                                <C.Button
+                                  onClick={() => {
+                                    remove(index);
+                                  }}
+                                  color="secondary"
+                                  text="Remove Reporting Detail"
+                                  startIcon={MdRemove}
+                                />
+                              )}
+                            </StyledHalfSection>
+                            <StyledHalfSection>
+                              <StyledRadioDiv>
+                                <C.RadioGroup
+                                  name={`reportDetails[${index}].verified`}
+                                  options={[
+                                    { value: 'verified', label: 'Verified' },
+                                    {
+                                      value: 'unverified',
+                                      label: 'Unverified',
+                                    },
+                                  ]}
+                                  label="Verified"
+                                  row
+                                />
+                              </StyledRadioDiv>
+                              <C.DatePicker
+                                name={`reportDetails[${index}].reportedDate`}
+                                label="Date Reported"
+                              />
+                              <C.TextFieldWrapper
+                                label="Reporter Reference Code"
+                                name={`reportDetails[${index}].reporterReferenceCode`}
+                                type="text"
+                              />
+                              <C.TextFieldWrapper
+                                label="Reporter Contact Information"
+                                name={`reportDetails[${index}].reporterContactInformation`}
+                                multiline
+                                rows={4}
+                                type="text"
+                              />
+                            </StyledHalfSection>
+                          </StyledRow>
+                        </C.FormSection>
+                      </StyledFullSection>
+                    ))}
+                  <StyledAddReportDetailButton
+                    onClick={() => {
+                      push(initialReportDetail);
+                    }}
+                    color="primary"
+                    text="Add Reporting Detail"
+                    startIcon={MdAdd}
+                  />
+                </>
+              )}
+            </FieldArray>
+            {isEdit && prevDetails && prevDetails.length > 0 && (
+              <StyledFullSection>
+                <C.FormSection title="Previous Reporting Details">
+                  <TableContainer component={Paper}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Version</TableCell>
+                          <TableCell>Type</TableCell>
+                          <TableCell>Organization</TableCell>
+                          <TableCell>Date Reported</TableCell>
+                          <TableCell>Channel</TableCell>
+                          <TableCell>Record ID</TableCell>
+                          <TableCell>Contact</TableCell>
+                          <TableCell>Ref Code</TableCell>
+                          <TableCell>Verified?</TableCell>
+                          <TableCell>Docs</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {prevDetails.map((row, index) => (
+                          <TableRow
+                            key={index}
+                            sx={{
+                              '&:last-child td, &:last-child th': { border: 0 },
+                            }}
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.versionId}
+                            </TableCell>
+                            <TableCell>{row.reportSource}</TableCell>
+                            <TableCell>
+                              {typeof row.reportedOrganization === 'string'
+                                ? row.reportedOrganization
+                                : row.reportedOrganization.label}
+                            </TableCell>
+                            <TableCell>{row.reportedDate}</TableCell>
+                            <TableCell>{row.reportChannel}</TableCell>
+                            <TableCell>{row.sourceSystemRecordId}</TableCell>
+                            <TableCell>
+                              {row.reporterContactInformation}
+                            </TableCell>
+                            <TableCell>{row.reporterReferenceCode}</TableCell>
+                            <TableCell>
+                              {row.verified === 'verified' ? 'Yes' : 'No'}
+                            </TableCell>
+                            <TableCell>
+                              {row.reportFiles
+                                .map((file) => file.title)
+                                .join(', ')}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </C.FormSection>
+              </StyledFullSection>
+            )}
+            {isEdit && versionData && versionData.length > 0 && (
+              <StyledFullSection>
+                <C.FormSection title="Flow Versions">
+                  {versionData.map((version) => (
+                    <C.CheckBox
+                      key={`${version.flowId}-${version.versionId}`}
+                      name={`${version.flowId}-${version.versionId}`}
+                      label={
+                        `${version.flowId}-${version.versionId}` +
+                        `${version.active ? ' [Active] ' : ' '}` +
+                        `${version.viewing ? '[Viewing]' : ''} ` +
+                        `Created at ${version.createdTime} by ${
+                          version.createdBy ?? 'FTS User'
+                        }, ` +
+                        `updated at ${version.updatedTime} by ${
+                          version.updatedBy ?? 'FTS User'
+                        }`
                       }
                     />
-                    <C.AsyncSingleSelect
-                      label="Reported Channel"
-                      name="reportChannel"
-                      fnPromise={environment.model.categories.getCategories}
-                      category="reportChannel"
-                      hasNameValue
-                    />
-                    <C.TextFieldWrapper
-                      label="Source System Record Id"
-                      name="sourceSystemRecordId"
-                      type="text"
-                    />
-                    <StyledFieldset>
-                      <C.TextFieldWrapper
-                        label="Title"
-                        name="reportFileTitle"
-                        type="text"
-                      />
-                      <C.FileUpload />
-                      <C.TextFieldWrapper
-                        label="Title"
-                        name="reportUrlTitle"
-                        type="text"
-                      />
-                      <C.TextFieldWrapper
-                        label="URL"
-                        name="reportUrl"
-                        type="text"
-                      />
-                    </StyledFieldset>
-                  </StyledHalfSection>
-                  <StyledHalfSection>
-                    <StyledRadioDiv>
-                      <C.RadioGroup
-                        name="verified"
-                        options={[
-                          { value: 'verified', label: 'Verified' },
-                          { value: 'unverified', label: 'Unverified' },
-                        ]}
-                        label="Verified"
-                        row
-                      />
-                    </StyledRadioDiv>
-                    <C.DatePicker name="reportedDate" label="Date Reported" />
-                    <C.TextFieldWrapper
-                      label="Reporter Reference Code"
-                      name="reporterReferenceCode"
-                      type="text"
-                    />
-                    <C.TextFieldWrapper
-                      label="Reporter Contact Information"
-                      name="reporterContactInformation"
-                      multiline
-                      rows={4}
-                      type="text"
-                    />
-                  </StyledHalfSection>
-                </StyledRow>
-              </C.FormSection>
-            </StyledFullSection>
+                  ))}
+                </C.FormSection>
+              </StyledFullSection>
+            )}
           </Form>
         );
       }}

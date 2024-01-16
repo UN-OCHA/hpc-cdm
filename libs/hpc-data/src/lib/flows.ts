@@ -1,6 +1,7 @@
 import * as t from 'io-ts';
 
 import { INTEGER_FROM_STRING } from './util';
+import { CATEGORY } from './categories';
 
 const FLOW_REF_DIRECTION = t.keyof({
   source: null,
@@ -86,12 +87,28 @@ const FLOW_REPORT_DETAIL = t.intersection([
     source: t.string,
   }),
   t.partial({
+    verified: t.string,
+    contactInfo: t.union([t.string, t.null]),
     date: t.union([t.string, t.null]),
     channel: t.union([t.string, t.null]),
     refCode: t.union([t.string, t.null]),
     sourceID: t.union([t.string, t.null]),
+    categories: t.array(CATEGORY),
+    organization: t.type({
+      id: t.number,
+      name: t.string,
+      abbreviation: t.string,
+    }),
+    reportFiles: t.array(
+      t.type({
+        id: t.number,
+        title: t.string,
+      })
+    ),
   }),
 ]);
+
+export type FlowReportDetail = t.TypeOf<typeof FLOW_REPORT_DETAIL>;
 
 const TRANSFERRED_ENTITY = t.type({
   key: t.string,
