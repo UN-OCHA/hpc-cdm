@@ -68,8 +68,8 @@ export default (props: Props) => {
       StringParam,
       encodeTableHeaders([], 'organizations')
     ),
-    prevPageCursor: withDefault(StringParam, ''),
-    nextPageCursor: withDefault(StringParam, ''),
+    prevPageCursor: withDefault(NumberParam, 0),
+    nextPageCursor: withDefault(NumberParam, 0),
   });
 
   const organizationTableProps: OrganizationTableProps = {

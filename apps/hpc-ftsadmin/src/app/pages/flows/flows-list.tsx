@@ -90,8 +90,8 @@ export default (props: Props) => {
     orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
     filters: withDefault(JsonParam, JSON.stringify({})),
     tableHeaders: withDefault(StringParam, encodeTableHeaders([])), //  Default value of table headers
-    prevPageCursor: withDefault(StringParam, undefined),
-    nextPageCursor: withDefault(StringParam, undefined),
+    prevPageCursor: withDefault(NumberParam, undefined),
+    nextPageCursor: withDefault(NumberParam, undefined),
   });
 
   const flowsTableProps: FlowsTableProps = {
