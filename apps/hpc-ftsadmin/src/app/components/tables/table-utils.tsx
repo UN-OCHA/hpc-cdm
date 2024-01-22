@@ -23,8 +23,8 @@ export type Query = {
   orderDir: string;
   filters: string;
   tableHeaders: string;
-  prevPageCursor?: string;
-  nextPageCursor?: string;
+  prevPageCursor?: number;
+  nextPageCursor?: number;
 };
 
 export const StyledLoader = tw(C.Loader)`

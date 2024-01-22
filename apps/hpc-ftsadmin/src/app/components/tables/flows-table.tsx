@@ -125,8 +125,8 @@ export default function FlowsTable(props: FlowsTableProps) {
   const handleChangePage = (
     event: unknown,
     newPage: number,
-    prevPageCursor: string,
-    nextPageCursor: string
+    prevPageCursor: number,
+    nextPageCursor: number
   ) => {
     if (newPage > props.query.page) {
       setQuery({
