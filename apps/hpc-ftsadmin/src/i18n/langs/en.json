@@ -90,6 +90,9 @@
     },
     "newFlow": {
       "title": "Add Funding Flow"
+    },
+    "editFlow": {
+      "title": "Edit Flow"
     }
   }
 }

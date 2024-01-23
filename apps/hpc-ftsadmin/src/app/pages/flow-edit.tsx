@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { C, CLASSES, combineClasses, useDataLoader } from '@unocha/hpc-ui';
 import {
   categories,
@@ -22,10 +23,16 @@ import FlowForm, {
   ReportDetailType,
   VersionDataType,
 } from '../components/flow-form';
+dayjs.extend(advancedFormat);
 
 interface Props {
   className?: string;
   isEdit: boolean;
+}
+
+interface Participant {
+  name?: string;
+  email?: string;
 }
 
 const StyledLoader = tw(C.Loader)`
@@ -40,6 +47,16 @@ const StyledAnchorDiv = tw.span`
 text-2xl
 float-right
 `;
+
+const StyledSubTitle = tw.h3`
+text-2xl
+`;
+
+const StyledTitle = tw.div`
+flex
+justify-between
+`;
+
 export default (props: Props) => {
   const env = getEnv();
   const { flowId, versionId } = useParams<{
@@ -106,6 +123,16 @@ export default (props: Props) => {
   const [latestVersion, setLatestVersion] = useState<number>(
     parseInt(versionId as string)
   );
+
+  function displayUserName(participant: Participant): string {
+    if (participant?.name) {
+      return participant.name;
+    }
+    if (participant?.email) {
+      return participant.email;
+    }
+    return 'FTS user';
+  }
 
   const [state] = useDataLoader([flowId, versionId], () => {
     if (props.isEdit && parseInt(versionId as string) === latestVersion) {
@@ -420,7 +447,6 @@ export default (props: Props) => {
         active: flowItemData.activeStatus,
         viewing: index + 1 === parseInt(versionId as string),
       }));
-
       setFlowData({
         amountUSD,
         amountOriginal,
@@ -482,12 +508,87 @@ export default (props: Props) => {
             >
               <PageMeta title={[t.t(lang, (s) => s.routes.newFlow.title)]} />
               <C.PageTitle>
-                {t.t(lang, (s) => s.routes.newFlow.title)}
-                <StyledAnchorDiv>
-                  <StyledAnchor href="flows" target="_blank">
-                    Find Similar Flows
-                  </StyledAnchor>
-                </StyledAnchorDiv>
+                <StyledTitle>
+                  <div>
+                    {props.isEdit && state.type === 'success'
+                      ? t.t(
+                          lang,
+                          (s) =>
+                            s.routes.editFlow.title +
+                            ' ' +
+                            state.data[parseInt(versionId as string) - 1].id +
+                            ', v' +
+                            state.data[parseInt(versionId as string) - 1]
+                              .versionID
+                        )
+                      : t.t(lang, (s) => s.routes.newFlow.title)}
+                    {props.isEdit && state.type === 'success' ? (
+                      <>
+                        {!state.data[parseInt(versionId as string) - 1]
+                          .activeStatus &&
+                        !state.data[parseInt(versionId as string) - 1]
+                          .deletedAt ? (
+                          <p>
+                            This flow is not active because it has been marked
+                            as{' '}
+                            {
+                              state.data[parseInt(versionId as string) - 1]
+                                .inactiveReason
+                            }
+                            . See{' '}
+                            <a>
+                              Flow{' '}
+                              {state.data[parseInt(versionId as string) - 1].id}
+                              , v
+                              {
+                                state.data[parseInt(versionId as string) - 1]
+                                  .versionID
+                              }
+                            </a>{' '}
+                            for the current active version.
+                          </p>
+                        ) : (
+                          ''
+                        )}
+                        <StyledSubTitle>
+                          Updated{' '}
+                          {dayjs(
+                            state.data[parseInt(versionId as string) - 1][
+                              'updatedAtDisplay'
+                            ]
+                          ).format('Do MMMM YYYY [at] h:mm:ss a')}{' '}
+                          by{' '}
+                          {displayUserName(
+                            state.data[parseInt(versionId as string) - 1][
+                              'lastUpdatedBy'
+                            ]
+                          )}
+                        </StyledSubTitle>
+                        <StyledSubTitle>
+                          Created{' '}
+                          {dayjs(
+                            state.data[parseInt(versionId as string) - 1][
+                              'createdAtDisplay'
+                            ]
+                          ).format('Do MMMM YYYY [at] h:mm:ss a')}{' '}
+                          by{' '}
+                          {displayUserName(
+                            state.data[parseInt(versionId as string) - 1][
+                              'createdBy'
+                            ]
+                          )}
+                        </StyledSubTitle>
+                      </>
+                    ) : (
+                      ''
+                    )}
+                  </div>
+                  <StyledAnchorDiv>
+                    <StyledAnchor href="flows" target="_blank">
+                      Find Similar Flows
+                    </StyledAnchor>
+                  </StyledAnchorDiv>
+                </StyledTitle>
               </C.PageTitle>
               {isSetupedInitialValue && (
                 <FlowForm

@@ -90,6 +90,9 @@
     },
     "newFlow": {
       "title": "Ajouter un flux de financement"
+    },
+    "editFlow": {
+      "title": "Modifier le flux"
     }
   }
 }
