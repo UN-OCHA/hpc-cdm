@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Formik, FieldArray } from 'formik';
 import { array, number, object, string } from 'yup';
 import tw from 'twin.macro';
@@ -56,6 +56,7 @@ export interface FormValues {
   earmarkingType: AutoCompleteSeletionType;
   method: string;
   beneficiaryGroup: string;
+  inactiveReason: string;
   origCurrency: AutoCompleteSeletionType;
   amountOriginal: number;
   exchangeRateUsed: number;
@@ -86,6 +87,12 @@ export interface VersionDataType {
   updatedBy: string | null;
   active: boolean;
   viewing: boolean;
+  source: any;
+  destination: any;
+  categories: any;
+  uniqueSources: any;
+  uniqueDestinations: any;
+  uniqueCategories: any;
 }
 
 interface Props {
@@ -164,6 +171,13 @@ export const FlowForm = (props: Props) => {
   };
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
+  const [comparingVersions, setComparingVersions] = useState<VersionDataType[]>(
+    []
+  );
+  const [comparedVersions, setComparedVersions] = useState<VersionDataType[]>(
+    []
+  );
+
   const buttonText = 'Calculate The Exchange Rate';
 
   const handleCalculateExchangeRate = (values: any, setFieldValue: any) => {
@@ -453,6 +467,103 @@ export const FlowForm = (props: Props) => {
     console.log(fetchedGoverningEntities);
   };
 
+  const handleCompareCheck = (
+    checkedVersion: VersionDataType,
+    isChecked: boolean
+  ) => {
+    setComparingVersions((prev: VersionDataType[]) => {
+      if (isChecked) {
+        return [...prev, checkedVersion];
+      } else {
+        return prev.filter(
+          (version: VersionDataType) =>
+            version.versionId !== checkedVersion.versionId
+        );
+      }
+    });
+  };
+
+  const objectTypes = [
+    'emergencies',
+    'projects',
+    'usageYears',
+    'globalClusters',
+    'locations',
+    'plans',
+    'organizations',
+  ];
+
+  const extractUniqueFromArray = (array1: any, array2: any) => {
+    return array1.filter((item: any) => !array2.includes(item));
+  };
+
+  const compareVersions = (versions: VersionDataType[]) => {
+    const version1 = versions[0];
+    const version2 = versions[1];
+    const newVersion1 = {
+      ...version1,
+      uniqueSources: objectTypes.reduce<Record<string, string[]>>(
+        (acc, type) => {
+          acc[type] = extractUniqueFromArray(
+            version1.source[type],
+            version2.source[type]
+          );
+          return acc;
+        },
+        {}
+      ),
+      uniqueDestinations: objectTypes.reduce<Record<string, string[]>>(
+        (acc, type) => {
+          acc[type] = extractUniqueFromArray(
+            version1.destination[type],
+            version2.destination[type]
+          );
+          return acc;
+        },
+        {}
+      ),
+      uniqueCategories: extractUniqueFromArray(
+        version1.categories,
+        version2.categories
+      ),
+    };
+
+    const newVersion2 = {
+      ...version2,
+      uniqueSources: objectTypes.reduce<Record<string, string[]>>(
+        (acc, type) => {
+          acc[type] = extractUniqueFromArray(
+            version2.source[type],
+            version1.source[type]
+          );
+          return acc;
+        },
+        {}
+      ),
+      uniqueDestinations: objectTypes.reduce<Record<string, string[]>>(
+        (acc, type) => {
+          acc[type] = extractUniqueFromArray(
+            version2.destination[type],
+            version1.destination[type]
+          );
+          return acc;
+        },
+        {}
+      ),
+      uniqueCategories: extractUniqueFromArray(
+        version2.categories,
+        version1.categories
+      ),
+    };
+    return [newVersion1, newVersion2];
+  };
+
+  useEffect(() => {
+    if (comparingVersions.length === 2) {
+      const compared = compareVersions(comparingVersions);
+      setComparedVersions(compared);
+    }
+  }, [comparingVersions]);
   const dictExecutedForEachObject: Record<
     string,
     (objectType: string, flowObject: any, setFieldValue: any) => Promise<any>
@@ -1162,6 +1273,7 @@ export const FlowForm = (props: Props) => {
                     <C.CheckBox
                       key={`${version.flowId}-${version.versionId}`}
                       name={`${version.flowId}-${version.versionId}`}
+                      value={version}
                       label={
                         `${version.flowId}-${version.versionId}` +
                         `${version.active ? ' [Active] ' : ' '}` +
@@ -1173,8 +1285,126 @@ export const FlowForm = (props: Props) => {
                           version.updatedBy ?? 'FTS User'
                         }`
                       }
+                      // checked={comparingVersions.some(
+                      //   (v) => v.versionId === version.versionId
+                      // )}
+                      onChange={(e) => {
+                        handleCompareCheck(version, e.target.checked);
+                      }}
+                      // disabled={
+                      //   comparingVersions.length === 2 &&
+                      //   !comparingVersions.some(
+                      //     (v) => v.versionId === version.versionId
+                      //   )
+                      // }
                     />
                   ))}
+                  {comparingVersions.length === 2 && (
+                    <div>
+                      Comparing versions{' '}
+                      {comparedVersions.map((version, index) => (
+                        <span key={version.versionId}>
+                          {version.versionId}
+                          {index < comparedVersions.length - 1 ? ',' : ''}
+                        </span>
+                      ))}{' '}
+                      differences:
+                      <TableContainer component={Paper}>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell></TableCell>
+                              {comparedVersions.map((version) => (
+                                <TableCell
+                                  key={version.versionId}
+                                >{`${version.flowId} ${version.versionId}`}</TableCell>
+                              ))}
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell>Sources</TableCell>
+                              {comparedVersions.map((version) => (
+                                <TableCell key={version.versionId}>
+                                  {objectTypes.map(
+                                    (type) =>
+                                      version.uniqueSources[type] &&
+                                      version.uniqueSources[type].length >
+                                        0 && (
+                                        <div key={type}>
+                                          {type}:{' '}
+                                          {version.uniqueSources[type].join(
+                                            ', '
+                                          )}
+                                        </div>
+                                      )
+                                  )}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                            <TableRow>
+                              <TableCell>Destinations</TableCell>
+                              {comparedVersions.map((version) => (
+                                <TableCell key={version.versionId}>
+                                  {objectTypes.map(
+                                    (type) =>
+                                      version.uniqueDestinations[type] &&
+                                      version.uniqueDestinations[type].length >
+                                        0 && (
+                                        <div key={type}>
+                                          {type}:{' '}
+                                          {version.uniqueDestinations[
+                                            type
+                                          ].join(', ')}
+                                        </div>
+                                      )
+                                  )}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                            {(comparedVersions[0] &&
+                              comparedVersions[0].uniqueCategories.length) >
+                              0 ||
+                            (comparedVersions[1] &&
+                              comparedVersions[1].uniqueCategories.length >
+                                0) ? (
+                              <TableRow>
+                                <TableCell>Categories</TableCell>
+                                <TableCell>
+                                  {comparedVersions[0].uniqueCategories.join(
+                                    ', '
+                                  )}
+                                </TableCell>
+                                <TableCell>
+                                  {comparedVersions[1].uniqueCategories.join(
+                                    ', '
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            ) : null}
+                            {/* {flowValuesForDisplay.map(
+                            (value) =>
+                              comparingVersions[0][value] !==
+                                comparingVersions[1][value] && (
+                                <tr key={value}>
+                                  <td>{value}</td>
+                                  {comparingVersions.map((version) => (
+                                    <td key={version.versionID}>
+                                      {value.includes('Date')
+                                        ? new Date(
+                                            version[value]
+                                          ).toLocaleDateString('en-CA') // yyyy-MM-dd format
+                                        : version[value]}
+                                    </td>
+                                  ))}
+                                </tr>
+                              )
+                          )} */}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </div>
+                  )}
                 </C.FormSection>
               </StyledFullSection>
             )}

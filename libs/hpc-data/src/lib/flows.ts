@@ -218,6 +218,8 @@ const FLOW_REST = t.intersection([
     versionStartDate: t.string,
     createdAt: t.string,
     updatedAt: t.string,
+    updatedAtDisplay: t.string,
+    createdAtDisplay: t.string,
     meta: t.type({
       language: t.string,
     }),

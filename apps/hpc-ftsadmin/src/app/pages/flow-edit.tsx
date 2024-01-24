@@ -79,6 +79,7 @@ export default (props: Props) => {
     earmarkingType: '',
     method: 'Traditional aid',
     beneficiaryGroup: '',
+    inactiveReason: '',
     notes: '',
     sourceOrganizations: [],
     sourceCountries: [],
@@ -123,8 +124,9 @@ export default (props: Props) => {
   const [latestVersion, setLatestVersion] = useState<number>(
     parseInt(versionId as string)
   );
-
-  function displayUserName(participant: Participant): string {
+  const [flowDetail, setFlowDetail] = useState<flows.Flow | null>(null);
+  const [activeVersionID, setActiveVersionID] = useState<number>(0);
+  function displayUserName(participant: Participant | null): string {
     if (participant?.name) {
       return participant.name;
     }
@@ -179,6 +181,7 @@ export default (props: Props) => {
         parseInt(versionId as string) === latestVersion)
     ) {
       const data = state.data[parseInt(versionId as string) - 1];
+      setFlowDetail(data);
       if (
         data.versions.length !== latestVersion ||
         fullState.type !== 'success'
@@ -376,6 +379,14 @@ export default (props: Props) => {
           (category: categories.Category) =>
             category.group === 'beneficiaryGroup'
         )?.name ?? '';
+      const inactiveReason =
+        data.categories.find(
+          (category: categories.Category) => category.group === 'inactiveReason'
+        )?.name ?? '';
+      const activeMatch = data.versions.filter(function (d: any) {
+        return d.activeStatus;
+      })[0].versionID;
+      setActiveVersionID(activeMatch);
       const reportDetails = data.reportDetails.map(
         (detail: flows.FlowReportDetail) => ({
           verified: detail.verified ? 'verified' : 'unverified',
@@ -437,15 +448,133 @@ export default (props: Props) => {
         versionId: index + 1,
         flowId: parseInt(flowId as string),
         createdTime: dayjs(flowItemData.createdAt).format(
-          'D MMMM YYYY [at] h:mm:ss a'
+          'Do MMMM YYYY [at] h:mm:ss a'
         ),
         createdBy: flowItemData.createdBy?.name,
         updatedTime: dayjs(flowItemData.updated).format(
-          'D MMMM YYYY [at] h:mm:ss a'
+          'Do MMMM YYYY [at] h:mm:ss a'
         ),
         updatedBy: flowItemData.lastUpdatedBy?.name,
         active: flowItemData.activeStatus,
         viewing: index + 1 === parseInt(versionId as string),
+        source: {
+          emergencies: flowItemData.emergencies
+            .filter(
+              (emergency: emergencies.Emergency) =>
+                emergency?.flowObject?.refDirection === 'source'
+            )
+            .map((emergency: emergencies.Emergency) => emergency.name),
+          projects: flowItemData.projects
+            .filter(
+              (project: projects.GetProjectResult) =>
+                project?.flowObject?.refDirection === 'source'
+            )
+            .map((project: projects.GetProjectResult) => {
+              const latestProject = project.projectVersions.filter(
+                (projectVersion) =>
+                  projectVersion.id === project.latestVersionId
+              )[0];
+              return `${latestProject.name} [${latestProject.code}]`;
+            }),
+          usageYears: flowItemData.usageYears
+            .filter(
+              (usageYear: usageYears.UsageYear) =>
+                usageYear?.flowObject?.refDirection === 'source'
+            )
+            .map((usageYear: usageYears.UsageYear) => usageYear.year),
+          globalClusters: flowItemData.globalClusters
+            .filter(
+              (globalCluster: globalClusters.GlobalCluster) =>
+                globalCluster?.flowObject?.refDirection === 'source'
+            )
+            .map(
+              (globalCluster: globalClusters.GlobalCluster) =>
+                globalCluster.name
+            ),
+          locations: flowItemData.locations
+            .filter(
+              (location: locations.LocationREST) =>
+                location?.flowObject?.refDirection === 'source'
+            )
+            .map((location: locations.LocationREST) => location.name),
+          plans: flowItemData.plans
+            .filter(
+              (plan: plans.GetPlanResult) =>
+                plan?.flowObject?.refDirection === 'source'
+            )
+            .map((plan: plans.GetPlanResult) => plan.planVersion.name),
+          organizations: data.organizations
+            .filter(
+              (organization: organizations.Organization) =>
+                organization?.flowObject?.refDirection === 'source'
+            )
+            .map(
+              (organization: organizations.Organization) =>
+                `${organization.name} [${organization.abbreviation}]`
+            ),
+        },
+        destination: {
+          emergencies: flowItemData.emergencies
+            .filter(
+              (emergency: emergencies.Emergency) =>
+                emergency?.flowObject?.refDirection === 'destination'
+            )
+            .map((emergency: emergencies.Emergency) => emergency.name),
+          projects: flowItemData.projects
+            .filter(
+              (project: projects.GetProjectResult) =>
+                project?.flowObject?.refDirection === 'destination'
+            )
+            .map((project: projects.GetProjectResult) => {
+              const latestProject = project.projectVersions.filter(
+                (projectVersion) =>
+                  projectVersion.id === project.latestVersionId
+              )[0];
+              return `${latestProject.name} [${latestProject.code}]`;
+            }),
+          usageYears: flowItemData.usageYears
+            .filter(
+              (usageYear: usageYears.UsageYear) =>
+                usageYear?.flowObject?.refDirection === 'destination'
+            )
+            .map((usageYear: usageYears.UsageYear) => usageYear.year),
+          globalClusters: flowItemData.globalClusters
+            .filter(
+              (globalCluster: globalClusters.GlobalCluster) =>
+                globalCluster?.flowObject?.refDirection === 'destination'
+            )
+            .map(
+              (globalCluster: globalClusters.GlobalCluster) =>
+                globalCluster.name
+            ),
+          locations: flowItemData.locations
+            .filter(
+              (location: locations.LocationREST) =>
+                location?.flowObject?.refDirection === 'destination'
+            )
+            .map((location: locations.LocationREST) => location.name),
+          plans: flowItemData.plans
+            .filter(
+              (plan: plans.GetPlanResult) =>
+                plan?.flowObject?.refDirection === 'destination'
+            )
+            .map((plan: plans.GetPlanResult) => plan.planVersion.name),
+          organizations: data.organizations
+            .filter(
+              (organization: organizations.Organization) =>
+                organization?.flowObject?.refDirection === 'destination'
+            )
+            .map(
+              (organization: organizations.Organization) =>
+                `${organization.name} [${organization.abbreviation}]`
+            ),
+        },
+        categories: flowItemData.categories.map(
+          (category: categories.Category) => category.name
+        ),
+        uniqueSources: {},
+        uniqueDestinations: {},
+        uniqueCategories: {},
       }));
       setFlowData({
         amountUSD,
@@ -463,6 +592,7 @@ export default (props: Props) => {
         earmarkingType,
         method,
         beneficiaryGroup,
+        inactiveReason,
         notes,
         sourceOrganizations,
         sourceCountries,
@@ -484,6 +614,8 @@ export default (props: Props) => {
       setIsSetupedInitialValue(true);
       setPreviousReportDetails(prevReportDetails);
       setVersionData(versionDetails);
+    } else {
+      setFlowDetail(null);
     }
   }, [state, fullState, props.isEdit]);
 
@@ -499,108 +631,85 @@ export default (props: Props) => {
             },
           }}
         >
-          {() => (
-            <div
-              className={combineClasses(
-                CLASSES.CONTAINER.FLUID,
-                props.className
-              )}
-            >
-              <PageMeta title={[t.t(lang, (s) => s.routes.newFlow.title)]} />
-              <C.PageTitle>
-                <StyledTitle>
-                  <div>
-                    {props.isEdit && state.type === 'success'
-                      ? t.t(
-                          lang,
-                          (s) =>
-                            s.routes.editFlow.title +
-                            ' ' +
-                            state.data[parseInt(versionId as string) - 1].id +
-                            ', v' +
-                            state.data[parseInt(versionId as string) - 1]
-                              .versionID
-                        )
-                      : t.t(lang, (s) => s.routes.newFlow.title)}
-                    {props.isEdit && state.type === 'success' ? (
-                      <>
-                        {!state.data[parseInt(versionId as string) - 1]
-                          .activeStatus &&
-                        !state.data[parseInt(versionId as string) - 1]
-                          .deletedAt ? (
-                          <p>
-                            This flow is not active because it has been marked
-                            as{' '}
-                            {
-                              state.data[parseInt(versionId as string) - 1]
-                                .inactiveReason
-                            }
-                            . See{' '}
-                            <a>
-                              Flow{' '}
-                              {state.data[parseInt(versionId as string) - 1].id}
-                              , v
-                              {
-                                state.data[parseInt(versionId as string) - 1]
-                                  .versionID
-                              }
-                            </a>{' '}
-                            for the current active version.
-                          </p>
-                        ) : (
-                          ''
-                        )}
-                        <StyledSubTitle>
-                          Updated{' '}
-                          {dayjs(
-                            state.data[parseInt(versionId as string) - 1][
-                              'updatedAtDisplay'
-                            ]
-                          ).format('Do MMMM YYYY [at] h:mm:ss a')}{' '}
-                          by{' '}
-                          {displayUserName(
-                            state.data[parseInt(versionId as string) - 1][
-                              'lastUpdatedBy'
-                            ]
+          {() => {
+            return (
+              <div
+                className={combineClasses(
+                  CLASSES.CONTAINER.FLUID,
+                  props.className
+                )}
+              >
+                <PageMeta title={[t.t(lang, (s) => s.routes.newFlow.title)]} />
+                <C.PageTitle>
+                  <StyledTitle>
+                    <div>
+                      {flowDetail
+                        ? t.t(
+                            lang,
+                            (s) =>
+                              s.routes.editFlow.title +
+                              ' ' +
+                              flowDetail.id +
+                              ', v' +
+                              flowDetail.versionID
+                          )
+                        : t.t(lang, (s) => s.routes.newFlow.title)}
+                      {flowDetail ? (
+                        <>
+                          {!flowDetail.activeStatus &&
+                          !flowDetail.deletedAt &&
+                          flowData.inactiveReason !== 'Pending' ? (
+                            <StyledSubTitle>
+                              <p>
+                                This flow is not active because it has been
+                                marked as {flowData.inactiveReason}. See{' '}
+                                <a>
+                                  Flow {flowDetail.id}, v{activeVersionID}
+                                </a>{' '}
+                                for the current active version.
+                              </p>
+                            </StyledSubTitle>
+                          ) : (
+                            ''
                           )}
-                        </StyledSubTitle>
-                        <StyledSubTitle>
-                          Created{' '}
-                          {dayjs(
-                            state.data[parseInt(versionId as string) - 1][
-                              'createdAtDisplay'
-                            ]
-                          ).format('Do MMMM YYYY [at] h:mm:ss a')}{' '}
-                          by{' '}
-                          {displayUserName(
-                            state.data[parseInt(versionId as string) - 1][
-                              'createdBy'
-                            ]
-                          )}
-                        </StyledSubTitle>
-                      </>
-                    ) : (
-                      ''
-                    )}
-                  </div>
-                  <StyledAnchorDiv>
-                    <StyledAnchor href="flows" target="_blank">
-                      Find Similar Flows
-                    </StyledAnchor>
-                  </StyledAnchorDiv>
-                </StyledTitle>
-              </C.PageTitle>
-              {isSetupedInitialValue && (
-                <FlowForm
-                  environment={env}
-                  isEdit={props.isEdit}
-                  initialValue={flowData}
-                  prevDetails={previousReportDetails}
-                  versionData={versionData}
-                />
-              )}
-            </div>
-          )}
+                          <StyledSubTitle>
+                            Updated{' '}
+                            {dayjs(flowDetail.updatedAtDisplay).format(
+                              'Do MMMM YYYY [at] h:mm:ss a'
+                            )}{' '}
+                            by {displayUserName(flowDetail.lastUpdatedBy)}
+                          </StyledSubTitle>
+                          <StyledSubTitle>
+                            Created{' '}
+                            {dayjs(flowDetail.createdAtDisplay).format(
+                              'Do MMMM YYYY [at] h:mm:ss a'
+                            )}{' '}
+                            by {displayUserName(flowDetail.createdBy)}
+                          </StyledSubTitle>
+                        </>
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                    <StyledAnchorDiv>
+                      <StyledAnchor href="flows" target="_blank">
+                        Find Similar Flows
+                      </StyledAnchor>
+                    </StyledAnchorDiv>
+                  </StyledTitle>
+                </C.PageTitle>
+                {isSetupedInitialValue && (
+                  <FlowForm
+                    environment={env}
+                    isEdit={props.isEdit}
+                    initialValue={flowData}
+                    prevDetails={previousReportDetails}
+                    versionData={versionData}
+                  />
+                )}
+              </div>
+            );
+          }}
         </StyledLoader>
       )}
     </AppContext.Consumer>
