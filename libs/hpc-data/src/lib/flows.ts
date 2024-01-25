@@ -136,7 +136,13 @@ const FLOW_SEARCH_RESULT_REST = t.intersection([
     childIDs: t.union([t.array(t.number), t.null]),
     parentIDs: t.union([t.array(t.number), t.null]),
     categories: t.union([t.array(FLOW_CATEGORY), t.null]),
+    // TO REMOVE
     organizations: t.union([t.array(FLOW_ORGANIZATION_REST), t.null]),
+    destinationOrganizations: t.union([
+      t.array(FLOW_ORGANIZATION_REST),
+      t.null,
+    ]),
+    sourceOrganizations: t.union([t.array(FLOW_ORGANIZATION_REST), t.null]),
     plans: t.union([t.array(FLOW_PLAN), t.null]),
     locations: t.union([t.array(FLOW_LOCATION), t.null]),
     usageYears: t.union([t.array(FLOW_USAGE_YEAR), t.null]),
