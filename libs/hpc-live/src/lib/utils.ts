@@ -98,6 +98,15 @@ export const searchFlowsParams = (params: flows.SearchFlowsParams): string => {
           );
         break;
       }
+      case 'nestedFlowFilters': {
+        const filter = params[unmutableKey];
+        if (filter && JSON.stringify(filter) !== '{}')
+          queryParams = queryParams.concat(
+            unmutableKey,
+            `:${parseFilterToGraphQL(filter)} `
+          );
+        break;
+      }
     }
   }
 

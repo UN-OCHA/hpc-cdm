@@ -368,11 +368,17 @@ export const parseFlowFilters = (
 ): flows.SearchFlowsParams => {
   const res: flows.SearchFlowsParams = {
     flowFilters: {},
+    nestedFlowFilters: {},
     flowObjectFilters: [],
     pending: pending,
     flowCategoryFilters: [],
   };
-  if (!res.flowFilters || !res.flowObjectFilters || !res.flowCategoryFilters)
+  if (
+    !res.flowFilters ||
+    !res.flowObjectFilters ||
+    !res.flowCategoryFilters ||
+    !res.nestedFlowFilters
+  )
     return res;
   for (const key in filters) {
     if (isKey(filters, key)) {
@@ -407,8 +413,15 @@ export const parseFlowFilters = (
           break;
         }
         case 'reporterRefCode':
-        case 'legacyID':
-        case 'sourceSystemID':
+        case 'sourceSystemID': {
+          res.nestedFlowFilters[key] = filters[key]?.value as string;
+          break;
+        }
+        case 'legacyID': {
+          const parsedValue = parseInt(filters[key]?.value as string);
+          res.nestedFlowFilters[key] = parsedValue;
+          break;
+        }
         case 'amountUSD': {
           const parsedValue = parseInt(filters[key]?.value as string);
           res.flowFilters[key] = parsedValue;
