@@ -391,9 +391,6 @@ const FLOW_FILTERS = t.partial({
     status: t.string,
     amountUSD: t.number,
     type: t.string,
-    reporterRefCode: t.number,
-    sourceSystemID: t.number,
-    legacyID: t.number,
     restricted: t.boolean,
   }),
   flowObjectFilters: t.array(
@@ -409,7 +406,13 @@ const FLOW_FILTERS = t.partial({
   flowCategoryFilters: t.array(t.type({ id: t.number, group: t.string })),
   pending: t.boolean,
   includeChildrenOfParkedFlows: t.boolean,
+  nestedFlowFilters: t.partial({
+    reporterRefCode: t.string,
+    legacyID: t.number,
+    sourceSystemID: t.string,
+  }),
 });
+// TODO: transform to arrays of
 export type FlowFilters = t.TypeOf<typeof FLOW_FILTERS>;
 const AbortSignalType = new t.Type<AbortSignal, AbortSignal, unknown>(
   'AbortSignal',
