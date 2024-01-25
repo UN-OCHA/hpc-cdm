@@ -84,10 +84,9 @@ const FORM_VALIDATION = io.partial({
     codecs.POSITIVE_NUMBER_FROM_STRING,
     codecs.EMPTY_STRING,
   ]),
-  reporterRefCode: io.union([codecs.INTEGER_FROM_STRING, codecs.EMPTY_STRING]),
-  sourceSystemID: io.union([codecs.INTEGER_FROM_STRING, codecs.EMPTY_STRING]),
+  reporterRefCode: io.union([codecs.NON_EMPTY_STRING, codecs.EMPTY_STRING]),
+  sourceSystemID: io.union([codecs.NON_EMPTY_STRING, codecs.EMPTY_STRING]),
   legacyID: io.union([codecs.INTEGER_FROM_STRING, codecs.EMPTY_STRING]),
-  destinationOrganizations: codecs.NON_EMPTY_ARRAY,
 });
 
 const StyledDiv = tw.div`
@@ -290,7 +289,7 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.reporterRefCode
                   )}
                   name="reporterRefCode"
-                  type="number"
+                  type="text"
                 />
                 <C.TextFieldWrapper
                   label={t.t(
@@ -298,7 +297,7 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.sourceSystemID
                   )}
                   name="sourceSystemID"
-                  type="number"
+                  type="text"
                 />
                 <C.TextFieldWrapper
                   label={t.t(
