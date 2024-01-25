@@ -558,6 +558,20 @@ export class LiveModel implements Model {
                 direction
                 abbreviation
               }
+
+              destinationOrganizations {
+                id
+                name
+                direction
+                abbreviation
+              }
+
+              sourceOrganizations {
+                id
+                name
+                direction
+                abbreviation
+              }
         
               plans {
                 id
