@@ -64,7 +64,8 @@
         "exchangeRate": "Exchange Rate",
         "flowDate": "Flow Date",
         "newMoney": "New Money",
-        "decisionDate": "Decision Date"
+        "decisionDate": "Decision Date",
+        "sourceID": "Source System ID"
       },
       "update": "Update",
       "new": "New",

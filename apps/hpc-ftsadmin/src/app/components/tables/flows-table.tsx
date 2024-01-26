@@ -364,16 +364,18 @@ export default function FlowsTable(props: FlowsTableProps) {
                         row.organizations
                           .filter((org) => org.direction === 'source')
                           .map((org, index) => (
-                            <Tooltip
-                              title={org.name}
-                              placement="top"
-                              followCursor={true}
-                            >
-                              <span key={`source_${row.id}_${index}`}>
-                                {org.abbreviation}
-                                {renderReportDetail(org, row, lang)}
-                              </span>
-                            </Tooltip>
+                            <>
+                              <Tooltip
+                                title={org.name}
+                                placement="top"
+                                followCursor={true}
+                              >
+                                <span key={`source_${row.id}_${index}`}>
+                                  {org.abbreviation}
+                                </span>
+                              </Tooltip>
+                              {renderReportDetail(org, row, lang)}
+                            </>
                           ))}
                     </TableCell>
                   );
@@ -388,16 +390,18 @@ export default function FlowsTable(props: FlowsTableProps) {
                         row.organizations
                           .filter((org) => org.direction === 'destination')
                           .map((org, index) => (
-                            <Tooltip
-                              title={org.name}
-                              placement="top"
-                              followCursor={true}
-                            >
-                              <span key={`destination_${row.id}_${index}`}>
-                                {org.abbreviation}
-                                {renderReportDetail(org, row, lang)}
-                              </span>
-                            </Tooltip>
+                            <>
+                              <Tooltip
+                                title={org.name}
+                                placement="top"
+                                followCursor={true}
+                              >
+                                <span key={`destination_${row.id}_${index}`}>
+                                  {org.abbreviation}
+                                </span>
+                              </Tooltip>
+                              {renderReportDetail(org, row, lang)}
+                            </>
                           ))}
                     </TableCell>
                   );
@@ -552,6 +556,27 @@ export default function FlowsTable(props: FlowsTableProps) {
                         : '--'}
                     </TableCell>
                   );
+                case 'reportDetails.sourceID': {
+                  let rd = '--';
+                  if (row.reportDetails) {
+                    const uniqueSourceIDs = new Set(
+                      row.reportDetails.map((rd) => rd.sourceID)
+                    );
+                    const uniqueSourceIDsArray = Array.from(uniqueSourceIDs);
+                    rd = uniqueSourceIDsArray.join(', ');
+                    rd = rd.length > 0 ? rd : '--';
+                  }
+
+                  return (
+                    <TableCell
+                      key={`${row.id}v${row.versionID}_reportDetail.sourceSystemId`}
+                      size="small"
+                      data-test="flows-table-sourceSystemId"
+                    >
+                      {rd}
+                    </TableCell>
+                  );
+                }
                 default:
                   return null;
               }
