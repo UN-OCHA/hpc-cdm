@@ -64,7 +64,8 @@
         "exchangeRate": "سعر الصرف",
         "flowDate": "تاريخ التدفق",
         "newMoney": "عملة جديدة",
-        "decisionDate": "تاريخ القرار"
+        "decisionDate": "تاريخ القرار",
+        "sourceID": "معرّف النظام المصدر"
       },
       "update": "تحديث",
       "new": "جديد",
