@@ -65,7 +65,8 @@
         "flowDate": "Fecha del flujo",
         "newMoney": "Nueva moneda",
         "decisionDate": "Fecha de decisión",
-        "sourceID": "Identificador sistema de origen"
+        "sourceID": "Identificador sistema de origen",
+        "reporterRefCode": "Código de referencia del informador"
       },
       "update": "Actualizar",
       "new": "Nuevo",
