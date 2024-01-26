@@ -65,7 +65,8 @@
         "flowDate": "Date de flux",
         "newMoney": "Nouvelle devise",
         "decisionDate": "Date de décision",
-        "sourceID": "ID du système source"
+        "sourceID": "ID du système source",
+        "reporterRefCode": "Code de référence du déclarant"
       },
       "update": "Mise à jour de",
       "new": "Nouveau",
