@@ -577,6 +577,27 @@ export default function FlowsTable(props: FlowsTableProps) {
                     </TableCell>
                   );
                 }
+                case 'reportDetails.reporterRefCode': {
+                  let rd = '--';
+                  if (row.reportDetails) {
+                    const uniqueSourceIDs = new Set(
+                      row.reportDetails.map((rd) => rd.refCode)
+                    );
+                    const uniqueRefCodesArray = Array.from(uniqueSourceIDs);
+                    rd = uniqueRefCodesArray.join(', ');
+                    rd = rd.length > 0 ? rd : '--';
+                  }
+
+                  return (
+                    <TableCell
+                      key={`${row.id}v${row.versionID}_reportDetail.reporterRefCode`}
+                      size="small"
+                      data-test="flows-table-reporterRefCode"
+                    >
+                      {rd}
+                    </TableCell>
+                  );
+                }
                 default:
                   return null;
               }

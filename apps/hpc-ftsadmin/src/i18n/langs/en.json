@@ -65,7 +65,8 @@
         "flowDate": "Flow Date",
         "newMoney": "New Money",
         "decisionDate": "Decision Date",
-        "sourceID": "Source System ID"
+        "sourceID": "Source System ID",
+        "reporterRefCode": "Reporter Reference Code"
       },
       "update": "Update",
       "new": "New",

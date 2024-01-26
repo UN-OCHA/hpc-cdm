@@ -65,7 +65,8 @@
         "flowDate": "流动日期",
         "newMoney": "新货币",
         "decisionDate": "决策日期",
-        "sourceID": "源系统识别"
+        "sourceID": "源系统识别",
+        "reporterRefCode": "记者参考编码"
       },
       "update": "更新",
       "new": "新建",
