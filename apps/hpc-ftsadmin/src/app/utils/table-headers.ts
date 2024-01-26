@@ -25,7 +25,8 @@ export type FlowHeaderID =
   | 'planVersion.destination.name'
   | 'location.destination.name'
   | 'usageYear.destination.year'
-  | 'details';
+  | 'details'
+  | 'reportDetails.sourceID';
 
 export type OrganizationHeaderID =
   | 'organization.id'
@@ -142,6 +143,12 @@ export const POSSIBLE_FLOW_HEADER_VALUES: Record<
     label: 'flowDate',
     sortable: true,
   },
+  15: {
+    id: 15,
+    identifierID: 'reportDetails.sourceID',
+    label: 'sourceID',
+    sortable: true,
+  },
 };
 
 export const POSSIBLE_ORGANIZATION_VALUES: Record<
@@ -221,27 +228,28 @@ export const POSSIBLE_KEYWORD_VALUES: Record<
 /** When adding more new field to POSSIBLE consts that are not default, modify as needed */
 
 export const DEFAULT_FLOW_TABLE_HEADERS: TableHeadersProps<FlowHeaderID>[] = [];
-for (let i = 1; i <= 14; i++) {
+for (const [index, header] of Object.entries(POSSIBLE_FLOW_HEADER_VALUES)) {
+  const i = parseInt(index);
   if (i <= 10)
     DEFAULT_FLOW_TABLE_HEADERS.push({
-      ...POSSIBLE_FLOW_HEADER_VALUES[i],
+      ...header,
       active: true,
     });
   else
     DEFAULT_FLOW_TABLE_HEADERS.push({
-      ...POSSIBLE_FLOW_HEADER_VALUES[i],
+      ...header,
       active: false,
     });
 }
 export const DEFAULT_ORGANIZATION_TABLE_HEADERS: TableHeadersProps<OrganizationHeaderID>[] =
   [];
-for (let i = 1; i <= 8; i++) {
-  DEFAULT_ORGANIZATION_TABLE_HEADERS.push(POSSIBLE_ORGANIZATION_VALUES[i]);
+for (const [index, header] of Object.entries(POSSIBLE_ORGANIZATION_VALUES)) {
+  DEFAULT_ORGANIZATION_TABLE_HEADERS.push(header);
 }
 export const DEFAULT_KEYWORD_TABLE_HEADERS: TableHeadersProps<KeywordHeaderID>[] =
   [];
-for (let i = 1; i <= 4; i++) {
-  DEFAULT_KEYWORD_TABLE_HEADERS.push(POSSIBLE_KEYWORD_VALUES[i]);
+for (const [index, header] of Object.entries(POSSIBLE_KEYWORD_VALUES)) {
+  DEFAULT_KEYWORD_TABLE_HEADERS.push(header);
 }
 
 /**
