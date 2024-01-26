@@ -26,7 +26,8 @@ export type FlowHeaderID =
   | 'location.destination.name'
   | 'usageYear.destination.year'
   | 'details'
-  | 'reportDetails.sourceID';
+  | 'reportDetails.sourceID'
+  | 'reportDetails.reporterRefCode';
 
 export type OrganizationHeaderID =
   | 'organization.id'
@@ -147,6 +148,12 @@ export const POSSIBLE_FLOW_HEADER_VALUES: Record<
     id: 15,
     identifierID: 'reportDetails.sourceID',
     label: 'sourceID',
+    sortable: true,
+  },
+  16: {
+    id: 16,
+    identifierID: 'reportDetails.reporterRefCode',
+    label: 'reporterRefCode',
     sortable: true,
   },
 };
