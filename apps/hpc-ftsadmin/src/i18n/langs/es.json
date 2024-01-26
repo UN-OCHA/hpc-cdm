@@ -64,7 +64,8 @@
         "exchangeRate": "Tipo de cambio",
         "flowDate": "Fecha del flujo",
         "newMoney": "Nueva moneda",
-        "decisionDate": "Fecha de decisión"
+        "decisionDate": "Fecha de decisión",
+        "sourceID": "Identificador sistema de origen"
       },
       "update": "Actualizar",
       "new": "Nuevo",
