@@ -109,7 +109,7 @@ const FLOW_EXTERNAL_REFERENCE = t.intersection([
     systemID: t.string,
     flowID: t.number,
     externalRecordID: t.string,
-    externalRecordDate: t.string,
+    externalRecordDate: t.union([t.string, t.null]),
   }),
   t.partial({
     versionID: t.union([t.number, t.null]),
@@ -256,7 +256,7 @@ const FlowReportDetail = t.type({
   id: t.number,
   versionID: t.number,
   source: t.string,
-  date: t.string,
+  date: t.union([t.string, t.null]),
   verified: t.boolean,
   channel: t.union([t.string, t.null]),
   updatedAt: t.string,
@@ -427,6 +427,14 @@ const AbortSignalType = new t.Type<AbortSignal, AbortSignal, unknown>(
     input instanceof AbortSignal ? t.success(input) : t.failure(input, context),
   t.identity
 );
+
+export const NESTED_FLOW_FILTERS = t.partial({
+  reporterRefCode: t.string,
+  legacyID: t.number,
+  sourceSystemID: t.string,
+});
+export type NestedFlowFilters = t.TypeOf<typeof NESTED_FLOW_FILTERS>;
+
 export type FlowFiltersREST = t.TypeOf<typeof FILTERS>;
 export const SEARCH_FLOWS_PARAMS = t.partial({
   limit: t.number,
@@ -473,7 +481,6 @@ export type GetTotalAmountUSDParams = t.TypeOf<
 export const GET_TOTAL_AMOUNT_USD_RESULT = t.type({
   searchFlowsTotalAmountUSD: t.type({
     totalAmountUSD: t.string,
-    flowsCount: t.number,
   }),
 });
 export type GetTotalAmountUSDResult = t.TypeOf<
