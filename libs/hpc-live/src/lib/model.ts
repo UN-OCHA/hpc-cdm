@@ -660,7 +660,6 @@ export class LiveModel implements Model {
         const query = `query{
             searchFlowsTotalAmountUSD${searchFlowsParams(params)}{
               totalAmountUSD
-              flowsCount
             }
           }`;
         return this.call({
