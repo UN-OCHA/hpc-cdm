@@ -556,7 +556,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                         : '--'}
                     </TableCell>
                   );
-                case 'reportDetails.sourceID': {
+                case 'reportDetail.sourceID': {
                   let rd = '--';
                   if (row.reportDetails) {
                     const uniqueSourceIDs = new Set(
@@ -577,7 +577,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                     </TableCell>
                   );
                 }
-                case 'reportDetails.reporterRefCode': {
+                case 'reportDetail.reporterRefCode': {
                   let rd = '--';
                   if (row.reportDetails) {
                     const uniqueSourceIDs = new Set(
