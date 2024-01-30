@@ -29,6 +29,10 @@ interface Props {
         onClick: () => void;
       }
     | {
+        type: 'submit';
+        onClick?: () => void;
+      }
+    | {
         type: 'link';
         to: string;
       };
@@ -93,6 +97,15 @@ const BaseButton = (props: Props) => {
     <button
       className={className}
       onClick={behaviour.onClick}
+      ref={ref as React.RefObject<HTMLButtonElement>}
+    >
+      {contents}
+    </button>
+  ) : behaviour.type === 'submit' ? (
+    <button
+      className={className}
+      onClick={behaviour.onClick}
+      type={behaviour.type}
       ref={ref as React.RefObject<HTMLButtonElement>}
     >
       {contents}
@@ -179,6 +192,14 @@ type ButtonProps = Omit<Props, 'behaviour'> & { onClick: () => void };
 export const Button = (props: ButtonProps) => (
   <StyledBaseButton
     behaviour={{ type: 'button', onClick: props.onClick }}
+    {...{ ...props }}
+  />
+);
+
+type ButtonSubmitProps = Omit<Props, 'behaviour'> & { onClick?: () => void };
+export const ButtonSubmit = (props: ButtonSubmitProps) => (
+  <StyledBaseButton
+    behaviour={{ type: 'submit', onClick: props.onClick }}
     {...{ ...props }}
   />
 );
