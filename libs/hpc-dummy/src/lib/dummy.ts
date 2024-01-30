@@ -1082,6 +1082,30 @@ export class Dummy {
             ];
           }
         ),
+        getLocation: dummyEndpoint(
+          'locations.getLocation',
+          async (
+            params: locations.GetLocationParams
+          ): Promise<locations.GetLocationResult> => {
+            return {
+              id: 209,
+              externalId: '389',
+              name: 'Spain',
+              adminLevel: 0,
+              latitude: 40.309787496783,
+              longitude: -3.578125378279,
+              iso3: 'ESP',
+              pcode: null,
+              validOn: null,
+              status: 'active',
+              itosSync: true,
+              createdAt: '2015-09-10T20:25:11.133Z',
+              updatedAt: '2023-01-15T00:05:07.209Z',
+              parentId: null,
+              children: [],
+            };
+          }
+        ),
       },
       organizations: {
         getAutocompleteOrganizations: dummyEndpoint(

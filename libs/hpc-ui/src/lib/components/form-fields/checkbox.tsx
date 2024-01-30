@@ -12,13 +12,15 @@ const CheckBox = ({
   size,
   value,
   onChange,
+  disabled,
   ...otherProps
 }: {
   name: string;
-  label?: string;
+  label?: string | React.ReactNode;
   value?: any;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void | any;
   size?: 'small' | 'medium';
+  disabled?: boolean;
 }) => {
   const [field, meta] = useField(name);
   const { setFieldValue } = useFormikContext();
@@ -35,7 +37,13 @@ const CheckBox = ({
     ...otherProps,
     label: label,
     id: name,
-    control: <Checkbox onChange={(event) => handleChange(event)} size={size} />,
+    control: (
+      <Checkbox
+        onChange={(event) => handleChange(event)}
+        size={size}
+        disabled={disabled}
+      />
+    ),
   };
   return <FormControlLabel {...configCheckBox} />;
 };

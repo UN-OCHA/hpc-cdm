@@ -121,7 +121,7 @@ const INFERRED_ENTITY = t.type({
   reason: t.string,
 });
 
-const FLOW_EXTERNAL_REFERENCE = t.intersection([
+export const FLOW_EXTERNAL_REFERENCE = t.intersection([
   t.type({
     id: t.number,
     systemID: t.string,
@@ -140,6 +140,17 @@ const FLOW_EXTERNAL_REFERENCE = t.intersection([
     ]),
   }),
 ]);
+
+export type FlowExternalReference = t.TypeOf<typeof FLOW_EXTERNAL_REFERENCE>;
+
+export const FLOW_EXTERNAL_DATA = t.type({
+  id: t.number,
+  data: t.string,
+  objectType: t.string,
+  refDirection: t.string,
+});
+
+export type FlowExternalData = t.TypeOf<typeof FLOW_EXTERNAL_DATA>;
 
 const FLOW_SEARCH_RESULT = t.intersection([
   t.type({
@@ -243,6 +254,8 @@ const FLOW_REST = t.intersection([
       }),
       t.null,
     ]),
+    externalReferences: t.array(t.union([FLOW_EXTERNAL_REFERENCE, t.null])),
+    externalData: t.array(t.union([FLOW_EXTERNAL_DATA, t.null])),
   }),
 ]);
 

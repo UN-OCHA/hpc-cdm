@@ -24,8 +24,14 @@ type AutoCompleteSeletionType =
       label: string;
       id: string;
       isAutoFilled?: boolean;
+      isTransferred?: boolean;
+      isInferred?: boolean;
     }
   | string;
+
+type UniqueDataType = {
+  [key: string]: string[];
+};
 
 export interface ReportDetailType {
   verified: string;
@@ -87,12 +93,23 @@ export interface VersionDataType {
   updatedBy: string | null;
   active: boolean;
   viewing: boolean;
-  source: any;
-  destination: any;
-  categories: any;
-  uniqueSources: any;
-  uniqueDestinations: any;
-  uniqueCategories: any;
+  pending?: boolean;
+  [key: string]:
+    | string
+    | number
+    | null
+    | boolean
+    | string[]
+    | Date
+    | undefined
+    | Record<string, string[]>;
+  source: UniqueDataType;
+  destination: UniqueDataType;
+  categories: string[];
+  uniqueSources: UniqueDataType;
+  uniqueDestinations: UniqueDataType;
+  uniqueCategories: string[];
+  restricted?: boolean;
 }
 
 interface Props {
@@ -300,7 +317,6 @@ export const FlowForm = (props: Props) => {
     }
     return existingObjects;
   };
-
   const fetchPlanDetails = async (
     objectType: string,
     plan: any,
@@ -491,10 +507,26 @@ export const FlowForm = (props: Props) => {
     'locations',
     'plans',
     'organizations',
+  ] as const;
+
+  const flowValuesForDisplay = [
+    'amountUSD',
+    'flowDate',
+    'decisionDate',
+    'firstReportedDate',
+    'budgetYear',
+    'origAmount',
+    'origCurrency',
+    'exchangeRate',
+    'activeStatus',
+    'restricted',
+    'newMoney',
+    'description',
+    'notes',
   ];
 
-  const extractUniqueFromArray = (array1: any, array2: any) => {
-    return array1.filter((item: any) => !array2.includes(item));
+  const extractUniqueFromArray = (array1: string[], array2: string[]) => {
+    return array1.filter((item: string) => !array2.includes(item));
   };
 
   const compareVersions = (versions: VersionDataType[]) => {
@@ -1275,28 +1307,32 @@ export const FlowForm = (props: Props) => {
                       name={`${version.flowId}-${version.versionId}`}
                       value={version}
                       label={
-                        `${version.flowId}-${version.versionId}` +
-                        `${version.active ? ' [Active] ' : ' '}` +
-                        `${version.viewing ? '[Viewing]' : ''} ` +
-                        `Created at ${version.createdTime} by ${
-                          version.createdBy ?? 'FTS User'
-                        }, ` +
-                        `updated at ${version.updatedTime} by ${
-                          version.updatedBy ?? 'FTS User'
-                        }`
+                        <>
+                          <a
+                            href={`flows/edit/${version.flowId}/version/${version.versionId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {version.flowId}-{version.versionId}
+                          </a>
+                          {version.active ? ' [Active] ' : ' '}
+                          {version.pending ? ' [Pending] ' : ' '}
+                          {version.viewing ? '[Viewing]' : ''}
+                          Created at {version.createdTime} by{' '}
+                          {version.createdBy ?? 'FTS User'}, updated at{' '}
+                          {version.updatedTime} by{' '}
+                          {version.updatedBy ?? 'FTS User'}
+                        </>
                       }
-                      // checked={comparingVersions.some(
-                      //   (v) => v.versionId === version.versionId
-                      // )}
                       onChange={(e) => {
                         handleCompareCheck(version, e.target.checked);
                       }}
-                      // disabled={
-                      //   comparingVersions.length === 2 &&
-                      //   !comparingVersions.some(
-                      //     (v) => v.versionId === version.versionId
-                      //   )
-                      // }
+                      disabled={
+                        comparingVersions.length === 2 &&
+                        !comparingVersions.some(
+                          (v) => v.versionId === version.versionId
+                        )
+                      }
                     />
                   ))}
                   {comparingVersions.length === 2 && (
@@ -1382,24 +1418,36 @@ export const FlowForm = (props: Props) => {
                                 </TableCell>
                               </TableRow>
                             ) : null}
-                            {/* {flowValuesForDisplay.map(
-                            (value) =>
-                              comparingVersions[0][value] !==
-                                comparingVersions[1][value] && (
-                                <tr key={value}>
-                                  <td>{value}</td>
-                                  {comparingVersions.map((version) => (
-                                    <td key={version.versionID}>
-                                      {value.includes('Date')
-                                        ? new Date(
-                                            version[value]
-                                          ).toLocaleDateString('en-CA') // yyyy-MM-dd format
-                                        : version[value]}
-                                    </td>
-                                  ))}
-                                </tr>
-                              )
-                          )} */}
+                            {flowValuesForDisplay.map(
+                              (value) =>
+                                comparedVersions[0] &&
+                                comparedVersions[1] &&
+                                comparedVersions[0][value] !==
+                                  comparedVersions[1][value] && (
+                                  <TableRow key={value}>
+                                    <TableCell>{value}</TableCell>
+                                    {comparedVersions.map((version) => {
+                                      let displayValue: React.ReactNode;
+                                      const rawValue = version[value];
+
+                                      if (rawValue instanceof Date) {
+                                        displayValue =
+                                          rawValue.toLocaleDateString('en-CA');
+                                      } else if (Array.isArray(rawValue)) {
+                                        displayValue = rawValue.join(', ');
+                                      } else {
+                                        displayValue = String(rawValue);
+                                      }
+
+                                      return (
+                                        <TableCell key={version.versionId}>
+                                          {displayValue}
+                                        </TableCell>
+                                      );
+                                    })}
+                                  </TableRow>
+                                )
+                            )}
                           </TableBody>
                         </Table>
                       </TableContainer>

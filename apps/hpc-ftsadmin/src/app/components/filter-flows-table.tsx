@@ -1,7 +1,8 @@
-import { Form, Formik, FormikState } from 'formik';
+import { Form, Formik, FormikState, useFormikContext } from 'formik';
 import { array, number, object, string } from 'yup';
 import tw from 'twin.macro';
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { C } from '@unocha/hpc-ui';
 import { Environment } from '../../environments/interface';
@@ -78,8 +79,34 @@ lg:flex
 justify-end
 gap-x-4 
 `;
+
+const FormValuesUpdater = ({
+  filterValues,
+}: {
+  filterValues: FlowsFilterValues;
+}) => {
+  const { setFieldValue, submitForm } = useFormikContext();
+
+  useEffect(() => {
+    if (filterValues) {
+      Object.entries(filterValues).forEach(([field, value]) => {
+        setFieldValue(field, value, false);
+      });
+
+      setTimeout(() => {
+        submitForm();
+      }, 0);
+    }
+  }, [filterValues, setFieldValue]);
+
+  return null;
+};
+
 export const FilterFlowsTable = (props: Props) => {
   const { environment, setQuery, query } = props;
+  const location = useLocation();
+  const [initialFlowFilterValues, setInitialFlowFilterValues] =
+    useState<FlowsFilterValues>(FLOWS_FILTER_INITIAL_VALUES);
   const FORM_VALIDATION = object().shape({
     flowID: number()
       .positive()
@@ -139,6 +166,77 @@ export const FilterFlowsTable = (props: Props) => {
       ),
     });
   };
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+
+    const sourceLocations = searchParams.get('source_location')?.split(',');
+    const sourceOrganizations = searchParams
+      .get('source_organization')
+      ?.split(',');
+    const destinationOrganizations = searchParams
+      .get('destination_organization')
+      ?.split(',');
+    const destinationPlans = searchParams.get('destination_plan')?.split(',');
+
+    (async () => {
+      try {
+        if (sourceLocations && sourceLocations.length > 0) {
+          const response = await Promise.all(
+            sourceLocations.map((id) =>
+              environment.model.locations.getLocation(parseInt(id))
+            )
+          );
+          initialFlowFilterValues.sourceCountries = response.map(
+            (location) => ({
+              id: '' + location.id,
+              label: location.name,
+            })
+          );
+        }
+        if (sourceOrganizations && sourceOrganizations.length > 0) {
+          const response = await Promise.all(
+            sourceOrganizations.map((id) =>
+              environment.model.organizations.getOrganization(parseInt(id))
+            )
+          );
+          initialFlowFilterValues.sourceOrganizations = response.map(
+            (organizations) => ({
+              id: '' + organizations[0].id,
+              label: `${organizations[0].name} [${organizations[0].abbreviation}]`,
+            })
+          );
+        }
+        if (destinationOrganizations && destinationOrganizations.length > 0) {
+          const response = await Promise.all(
+            destinationOrganizations.map((id) =>
+              environment.model.organizations.getOrganization(parseInt(id))
+            )
+          );
+          initialFlowFilterValues.destinationOrganizations = response.map(
+            (organizations) => ({
+              id: '' + organizations[0].id,
+              label: `${organizations[0].name} [${organizations[0].abbreviation}]`,
+            })
+          );
+        }
+        if (destinationPlans && destinationPlans.length > 0) {
+          const response = await Promise.all(
+            destinationPlans.map((id) =>
+              environment.model.plans.getPlan(parseInt(id))
+            )
+          );
+          initialFlowFilterValues.destinationPlans = response.map((plan) => ({
+            id: '' + plan.id,
+            label: plan.planVersion.name,
+          }));
+        }
+        setInitialFlowFilterValues({ ...initialFlowFilterValues });
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, [location]);
   return (
     <C.SearchFilter title="Filters">
       <Formik
@@ -152,6 +250,7 @@ export const FilterFlowsTable = (props: Props) => {
       >
         {({ resetForm }) => (
           <Form>
+            <FormValuesUpdater filterValues={initialFlowFilterValues} />
             <StyledDiv>
               <C.ButtonSubmit color="primary" text="Search" />
               <C.Button

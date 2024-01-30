@@ -61,9 +61,7 @@ export type GetOrganizationsAutocompleteResult = t.TypeOf<
   typeof GET_ORGANIZATIONS_AUTOCOMPLETE_RESULT
 >;
 
-export const GET_ORGANIZATION_PARAMS = t.type({
-  id: t.number,
-});
+export const GET_ORGANIZATION_PARAMS = t.number;
 
 export type GetOrganizationParams = t.TypeOf<typeof GET_ORGANIZATION_PARAMS>;
 

@@ -54,9 +54,7 @@ export const GET_PLANS_AUTOCOMPLETE_PARAMS = t.type({
   query: t.string,
 });
 
-export const GET_PLAN_PARAMS = t.type({
-  id: t.number,
-});
+export const GET_PLAN_PARAMS = t.number;
 
 export type GetPlansAutocompleteParams = t.TypeOf<
   typeof GET_PLANS_AUTOCOMPLETE_PARAMS

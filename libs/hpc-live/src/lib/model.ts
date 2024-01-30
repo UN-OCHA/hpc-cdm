@@ -301,8 +301,12 @@ export class LiveModel implements Model {
     }
     const res = await this.fetch(url.href, init);
     if (res.ok) {
-      const json: Res<T> = (await res.json()) as Res<T>;
-      return json.data;
+      const json: Res<T> | T = (await res.json()) as Res<T> | T;
+      if ((json as Res<T>).data) {
+        return (json as Res<T>).data;
+      } else {
+        return json as T;
+      }
       // const decode = resultType.decode(json.data);
       // console.log(decode)
       // if (isRight(decode)) {
@@ -599,6 +603,14 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v1/location/autocomplete/${params.query}`,
           resultType: locations.GET_LOCATIONS_AUTOCOMPLETE_RESULT,
+        }),
+      getLocation: (id) =>
+        this.call({
+          pathname: `/v1/location/${id}`,
+          queryParams: {
+            maxLevel: '1',
+          },
+          resultType: locations.GET_LOCATION_RESULT,
         }),
     };
   }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
@@ -50,6 +50,10 @@ float-right
 
 const StyledSubTitle = tw.h3`
 text-2xl
+`;
+
+const StyledInactiveTitle = tw.span`
+text-gray-500
 `;
 
 const StyledTitle = tw.div`
@@ -170,6 +174,57 @@ export default (props: Props) => {
     }
   });
 
+  const handleSimilarFlowLink = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+      const paramsObject: Record<string, string> = {};
+      if (flowData.sourceCountries.length > 0) {
+        paramsObject['source_location'] = flowData.sourceCountries
+          .map((location) => {
+            if (typeof location !== 'string') {
+              return location.id;
+            } else {
+              return null;
+            }
+          })
+          .join(',');
+        paramsObject['source_organization'] = flowData.sourceOrganizations
+          .map((organization) => {
+            if (typeof organization !== 'string') {
+              return organization.id;
+            } else {
+              return null;
+            }
+          })
+          .join(',');
+        paramsObject['destination_organization'] =
+          flowData.destinationOrganizations
+            .map((organization) => {
+              if (typeof organization !== 'string') {
+                return organization.id;
+              } else {
+                return null;
+              }
+            })
+            .join(',');
+        paramsObject['destination_plan'] = flowData.destinationPlans
+          .map((plan) => {
+            if (typeof plan !== 'string') {
+              return plan.id;
+            } else {
+              return null;
+            }
+          })
+          .join(',');
+      }
+
+      const params = new URLSearchParams(paramsObject);
+      const newUrl = `/flows/?${params.toString()}`;
+      window.open(newUrl, '_blank');
+    },
+    [flowData]
+  );
+
   useEffect(() => {
     if (
       props.isEdit &&
@@ -190,6 +245,55 @@ export default (props: Props) => {
         return undefined;
       }
       const fullData = [...state.data, ...fullState.data];
+
+      const checkExternalRef = (
+        src: string,
+        objType: string,
+        id: number,
+        refType: string
+      ) => {
+        return (
+          data.externalReferences as flows.FlowExternalReference[]
+        ).reduce((value: boolean | null | undefined, infoRef) => {
+          if (value) {
+            return true;
+          } else {
+            if (refType === 'inferred') {
+              return infoRef?.importInformation?.inferred?.reduce(
+                (val, inferredInfo) => {
+                  if (val) {
+                    return true;
+                  } else {
+                    return (
+                      inferredInfo.key === `flowObjects.${src}.${objType}` &&
+                      id === inferredInfo.valueId
+                    );
+                  }
+                },
+                false
+              );
+            }
+
+            if (refType === 'transferred') {
+              return infoRef?.importInformation?.transferred?.reduce(
+                (val, transferredInfo) => {
+                  if (val) {
+                    return true;
+                  } else {
+                    return (
+                      transferredInfo.key === `flowObjects.${src}.${objType}` &&
+                      id === transferredInfo.valueId
+                    );
+                  }
+                },
+                false
+              );
+            }
+
+            return false;
+          }
+        }, false);
+      };
 
       const amountUSD = parseFloat(data.amountUSD);
       const amountOriginal = parseFloat(data.origAmount);
@@ -221,6 +325,18 @@ export default (props: Props) => {
         .map((organization: organizations.Organization) => ({
           id: organization.id,
           label: `${organization.name} [${organization.abbreviation}]`,
+          isInferred: checkExternalRef(
+            'source',
+            'organization',
+            organization.id,
+            'inferred'
+          ),
+          isTransferred: checkExternalRef(
+            'source',
+            'organization',
+            organization.id,
+            'transferred'
+          ),
         }));
       const destinationOrganizations = data.organizations
         .filter(
@@ -230,6 +346,18 @@ export default (props: Props) => {
         .map((organization: organizations.Organization) => ({
           id: organization.id,
           label: `${organization.name} [${organization.abbreviation}]`,
+          isInferred: checkExternalRef(
+            'destination',
+            'organization',
+            organization.id,
+            'inferred'
+          ),
+          isTransferred: checkExternalRef(
+            'destination',
+            'organization',
+            organization.id,
+            'transferred'
+          ),
         }));
       const sourceCountries = data.locations
         .filter(
@@ -239,6 +367,18 @@ export default (props: Props) => {
         .map((location: locations.LocationREST) => ({
           id: location.id,
           label: location.name,
+          isInferred: checkExternalRef(
+            'source',
+            'location',
+            location.id,
+            'inferred'
+          ),
+          isTransferred: checkExternalRef(
+            'source',
+            'location',
+            location.id,
+            'transferred'
+          ),
         }));
       const destinationCountries = data.locations
         .filter(
@@ -248,6 +388,18 @@ export default (props: Props) => {
         .map((location: locations.LocationREST) => ({
           id: location.id,
           label: location.name,
+          isInferred: checkExternalRef(
+            'destination',
+            'location',
+            location.id,
+            'inferred'
+          ),
+          isTransferred: checkExternalRef(
+            'destination',
+            'location',
+            location.id,
+            'transferred'
+          ),
         }));
       const sourceUsageYears = data.usageYears
         .filter(
@@ -257,6 +409,18 @@ export default (props: Props) => {
         .map((usageYear: usageYears.UsageYear) => ({
           id: usageYear.id,
           label: usageYear.year,
+          isInferred: checkExternalRef(
+            'source',
+            'usageYear',
+            usageYear.id,
+            'inferred'
+          ),
+          isTransferred: checkExternalRef(
+            'source',
+            'usageYear',
+            usageYear.id,
+            'transferred'
+          ),
         }));
       const destinationUsageYears = data.usageYears
         .filter(
@@ -266,6 +430,18 @@ export default (props: Props) => {
         .map((usageYear: usageYears.UsageYear) => ({
           id: usageYear.id,
           label: usageYear.year,
+          isInferred: checkExternalRef(
+            'destination',
+            'usageYear',
+            usageYear.id,
+            'inferred'
+          ),
+          isTransferred: checkExternalRef(
+            'destination',
+            'usageYear',
+            usageYear.id,
+            'transferred'
+          ),
         }));
       const sourceGlobalClusters = data.globalClusters
         .filter(
@@ -275,6 +451,18 @@ export default (props: Props) => {
         .map((globalCluster: globalClusters.GlobalCluster) => ({
           id: globalCluster.id,
           label: globalCluster.name,
+          isInferred: checkExternalRef(
+            'source',
+            'globalCluster',
+            globalCluster.id,
+            'inferred'
+          ),
+          isTransferred: checkExternalRef(
+            'source',
+            'globalCluster',
+            globalCluster.id,
+            'transferred'
+          ),
         }));
       const destinationGlobalClusters = data.globalClusters
         .filter(
@@ -284,6 +472,18 @@ export default (props: Props) => {
         .map((globalCluster: globalClusters.GlobalCluster) => ({
           id: globalCluster.id,
           label: globalCluster.name,
+          isInferred: checkExternalRef(
+            'destination',
+            'globalCluster',
+            globalCluster.id,
+            'inferred'
+          ),
+          isTransferred: checkExternalRef(
+            'destination',
+            'globalCluster',
+            globalCluster.id,
+            'transferred'
+          ),
         }));
       const sourceEmergencies = data.emergencies
         .filter(
@@ -293,6 +493,18 @@ export default (props: Props) => {
         .map((emergency: emergencies.Emergency) => ({
           id: emergency.id,
           label: emergency.name,
+          isInferred: checkExternalRef(
+            'source',
+            'emergency',
+            emergency.id,
+            'inferred'
+          ),
+          isTransferred: checkExternalRef(
+            'source',
+            'emergency',
+            emergency.id,
+            'transferred'
+          ),
         }));
       const destinationEmergencies = data.emergencies
         .filter(
@@ -302,6 +514,18 @@ export default (props: Props) => {
         .map((emergency: emergencies.Emergency) => ({
           id: emergency.id,
           label: emergency.name,
+          isInferred: checkExternalRef(
+            'destination',
+            'emergency',
+            emergency.id,
+            'inferred'
+          ),
+          isTransferred: checkExternalRef(
+            'destination',
+            'emergency',
+            emergency.id,
+            'transferred'
+          ),
         }));
       const sourceProjects = data.projects
         .filter(
@@ -315,6 +539,18 @@ export default (props: Props) => {
           return {
             id: project.id,
             label: `${latestProject.name} [${latestProject.code}]`,
+            isInferred: checkExternalRef(
+              'source',
+              'project',
+              project.id,
+              'inferred'
+            ),
+            isTransferred: checkExternalRef(
+              'source',
+              'project',
+              project.id,
+              'transferred'
+            ),
           };
         });
       const destinationProjects = data.projects
@@ -329,6 +565,18 @@ export default (props: Props) => {
           return {
             id: project.id,
             label: `${latestProject.name} [${latestProject.code}]`,
+            isInferred: checkExternalRef(
+              'destination',
+              'project',
+              project.id,
+              'inferred'
+            ),
+            isTransferred: checkExternalRef(
+              'destination',
+              'project',
+              project.id,
+              'transferred'
+            ),
           };
         });
       const sourcePlans = data.plans
@@ -339,6 +587,13 @@ export default (props: Props) => {
         .map((plan: plans.GetPlanResult) => ({
           id: plan.id,
           label: plan.planVersion.name,
+          isInferred: checkExternalRef('source', 'plan', plan.id, 'inferred'),
+          isTransferred: checkExternalRef(
+            'source',
+            'plan',
+            plan.id,
+            'transferred'
+          ),
         }));
       const destinationPlans = data.plans
         .filter(
@@ -348,6 +603,18 @@ export default (props: Props) => {
         .map((plan: plans.GetPlanResult) => ({
           id: plan.id,
           label: plan.planVersion.name,
+          isInferred: checkExternalRef(
+            'destination',
+            'plan',
+            plan.id,
+            'inferred'
+          ),
+          isTransferred: checkExternalRef(
+            'destination',
+            'plan',
+            plan.id,
+            'transferred'
+          ),
         }));
       const flowDescription = data.description;
       const firstReported = dayjs(data.firstReportedDate).format('MM/DD/YYYY');
@@ -383,9 +650,12 @@ export default (props: Props) => {
         data.categories.find(
           (category: categories.Category) => category.group === 'inactiveReason'
         )?.name ?? '';
-      const activeMatch = data.versions.filter(function (d: any) {
+      const activeMatch = data.versions.filter(function (
+        d: flows.FlowSearchResult
+      ) {
         return d.activeStatus;
-      })[0].versionID;
+      })[0]?.versionID;
+
       setActiveVersionID(activeMatch);
       const reportDetails = data.reportDetails.map(
         (detail: flows.FlowReportDetail) => ({
@@ -457,6 +727,11 @@ export default (props: Props) => {
         updatedBy: flowItemData.lastUpdatedBy?.name,
         active: flowItemData.activeStatus,
         viewing: index + 1 === parseInt(versionId as string),
+        pending:
+          flowItemData.categories.find(
+            (category: categories.Category) =>
+              category.group === 'inactiveReason'
+          )?.name === 'Pending review',
         source: {
           emergencies: flowItemData.emergencies
             .filter(
@@ -572,9 +847,22 @@ export default (props: Props) => {
         categories: flowItemData.categories.map(
           (category: categories.Category) => category.name
         ),
+        amountUSD: flowItemData.amountUSD,
+        flowDate: flowItemData.flowDate,
+        decisionDate: flowItemData.flowDate,
+        firstReportedDate: flowItemData.firstReportedDate,
+        budgetYear: flowItemData.budgetYear,
+        origAmount: flowItemData.origAmount,
+        origCurrency: flowItemData.origCurrency,
+        exchangeRate: flowItemData.exchangeRate,
+        activeStatus: flowItemData.activeStatus,
+        restricted: flowItemData.restricted,
+        newMoney: flowItemData.newMoney,
+        description: flowItemData.description,
+        notes: flowItemData.notes,
         uniqueSources: {},
         uniqueDestinations: {},
-        uniqueCategories: {},
+        uniqueCategories: [],
       }));
       setFlowData({
         amountUSD,
@@ -654,24 +942,65 @@ export default (props: Props) => {
                               flowDetail.versionID
                           )
                         : t.t(lang, (s) => s.routes.newFlow.title)}
+                      {flowDetail &&
+                        !flowDetail.activeStatus &&
+                        !flowDetail.deletedAt &&
+                        flowData.inactiveReason === 'Pending review' && (
+                          <StyledInactiveTitle>{`[Inactive -Pending Review]`}</StyledInactiveTitle>
+                        )}
                       {flowDetail ? (
                         <>
                           {!flowDetail.activeStatus &&
-                          !flowDetail.deletedAt &&
-                          flowData.inactiveReason !== 'Pending' ? (
-                            <StyledSubTitle>
-                              <p>
-                                This flow is not active because it has been
-                                marked as {flowData.inactiveReason}. See{' '}
-                                <a>
-                                  Flow {flowDetail.id}, v{activeVersionID}
-                                </a>{' '}
-                                for the current active version.
-                              </p>
-                            </StyledSubTitle>
-                          ) : (
-                            ''
-                          )}
+                            !flowDetail.deletedAt && (
+                              <>
+                                {versionData[parseInt(versionId as string)]
+                                  ?.restricted ? (
+                                  <StyledSubTitle>
+                                    <StyledInactiveTitle>
+                                      This flow is marked as Restricted and will
+                                      not be included in the funding totals on
+                                      the FTS website.
+                                      {flowData.inactiveReason !==
+                                        'Pending review' && (
+                                        <>
+                                          There is a pending update to this
+                                          flow. Review pending{' '}
+                                          <a
+                                            href={`flows/edit/${flowDetail.id}/version/${activeVersionID}`}
+                                            target="_blank"
+                                          >
+                                            Flow {flowDetail.id}, v
+                                            {activeVersionID}
+                                          </a>
+                                          .
+                                        </>
+                                      )}
+                                    </StyledInactiveTitle>
+                                  </StyledSubTitle>
+                                ) : (
+                                  <StyledSubTitle>
+                                    <StyledInactiveTitle>
+                                      This flow is not active because it has
+                                      been marked as {flowData.inactiveReason}.
+                                      {flowData.inactiveReason !==
+                                        'Pending review' && (
+                                        <>
+                                          See{' '}
+                                          <a
+                                            href={`flows/edit/${flowDetail.id}/version/${activeVersionID}`}
+                                            target="_blank"
+                                          >
+                                            Flow {flowDetail.id}, v
+                                            {activeVersionID}
+                                          </a>{' '}
+                                          for the current active version.
+                                        </>
+                                      )}
+                                    </StyledInactiveTitle>
+                                  </StyledSubTitle>
+                                )}
+                              </>
+                            )}
                           <StyledSubTitle>
                             Updated{' '}
                             {dayjs(flowDetail.updatedAtDisplay).format(
@@ -692,7 +1021,11 @@ export default (props: Props) => {
                       )}
                     </div>
                     <StyledAnchorDiv>
-                      <StyledAnchor href="flows" target="_blank">
+                      <StyledAnchor
+                        href="flows"
+                        target="_blank"
+                        onClick={handleSimilarFlowLink}
+                      >
                         Find Similar Flows
                       </StyledAnchor>
                     </StyledAnchorDiv>

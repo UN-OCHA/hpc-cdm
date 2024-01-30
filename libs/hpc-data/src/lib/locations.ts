@@ -43,14 +43,22 @@ export type GetLocationsAutocompleteParams = t.TypeOf<
   typeof GET_LOCATIONS_AUTOCOMPLETE_PARAMS
 >;
 
+export const GET_LOCATION_PARAMS = t.number;
+
+export type GetLocationParams = t.TypeOf<typeof GET_LOCATION_PARAMS>;
+
 export const GET_LOCATIONS_AUTOCOMPLETE_RESULT = t.array(LOCATION);
+export const GET_LOCATION_RESULT = LOCATION;
 
 export type GetLocationsAutocompleteResult = t.TypeOf<
   typeof GET_LOCATIONS_AUTOCOMPLETE_RESULT
 >;
 
+export type GetLocationResult = t.TypeOf<typeof GET_LOCATION_RESULT>;
+
 export interface Model {
   getAutocompleteLocations(
     params: GetLocationsAutocompleteParams
   ): Promise<GetLocationsAutocompleteResult>;
+  getLocation(params: GetLocationParams): Promise<GetLocationResult>;
 }

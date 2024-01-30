@@ -26,6 +26,7 @@ import {
   currencies,
 } from '@unocha/hpc-data';
 import tw from 'twin.macro';
+import { THEME } from '../../theme';
 
 const StyledTextField = tw(TextField)`
     min-w-[10rem]
@@ -283,7 +284,13 @@ const AsyncAutocompleteSelect = ({
   }, [field.value, options, helpers]);
 
   const configAutocomplete: AutocompleteProps<
-    { label: string; id: number; isAutoFilled?: boolean },
+    {
+      label: string;
+      id: number;
+      isAutoFilled?: boolean;
+      isTransferred?: boolean;
+      isInferred?: boolean;
+    },
     boolean,
     boolean,
     boolean
@@ -327,7 +334,47 @@ const AsyncAutocompleteSelect = ({
     renderTags: (value, getTagProps) => {
       return value.map((option, index) => (
         <Chip
-          label={option.label}
+          label={
+            <>
+              {option.label}
+              {option.isTransferred && (
+                <span
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: '50%',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: THEME.colors.secondary.light1,
+                    color: THEME.colors.panel.bg,
+                    fontWeight: 800,
+                    marginLeft: 6,
+                  }}
+                >
+                  T
+                </span>
+              )}
+              {option.isInferred && (
+                <span
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: '50%',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: THEME.colors.primary.light,
+                    color: THEME.colors.panel.bg,
+                    fontWeight: 800,
+                    marginLeft: 6,
+                  }}
+                >
+                  I
+                </span>
+              )}
+            </>
+          }
           {...getTagProps({ index })}
           sx={option?.isAutoFilled ? { bgcolor: '#FFCC00' } : {}}
         />
