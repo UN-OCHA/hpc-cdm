@@ -62,3 +62,57 @@ export const FORM_UPDATE_DATA = t.intersection([
 ]);
 
 export type FormUpdateData = t.TypeOf<typeof FORM_UPDATE_DATA>;
+
+export enum InputEntryCategoriesEnum {
+  ACTIVE_FLOW = 'activeFlow',
+  EXTERNAL = 'external',
+}
+
+export enum InputEntryKindsEnum {
+  NEW = 'new',
+  DELETED = 'deleted',
+  REVISED = 'revised',
+  UNMATCHED = 'unmatched',
+}
+
+const InputEntryCategoriesCodec = t.union([
+  t.literal(InputEntryCategoriesEnum.ACTIVE_FLOW),
+  t.literal(InputEntryCategoriesEnum.EXTERNAL),
+]);
+
+const InputEntryKindsCodec = t.union([
+  t.literal(InputEntryKindsEnum.NEW),
+  t.literal(InputEntryKindsEnum.DELETED),
+  t.literal(InputEntryKindsEnum.REVISED),
+  t.literal(InputEntryKindsEnum.UNMATCHED),
+]);
+
+const InputSelectValueTypeCodec = t.intersection([
+  t.type({
+    id: t.string,
+    label: t.string,
+  }),
+  t.partial({
+    isAutoFilled: t.boolean,
+    isTransferred: t.boolean,
+    isInferred: t.boolean,
+  }),
+]);
+
+export const INPUT_SELECT_VALUE_TYPE = InputSelectValueTypeCodec;
+export type InputSelectValueType = t.TypeOf<typeof INPUT_SELECT_VALUE_TYPE>;
+
+const InputEntryTypeCodec = t.type({
+  category: InputEntryCategoriesCodec,
+  value: t.union([
+    t.array(InputSelectValueTypeCodec),
+    InputSelectValueTypeCodec,
+    t.string,
+    t.number,
+    t.null,
+  ]),
+  kind: InputEntryKindsCodec,
+});
+
+export const INPUT_ENTRY_TYPE = InputEntryTypeCodec;
+export type InputEntryType = t.TypeOf<typeof INPUT_ENTRY_TYPE>;

@@ -3,6 +3,8 @@ import { Form, Formik, FieldArray } from 'formik';
 import { array, number, object, string } from 'yup';
 import tw from 'twin.macro';
 import dayjs from 'dayjs';
+import { isRight } from 'fp-ts/Either';
+import * as t from 'io-ts';
 
 import { C, dialogs } from '@unocha/hpc-ui';
 import {
@@ -15,19 +17,11 @@ import {
   Paper,
 } from '@mui/material';
 import { Environment } from '../../environments/interface';
-import { MdAdd, MdRemove } from 'react-icons/md';
-import { usageYears } from '@unocha/hpc-data';
+import { MdAdd, MdRemove, MdClose, MdCheck } from 'react-icons/md';
+import { usageYears, forms } from '@unocha/hpc-data';
 import { isValidDate, isValidYear } from '../utils/validation';
 
-type AutoCompleteSeletionType =
-  | {
-      label: string;
-      id: string;
-      isAutoFilled?: boolean;
-      isTransferred?: boolean;
-      isInferred?: boolean;
-    }
-  | string;
+type AutoCompleteSeletionType = forms.InputSelectValueType | string;
 
 type UniqueDataType = {
   [key: string]: string[];
@@ -64,8 +58,8 @@ export interface FormValues {
   beneficiaryGroup: string;
   inactiveReason: string;
   origCurrency: AutoCompleteSeletionType;
-  amountOriginal: number;
-  exchangeRateUsed: number;
+  amountOriginal: number | null;
+  exchangeRateUsed: number | null;
   notes: string;
   sourceOrganizations: AutoCompleteSeletionType[];
   sourceCountries: AutoCompleteSeletionType[];
@@ -112,12 +106,46 @@ export interface VersionDataType {
   restricted?: boolean;
 }
 
+export interface InputEntriesType {
+  amountUSD: forms.InputEntryType | null;
+  keywords: forms.InputEntryType | null;
+  flowStatus: forms.InputEntryType | null;
+  flowType: forms.InputEntryType | null;
+  flowDescription: forms.InputEntryType | null;
+  contributionType: forms.InputEntryType | null;
+  earmarkingType: forms.InputEntryType | null;
+  method: forms.InputEntryType | null;
+  beneficiaryGroup: forms.InputEntryType | null;
+  inactiveReason: forms.InputEntryType | null;
+  amountOriginal: forms.InputEntryType | null;
+  exchangeRateUsed: forms.InputEntryType | null;
+  notes: forms.InputEntryType | null;
+  sourceOrganizations: forms.InputEntryType[];
+  sourceCountries: forms.InputEntryType[];
+  sourceUsageYears: forms.InputEntryType[];
+  sourceProjects: forms.InputEntryType[];
+  sourcePlans: forms.InputEntryType[];
+  sourceGlobalClusters: forms.InputEntryType[];
+  sourceEmergencies: forms.InputEntryType[];
+  destinationOrganizations: forms.InputEntryType[];
+  destinationCountries: forms.InputEntryType[];
+  destinationUsageYears: forms.InputEntryType[];
+  destinationProjects: forms.InputEntryType[];
+  destinationPlans: forms.InputEntryType[];
+  destinationGlobalClusters: forms.InputEntryType[];
+  destinationEmergencies: forms.InputEntryType[];
+}
+
 interface Props {
   environment: Environment;
   isEdit: boolean;
   initialValue: FormValues;
   prevDetails?: ReportDetailType[];
   versionData?: VersionDataType[];
+  isRestricted: boolean;
+  inputEntries: InputEntriesType;
+  initializeInputEntries: () => void;
+  rejectInputEntry: (key: string) => void;
 }
 
 const StyledLayoutRow = tw.div`
@@ -163,7 +191,7 @@ border-gray-100
 const StyledCurrencyRow = tw.div`
 w-1/2
 `;
-const StyledAddReportDetailButton = tw(C.Button)`
+const StyledFormButton = tw(C.Button)`
 ml-[25px]
 mb-6
 `;
@@ -180,7 +208,17 @@ const initialReportDetail = {
 };
 
 export const FlowForm = (props: Props) => {
-  const { environment, initialValue, isEdit, prevDetails, versionData } = props;
+  const {
+    environment,
+    initialValue,
+    isEdit,
+    prevDetails,
+    versionData,
+    isRestricted,
+    inputEntries,
+    initializeInputEntries,
+    rejectInputEntry,
+  } = props;
   const { confirm } = dialogs;
 
   const handleSubmit = (values: FormValues) => {
@@ -781,6 +819,8 @@ export const FlowForm = (props: Props) => {
                         updateFlowObjects(event, value, setFieldValue);
                       }}
                       isMulti
+                      entryInfo={inputEntries.sourceOrganizations}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <StyledRow>
                       <StyledHalfSection>
@@ -791,6 +831,8 @@ export const FlowForm = (props: Props) => {
                           isMulti
                           behavior={FORM_SETTINGS.usageYear.behavior}
                           isAutocompleteAPI={false}
+                          entryInfo={inputEntries.sourceUsageYears}
+                          rejectInputEntry={rejectInputEntry}
                         />
                       </StyledHalfSection>
                       <StyledHalfSection>
@@ -802,6 +844,8 @@ export const FlowForm = (props: Props) => {
                           }
                           behavior={FORM_SETTINGS.location.behavior}
                           isMulti
+                          entryInfo={inputEntries.sourceCountries}
+                          rejectInputEntry={rejectInputEntry}
                         />
                       </StyledHalfSection>
                     </StyledRow>
@@ -816,6 +860,8 @@ export const FlowForm = (props: Props) => {
                       }}
                       behavior={FORM_SETTINGS.emergency.behavior}
                       isMulti
+                      entryInfo={inputEntries.sourceEmergencies}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelect
                       label="Global Cluster(s)"
@@ -829,6 +875,8 @@ export const FlowForm = (props: Props) => {
                       behavior={FORM_SETTINGS.globalCluster.behavior}
                       isMulti
                       isAutocompleteAPI={false}
+                      entryInfo={inputEntries.sourceGlobalClusters}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelect
                       label="Plan"
@@ -839,6 +887,8 @@ export const FlowForm = (props: Props) => {
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue);
                       }}
+                      entryInfo={inputEntries.sourcePlans}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelect
                       label="Project"
@@ -851,6 +901,8 @@ export const FlowForm = (props: Props) => {
                         updateFlowObjects(event, value, setFieldValue);
                       }}
                       isMulti
+                      entryInfo={inputEntries.sourceProjects}
+                      rejectInputEntry={rejectInputEntry}
                     />
                   </C.FormSection>
                 </StyledFullSection>
@@ -867,6 +919,8 @@ export const FlowForm = (props: Props) => {
                       }
                       behavior={FORM_SETTINGS.organization.behavior}
                       isMulti
+                      entryInfo={inputEntries.destinationOrganizations}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <StyledRow>
                       <StyledHalfSection>
@@ -877,6 +931,8 @@ export const FlowForm = (props: Props) => {
                           isMulti
                           behavior={FORM_SETTINGS.usageYear.behavior}
                           isAutocompleteAPI={false}
+                          entryInfo={inputEntries.destinationUsageYears}
+                          rejectInputEntry={rejectInputEntry}
                         />
                       </StyledHalfSection>
                       <StyledHalfSection>
@@ -888,6 +944,8 @@ export const FlowForm = (props: Props) => {
                           }
                           behavior={FORM_SETTINGS.location.behavior}
                           isMulti
+                          entryInfo={inputEntries.destinationCountries}
+                          rejectInputEntry={rejectInputEntry}
                         />
                       </StyledHalfSection>
                     </StyledRow>
@@ -899,6 +957,8 @@ export const FlowForm = (props: Props) => {
                       }
                       behavior={FORM_SETTINGS.globalCluster.behavior}
                       isMulti
+                      entryInfo={inputEntries.destinationGlobalClusters}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelect
                       label="Plan"
@@ -909,6 +969,8 @@ export const FlowForm = (props: Props) => {
                       }}
                       behavior={FORM_SETTINGS.plan.behavior}
                       isMulti
+                      entryInfo={inputEntries.destinationPlans}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelect
                       label="Emergency(ies)"
@@ -920,6 +982,8 @@ export const FlowForm = (props: Props) => {
                         updateFlowObjects(event, value, setFieldValue);
                       }}
                       isMulti
+                      entryInfo={inputEntries.destinationEmergencies}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelect
                       label="Project"
@@ -932,6 +996,8 @@ export const FlowForm = (props: Props) => {
                         updateFlowObjects(event, value, setFieldValue);
                       }}
                       isMulti
+                      entryInfo={inputEntries.destinationProjects}
+                      rejectInputEntry={rejectInputEntry}
                     />
                   </C.FormSection>
                 </StyledFullSection>
@@ -952,6 +1018,8 @@ export const FlowForm = (props: Props) => {
                         name="amountUSD"
                         type="currency"
                         thousandSeparator
+                        entryInfo={inputEntries.amountUSD}
+                        rejectInputEntry={rejectInputEntry}
                       />
                     </StyledFormRow>
                     <C.Section title="Original Currency" type="secondary">
@@ -961,6 +1029,8 @@ export const FlowForm = (props: Props) => {
                           name="amountOriginal"
                           type="number"
                           thousandSeparator
+                          entryInfo={inputEntries.amountOriginal}
+                          rejectInputEntry={rejectInputEntry}
                         />
                         <StyledCurrencyRow>
                           <C.AsyncAutocompleteSelect
@@ -978,6 +1048,8 @@ export const FlowForm = (props: Props) => {
                         name="exchangeRateUsed"
                         type="number"
                         thousandSeparator
+                        entryInfo={inputEntries.exchangeRateUsed}
+                        rejectInputEntry={rejectInputEntry}
                       />
                       <StyledAnchorDiv>
                         <StyledAnchor
@@ -1002,6 +1074,8 @@ export const FlowForm = (props: Props) => {
                       multiline
                       rows={2}
                       type="text"
+                      entryInfo={inputEntries.flowDescription}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <StyledFormRow>
                       <C.DatePicker
@@ -1028,6 +1102,8 @@ export const FlowForm = (props: Props) => {
                       fnPromise={environment.model.categories.getCategories}
                       category="flowType"
                       hasNameValue
+                      entryInfo={inputEntries.flowType}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncSingleSelect
                       label="Flow Status"
@@ -1035,6 +1111,8 @@ export const FlowForm = (props: Props) => {
                       fnPromise={environment.model.categories.getCategories}
                       category="flowStatus"
                       hasNameValue
+                      entryInfo={inputEntries.flowStatus}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.DatePicker name="flowDate" label="Flow Date" />
                     <C.AsyncSingleSelect
@@ -1043,6 +1121,8 @@ export const FlowForm = (props: Props) => {
                       fnPromise={environment.model.categories.getCategories}
                       category="contributionType"
                       hasNameValue
+                      entryInfo={inputEntries.contributionType}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelect
                       label="Gb Earmarking"
@@ -1050,6 +1130,12 @@ export const FlowForm = (props: Props) => {
                       fnPromise={environment.model.categories.getCategories}
                       category="earmarkingType"
                       isAutocompleteAPI={false}
+                      entryInfo={
+                        inputEntries.earmarkingType
+                          ? [inputEntries.earmarkingType]
+                          : []
+                      }
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncSingleSelect
                       label="Aid Modality"
@@ -1057,6 +1143,8 @@ export const FlowForm = (props: Props) => {
                       fnPromise={environment.model.categories.getCategories}
                       category="method"
                       hasNameValue
+                      entryInfo={inputEntries.method}
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelect
                       label="Keywords"
@@ -1065,6 +1153,10 @@ export const FlowForm = (props: Props) => {
                       category="keywords"
                       isMulti
                       isAutocompleteAPI={false}
+                      entryInfo={
+                        inputEntries.keywords ? [inputEntries.keywords] : []
+                      }
+                      rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncSingleSelect
                       label="Beneficiary Group"
@@ -1072,18 +1164,20 @@ export const FlowForm = (props: Props) => {
                       fnPromise={environment.model.categories.getCategories}
                       category="beneficiaryGroup"
                       hasNameValue
+                      entryInfo={inputEntries.beneficiaryGroup}
+                      rejectInputEntry={rejectInputEntry}
                     />
                   </StyledHalfSection>
                 </StyledRow>
-                <StyledRow>
-                  <C.TextFieldWrapper
-                    label="Notes"
-                    name="notes"
-                    multiline
-                    rows={4}
-                    type="text"
-                  />
-                </StyledRow>
+                <C.TextFieldWrapper
+                  label="Notes"
+                  name="notes"
+                  multiline
+                  rows={4}
+                  type="text"
+                  entryInfo={inputEntries.notes}
+                  rejectInputEntry={rejectInputEntry}
+                />
               </C.FormSection>
             </StyledFullSection>
             <StyledFullSection>
@@ -1228,7 +1322,7 @@ export const FlowForm = (props: Props) => {
                         </C.FormSection>
                       </StyledFullSection>
                     ))}
-                  <StyledAddReportDetailButton
+                  <StyledFormButton
                     onClick={() => {
                       push(initialReportDetail);
                     }}
@@ -1333,6 +1427,7 @@ export const FlowForm = (props: Props) => {
                           (v) => v.versionId === version.versionId
                         )
                       }
+                      withoutFormik
                     />
                   ))}
                   {comparingVersions.length === 2 && (
@@ -1456,6 +1551,43 @@ export const FlowForm = (props: Props) => {
                 </C.FormSection>
               </StyledFullSection>
             )}
+            <div style={{ float: 'right' }}>
+              <StyledFormButton
+                onClick={() => {
+                  Object.keys(inputEntries).forEach((key) => {
+                    const specificKey = key as keyof InputEntriesType;
+                    const value = inputEntries[specificKey];
+
+                    if (value === null) {
+                      return;
+                    }
+                    if (isRight(forms.INPUT_ENTRY_TYPE.decode(value))) {
+                      setFieldValue(key, (value as forms.InputEntryType).value);
+                    }
+                    if (Array.isArray(value)) {
+                      setFieldValue(
+                        key,
+                        (value as forms.InputEntryType[]).find(
+                          (inputEntry) =>
+                            inputEntry.category ===
+                            forms.InputEntryCategoriesEnum.ACTIVE_FLOW
+                        )?.value ?? []
+                      );
+                    }
+                  });
+                  initializeInputEntries();
+                }}
+                color="greenLight"
+                text="Accept Remaining Changes"
+                startIcon={MdCheck}
+              />
+              <StyledFormButton
+                onClick={initializeInputEntries}
+                color="secondary"
+                text="Reject Remaining Changes"
+                startIcon={MdClose}
+              />
+            </div>
           </Form>
         );
       }}

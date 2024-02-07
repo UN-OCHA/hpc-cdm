@@ -52,11 +52,16 @@ export const THEME = {
     textError: COLOR_PALETTE.red.dark,
     textErrorLight: COLOR_PALETTE.red.light,
     dividers: COLOR_PALETTE.gray.light4,
+    greenLight: COLOR_PALETTE.green.light,
     panel: {
       border: COLOR_PALETTE.gray.light2,
       bg: COLOR_PALETTE.gray.light5,
       bgSelected: COLOR_PALETTE.gray.light3,
       bgHover: COLOR_PALETTE.gray.light4,
+    },
+    entryBg: {
+      active: '#ffd9cc',
+      pending: '#ffecb3',
     },
   },
   marginPx: {

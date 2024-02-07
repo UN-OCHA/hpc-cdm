@@ -10,7 +10,8 @@ import {
   SelectChangeEvent,
   SelectProps,
 } from '@mui/material';
-import { categories } from '@unocha/hpc-data';
+import InputEntry from './input-entry';
+import { categories, forms } from '@unocha/hpc-data';
 import { useField, useFormikContext, ErrorMessage } from 'formik';
 import CloseIcon from '@mui/icons-material/Close';
 import tw from 'twin.macro';
@@ -44,6 +45,8 @@ const AsyncSingleSelect = ({
   fnPromise,
   category,
   hasNameValue,
+  entryInfo,
+  rejectInputEntry,
   ...otherProps
 }: {
   name: string;
@@ -55,6 +58,8 @@ const AsyncSingleSelect = ({
   }) => Promise<categories.GetCategoriesResult>;
   category: categories.CategoryGroup;
   hasNameValue?: boolean;
+  entryInfo?: forms.InputEntryType | null;
+  rejectInputEntry?: (key: string) => void;
 }) => {
   const { setFieldValue } = useFormikContext<string>();
   const [field, meta, helpers] = useField(name);
@@ -138,28 +143,44 @@ const AsyncSingleSelect = ({
     singleSelectConfig.error = true;
   }
   return (
-    <FormControl sx={{ width: '100%' }} size="small">
-      <InputLabel id={`${label.toLowerCase().replace(' ', '-').trim()}-label`}>
-        {label}
-      </InputLabel>
-      <StyledSelect {...singleSelectConfig}>
-        {options.length > 0 ? (
-          options.map((value) => (
-            <MenuItem
-              key={value.id}
-              value={hasNameValue ? value.label : value.id}
-            >
-              {value.label}
-            </MenuItem>
-          ))
-        ) : (
-          <Loading disabled value="">
-            Loading...
-          </Loading>
-        )}
-      </StyledSelect>
-      <FormikError name={name} />
-    </FormControl>
+    <>
+      <FormControl sx={{ width: '100%' }} size="small">
+        <InputLabel
+          id={`${label.toLowerCase().replace(' ', '-').trim()}-label`}
+        >
+          {label}
+        </InputLabel>
+        <StyledSelect {...singleSelectConfig}>
+          {options.length > 0 ? (
+            options.map((value) => (
+              <MenuItem
+                key={value.id}
+                value={hasNameValue ? value.label : value.id}
+              >
+                {value.label}
+              </MenuItem>
+            ))
+          ) : (
+            <Loading disabled value="">
+              Loading...
+            </Loading>
+          )}
+        </StyledSelect>
+        <FormikError name={name} />
+      </FormControl>
+      {entryInfo && rejectInputEntry && (
+        <InputEntry
+          info={entryInfo}
+          setValue={() => {
+            setFieldValue(name, entryInfo.value);
+            rejectInputEntry(name);
+          }}
+          rejectValue={() => {
+            rejectInputEntry(name);
+          }}
+        />
+      )}
+    </>
   );
 };
 export default AsyncSingleSelect;

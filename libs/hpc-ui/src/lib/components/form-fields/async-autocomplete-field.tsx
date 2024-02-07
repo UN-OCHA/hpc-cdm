@@ -14,6 +14,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import JoinInnerIcon from '@mui/icons-material/JoinInner';
 import { styled } from '@mui/material/styles';
 import { useField, useFormikContext, FormikValues } from 'formik';
+import InputEntry from './input-entry';
 import {
   categories,
   emergencies,
@@ -24,6 +25,7 @@ import {
   projects,
   usageYears,
   currencies,
+  forms,
 } from '@unocha/hpc-data';
 import tw from 'twin.macro';
 import { THEME } from '../../theme';
@@ -68,6 +70,8 @@ const AsyncAutocompleteSelect = ({
   isAutocompleteAPI,
   behavior,
   onChange,
+  entryInfo,
+  rejectInputEntry,
   ...otherProps
 }: {
   name: string;
@@ -79,6 +83,8 @@ const AsyncAutocompleteSelect = ({
   isAutocompleteAPI?: boolean;
   behavior?: string;
   onChange?: (name: string, value: any) => void;
+  entryInfo?: forms.InputEntryType[];
+  rejectInputEntry?: (key: string) => void;
 }) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -428,7 +434,27 @@ const AsyncAutocompleteSelect = ({
   if (meta && meta.error && meta.touched) {
     console.log(meta.error);
   }
-  return <StyledAutocomplete {...configAutocomplete} />;
+  return (
+    <>
+      <StyledAutocomplete {...configAutocomplete} />
+      {entryInfo &&
+        entryInfo.length > 0 &&
+        rejectInputEntry &&
+        entryInfo.map((entry, index) => (
+          <InputEntry
+            key={index}
+            info={entry}
+            setValue={() => {
+              setFieldValue(name, entry.value);
+              rejectInputEntry(name);
+            }}
+            rejectValue={() => {
+              rejectInputEntry(name);
+            }}
+          />
+        ))}
+    </>
+  );
 };
 
 AsyncAutocompleteSelect.defaultProps = {

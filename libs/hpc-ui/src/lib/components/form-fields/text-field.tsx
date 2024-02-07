@@ -1,8 +1,14 @@
 import React from 'react';
 import { TextField, TextFieldProps, InputAdornment } from '@mui/material';
-import { useField } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import tw from 'twin.macro';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
+import InputEntry from './input-entry';
+import { forms } from '@unocha/hpc-data';
+
+const StyledContainer = tw.div`
+w-full
+`;
 
 const StyledTextField = tw(TextField)`
 min-w-[10rem]
@@ -47,6 +53,8 @@ const TextFieldWrapper = ({
   multiline,
   rows,
   thousandSeparator,
+  entryInfo,
+  rejectInputEntry,
   ...otherProps
 }: {
   type: 'text' | 'number' | 'currency';
@@ -56,8 +64,11 @@ const TextFieldWrapper = ({
   multiline?: boolean;
   thousandSeparator?: boolean;
   rows?: number;
+  entryInfo?: forms.InputEntryType | null;
+  rejectInputEntry?: (key: string) => void;
 }) => {
   const [field, meta] = useField(name);
+  const { setFieldValue } = useFormikContext<string>();
   const configTextField: TextFieldProps = {
     ...field,
     ...otherProps,
@@ -87,7 +98,24 @@ const TextFieldWrapper = ({
     configTextField.error = true;
     configTextField.helperText = meta.error;
   }
-  return <StyledTextField {...configTextField} />;
+  return (
+    <StyledContainer>
+      <StyledTextField {...configTextField} />
+      <br />
+      {entryInfo && rejectInputEntry && (
+        <InputEntry
+          info={entryInfo}
+          setValue={() => {
+            setFieldValue(name, entryInfo.value);
+            rejectInputEntry(name);
+          }}
+          rejectValue={() => {
+            rejectInputEntry(name);
+          }}
+        />
+      )}
+    </StyledContainer>
+  );
 };
 
 export default TextFieldWrapper;
