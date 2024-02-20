@@ -55,12 +55,11 @@ import {
   TopRowContainer,
   handleTableSettingsInfoClose,
 } from './table-utils';
-import { useNavigate } from 'react-router-dom';
-import * as paths from '../../paths';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { util } from '@unocha/hpc-core';
 import { FlowsFilterValues } from '../filters/filter-flows-table';
 import NoResultTable from './no-result';
+import { editFlowSetting } from '../../paths';
 
 export interface FlowsTableProps {
   headers: TableHeadersProps<FlowHeaderID>[];
@@ -84,7 +83,6 @@ export default function FlowsTable(props: FlowsTableProps) {
     util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
   const parsedFilters = parseFlowFilters(tableFilters, props.pending);
-  const navigate = useNavigate();
   const [state, load] = useDataLoader([query], () =>
     env.model.flows.searchFlows({
       limit: query.rowsPerPage,
@@ -227,12 +225,18 @@ export default function FlowsTable(props: FlowsTableProps) {
       <>
         {data.searchFlows.flows.map((row) => (
           <TableRowClick
-            onClick={() => navigate(paths.flow(row.id))}
+            onClick={() => {
+              const path = editFlowSetting(row.id, row.versionID);
+              window.open(path, '_blank');
+            }}
             key={`${row.id}v${row.versionID}`}
             sx={{
               backgroundColor: selectedRows.map((x) => x.id).includes(row.id)
                 ? tw`bg-unocha-primary bg-opacity-10`
                 : undefined,
+              '&:hover': {
+                backgroundColor: tw`bg-unocha-primary bg-opacity-10`,
+              },
             }}
           >
             {props.pending && (

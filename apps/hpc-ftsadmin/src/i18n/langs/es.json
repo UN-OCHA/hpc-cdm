@@ -300,7 +300,8 @@
     "rpm": "Módulo de Planificación de Respuesta",
     "prism": "Sistema de Proyectos en Línea",
     "ftsWebsite": "Sitio web de FTS",
-    "help": "Ayuda"
+    "help": "Ayuda",
+    "newFlow": "Nuevo flujo"
   },
   "routes": {
     "flows": {
@@ -314,6 +315,12 @@
     },
     "organizations": {
       "title": "Organizaciones"
+    },
+    "newFlow": {
+      "title": "Agregar flujo de fondos"
+    },
+    "editFlow": {
+      "title": "Editar flujo"
     }
   }
 }

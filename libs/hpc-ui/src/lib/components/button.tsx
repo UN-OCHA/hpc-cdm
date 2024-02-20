@@ -15,6 +15,7 @@ const COLOR_CLS = {
   primary: 'color-primary',
   secondary: 'color-secondary',
   neutral: 'color-neutral',
+  greenLight: 'green-light',
 } as const;
 
 export type ButtonColor = keyof typeof COLOR_CLS;
@@ -96,6 +97,7 @@ const BaseButton = (props: Props) => {
   return behaviour.type === 'button' ? (
     <button
       className={className}
+      type={behaviour.type}
       onClick={behaviour.onClick}
       ref={ref as React.RefObject<HTMLButtonElement>}
     >
@@ -169,6 +171,17 @@ const StyledBaseButton = styled(BaseButton)`
     &:focus,
     &.${CLS.ACTIVE} {
       background-color: ${(p) => p.theme.colors.secondary.normal};
+      color: #fff;
+    }
+  }
+
+  &.${COLOR_CLS.greenLight} {
+    border: 1px solid ${(p) => p.theme.colors.greenLight};
+    color: ${(p) => p.theme.colors.greenLight};
+    &:hover,
+    &:focus,
+    &.${CLS.ACTIVE} {
+      background-color: ${(p) => p.theme.colors.greenLight};
       color: #fff;
     }
   }
