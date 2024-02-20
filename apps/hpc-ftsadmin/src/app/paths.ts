@@ -6,8 +6,10 @@ const PENDING_FLOWS = '/pending-flows';
 const ORGANIZATIONS = '/organizations';
 const ORGANIZATION = `${ORGANIZATIONS}/:id`;
 const ADD_ORGANIZATION = `${ORGANIZATIONS}/add`;
-const FLOW = `${FLOWS}/:id`;
+// const FLOW = `${FLOWS}/:id`;
 const KEYWORDS = '/keywords';
+const NEW_FLOW = '/flows/add';
+const EDIT_FLOW = '/flows/edit/:flowId/version/:versionId';
 
 const replacePlaceholders = (
   path: string,
@@ -36,6 +38,16 @@ export const organizationRoot = () => ORGANIZATION + ROOT;
 
 export const addOrganization = () => replacePlaceholders(ADD_ORGANIZATION, {});
 
-export const flow = (id: number) => replacePlaceholders(FLOW, { id });
+// export const flow = (id: number) => replacePlaceholders(FLOW, { id });
 
 export const keywords = () => replacePlaceholders(KEYWORDS, {});
+
+export const newFlow = () => replacePlaceholders(NEW_FLOW, {});
+
+export const editFlowSetting = (flowId: number, versionId: number) =>
+  replacePlaceholders(EDIT_FLOW, {
+    flowId,
+    versionId,
+  });
+
+export const editFlow = () => EDIT_FLOW;

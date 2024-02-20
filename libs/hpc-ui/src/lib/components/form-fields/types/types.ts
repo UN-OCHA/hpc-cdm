@@ -1,1 +1,2 @@
-export type FormObjectValue = { displayLabel: string; value: string | number };
+import { forms } from '@unocha/hpc-data';
+export type FormObjectValue = forms.InputSelectValueType;

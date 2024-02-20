@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import tw from 'twin.macro';
 import { LanguageKey, t } from '../../../i18n';
 import { FilterKeys, Filter, isKey } from '../../utils/parse-filters';
@@ -74,77 +75,88 @@ export const RenderChipsRow = ({
   tableType: 'organizationsFilter' | 'flowsFilter' | 'pendingFlowsFilter';
   chipSpacing?: { m: number };
 }) => {
-  const chipList: Array<JSX.Element> = [];
-  let key: keyof typeof parsedFilters;
-  for (key in parsedFilters) {
-    const savedKey = key;
-    const val = parsedFilters[savedKey];
-    if (!val) return;
-    const { displayValue } = val;
-    chipList.push(
-      <Tooltip
-        key={savedKey}
-        title={
-          <div style={{ textAlign: 'start', width: 'auto' }}>
-            {displayValue.split('<||>').map((filter) => (
-              <li
-                key={filter}
-                style={{
-                  textAlign: 'start',
-                  marginTop: '0',
-                  marginBottom: '0',
-                  listStyle:
-                    displayValue.split('<||>').length > 1 ? 'inherit' : 'none',
-                }}
-              >
-                {filter}
-              </li>
-            ))}
-          </div>
-        }
-      >
-        <Chip
-          key={`chip_${savedKey}`}
-          sx={{
-            ...chipSpacing,
-            position: 'relative',
-          }}
-          label={
-            <div>
-              <span>
-                {`${t.t(lang, (s) =>
-                  isKey(s.components[tableType].filters, savedKey)
-                    ? s.components[tableType].filters[savedKey]
-                    : ''
-                )}: `}
-              </span>
-              <div
-                style={{
-                  display: 'inline-block',
-                  maxWidth: '1000px',
-                }}
-              >
-                {displayValue.split('<||>').map((filter, index) => (
-                  <ChipFilterValues key={index}>
-                    <EllipsisText maxWidth={400}>
-                      {/\[(.*)\]/.test(filter) // We do this in order to shorten organization names
-                        ? filter.match(/\[(.*)\]/)?.[1]
-                        : filter}
-                    </EllipsisText>
-                  </ChipFilterValues>
+  const [chipListKeys, setChipListKeys] = useState<FilterKeys[]>([]);
+
+  useEffect(() => {
+    if (parsedFilters) {
+      setChipListKeys(Object.keys(parsedFilters) as FilterKeys[]);
+    }
+  }, [parsedFilters]);
+
+  return (
+    <>
+      {chipListKeys.map((key) => {
+        const savedKey = key;
+        const val = parsedFilters[savedKey];
+        if (!val) return null;
+        const { displayValue } = val;
+        return (
+          <Tooltip
+            key={savedKey}
+            title={
+              <div style={{ textAlign: 'start', width: 'auto' }}>
+                {displayValue.split('<||>').map((filter) => (
+                  <li
+                    key={filter}
+                    style={{
+                      textAlign: 'start',
+                      marginTop: '0',
+                      marginBottom: '0',
+                      listStyle:
+                        displayValue.split('<||>').length > 1
+                          ? 'inherit'
+                          : 'none',
+                    }}
+                  >
+                    {filter}
+                  </li>
                 ))}
               </div>
-            </div>
-          }
-          size="small"
-          color="primary"
-          onDelete={() => handleChipDelete(savedKey)}
-          deleteIcon={<CancelRoundedIcon sx={tw`-ms-1! me-1!`} />}
-        />
-      </Tooltip>
-    );
-  }
-  return chipList;
+            }
+          >
+            <Chip
+              key={`chip_${savedKey}`}
+              sx={{
+                ...chipSpacing,
+                position: 'relative',
+              }}
+              label={
+                <div>
+                  <span>
+                    {`${t.t(lang, (s) =>
+                      isKey(s.components[tableType].filters, savedKey)
+                        ? s.components[tableType].filters[savedKey]
+                        : ''
+                    )}: `}
+                  </span>
+                  <div
+                    style={{
+                      display: 'inline-block',
+                      maxWidth: '1000px',
+                    }}
+                  >
+                    {displayValue.split('<||>').map((filter, index) => (
+                      <ChipFilterValues key={index}>
+                        <EllipsisText maxWidth={400}>
+                          {/\[(.*)\]/.test(filter) // We do this in order to shorten organization names
+                            ? filter.match(/\[(.*)\]/)?.[1]
+                            : filter}
+                        </EllipsisText>
+                      </ChipFilterValues>
+                    ))}
+                  </div>
+                </div>
+              }
+              size="small"
+              color="primary"
+              onDelete={() => handleChipDelete(savedKey)}
+              deleteIcon={<CancelRoundedIcon sx={tw`-ms-1! me-1!`} />}
+            />
+          </Tooltip>
+        );
+      })}
+    </>
+  );
 };
 
 const TotalAmountUSDContainer = tw.div`

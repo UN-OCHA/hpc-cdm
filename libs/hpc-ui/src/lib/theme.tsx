@@ -17,6 +17,7 @@ const COLOR_PALETTE = {
     dark2: '#b44d0e',
     dark1: '#d05b10',
     normal: '#e16856', // from style guide
+    light1: '#FFA500',
   },
   yellow: {
     normal: '#FFC000',
@@ -51,11 +52,16 @@ export const THEME = {
     textError: COLOR_PALETTE.red.dark,
     textErrorLight: COLOR_PALETTE.red.light,
     dividers: COLOR_PALETTE.gray.light4,
+    greenLight: COLOR_PALETTE.green.light,
     panel: {
       border: COLOR_PALETTE.gray.light2,
       bg: COLOR_PALETTE.gray.light5,
       bgSelected: COLOR_PALETTE.gray.light3,
       bgHover: COLOR_PALETTE.gray.light4,
+    },
+    entryBg: {
+      active: '#ffd9cc',
+      pending: '#ffecb3',
     },
   },
   marginPx: {

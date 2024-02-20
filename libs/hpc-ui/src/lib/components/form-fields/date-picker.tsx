@@ -1,3 +1,4 @@
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useField } from 'formik';
 import { TextField, Link } from '@mui/material';
 import { DatePicker as BaseDatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -5,7 +6,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import tw from 'twin.macro';
 import dayjs from '../../i18n/utils/dayjs';
-import { useEffect, useState } from 'react';
 
 const StyledDatePicker = tw.div`
 flex
@@ -32,6 +32,15 @@ const DatePicker = ({
   const [field, meta, helpers] = useField(name);
   const [cleared, setCleared] = useState(false);
 
+  const onBlur = useCallback(() => helpers.setTouched(true), [helpers]);
+  const errorMsg = useMemo(
+    () =>
+      meta.touched && Boolean(meta.error)
+        ? meta.touched && (meta.error as string)
+        : null,
+    [meta.touched, meta.error]
+  );
+
   useEffect(() => {
     if (cleared) {
       const timeout = setTimeout(() => {
@@ -41,6 +50,7 @@ const DatePicker = ({
       return () => clearTimeout(timeout);
     }
   }, [cleared]);
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={lang}>
       <StyledDatePicker>
@@ -69,6 +79,9 @@ const DatePicker = ({
               <TextField
                 {...params}
                 InputLabelProps={{ shrink: true }}
+                onBlur={onBlur}
+                error={!!errorMsg}
+                helperText={errorMsg}
                 size="small"
               />
             ),

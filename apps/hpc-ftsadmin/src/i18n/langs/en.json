@@ -262,7 +262,8 @@
     "rpm": "Response Planning Module",
     "prism": "Online Projects System",
     "ftsWebsite": "FTS Website",
-    "help": "Help"
+    "help": "Help",
+    "newFlow": "New Flow"
   },
   "routes": {
     "flows": {
@@ -276,6 +277,12 @@
     },
     "organizations": {
       "title": "Organizations"
+    },
+    "newFlow": {
+      "title": "Add Funding Flow"
+    },
+    "editFlow": {
+      "title": "Edit Flow"
     }
   }
 }

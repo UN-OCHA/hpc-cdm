@@ -15,6 +15,8 @@ import {
   projects,
   globalClusters,
   usageYears,
+  currencies,
+  governingEntities,
 } from '@unocha/hpc-data';
 import isEqual from 'lodash/isEqual';
 
@@ -680,6 +682,14 @@ export class Dummy {
             ];
           }
         ),
+        getEmergency: dummyEndpoint(
+          'emergencies.getEmergency',
+          async (
+            params: emergencies.GetEmergencyParams
+          ): Promise<emergencies.GetEmergencyResult> => {
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       flows: {
         getFlowREST: dummyEndpoint('flows.getFlowREST', async () => {
@@ -1109,6 +1119,14 @@ export class Dummy {
           }
         ),
       },
+      governingEntities: {
+        getAllPlanGoverningEntities: dummyEndpoint(
+          'governingEntities.getAllPlanGoverningEntities',
+          async (params: governingEntities.GetGoverningEntityParams) => {
+            throw new errors.NotFoundError();
+          }
+        ),
+      },
       locations: {
         getAutocompleteLocations: dummyEndpoint(
           'locations.getAutocompleteLocations',
@@ -1136,6 +1154,30 @@ export class Dummy {
                 children: [],
               },
             ];
+          }
+        ),
+        getLocation: dummyEndpoint(
+          'locations.getLocation',
+          async (
+            params: locations.GetLocationParams
+          ): Promise<locations.GetLocationResult> => {
+            return {
+              id: 209,
+              externalId: '389',
+              name: 'Spain',
+              adminLevel: 0,
+              latitude: 40.309787496783,
+              longitude: -3.578125378279,
+              iso3: 'ESP',
+              pcode: null,
+              validOn: null,
+              status: 'active',
+              itosSync: true,
+              createdAt: '2015-09-10T20:25:11.133Z',
+              updatedAt: '2023-01-15T00:05:07.209Z',
+              parentId: null,
+              children: [],
+            };
           }
         ),
       },
@@ -1378,6 +1420,12 @@ export class Dummy {
               ],
               locations: [],
             };
+          }
+        ),
+        getOrganizationsById: dummyEndpoint(
+          'organizations.getOrganizationsById',
+          async (params: organizations.GetOrganizationsByIdParams) => {
+            throw new errors.NotFoundError();
           }
         ),
         createOrganization: dummyEndpoint(
@@ -1864,6 +1912,12 @@ export class Dummy {
             ];
           }
         ),
+        getPlan: dummyEndpoint(
+          'plans.getPlan',
+          async (params: plans.GetPlanParams): Promise<plans.GetPlanResult> => {
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       projects: {
         getAutocompleteProjects: dummyEndpoint(
@@ -2099,6 +2153,12 @@ export class Dummy {
                 visible: true,
               },
             ];
+          }
+        ),
+        getProject: dummyEndpoint(
+          'projects.getProject',
+          async (params: projects.GetProjectParams) => {
+            throw new errors.NotFoundError();
           }
         ),
       },
@@ -2499,6 +2559,117 @@ export class Dummy {
                 year: '2043',
                 createdAt: '2016-02-23T15:03:31.073Z',
                 updatedAt: '2016-02-23T15:03:31.073Z',
+              },
+            ];
+          }
+        ),
+      },
+      currencies: {
+        getCurrencies: dummyEndpoint(
+          'currencies.getCurrencies',
+          async (): Promise<currencies.GetCurrenciesResult> => {
+            return [
+              {
+                id: 2,
+                code: 'ADP',
+                createdAt: '2017-01-14T00:52:05.157Z',
+                updatedAt: '2017-01-14T00:52:05.157Z',
+              },
+              {
+                id: 1,
+                code: 'AED',
+                createdAt: '2017-01-14T00:52:05.157Z',
+                updatedAt: '2017-01-14T00:52:05.157Z',
+              },
+              {
+                id: 3,
+                code: 'AFA',
+                createdAt: '2017-01-14T00:52:05.157Z',
+                updatedAt: '2017-01-14T00:52:05.157Z',
+              },
+              {
+                id: 7,
+                code: 'AFN',
+                createdAt: '2017-01-14T00:52:05.167Z',
+                updatedAt: '2017-01-14T00:52:05.167Z',
+              },
+              {
+                id: 8,
+                code: 'ALL',
+                createdAt: '2017-01-14T00:52:05.167Z',
+                updatedAt: '2017-01-14T00:52:05.167Z',
+              },
+              {
+                id: 4,
+                code: 'AMD',
+                createdAt: '2017-01-14T00:52:05.167Z',
+                updatedAt: '2017-01-14T00:52:05.167Z',
+              },
+              {
+                id: 5,
+                code: 'ANG',
+                createdAt: '2017-01-14T00:52:05.167Z',
+                updatedAt: '2017-01-14T00:52:05.167Z',
+              },
+              {
+                id: 6,
+                code: 'AOA',
+                createdAt: '2017-01-14T00:52:05.167Z',
+                updatedAt: '2017-01-14T00:52:05.167Z',
+              },
+              {
+                id: 9,
+                code: 'AON',
+                createdAt: '2017-01-14T00:52:05.181Z',
+                updatedAt: '2017-01-14T00:52:05.181Z',
+              },
+              {
+                id: 10,
+                code: 'AOR',
+                createdAt: '2017-01-14T00:52:05.181Z',
+                updatedAt: '2017-01-14T00:52:05.181Z',
+              },
+              {
+                id: 11,
+                code: 'ARS',
+                createdAt: '2017-01-14T00:52:05.181Z',
+                updatedAt: '2017-01-14T00:52:05.181Z',
+              },
+              {
+                id: 12,
+                code: 'ATS',
+                createdAt: '2017-01-14T00:52:05.181Z',
+                updatedAt: '2017-01-14T00:52:05.181Z',
+              },
+              {
+                id: 13,
+                code: 'AUD',
+                createdAt: '2017-01-14T00:52:05.181Z',
+                updatedAt: '2017-01-14T00:52:05.181Z',
+              },
+              {
+                id: 14,
+                code: 'AWG',
+                createdAt: '2017-01-14T00:52:05.193Z',
+                updatedAt: '2017-01-14T00:52:05.193Z',
+              },
+              {
+                id: 15,
+                code: 'AZM',
+                createdAt: '2017-01-14T00:52:05.194Z',
+                updatedAt: '2017-01-14T00:52:05.194Z',
+              },
+              {
+                id: 16,
+                code: 'BAD',
+                createdAt: '2017-01-14T00:52:05.194Z',
+                updatedAt: '2017-01-14T00:52:05.194Z',
+              },
+              {
+                id: 17,
+                code: 'BAM',
+                createdAt: '2017-01-14T00:52:05.194Z',
+                updatedAt: '2017-01-14T00:52:05.194Z',
               },
             ];
           }

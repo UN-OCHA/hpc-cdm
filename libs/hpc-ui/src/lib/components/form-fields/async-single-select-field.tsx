@@ -1,3 +1,4 @@
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   CircularProgress,
   FormControl,
@@ -9,9 +10,10 @@ import {
   SelectChangeEvent,
   SelectProps,
 } from '@mui/material';
-import { useField, useFormikContext } from 'formik';
 import CloseIcon from '@mui/icons-material/Close';
-import { useEffect, useState } from 'react';
+import { useField, useFormikContext, ErrorMessage } from 'formik';
+import InputEntry from './input-entry';
+import { forms } from '@unocha/hpc-data';
 import tw from 'twin.macro';
 import { FormObjectValue } from './types/types';
 
@@ -32,6 +34,12 @@ const CircularProgressBox = tw.div`
 const StyledIconButton = tw(IconButton)`
   me-6`;
 
+const FormikError = ({ name }: { name: string }) => (
+  <ErrorMessage name={name}>
+    {(msg) => <div style={{ color: 'red', marginTop: '0.5rem' }}>{msg}</div>}
+  </ErrorMessage>
+);
+
 type AsyncSingleSelectProps = {
   name: string;
   label: string;
@@ -39,6 +47,8 @@ type AsyncSingleSelectProps = {
   hasNameValue?: boolean;
   returnObject?: boolean;
   preOptions?: Array<FormObjectValue>;
+  entryInfo?: forms.InputEntryType | null;
+  rejectInputEntry?: (key: string) => void;
 };
 
 /** FIXME: Component miss-beheaving */
@@ -49,29 +59,53 @@ const AsyncSingleSelect = ({
   hasNameValue,
   returnObject,
   preOptions, //TODO: Review how to properly implement already fetch data on refresh. Most likely not working fine
+  entryInfo,
+  rejectInputEntry,
   ...otherProps
 }: AsyncSingleSelectProps) => {
   const { setFieldValue } = useFormikContext<string>();
-  const [field, meta] = useField<string | number | FormObjectValue>(name);
+  const [field, meta, helpers] = useField<string | number | FormObjectValue>(
+    name
+  );
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<Array<FormObjectValue>>([
     ...(preOptions ? preOptions : []),
   ]);
+  const [isInitialRender, setIsInitialRender] = useState(true);
   const loading =
     open && (options.length === 0 || (preOptions && options.length === 1));
+  const onBlur = useCallback(() => helpers.setTouched(true), [helpers]);
+  const errorMsg = useMemo(
+    () =>
+      meta.touched && Boolean(meta.error)
+        ? meta.touched && (meta.error as string)
+        : null,
+    [meta.touched, meta.error]
+  );
+
   useEffect(() => {
-    if (!loading) {
+    if (!loading && !isInitialRender) {
       return undefined;
     }
     (async () => {
       try {
         const response = await fnPromise();
+        if (response.length > 0 && field.value && returnObject) {
+          setFieldValue(
+            name,
+            response.find(
+              (value) => value.value === (field.value as FormObjectValue).value
+            )
+          );
+        }
         setOptions(response);
+        setIsInitialRender(false);
       } catch (error) {
         console.error(error);
       }
     })();
   }, [loading]);
+
   const handleChange = (
     event: SelectChangeEvent<string | number | FormObjectValue>
   ) => {
@@ -91,16 +125,14 @@ const AsyncSingleSelect = ({
     onChange: handleChange,
     input: (
       <OutlinedInput
+        onBlur={onBlur}
+        error={!!errorMsg}
+        value={field.value}
         endAdornment={
           <CircularProgressBox>
             {field.value && (
               <StyledIconButton
-                onClick={() =>
-                  setFieldValue(
-                    name,
-                    returnObject ? { displayLabel: '', value: '' } : ''
-                  )
-                }
+                onClick={() => setFieldValue(name, '')}
                 size="small"
               >
                 <CloseIcon fontSize="small" />
@@ -122,36 +154,53 @@ const AsyncSingleSelect = ({
     singleSelectConfig.error = true;
   }
   return (
-    <FormControl sx={{ width: '100%' }} size="small">
-      <InputLabel id={`${label.toLowerCase().replace(' ', '-').trim()}-label`}>
-        {label}
-      </InputLabel>
-      <StyledSelect {...singleSelectConfig}>
-        {options.length > 0 ? (
-          options.map((value) => (
-            //  TODO: Find a way to add { label:string, value:string } as value, maybe by enconding it to a string or any other method
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            <MenuItem
-              key={value.value}
-              value={
-                returnObject
-                  ? value
-                  : hasNameValue
-                  ? value.displayLabel
-                  : value.value
-              }
-            >
-              {value.displayLabel}
-            </MenuItem>
-          ))
-        ) : (
-          <Loading disabled value="">
-            Loading... {/** TODO: Add i18n support */}
-          </Loading>
-        )}
-      </StyledSelect>
-    </FormControl>
+    <>
+      <FormControl sx={{ width: '100%' }} size="small">
+        <InputLabel
+          id={`${label.toLowerCase().replace(' ', '-').trim()}-label`}
+        >
+          {label}
+        </InputLabel>
+        <StyledSelect {...singleSelectConfig}>
+          {options.length > 0 ? (
+            options.map((value) => (
+              //  TODO: Find a way to add { label:string, value:string } as value, maybe by enconding it to a string or any other method
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-ignore
+              <MenuItem
+                key={value.value}
+                value={
+                  returnObject
+                    ? value
+                    : hasNameValue
+                    ? value.displayLabel
+                    : value.value
+                }
+              >
+                {value.displayLabel}
+              </MenuItem>
+            ))
+          ) : (
+            <Loading disabled value="">
+              Loading... {/** TODO: Add i18n support */}
+            </Loading>
+          )}
+        </StyledSelect>
+        <FormikError name={name} />
+      </FormControl>
+      {entryInfo && rejectInputEntry && (
+        <InputEntry
+          info={entryInfo}
+          setValue={() => {
+            setFieldValue(name, entryInfo.value);
+            rejectInputEntry(name);
+          }}
+          rejectValue={() => {
+            rejectInputEntry(name);
+          }}
+        />
+      )}
+    </>
   );
 };
 export default AsyncSingleSelect;

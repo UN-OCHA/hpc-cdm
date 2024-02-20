@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { FormObjectValue } from './parse-filters';
 
 export const formValueToID = (items: Array<FormObjectValue>): number[] => {
-  return items.map((item) => parseInt(item.value));
+  return items.map((item) => parseInt(String(item.value)));
 };
 
 export const formValueToLabel = (items: Array<FormObjectValue>): string[] => {

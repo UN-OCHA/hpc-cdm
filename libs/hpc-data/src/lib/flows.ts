@@ -1,6 +1,15 @@
 import * as t from 'io-ts';
 
 import { INTEGER_FROM_STRING } from './util';
+import { CATEGORY } from './categories';
+import { ORGANIZATION } from './organizations';
+import { LOCATION_REST } from './locations';
+import { USAGE_YEAR } from './usageYears';
+import { GLOBAL_CLUSTER } from './global-clusters';
+import { EMERGENCY } from './emergencies';
+import { PROJECT_DETAIL } from './projects';
+import { PLAN_DETAIL } from './plans';
+import { FLOW_OBJECT } from './flowObject';
 
 const FLOW_REF_DIRECTION = t.keyof({
   source: null,
@@ -14,22 +23,6 @@ const FLOW_LIST = t.keyof({
 });
 
 export type FlowList = t.TypeOf<typeof FLOW_LIST>;
-
-const FLOW_OBJECT = t.intersection([
-  t.type({
-    objectID: t.number,
-    refDirection: FLOW_REF_DIRECTION,
-    objectType: t.string,
-  }),
-  t.partial({
-    flowID: t.number,
-    versionID: t.number,
-    behavior: t.union([t.string, t.null]),
-    objectDetail: t.union([t.string, t.null]),
-    createdAt: t.string,
-    updatedAt: t.string,
-  }),
-]);
 
 export type FlowObject = t.TypeOf<typeof FLOW_OBJECT>;
 
@@ -85,12 +78,28 @@ const FLOW_REPORT_DETAIL = t.intersection([
     source: t.string,
   }),
   t.partial({
+    verified: t.string,
+    contactInfo: t.union([t.string, t.null]),
     date: t.union([t.string, t.null]),
     channel: t.union([t.string, t.null]),
     refCode: t.union([t.string, t.null]),
     sourceID: t.union([t.string, t.null]),
+    categories: t.array(CATEGORY),
+    organization: t.type({
+      id: t.number,
+      name: t.string,
+      abbreviation: t.string,
+    }),
+    reportFiles: t.array(
+      t.type({
+        id: t.number,
+        title: t.string,
+      })
+    ),
   }),
 ]);
+
+export type FlowReportDetail = t.TypeOf<typeof FLOW_REPORT_DETAIL>;
 
 const TRANSFERRED_ENTITY = t.type({
   key: t.string,
@@ -103,7 +112,7 @@ const INFERRED_ENTITY = t.type({
   reason: t.string,
 });
 
-const FLOW_EXTERNAL_REFERENCE = t.intersection([
+export const FLOW_EXTERNAL_REFERENCE = t.intersection([
   t.type({
     id: t.number,
     systemID: t.string,
@@ -122,6 +131,17 @@ const FLOW_EXTERNAL_REFERENCE = t.intersection([
     ]),
   }),
 ]);
+
+export type FlowExternalReference = t.TypeOf<typeof FLOW_EXTERNAL_REFERENCE>;
+
+export const FLOW_EXTERNAL_DATA = t.type({
+  id: t.number,
+  data: t.string,
+  objectType: t.string,
+  refDirection: t.string,
+});
+
+export type FlowExternalData = t.TypeOf<typeof FLOW_EXTERNAL_DATA>;
 
 const FLOW_SEARCH_RESULT_REST = t.intersection([
   t.type({
@@ -178,17 +198,29 @@ const FLOW_REST = t.intersection([
     versionStartDate: t.string,
     createdAt: t.string,
     updatedAt: t.string,
+    updatedAtDisplay: t.string,
+    createdAtDisplay: t.string,
     meta: t.type({
       language: t.string,
     }),
     createdBy: t.union([CREATED_BY_OR_LAST_UPDATED_BY, t.null]),
     lastUpdatedBy: t.union([CREATED_BY_OR_LAST_UPDATED_BY, t.null]),
+    categories: t.array(CATEGORY),
+    organizations: t.array(ORGANIZATION),
+    locations: t.array(LOCATION_REST),
+    usageYears: t.array(USAGE_YEAR),
+    versions: t.array(FLOW_SEARCH_RESULT_REST),
+    reportDetails: t.array(FLOW_REPORT_DETAIL),
   }),
   t.partial({
     budgetYear: t.union([t.string, t.null]),
     origAmount: t.union([t.string, t.null]),
     origCurrency: t.union([t.string, t.null]),
     exchangeRate: t.union([t.string, t.null]),
+    globalClusters: t.array(GLOBAL_CLUSTER),
+    emergencies: t.array(EMERGENCY),
+    projects: t.array(PROJECT_DETAIL),
+    plans: t.array(PLAN_DETAIL),
     versionEndDate: t.union([t.string, t.null]),
     deletedAt: t.union([t.string, t.null]),
     legacy: t.union([
@@ -201,14 +233,21 @@ const FLOW_REST = t.intersection([
       }),
       t.null,
     ]),
+    externalReferences: t.array(t.union([FLOW_EXTERNAL_REFERENCE, t.null])),
+    externalData: t.array(t.union([FLOW_EXTERNAL_DATA, t.null])),
   }),
 ]);
 
 export type FlowREST = t.TypeOf<typeof FLOW_REST>;
 
-export const GET_FLOW_PARAMS = t.type({
-  id: INTEGER_FROM_STRING,
-});
+export const GET_FLOW_PARAMS = t.intersection([
+  t.type({
+    id: INTEGER_FROM_STRING,
+  }),
+  t.partial({
+    versionId: INTEGER_FROM_STRING,
+  }),
+]);
 
 export type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
 

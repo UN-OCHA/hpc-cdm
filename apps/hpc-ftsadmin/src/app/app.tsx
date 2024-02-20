@@ -24,6 +24,7 @@ import PageNotLoggedIn from './pages/not-logged-in';
 import PagePendingFlowsList from './pages/flows/pending-flows-list';
 import PageOrganizationsList from './pages/organizations/organization-list';
 import PageOrganization from './pages/organizations/organization';
+import FlowEdit from './pages/add-edit/flow-edit';
 import * as paths from './paths';
 import { RouteParamsValidator } from './components/route-params-validator';
 
@@ -184,6 +185,12 @@ export const App = () => {
                               ]
                             : []),
                         ]}
+                        actionButtons={[
+                          {
+                            label: t.t(lang, (s) => s.navigation.newFlow),
+                            path: paths.newFlow(),
+                          },
+                        ]}
                       />
                       <Routes>
                         <Route
@@ -222,6 +229,14 @@ export const App = () => {
                         <Route
                           path={paths.keywords()}
                           element={<PageKeywordsList />}
+                        />
+                        <Route
+                          path={paths.newFlow()}
+                          element={<FlowEdit isEdit={false} />}
+                        />
+                        <Route
+                          path={paths.editFlow()}
+                          element={<FlowEdit isEdit />}
                         />
                         <Route element={<PageNotFound />} />
                       </Routes>

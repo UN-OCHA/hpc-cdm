@@ -39,6 +39,9 @@ import Switch from './lib/components/form-fields/switch';
 import TertiaryNavigation from './lib/components/tertiary-navigation';
 import TextFieldWrapper from './lib/components/form-fields/text-field';
 import Toolbar from './lib/components/toolbar';
+import FormSection from './lib/components/form-section';
+import RadioGroup from './lib/components/radio-group';
+import FileUpload from './lib/components/form-fields/file-upload';
 import * as dialogs from './lib/components/dialogs';
 
 import Caret from './lib/assets/icons/caret';
@@ -81,6 +84,9 @@ const COMPONENTS = {
   TertiaryNavigation,
   TextFieldWrapper,
   Toolbar,
+  FormSection,
+  RadioGroup,
+  FileUpload,
 };
 
 const ICONS = {

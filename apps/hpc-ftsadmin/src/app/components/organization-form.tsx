@@ -80,9 +80,13 @@ const formToUpdate = (
   const res: organizations.UpdateOrganizationParams = {
     ...values,
     id: id,
-    categories: values.organizationTypes.map((org) => parseInt(org.value)),
-    parentID: values.parent?.value ? parseInt(values.parent.value) : undefined,
-    locations: values.locations?.map((loc) => parseInt(loc.value)),
+    categories: values.organizationTypes.map((org) =>
+      parseInt(String(org.value))
+    ),
+    parentID: values.parent?.value
+      ? parseInt(String(values.parent.value))
+      : undefined,
+    locations: values.locations?.map((loc) => parseInt(String(loc.value))),
   };
   return res;
 };
@@ -93,11 +97,13 @@ const formToCreate = (
   const res: organizations.CreateOrganizationParams = {
     organization: {
       ...values,
-      categories: values.organizationTypes.map((org) => parseInt(org.value)),
+      categories: values.organizationTypes.map((org) =>
+        parseInt(String(org.value))
+      ),
       parentID: values.parent?.value
-        ? parseInt(values.parent.value)
+        ? parseInt(String(values.parent.value))
         : undefined,
-      locations: values.locations?.map((loc) => parseInt(loc.value)),
+      locations: values.locations?.map((loc) => parseInt(String(loc.value))),
     },
   };
   return res;

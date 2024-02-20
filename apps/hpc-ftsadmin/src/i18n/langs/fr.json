@@ -261,7 +261,8 @@
     "rpm": "Module de planification des interventions",
     "prism": "Système de projets en ligne",
     "ftsWebsite": "Site web FTS",
-    "help": "Aide"
+    "help": "Aide",
+    "newFlow": "Nouveau flux"
   },
   "routes": {
     "flows": {
@@ -275,6 +276,12 @@
     },
     "organizations": {
       "title": "Organizations"
+    },
+    "newFlow": {
+      "title": "Ajouter un flux de financement"
+    },
+    "editFlow": {
+      "title": "Modifier le flux"
     }
   }
 }

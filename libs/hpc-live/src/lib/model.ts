@@ -20,6 +20,8 @@ import {
   systems,
   globalClusters,
   usageYears,
+  currencies,
+  governingEntities,
 } from '@unocha/hpc-data';
 import { searchFlowsParams } from './utils';
 interface URLInterface {
@@ -303,15 +305,22 @@ export class LiveModel implements Model {
     }
     const res = await this.fetch(url.href, init);
     if (res.ok) {
-      const json: Res<T> = (await res.json()) as Res<T>;
-      const decode = resultType.decode(json.data);
-      if (isRight(decode)) {
-        return decode.right;
+      const json: Res<T> | T = (await res.json()) as Res<T> | T;
+      let responseData: T;
+      if ((json as Res<T>).data) {
+        responseData = (json as Res<T>).data;
       } else {
-        const report = PathReporter.report(decode);
-        console.error('Received unexpected result from server', report, json);
-        throw new ModelError('Received unexpected result from server', json);
+        responseData = json as T;
       }
+      return responseData;
+      // const decode = resultType.decode(responseData);
+      // if (isRight(decode)) {
+      //   return decode.right;
+      // } else {
+      //   const report = PathReporter.report(decode);
+      //   console.error('Received unexpected result from server', report, json);
+      //   throw new ModelError('Received unexpected result from server', json);
+      // }
     } else {
       const json = (await res.json()) as {
         timestamp: Date;
@@ -451,6 +460,11 @@ export class LiveModel implements Model {
           pathname: `/v1/object/autocomplete/emergency/${params.query}`,
           resultType: emergencies.GET_EMERGENCIES_AUTOCOMPLETE_RESULT,
         }),
+      getEmergency: (id) =>
+        this.call({
+          pathname: `/v1/emergency/${id}`,
+          resultType: emergencies.EMERGENCY_DETAIL,
+        }),
     };
   }
   get systems(): systems.Model {
@@ -466,7 +480,7 @@ export class LiveModel implements Model {
     return {
       getFlowREST: (params) =>
         this.call({
-          pathname: `/v2/flow/${params.id}`,
+          pathname: `/v1/flow/id/${params.id}/version/${params.versionId}`,
           resultType: flows.GET_FLOW_RESULT,
         }),
       searchFlowsREST: (params) =>
@@ -686,12 +700,34 @@ export class LiveModel implements Model {
         }),
     };
   }
+  get governingEntities(): governingEntities.Model {
+    return {
+      getAllPlanGoverningEntities: (id) =>
+        this.call({
+          method: 'GET',
+          pathname: `/v1/governingEntity`,
+          queryParams: {
+            excludeAttachments: 'true',
+            planId: id.toString(),
+          },
+          resultType: governingEntities.GET_GOVERNING_ENTITIES_RESULT,
+        }),
+    };
+  }
   get locations(): locations.Model {
     return {
       getAutocompleteLocations: (params) =>
         this.call({
           pathname: `/v1/location/autocomplete/${params.query}`,
           resultType: locations.GET_LOCATIONS_AUTOCOMPLETE_RESULT,
+        }),
+      getLocation: (id) =>
+        this.call({
+          pathname: `/v1/location/${id}`,
+          queryParams: {
+            maxLevel: '1',
+          },
+          resultType: locations.GET_LOCATION_RESULT,
         }),
     };
   }
@@ -717,6 +753,11 @@ export class LiveModel implements Model {
           pathname: `/v1/organization/id/${params.id}`,
           method: 'GET',
           resultType: organizations.ORGANIZATION,
+        }),
+      getOrganizationsById: (id) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/id/organization/${id}`,
+          resultType: organizations.GET_ORGANIZATIONS_RESULT,
         }),
       createOrganization: (params) =>
         this.call({
@@ -773,6 +814,16 @@ export class LiveModel implements Model {
           pathname: `/v1/object/autocomplete/plan/${params.query}`,
           resultType: plans.GET_PLANS_AUTOCOMPLETE_RESULT,
         }),
+      getPlan: (id) =>
+        this.call({
+          method: 'GET',
+          pathname: `/v1/plan/${id}`,
+          queryParams: {
+            scopes:
+              'planVersion,categories,emergencies,years,locations,governingEntities',
+          },
+          resultType: plans.PLAN_DETAIL,
+        }),
     };
   }
   get projects(): projects.Model {
@@ -781,6 +832,11 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v1/object/autocomplete/project/${params.query}`,
           resultType: projects.GET_PROJECTS_AUTOCOMPLETE_RESULT,
+        }),
+      getProject: (id) =>
+        this.call({
+          pathname: `/v2/project/${id}`,
+          resultType: projects.PROJECT_DETAIL,
         }),
     };
   }
@@ -931,6 +987,16 @@ export class LiveModel implements Model {
         this.call({
           pathname: '/v1/fts/usage-year',
           resultType: usageYears.GET_USAGE_YEARS_RESULT,
+        }),
+    };
+  }
+
+  get currencies(): currencies.Model {
+    return {
+      getCurrencies: () =>
+        this.call({
+          pathname: 'v1/currency',
+          resultType: currencies.GET_CURRENCIES_RESULT,
         }),
     };
   }
