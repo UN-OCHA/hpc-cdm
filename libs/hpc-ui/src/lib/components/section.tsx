@@ -6,6 +6,7 @@ import { styled } from '../theme';
 export interface SectionProps {
   title: string;
   type: 'primary' | 'secondary';
+  noGap?: boolean;
   children: React.ReactNode;
 }
 
@@ -39,12 +40,16 @@ const SectionContainer = styled.details(
   ]
 );
 
-const Container = tw.div`
-  flex
-  flex-wrap
-  gap-8
-  `;
-const Section = ({ title, type, children }: SectionProps) => {
+interface ContainerProps {
+  noGap?: boolean;
+}
+
+const Container = styled.div<ContainerProps>(({ noGap }) => [
+  tw`flex flex-wrap`,
+  noGap ? tw`gap-0` : tw`gap-8`,
+]);
+
+const Section = ({ title, type, noGap, children }: SectionProps) => {
   const [open, setOpen] = React.useState(type !== 'primary');
 
   return (
@@ -57,7 +62,7 @@ const Section = ({ title, type, children }: SectionProps) => {
         />
       </SectionTitle>
 
-      <Container>{children}</Container>
+      <Container noGap>{children}</Container>
     </SectionContainer>
   );
 };

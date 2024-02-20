@@ -11,6 +11,8 @@ import * as actionableButton from './lib/components/actionable-button';
 import ActionableDropdown from './lib/components/actionable-dropdown';
 import AutocompleteSelect from './lib/components/form-fields/autocomplete-field';
 import AsyncAutocompleteSelect from './lib/components/form-fields/async-autocomplete-field';
+import AsyncAutocompleteSelectFTSAdmin from './lib/components/form-fields/async-autocomplete-field-ftsadmin';
+import AsyncSingleSelect from './lib/components/form-fields/async-single-select-field';
 import AsyncIconButton from './lib/components/async-icon-button';
 import { Button, ButtonLink, ButtonSubmit } from './lib/components/button';
 import CheckBox from './lib/components/form-fields/checkbox';
@@ -37,6 +39,9 @@ import Switch from './lib/components/form-fields/switch';
 import TertiaryNavigation from './lib/components/tertiary-navigation';
 import TextFieldWrapper from './lib/components/form-fields/text-field';
 import Toolbar from './lib/components/toolbar';
+import FormSection from './lib/components/form-section';
+import RadioGroup from './lib/components/radio-group';
+import FileUpload from './lib/components/form-fields/file-upload';
 import * as dialogs from './lib/components/dialogs';
 
 import Caret from './lib/assets/icons/caret';
@@ -49,6 +54,8 @@ const COMPONENTS = {
   ActionableIconButton: actionableButton.ActionableIconButton,
   AutocompleteSelect,
   AsyncAutocompleteSelect,
+  AsyncAutocompleteSelectFTSAdmin,
+  AsyncSingleSelect,
   AsyncIconButton,
   Button,
   ButtonLink,
@@ -77,6 +84,9 @@ const COMPONENTS = {
   TertiaryNavigation,
   TextFieldWrapper,
   Toolbar,
+  FormSection,
+  RadioGroup,
+  FileUpload,
 };
 
 const ICONS = {

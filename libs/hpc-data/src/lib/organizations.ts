@@ -1,5 +1,6 @@
 import * as t from 'io-ts';
 import { LOCATION_BUILDER } from './locations';
+import { FLOW_OBJECT } from './flowObject';
 
 const ORGANIZATION_CATEGORY = t.type({
   id: t.number,
@@ -42,6 +43,7 @@ const ORGANIZATION_BUILDER = t.intersection([
   t.partial({
     categories: t.array(ORGANIZATION_CATEGORY),
     locations: t.array(t.type(LOCATION_BUILDER)),
+    flowObject: FLOW_OBJECT,
   }),
 ]);
 
@@ -99,6 +101,12 @@ export const GET_ORGANIZATIONS_AUTOCOMPLETE_PARAMS = t.type({
 
 export type GetOrganizationsAutocompleteParams = t.TypeOf<
   typeof GET_ORGANIZATIONS_AUTOCOMPLETE_PARAMS
+>;
+
+export const GET_ORGANIZATIONS_BY_ID_PARAMS = t.number;
+
+export type GetOrganizationsByIdParams = t.TypeOf<
+  typeof GET_ORGANIZATIONS_BY_ID_PARAMS
 >;
 
 export const GET_ORGANIZATIONS_RESULT = t.array(ORGANIZATION);
@@ -244,6 +252,9 @@ export interface Model {
   getOrganization(
     params: GetOrganizationParams
   ): Promise<GetOrganizationResult>;
+  getOrganizationsById(
+    params: GetOrganizationsByIdParams
+  ): Promise<GetOrganizationsResult>;
   createOrganization(
     params: CreateOrganizationParams
   ): Promise<CreateOrganizationResult>;

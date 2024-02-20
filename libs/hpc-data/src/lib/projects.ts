@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { FLOW_OBJECT } from './flowObject';
 
 const PDF = t.type({
   withComments: t.union([
@@ -21,7 +22,7 @@ const PDF = t.type({
   ]),
 });
 
-const PROJECT = t.type({
+export const PROJECT = t.type({
   id: t.number,
   createdAt: t.string,
   updatedAt: t.string,
@@ -38,6 +39,35 @@ const PROJECT = t.type({
   visible: t.boolean,
 });
 
+export const PROJECT_DETAIL = t.intersection([
+  t.type({
+    id: t.number,
+    createdAt: t.string,
+    updatedAt: t.string,
+    code: t.union([t.string, t.null]),
+    currentPublishedVersionId: t.union([t.number, t.null]),
+    creatorParticipantId: t.union([t.number, t.null]),
+    latestVersionId: t.union([t.number, t.null]),
+    implementationStatus: t.union([t.string, t.null]),
+    pdf: t.union([PDF, t.null]),
+    sourceProjectId: t.union([t.number, t.null]),
+    name: t.string,
+    version: t.number,
+    projectVersionCode: t.string,
+    visible: t.boolean,
+    projectVersions: t.array(PROJECT),
+  }),
+  t.partial({
+    flowObject: FLOW_OBJECT,
+  }),
+]);
+
+export const GET_PROJECT_PARAMS = t.type({
+  id: t.number,
+});
+
+export type GetProjectParams = t.TypeOf<typeof GET_PROJECT_PARAMS>;
+
 export type Project = t.TypeOf<typeof PROJECT>;
 
 export const GET_PROJECTS_AUTOCOMPLETE_PARAMS = t.type({
@@ -52,8 +82,11 @@ export type GetProjectsAutocompleteResult = t.TypeOf<
   typeof GET_PROJECTS_AUTOCOMPLETE_RESULT
 >;
 
+export type GetProjectResult = t.TypeOf<typeof PROJECT_DETAIL>;
+
 export interface Model {
   getAutocompleteProjects(
     params: GetProjectsAutocompleteParams
   ): Promise<GetProjectsAutocompleteResult>;
+  getProject(params: GetProjectParams): Promise<GetProjectResult>;
 }
