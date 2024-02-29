@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ReactNode, useRef } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -7,6 +7,12 @@ import {
   DialogActions,
 } from '@mui/material';
 import { Button } from './button';
+
+import tw from 'twin.macro';
+
+const CustomDialogContent = tw(DialogContent)`
+  w-[500px]
+`;
 
 type HPCDialog =
   | {
@@ -25,6 +31,15 @@ type HPCDialog =
         callback: () => void;
         dismissButton?: string;
       };
+    }
+  | {
+      type: 'custom';
+      title?: string;
+      content: ReactNode;
+      width?: string;
+      buttonConfirm: string;
+      buttonCancel: string;
+      callback: (result: any) => void;
     };
 
 let hooks: null | {
@@ -115,6 +130,12 @@ export const controlledAlert = ({
  */
 export const Dialogs = () => {
   const [dialogs, setDialogs] = useState<HPCDialog[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const customDialogContentRef = useRef<any>(null);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     hooks = {
@@ -147,7 +168,7 @@ export const Dialogs = () => {
           return (
             <Dialog
               key={i}
-              open={true}
+              open={open}
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
             >
@@ -171,7 +192,6 @@ export const Dialogs = () => {
             </Dialog>
           );
         }
-
         if (d.type === 'confirm') {
           const confirm = () => {
             close();
@@ -206,6 +226,35 @@ export const Dialogs = () => {
                 </Button>
                 <Button onClick={confirm} color="primary" autoFocus>
                   <span>{d.buttonConfirm}</span>
+                </Button>
+              </DialogActions>
+            </Dialog>
+          );
+        }
+        if (d.type === 'custom') {
+          const confirm = () => {
+            close();
+            d.callback(true);
+          };
+
+          const cancel = () => {
+            close();
+          };
+
+          return (
+            <Dialog key={i} open={true} fullWidth onClose={handleClose}>
+              {d.title && (
+                <DialogTitle id="alert-dialog-title">{d.title}</DialogTitle>
+              )}
+              {d.content && (
+                <CustomDialogContent>{d.content}</CustomDialogContent>
+              )}
+              <DialogActions>
+                <Button onClick={confirm} color="primary" autoFocus>
+                  <span>{d.buttonConfirm}</span>
+                </Button>
+                <Button onClick={cancel} color="primary">
+                  <span>{d.buttonCancel}</span>
                 </Button>
               </DialogActions>
             </Dialog>
