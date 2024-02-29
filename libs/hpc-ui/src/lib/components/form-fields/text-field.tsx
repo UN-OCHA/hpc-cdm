@@ -9,7 +9,7 @@ import { forms } from '@unocha/hpc-data';
 const StyledContainer = tw.div`
 w-full
 `;
-const StyledTextField = tw(TextField)`
+export const StyledTextField = tw(TextField)`
 min-w-[10rem]
 w-full
 `;
