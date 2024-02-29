@@ -127,6 +127,8 @@ const initialInputEntries = {
   destinationGoverningEntities: [],
   destinationGlobalClusters: [],
   destinationEmergencies: [],
+  parentFlow: null,
+  childFlow: null,
 };
 
 export default (props: Props) => {
@@ -187,6 +189,8 @@ export default (props: Props) => {
         ],
       },
     ],
+    parentFlow: null,
+    childFlow: null,
   });
   const [inputEntries, setInputEntries] = useState<InputEntriesType>(
     JSON.parse(JSON.stringify(initialInputEntries))
@@ -617,7 +621,16 @@ export default (props: Props) => {
         'beneficiaryGroup',
         false
       ) as AutoCompleteSeletionType;
-
+      const parentFlow = getFormValueFromCategory(
+        data,
+        'parentFlow',
+        false
+      ) as AutoCompleteSeletionType;
+      const childFlow = getFormValueFromCategory(
+        data,
+        'childFlow',
+        false
+      ) as AutoCompleteSeletionType;
       const reportDetails = data.reportDetails.map((detail) => ({
         verified: detail.verified ? 'verified' : 'unverified',
         reportSource: detail.source === 'Primary' ? 'primary' : 'secondary',
@@ -1031,6 +1044,20 @@ export default (props: Props) => {
           destinationPlans,
           'destinationPlans'
         );
+
+        const pendingParetFlow = getFormValueFromCategory(
+          currentVersionData,
+          'parentFlow',
+          false
+        ) as AutoCompleteSeletionType;
+        createInputEntryActiveFlow(pendingParetFlow, parentFlow, 'parentFlow');
+
+        const pendingChildFlow = getFormValueFromCategory(
+          currentVersionData,
+          'childFlow',
+          false
+        ) as AutoCompleteSeletionType;
+        createInputEntryActiveFlow(pendingChildFlow, childFlow, 'childFlow');
       }
 
       if (data.externalData && inactiveReason === 'Pending review') {
@@ -1088,6 +1115,8 @@ export default (props: Props) => {
         destinationEmergencies,
         origCurrency,
         reportDetails,
+        parentFlow,
+        childFlow,
       });
       setInputEntries({ ...inputEntries });
       setIsSetupedInitialValue(true);

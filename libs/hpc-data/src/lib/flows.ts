@@ -360,9 +360,10 @@ const FLOW = t.type({
   decisionDate: t.union([t.string, t.null]),
   flowDate: t.union([t.string, t.null]),
   exchangeRate: t.union([t.string, t.null]),
+  description: t.string,
 });
 
-const FLOW_RESULT = t.array(FLOW);
+export const FLOW_RESULT = t.array(FLOW);
 export type Flow = t.TypeOf<typeof FLOW>;
 export type FlowResult = t.TypeOf<typeof FLOW_RESULT>;
 
@@ -526,6 +527,13 @@ export type GetTotalAmountUSDResult = t.TypeOf<
   typeof GET_TOTAL_AMOUNT_USD_RESULT
 >;
 
+export const GET_FLOWS_AUTOCOMPLETE_PARAMS = t.type({
+  query: t.string,
+});
+export type GetFlowsAutocompleteParams = t.TypeOf<
+  typeof GET_FLOWS_AUTOCOMPLETE_PARAMS
+>;
+
 export interface Model {
   getFlowREST(params: GetFlowParams): Promise<GetFlowResult>;
   getFlow(params: GetFlowParams): Promise<GetFlowResult>;
@@ -539,4 +547,5 @@ export interface Model {
   getTotalAmountUSD(
     params: GetTotalAmountUSDParams
   ): Promise<GetTotalAmountUSDResult>;
+  getAutocompleteFlows(params: GetFlowsAutocompleteParams): Promise<FlowResult>;
 }

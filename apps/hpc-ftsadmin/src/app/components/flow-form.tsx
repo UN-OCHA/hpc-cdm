@@ -77,6 +77,8 @@ export interface FormValues {
   destinationGlobalClusters: AutoCompleteSeletionType[];
   destinationEmergencies: AutoCompleteSeletionType[];
   reportDetails: ReportDetailType[];
+  parentFlow: AutoCompleteSeletionType | null;
+  childFlow: AutoCompleteSeletionType | null;
 }
 
 export interface VersionDataType {
@@ -137,6 +139,8 @@ export interface InputEntriesType {
   destinationGoverningEntities: forms.InputEntryType[];
   destinationGlobalClusters: forms.InputEntryType[];
   destinationEmergencies: forms.InputEntryType[];
+  parentFlow: forms.InputEntryType | null;
+  childFlow: forms.InputEntryType | null;
 }
 
 interface Props {
@@ -198,7 +202,12 @@ const StyledFormButton = tw(C.Button)`
 ml-[25px]
 mb-6
 `;
-
+const StyledLabel = tw.label`
+block
+`;
+const StyledLinkedFlowRow = tw.div`
+mt-4
+`;
 const initialReportDetail = {
   verified: 'verified',
   reportSource: 'primary',
@@ -298,7 +307,8 @@ export const FlowForm = (props: Props) => {
     useState<governingEntities.GetGoverningEntityResult>([]);
   const [destinationGoverningEntities, setDestinationGoverningEntities] =
     useState<governingEntities.GetGoverningEntityResult>([]);
-
+  const [isShowParentFlow, setShowParentFlow] = useState(false);
+  const [isShowChildFlow, setShowChildFlow] = useState(false);
   const buttonText = 'Calculate The Exchange Rate';
 
   const handleCalculateExchangeRate = (values: any, setFieldValue: any) => {
@@ -1225,38 +1235,279 @@ export const FlowForm = (props: Props) => {
             </StyledFullSection>
             <StyledFullSection>
               <C.FormSection title="Linked Flows">
-                <StyledRow>
-                  <C.Button
-                    onClick={() => {
-                      return true;
-                      confirm({
-                        title: 'Confirm Action',
-                        message: 'Are you sure you want to proceed?',
-                        buttonConfirm: 'Yes',
-                        buttonCancel: 'No',
-                      }).then((result: any) => {
-                        if (result) {
-                          console.log('Yes');
-                          // User clicked 'Yes'
-                        } else {
-                          console.log('No');
-                          // User clicked 'No'
-                        }
-                      });
-                    }}
-                    color="primary"
-                    text="Add Parent Flow"
-                    startIcon={MdAdd}
-                  />
-                  <C.Button
-                    onClick={() => {
-                      return true;
-                    }}
-                    color="primary"
-                    text="Add Child Flow"
-                    startIcon={MdAdd}
-                  />
-                </StyledRow>
+                <StyledLabel>Parent Flow</StyledLabel>
+                {isShowParentFlow && (
+                  <StyledRow>
+                    <TableContainer component={Paper}>
+                      <Table>
+                        <TableBody>
+                          <TableRow
+                            sx={{
+                              '&:last-child td, &:last-child th': {
+                                border: 0,
+                              },
+                            }}
+                          >
+                            <TableCell>
+                              #
+                              {
+                                JSON.parse(
+                                  values.parentFlow?.value
+                                    ? values.parentFlow?.value.toString()
+                                    : ''
+                                ).id
+                              }
+                            </TableCell>
+                            <TableCell>
+                              {
+                                JSON.parse(
+                                  values.parentFlow?.value
+                                    ? values.parentFlow?.value.toString()
+                                    : ''
+                                ).description
+                              }
+                            </TableCell>
+                            <TableCell>
+                              {
+                                JSON.parse(
+                                  values.parentFlow?.value
+                                    ? values.parentFlow?.value.toString()
+                                    : ''
+                                ).organizations[1].name
+                              }{' '}
+                              |{' '}
+                              {
+                                JSON.parse(
+                                  values.parentFlow?.value
+                                    ? values.parentFlow?.value.toString()
+                                    : ''
+                                ).organizations[1].abbreviation
+                              }{' '}
+                              |{' '}
+                              {
+                                JSON.parse(
+                                  values.parentFlow?.value
+                                    ? values.parentFlow?.value.toString()
+                                    : ''
+                                ).budgetYear
+                              }
+                            </TableCell>
+                            <TableCell>
+                              {dayjs(
+                                JSON.parse(
+                                  values.parentFlow?.value
+                                    ? values.parentFlow?.value.toString()
+                                    : ''
+                                ).flowDate
+                              ).format('MM/DD/YYYY')}
+                            </TableCell>
+                            <TableCell>
+                              US$
+                              {parseFloat(
+                                JSON.parse(
+                                  values.parentFlow?.value
+                                    ? values.parentFlow?.value.toString()
+                                    : ''
+                                ).amountUSD
+                              ).toLocaleString('en-US')}
+                            </TableCell>
+                            <TableCell>
+                              EUR
+                              {parseFloat(
+                                JSON.parse(
+                                  values.parentFlow?.value
+                                    ? values.parentFlow?.value.toString()
+                                    : ''
+                                ).origAmount
+                              ).toLocaleString('en-US')}
+                            </TableCell>
+                            <TableCell>
+                              <C.Button
+                                onClick={() => {
+                                  setShowParentFlow(false);
+                                }}
+                                color="secondary"
+                                text="unlink"
+                                startIcon={MdRemove}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </StyledRow>
+                )}
+                <StyledLabel>Child Flow</StyledLabel>
+                {isShowChildFlow && (
+                  <StyledRow>
+                    <TableContainer component={Paper}>
+                      <Table>
+                        <TableBody>
+                          <TableRow
+                            sx={{
+                              '&:last-child td, &:last-child th': {
+                                border: 0,
+                              },
+                            }}
+                          >
+                            <TableCell>
+                              #
+                              {
+                                JSON.parse(
+                                  values.childFlow?.value
+                                    ? values.childFlow?.value.toString()
+                                    : ''
+                                ).id
+                              }
+                            </TableCell>
+                            <TableCell>
+                              {
+                                JSON.parse(
+                                  values.childFlow?.value
+                                    ? values.childFlow?.value.toString()
+                                    : ''
+                                ).description
+                              }
+                            </TableCell>
+                            <TableCell>
+                              {
+                                JSON.parse(
+                                  values.childFlow?.value
+                                    ? values.childFlow?.value.toString()
+                                    : ''
+                                ).organizations[0].name
+                              }{' '}
+                              |{' '}
+                              {
+                                JSON.parse(
+                                  values.childFlow?.value
+                                    ? values.childFlow?.value.toString()
+                                    : ''
+                                ).organizations[0].abbreviation
+                              }{' '}
+                              |{' '}
+                              {
+                                JSON.parse(
+                                  values.childFlow?.value
+                                    ? values.childFlow?.value.toString()
+                                    : ''
+                                ).budgetYear
+                              }
+                            </TableCell>
+                            <TableCell>
+                              {dayjs(
+                                JSON.parse(
+                                  values.childFlow?.value
+                                    ? values.childFlow?.value.toString()
+                                    : ''
+                                ).flowDate
+                              ).format('MM/DD/YYYY')}
+                            </TableCell>
+                            <TableCell>
+                              US$
+                              {parseFloat(
+                                JSON.parse(
+                                  values.childFlow?.value
+                                    ? values.childFlow?.value.toString()
+                                    : ''
+                                ).amountUSD
+                              ).toLocaleString('en-US')}
+                            </TableCell>
+                            <TableCell>
+                              EUR
+                              {parseFloat(
+                                JSON.parse(
+                                  values.childFlow?.value
+                                    ? values.childFlow?.value.toString()
+                                    : ''
+                                ).origAmount
+                              ).toLocaleString('en-US')}
+                            </TableCell>
+                            <TableCell>
+                              <C.Button
+                                onClick={() => {
+                                  setShowChildFlow(false);
+                                }}
+                                color="secondary"
+                                text="unlink"
+                                startIcon={MdRemove}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </StyledRow>
+                )}
+
+                <StyledLinkedFlowRow>
+                  <StyledRow>
+                    {!isShowParentFlow && (
+                      <C.Button
+                        onClick={() => {
+                          dialogs.openDialog({
+                            type: 'custom',
+                            title: 'Add Flow Link',
+                            width: '700',
+                            buttonCancel: 'Cancel',
+                            buttonConfirm: 'Add Flow Link',
+                            content: (
+                              <C.AsyncAutocompleteSelect
+                                label="Flow"
+                                name="parentFlow"
+                                fnPromise={
+                                  environment.model.flows.getAutocompleteFlows
+                                }
+                                withoutFormik
+                                setFieldValue={setFieldValue}
+                                onChange={(event, value) => {
+                                  // setFieldValue('parentFlow', value);
+                                }}
+                              />
+                            ),
+                            callback: (value: any) => {
+                              setShowParentFlow(true);
+                            },
+                          });
+                        }}
+                        color="primary"
+                        text="Add Parent Flow"
+                        startIcon={MdAdd}
+                      />
+                    )}
+                    <C.Button
+                      onClick={() => {
+                        dialogs.openDialog({
+                          type: 'custom',
+                          title: 'Add Flow Link',
+                          width: '700',
+                          buttonCancel: 'Cancel',
+                          buttonConfirm: 'Add Flow Link',
+                          content: (
+                            <C.AsyncAutocompleteSelect
+                              label="Flow"
+                              name="childFlow"
+                              fnPromise={
+                                environment.model.flows.getAutocompleteFlows
+                              }
+                              withoutFormik
+                              setFieldValue={setFieldValue}
+                              onChange={(event, value) => {
+                                // setFieldValue('parentFlow', value);
+                              }}
+                            />
+                          ),
+                          callback: (value: any) => {
+                            setShowChildFlow(true);
+                          },
+                        });
+                      }}
+                      color="primary"
+                      text="Add Child Flow"
+                      startIcon={MdAdd}
+                    />
+                  </StyledRow>
+                </StyledLinkedFlowRow>
               </C.FormSection>
             </StyledFullSection>
             <FieldArray name="reportDetails">

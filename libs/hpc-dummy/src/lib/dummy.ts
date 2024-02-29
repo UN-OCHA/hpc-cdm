@@ -830,6 +830,12 @@ export class Dummy {
             };
           }
         ),
+        getAutocompleteFlows: dummyEndpoint(
+          'flows.searchFlows',
+          async (params: flows.GetFlowsAutocompleteParams) => {
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       globalClusters: {
         getGlobalClusters: dummyEndpoint(
