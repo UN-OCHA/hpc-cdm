@@ -105,6 +105,7 @@ export default (props: Props) => {
     initialValues: FLOWS_FILTER_INITIAL_VALUES,
     query: query,
     setQuery: setQuery,
+    pending: false,
     abortSignal: abortController.signal,
   };
 
