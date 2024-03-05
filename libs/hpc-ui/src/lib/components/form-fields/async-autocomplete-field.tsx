@@ -80,6 +80,7 @@ type AsyncAutocompleteSelectProps = {
   rejectInputEntry?: (key: string) => void;
   withoutFormik?: boolean;
   setFieldValue?: any;
+  values?: any;
 };
 
 const AsyncAutocompleteSelect = ({
@@ -97,6 +98,7 @@ const AsyncAutocompleteSelect = ({
   entryInfo,
   rejectInputEntry,
   withoutFormik = false,
+  values,
   setFieldValue,
   ...otherProps
 }: AsyncAutocompleteSelectProps) => {
@@ -365,9 +367,12 @@ const AsyncAutocompleteSelect = ({
       if (onChange) {
         onChange(name, newValue);
       }
-      console.log(newValue);
-      setFieldValue(name, newValue);
-      setMultipleValueSelected(Array.isArray(newValue) && newValue.length > 1);
+      if (name === 'childFlow') {
+        const newList = [...values[name], ...[newValue]];
+        setFieldValue(name, newList);
+      } else {
+        setFieldValue(name, newValue);
+      }
     },
     onInputChange: (event, newInputValue) => {
       setInputValue(newInputValue);
@@ -513,6 +518,7 @@ const FormikAsyncAutocompleteSelect = ({
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [debouncedInputValue, setDebouncedInputValue] = useState('');
   const [multipleValuesSelected, setMultipleValueSelected] = useState(false);
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const [field, meta, helpers] = useField<
@@ -569,11 +575,22 @@ const FormikAsyncAutocompleteSelect = ({
   );
 
   useEffect(() => {
+    const delay = 300;
+    const debounceTimer = setTimeout(() => {
+      setDebouncedInputValue(inputValue);
+    }, delay);
+
+    return () => {
+      clearTimeout(debounceTimer);
+    };
+  }, [inputValue]);
+
+  useEffect(() => {
     let active = true;
     if (
       !category &&
       isAutocompleteAPI &&
-      (inputValue === '' || inputValue.length < 3)
+      (debouncedInputValue === '' || debouncedInputValue.length < 3)
     ) {
       setOptions([]);
       setData([]);
@@ -582,17 +599,19 @@ const FormikAsyncAutocompleteSelect = ({
     }
     if (
       (data.length > 0 &&
-        (inputValue.length >= 3 || category || !isAutocompleteAPI) &&
-        (!isUsageYear || inputValue.length > 0)) ||
+        (debouncedInputValue.length >= 3 || category || !isAutocompleteAPI) &&
+        (!isUsageYear || debouncedInputValue.length > 0)) ||
       (isUsageYear &&
-        inputValue.length === 0 &&
+        debouncedInputValue.length === 0 &&
         options.at(0)?.displayLabel !== (actualYear - 5).toString() &&
         options.at(-1)?.displayLabel !== (actualYear + 5).toString())
     ) {
       setOptions(
         data
           .filter((x) =>
-            x.displayLabel.toUpperCase().includes(inputValue.toUpperCase())
+            x.displayLabel
+              .toUpperCase()
+              .includes(debouncedInputValue.toUpperCase())
           )
           .sort((a, b) =>
             a.displayLabel < b.displayLabel
@@ -612,7 +631,7 @@ const FormikAsyncAutocompleteSelect = ({
         let response: APIAutocompleteResult;
         if (fnPromise) {
           response = await fnPromise({
-            query: category ? category : inputValue,
+            query: category ? category : debouncedInputValue,
           });
         } else {
           response = optionsData || [];
@@ -695,7 +714,7 @@ const FormikAsyncAutocompleteSelect = ({
     return () => {
       active = false;
     };
-  }, [loading, inputValue]);
+  }, [loading, debouncedInputValue]);
 
   useEffect(() => {
     setMultipleValueSelected(

@@ -26,7 +26,7 @@ export const GOVERNING_ENTITY_DETAIL = t.type({
   entityPrototypeId: t.number,
   entityType: t.string,
   governingEntityVersion: GoverningEntityVersion,
-  // globalClusterIds: t.array(t.string),
+  globalClusterIds: t.array(t.string),
   latestTaggedVersion: t.boolean,
   latestVersion: t.boolean,
   planId: t.number,

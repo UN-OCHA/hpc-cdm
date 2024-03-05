@@ -78,7 +78,7 @@ export interface FormValues {
   destinationEmergencies: AutoCompleteSeletionType[];
   reportDetails: ReportDetailType[];
   parentFlow: AutoCompleteSeletionType | null;
-  childFlow: AutoCompleteSeletionType | null;
+  childFlow: AutoCompleteSeletionType[];
 }
 
 export interface VersionDataType {
@@ -140,7 +140,7 @@ export interface InputEntriesType {
   destinationGlobalClusters: forms.InputEntryType[];
   destinationEmergencies: forms.InputEntryType[];
   parentFlow: forms.InputEntryType | null;
-  childFlow: forms.InputEntryType | null;
+  childFlow: forms.InputEntryType[];
 }
 
 interface Props {
@@ -204,6 +204,7 @@ mb-6
 `;
 const StyledLabel = tw.label`
 block
+my-4
 `;
 const StyledLinkedFlowRow = tw.div`
 mt-4
@@ -310,6 +311,7 @@ export const FlowForm = (props: Props) => {
   const [isShowParentFlow, setShowParentFlow] = useState(false);
   const [isShowChildFlow, setShowChildFlow] = useState(false);
   const buttonText = 'Calculate The Exchange Rate';
+  const [childFlowList, setChildFlowList] = useState([]);
 
   const handleCalculateExchangeRate = (values: any, setFieldValue: any) => {
     const { amountOriginal, amountUSD } = values;
@@ -345,14 +347,6 @@ export const FlowForm = (props: Props) => {
         );
       }
 
-      if (
-        newObjects[key] &&
-        newObjects[key].length &&
-        newShowingTypes.indexOf(key) === -1
-      ) {
-        newShowingTypes.push(key);
-      }
-
       const parsedResponse = newObjects[key].map((responseValue: any) => {
         if (settingArrayKeys[i] === 'years') {
           return {
@@ -368,6 +362,16 @@ export const FlowForm = (props: Props) => {
             value: responseValue.planVersion.id,
             isAutoFilled: true,
           };
+        } else if (settingArrayKeys[i] === 'governingEntities') {
+          return {
+            displayLabel: (
+              responseValue.governingEntityVersion as {
+                id: number;
+                name: string;
+              }
+            ).name,
+            value: responseValue.governingEntityVersion.id,
+          };
         } else {
           return {
             displayLabel: (responseValue as { id: number; name: string }).name,
@@ -376,7 +380,7 @@ export const FlowForm = (props: Props) => {
           };
         }
       });
-      setFieldValue(newShowingTypes[i], parsedResponse);
+      setFieldValue(key, parsedResponse);
     });
 
     setObjects(newObjects);
@@ -435,7 +439,8 @@ export const FlowForm = (props: Props) => {
   const fetchPlanDetails = async (
     objectType: string,
     plan: any,
-    setFieldValue: any
+    setFieldValue: any,
+    values?: any
   ) => {
     const fetchedPlan = await environment.model.plans.getPlan(plan[0].value);
     if (objectType === 'sourcePlans') {
@@ -464,7 +469,7 @@ export const FlowForm = (props: Props) => {
         if (objectType === 'sourcePlans') {
           setObjectsWithArray(
             { locations: countries },
-            ['sourceCountries'],
+            ['sourceLocations'],
             ['locations'],
             setFieldValue
           );
@@ -472,7 +477,7 @@ export const FlowForm = (props: Props) => {
         if (objectType === 'destinationPlans') {
           setObjectsWithArray(
             { locations: countries },
-            ['destinationCountries'],
+            ['destinationLocations'],
             ['locations'],
             setFieldValue
           );
@@ -484,7 +489,8 @@ export const FlowForm = (props: Props) => {
   const fetchEmergencyDetails = async (
     objectType: string,
     emergency: any,
-    setFieldValue: any
+    setFieldValue: any,
+    values?: any
   ) => {
     if (objectType === 'destinationEmergencies') {
       const fetchedEmergency = await environment.model.emergencies.getEmergency(
@@ -493,7 +499,7 @@ export const FlowForm = (props: Props) => {
       if (fetchedEmergency.locations.length <= 1) {
         setObjectsWithArray(
           fetchedEmergency,
-          ['destinationCountries'],
+          ['destinationLocations'],
           ['locations'],
           setFieldValue
         );
@@ -503,7 +509,8 @@ export const FlowForm = (props: Props) => {
   const fetchProjectDetails = async (
     objectType: string,
     project: any,
-    setFieldValue: any
+    setFieldValue: any,
+    values?: any
   ) => {
     if (objectType === 'destinationProjects') {
       const fetchedCategories =
@@ -531,7 +538,7 @@ export const FlowForm = (props: Props) => {
         publishedVersion,
         [
           'sourcePlans',
-          'sourceCountries',
+          'sourceLocations',
           'sourceGoverningEntities',
           'sourceGlobalClusters',
           'sourceOrganizations',
@@ -550,7 +557,8 @@ export const FlowForm = (props: Props) => {
   const fetchOrganizationDetails = async (
     objectType: string,
     organization: any,
-    setFieldValue: any
+    setFieldValue: any,
+    values?: any
   ) => {
     const fetchedOrg =
       await environment.model.organizations.getOrganizationsById(
@@ -565,14 +573,14 @@ export const FlowForm = (props: Props) => {
       }
     );
     if (isGovernment && objectType === 'sourceOrganizations') {
-      objects.sourceCountries = checkIfExistingAndCopy(
+      objects.sourceLocations = checkIfExistingAndCopy(
         objects.location,
         fetchedOrg[0],
         'locations'
       );
       setObjectsWithArray(
         objects,
-        ['sourceCountries'],
+        ['sourceLocations'],
         ['locations'],
         setFieldValue
       );
@@ -581,12 +589,109 @@ export const FlowForm = (props: Props) => {
   const fetchAssociatedGoverningEntity = async (
     objectType: string,
     globalCluster: any,
-    setFieldValue: any
+    setFieldValue: any,
+    values?: any
   ) => {
+    if (
+      (values.sourcePlans.length === 0 &&
+        objectType === 'sourceGlobalClusters') ||
+      (values.destinationPlans.length === 0 &&
+        objectType === 'destinationGlobalClusters')
+    ) {
+      return;
+    }
+    let plan = null;
+    let targetGoverningEntities: any = null;
+    if (objectType === 'sourceGlobalClusters') {
+      plan = values.sourcePlans[0];
+      targetGoverningEntities = values.sourceGoverningEntities;
+    } else {
+      plan = values.destinationPlans[0];
+      targetGoverningEntities = values.destinationGoverningEntities;
+    }
     const fetchedGoverningEntities =
       await environment.model.governingEntities.getAllPlanGoverningEntities(
-        globalCluster[0].value
+        plan.value
       );
+    const hasGoverningEntitiesWithoutGlobalCluster =
+      Array.isArray(targetGoverningEntities) &&
+      fetchedGoverningEntities
+        .filter(function (fetchedGe) {
+          return targetGoverningEntities.find(function (selectedGe: any) {
+            return fetchedGe.id === selectedGe.value;
+          });
+        })
+        .some(function (fetchedGe) {
+          return (
+            Array.isArray(fetchedGe.globalClusterIds) &&
+            !fetchedGe.globalClusterIds.length
+          );
+        });
+
+    if (hasGoverningEntitiesWithoutGlobalCluster) {
+      return;
+    }
+    const governingEntities = fetchedGoverningEntities.filter(
+      function (governingEntity) {
+        return (
+          governingEntity.globalClusterIds.indexOf(
+            globalCluster[globalCluster.length - 1].value
+          ) > -1
+        );
+      }
+    );
+
+    if (governingEntities.length) {
+      governingEntities.forEach(function (governingEntity) {
+        setObjectsWithArray(
+          { governingEntities: governingEntity },
+          [
+            objectType === 'sourceGlobalClusters'
+              ? 'sourceGoverningEntities'
+              : 'destinationGoverningEntities',
+          ],
+          ['governingEntities'],
+          setFieldValue
+        );
+      });
+    }
+  };
+
+  const fetchKeywords = async (
+    objectType: string,
+    usageYears: any,
+    setFieldValue: any,
+    values?: any
+  ) => {
+    if (usageYears.length === 2) {
+      const fetchedCategories =
+        await environment.model.categories.getCategories({
+          query: 'keywords',
+        });
+      const category = fetchedCategories.filter(
+        (item) => item.name === 'Multiyear'
+      );
+
+      const mergedKeywords = [
+        ...values.keywords,
+        ...[
+          {
+            value: category[0].id,
+            displayLabel: category[0].name,
+          },
+        ].filter(
+          (item2) =>
+            !values.keywords.some((item1: any) => item1.value === item2.value)
+        ),
+      ];
+
+      setFieldValue('keywords', mergedKeywords);
+    } else if (usageYears.length === 1) {
+      const filteredKeywords = values.keywords.filter(
+        (item: any) => item.displayLabel !== 'Multiyear'
+      );
+      setFieldValue('keywords', filteredKeywords);
+    }
   };
 
   const handleCompareCheck = (
@@ -694,7 +799,12 @@ export const FlowForm = (props: Props) => {
   }, [comparingVersions]);
   const dictExecutedForEachObject: Record<
     string,
-    (objectType: string, flowObject: any, setFieldValue: any) => Promise<any>
+    (
+      objectType: string,
+      flowObject: any,
+      setFieldValue: any,
+      values: any
+    ) => Promise<any>
   > = {
     sourcePlans: fetchPlanDetails,
     destinationPlans: fetchPlanDetails,
@@ -703,18 +813,23 @@ export const FlowForm = (props: Props) => {
     destinationProjects: fetchProjectDetails,
     sourceOrganizations: fetchOrganizationDetails,
     sourceGlobalClusters: fetchAssociatedGoverningEntity,
+    destinationGlobalClusters: fetchAssociatedGoverningEntity,
+    sourceUsageYears: fetchKeywords,
+    destinationUsageYears: fetchKeywords,
   };
 
   const updateFlowObjects = async (
     objectType: string,
     flowObject: any,
-    setFieldValue: any
+    setFieldValue: any,
+    values?: any
   ) => {
     if (flowObject.length > 0 && dictExecutedForEachObject[objectType]) {
       await dictExecutedForEachObject[objectType](
         objectType,
         flowObject,
-        setFieldValue
+        setFieldValue,
+        values
       );
     }
     if (objectType === 'sourcePlans') {
@@ -725,6 +840,12 @@ export const FlowForm = (props: Props) => {
     }
   };
 
+  const handleChildFlow = (values: any, setFieldValue: any, index: number) => {
+    setFieldValue(
+      'childFlow',
+      values['childFlow'].filter((item: any, ind: number) => ind !== index)
+    );
+  };
   // const FORM_VALIDATION = object().shape({
   //   sourceOrganizations: array()
   //     .of(object().shape({ label: string(), id: string() }))
@@ -867,6 +988,14 @@ export const FlowForm = (props: Props) => {
                           fnPromise={environment.model.usageYears.getUsageYears}
                           isMulti
                           behavior={FORM_SETTINGS.usageYear.behavior}
+                          onChange={(event, value) => {
+                            updateFlowObjects(
+                              event,
+                              value,
+                              setFieldValue,
+                              values
+                            );
+                          }}
                           isAutocompleteAPI={false}
                           entryInfo={inputEntries.sourceUsageYears}
                           rejectInputEntry={rejectInputEntry}
@@ -907,7 +1036,7 @@ export const FlowForm = (props: Props) => {
                         environment.model.globalClusters.getGlobalClusters
                       }
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       behavior={FORM_SETTINGS.globalCluster.behavior}
                       isMulti
@@ -980,6 +1109,14 @@ export const FlowForm = (props: Props) => {
                           fnPromise={environment.model.usageYears.getUsageYears}
                           isMulti
                           behavior={FORM_SETTINGS.usageYear.behavior}
+                          onChange={(event, value) => {
+                            updateFlowObjects(
+                              event,
+                              value,
+                              setFieldValue,
+                              values
+                            );
+                          }}
                           isAutocompleteAPI={false}
                           entryInfo={inputEntries.destinationUsageYears}
                           rejectInputEntry={rejectInputEntry}
@@ -1005,6 +1142,9 @@ export const FlowForm = (props: Props) => {
                       fnPromise={
                         environment.model.globalClusters.getGlobalClusters
                       }
+                      onChange={(event, value) => {
+                        updateFlowObjects(event, value, setFieldValue, values);
+                      }}
                       behavior={FORM_SETTINGS.globalCluster.behavior}
                       isMulti
                       isAutocompleteAPI={false}
@@ -1312,14 +1452,19 @@ export const FlowForm = (props: Props) => {
                               ).toLocaleString('en-US')}
                             </TableCell>
                             <TableCell>
-                              EUR
-                              {parseFloat(
-                                JSON.parse(
-                                  values.parentFlow?.value
-                                    ? values.parentFlow?.value.toString()
-                                    : ''
-                                ).origAmount
-                              ).toLocaleString('en-US')}
+                              {JSON.parse(
+                                values.parentFlow?.value
+                                  ? values.parentFlow?.value.toString()
+                                  : ''
+                              ).origAmount &&
+                                'EUR' +
+                                  parseFloat(
+                                    JSON.parse(
+                                      values.parentFlow?.value
+                                        ? values.parentFlow?.value.toString()
+                                        : ''
+                                    ).origAmount
+                                  ).toLocaleString('en-US')}
                             </TableCell>
                             <TableCell>
                               <C.Button
@@ -1343,97 +1488,95 @@ export const FlowForm = (props: Props) => {
                     <TableContainer component={Paper}>
                       <Table>
                         <TableBody>
-                          <TableRow
-                            sx={{
-                              '&:last-child td, &:last-child th': {
-                                border: 0,
-                              },
-                            }}
-                          >
-                            <TableCell>
-                              #
-                              {
-                                JSON.parse(
-                                  values.childFlow?.value
-                                    ? values.childFlow?.value.toString()
-                                    : ''
-                                ).id
-                              }
-                            </TableCell>
-                            <TableCell>
-                              {
-                                JSON.parse(
-                                  values.childFlow?.value
-                                    ? values.childFlow?.value.toString()
-                                    : ''
-                                ).description
-                              }
-                            </TableCell>
-                            <TableCell>
-                              {
-                                JSON.parse(
-                                  values.childFlow?.value
-                                    ? values.childFlow?.value.toString()
-                                    : ''
-                                ).organizations[0].name
-                              }{' '}
-                              |{' '}
-                              {
-                                JSON.parse(
-                                  values.childFlow?.value
-                                    ? values.childFlow?.value.toString()
-                                    : ''
-                                ).organizations[0].abbreviation
-                              }{' '}
-                              |{' '}
-                              {
-                                JSON.parse(
-                                  values.childFlow?.value
-                                    ? values.childFlow?.value.toString()
-                                    : ''
-                                ).budgetYear
-                              }
-                            </TableCell>
-                            <TableCell>
-                              {dayjs(
-                                JSON.parse(
-                                  values.childFlow?.value
-                                    ? values.childFlow?.value.toString()
-                                    : ''
-                                ).flowDate
-                              ).format('MM/DD/YYYY')}
-                            </TableCell>
-                            <TableCell>
-                              US$
-                              {parseFloat(
-                                JSON.parse(
-                                  values.childFlow?.value
-                                    ? values.childFlow?.value.toString()
-                                    : ''
-                                ).amountUSD
-                              ).toLocaleString('en-US')}
-                            </TableCell>
-                            <TableCell>
-                              EUR
-                              {parseFloat(
-                                JSON.parse(
-                                  values.childFlow?.value
-                                    ? values.childFlow?.value.toString()
-                                    : ''
-                                ).origAmount
-                              ).toLocaleString('en-US')}
-                            </TableCell>
-                            <TableCell>
-                              <C.Button
-                                onClick={() => {
-                                  setShowChildFlow(false);
+                          {isShowChildFlow &&
+                            values.childFlow.map((item, index) => (
+                              <TableRow
+                                key={index}
+                                sx={{
+                                  '&:last-child td, &:last-child th': {
+                                    border: 0,
+                                  },
                                 }}
-                                color="secondary"
-                                text="unlink"
-                                startIcon={MdRemove}
-                              />
-                            </TableCell>
-                          </TableRow>
+                              >
+                                <TableCell>
+                                  #
+                                  {
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).id
+                                  }
+                                </TableCell>
+                                <TableCell>
+                                  {
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).description
+                                  }
+                                </TableCell>
+                                <TableCell>
+                                  {
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).organizations[0].name
+                                  }{' '}
+                                  |{' '}
+                                  {
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).organizations[0].abbreviation
+                                  }{' '}
+                                  |{' '}
+                                  {
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).budgetYear
+                                  }
+                                </TableCell>
+                                <TableCell>
+                                  {dayjs(
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).flowDate
+                                  ).format('MM/DD/YYYY')}
+                                </TableCell>
+                                <TableCell>
+                                  US$
+                                  {parseFloat(
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).amountUSD
+                                  ).toLocaleString('en-US')}
+                                </TableCell>
+                                <TableCell>
+                                  {JSON.parse(
+                                    item?.value ? item?.value.toString() : ''
+                                  ).origAmount &&
+                                    'EUR' +
+                                      parseFloat(
+                                        JSON.parse(
+                                          item?.value
+                                            ? item?.value.toString()
+                                            : ''
+                                        ).origAmount
+                                      ).toLocaleString('en-US')}
+                                </TableCell>
+                                <TableCell>
+                                  <C.Button
+                                    onClick={() => {
+                                      handleChildFlow(
+                                        values,
+                                        setFieldValue,
+                                        index
+                                      );
+                                      // setShowChildFlow(false);
+                                    }}
+                                    color="secondary"
+                                    text="unlink"
+                                    startIcon={MdRemove}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            ))}
                         </TableBody>
                       </Table>
                     </TableContainer>
@@ -1491,10 +1634,8 @@ export const FlowForm = (props: Props) => {
                                 environment.model.flows.getAutocompleteFlows
                               }
                               withoutFormik
+                              values={values}
                               setFieldValue={setFieldValue}
-                              onChange={(event, value) => {
-                                // setFieldValue('parentFlow', value);
-                              }}
                             />
                           ),
                           callback: (value: any) => {

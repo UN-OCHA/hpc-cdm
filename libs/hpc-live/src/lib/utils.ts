@@ -56,11 +56,16 @@ export const searchFlowsParams = (params: flows.SearchFlowsParams): string => {
       case 'parked':
       case 'standard':
       case 'pass_through':
-      case 'pending':
       case 'pledged':
       case 'includeChildrenOfParkedFlows':
         if (params[unmutableKey])
           queryParams = queryParams.concat(unmutableKey, ': true ');
+        break;
+      case 'pending':
+        queryParams = queryParams.concat(
+          unmutableKey,
+          `: ${params[unmutableKey]} `
+        );
         break;
       case 'nextPageCursor':
       case 'prevPageCursor':
