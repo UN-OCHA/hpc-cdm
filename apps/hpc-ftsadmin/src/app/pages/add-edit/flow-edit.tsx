@@ -128,7 +128,7 @@ const initialInputEntries = {
   destinationGlobalClusters: [],
   destinationEmergencies: [],
   parentFlow: null,
-  childFlow: null,
+  childFlow: [],
 };
 
 export default (props: Props) => {
@@ -190,7 +190,7 @@ export default (props: Props) => {
       },
     ],
     parentFlow: null,
-    childFlow: null,
+    childFlow: [],
   });
   const [inputEntries, setInputEntries] = useState<InputEntriesType>(
     JSON.parse(JSON.stringify(initialInputEntries))
@@ -630,7 +630,7 @@ export default (props: Props) => {
         data,
         'childFlow',
         false
-      ) as AutoCompleteSeletionType;
+      ) as AutoCompleteSeletionType[];
       const reportDetails = data.reportDetails.map((detail) => ({
         verified: detail.verified ? 'verified' : 'unverified',
         reportSource: detail.source === 'Primary' ? 'primary' : 'secondary',

@@ -60,6 +60,12 @@ export const searchFlowsParams = (params: flows.SearchFlowsParams): string => {
         if (params[unmutableKey])
           queryParams = queryParams.concat(unmutableKey, ': true ');
         break;
+      case 'pending':
+        queryParams = queryParams.concat(
+          unmutableKey,
+          `: ${params[unmutableKey]} `
+        );
+        break;
       case 'nextPageCursor':
       case 'prevPageCursor':
       case 'limit':
