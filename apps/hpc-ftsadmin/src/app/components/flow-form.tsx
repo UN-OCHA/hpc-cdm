@@ -371,6 +371,7 @@ export const FlowForm = (props: Props) => {
               }
             ).name,
             value: responseValue.governingEntityVersion.id,
+            isAutoFilled: true,
           };
         } else {
           return {
