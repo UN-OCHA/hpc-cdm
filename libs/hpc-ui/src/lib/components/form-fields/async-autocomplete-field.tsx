@@ -257,7 +257,30 @@ const AsyncAutocompleteSelect = ({
                   ? value.organizations[1].name
                   : ''
               }`,
-              value: JSON.stringify(responseValue),
+              value: JSON.stringify({
+                id: value.id,
+                description: value.description,
+                src_org_name:
+                  value.organizations && value.organizations[0]
+                    ? value.organizations[0].name
+                    : '',
+                src_org_abbreviation:
+                  value.organizations && value.organizations[0]
+                    ? value.organizations[0].abbreviation
+                    : '',
+                dest_org_name:
+                  value.organizations && value.organizations[1]
+                    ? value.organizations[1].name
+                    : '',
+                dest_org_abbreviation:
+                  value.organizations && value.organizations[1]
+                    ? value.organizations[1].abbreviation
+                    : '',
+                budgetYear: value.budgetYear,
+                flowDate: value.flowDate,
+                amountUSD: value.amountUSD,
+                origAmount: value.origAmount,
+              }),
             };
           } else {
             return {
@@ -370,6 +393,8 @@ const AsyncAutocompleteSelect = ({
       if (name === 'childFlow') {
         const newList = [...values[name], ...[newValue]];
         setFieldValue(name, newList);
+      } else if (name === 'parentFlow') {
+        setFieldValue(name, [newValue]);
       } else {
         setFieldValue(name, newValue);
       }

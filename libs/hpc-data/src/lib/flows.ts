@@ -211,6 +211,24 @@ const FLOW_REST = t.intersection([
     usageYears: t.array(USAGE_YEAR),
     versions: t.array(FLOW_SEARCH_RESULT_REST),
     reportDetails: t.array(FLOW_REPORT_DETAIL),
+    parents: t.array(
+      t.type({
+        childID: t.number,
+        parentID: t.number,
+        depth: t.number,
+        createdAt: t.string,
+        updatedAt: t.string,
+      })
+    ),
+    children: t.array(
+      t.type({
+        childID: t.number,
+        parentID: t.number,
+        depth: t.number,
+        createdAt: t.string,
+        updatedAt: t.string,
+      })
+    ),
   }),
   t.partial({
     budgetYear: t.union([t.string, t.null]),
@@ -361,6 +379,7 @@ const FLOW = t.type({
   flowDate: t.union([t.string, t.null]),
   exchangeRate: t.union([t.string, t.null]),
   description: t.string,
+  budgetYear: t.string,
 });
 
 export const FLOW_RESULT = t.array(FLOW);
