@@ -127,7 +127,7 @@ const initialInputEntries = {
   destinationGoverningEntities: [],
   destinationGlobalClusters: [],
   destinationEmergencies: [],
-  parentFlow: null,
+  parentFlow: [],
   childFlow: [],
 };
 
@@ -189,7 +189,7 @@ export default (props: Props) => {
         ],
       },
     ],
-    parentFlow: null,
+    parentFlow: [],
     childFlow: [],
   });
   const [inputEntries, setInputEntries] = useState<InputEntriesType>(
@@ -209,6 +209,8 @@ export default (props: Props) => {
   const [activeVersionID, setActiveVersionID] = useState<number>(0);
   const [isPendingFlow, setIsPendingFlow] = useState<boolean>(false);
   const [isRestricted, setIsRestricted] = useState<boolean>(false);
+  const [parentFlow, setParentFlow] = useState<AutoCompleteSeletionType[]>([]);
+  const [childFlow, setChildFlow] = useState<AutoCompleteSeletionType[]>([]);
 
   function displayUserName(participant: Participant | null): string {
     if (participant?.name) {
@@ -621,16 +623,113 @@ export default (props: Props) => {
         'beneficiaryGroup',
         false
       ) as AutoCompleteSeletionType;
-      const parentFlow = getFormValueFromCategory(
-        data,
-        'parentFlow',
-        false
-      ) as AutoCompleteSeletionType;
-      const childFlow = getFormValueFromCategory(
-        data,
-        'childFlow',
-        false
-      ) as AutoCompleteSeletionType[];
+
+      const fetchData = async () => {
+        try {
+          const parentResults = await Promise.all(
+            data.parents.map((item) =>
+              env.model.flows.getFlowREST({
+                id: item.parentID,
+              })
+            )
+          );
+
+          const parentFlowData = parentResults.map((value) => {
+            return {
+              displayLabel: `Flow ${value.id}: ${value.description} Source: ${
+                value.organizations && value.organizations[0]
+                  ? value.organizations[0].name
+                  : ''
+              } | Destination: ${
+                value.organizations && value.organizations[1]
+                  ? value.organizations[1].name
+                  : ''
+              }`,
+              value: JSON.stringify({
+                id: value.id,
+                description: value.description,
+                src_org_name:
+                  value.organizations && value.organizations[0]
+                    ? value.organizations[0].name
+                    : '',
+                src_org_abbreviation:
+                  value.organizations && value.organizations[0]
+                    ? value.organizations[0].abbreviation
+                    : '',
+                dest_org_name:
+                  value.organizations && value.organizations[1]
+                    ? value.organizations[1].name
+                    : '',
+                dest_org_abbreviation:
+                  value.organizations && value.organizations[1]
+                    ? value.organizations[1].abbreviation
+                    : '',
+                budgetYear: value.budgetYear,
+                flowDate: value.flowDate,
+                amountUSD: value.amountUSD,
+                origAmount: value.origAmount,
+              }),
+            };
+          });
+
+          setParentFlow(parentFlowData);
+
+          const childResults = await Promise.all(
+            data.children.map((item) =>
+              env.model.flows.getFlowREST({
+                id: item.childID,
+              })
+            )
+          );
+
+          const childFlowData = childResults.map((value) => {
+            return {
+              displayLabel: `Flow ${value.id}: ${value.description} Source: ${
+                value.organizations && value.organizations[0]
+                  ? value.organizations[0].name
+                  : ''
+              } | Destination: ${
+                value.organizations && value.organizations[1]
+                  ? value.organizations[1].name
+                  : ''
+              }`,
+              value: JSON.stringify({
+                id: value.id,
+                description: value.description,
+                src_org_name:
+                  value.organizations && value.organizations[0]
+                    ? value.organizations[0].name
+                    : '',
+                src_org_abbreviation:
+                  value.organizations && value.organizations[0]
+                    ? value.organizations[0].abbreviation
+                    : '',
+                dest_org_name:
+                  value.organizations && value.organizations[1]
+                    ? value.organizations[1].name
+                    : '',
+                dest_org_abbreviation:
+                  value.organizations && value.organizations[1]
+                    ? value.organizations[1].abbreviation
+                    : '',
+                budgetYear: value.budgetYear,
+                flowDate: value.flowDate,
+                amountUSD: value.amountUSD,
+                origAmount: value.origAmount,
+              }),
+            };
+          });
+
+          setChildFlow(childFlowData);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+
+      if (parentFlow.length === 0 && childFlow.length === 0) {
+        fetchData();
+      }
+
       const reportDetails = data.reportDetails.map((detail) => ({
         verified: detail.verified ? 'verified' : 'unverified',
         reportSource: detail.source === 'Primary' ? 'primary' : 'secondary',
@@ -1045,19 +1144,19 @@ export default (props: Props) => {
           'destinationPlans'
         );
 
-        const pendingParetFlow = getFormValueFromCategory(
-          currentVersionData,
-          'parentFlow',
-          false
-        ) as AutoCompleteSeletionType;
-        createInputEntryActiveFlow(pendingParetFlow, parentFlow, 'parentFlow');
+        // const pendingParentFlow = getFormValueFromCategory(
+        //   currentVersionData,
+        //   'parentFlow',
+        //   false
+        // ) as AutoCompleteSeletionType;
+        // createInputEntryActiveFlow(pendingParentFlow, parentFlow, 'parentFlow');
 
-        const pendingChildFlow = getFormValueFromCategory(
-          currentVersionData,
-          'childFlow',
-          false
-        ) as AutoCompleteSeletionType;
-        createInputEntryActiveFlow(pendingChildFlow, childFlow, 'childFlow');
+        // const pendingChildFlow = getFormValueFromCategory(
+        //   currentVersionData,
+        //   'childFlow',
+        //   false
+        // ) as AutoCompleteSeletionType;
+        // createInputEntryActiveFlow(pendingChildFlow, childFlow, 'childFlow');
       }
 
       if (data.externalData && inactiveReason === 'Pending review') {
@@ -1129,7 +1228,7 @@ export default (props: Props) => {
     } else {
       setFlowDetail(null);
     }
-  }, [state, fullState, props.isEdit]);
+  }, [state, fullState, parentFlow, props.isEdit]);
 
   return (
     <AppContext.Consumer>

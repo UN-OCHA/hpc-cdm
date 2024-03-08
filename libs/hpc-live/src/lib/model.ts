@@ -595,7 +595,10 @@ export class LiveModel implements Model {
     return {
       getFlowREST: (params) =>
         this.call({
-          pathname: `/v1/flow/id/${params.id}/version/${params.versionId}`,
+          pathname:
+            '/v1/flow/id/' +
+            params.id +
+            (params.versionId ? '/version/' + params.versionId : ''),
           resultType: flows.GET_FLOW_RESULT,
         }),
       getFlow: (params) =>
