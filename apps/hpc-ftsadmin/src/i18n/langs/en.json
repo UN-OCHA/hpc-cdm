@@ -83,7 +83,7 @@
       "parkedSource": "Parked source",
       "sortBy": "Sort by",
       "rejectPendingFlows": "Reject Pending Flows",
-      "downloadDisabled": "Download only allowed for maximum 50.000 flows",
+      "downloadDisabled": "Download only allowed when there are at least a filter applied",
       "tableSettings": {
         "title": "Table Settings",
         "save": "Save",
