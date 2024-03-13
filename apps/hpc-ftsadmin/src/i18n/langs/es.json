@@ -83,7 +83,7 @@
       "sortBy": "Ordenar por",
       "totalAmount": "Monto Total：",
       "rejectPendingFlows": "Rechazar flujos pendientes",
-      "downloadDisabled": "Descarga solo permitida para un máximo de 50.000 flujos",
+      "downloadDisabled": "Descarga solo permitida cuando se aplica algún filtro",
       "tableSettings": {
         "title": "Configuración de la tabla",
         "save": "Guardar",
