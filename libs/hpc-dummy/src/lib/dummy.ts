@@ -836,6 +836,12 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
+        getFlowsDownloadXLSX: dummyEndpoint(
+          'flows.getFlowsDownloadXLSX',
+          async (params: flows.SearchFlowsParams) => {
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       globalClusters: {
         getGlobalClusters: dummyEndpoint(
