@@ -41,6 +41,10 @@ export interface ReportDetailType {
   versionId?: number;
 }
 
+export interface ParentFlowType {
+  value: any;
+}
+
 export interface FormValues {
   amountUSD: number;
   keywords: AutoCompleteSeletionType[];
@@ -77,8 +81,10 @@ export interface FormValues {
   destinationGlobalClusters: AutoCompleteSeletionType[];
   destinationEmergencies: AutoCompleteSeletionType[];
   reportDetails: ReportDetailType[];
-  parentFlow: AutoCompleteSeletionType | null;
-  childFlow: AutoCompleteSeletionType[];
+  parentFlow?: AutoCompleteSeletionType[];
+  childFlow?: AutoCompleteSeletionType[];
+  isParkedParent?: boolean;
+  sources?: Record<string, any[]>;
 }
 
 export interface VersionDataType {
@@ -209,6 +215,24 @@ my-4
 const StyledLinkedFlowRow = tw.div`
 mt-4
 `;
+
+const StyledParentInfo = tw.div`
+border-0
+border-b
+border-solid
+cursor-pointer
+mb-4
+pb-4
+`;
+
+const StyledStrong = tw.strong`
+min-w-[16rem]
+inline-block
+`;
+
+const StyledList = tw.li`
+list-none
+`;
 const initialReportDetail = {
   verified: 'verified',
   reportSource: 'primary',
@@ -308,10 +332,13 @@ export const FlowForm = (props: Props) => {
     useState<governingEntities.GetGoverningEntityResult>([]);
   const [destinationGoverningEntities, setDestinationGoverningEntities] =
     useState<governingEntities.GetGoverningEntityResult>([]);
-  const [isShowParentFlow, setShowParentFlow] = useState(false);
-  const [isShowChildFlow, setShowChildFlow] = useState(false);
+  const [isShowParentFlow, setShowParentFlow] = useState(
+    initialValue.parentFlow && initialValue.parentFlow.length ? true : false
+  );
+  const [isShowChildFlow, setShowChildFlow] = useState(
+    initialValue.childFlow && initialValue.childFlow.length ? true : false
+  );
   const buttonText = 'Calculate The Exchange Rate';
-  const [childFlowList, setChildFlowList] = useState([]);
 
   const handleCalculateExchangeRate = (values: any, setFieldValue: any) => {
     const { amountOriginal, amountUSD } = values;
@@ -329,6 +356,17 @@ export const FlowForm = (props: Props) => {
       console.warn('Both original amount and USD amount are missing.');
     }
   };
+
+  useEffect(() => {
+    if (initialValue.parentFlow && initialValue.parentFlow.length) {
+      setShowParentFlow(true);
+    }
+  }, initialValue.parentFlow);
+  useEffect(() => {
+    if (initialValue.childFlow && initialValue.childFlow.length) {
+      setShowChildFlow(true);
+    }
+  }, initialValue.childFlow);
 
   const setObjectsWithArray = (
     fetchedObject: any,
@@ -952,7 +990,7 @@ export const FlowForm = (props: Props) => {
   //       'Report detail information is required and should have at least 1'
   //     ),
   // });
-
+  console.log(initialValue);
   return (
     <Formik
       initialValues={initialValue}
@@ -966,6 +1004,61 @@ export const FlowForm = (props: Props) => {
               <StyledHalfSection>
                 <StyledFullSection>
                   <C.FormSection title="Funding Source(s)" isLeftSection>
+                    {initialValue.parentFlow &&
+                    initialValue.parentFlow.length ? (
+                      <StyledParentInfo>
+                        Source associated with Parent Destination. To edit these
+                        fields, remove the Parent flow or make changes directly
+                        to the Parent flow at&nbsp;(
+                        {initialValue.parentFlow.map((item) => (
+                          <StyledAnchor
+                            href={`flows/edit/${
+                              JSON.parse(
+                                item?.value ? item?.value.toString() : ''
+                              ).id
+                            }/version/${
+                              JSON.parse(
+                                item?.value ? item?.value.toString() : ''
+                              ).versionID
+                            }`}
+                            target="_blank"
+                          >
+                            {
+                              JSON.parse(
+                                item?.value ? item?.value.toString() : ''
+                              ).id
+                            }
+                          </StyledAnchor>
+                        ))}
+                        )
+                      </StyledParentInfo>
+                    ) : (
+                      ''
+                    )}
+
+                    {initialValue.isParkedParent && initialValue.sources ? (
+                      <StyledParentInfo>
+                        The parent to this flow is "parked", here are its
+                        sources:
+                        <ul>
+                          {Object.entries(initialValue.sources).map(
+                            ([objectType, objects]) => (
+                              <StyledList key={objectType}>
+                                <StyledStrong>{objectType}</StyledStrong>
+                                {objects.map((object, index) => (
+                                  <span key={index}>
+                                    {object.year || object.name}
+                                  </span>
+                                ))}
+                              </StyledList>
+                            )
+                          )}
+                        </ul>
+                      </StyledParentInfo>
+                    ) : (
+                      ''
+                    )}
+
                     <C.AsyncAutocompleteSelect
                       label="Organization(s)"
                       name="sourceOrganizations"
@@ -1382,102 +1475,89 @@ export const FlowForm = (props: Props) => {
                     <TableContainer component={Paper}>
                       <Table>
                         <TableBody>
-                          <TableRow
-                            sx={{
-                              '&:last-child td, &:last-child th': {
-                                border: 0,
-                              },
-                            }}
-                          >
-                            <TableCell>
-                              #
-                              {
-                                JSON.parse(
-                                  values.parentFlow?.value
-                                    ? values.parentFlow?.value.toString()
-                                    : ''
-                                ).id
-                              }
-                            </TableCell>
-                            <TableCell>
-                              {
-                                JSON.parse(
-                                  values.parentFlow?.value
-                                    ? values.parentFlow?.value.toString()
-                                    : ''
-                                ).description
-                              }
-                            </TableCell>
-                            <TableCell>
-                              {
-                                JSON.parse(
-                                  values.parentFlow?.value
-                                    ? values.parentFlow?.value.toString()
-                                    : ''
-                                ).organizations[1].name
-                              }{' '}
-                              |{' '}
-                              {
-                                JSON.parse(
-                                  values.parentFlow?.value
-                                    ? values.parentFlow?.value.toString()
-                                    : ''
-                                ).organizations[1].abbreviation
-                              }{' '}
-                              |{' '}
-                              {
-                                JSON.parse(
-                                  values.parentFlow?.value
-                                    ? values.parentFlow?.value.toString()
-                                    : ''
-                                ).budgetYear
-                              }
-                            </TableCell>
-                            <TableCell>
-                              {dayjs(
-                                JSON.parse(
-                                  values.parentFlow?.value
-                                    ? values.parentFlow?.value.toString()
-                                    : ''
-                                ).flowDate
-                              ).format('MM/DD/YYYY')}
-                            </TableCell>
-                            <TableCell>
-                              US$
-                              {parseFloat(
-                                JSON.parse(
-                                  values.parentFlow?.value
-                                    ? values.parentFlow?.value.toString()
-                                    : ''
-                                ).amountUSD
-                              ).toLocaleString('en-US')}
-                            </TableCell>
-                            <TableCell>
-                              {JSON.parse(
-                                values.parentFlow?.value
-                                  ? values.parentFlow?.value.toString()
-                                  : ''
-                              ).origAmount &&
-                                'EUR' +
-                                  parseFloat(
-                                    JSON.parse(
-                                      values.parentFlow?.value
-                                        ? values.parentFlow?.value.toString()
-                                        : ''
-                                    ).origAmount
-                                  ).toLocaleString('en-US')}
-                            </TableCell>
-                            <TableCell>
-                              <C.Button
-                                onClick={() => {
-                                  setShowParentFlow(false);
+                          {values.parentFlow &&
+                            values.parentFlow.map((item, index) => (
+                              <TableRow
+                                sx={{
+                                  '&:last-child td, &:last-child th': {
+                                    border: 0,
+                                  },
                                 }}
-                                color="secondary"
-                                text="unlink"
-                                startIcon={MdRemove}
-                              />
-                            </TableCell>
-                          </TableRow>
+                              >
+                                <TableCell>
+                                  #
+                                  {
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).id
+                                  }
+                                </TableCell>
+                                <TableCell>
+                                  {
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).description
+                                  }
+                                </TableCell>
+                                <TableCell>
+                                  {
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).dest_org_name
+                                  }{' '}
+                                  |{' '}
+                                  {
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).dest_org_abbreviation
+                                  }{' '}
+                                  |{' '}
+                                  {
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).budgetYear
+                                  }
+                                </TableCell>
+                                <TableCell>
+                                  {dayjs(
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).flowDate
+                                  ).format('MM/DD/YYYY')}
+                                </TableCell>
+                                <TableCell>
+                                  US$
+                                  {parseFloat(
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).amountUSD
+                                  ).toLocaleString('en-US')}
+                                </TableCell>
+                                <TableCell>
+                                  {JSON.parse(
+                                    item?.value ? item?.value.toString() : ''
+                                  ).origAmount &&
+                                    'EUR' +
+                                      parseFloat(
+                                        JSON.parse(
+                                          item?.value
+                                            ? item?.value.toString()
+                                            : ''
+                                        ).origAmount
+                                      ).toLocaleString('en-US')}
+                                </TableCell>
+                                <TableCell>
+                                  <C.Button
+                                    onClick={() => {
+                                      setShowParentFlow(false);
+                                    }}
+                                    color="secondary"
+                                    text="unlink"
+                                    startIcon={MdRemove}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            ))}
                         </TableBody>
                       </Table>
                     </TableContainer>
@@ -1489,7 +1569,7 @@ export const FlowForm = (props: Props) => {
                     <TableContainer component={Paper}>
                       <Table>
                         <TableBody>
-                          {isShowChildFlow &&
+                          {values.childFlow &&
                             values.childFlow.map((item, index) => (
                               <TableRow
                                 key={index}
@@ -1518,13 +1598,13 @@ export const FlowForm = (props: Props) => {
                                   {
                                     JSON.parse(
                                       item?.value ? item?.value.toString() : ''
-                                    ).organizations[0].name
+                                    ).org_name
                                   }{' '}
                                   |{' '}
                                   {
                                     JSON.parse(
                                       item?.value ? item?.value.toString() : ''
-                                    ).organizations[0].abbreviation
+                                    ).org_abbreviation
                                   }{' '}
                                   |{' '}
                                   {
@@ -1603,10 +1683,8 @@ export const FlowForm = (props: Props) => {
                                   environment.model.flows.getAutocompleteFlows
                                 }
                                 withoutFormik
+                                values={values}
                                 setFieldValue={setFieldValue}
-                                onChange={(event, value) => {
-                                  // setFieldValue('parentFlow', value);
-                                }}
                               />
                             ),
                             callback: (value: any) => {

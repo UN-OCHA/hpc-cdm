@@ -13,7 +13,7 @@ import {
   useDataLoader,
   THEME,
 } from '@unocha/hpc-ui';
-import { categories, flows, forms } from '@unocha/hpc-data';
+import { categories, flows, forms, usageYears } from '@unocha/hpc-data';
 import { t } from '../../../i18n';
 import PageMeta from '../../components/page-meta';
 import { AppContext, getEnv } from '../../context';
@@ -127,8 +127,10 @@ const initialInputEntries = {
   destinationGoverningEntities: [],
   destinationGlobalClusters: [],
   destinationEmergencies: [],
-  parentFlow: null,
+  parentFlow: [],
   childFlow: [],
+  isParkedParent: false,
+  sources: [],
 };
 
 export default (props: Props) => {
@@ -189,8 +191,10 @@ export default (props: Props) => {
         ],
       },
     ],
-    parentFlow: null,
+    parentFlow: [],
     childFlow: [],
+    isParkedParent: false,
+    sources: {},
   });
   const [inputEntries, setInputEntries] = useState<InputEntriesType>(
     JSON.parse(JSON.stringify(initialInputEntries))
@@ -209,6 +213,12 @@ export default (props: Props) => {
   const [activeVersionID, setActiveVersionID] = useState<number>(0);
   const [isPendingFlow, setIsPendingFlow] = useState<boolean>(false);
   const [isRestricted, setIsRestricted] = useState<boolean>(false);
+  const [parentFlow, setParentFlow] = useState<AutoCompleteSeletionType[]>([]);
+  const [childFlow, setChildFlow] = useState<AutoCompleteSeletionType[]>([]);
+  const [parentIds, setParentIds] = useState<number[]>([]);
+  const [childIds, setChildIds] = useState<number[]>([]);
+  // const [isParkedParent, setIsParkedParent] = useState<boolean>(false);
+  // const [sources, setSources] = useState<Record<string, any[]>>({});
 
   function displayUserName(participant: Participant | null): string {
     if (participant?.name) {
@@ -393,6 +403,205 @@ export default (props: Props) => {
     tempEntries.push(inputEntry);
     (inputEntries[key] as forms.InputEntryType[]) = tempEntries;
   };
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const parentResults = await Promise.all(
+          parentIds.map((id) =>
+            env.model.flows.getFlowREST({
+              id,
+            })
+          )
+        );
+
+        let isParkedParent = false;
+        const sources: Record<string, any[]> = {};
+
+        if (parentResults && parentResults[0] && parentResults[0].categories) {
+          const parent = parentResults[0];
+          isParkedParent = parent.categories.some(function (category) {
+            return (
+              category.group === 'flowType' &&
+              category.name.toLowerCase() === 'parked'
+            );
+          });
+
+          parent.flowObjects
+            .filter(function (flowObject) {
+              return flowObject.refDirection === 'source';
+            })
+            .forEach(function (flowObject) {
+              const objectType = flowObject.objectType;
+              const objTypeTail = objectType[flowObject.objectType.length - 1];
+
+              let objectTypePlural: string;
+              if (objTypeTail === 'y') {
+                objectTypePlural = objectType.replace('y', 'ies');
+              } else {
+                objectTypePlural = objectType + 's';
+              }
+              if (
+                !sources[objectTypePlural] ||
+                !sources[objectTypePlural].length
+              ) {
+                sources[objectTypePlural] = [];
+              }
+
+              const parentArray =
+                parent[objectTypePlural as keyof typeof parent];
+              if (parentArray && Array.isArray(parentArray)) {
+                const foundObject = parentArray.find((obj: any) => {
+                  return flowObject.objectID === obj.id;
+                });
+                if (foundObject) {
+                  sources[objectTypePlural].push(foundObject);
+                }
+              }
+            });
+
+          const srcUsageYear: usageYears.UsageYear[] = [];
+          const destUsageYear: usageYears.UsageYear[] = [];
+          parent.usageYears.map((item: usageYears.UsageYear) => {
+            if (item.flowObject && item.flowObject.refDirection === 'source') {
+              srcUsageYear.push(item);
+            }
+            if (
+              item.flowObject &&
+              item.flowObject.refDirection === 'destination'
+            ) {
+              destUsageYear.push(item);
+            }
+          });
+          if (
+            isParkedParent &&
+            Array.isArray(srcUsageYear) &&
+            srcUsageYear.length > 1 &&
+            Array.isArray(destUsageYear) &&
+            destUsageYear.length === 1
+          ) {
+            sources.usageYears = destUsageYear;
+          }
+        } else {
+          isParkedParent = false;
+        }
+
+        // setIsParkedParent(isParkedParent);
+        // setSources(sources);
+
+        const parentFlowData = parentResults.map((value) => {
+          return {
+            displayLabel: `Flow ${value.id}: ${value.description} Source: ${
+              value.organizations && value.organizations[0]
+                ? value.organizations[0].name
+                : ''
+            } | Destination: ${
+              value.organizations && value.organizations[1]
+                ? value.organizations[1].name
+                : ''
+            }`,
+            value: JSON.stringify({
+              id: value.id,
+              description: value.description,
+              src_org_name:
+                value.organizations && value.organizations[0]
+                  ? value.organizations[0].name
+                  : '',
+              src_org_abbreviation:
+                value.organizations && value.organizations[0]
+                  ? value.organizations[0].abbreviation
+                  : '',
+              dest_org_name:
+                value.organizations && value.organizations[1]
+                  ? value.organizations[1].name
+                  : '',
+              dest_org_abbreviation:
+                value.organizations && value.organizations[1]
+                  ? value.organizations[1].abbreviation
+                  : '',
+              budgetYear: value.budgetYear,
+              flowDate: value.flowDate,
+              amountUSD: value.amountUSD,
+              origAmount: value.origAmount,
+              versionID: value.versionID,
+            }),
+          };
+        });
+
+        setFlowData({
+          ...flowData,
+          isParkedParent,
+          sources,
+          parentFlow: parentFlowData,
+        });
+      };
+
+      fetchData();
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }, [parentIds]);
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const childResults = await Promise.all(
+          childIds.map((id) =>
+            env.model.flows.getFlowREST({
+              id,
+            })
+          )
+        );
+
+        const childFlowData = childResults.map((value) => {
+          return {
+            displayLabel: `Flow ${value.id}: ${value.description} Source: ${
+              value.organizations && value.organizations[0]
+                ? value.organizations[0].name
+                : ''
+            } | Destination: ${
+              value.organizations && value.organizations[1]
+                ? value.organizations[1].name
+                : ''
+            }`,
+            value: JSON.stringify({
+              id: value.id,
+              description: value.description,
+              src_org_name:
+                value.organizations && value.organizations[0]
+                  ? value.organizations[0].name
+                  : '',
+              src_org_abbreviation:
+                value.organizations && value.organizations[0]
+                  ? value.organizations[0].abbreviation
+                  : '',
+              dest_org_name:
+                value.organizations && value.organizations[1]
+                  ? value.organizations[1].name
+                  : '',
+              dest_org_abbreviation:
+                value.organizations && value.organizations[1]
+                  ? value.organizations[1].abbreviation
+                  : '',
+              budgetYear: value.budgetYear,
+              flowDate: value.flowDate,
+              amountUSD: value.amountUSD,
+              origAmount: value.origAmount,
+            }),
+          };
+        });
+
+        setFlowData({
+          ...flowData,
+          childFlow: childFlowData,
+        });
+      };
+
+      fetchData();
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }, [childIds]);
 
   useEffect(() => {
     if (
@@ -621,16 +830,13 @@ export default (props: Props) => {
         'beneficiaryGroup',
         false
       ) as AutoCompleteSeletionType;
-      const parentFlow = getFormValueFromCategory(
-        data,
-        'parentFlow',
-        false
-      ) as AutoCompleteSeletionType;
-      const childFlow = getFormValueFromCategory(
-        data,
-        'childFlow',
-        false
-      ) as AutoCompleteSeletionType[];
+
+      const parentIds = data.parents.map((item) => item.parentID);
+      const childIds = data.children.map((item) => item.childID);
+
+      setParentIds(parentIds);
+      setChildIds(childIds);
+
       const reportDetails = data.reportDetails.map((detail) => ({
         verified: detail.verified ? 'verified' : 'unverified',
         reportSource: detail.source === 'Primary' ? 'primary' : 'secondary',
@@ -1045,19 +1251,19 @@ export default (props: Props) => {
           'destinationPlans'
         );
 
-        const pendingParetFlow = getFormValueFromCategory(
-          currentVersionData,
-          'parentFlow',
-          false
-        ) as AutoCompleteSeletionType;
-        createInputEntryActiveFlow(pendingParetFlow, parentFlow, 'parentFlow');
+        // const pendingParentFlow = getFormValueFromCategory(
+        //   currentVersionData,
+        //   'parentFlow',
+        //   false
+        // ) as AutoCompleteSeletionType;
+        // createInputEntryActiveFlow(pendingParentFlow, parentFlow, 'parentFlow');
 
-        const pendingChildFlow = getFormValueFromCategory(
-          currentVersionData,
-          'childFlow',
-          false
-        ) as AutoCompleteSeletionType;
-        createInputEntryActiveFlow(pendingChildFlow, childFlow, 'childFlow');
+        // const pendingChildFlow = getFormValueFromCategory(
+        //   currentVersionData,
+        //   'childFlow',
+        //   false
+        // ) as AutoCompleteSeletionType;
+        // createInputEntryActiveFlow(pendingChildFlow, childFlow, 'childFlow');
       }
 
       if (data.externalData && inactiveReason === 'Pending review') {
@@ -1115,8 +1321,6 @@ export default (props: Props) => {
         destinationEmergencies,
         origCurrency,
         reportDetails,
-        parentFlow,
-        childFlow,
       });
       setInputEntries({ ...inputEntries });
       setIsSetupedInitialValue(true);
