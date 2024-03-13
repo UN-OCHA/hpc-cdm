@@ -811,6 +811,12 @@ export class Dummy {
             };
           }
         ),
+        getFlowsDownloadXLSX: dummyEndpoint(
+          'flows.getFlowsDownloadXLSX',
+          async () => {
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       globalClusters: {
         getGlobalClusters: dummyEndpoint(

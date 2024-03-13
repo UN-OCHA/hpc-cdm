@@ -718,6 +718,52 @@ export default function FlowsTable(props: FlowsTableProps) {
     }
     return <TableComponent lang={lang} data={data} />;
   };
+
+  const isAnyFilterActive = () => {
+    // First check shortcut filters
+    if (
+      parsedFilters.carryover ||
+      parsedFilters.pass_through ||
+      parsedFilters.parked ||
+      parsedFilters.commitment ||
+      parsedFilters.standard
+    ) {
+      return true;
+    }
+
+    // Check if there are any filter inside flowFilters but activeStatus
+    const flowFilters = parsedFilters.flowFilters;
+    if (
+      flowFilters?.activeStatus ||
+      flowFilters?.amountUSD ||
+      flowFilters?.id ||
+      flowFilters?.restricted
+    ) {
+      return true;
+    }
+
+    // Check if there are any filter inside nestedFlowFilters
+    const nestedFlowFilters = parsedFilters.nestedFlowFilters;
+    if (
+      nestedFlowFilters?.reporterRefCode ||
+      nestedFlowFilters?.legacyID ||
+      nestedFlowFilters?.sourceSystemID
+    ) {
+      return true;
+    }
+
+    // Check if there are any filter inside flowCategoryFilters
+    const flowCategoryFilters = parsedFilters.flowCategoryFilters ?? [];
+    if (flowCategoryFilters.length > 0) {
+      return true;
+    }
+
+    // Check if there are any filter inside flowObjectFilters
+    const flowObjectFilters = parsedFilters.flowObjectFilters ?? [];
+    if (flowObjectFilters.length > 0) {
+      return true;
+    }
+  };
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -752,14 +798,25 @@ export default function FlowsTable(props: FlowsTableProps) {
                     />
                     <C.AsyncIconButton
                       fnPromise={() =>
-                        downloadExcel<flows.Flow>(
-                          data.searchFlows.flows,
-                          'export'
-                        )
+                        new Promise<void>((resolve) => {
+                          env.model.flows
+                            .getFlowsDownloadXLSX({
+                              limit: query.rowsPerPage,
+                              ...parsedFilters,
+                            })
+                            .then((response) => {
+                              resolve(
+                                downloadExcel<flows.Flow>(
+                                  response.searchFlowsBatches.flows,
+                                  'export'
+                                )
+                              );
+                            });
+                        })
                       }
                       IconComponent={DownloadIcon}
                       disabledText={
-                        data.searchFlows.total > 50_000
+                        !isAnyFilterActive()
                           ? t.t(
                               lang,
                               (s) => s.components.flowsTable.downloadDisabled

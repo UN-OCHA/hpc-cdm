@@ -83,7 +83,7 @@
       "sortBy": "Trier par",
       "totalAmount": "Montant Total：",
       "rejectPendingFlows": "Rejeter les flux en attente",
-      "downloadDisabled": "Téléchargement autorisé uniquement pour un maximum de 50 000 flux",
+      "downloadDisabled": "Le rejet n'est autorisé que lorsqu'un filtre est appliqué",
       "tableSettings": {
         "title": "Paramètres du tableau",
         "save": "Enregistrer",
