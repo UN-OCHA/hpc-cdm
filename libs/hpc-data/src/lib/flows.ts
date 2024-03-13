@@ -487,6 +487,15 @@ export type GetTotalAmountUSDResult = t.TypeOf<
   typeof GET_TOTAL_AMOUNT_USD_RESULT
 >;
 
+export const SEARCH_FLOWS_BATCHES_RESULT = t.type({
+  searchFlowsBatches: t.type({
+    flows: FLOW_RESULT,
+  }),
+});
+export type SearchFlowsBatchesResult = t.TypeOf<
+  typeof SEARCH_FLOWS_BATCHES_RESULT
+>;
+
 export interface Model {
   getFlowREST(params: GetFlowParams): Promise<GetFlowResult>;
   getFlow(params: GetFlowParams): Promise<GetFlowResult>;
@@ -500,4 +509,7 @@ export interface Model {
   getTotalAmountUSD(
     params: GetTotalAmountUSDParams
   ): Promise<GetTotalAmountUSDResult>;
+  getFlowsDownloadXLSX(
+    params: SearchFlowsParams
+  ): Promise<SearchFlowsBatchesResult>;
 }

@@ -228,6 +228,106 @@ export class LiveModel implements Model {
   private readonly fetch: FetchInterface;
   private readonly sha256Hash: (data: ArrayBuffer) => Promise<string>;
 
+  private readonly searchFlowFields = `flows {
+    id
+    updatedAt
+    amountUSD
+    versionID
+    activeStatus
+    restricted
+    exchangeRate
+    flowDate
+    newMoney
+    decisionDate
+    categories {
+      id
+      name
+      group
+      createdAt
+      updatedAt
+      description
+      parentID
+      code
+      includeTotals
+      categoryRef {
+        objectID
+        versionID
+        objectType
+        categoryID
+        updatedAt
+      }
+    }
+
+    organizations {
+      id
+      name
+      direction
+      abbreviation
+    }
+
+    destinationOrganizations {
+      id
+      name
+      direction
+      abbreviation
+    }
+
+    sourceOrganizations {
+      id
+      name
+      direction
+      abbreviation
+    }
+
+    plans {
+      id
+      name
+      direction
+    }
+
+    usageYears {
+      year
+      direction
+    }
+    childIDs
+    parentIDs
+    origAmount
+    origCurrency
+    locations{
+      id
+      name
+      direction
+    }
+    externalReferences {
+      systemID
+      flowID
+      externalRecordID
+      externalRecordDate
+      versionID
+      createdAt
+      updatedAt
+    }
+    reportDetails {
+      id
+      flowID
+      versionID
+      contactInfo
+      refCode
+      organizationID
+      channel
+      source
+      date
+      verified
+      updatedAt
+      createdAt
+      sourceID
+    }
+    parkedParentSource{
+      orgName
+      organization
+    }
+  }`;
+
   public constructor(config: Config) {
     this.config = config;
     this.URL = config.interfaces?.URL || URL;
@@ -522,106 +622,7 @@ export class LiveModel implements Model {
         const query = `query {
           searchFlows${searchFlowsParams(params)} {
             total
-            flows {
-              id
-              updatedAt
-              amountUSD
-              versionID
-              activeStatus
-              restricted
-              exchangeRate
-              flowDate
-              newMoney
-              decisionDate
-              categories {
-                id
-                name
-                group
-                createdAt
-                updatedAt
-                description
-                parentID
-                code
-                includeTotals
-                categoryRef {
-                  objectID
-                  versionID
-                  objectType
-                  categoryID
-                  updatedAt
-                }
-              }
-        
-              organizations {
-                id
-                name
-                direction
-                abbreviation
-              }
-
-              destinationOrganizations {
-                id
-                name
-                direction
-                abbreviation
-              }
-
-              sourceOrganizations {
-                id
-                name
-                direction
-                abbreviation
-              }
-        
-              plans {
-                id
-                name
-                direction
-              }
-        
-              usageYears {
-                year
-                direction
-              }
-              childIDs
-              parentIDs
-              origAmount
-              origCurrency
-              locations{
-                id
-                name
-                direction
-              }
-              externalReferences {
-                systemID
-                flowID
-                externalRecordID
-                externalRecordDate
-                versionID
-                createdAt
-                updatedAt
-              }
-              reportDetails {
-                id
-                flowID
-                versionID
-                contactInfo
-                refCode
-                organizationID
-                channel
-                source
-                date
-                verified
-                updatedAt
-                createdAt
-                sourceID
-              }
-              parkedParentSource{
-                orgName
-                organization
-              }
-            }
-        
+            
             prevPageCursor
         
             hasNextPage
@@ -631,6 +632,8 @@ export class LiveModel implements Model {
             hasPreviousPage
         
             pageSize
+
+            ${this.searchFlowFields}
           }
         }`;
         return this.call({
@@ -673,6 +676,25 @@ export class LiveModel implements Model {
           },
           resultType: flows.GET_TOTAL_AMOUNT_USD_RESULT,
           signal: params.signal,
+        });
+      },
+      getFlowsDownloadXLSX: (params) => {
+        const query = `query {
+          searchFlowsBatches${searchFlowsParams(params)} {
+            ${this.searchFlowFields}
+          }
+        }`;
+        return this.call({
+          pathname: `/v4/graphql`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: {
+              query: query,
+            },
+          },
+          signal: params.signal,
+          resultType: flows.SEARCH_FLOWS_BATCHES_RESULT,
         });
       },
     };

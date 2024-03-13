@@ -83,7 +83,7 @@
       "sortBy": "الترتيب حسب",
       "totalAmount": "المبلغ الإجمالي: ",
       "rejectPendingFlows": "رفض الأنسجة المعلقة",
-      "downloadDisabled": "التنزيل مسموح فقط لأقصى 50،000 تدفق",
+      "downloadDisabled": "التفريغ مسموح به فقط عند استخدام مرشح",
       "tableSettings": {
         "title": "إعدادات الجدول",
         "save": "حفظ",

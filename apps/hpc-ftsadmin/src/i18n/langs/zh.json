@@ -83,7 +83,7 @@
       "totalAmount": "总金额：",
       "sortBy": "排序方式",
       "rejectPendingFlows": "拒绝待处理的资金流",
-      "downloadDisabled": "仅允许下载最多50,000个流",
+      "downloadDisabled": "只有在使用过滤器时才允许排放",
       "tableSettings": {
         "title": "表格设置",
         "save": "保存",
