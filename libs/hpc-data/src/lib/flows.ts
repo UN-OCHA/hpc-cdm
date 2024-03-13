@@ -211,6 +211,7 @@ const FLOW_REST = t.intersection([
     usageYears: t.array(USAGE_YEAR),
     versions: t.array(FLOW_SEARCH_RESULT_REST),
     reportDetails: t.array(FLOW_REPORT_DETAIL),
+    flowObjects: t.array(FLOW_OBJECT),
     parents: t.array(
       t.type({
         childID: t.number,
