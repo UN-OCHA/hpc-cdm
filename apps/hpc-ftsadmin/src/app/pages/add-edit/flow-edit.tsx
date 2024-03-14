@@ -1286,6 +1286,7 @@ export default (props: Props) => {
 
       setActiveVersionID(activeMatch);
       setFlowData({
+        ...flowData,
         amountUSD,
         amountOriginal,
         exchangeRateUsed,

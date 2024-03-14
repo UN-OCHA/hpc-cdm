@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Form, Formik, FieldArray } from 'formik';
 import tw from 'twin.macro';
 import dayjs from 'dayjs';
@@ -361,12 +361,12 @@ export const FlowForm = (props: Props) => {
     if (initialValue.parentFlow && initialValue.parentFlow.length) {
       setShowParentFlow(true);
     }
-  }, initialValue.parentFlow);
+  }, [initialValue.parentFlow]);
   useEffect(() => {
     if (initialValue.childFlow && initialValue.childFlow.length) {
       setShowChildFlow(true);
     }
-  }, initialValue.childFlow);
+  }, [initialValue.childFlow]);
 
   const setObjectsWithArray = (
     fetchedObject: any,
@@ -995,6 +995,7 @@ export const FlowForm = (props: Props) => {
     <Formik
       initialValues={initialValue}
       // validationSchema={FORM_VALIDATION}
+      enableReinitialize
       onSubmit={handleSubmit}
     >
       {({ values, setFieldValue }) => {
