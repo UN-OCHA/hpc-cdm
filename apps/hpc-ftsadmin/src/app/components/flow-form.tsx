@@ -6,6 +6,8 @@ import { isRight } from 'fp-ts/Either';
 import * as t from 'io-ts';
 
 import { C, dialogs } from '@unocha/hpc-ui';
+import * as HPC from '../utils/flow-validations';
+
 import {
   Table,
   TableBody,
@@ -233,6 +235,15 @@ inline-block
 const StyledList = tw.li`
 list-none
 `;
+
+const StyledDiv = tw.div`
+my-6
+me-4
+lg:flex
+justify-end
+gap-x-4 
+`;
+
 const initialReportDetail = {
   verified: 'verified',
   reportSource: 'primary',
@@ -311,8 +322,64 @@ export const FlowForm = (props: Props) => {
   } = props;
   const { confirm } = dialogs;
 
+  const normalizeFlowData = (values: FormValues) => {
+    // console.log(values.)
+    const data = {
+      flowType: values.flowType,
+      contributionTypes: values.contributionType,
+      method: values.method,
+      newMoney: true,
+      isCancellation: true,
+      src: {
+        governingEntity: values.sourceGoverningEntities,
+        location: values.sourceLocations,
+        organization: values.sourceOrganizations,
+        project: values.sourceProjects,
+        usageYear: values.sourceUsageYears,
+        globalCluster: values.sourceGlobalClusters,
+        emergency: values.sourceEmergencies,
+      },
+      dest: {
+        governingEntity: values.destinationGoverningEntities,
+        location: values.destinationLocations,
+        organization: values.destinationOrganizations,
+        project: values.destinationProjects,
+        usageYear: values.destinationUsageYears,
+        globalCluster: values.destinationGlobalClusters,
+        emergency: values.destinationEmergencies,
+      },
+      children: values.childFlow
+        ? values.childFlow.map((item) => JSON.parse(item.value as string))
+        : [],
+      parents: values.parentFlow
+        ? values.parentFlow.map((item) => JSON.parse(item.value as string))
+        : [],
+      reportDetails: values.reportDetails,
+      keywords: values.keywords,
+      amountUSD: values.amountUSD,
+      description: values.flowDescription,
+      flowStatuses: values.flowStatus,
+      flowDate: values.flowDate,
+      firstReportedDate: values.firstReported,
+      origCurrency: values.origCurrency,
+      activeStatus: true,
+      restricted: true,
+    };
+    return data;
+  };
   const handleSubmit = (values: FormValues) => {
-    console.log(values);
+    const data = normalizeFlowData(values);
+
+    const hpcFlowObject = new (HPC as any).HPC.Flow(
+      data,
+      {
+        adding: !isEdit,
+        originalFlow: {},
+      },
+      window
+    );
+
+    console.log(hpcFlowObject.preValidate());
   };
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
@@ -356,6 +423,11 @@ export const FlowForm = (props: Props) => {
       console.warn('Both original amount and USD amount are missing.');
     }
   };
+
+  useEffect(() => {
+    console.log('HPC--------->');
+    console.log(HPC);
+  }, []);
 
   useEffect(() => {
     if (initialValue.parentFlow && initialValue.parentFlow.length) {
@@ -2110,6 +2182,12 @@ export const FlowForm = (props: Props) => {
                 />
               </div>
             )}
+            <StyledDiv>
+              <C.ButtonSubmit
+                color="primary"
+                text={isEdit ? 'Save' : 'Create'}
+              />
+            </StyledDiv>
           </Form>
         );
       }}
