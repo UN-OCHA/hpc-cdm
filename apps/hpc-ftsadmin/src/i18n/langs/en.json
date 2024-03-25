@@ -225,6 +225,9 @@
       }
     },
     "organizationUpdateCreate": {
+      "title": {
+        "create": "Add Organization"
+      },
       "fields": {
         "name": "Organization Name",
         "abbreviation": "Organization Abbreviation",
@@ -249,6 +252,12 @@
         "text": "Are you sure you want to delete this flow? All the information will be deleted.",
         "principalButton": "Delete",
         "secondaryButton": "Cancel"
+      },
+      "text": {
+        "collectiveOrganization": "The Collective Organization setting indicates that the organization is a 'stand-in' for one or more organizations of the same Organization Type (e.g., “Red Cross Organizations”), and is used when the specific organizations are not known or need to be masked for security purposes",
+        "organizationType": "This is an only read field that fills based on the 'Organization Type'",
+        "create": "Provide information to add a new organization, this organization will be accesible in all HPC tools applications. Fields marked with '*' are mandatory.",
+        "edit": "Edit the selected organization, or click the Delete button to PERMANENTLY DELETE the organization, this organization will be accesible in all HPC tools applications. Fields marked with '*' are mandatory"
       },
       "create": "Create",
       "update": "Update"
