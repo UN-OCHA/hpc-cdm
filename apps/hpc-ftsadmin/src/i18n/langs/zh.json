@@ -227,6 +227,9 @@
       }
     },
     "organizationUpdateCreate": {
+      "title": {
+        "create": "添加组织"
+      },
       "fields": {
         "name": "组织名称",
         "abbreviation": "组织缩写",
@@ -251,6 +254,12 @@
         "text": "您确定要删除此流程吗？所有信息将被删除。",
         "principalButton": "删除",
         "secondaryButton": "取消"
+      },
+      "text": {
+        "collectiveOrganization": "集体组织设置指示该组织是同一类型的一个或多个组织的“替代品”（例如，“红十字组织”），当不知道具体组织或出于安全目的需要对其进行掩码时使用",
+        "organizationType": "这是一个只读字段，根据'组织类型'填充",
+        "create": "提供信息以添加新组织，此组织将在所有HPC工具应用程序中可访问。标有 '*' 的字段为必填项。",
+        "edit": "编辑所选组织，或单击删除按钮永久删除组织，此组织将在所有HPC工具应用程序中可访问。标有 '*' 的字段为必填项"
       },
       "create": "创建",
       "update": "更新"
