@@ -1,12 +1,8 @@
 import { Form, Formik, FormikState } from 'formik';
 import tw from 'twin.macro';
 
-import { C } from '@unocha/hpc-ui';
-import {
-  FormObjectValue,
-  decodeFilters,
-  encodeFilters,
-} from '../../utils/parse-filters';
+import { C, FormObjectValue } from '@unocha/hpc-ui';
+import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import { t } from '../../../i18n';
 import { Query } from '../tables/table-utils';
 import { useContext } from 'react';
@@ -14,6 +10,11 @@ import { AppContext } from '../../context';
 import validateForm from '../../utils/form-validation';
 import * as io from 'io-ts';
 import { util as codecs } from '@unocha/hpc-data';
+import {
+  fnLocations,
+  fnOrganizations,
+  fnUsageYears,
+} from '../../utils/fn-promises';
 interface Props {
   query: Query;
   setQuery: (newQuery: Query) => void;
@@ -173,9 +174,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                     s.components.pendingFlowsFilter.filters.sourceOrganizations
                 )}
                 name="sourceOrganizations"
-                fnPromise={
-                  environment.model.organizations.getAutocompleteOrganizations
-                }
+                fnPromise={(query) => fnOrganizations(query, environment)}
                 isMulti
               />
               <C.AsyncAutocompleteSelect
@@ -184,7 +183,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                   (s) => s.components.pendingFlowsFilter.filters.sourceLocations
                 )}
                 name="sourceCountries"
-                fnPromise={environment.model.locations.getAutocompleteLocations}
+                fnPromise={(query) => fnLocations(query, environment)}
                 isMulti
               />
             </C.Section>
@@ -203,9 +202,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                       .destinationOrganizations
                 )}
                 name="destinationOrganizations"
-                fnPromise={
-                  environment.model.organizations.getAutocompleteOrganizations
-                }
+                fnPromise={(query) => fnOrganizations(query, environment)}
                 isMulti
               />
               <C.AsyncAutocompleteSelect
@@ -215,7 +212,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                     s.components.pendingFlowsFilter.filters.destinationLocations
                 )}
                 name="destinationCountries"
-                fnPromise={environment.model.locations.getAutocompleteLocations}
+                fnPromise={(query) => fnLocations(query, environment)}
                 isMulti
               />
               <C.AsyncAutocompleteSelect
@@ -226,7 +223,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                       .destinationUsageYears
                 )}
                 name="destinationUsageYears"
-                fnPromise={environment.model.usageYears.getUsageYears}
+                fnPromise={() => fnUsageYears(environment)}
                 isMulti
                 isAutocompleteAPI={false}
               />

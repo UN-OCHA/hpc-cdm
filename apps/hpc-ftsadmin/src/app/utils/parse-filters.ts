@@ -5,7 +5,12 @@ import { Strings } from '../../i18n/iface';
 import { OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { Dayjs } from 'dayjs';
 import { FlowsFilterValues } from '../components/filters/filter-flows-table';
-import { formValueToID, formValueToLabel } from './map-functions';
+import {
+  formValueToID,
+  formValueToLabel,
+  valueToInteger,
+} from './map-functions';
+import { FormObjectValue } from '@unocha/hpc-ui';
 
 /**
  * The whole idea of this filtering system is to parse every Filter Form to a common type, in this case Filter<T>
@@ -23,7 +28,6 @@ export type FilterKeys =
   | keyof Strings['components']['pendingFlowsFilter']['filters']
   | keyof Strings['components']['organizationsFilter']['filters'];
 
-export type FormObjectValue = { displayLabel: string; value: string };
 export type FilterValues =
   | string
   | string[]
@@ -403,7 +407,7 @@ export const parseFlowFilters = (
               ...res.flowObjectFilters,
               ...(filters[key]?.value as Array<FormObjectValue>).map(
                 (flowObject) => ({
-                  objectID: parseInt(flowObject.value),
+                  objectID: valueToInteger(flowObject.value),
                   direction: extractedDetails.direction,
                   objectType: extractedDetails.object,
                 })
@@ -464,7 +468,7 @@ export const parseFlowFilters = (
           const parsedCategories = (
             filters.keywords?.value as Array<FormObjectValue>
           ).map((keyword): { id: number; group: categories.CategoryGroup } => {
-            return { id: parseInt(keyword.value), group: 'keywords' };
+            return { id: valueToInteger(keyword.value), group: 'keywords' };
           });
 
           res.flowCategoryFilters = [
@@ -491,7 +495,7 @@ export const parseOrganizationFilters = (
           const val = filters[key]?.value as FormObjectValue;
           res.search[key] = {
             name: val.displayLabel,
-            id: parseInt(val.value),
+            id: valueToInteger(val.value),
           };
           break;
         }
@@ -500,7 +504,10 @@ export const parseOrganizationFilters = (
             ?.value as OrganizationFilterValues['locations'];
           if (locations) {
             res.search[key] = [
-              { name: locations.displayLabel, id: parseInt(locations.value) },
+              {
+                name: locations.displayLabel,
+                id: valueToInteger(locations.value),
+              },
             ];
           }
           break;

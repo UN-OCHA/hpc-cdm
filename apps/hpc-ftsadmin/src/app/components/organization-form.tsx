@@ -1,8 +1,7 @@
 import { Form, Formik } from 'formik';
 import tw from 'twin.macro';
 
-import { C } from '@unocha/hpc-ui';
-import { FormObjectValue } from '../utils/parse-filters';
+import { C, FormObjectValue } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
 import { useContext, useEffect, useState } from 'react';
@@ -16,6 +15,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import * as io from 'io-ts';
 import { util as codecs } from '@unocha/hpc-data';
 import validateForm from '../utils/form-validation';
+import {
+  fnCategories,
+  fnLocations,
+  fnOrganizations,
+} from '../utils/fn-promises';
+import { valueToInteger } from '../utils/map-functions';
 interface Props {
   id?: number;
   load?: () => void;
@@ -80,9 +85,13 @@ const formToUpdate = (
   const res: organizations.UpdateOrganizationParams = {
     ...values,
     id: id,
-    categories: values.organizationTypes.map((org) => parseInt(org.value)),
-    parentID: values.parent?.value ? parseInt(values.parent.value) : undefined,
-    locations: values.locations?.map((loc) => parseInt(loc.value)),
+    categories: values.organizationTypes.map((org) =>
+      valueToInteger(org.value)
+    ),
+    parentID: values.parent?.value
+      ? valueToInteger(values.parent.value)
+      : undefined,
+    locations: values.locations?.map((loc) => valueToInteger(loc.value)),
   };
   return res;
 };
@@ -93,11 +102,13 @@ const formToCreate = (
   const res: organizations.CreateOrganizationParams = {
     organization: {
       ...values,
-      categories: values.organizationTypes.map((org) => parseInt(org.value)),
+      categories: values.organizationTypes.map((org) =>
+        valueToInteger(org.value)
+      ),
       parentID: values.parent?.value
-        ? parseInt(values.parent.value)
+        ? valueToInteger(values.parent.value)
         : undefined,
-      locations: values.locations?.map((loc) => parseInt(loc.value)),
+      locations: values.locations?.map((loc) => valueToInteger(loc.value)),
     },
   };
   return res;
@@ -218,7 +229,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.locations
             )}
             name="locations"
-            fnPromise={environment.model.locations.getAutocompleteLocations}
+            fnPromise={(query) => fnLocations(query, environment)}
             isMulti
           />
           <C.TextFieldWrapper
@@ -264,14 +275,16 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
                 s.components.organizationUpdateCreate.fields.organizationTypes
             )}
             name="organizationTypes"
-            fnPromise={environment.model.categories.getCategories}
-            category="organizationType"
+            fnPromise={() => fnCategories('organizationType', environment)}
+            isAutocompleteAPI={false}
             isMulti
             requiered
           />
           <InfoText>
-            This is an only read field that fills based on the "Organization
-            Type"
+            {t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.text.organizationType
+            )}
           </InfoText>
           <C.SingleSelect
             label={t.t(
@@ -296,17 +309,16 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.parent
             )}
             name="parent"
-            fnPromise={
-              environment.model.organizations.getAutocompleteOrganizations
-            }
+            fnPromise={(query) => fnOrganizations(query, environment)}
             isAutocompleteAPI
           />
           <InfoText>
-            The Collective Organization setting indicates that the organization
-            is a 'stand-in' for one or more organizations of the same
-            Organization Type (e.g., “Red Cross Organizations”), and is used
-            when the specific organizations are not known or need to be masked
-            for security purposes
+            {t.t(
+              lang,
+              (s) =>
+                s.components.organizationUpdateCreate.text
+                  .collectiveOrganization
+            )}
           </InfoText>
           <C.CheckBox
             name="collectiveInd"
