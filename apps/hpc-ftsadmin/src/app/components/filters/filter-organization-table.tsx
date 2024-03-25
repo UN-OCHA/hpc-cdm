@@ -1,18 +1,19 @@
 import { Form, Formik, FormikState } from 'formik';
 import tw from 'twin.macro';
 
-import { C } from '@unocha/hpc-ui';
+import { C, FormObjectValue } from '@unocha/hpc-ui';
 import { Environment } from '../../../environments/interface';
-import {
-  FormObjectValue,
-  decodeFilters,
-  encodeFilters,
-} from '../../utils/parse-filters';
+import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import { LanguageKey, t } from '../../../i18n';
 import { Dayjs } from 'dayjs';
 import { Query } from '../tables/table-utils';
 import * as io from 'io-ts';
 import validateForm from '../../utils/form-validation';
+import {
+  fnCategories,
+  fnLocations,
+  fnOrganizations,
+} from '../../utils/fn-promises';
 interface Props {
   environment: Environment;
   query: Query;
@@ -124,8 +125,7 @@ export const FilterOrganizationsTable = (props: Props) => {
                     s.components.organizationsFilter.filters.organizationType
                 )}
                 name="organizationType"
-                fnPromise={environment.model.categories.getCategories}
-                category="organizationType"
+                fnPromise={() => fnCategories('organizationType', environment)}
               />
               <C.AsyncAutocompleteSelect
                 label={t.t(
@@ -134,9 +134,7 @@ export const FilterOrganizationsTable = (props: Props) => {
                     s.components.organizationsFilter.filters.parentOrganization
                 )}
                 name="parentOrganization"
-                fnPromise={
-                  environment.model.organizations.getAutocompleteOrganizations
-                }
+                fnPromise={(query) => fnOrganizations(query, environment)}
                 isAutocompleteAPI
               />
               <C.AsyncAutocompleteSelect
@@ -145,7 +143,7 @@ export const FilterOrganizationsTable = (props: Props) => {
                   (s) => s.components.organizationsFilter.filters.locations
                 )}
                 name="locations"
-                fnPromise={environment.model.locations.getAutocompleteLocations}
+                fnPromise={(query) => fnLocations(query, environment)}
                 isAutocompleteAPI
               />
               <C.DatePicker

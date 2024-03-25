@@ -5,16 +5,6 @@ import {
   TextField,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
-import {
-  categories,
-  emergencies,
-  globalClusters,
-  locations,
-  organizations,
-  plans,
-  projects,
-  usageYears,
-} from '@unocha/hpc-data';
 import React, { useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import { FormObjectValue } from './types/types';
@@ -26,22 +16,11 @@ const StyledAutocomplete = tw(Autocomplete)`
     min-w-[10rem]
     w-full`;
 
-type APIAutocompleteResult =
-  | organizations.GetOrganizationsResult
-  | locations.GetLocationsAutocompleteResult
-  | categories.GetCategoriesResult
-  | emergencies.GetEmergenciesAutocompleteResult
-  | plans.GetPlansAutocompleteResult
-  | projects.GetProjectsAutocompleteResult
-  | globalClusters.GetGlobalClustersResult
-  | usageYears.GetUsageYearsResult;
-
 type AsyncAutocompleteSelectProps = {
   name: string;
   label: string;
   placeholder?: string;
-  fnPromise: ({ query }: { query: string }) => Promise<APIAutocompleteResult>;
-  category?: categories.CategoryGroup;
+  fnPromise: ({ query }: { query: string }) => Promise<Array<FormObjectValue>>;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
   requiered?: boolean;
@@ -52,7 +31,6 @@ const AsyncAutocompleteSelect = ({
   placeholder,
   fnPromise,
   isMulti,
-  category,
   isAutocompleteAPI,
   requiered,
   ...otherProps
@@ -64,44 +42,18 @@ const AsyncAutocompleteSelect = ({
   const [options, setOptions] = useState<Array<FormObjectValue>>([]);
   const [data, setData] = useState<Array<FormObjectValue>>([]);
   const [isFetch, setIsFetch] = useState(false);
-  const [isUsageYear, setisUsageYear] = useState(false);
   const loading =
-    open &&
-    !isFetch &&
-    (!isAutocompleteAPI || inputValue.length >= 3 || category !== undefined);
-  const actualYear = new Date().getFullYear();
-  function isUsageYearsResult(
-    result: APIAutocompleteResult
-  ): result is usageYears.GetUsageYearsResult {
-    return usageYears.GET_USAGE_YEARS_RESULT.is(result);
-  }
-  function isOrganizationsResult(
-    result: APIAutocompleteResult
-  ): result is organizations.GetOrganizationsResult {
-    return organizations.GET_ORGANIZATIONS_RESULT.is(result);
-  }
+    open && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
 
   useEffect(() => {
     let active = true;
-    if (
-      !category &&
-      isAutocompleteAPI &&
-      (inputValue === '' || inputValue.length < 3)
-    ) {
+    if (isAutocompleteAPI && (inputValue === '' || inputValue.length < 3)) {
       setOptions([]);
       setData([]);
       setIsFetch(false);
       return undefined;
     }
-    if (
-      (data.length > 0 &&
-        (inputValue.length >= 3 || category || !isAutocompleteAPI) &&
-        (!isUsageYear || inputValue.length > 0)) ||
-      (isUsageYear &&
-        inputValue.length === 0 &&
-        options.at(0)?.displayLabel !== (actualYear - 5).toString() &&
-        options.at(-1)?.displayLabel !== (actualYear + 5).toString())
-    ) {
+    if (data.length > 0 && (inputValue.length >= 3 || !isAutocompleteAPI)) {
       setOptions(
         data
           .filter((x) =>
@@ -123,45 +75,11 @@ const AsyncAutocompleteSelect = ({
     (async () => {
       try {
         const response = await fnPromise({
-          query: category ? category : inputValue,
+          query: inputValue,
         });
-
-        const parsedResponse = response.map((responseValue) => {
-          if (isUsageYearsResult(response)) {
-            return {
-              displayLabel: (responseValue as usageYears.UsageYear).year,
-              value: responseValue.id,
-            };
-          } else if (isOrganizationsResult(response)) {
-            const org = responseValue as organizations.Organization;
-            return {
-              displayLabel: `${org.name} [${org.abbreviation}]`,
-              value: responseValue.id,
-            };
-          } else {
-            return {
-              displayLabel: (responseValue as { id: number; name: string })
-                .name,
-              value: responseValue.id,
-            };
-          }
-        });
-
-        setData(parsedResponse);
+        setData(response);
         if (active) {
-          if (isUsageYearsResult(response)) {
-            setisUsageYear(true);
-
-            const preOptions = parsedResponse.filter((item) => {
-              const year = parseInt(item.displayLabel, 10);
-              if (year >= actualYear - 5 && year <= actualYear + 5) {
-                return item;
-              }
-            });
-            setOptions(preOptions);
-          } else {
-            setOptions(parsedResponse);
-          }
+          setOptions(response);
         }
         setIsFetch(true);
       } catch (error) {
@@ -175,7 +93,7 @@ const AsyncAutocompleteSelect = ({
   }, [loading, inputValue]);
 
   useEffect(() => {
-    if (!open && !category && isAutocompleteAPI) {
+    if (!open && isAutocompleteAPI) {
       setOptions([]);
       setData([]);
       setIsFetch(false);

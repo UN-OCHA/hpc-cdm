@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 
-const USAGE_YEAR = t.type({
+export const USAGE_YEAR = t.type({
   id: t.number,
   year: t.string,
   createdAt: t.string,

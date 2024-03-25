@@ -1,4 +1,10 @@
-import { C, CLASSES, combineClasses, useDataLoader } from '@unocha/hpc-ui';
+import {
+  C,
+  CLASSES,
+  FormObjectValue,
+  combineClasses,
+  useDataLoader,
+} from '@unocha/hpc-ui';
 import { t } from '../../../i18n';
 import PageMeta from '../../components/page-meta';
 import { AppContext, getEnv } from '../../context';
@@ -8,9 +14,7 @@ import OrganizationForm, {
   AddEditOrganizationValues,
 } from '../../components/organization-form';
 import { organizations } from '@unocha/hpc-data';
-import { FormObjectValue } from '../../utils/parse-filters';
 
-//  TODO: Add support for i18n in every text
 interface Props {
   className?: string;
 }
@@ -153,11 +157,10 @@ export default (props: Props) => {
                     <PaddingContainer>
                       <C.PageTitle>{data.name}</C.PageTitle>
                       <InfoText>
-                        Modify information to edit the selected organization, or
-                        click the Delete button to{' '}
-                        <strong>PERMANENTLY DELETE</strong> the organization,
-                        this organization will be accesible in all HPC tools
-                        applications. Fields marked with "*" are mandatory
+                        {t.t(
+                          lang,
+                          (s) => s.components.organizationUpdateCreate.update
+                        )}
                       </InfoText>
                       <OrganizationForm
                         initialValues={parseOrganizationToInitialValue(data)}
@@ -170,12 +173,16 @@ export default (props: Props) => {
               ) : (
                 <PaddingContainer>
                   <C.PageTitle style={{ marginBottom: 0 }}>
-                    Add Organization
+                    {t.t(
+                      lang,
+                      (s) => s.components.organizationUpdateCreate.title.create
+                    )}
                   </C.PageTitle>
                   <InfoText>
-                    Provide information to add a new organization, this
-                    organization will be accesible in all HPC tools
-                    applications. Fields marked with "*" are mandatory.
+                    {t.t(
+                      lang,
+                      (s) => s.components.organizationUpdateCreate.create
+                    )}
                   </InfoText>
                   <OrganizationForm />
                 </PaddingContainer>

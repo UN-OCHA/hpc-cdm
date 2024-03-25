@@ -3,13 +3,9 @@ import tw from 'twin.macro';
 import React, { useState } from 'react';
 
 import * as io from 'io-ts';
-import { C } from '@unocha/hpc-ui';
+import { C, FormObjectValue } from '@unocha/hpc-ui';
 import { Environment } from '../../../environments/interface';
-import {
-  FormObjectValue,
-  decodeFilters,
-  encodeFilters,
-} from '../../utils/parse-filters';
+import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import { LanguageKey, t } from '../../../i18n';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { util } from '@unocha/hpc-core';
@@ -17,6 +13,16 @@ import { Alert } from '@mui/material';
 import { Query } from '../tables/table-utils';
 import { util as codecs } from '@unocha/hpc-data';
 import validateForm from '../../utils/form-validation';
+import {
+  fnCategories,
+  fnEmergencies,
+  fnGlobalClusters,
+  fnLocations,
+  fnOrganizations,
+  fnPlans,
+  fnProjects,
+  fnUsageYears,
+} from '../../utils/fn-promises';
 interface Props {
   environment: Environment;
   lang: LanguageKey;
@@ -192,8 +198,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                   (s) => s.components.flowsFilter.filters.keywords
                 )}
                 name="keywords"
-                fnPromise={environment.model.categories.getCategories}
-                category="keywords"
+                fnPromise={() => fnCategories('keywords', environment)}
                 isMulti
                 isAutocompleteAPI={false}
               />
@@ -291,9 +296,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                   (s) => s.components.flowsFilter.filters.sourceOrganizations
                 )}
                 name="sourceOrganizations"
-                fnPromise={
-                  environment.model.organizations.getAutocompleteOrganizations
-                }
+                fnPromise={(query) => fnOrganizations(query, environment)}
                 isMulti
               />
               <C.AsyncAutocompleteSelect
@@ -302,7 +305,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                   (s) => s.components.flowsFilter.filters.sourceLocations
                 )}
                 name="sourceLocations"
-                fnPromise={environment.model.locations.getAutocompleteLocations}
+                fnPromise={(query) => fnLocations(query, environment)}
                 isMulti
               />
 
@@ -312,7 +315,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                   (s) => s.components.flowsFilter.filters.sourceUsageYears
                 )}
                 name="sourceUsageYears"
-                fnPromise={environment.model.usageYears.getUsageYears}
+                fnPromise={() => fnUsageYears(environment)}
                 isMulti
                 isAutocompleteAPI={false}
               />
@@ -326,7 +329,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.sourceProjects
                   )}
                   name="sourceProjects"
-                  fnPromise={environment.model.projects.getAutocompleteProjects}
+                  fnPromise={(query) => fnProjects(query, environment)}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
@@ -335,7 +338,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.sourcePlans
                   )}
                   name="sourcePlans"
-                  fnPromise={environment.model.plans.getAutocompletePlans}
+                  fnPromise={(query) => fnPlans(query, environment)}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
@@ -344,7 +347,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.sourceGlobalClusters
                   )}
                   name="sourceGlobalClusters"
-                  fnPromise={environment.model.globalClusters.getGlobalClusters}
+                  fnPromise={() => fnGlobalClusters(environment)}
                   isMulti
                   isAutocompleteAPI={false}
                 />
@@ -354,9 +357,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.sourceEmergencies
                   )}
                   name="sourceEmergencies"
-                  fnPromise={
-                    environment.model.emergencies.getAutocompleteEmergencies
-                  }
+                  fnPromise={(query) => fnEmergencies(query, environment)}
                   isMulti
                 />
               </C.Section>
@@ -374,9 +375,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                     s.components.flowsFilter.filters.destinationOrganizations
                 )}
                 name="destinationOrganizations"
-                fnPromise={
-                  environment.model.organizations.getAutocompleteOrganizations
-                }
+                fnPromise={(query) => fnOrganizations(query, environment)}
                 isMulti
               />
               <C.AsyncAutocompleteSelect
@@ -385,7 +384,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                   (s) => s.components.flowsFilter.filters.destinationLocations
                 )}
                 name="destinationLocations"
-                fnPromise={environment.model.locations.getAutocompleteLocations}
+                fnPromise={(query) => fnLocations(query, environment)}
                 isMulti
               />
 
@@ -395,7 +394,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                   (s) => s.components.flowsFilter.filters.destinationUsageYears
                 )}
                 name="destinationUsageYears"
-                fnPromise={environment.model.usageYears.getUsageYears}
+                fnPromise={() => fnUsageYears(environment)}
                 isMulti
                 isAutocompleteAPI={false}
               />
@@ -409,7 +408,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.destinationProjects
                   )}
                   name="destinationProjects"
-                  fnPromise={environment.model.projects.getAutocompleteProjects}
+                  fnPromise={(query) => fnProjects(query, environment)}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
@@ -418,7 +417,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.destinationPlans
                   )}
                   name="destinationPlans"
-                  fnPromise={environment.model.plans.getAutocompletePlans}
+                  fnPromise={(query) => fnPlans(query, environment)}
                   isMulti
                 />
                 <C.AsyncAutocompleteSelect
@@ -428,7 +427,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                       s.components.flowsFilter.filters.destinationGlobalClusters
                   )}
                   name="destinationGlobalClusters"
-                  fnPromise={environment.model.globalClusters.getGlobalClusters}
+                  fnPromise={() => fnGlobalClusters(environment)}
                   isMulti
                   isAutocompleteAPI={false}
                 />
@@ -439,9 +438,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                       s.components.flowsFilter.filters.destinationEmergencies
                   )}
                   name="destinationEmergencies"
-                  fnPromise={
-                    environment.model.emergencies.getAutocompleteEmergencies
-                  }
+                  fnPromise={(query) => fnEmergencies(query, environment)}
                   isMulti
                 />
               </C.Section>

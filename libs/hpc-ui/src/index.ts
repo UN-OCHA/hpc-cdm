@@ -5,6 +5,7 @@ import type { Theme } from './lib/theme';
 import { dataLoader, useDataLoader } from './lib/util';
 import type { DataLoaderState } from './lib/util';
 import { Translations } from './lib/i18n';
+import { FormObjectValue } from './lib/components/form-fields/types/types';
 
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
 import * as actionableButton from './lib/components/actionable-button';
@@ -105,6 +106,7 @@ export {
   ThemeProvider,
   Translations,
   dialogs,
+  FormObjectValue,
 };
 
 export type { DataLoaderState, Theme };
