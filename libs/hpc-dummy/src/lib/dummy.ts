@@ -489,9 +489,7 @@ export class Dummy {
       categories: {
         getCategories: dummyEndpoint(
           'categories.getCategories',
-          async (
-            params: categories.GetCategoriesParams
-          ): Promise<categories.GetCategoriesResult> => {
+          async (): Promise<categories.GetCategoriesResult> => {
             // Implement the dummy data retrieval logic here
             // Replace the following line with the actual implementation
             return [
@@ -566,9 +564,7 @@ export class Dummy {
         ),
         deleteKeyword: dummyEndpoint(
           'categories.deleteKeyword',
-          async (
-            params: categories.DeleteKeywordParams
-          ): Promise<categories.DeleteKeywordResult> => {
+          async (): Promise<categories.DeleteKeywordResult> => {
             // Implement the dummy data retrieval logic here
             // Replace the following line with the actual implementation
             return undefined;
@@ -576,7 +572,7 @@ export class Dummy {
         ),
         updateKeyword: dummyEndpoint(
           'categories.updateKeyword',
-          async (params: categories.Keyword): Promise<categories.Category> => {
+          async (): Promise<categories.Category> => {
             // Implement the dummy data retrieval logic here
             // Replace the following line with the actual implementation
             return {
@@ -596,9 +592,7 @@ export class Dummy {
       emergencies: {
         getAutocompleteEmergencies: dummyEndpoint(
           'emergencies.getAutocompleteEmergencies',
-          async (
-            params: emergencies.GetEmergenciesAutocompleteParams
-          ): Promise<emergencies.GetEmergenciesAutocompleteResult> => {
+          async (): Promise<emergencies.GetEmergenciesAutocompleteResult> => {
             // Implement the dummy data retrieval logic here
             // Replace the following line with the actual implementation
             return [
@@ -797,12 +791,9 @@ export class Dummy {
             };
           }
         ),
-        searchFlows: dummyEndpoint(
-          'flows.searchFlows',
-          async (params: flows.SearchFlowsParams) => {
-            throw new errors.NotFoundError();
-          }
-        ),
+        searchFlows: dummyEndpoint('flows.searchFlows', async () => {
+          throw new errors.NotFoundError();
+        }),
         bulkRejectPendingFlows: dummyEndpoint(
           'flows.bulkRejectPendingFlows',
           async () => {
@@ -1112,9 +1103,7 @@ export class Dummy {
       locations: {
         getAutocompleteLocations: dummyEndpoint(
           'locations.getAutocompleteLocations',
-          async (
-            params: locations.GetLocationsAutocompleteParams
-          ): Promise<locations.GetLocationsAutocompleteResult> => {
+          async (): Promise<locations.GetLocationsAutocompleteResult> => {
             // Implement the dummy data retrieval logic here
             // Replace the following line with the actual implementation
             return [
@@ -1142,9 +1131,7 @@ export class Dummy {
       organizations: {
         getAutocompleteOrganizations: dummyEndpoint(
           'organizations.getAutocompleteOrganizations',
-          async (
-            params: organizations.GetOrganizationsAutocompleteParams
-          ): Promise<organizations.GetOrganizationsResult> => {
+          async (): Promise<organizations.GetOrganizationsResult> => {
             // Implement the dummy data retrieval logic here
             // Replace the following line with the actual implementation
             return [
@@ -1249,9 +1236,7 @@ export class Dummy {
         ),
         searchOrganizations: dummyEndpoint(
           'organizations.searchOrganizations',
-          async (
-            params: organizations.SearchOrganizationParams
-          ): Promise<organizations.SearchOrnganizationResult> => {
+          async (): Promise<organizations.SearchOrnganizationResult> => {
             return {
               count: '1',
               organizations: [
@@ -1278,9 +1263,7 @@ export class Dummy {
         ),
         getOrganization: dummyEndpoint(
           'organizations.getOrganization',
-          async (
-            params: organizations.GetOrganizationParams
-          ): Promise<organizations.GetOrganizationResult> => {
+          async (): Promise<organizations.GetOrganizationResult> => {
             return {
               id: 9093,
               name: 'Association pour le Secours et le Développement',
@@ -1382,9 +1365,7 @@ export class Dummy {
         ),
         createOrganization: dummyEndpoint(
           'organizations.createOrganization',
-          async (
-            params: organizations.CreateOrganizationParams
-          ): Promise<organizations.CreateOrganizationResult> => {
+          async (): Promise<organizations.CreateOrganizationResult> => {
             return {
               id: 9093,
               name: 'Association pour le Secours et le Développement',
@@ -1408,9 +1389,7 @@ export class Dummy {
         ),
         updateOrganization: dummyEndpoint(
           'organizations.updateOrganization',
-          async (
-            params: organizations.UpdateOrganizationParams
-          ): Promise<organizations.UpdateOrganizationResult> => {
+          async (): Promise<organizations.UpdateOrganizationResult> => {
             return {
               id: 9093,
               name: 'Association pour le Secours et le Développement',
@@ -1442,9 +1421,7 @@ export class Dummy {
         ),
         deleteOrganization: dummyEndpoint(
           'organizations.deleteOrganization',
-          async (
-            params: organizations.DeleteOrganizationParams
-          ): Promise<organizations.DeleteOrganizationResult> => {
+          async (): Promise<organizations.DeleteOrganizationResult> => {
             return undefined;
           }
         ),
@@ -1533,9 +1510,7 @@ export class Dummy {
       plans: {
         getAutocompletePlans: dummyEndpoint(
           'plans.getAutocompletePlans',
-          async (
-            params: plans.GetPlansAutocompleteParams
-          ): Promise<plans.GetPlansAutocompleteResult> => {
+          async (): Promise<plans.GetPlansAutocompleteResult> => {
             // Implement the dummy data retrieval logic here
             // Replace the following line with the actual implementation
             return [
@@ -1868,9 +1843,7 @@ export class Dummy {
       projects: {
         getAutocompleteProjects: dummyEndpoint(
           'projects.getAutocompleteProjects',
-          async (
-            params: projects.GetProjectsAutocompleteParams
-          ): Promise<projects.GetProjectsAutocompleteResult> => {
+          async (): Promise<projects.GetProjectsAutocompleteResult> => {
             // Implement the dummy data retrieval logic here
             // Replace the following line with the actual implementation
             return [
