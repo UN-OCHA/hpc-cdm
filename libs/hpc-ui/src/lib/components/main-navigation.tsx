@@ -106,7 +106,6 @@ const Nav = styled.nav`
     .${CLS.EXTERNAL_LINKS} {
       position: absolute;
       top: 100%;
-      left: 0;
       display: none;
       background: ${(p) => p.theme.colors.panel.bg};
       white-space: nowrap;

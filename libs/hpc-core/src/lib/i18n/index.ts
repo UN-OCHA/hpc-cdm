@@ -106,11 +106,7 @@ export class LanguageChoice<LanguageKey extends string> {
   private applyLanguage = () => {
     document.documentElement.lang = this.language;
     const meta = this.languages[this.language];
-    if (meta.direction === 'ltr') {
-      document.documentElement.removeAttribute('dir');
-    } else {
-      document.documentElement.setAttribute('dir', meta.direction);
-    }
+    document.documentElement.setAttribute('dir', meta.direction);
   };
 
   /**
