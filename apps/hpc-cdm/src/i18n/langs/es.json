@@ -1,6 +1,6 @@
 {
   "switchToThisLanguage": "Pasar al español",
-  "title": "Encuesta sobre las estructuras de coordinación humanitaria - 2022",
+  "title": "Encuesta sobre las estructuras de coordinación humanitaria - 2023",
   "user": {
     "login": "Inicio de sesión",
     "logout": "Cerrar sesión"
@@ -36,10 +36,10 @@
   },
   "components": {
     "appTitle": {
-      "primary": "Encuesta sobre las estructuras de coordinación humanitaria - 2022",
+      "primary": "Encuesta sobre las estructuras de coordinación humanitaria - 2023",
       "secondary": "Estructuras de coordinación humanitaria a escala nacional"
     },
-    "surveyIntro": "Bienvenido a la encuesta anual sobre las estructuras y capacidades de coordinación humanitaria existentes en 2022. Haga clic en el botón de inicio de sesión. Se le pedirá que inicie sesión con su dirección de correo electrónico y su contraseña de \"Humanitarian ID\". Si ha olvidado sus datos de acceso o necesita registrarse, siga las instrucciones de la página del Humanitarian ID.",
+    "surveyIntro": "Bienvenido a la encuesta anual sobre las estructuras y capacidades de coordinación humanitaria existentes en 2023. Haga clic en el botón de inicio de sesión. Se le pedirá que inicie sesión con su dirección de correo electrónico y su contraseña de \"Humanitarian ID\". Si ha olvidado sus datos de acceso o necesita registrarse, siga las instrucciones de la página del Humanitarian ID.",
     "acceptableUseNotification": {
       "login": "Haga clic aquí para iniciar sesión",
       "title": "Notificación de uso aceptable",
