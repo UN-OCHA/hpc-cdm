@@ -22,6 +22,11 @@ const FLOW_LIST = t.keyof({
   search: null,
 });
 
+const FORM_FIELD = t.type({
+  id: t.union([t.string, t.number]),
+  name: t.string,
+});
+
 export type FlowList = t.TypeOf<typeof FLOW_LIST>;
 
 export type FlowObject = t.TypeOf<typeof FLOW_OBJECT>;
@@ -96,6 +101,9 @@ const FLOW_REPORT_DETAIL = t.intersection([
         title: t.string,
       })
     ),
+    reportFileTitle: t.string,
+    reportUrlTitle: t.string,
+    reportUrl: t.string,
   }),
 ]);
 
@@ -391,6 +399,15 @@ export const SEARCH_FLOWS_RESULT = t.type({
   }),
 });
 
+export const VALIDATION_RESULT = t.type({
+  success: t.string,
+  checked: t.string,
+  message: t.string,
+  confirmed: t.union([t.string, t.null]),
+});
+export type ValidationResult = t.TypeOf<typeof VALIDATION_RESULT>;
+export const VALIDATE_FLOW_RESULT = t.array(VALIDATION_RESULT);
+
 export type SearchFlowsResult = t.TypeOf<typeof SEARCH_FLOWS_RESULT>;
 
 const FLOW_FILTERS = t.partial({
@@ -490,6 +507,54 @@ export type GetFlowsAutocompleteParams = t.TypeOf<
   typeof GET_FLOWS_AUTOCOMPLETE_PARAMS
 >;
 
+export const FUNDING_DETAIL = t.type({
+  governingEntity: t.array(FORM_FIELD),
+  location: t.array(FORM_FIELD),
+  organization: t.array(FORM_FIELD),
+  project: t.array(FORM_FIELD),
+  usageYear: t.array(FORM_FIELD),
+  globalCluster: t.array(FORM_FIELD),
+  emergency: t.array(FORM_FIELD),
+});
+
+export const GET_VALIDATE_FLOWS_PARAMS = t.type({
+  amountUSD: t.number,
+  flowDate: t.string,
+  decisionDate: t.union([t.string, t.null]),
+  firstReportedDate: t.string,
+  budgetYear: t.string,
+  origAmount: t.union([t.number, t.null]),
+  origCurrency: t.string,
+  exchangeRate: t.union([t.number, t.null]),
+  activeStatus: t.boolean,
+  restricted: t.boolean,
+  newMoney: t.boolean,
+  description: t.string,
+  versionStartDate: t.string,
+  versionEndDate: t.string,
+  flowObjects: t.array(FLOW_OBJECT),
+  children: t.any,
+  parents: t.any,
+  reportDetails: t.any,
+  flowType: FORM_FIELD,
+  keywords: t.array(FORM_FIELD),
+  flowStatuses: FORM_FIELD,
+  contributionTypes: FORM_FIELD,
+  method: FORM_FIELD,
+  earmarking: FORM_FIELD,
+  isCancellation: t.union([t.boolean, t.null]),
+  src: FUNDING_DETAIL,
+  dest: FUNDING_DETAIL,
+});
+
+export type GetValidateFlowParams = t.TypeOf<typeof GET_VALIDATE_FLOWS_PARAMS>;
+
+export const CREATE_FLOW = t.type({
+  flow: GET_VALIDATE_FLOWS_PARAMS,
+});
+
+export type CreateFlowParams = t.TypeOf<typeof CREATE_FLOW>;
+
 export interface Model {
   getFlowREST(params: GetFlowParams): Promise<GetFlowResult>;
   getFlow(params: GetFlowParams): Promise<GetFlowResult>;
@@ -501,4 +566,6 @@ export interface Model {
     params: SearchFlowsParams
   ): Promise<SearchFlowsBatchesResult>;
   getAutocompleteFlows(params: GetFlowsAutocompleteParams): Promise<FlowResult>;
+  validateFlow(params: GetValidateFlowParams): Promise<ValidationResult[]>;
+  createFlow(params: CreateFlowParams): Promise<FlowREST>;
 }

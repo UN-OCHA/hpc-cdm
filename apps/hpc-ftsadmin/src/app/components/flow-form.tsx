@@ -5,8 +5,7 @@ import dayjs from 'dayjs';
 import { isRight } from 'fp-ts/Either';
 import * as t from 'io-ts';
 
-import { C, dialogs } from '@unocha/hpc-ui';
-import * as HPC from '../utils/flow-validations';
+import { C, dialogs, dataLoader } from '@unocha/hpc-ui';
 
 import {
   Table,
@@ -16,11 +15,17 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Alert,
+  IconButton,
+  Collapse,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+
 import { Environment } from '../../environments/interface';
 import { MdAdd, MdRemove, MdClose, MdCheck } from 'react-icons/md';
 import { usageYears, forms, governingEntities } from '@unocha/hpc-data';
 import { isValidDate, isValidYear } from '../utils/validation';
+import { getEnv } from '../context';
 
 export type AutoCompleteSeletionType = forms.InputSelectValueType;
 
@@ -40,6 +45,9 @@ export interface ReportDetailType {
   reportFiles: {
     title: string;
   }[];
+  reportFileTitle?: string;
+  reportUrlTitle?: string;
+  reportUrl?: string;
   versionId?: number;
 }
 
@@ -119,6 +127,7 @@ export interface VersionDataType {
 
 export interface InputEntriesType {
   amountUSD: forms.InputEntryType | null;
+  origCurrency: forms.InputEntryType | null;
   keywords: forms.InputEntryType | null;
   flowStatus: forms.InputEntryType | null;
   flowType: forms.InputEntryType | null;
@@ -321,65 +330,217 @@ export const FlowForm = (props: Props) => {
     rejectInputEntry,
   } = props;
   const { confirm } = dialogs;
+  const env = getEnv();
 
   const normalizeFlowData = (values: FormValues) => {
-    // console.log(values.)
     const data = {
-      flowType: values.flowType,
-      contributionTypes: values.contributionType,
-      method: values.method,
+      amountUSD: values.amountUSD,
+      flowDate: values.flowDate,
+      decisionDate: values.decisionDate,
+      firstReportedDate: values.firstReported,
+      budgetYear: values.budgetYear,
+      origAmount: values.amountOriginal,
+      origCurrency: (values.origCurrency as AutoCompleteSeletionType)
+        .displayLabel,
+      exchangeRate: values.exchangeRateUsed,
+      activeStatus: true,
+      restricted: true,
       newMoney: true,
-      isCancellation: true,
-      src: {
-        governingEntity: values.sourceGoverningEntities,
-        location: values.sourceLocations,
-        organization: values.sourceOrganizations,
-        project: values.sourceProjects,
-        usageYear: values.sourceUsageYears,
-        globalCluster: values.sourceGlobalClusters,
-        emergency: values.sourceEmergencies,
-      },
-      dest: {
-        governingEntity: values.destinationGoverningEntities,
-        location: values.destinationLocations,
-        organization: values.destinationOrganizations,
-        project: values.destinationProjects,
-        usageYear: values.destinationUsageYears,
-        globalCluster: values.destinationGlobalClusters,
-        emergency: values.destinationEmergencies,
-      },
+      description: values.flowDescription,
+      versionStartDate: '',
+      versionEndDate: '',
+      flowObjects:
+        values.sources && Array.isArray(values.sources) && values.sources.length
+          ? values.sources.map((item: any[]) => item[0].flowObject)
+          : [],
       children: values.childFlow
         ? values.childFlow.map((item) => JSON.parse(item.value as string))
         : [],
       parents: values.parentFlow
         ? values.parentFlow.map((item) => JSON.parse(item.value as string))
         : [],
-      reportDetails: values.reportDetails,
-      keywords: values.keywords,
-      amountUSD: values.amountUSD,
-      description: values.flowDescription,
-      flowStatuses: values.flowStatus,
-      flowDate: values.flowDate,
-      firstReportedDate: values.firstReported,
-      origCurrency: values.origCurrency,
-      activeStatus: true,
-      restricted: true,
+      reportDetails: values.reportDetails.map((item) => {
+        return {
+          // id: 587806,
+          // flowID: 245996,
+          // versionID: 1,
+          contactInfo: item.reporterContactInformation,
+          source: item.reportSource,
+          date: item.reportedDate,
+          sourceID: null,
+          refCode: '7F-10073.04',
+          verified: true,
+          organizationID: item.reportedOrganization.value,
+          categories: [],
+          organization: {
+            id: item.reportedOrganization.value,
+            name: item.reportedOrganization.displayLabel,
+            // nativeName: null,
+            // abbreviation: 'Switzerland',
+            // url: null,
+            // parentID: null,
+            // comments: null,
+            // verified: true,
+            // notes: null,
+            // active: true,
+            // collectiveInd: false,
+            // newOrganizationId: null,
+            // createdAt: '2017-01-14T00:53:57.380Z',
+            // updatedAt: '2017-01-14T00:53:57.380Z',
+            // deletedAt: null,
+          },
+          reportFiles: [
+            {
+              type: 'url',
+              title: item.reportUrlTitle,
+              url: item.reportUrl,
+            },
+            {
+              type: 'file',
+              title: item.reportFileTitle,
+            },
+          ],
+          reportChannel: {
+            id: item.reportChannel && item.reportChannel.value,
+            name: item.reportChannel && item.reportChannel.displayLabel,
+            // description: null,
+            // parentID: null,
+            // code: null,
+            // group: 'reportChannel',
+            // includeTotals: null,
+            // createdAt: '2017-01-13T22:18:02.866Z',
+            // updatedAt: '2017-01-13T22:18:02.866Z',
+            // categoryRef: {
+            //   objectID: 587806,
+            //   versionID: 1,
+            //   objectType: 'reportDetail',
+            //   categoryID: 138,
+            //   createdAt: '2024-03-24T15:17:42.977Z',
+            //   updatedAt: '2024-03-24T15:17:42.977Z',
+            // },
+          },
+          // isEmpty: false,
+        };
+      }),
+      flowType: {
+        id: values.flowType && values.flowType.value,
+        name: values.flowType && values.flowType.displayLabel,
+      },
+      keywords: values.keywords.map((item) => ({
+        id: item.value,
+        name: item.displayLabel,
+      })),
+      flowStatuses: {
+        id: values.flowStatus && values.flowStatus.value,
+        name: values.flowStatus && values.flowStatus.displayLabel,
+      },
+      contributionTypes: {
+        id: values.contributionType && values.contributionType.value,
+        name: values.contributionType && values.contributionType.displayLabel,
+      },
+      method: {
+        id: values.method && values.method.value,
+        name: values.method && values.method.displayLabel,
+      },
+      earmarking: {
+        id: values.earmarkingType && values.earmarkingType.value,
+        name: values.earmarkingType && values.earmarkingType.displayLabel,
+      },
+      isCancellation: null,
+      src: {
+        governingEntity: values.sourceGoverningEntities.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        location: values.sourceLocations.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        organization: values.sourceOrganizations.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        project: values.sourceProjects.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        usageYear: values.sourceUsageYears.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        globalCluster: values.sourceGlobalClusters.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        emergency: values.sourceEmergencies.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+      },
+      dest: {
+        governingEntity: values.destinationGoverningEntities.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        location: values.destinationLocations.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        organization: values.destinationOrganizations.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        project: values.destinationProjects.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        usageYear: values.destinationUsageYears.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        globalCluster: values.destinationGlobalClusters.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        emergency: values.destinationEmergencies.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+      },
     };
     return data;
   };
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = async (values: FormValues) => {
     const data = normalizeFlowData(values);
 
-    const hpcFlowObject = new (HPC as any).HPC.Flow(
-      data,
-      {
-        adding: !isEdit,
-        originalFlow: {},
-      },
-      window
-    );
+    const response = await env.model.flows.validateFlow(data);
+    let flag = true;
+    console.log('response', response);
+    response.forEach((obj) => {
+      if (obj) {
+        const { success, message, confirmed } = obj;
+        if (!success) {
+          if (confirmed) {
+            const confirm = window.confirm(confirmed);
+            if (!confirm) {
+              setOpenAlerts([...openAlerts, { message, id: alertId }]);
+              setAlertId((prevId) => prevId + 1);
+              flag = false;
+            }
+          } else if (message) {
+            setOpenAlerts([...openAlerts, { message, id: alertId }]);
+            setAlertId((prevId) => prevId + 1);
+            flag = false;
+          }
+        }
+      }
+    });
 
-    console.log(hpcFlowObject.preValidate());
+    console.log('flag--->', flag);
+    if (flag) {
+      const response = await env.model.flows.createFlow({ flow: data });
+      console.log(response);
+    }
   };
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
@@ -405,6 +566,14 @@ export const FlowForm = (props: Props) => {
   const [isShowChildFlow, setShowChildFlow] = useState(
     initialValue.childFlow && initialValue.childFlow.length ? true : false
   );
+  const [openAlerts, setOpenAlerts] = useState<
+    { message: string; id: number }[]
+  >([]);
+  const [alertId, setAlertId] = useState(0);
+
+  const handleClose = (id: number) => {
+    setOpenAlerts(openAlerts.filter((alert) => alert.id !== id));
+  };
   const buttonText = 'Calculate The Exchange Rate';
 
   const handleCalculateExchangeRate = (values: any, setFieldValue: any) => {
@@ -423,11 +592,6 @@ export const FlowForm = (props: Props) => {
       console.warn('Both original amount and USD amount are missing.');
     }
   };
-
-  useEffect(() => {
-    console.log('HPC--------->');
-    console.log(HPC);
-  }, []);
 
   useEffect(() => {
     if (initialValue.parentFlow && initialValue.parentFlow.length) {
@@ -1062,7 +1226,6 @@ export const FlowForm = (props: Props) => {
   //       'Report detail information is required and should have at least 1'
   //     ),
   // });
-  console.log(initialValue);
   return (
     <Formik
       initialValues={initialValue}
@@ -1073,6 +1236,26 @@ export const FlowForm = (props: Props) => {
       {({ values, setFieldValue }) => {
         return (
           <Form>
+            {openAlerts.map((alert) => (
+              <Alert
+                key={alert.id}
+                severity="error"
+                action={
+                  <IconButton
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={() => handleClose(alert.id)}
+                  >
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+                sx={{ mb: 2 }}
+                onClose={() => handleClose(alert.id)}
+              >
+                {alert.message}
+              </Alert>
+            ))}
             <StyledLayoutRow>
               <StyledHalfSection>
                 <StyledFullSection>
@@ -1409,6 +1592,12 @@ export const FlowForm = (props: Props) => {
                             fnPromise={
                               environment.model.currencies.getCurrencies
                             }
+                            entryInfo={
+                              inputEntries.origCurrency
+                                ? [inputEntries.origCurrency]
+                                : []
+                            }
+                            rejectInputEntry={rejectInputEntry}
                             isAutocompleteAPI={false}
                           />
                         </StyledCurrencyRow>
@@ -1982,8 +2171,8 @@ export const FlowForm = (props: Props) => {
             {isEdit && versionData && versionData.length > 0 && (
               <StyledFullSection>
                 <C.FormSection title="Flow Versions">
-                  {versionData.map((version) => (
-                    <div>
+                  {versionData.map((version, index) => (
+                    <div key={index}>
                       <C.CheckBox
                         key={`${version.flowId}-${version.versionId}`}
                         name={`${version.flowId}-${version.versionId}`}
