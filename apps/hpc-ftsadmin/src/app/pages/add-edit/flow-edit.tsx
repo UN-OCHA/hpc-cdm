@@ -189,6 +189,9 @@ export default (props: Props) => {
             title: '',
           },
         ],
+        reportFileTitle: '',
+        reportUrlTitle: '',
+        reportUrl: '',
       },
     ],
     parentFlow: [],
@@ -523,6 +526,7 @@ export default (props: Props) => {
               flowDate: value.flowDate,
               amountUSD: value.amountUSD,
               origAmount: value.origAmount,
+              origCurrency: value.origCurrency,
               versionID: value.versionID,
             }),
           };
@@ -691,6 +695,16 @@ export default (props: Props) => {
       const amountOriginal = parseFloat(data.origAmount ?? '') || null;
       const exchangeRateUsed = parseFloat(data.exchangeRate ?? '') || null;
       const origCurrency = data.origCurrency ?? '';
+      // console.log(env.model.currencies)
+      // const origCurrency = env.model.currencies.map(option => {
+      //   if(option.code === data.origCurrency) {
+      //     return {
+      //       value: option.id,
+      //       displayLabel: option.code,
+      //     };
+      //   }
+      // })
+      // console.log('origCurrency', origCurrency)
       const keywords = getFormValueFromCategory(
         data,
         'keywords',
@@ -858,6 +872,9 @@ export default (props: Props) => {
         reportFiles: (detail?.reportFiles ?? []).map((fileData) => ({
           title: fileData.title,
         })),
+        reportFileTitle: detail.reportFileTitle,
+        reportUrlTitle: detail.reportUrlTitle,
+        reportUrl: detail.reportUrl,
       }));
       const prevReportDetails = state.data.reduce(
         (details, flowItemData, index) => {
@@ -887,6 +904,9 @@ export default (props: Props) => {
                   title: fileData.title,
                 })),
                 versionId: index + 1,
+                reportFileTitle: detail.reportFileTitle,
+                reportUrlTitle: detail.reportUrlTitle,
+                reportUrl: detail.reportUrl,
               })),
             ];
           }

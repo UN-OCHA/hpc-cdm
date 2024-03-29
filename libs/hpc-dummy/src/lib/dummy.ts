@@ -706,6 +706,18 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
+        validateFlow: dummyEndpoint(
+          'flows.getVallidateFlow',
+          async (params: flows.GetValidateFlowParams) => {
+            throw new errors.NotFoundError();
+          }
+        ),
+        createFlow: dummyEndpoint(
+          'flows.createFlow',
+          async (params: flows.CreateFlowParams) => {
+            throw new errors.NotFoundError();
+          }
+        ),
         getAutocompleteFlows: dummyEndpoint(
           'flows.searchFlows',
           async (params: flows.GetFlowsAutocompleteParams) => {
