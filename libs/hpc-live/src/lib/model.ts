@@ -678,6 +678,26 @@ export class LiveModel implements Model {
           },
           resultType: flows.BULK_REJECT_PENDING_FLOWS_RESULT,
         }),
+      validateFlow: (params) =>
+        this.call({
+          pathname: `/v2/flow/validate`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.VALIDATE_FLOW_RESULT,
+        }),
+      createFlow: (params) =>
+        this.call({
+          pathname: `/v1/flow/create`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.GET_FLOW_RESULT,
+        }),
       getTotalAmountUSD: (params) => {
         const query = `query{
             searchFlowsTotalAmountUSD${searchFlowsParams(params)}{
