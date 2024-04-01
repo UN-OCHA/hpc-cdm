@@ -523,6 +523,7 @@ export const GET_VALIDATE_FLOWS_PARAMS = t.type({
   decisionDate: t.union([t.string, t.null]),
   firstReportedDate: t.string,
   budgetYear: t.string,
+  categories: t.array(t.string),
   origAmount: t.union([t.number, t.null]),
   origCurrency: t.string,
   exchangeRate: t.union([t.number, t.null]),
