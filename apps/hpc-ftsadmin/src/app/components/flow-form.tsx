@@ -332,8 +332,153 @@ export const FlowForm = (props: Props) => {
   const { confirm } = dialogs;
   const env = getEnv();
 
+  const collapseFlowObjects = (data: any) => {
+    data.flowObjects = [];
+
+    collapsePerBehavior(data.dest, 'destination');
+    collapsePerBehavior(data.src, 'source');
+
+    function collapsePerBehavior(behaviorArr: any, ref: any) {
+      Object.keys(behaviorArr).forEach((type) => {
+        behaviorArr[type].forEach((obj: any) => {
+          if (
+            obj !== null &&
+            (!Object.prototype.hasOwnProperty.call(obj, 'cleared') ||
+              !obj.cleared)
+          ) {
+            if (type === 'organization') {
+              obj.objectDetail = obj.implementingPartner ? 'partner' : null;
+            }
+
+            const flowObj = {
+              refDirection: ref,
+              objectType: type,
+              objectID: obj.id,
+              behavior: obj.behavior || null,
+              objectDetail: obj.objectDetail,
+            };
+            data.flowObjects.push(flowObj);
+          }
+        });
+      });
+    }
+
+    return data;
+  };
+
+  const collapseCategories = (
+    data: any
+    // inactiveReasons: any,
+    // isPending: any,
+    // approvePending: any
+  ) => {
+    // const rejectedReasonCat = inactiveReasons.find(
+    //   (reason: any) => reason.name === 'Rejected'
+    // );
+    // const cancelledReasonCat = inactiveReasons.find(
+    //   (reason: any) => reason.name === 'Cancelled'
+    // );
+
+    // if (data.rejected) {
+    //   data.inactiveReason.push(rejectedReasonCat);
+    // } else if (data.cancelled) {
+    //   data.inactiveReason.push(cancelledReasonCat);
+    // }
+
+    // if (isPending) {
+    //     data = decideIfPendingReviewShouldBeSet(data, approvePending, inactiveReasons);
+    // }
+
+    data.categories = [
+      data.flowType,
+      data.flowStatuses,
+      data.contributionTypes,
+      data.method,
+      data.childMethod,
+      data.keywords,
+      data.inactiveReason,
+      data.beneficiaryGroup,
+      data.pendingStatus,
+      data.earmarking,
+    ].filter((category) => category !== undefined);
+
+    data.categories = data.categories
+      .map((value: any) => {
+        if (value && value.id) {
+          return value.id;
+        }
+      })
+      .filter(function (value: any) {
+        return value;
+      });
+
+    return data;
+  };
+
   const normalizeFlowData = (values: FormValues) => {
-    const data = {
+    const fundingObject = {
+      src: {
+        governingEntity: values.sourceGoverningEntities.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        location: values.sourceLocations.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        organization: values.sourceOrganizations.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        project: values.sourceProjects.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        usageYear: values.sourceUsageYears.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        globalCluster: values.sourceGlobalClusters.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        emergency: values.sourceEmergencies.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+      },
+      dest: {
+        governingEntity: values.destinationGoverningEntities.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        location: values.destinationLocations.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        organization: values.destinationOrganizations.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        project: values.destinationProjects.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        usageYear: values.destinationUsageYears.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        globalCluster: values.destinationGlobalClusters.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+        emergency: values.destinationEmergencies.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+        })),
+      },
+    };
+    let data = {
       amountUSD: values.amountUSD,
       flowDate: values.flowDate,
       decisionDate: values.decisionDate,
@@ -344,15 +489,12 @@ export const FlowForm = (props: Props) => {
         .displayLabel,
       exchangeRate: values.exchangeRateUsed,
       activeStatus: true,
-      restricted: true,
+      restricted: false,
       newMoney: true,
       description: values.flowDescription,
       versionStartDate: '',
       versionEndDate: '',
-      flowObjects:
-        values.sources && Array.isArray(values.sources) && values.sources.length
-          ? values.sources.map((item: any[]) => item[0].flowObject)
-          : [],
+      flowObjects: collapseFlowObjects(fundingObject),
       children: values.childFlow
         ? values.childFlow.map((item) => JSON.parse(item.value as string))
         : [],
@@ -447,67 +589,11 @@ export const FlowForm = (props: Props) => {
         name: values.earmarkingType && values.earmarkingType.displayLabel,
       },
       isCancellation: null,
-      src: {
-        governingEntity: values.sourceGoverningEntities.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        location: values.sourceLocations.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        organization: values.sourceOrganizations.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        project: values.sourceProjects.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        usageYear: values.sourceUsageYears.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        globalCluster: values.sourceGlobalClusters.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        emergency: values.sourceEmergencies.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-      },
-      dest: {
-        governingEntity: values.destinationGoverningEntities.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        location: values.destinationLocations.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        organization: values.destinationOrganizations.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        project: values.destinationProjects.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        usageYear: values.destinationUsageYears.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        globalCluster: values.destinationGlobalClusters.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-        emergency: values.destinationEmergencies.map((item) => ({
-          id: item.value,
-          name: item.displayLabel,
-        })),
-      },
+      categories: [],
+      ...fundingObject,
     };
+
+    data = collapseCategories(data);
     return data;
   };
   const handleSubmit = async (values: FormValues) => {
@@ -515,7 +601,6 @@ export const FlowForm = (props: Props) => {
 
     const response = await env.model.flows.validateFlow(data);
     let flag = true;
-    console.log('response', response);
     response.forEach((obj) => {
       if (obj) {
         const { success, message, confirmed } = obj;
@@ -536,11 +621,19 @@ export const FlowForm = (props: Props) => {
       }
     });
 
-    console.log('flag--->', flag);
+    console.log('data--->', data);
     if (flag) {
       const response = await env.model.flows.createFlow({ flow: data });
       console.log(response);
     }
+    // if  (values.reportDetails.some(detail => Object.values(detail).some(field => !field))) {
+    //         alert("Please fill all fields in the current reporting detail before adding another.");
+    //         <C.TextFieldWrapper
+    //             name = {"sourceOrganizations"}
+    //             type = "text"
+    //             style ={{ backgroundColor: 'your_color_here' }}
+    //         />
+    //     }
   };
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
