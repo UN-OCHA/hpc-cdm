@@ -505,6 +505,7 @@ export default (props: Props) => {
             }`,
             value: JSON.stringify({
               id: value.id,
+              parentID: value.id,
               description: value.description,
               src_org_name:
                 value.organizations && value.organizations[0]
