@@ -561,7 +561,9 @@ export default function FlowsTable(props: FlowsTableProps) {
                   let rd = '--';
                   if (row.reportDetails) {
                     const uniqueSourceIDs = new Set(
-                      row.reportDetails.map((rd) => rd.sourceID)
+                      row.reportDetails
+                        .map((rd) => rd.sourceID)
+                        .filter(util.isDefined)
                     );
                     const uniqueSourceIDsArray = Array.from(uniqueSourceIDs);
                     rd = uniqueSourceIDsArray.join(', ');
@@ -582,7 +584,9 @@ export default function FlowsTable(props: FlowsTableProps) {
                   let rd = '--';
                   if (row.reportDetails) {
                     const uniqueSourceIDs = new Set(
-                      row.reportDetails.map((rd) => rd.refCode)
+                      row.reportDetails
+                        .map((rd) => rd.refCode)
+                        .filter(util.isDefined)
                     );
                     const uniqueRefCodesArray = Array.from(uniqueSourceIDs);
                     rd = uniqueRefCodesArray.join(', ');
