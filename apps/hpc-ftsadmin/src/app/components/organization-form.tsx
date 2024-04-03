@@ -201,7 +201,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
             )}
             name="name"
             type="text"
-            requiered
+            required
           />
           <C.TextFieldWrapper
             label={t.t(
@@ -210,7 +210,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
             )}
             name="abbreviation"
             type="text"
-            requiered
+            required
           />
           <C.TextFieldWrapper
             label={t.t(
@@ -278,7 +278,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
             fnPromise={() => fnCategories('organizationType', environment)}
             isAutocompleteAPI={false}
             isMulti
-            requiered
+            required
           />
           <InfoText>
             {t.t(
