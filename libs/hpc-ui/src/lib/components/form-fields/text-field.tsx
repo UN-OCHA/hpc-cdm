@@ -44,7 +44,7 @@ interface TextFieldWrapperProps {
   label: string;
   placeholder?: string;
   textarea?: boolean;
-  requiered?: boolean;
+  required?: boolean;
 }
 const TextFieldWrapper = ({
   type,
@@ -52,7 +52,7 @@ const TextFieldWrapper = ({
   label,
   placeholder,
   textarea,
-  requiered,
+  required,
   ...otherProps
 }: TextFieldWrapperProps) => {
   const [field, meta] = useField(name);
@@ -64,7 +64,7 @@ const TextFieldWrapper = ({
     id: name,
     multiline: textarea,
     maxRows: 5,
-    required: requiered,
+    required,
     placeholder: placeholder,
     size: 'small',
     type: 'text',
