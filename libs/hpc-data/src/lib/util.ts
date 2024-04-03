@@ -11,12 +11,12 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 /**
  * Accepts either an integer, or a string of an integer, serializes to a number.
  */
-export const INTEGER_FROM_STRING = new t.Type<number, number>(
-  'INTEGER_FROM_STRING',
+export const POSITIVE_INTEGER_FROM_STRING = new t.Type<number, number>(
+  'POSITIVE_INTEGER_FROM_STRING',
   t.number.is,
   (v, c) => {
     if (typeof v === 'number') {
-      return Number.isInteger(v) ? t.success(v) : t.failure(v, c);
+      return Number.isInteger(v) && v >= 0 ? t.success(v) : t.failure(v, c);
     } else if (typeof v === 'string') {
       return INTEGER_REGEX.test(v) ? t.success(parseInt(v)) : t.failure(v, c);
     } else {
