@@ -185,7 +185,7 @@ export const LIVE_TYPES = {
         }),
       }),
       t.partial({
-        targetId: dataUtil.INTEGER_FROM_STRING,
+        targetId: dataUtil.POSITIVE_INTEGER_FROM_STRING,
       }),
     ]),
     /**

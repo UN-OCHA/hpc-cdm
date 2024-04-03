@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 
-import { INTEGER_FROM_STRING } from './util';
+import { POSITIVE_INTEGER_FROM_STRING } from './util';
 
 const FLOW_REF_DIRECTION = t.keyof({
   source: null,
@@ -207,7 +207,7 @@ const FLOW_REST = t.intersection([
 export type FlowREST = t.TypeOf<typeof FLOW_REST>;
 
 export const GET_FLOW_PARAMS = t.type({
-  id: INTEGER_FROM_STRING,
+  id: POSITIVE_INTEGER_FROM_STRING,
 });
 
 export type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
