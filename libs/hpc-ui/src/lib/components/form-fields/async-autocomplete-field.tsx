@@ -23,7 +23,7 @@ type AsyncAutocompleteSelectProps = {
   fnPromise: ({ query }: { query: string }) => Promise<Array<FormObjectValue>>;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
-  requiered?: boolean;
+  required?: boolean;
 };
 const AsyncAutocompleteSelect = ({
   name,
@@ -32,7 +32,7 @@ const AsyncAutocompleteSelect = ({
   fnPromise,
   isMulti,
   isAutocompleteAPI,
-  requiered,
+  required,
   ...otherProps
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
@@ -143,7 +143,7 @@ const AsyncAutocompleteSelect = ({
         {...params}
         size="small"
         label={label}
-        required={requiered}
+        required={required}
         InputProps={{
           ...params.InputProps,
           endAdornment: (
