@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 import { FORM_META, FORM, FORM_UPDATE_DATA, FORM_FILE } from './forms';
-import { INTEGER_FROM_STRING, ARRAY_BUFFER } from './util';
+import { POSITIVE_INTEGER_FROM_STRING, ARRAY_BUFFER } from './util';
 
 export const REPORTING_WINDOW = t.type({
   // TODO
@@ -42,8 +42,8 @@ const FORM_ASSIGNMENT = t.type({
 export type FormAssignment = t.TypeOf<typeof FORM_ASSIGNMENT>;
 
 export const GET_ASSIGNMENTS_FOR_OPERATION_PARAMS = t.type({
-  reportingWindowId: INTEGER_FROM_STRING,
-  operationId: INTEGER_FROM_STRING,
+  reportingWindowId: POSITIVE_INTEGER_FROM_STRING,
+  operationId: POSITIVE_INTEGER_FROM_STRING,
 });
 
 export type GetAssignmentsForOperationParams = t.TypeOf<
@@ -69,7 +69,7 @@ export type GetAssignmentsForOperationResult = t.TypeOf<
 >;
 
 export const GET_ASSIGNMENT_PARAMS = t.type({
-  assignmentId: INTEGER_FROM_STRING,
+  assignmentId: POSITIVE_INTEGER_FROM_STRING,
 });
 
 export type GetAssignmentParams = t.TypeOf<typeof GET_ASSIGNMENT_PARAMS>;
@@ -123,7 +123,7 @@ export const GET_ASSIGNMENT_RESULT_MODEL = GET_ASSIGNMENT_RESULT(FORM_FILE);
 export type GetAssignmentResult = t.TypeOf<typeof GET_ASSIGNMENT_RESULT_MODEL>;
 
 export const UPDATE_ASSIGNMENT_PARAMS_VALUES = t.type({
-  assignmentId: INTEGER_FROM_STRING,
+  assignmentId: POSITIVE_INTEGER_FROM_STRING,
   /**
    * Supply the last-known version number of the assignment.
    *
@@ -135,7 +135,7 @@ export const UPDATE_ASSIGNMENT_PARAMS_VALUES = t.type({
 });
 
 export const UPDATE_ASSIGNMENT_PARAMS_STATE_CHANGE = t.type({
-  assignmentId: INTEGER_FROM_STRING,
+  assignmentId: POSITIVE_INTEGER_FROM_STRING,
   state: ASSIGNMENT_STATE,
 });
 
@@ -167,7 +167,7 @@ export type UploadAssignmentFileResult = t.TypeOf<
 >;
 
 export const DOWNLOAD_ASSIGNMENT_FILE_PARAMS = t.type({
-  assignmentId: INTEGER_FROM_STRING,
+  assignmentId: POSITIVE_INTEGER_FROM_STRING,
   fileHash: t.string,
 });
 
