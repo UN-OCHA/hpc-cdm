@@ -94,6 +94,7 @@ export interface FormValues {
   parentFlow?: AutoCompleteSeletionType[];
   childFlow?: AutoCompleteSeletionType[];
   isParkedParent?: boolean;
+  includeChildrenOfParkedFlows: boolean;
   sources?: Record<string, any[]>;
 }
 
@@ -637,6 +638,9 @@ export const FlowForm = (props: Props) => {
   };
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
+  const [newMoneyCheckboxDisabled, setNewMoneyCheckboxDisabled] =
+    useState<boolean>(false);
+
   const [comparingVersions, setComparingVersions] = useState<VersionDataType[]>(
     []
   );
@@ -1657,6 +1661,7 @@ export const FlowForm = (props: Props) => {
                       label="Is this flow new money?"
                       name="includeChildrenOfParkedFlows"
                       size="small"
+                      disabled={newMoneyCheckboxDisabled}
                     />
                     <StyledFormRow>
                       <C.TextFieldWrapper
@@ -1905,6 +1910,13 @@ export const FlowForm = (props: Props) => {
                                   <C.Button
                                     onClick={() => {
                                       setShowParentFlow(false);
+                                      setFieldValue(
+                                        'includeChildrenOfParkedFlows',
+                                        true
+                                      );
+                                      setNewMoneyCheckboxDisabled(
+                                        !newMoneyCheckboxDisabled
+                                      );
                                     }}
                                     color="secondary"
                                     text="unlink"
@@ -2044,6 +2056,13 @@ export const FlowForm = (props: Props) => {
                             ),
                             callback: (value: any) => {
                               setShowParentFlow(true);
+                              setFieldValue(
+                                'includeChildrenOfParkedFlows',
+                                false
+                              );
+                              setNewMoneyCheckboxDisabled(
+                                !newMoneyCheckboxDisabled
+                              );
                             },
                           });
                         }}
