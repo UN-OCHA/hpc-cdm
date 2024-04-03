@@ -7,27 +7,23 @@ import { FormObjectValue } from '@unocha/hpc-ui';
 export const fnOrganizations = async (
   query: { query: string },
   env: Environment
-) => {
+): Promise<Array<FormObjectValue>> => {
   const response =
     await env.model.organizations.getAutocompleteOrganizations(query);
-  const options: Array<FormObjectValue> = response.map((responseValue) => {
-    return {
-      displayLabel: `${responseValue.name} [${responseValue.abbreviation}]`,
-      value: responseValue.id,
-    };
-  });
-  return options;
+  return response.map((responseValue) => ({
+    displayLabel: `${responseValue.name} [${responseValue.abbreviation}]`,
+    value: responseValue.id,
+  }));
 };
 
-export const fnUsageYears = async (env: Environment) => {
+export const fnUsageYears = async (
+  env: Environment
+): Promise<Array<FormObjectValue>> => {
   const response = await env.model.usageYears.getUsageYears();
-  const options: Array<FormObjectValue> = response.map((responseValue) => {
-    return {
-      displayLabel: responseValue.year,
-      value: responseValue.id,
-    };
-  });
-  return options;
+  return response.map((responseValue) => ({
+    displayLabel: responseValue.year,
+    value: responseValue.id,
+  }));
 };
 
 const defaultOptions = (
@@ -35,14 +31,11 @@ const defaultOptions = (
     name: string;
     id: number;
   }>
-) => {
-  const options: Array<FormObjectValue> = response.map((responseValue) => {
-    return {
-      displayLabel: responseValue.name,
-      value: responseValue.id,
-    };
-  });
-  return options;
+): Array<FormObjectValue> => {
+  return response.map((responseValue) => ({
+    displayLabel: responseValue.name,
+    value: responseValue.id,
+  }));
 };
 
 export const fnLocations = async (
