@@ -118,10 +118,10 @@ const AsyncMultiSelect = ({
         label={label}
       />
     ),
-    renderValue: (selected: any) => (
+    renderValue: (selected) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-        {selected.map((value: any) => (
-          <Chip key={value.id} label={value.label} />
+        {selected.map((value) => (
+          <Chip key={value.value} label={value.displayLabel} />
         ))}
       </Box>
     ),
