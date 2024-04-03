@@ -85,14 +85,17 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
 };
 
 const FORM_VALIDATION = io.partial({
-  flowID: io.array(codecs.INTEGER_FROM_STRING),
+  flowID: io.array(codecs.POSITIVE_INTEGER_FROM_STRING),
   amountUSD: io.union([
     codecs.POSITIVE_NUMBER_FROM_STRING,
     codecs.EMPTY_STRING,
   ]),
   reporterRefCode: io.union([codecs.NON_EMPTY_STRING, codecs.EMPTY_STRING]),
   sourceSystemID: io.union([codecs.NON_EMPTY_STRING, codecs.EMPTY_STRING]),
-  legacyID: io.union([codecs.INTEGER_FROM_STRING, codecs.EMPTY_STRING]),
+  legacyID: io.union([
+    codecs.POSITIVE_INTEGER_FROM_STRING,
+    codecs.EMPTY_STRING,
+  ]),
 });
 
 const StyledDiv = tw.div`

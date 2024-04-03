@@ -101,17 +101,23 @@ export const FilterFlowsTableREST = (props: Props) => {
   };
 
   const FORM_VALIDATION = io.partial({
-    flowID: io.array(codecs.INTEGER_FROM_STRING),
+    flowID: io.array(codecs.POSITIVE_INTEGER_FROM_STRING),
     amountUSD: io.union([
       codecs.POSITIVE_NUMBER_FROM_STRING,
       codecs.EMPTY_STRING,
     ]),
     reporterRefCode: io.union([
-      codecs.INTEGER_FROM_STRING,
+      codecs.POSITIVE_INTEGER_FROM_STRING,
       codecs.EMPTY_STRING,
     ]),
-    sourceSystemID: io.union([codecs.INTEGER_FROM_STRING, codecs.EMPTY_STRING]),
-    legacyID: io.union([codecs.INTEGER_FROM_STRING, codecs.EMPTY_STRING]),
+    sourceSystemID: io.union([
+      codecs.POSITIVE_INTEGER_FROM_STRING,
+      codecs.EMPTY_STRING,
+    ]),
+    legacyID: io.union([
+      codecs.POSITIVE_INTEGER_FROM_STRING,
+      codecs.EMPTY_STRING,
+    ]),
     destinationOrganizations: codecs.NON_EMPTY_ARRAY,
   });
   const handleSubmit = (values: FlowsFilterValuesREST) => {
