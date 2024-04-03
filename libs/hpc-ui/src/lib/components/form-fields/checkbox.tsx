@@ -2,6 +2,7 @@ import {
   Checkbox,
   FormControlLabel,
   FormControlLabelProps,
+  CheckboxProps,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 import React from 'react';
@@ -33,21 +34,20 @@ const FormikCheckBox = ({
       setFieldValue(name, !field.value);
     }
   };
-  const configCheckBox: FormControlLabelProps = {
+
+  const configCheckBox: CheckboxProps = {
     ...field,
     ...otherProps,
-    label: label,
-    id: name,
-    control: (
-      <Checkbox
-        onChange={(event) => handleChange(event)}
-        size={size}
-        defaultChecked={typeof field.value === 'boolean' ? field.value : false}
-        disabled={disabled}
-      />
-    ),
+    checked: field.value || false,
+    onChange: handleChange,
+    disabled: disabled || false,
   };
-  return <FormControlLabel {...configCheckBox} />;
+  return (
+    <FormControlLabel
+      control={<Checkbox {...configCheckBox} />}
+      label={label}
+    />
+  );
 };
 
 FormikCheckBox.defaultProps = {
