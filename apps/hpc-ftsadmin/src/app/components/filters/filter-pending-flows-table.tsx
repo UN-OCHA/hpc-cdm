@@ -56,7 +56,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
   const environment = env();
 
   const FORM_VALIDATION = io.partial({
-    reporterRefCode: codecs.INTEGER_FROM_STRING,
+    reporterRefCode: codecs.POSITIVE_INTEGER_FROM_STRING,
   });
 
   const handleSubmit = (values: PendingFlowsFilterValues) => {

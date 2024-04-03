@@ -27,6 +27,24 @@ export const INTEGER_FROM_STRING = new t.Type<number, number>(
 );
 
 /**
+ * Accepts either an integer, or a string of an integer, serializes to a number.
+ */
+export const POSITIVE_INTEGER_FROM_STRING = new t.Type<number, number>(
+  'POSITIVE_INTEGER_FROM_STRING',
+  t.number.is,
+  (v, c) => {
+    if (typeof v === 'number') {
+      return Number.isInteger(v) && v >= 0 ? t.success(v) : t.failure(v, c);
+    } else if (typeof v === 'string') {
+      return INTEGER_REGEX.test(v) ? t.success(parseInt(v)) : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
  * Accepts either a number, or a string of a number, serializes to a number type.
  */
 export const NUMBER_FROM_STRING = new t.Type<number, number>(
