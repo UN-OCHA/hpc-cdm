@@ -27,7 +27,7 @@ const AutocompleteSelect = ({
   isMulti?: boolean;
 }) => {
   const { setFieldValue } = useFormikContext();
-  const [field, meta] = useField(name);
+  const [field] = useField(name);
   const [selectOptions, setSelectOptions] = useState(
     preOptions ? preOptions : []
   );
@@ -48,7 +48,7 @@ const AutocompleteSelect = ({
     options: selectOptions,
     getOptionLabel: (op) => op,
     ChipProps: { size: 'small' },
-    onInputChange: (event, newInputValue) => handleInputChange(newInputValue),
+    onInputChange: (_, newInputValue) => handleInputChange(newInputValue),
     onChange: (_, newValue) => {
       // For multiple selections, newValue will be an array of selected values
       setFieldValue(name, newValue);
