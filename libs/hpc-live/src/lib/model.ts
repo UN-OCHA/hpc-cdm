@@ -686,13 +686,16 @@ export class LiveModel implements Model {
           },
           resultType: flows.BULK_REJECT_PENDING_FLOWS_RESULT,
         }),
-      validateFlow: (params) =>
+      validateFlow: (params, options) =>
         this.call({
           pathname: `/v2/flow/validate`,
           method: 'POST',
           body: {
             type: 'json',
-            data: params,
+            data: {
+              params,
+              options,
+            },
           },
           resultType: flows.VALIDATE_FLOW_RESULT,
         }),
@@ -706,7 +709,17 @@ export class LiveModel implements Model {
           },
           resultType: flows.GET_FLOW_RESULT,
         }),
-      getFlowsDownloadXLSX: (params) => {
+      updateFlow: (params) =>
+        this.call({
+          pathname: `/v1/flow/update/${params.flow.id}`,
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.GET_FLOW_RESULT,
+        }),
+       getFlowsDownloadXLSX: (params) => {
         const query = `query {
           searchFlowsBatches${searchFlowsParams(params)} {
             ${this.searchFlowFields}
