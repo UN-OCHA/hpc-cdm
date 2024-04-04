@@ -174,6 +174,7 @@ export default (props: Props) => {
     destinationGlobalClusters: [],
     destinationEmergencies: [],
     origCurrency: '',
+    includeChildrenOfParkedFlows: true,
     reportDetails: [
       {
         verified: 'verified',
