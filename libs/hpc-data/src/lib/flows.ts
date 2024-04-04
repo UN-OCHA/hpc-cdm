@@ -579,9 +579,11 @@ export const FUNDING_DETAIL = t.type({
   usageYear: t.array(FORM_FIELD),
   globalCluster: t.array(FORM_FIELD),
   emergency: t.array(FORM_FIELD),
+  plan: t.array(FORM_FIELD),
 });
 
 export const GET_VALIDATE_FLOWS_PARAMS = t.type({
+  id: t.union([t.string, t.null]),
   amountUSD: t.number,
   flowDate: t.string,
   decisionDate: t.union([t.string, t.null]),
@@ -606,7 +608,7 @@ export const GET_VALIDATE_FLOWS_PARAMS = t.type({
   flowStatuses: FORM_FIELD,
   contributionTypes: FORM_FIELD,
   method: FORM_FIELD,
-  earmarking: FORM_FIELD,
+  earmarking: t.union([FORM_FIELD, t.null]),
   isCancellation: t.union([t.boolean, t.null]),
   src: FUNDING_DETAIL,
   dest: FUNDING_DETAIL,
@@ -618,7 +620,13 @@ export const CREATE_FLOW = t.type({
   flow: GET_VALIDATE_FLOWS_PARAMS,
 });
 
+export const CREATE_FLOW_OPTION = t.type({
+  adding: t.boolean,
+  originalFlow: t.any,
+});
+
 export type CreateFlowParams = t.TypeOf<typeof CREATE_FLOW>;
+export type CreateFlowOptions = t.TypeOf<typeof CREATE_FLOW_OPTION>;
 
 export interface Model {
   getFlowREST(params: GetFlowParams): Promise<GetFlowResult>;
@@ -634,6 +642,10 @@ export interface Model {
     params: GetTotalAmountUSDParams
   ): Promise<GetTotalAmountUSDResult>;
   getAutocompleteFlows(params: GetFlowsAutocompleteParams): Promise<FlowResult>;
-  validateFlow(params: GetValidateFlowParams): Promise<ValidationResult[]>;
+  validateFlow(
+    params: GetValidateFlowParams,
+    options: CreateFlowOptions
+  ): Promise<ValidationResult[]>;
   createFlow(params: CreateFlowParams): Promise<FlowREST>;
+  updateFlow(params: CreateFlowParams): Promise<FlowREST>;
 }

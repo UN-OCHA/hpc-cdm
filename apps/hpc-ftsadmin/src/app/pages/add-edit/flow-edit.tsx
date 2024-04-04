@@ -181,7 +181,7 @@ export default (props: Props) => {
         reporterReferenceCode: '',
         reportChannel: '',
         reportedOrganization: { value: '', displayLabel: '' },
-        reportedDate: dayjs().format('MM/DD/YYYY'),
+        reportedDate: '',
         reporterContactInformation: '',
         sourceSystemRecordId: '',
         reportFiles: [
@@ -1528,6 +1528,8 @@ export default (props: Props) => {
                     versionData={versionData}
                     isRestricted={isRestricted}
                     inputEntries={inputEntries}
+                    flowId={flowId}
+                    versionId={versionId}
                     initializeInputEntries={initializeInputEntries}
                     rejectInputEntry={rejectInputEntry}
                   />

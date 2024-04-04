@@ -842,6 +842,12 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
+        updateFlow: dummyEndpoint(
+          'flows.updateFlow',
+          async (params: flows.CreateFlowParams) => {
+            throw new errors.NotFoundError();
+          }
+        ),
         getAutocompleteFlows: dummyEndpoint(
           'flows.searchFlows',
           async (params: flows.GetFlowsAutocompleteParams) => {

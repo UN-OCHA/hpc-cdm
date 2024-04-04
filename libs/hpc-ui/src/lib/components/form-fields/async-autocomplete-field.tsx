@@ -223,6 +223,7 @@ const AsyncAutocompleteSelect = ({
             return {
               displayLabel: (responseValue as plans.Plan).name,
               value: responseValue.id,
+              restricted: (responseValue as plans.Plan).restricted,
             };
           } else if (isCurrenciesResult(response)) {
             return {
@@ -284,9 +285,18 @@ const AsyncAutocompleteSelect = ({
             };
           } else {
             return {
-              displayLabel: (responseValue as { id: number; name: string })
-                .name,
+              displayLabel: (
+                responseValue as {
+                  id: number;
+                  name: string;
+                }
+              ).name,
               value: responseValue.id,
+              restricted: (
+                responseValue as {
+                  restricted?: boolean;
+                }
+              ).restricted,
             };
           }
         });
@@ -683,6 +693,7 @@ const FormikAsyncAutocompleteSelect = ({
             return {
               displayLabel: (responseValue as plans.Plan).name,
               value: responseValue.id,
+              restricted: (responseValue as plans.Plan).restricted,
             };
           } else if (isCurrenciesResult(response)) {
             return {
@@ -707,9 +718,18 @@ const FormikAsyncAutocompleteSelect = ({
             };
           } else {
             return {
-              displayLabel: (responseValue as { id: number; name: string })
-                .name,
+              displayLabel: (
+                responseValue as {
+                  id: number;
+                  name: string;
+                }
+              ).name,
               value: responseValue.id,
+              restricted: (
+                responseValue as {
+                  restricted?: boolean;
+                }
+              ).restricted,
             };
           }
         });

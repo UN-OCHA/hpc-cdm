@@ -96,6 +96,7 @@ const InputSelectValueTypeCodec = t.intersection([
     isAutoFilled: t.boolean,
     isTransferred: t.boolean,
     isInferred: t.boolean,
+    restricted: t.boolean,
   }),
 ]);
 

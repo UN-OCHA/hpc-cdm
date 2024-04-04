@@ -92,12 +92,11 @@ const DatePicker = ({
         />
         {enableButton && (
           <StyledLink
-            component="button"
             variant="body2"
             onClick={() => {
               helpers.setValue(dayjs());
             }}
-            sx={{ height: '100%', lineHeight: '40px' }}
+            sx={{ height: '100%', lineHeight: '40px', cursor: 'pointer' }}
           >
             Today
           </StyledLink>

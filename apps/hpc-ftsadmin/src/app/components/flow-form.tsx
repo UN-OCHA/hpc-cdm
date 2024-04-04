@@ -3,7 +3,10 @@ import { Form, Formik, FieldArray } from 'formik';
 import tw from 'twin.macro';
 import dayjs from 'dayjs';
 import { isRight } from 'fp-ts/Either';
+import { FormikErrors } from 'formik';
 import * as t from 'io-ts';
+import { util as codecs } from '@unocha/hpc-data';
+import GppMaybeIcon from '@mui/icons-material/GppMaybe';
 
 import { C, dialogs, dataLoader } from '@unocha/hpc-ui';
 
@@ -26,8 +29,11 @@ import { MdAdd, MdRemove, MdClose, MdCheck } from 'react-icons/md';
 import { usageYears, forms, governingEntities } from '@unocha/hpc-data';
 import { isValidDate, isValidYear } from '../utils/validation';
 import { getEnv } from '../context';
+import { editFlowSetting } from '../paths';
 
 export type AutoCompleteSeletionType = forms.InputSelectValueType;
+
+const INPUT_SELECT_VALUE_TYPE = forms.INPUT_SELECT_VALUE_TYPE;
 
 type UniqueDataType = {
   [key: string]: string[];
@@ -160,18 +166,60 @@ export interface InputEntriesType {
   childFlow: forms.InputEntryType[];
 }
 
+const reportChannelSchema = t.type({
+  value: t.intersection([codecs.NON_EMPTY_STRING, t.string]),
+  displayLabel: t.intersection([codecs.NON_EMPTY_STRING, t.string]),
+});
+
+const reportDetailsSchema = t.type({
+  reportedOrganization: INPUT_SELECT_VALUE_TYPE,
+  reportedDate: t.intersection([codecs.NON_EMPTY_STRING, t.string]),
+  reportChannel: t.intersection([codecs.NON_EMPTY_STRING, reportChannelSchema]),
+});
+
+const validationSchema = t.type({
+  amountUSD: t.number,
+  flowStatus: INPUT_SELECT_VALUE_TYPE,
+  flowDescription: t.intersection([codecs.NON_EMPTY_STRING, t.string]),
+  firstReported: t.string,
+  flowDate: t.intersection([codecs.NON_EMPTY_STRING, t.string]),
+  sourceOrganizations: INPUT_SELECT_VALUE_TYPE,
+  sourceUsageYears: INPUT_SELECT_VALUE_TYPE,
+  destinationOrganizations: INPUT_SELECT_VALUE_TYPE,
+  destinationUsageYears: INPUT_SELECT_VALUE_TYPE,
+  reportDetails: reportDetailsSchema,
+});
+
 interface Props {
   environment: Environment;
   isEdit: boolean;
   initialValue: FormValues;
   prevDetails?: ReportDetailType[];
   versionData?: VersionDataType[];
+  flowId?: string;
+  versionId?: string;
   isRestricted: boolean;
   inputEntries: InputEntriesType;
   initializeInputEntries: () => void;
   rejectInputEntry: (key: string) => void;
 }
 
+const StyledAddChildWarning = tw.div`
+  border border-solid border-yellow-600
+  flex
+  rounded-md
+  text-gray-900
+  bg-yellow-100 bg-opacity-50
+`;
+
+const StyledAddChildWarningIconDiv = tw.div`
+  flex
+  items-center
+  p-1
+`;
+const StyledAddChildWarningText = tw.span`
+  py-3 px-3 pb-3
+`;
 const StyledLayoutRow = tw.div`
 flex
 `;
@@ -258,7 +306,7 @@ const initialReportDetail = {
   reportSource: 'primary',
   reporterReferenceCode: '',
   reportChannel: '',
-  reportedOrganization: '',
+  reportedOrganization: { value: '', displayLabel: '' },
   reportedDate: dayjs().format('MM/DD/YYYY'),
   reporterContactInformation: '',
   sourceSystemRecordId: '',
@@ -326,6 +374,8 @@ export const FlowForm = (props: Props) => {
     versionData,
     isRestricted,
     inputEntries,
+    flowId,
+    versionId,
     initializeInputEntries,
     rejectInputEntry,
   } = props;
@@ -445,6 +495,12 @@ export const FlowForm = (props: Props) => {
         emergency: values.sourceEmergencies.map((item) => ({
           id: item.value,
           name: item.displayLabel,
+          restricted: item.restricted,
+        })),
+        plan: values.sourcePlans.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+          restricted: item.restricted,
         })),
       },
       dest: {
@@ -475,10 +531,18 @@ export const FlowForm = (props: Props) => {
         emergency: values.destinationEmergencies.map((item) => ({
           id: item.value,
           name: item.displayLabel,
+          restricted: item.restricted,
+        })),
+        plan: values.destinationPlans.map((item) => ({
+          id: item.value,
+          name: item.displayLabel,
+          restricted: item.restricted,
         })),
       },
     };
     let data = {
+      id: isEdit && flowId ? flowId : null,
+      versionID: isEdit && versionId ? versionId : null,
       amountUSD: values.amountUSD,
       flowDate: values.flowDate,
       decisionDate: values.decisionDate,
@@ -584,10 +648,12 @@ export const FlowForm = (props: Props) => {
         id: values.method && values.method.value,
         name: values.method && values.method.displayLabel,
       },
-      earmarking: {
-        id: values.earmarkingType && values.earmarkingType.value,
-        name: values.earmarkingType && values.earmarkingType.displayLabel,
-      },
+      earmarking: values.earmarkingType
+        ? {
+            id: values.earmarkingType.value,
+            name: values.earmarkingType.displayLabel,
+          }
+        : null,
       isCancellation: null,
       categories: [],
       ...fundingObject,
@@ -598,8 +664,12 @@ export const FlowForm = (props: Props) => {
   };
   const handleSubmit = async (values: FormValues) => {
     const data = normalizeFlowData(values);
+    console.log(values);
 
-    const response = await env.model.flows.validateFlow(data);
+    const response = await env.model.flows.validateFlow(data, {
+      adding: !isEdit,
+      originalFlow: {},
+    });
     let flag = true;
     response.forEach((obj) => {
       if (obj) {
@@ -621,10 +691,20 @@ export const FlowForm = (props: Props) => {
       }
     });
 
-    console.log('data--->', data);
     if (flag) {
-      const response = await env.model.flows.createFlow({ flow: data });
-      console.log(response);
+      if (!isEdit) {
+        const response = await env.model.flows.createFlow({ flow: data });
+        const path = editFlowSetting(response.id, response.versionID);
+        window.open(path, '_self');
+      } else {
+        try {
+          const response = await env.model.flows.updateFlow({ flow: data });
+          console.log(response);
+        } catch (err: any) {
+          setOpenAlerts([...openAlerts, { message: err.message, id: alertId }]);
+          setAlertId((prevId) => prevId + 1);
+        }
+      }
     }
     // if  (values.reportDetails.some(detail => Object.values(detail).some(field => !field))) {
     //         alert("Please fill all fields in the current reporting detail before adding another.");
@@ -634,7 +714,14 @@ export const FlowForm = (props: Props) => {
     //             style ={{ backgroundColor: 'your_color_here' }}
     //         />
     //     }
+    handleSave();
   };
+
+  const handleSave = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const [showWarningMessage, setShowWarningMessage] = useState<boolean>(false);
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
   const [comparingVersions, setComparingVersions] = useState<VersionDataType[]>(
@@ -1214,115 +1301,81 @@ export const FlowForm = (props: Props) => {
       values['childFlow'].filter((item: any, ind: number) => ind !== index)
     );
   };
-  // const FORM_VALIDATION = object().shape({
-  //   sourceOrganizations: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Organization is required and should have at least 1 item'),
-  //   sourceUsageYears: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Usage Year is required and should have at least 1 item'),
-  //   sourceLocations: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Country is required and should have at least 1 item'),
-  //   sourceEmergencies: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Emergency is required and should have at least 1 item'),
-  //   sourceGlobalClusters: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Clobal Cluster is required and should have at least 1 item'),
-  //   sourcePlans: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Plan is required and should have at least 1 item'),
-  //   sourceProjects: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Projects is required and should have at least 1 item'),
-  //   destinationOrganizations: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Organization is required and should have at least 1 item'),
-  //   destinationUsageYears: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Usage Year is required and should have at least 1 item'),
-  //   destinationLocations: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Country is required and should have at least 1 item'),
-  //   destinationEmergencies: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Emergency is required and should have at least 1 item'),
-  //   destinationGlobalClusters: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Clobal Cluster is required and should have at least 1 item'),
-  //   destinationPlans: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Plan is required and should have at least 1 item'),
-  //   destinationProjects: array()
-  //     .of(object().shape({ label: string(), id: string() }))
-  //     .min(1, 'Projects is required and should have at least 1 item'),
-  //   amountUSD: number().min(0, 'Only non-negative numbers are accepted'),
-  //   amountOriginal: number().min(0, 'Only non-negative numbers are accepted'),
-  //   exchangeRateUsed: number().min(0, 'Only non-negative numbers are accepted'),
-  //   flowDescription: string().required(),
-  //   firstReported: string()
-  //     .nullable()
-  //     .required()
-  //     .test('validate-format-date', 'Date entered is invalid', (value) =>
-  //       isValidDate(value ?? '')
-  //     ),
-  //   decisionDate: string()
-  //     .nullable()
-  //     .test('validate-format-date', 'Date entered is invalid', (value) =>
-  //       value ? isValidDate(value) : true
-  //     ),
-  //   budgetYear: string().test(
-  //     'validate-format-year',
-  //     'Year entered is invalid',
-  //     (value) => (value ? isValidYear(value) : true)
-  //   ),
-  //   flowDate: string()
-  //     .nullable()
-  //     .required()
-  //     .test('validate-format-date', 'Date entered is invalid', (value) =>
-  //       isValidDate(value ?? '')
-  //     ),
-  //   flowStatus: string().required(),
-  //   method: string().required(),
 
-  //   sourceSystemId: number()
-  //     .positive()
-  //     .typeError('Only positive integers are accepted'),
-  //   flowLegacyId: number()
-  //     .positive()
-  //     .typeError('Only positive integers are accepted'),
-  //   reportDetails: array()
-  //     .of(
-  //       object().shape({
-  //         verified: string().required(),
-  //         reportSource: string().required(),
-  //         reporterReferenceCode: number()
-  //           .positive()
-  //           .typeError('Only positive integers are accepted'),
-  //         reportChannel: string(),
-  //         reportedOrganization: object()
-  //           .shape({ label: string(), id: string() })
-  //           .required(),
-  //         reportedDate: string()
-  //           .nullable()
-  //           .required()
-  //           .test('validate-format-date', 'Date entered is invalid', (value) =>
-  //             isValidDate(value ?? '')
-  //           ),
-  //         reporterContactInformation: string(),
-  //         sourceSystemRecordId: string(),
-  //       })
-  //     )
-  //     .min(
-  //       1,
-  //       'Report detail information is required and should have at least 1'
-  //     ),
-  // });
+  const validateForm = (values: FormValues) => {
+    const result = validationSchema.decode(values);
+    if (isRight(result)) {
+      return {};
+    } else {
+      const errors: Record<string, string | Record<string, string>[]> = {};
+      Object.keys(values).forEach((key) => {
+        const value = values[key as keyof FormValues];
+        if (
+          result.left.some((err) => err.context.find((ctx) => ctx.key === key))
+        ) {
+          const errorKey = key as keyof FormikErrors<FormValues>;
+          if (!value) {
+            errors[errorKey] = 'This field is required.';
+          } else if (Array.isArray(value) && value.length === 0) {
+            errors[errorKey] = 'This field is required.';
+          }
+        }
+        if (key === 'reportDetails') {
+          const res = result.left.filter((err) =>
+            err.context.find((ctx) => ctx.key === key)
+          )[0].value;
+          if (res && Array.isArray(res)) {
+            const reportDetailError: Record<string, string>[] = [];
+            res.forEach((_, index) => {
+              const error: Record<string, string> = {};
+              if (res[index].reportChannel === '') {
+                error['reportChannel'] = 'This field is required.';
+              } else {
+                error['reportChannel'] = '';
+              }
+              if (!res[index].reportedDate) {
+                error['reportedDate'] = 'This field is required.';
+              } else {
+                error['reportedDate'] = '';
+              }
+              if (
+                res[index].reportedOrganization === null ||
+                res[index].reportedOrganization.displayLabel === ''
+              ) {
+                error['reportedOrganization'] = 'This field is required.';
+              } else {
+                error['reportedOrganization'] = '';
+              }
+
+              if (Object.keys(error).length > 0) {
+                (reportDetailError as Record<string, string>[]).push(error);
+              }
+            });
+
+            if (reportDetailError.length >= res.length) {
+              res.forEach((_, index) => {
+                if (
+                  res[index].reportChannel !== '' &&
+                  res[index].reportedOrganization !== '' &&
+                  res[index].reportedDate !== ''
+                ) {
+                  return {};
+                } else {
+                  errors['reportDetails'] = reportDetailError;
+                }
+              });
+            }
+          }
+        }
+      });
+      return errors;
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValue}
-      // validationSchema={FORM_VALIDATION}
+      validate={(values) => validateForm(values)}
       enableReinitialize
       onSubmit={handleSubmit}
     >
@@ -1532,6 +1585,25 @@ export const FlowForm = (props: Props) => {
               <StyledHalfSection>
                 <StyledFullSection>
                   <C.FormSection title="Funding Destination(s)" isRightSection>
+                    {showWarningMessage && (
+                      <StyledAddChildWarning>
+                        <StyledAddChildWarningIconDiv>
+                          <GppMaybeIcon
+                            style={{
+                              fontSize: '40px',
+                              fill: '#D18E00',
+                            }}
+                          />
+                        </StyledAddChildWarningIconDiv>
+                        <StyledAddChildWarningText>
+                          You have added a Child flow for this flow. Updating
+                          the Funding Destination(s) for this flow will update
+                          the Funding Source(s) for the child flows. If you
+                          don't want to update the Child flow's funding sources,
+                          unlink it first.
+                        </StyledAddChildWarningText>
+                      </StyledAddChildWarning>
+                    )}
                     <C.AsyncAutocompleteSelect
                       label="Organization(s)"
                       name="destinationOrganizations"
@@ -2005,6 +2077,7 @@ export const FlowForm = (props: Props) => {
                                         index
                                       );
                                       // setShowChildFlow(false);
+                                      setShowWarningMessage(false);
                                     }}
                                     color="secondary"
                                     text="unlink"
@@ -2044,6 +2117,7 @@ export const FlowForm = (props: Props) => {
                             ),
                             callback: (value: any) => {
                               setShowParentFlow(true);
+                              setIsDisabled(false);
                             },
                           });
                         }}
@@ -2074,6 +2148,7 @@ export const FlowForm = (props: Props) => {
                           ),
                           callback: (value: any) => {
                             setShowChildFlow(true);
+                            setShowWarningMessage(true);
                           },
                         });
                       }}
