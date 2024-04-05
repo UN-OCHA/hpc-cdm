@@ -152,7 +152,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                   });
                 }}
               />
-              <C.TextFieldWrapper
+              <C.NumberField
                 label={t.t(
                   lang,
                   (s) => s.components.pendingFlowsFilter.filters.reporterRefCode
