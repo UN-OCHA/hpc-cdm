@@ -200,7 +200,6 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.name
             )}
             name="name"
-            type="text"
             required
           />
           <C.TextFieldWrapper
@@ -209,7 +208,6 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.abbreviation
             )}
             name="abbreviation"
-            type="text"
             required
           />
           <C.TextFieldWrapper
@@ -218,7 +216,6 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.nativeName
             )}
             name="nativeName"
-            type="text"
           />
 
           <C.Divider />
@@ -238,7 +235,6 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.url
             )}
             name="url"
-            type="text"
           />
 
           <C.Switch
@@ -262,7 +258,6 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.notes
             )}
             name="notes"
-            type="text"
             textarea
           />
 
@@ -334,7 +329,6 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.comments
             )}
             name="comments"
-            type="text"
             textarea
           />
           <C.Divider />

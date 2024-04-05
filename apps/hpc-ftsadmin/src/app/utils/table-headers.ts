@@ -59,6 +59,11 @@ export interface TableHeadersProps<
   displayLabel?: string;
 }
 
+type HeaderType = {
+  id: number;
+  label: FilterKeys;
+  active: boolean;
+};
 /** We create these POSSIBLE consts because in the future we want to add more fields than the default ones displayed */
 
 export const POSSIBLE_FLOW_HEADER_VALUES: Record<
@@ -299,11 +304,7 @@ const defaultEncodeTableHeaders = (table: TableType) => {
  * Encodes the query param to obtain a string suitable for the URL, use it alongside decodeTableHeaders()
  */
 export const encodeTableHeaders = (
-  headers: {
-    id: number;
-    label: FilterKeys;
-    active: boolean;
-  }[],
+  headers: Array<HeaderType>,
   table: TableType = 'flows',
   query?: Query,
   setQuery?: (newQuery: Query) => void
@@ -397,9 +398,9 @@ export const decodeTableHeaders = (
   table: TableType = 'flows',
   query?: Query,
   setQuery?: (newQuery: Query) => void
-): TableHeadersProps<
-  FlowHeaderID | OrganizationHeaderID | KeywordHeaderID
->[] => {
+): Array<
+  TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
+> => {
   if (queryParam.trim() === '') {
     return defaultDecodeTableHeaders(lang, table);
   }
@@ -440,4 +441,61 @@ export const decodeTableHeaders = (
     }
     return defaultDecodeTableHeaders(lang, table);
   }
+};
+
+export const isTableHeadersPropsFlow = (
+  headers: Array<
+    TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
+  >
+): headers is Array<TableHeadersProps<FlowHeaderID>> => {
+  const possibleIdentifierIDs: string[] = Object.values(
+    POSSIBLE_FLOW_HEADER_VALUES
+  ).map((header) => header.identifierID);
+  for (const header of headers) {
+    if (!possibleIdentifierIDs.includes(header.identifierID)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export const isTableHeadersPropsOrganization = (
+  headers: Array<
+    TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
+  >
+): headers is Array<TableHeadersProps<OrganizationHeaderID>> => {
+  const possibleIdentifierIDs: string[] = Object.values(
+    POSSIBLE_ORGANIZATION_VALUES
+  ).map((header) => header.identifierID);
+  for (const header of headers) {
+    if (!possibleIdentifierIDs.includes(header.identifierID)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export const isTableHeadersPropsKeyword = (
+  headers: Array<
+    TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
+  >
+): headers is Array<TableHeadersProps<KeywordHeaderID>> => {
+  const possibleIdentifierIDs: string[] = Object.values(
+    POSSIBLE_KEYWORD_VALUES
+  ).map((header) => header.identifierID);
+  for (const header of headers) {
+    if (!possibleIdentifierIDs.includes(header.identifierID)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export const isCompatibleTableHeaderType = (
+  element: Array<object>
+): element is Array<HeaderType> => {
+  const keys = Object.keys(element[0]);
+  return (
+    keys.includes('id') && keys.includes('label') && keys.includes('active')
+  );
 };
