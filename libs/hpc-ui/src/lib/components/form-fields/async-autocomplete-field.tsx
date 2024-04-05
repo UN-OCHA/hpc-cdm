@@ -2,16 +2,13 @@ import {
   Autocomplete,
   AutocompleteProps,
   CircularProgress,
-  TextField,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 import React, { useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import { FormObjectValue } from './types/types';
+import { StyledTextField } from './text-field';
 
-const StyledTextField = tw(TextField)`
-    min-w-[10rem]
-    w-full`;
 const StyledAutocomplete = tw(Autocomplete)`
     min-w-[10rem]
     w-full`;

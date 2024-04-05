@@ -208,7 +208,7 @@ export const FilterFlowsTable = (props: Props) => {
                 )}
                 name="flowID"
               />
-              <C.TextFieldWrapper
+              <C.NumberField
                 label={t.t(
                   lang,
                   (s) => s.components.flowsFilter.filters.amountUSD
@@ -297,7 +297,6 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.reporterRefCode
                   )}
                   name="reporterRefCode"
-                  type="text"
                 />
                 <C.TextFieldWrapper
                   label={t.t(
@@ -305,9 +304,8 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.sourceSystemID
                   )}
                   name="sourceSystemID"
-                  type="text"
                 />
-                <C.TextFieldWrapper
+                <C.NumberField
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.legacyID

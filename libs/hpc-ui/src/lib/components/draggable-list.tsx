@@ -9,16 +9,16 @@ export interface DraggableListProps {
   title: string;
   queryValues: DraggableListItemProps[];
   buttonText: string;
-  onClick: (elements: DraggableListItemProps[]) => any;
+  onClick: (elements: DraggableListItemProps[]) => unknown;
   sx?: React.CSSProperties;
   innerRef?: React.ForwardedRef<HTMLDivElement>;
   elevation?: number;
   children?: ReactNode;
 }
 
-type DraggableListItemProps = {
+export type DraggableListItemProps = {
   id: number;
-  displayLabel?: string;
+  label: string;
   active?: boolean;
 };
 
@@ -70,7 +70,7 @@ const DraggableListItem = ({
         >
           <DragIconContainer>
             <DragIndicatorIcon color={active ? 'primary' : 'disabled'} />
-            <TextContainer>{item.displayLabel}</TextContainer>
+            <TextContainer>{item.label}</TextContainer>
           </DragIconContainer>
           <Switch
             color="primary"

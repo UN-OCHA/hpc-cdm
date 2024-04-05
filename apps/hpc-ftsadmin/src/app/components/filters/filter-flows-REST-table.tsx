@@ -190,7 +190,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                 )}
                 name="flowID"
               />
-              <C.TextFieldWrapper
+              <C.NumberField
                 label={t.t(
                   lang,
                   (s) => s.components.flowsFilter.filters.amountUSD
@@ -264,7 +264,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                     { displayLabel: 'Inactive', value: 'Inactive' },
                   ]}
                 />
-                <C.TextFieldWrapper
+                <C.NumberField
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.reporterRefCode
@@ -272,7 +272,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                   name="reporterRefCode"
                   type="number"
                 />
-                <C.TextFieldWrapper
+                <C.NumberField
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.sourceSystemID
@@ -280,7 +280,7 @@ export const FilterFlowsTableREST = (props: Props) => {
                   name="sourceSystemID"
                   type="number"
                 />
-                <C.TextFieldWrapper
+                <C.NumberField
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.legacyID
