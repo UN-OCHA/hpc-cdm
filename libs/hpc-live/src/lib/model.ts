@@ -569,16 +569,6 @@ export class LiveModel implements Model {
           pathname: `/v2/flow/${params.id}`,
           resultType: flows.GET_FLOW_RESULT,
         }),
-      searchFlowsREST: (params) =>
-        this.call({
-          pathname: `/v2/flow/search`,
-          method: 'POST',
-          body: {
-            type: 'json',
-            data: params,
-          },
-          resultType: flows.SEARCH_FLOWS_RESULT_REST,
-        }),
       getFlow: (params) =>
         this.call({
           pathname: `/v4/graphql`,
