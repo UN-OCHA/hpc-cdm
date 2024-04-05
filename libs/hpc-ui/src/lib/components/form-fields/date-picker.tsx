@@ -29,7 +29,7 @@ const DatePicker = ({
   lang?: string;
   enableButton?: boolean;
 }) => {
-  const [field, meta, helpers] = useField(name);
+  const [field, , helpers] = useField(name);
   const [cleared, setCleared] = useState(false);
 
   useEffect(() => {
