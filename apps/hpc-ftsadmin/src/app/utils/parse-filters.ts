@@ -1,15 +1,10 @@
 import { categories, flows, organizations } from '@unocha/hpc-data';
-import { FlowsFilterValuesREST } from '../components/filters/filter-flows-REST-table';
 import { PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
 import { Strings } from '../../i18n/iface';
 import { OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { Dayjs } from 'dayjs';
 import { FlowsFilterValues } from '../components/filters/filter-flows-table';
-import {
-  formValueToID,
-  formValueToLabel,
-  valueToInteger,
-} from './map-functions';
+import { valueToInteger } from './map-functions';
 import { FormObjectValue } from '@unocha/hpc-ui';
 
 /**
@@ -20,7 +15,6 @@ import { FormObjectValue } from '@unocha/hpc-ui';
 
 export type Filters =
   | FlowsFilterValues
-  | FlowsFilterValuesREST //  TODO: When removing the REST part, delete
   | PendingFlowsFilterValues
   | OrganizationFilterValues;
 
@@ -162,21 +156,6 @@ export const decodeFilters = <T extends Filters>(
   }
 };
 
-/** TODO: When removing the REST part, delete */
-type ParsedFlowFiltersREST = {
-  flowID?: number[];
-  amountUSD?: number;
-  sourceSystemID?: string;
-  dataProvider?: { systemID: string };
-  flowActiveStatus?: { activeStatus: { name: string } };
-  status?: { status: string };
-  reporterRefCode?: string;
-  legacyID?: string;
-  flowObjects?: flows.FlowObject[];
-  categories?: flows.FlowCategory[];
-  includeChildrenOfParkedFlows?: boolean;
-};
-
 export function isKey<T extends object>(x: T, k: PropertyKey): k is keyof T {
   return k in x;
 }
@@ -217,25 +196,6 @@ export const extractDirectionObject = (
   }
 };
 
-const parseCategories = (
-  categories:
-    | {
-        values: string | undefined;
-        group: categories.CategoryGroup;
-      }[]
-    | undefined
-) => {
-  if (categories) {
-    const res: { name: string; group: string }[] = [];
-    for (const category of categories) {
-      if (category.values) {
-        res.push({ name: category.values, group: category.group });
-      }
-    }
-    return res;
-  }
-};
-
 type FlowObjectTypes =
   | 'location'
   | 'organization'
@@ -245,24 +205,6 @@ type FlowObjectTypes =
   | 'plan'
   | 'globalCluster'
   | 'emergency';
-const parseFlowObject = (flowObject: {
-  values: number[] | undefined;
-  refDirection: 'source' | 'destination';
-  objectType: FlowObjectTypes;
-}): flows.FlowObject[] => {
-  const res: flows.FlowObject[] = [];
-
-  if (flowObject.values) {
-    res.push(
-      ...flowObject.values.map((value) => ({
-        objectID: value,
-        refDirection: flowObject.refDirection,
-        objectType: flowObject.objectType,
-      }))
-    );
-  }
-  return res;
-};
 
 export const parseFormFilters = <
   T extends FilterKeys,
@@ -300,161 +242,6 @@ export const parseFormFilters = <
     }
   }
   return parsedFormValue;
-};
-
-/** TODO: When removing the REST part, delete and also any unused method that this function used */
-export const parseFlowFiltersREST = (
-  filters: Filter<keyof Strings['components']['flowsFilter']['filters']>
-): ParsedFlowFiltersREST => {
-  const res: ParsedFlowFiltersREST = {};
-  for (const key in filters) {
-    if (isKey(filters, key)) {
-      switch (key) {
-        case 'destinationLocations':
-        case 'destinationEmergencies':
-        case 'destinationGlobalClusters':
-        case 'destinationOrganizations':
-        case 'destinationPlans':
-        case 'destinationProjects':
-        case 'destinationUsageYears':
-        case 'sourceLocations':
-        case 'sourceEmergencies':
-        case 'sourceGlobalClusters':
-        case 'sourceOrganizations':
-        case 'sourcePlans':
-        case 'sourceProjects':
-        case 'sourceUsageYears': {
-          const extractedDetails = extractDirectionObject(key);
-          const value = filters[key]?.value;
-          if (extractedDetails && value) {
-            if (!filterValueIsArrayFormObjectValue(value)) {
-              break;
-            }
-            res.flowObjects = [
-              ...(res.flowObjects ? res.flowObjects : []),
-              ...parseFlowObject({
-                values: formValueToID(value),
-                objectType: extractedDetails.object,
-                refDirection: extractedDetails.direction,
-              }),
-            ];
-          }
-          break;
-        }
-        case 'amountUSD': {
-          if (!filters.amountUSD) {
-            break;
-          }
-          const amountUSD = filters.amountUSD.value;
-          if (filterValueIsString(amountUSD)) {
-            res.amountUSD = valueToInteger(amountUSD);
-          }
-          break;
-        }
-        case 'flowID': {
-          if (!filters.flowID) {
-            break;
-          }
-          const ids = filters.flowID.value;
-          if (filterValueIsArrayString(ids)) {
-            res.flowID = ids.map((x) => valueToInteger(x));
-          }
-          break;
-        }
-        case 'flowActiveStatus': {
-          if (!filters.flowActiveStatus) {
-            break;
-          }
-          const activeStatus = filters.flowActiveStatus.value;
-          if (filterValueIsString(activeStatus)) {
-            res.flowActiveStatus = {
-              activeStatus: { name: activeStatus },
-            };
-          }
-          break;
-        }
-        case 'keywords': {
-          if (!filters.keywords) {
-            break;
-          }
-          const keywords = filters.keywords.value;
-          if (filterValueIsArrayFormObjectValue(keywords)) {
-            const parsedCategories = parseCategories(
-              formValueToLabel(keywords).map(
-                (
-                  keyword
-                ): { values: string; group: categories.CategoryGroup } => {
-                  return { values: keyword, group: 'keywords' };
-                }
-              )
-            );
-            res.categories = [
-              ...(res.categories ? res.categories : []),
-              ...(parsedCategories ? parsedCategories : []),
-            ];
-          }
-          break;
-        }
-        case 'flowStatus': {
-          if (!filters.flowStatus) {
-            break;
-          }
-          const flowStatus = filters.flowStatus.value;
-          if (filterValueIsString(flowStatus)) {
-            res.categories = [
-              ...(res.categories ? res.categories : []),
-              {
-                name: flowStatus,
-                group: 'flowStatus',
-              },
-            ];
-          }
-          break;
-        }
-        case 'flowType': {
-          if (!filters.flowType) {
-            break;
-          }
-          const flowType = filters.flowType.value;
-          if (filterValueIsString(flowType)) {
-            res.categories = [
-              ...(res.categories ? res.categories : []),
-              {
-                name: flowType,
-                group: 'flowStatus',
-              },
-            ];
-          }
-          break;
-        }
-        case 'includeChildrenOfParkedFlows': {
-          if (!filters.includeChildrenOfParkedFlows) {
-            break;
-          }
-          const value = filters.includeChildrenOfParkedFlows.value;
-          if (filterValueIsBoolean(value)) {
-            res.includeChildrenOfParkedFlows = value;
-          }
-          break;
-        }
-        case 'restricted': {
-          break;
-        }
-        default: {
-          const remainingValue = filters[key];
-          if (!remainingValue) {
-            break;
-          }
-          const value = remainingValue.value;
-          if (filterValueIsString(value)) {
-            res[key] = value;
-          }
-          break;
-        }
-      }
-    }
-  }
-  return res;
 };
 
 const parseActiveStatus = (activeStatus: string): boolean | undefined => {

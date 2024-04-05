@@ -58,110 +58,11 @@ const FLOW_CATEGORY = t.intersection([
 ]);
 export type FlowCategory = t.TypeOf<typeof FLOW_CATEGORY>;
 
-const FLOW_ORGANIZATION_REST = t.type({
-  objectID: t.number,
-  refDirection: FLOW_REF_DIRECTION,
-  name: t.string,
-});
-export type FlowOrganizationREST = t.TypeOf<typeof FLOW_ORGANIZATION_REST>;
-
-const FLOW_LOCATION = t.type({
-  name: t.string,
-});
-
-const FLOW_PLAN = t.type({
-  name: t.string,
-});
-
-const FLOW_USAGE_YEAR = t.type({
-  year: t.string,
-  refDirection: FLOW_REF_DIRECTION,
-});
-
-const FLOW_REPORT_DETAIL = t.intersection([
-  t.type({
-    id: t.number,
-    organizationID: t.union([t.number, t.null]),
-    source: t.string,
-  }),
-  t.partial({
-    date: t.union([t.string, t.null]),
-    channel: t.union([t.string, t.null]),
-    refCode: t.union([t.string, t.null]),
-    sourceID: t.union([t.string, t.null]),
-  }),
-]);
-
-const TRANSFERRED_ENTITY = t.type({
-  key: t.string,
-  valueId: t.number,
-});
-
-const INFERRED_ENTITY = t.type({
-  key: t.string,
-  valueId: t.union([t.number, t.null]),
-  reason: t.string,
-});
-
-const FLOW_EXTERNAL_REFERENCE = t.intersection([
-  t.type({
-    id: t.number,
-    systemID: t.string,
-    flowID: t.number,
-    externalRecordID: t.string,
-    externalRecordDate: t.union([t.string, t.null]),
-  }),
-  t.partial({
-    versionID: t.union([t.number, t.null]),
-    importInformation: t.union([
-      t.partial({
-        inferred: t.union([t.array(INFERRED_ENTITY), t.null]),
-        transferred: t.union([t.array(TRANSFERRED_ENTITY), t.null]),
-      }),
-      t.null,
-    ]),
-  }),
-]);
-
-const FLOW_SEARCH_RESULT_REST = t.intersection([
-  t.type({
-    id: t.number,
-    versionID: t.number,
-    amountUSD: t.string,
-    updatedAt: t.string,
-    activeStatus: t.boolean,
-    restricted: t.boolean,
-  }),
-  t.partial({
-    childIDs: t.union([t.array(t.number), t.null]),
-    parentIDs: t.union([t.array(t.number), t.null]),
-    categories: t.union([t.array(FLOW_CATEGORY), t.null]),
-    // TO REMOVE
-    organizations: t.union([t.array(FLOW_ORGANIZATION_REST), t.null]),
-    destinationOrganizations: t.union([
-      t.array(FLOW_ORGANIZATION_REST),
-      t.null,
-    ]),
-    sourceOrganizations: t.union([t.array(FLOW_ORGANIZATION_REST), t.null]),
-    plans: t.union([t.array(FLOW_PLAN), t.null]),
-    locations: t.union([t.array(FLOW_LOCATION), t.null]),
-    usageYears: t.union([t.array(FLOW_USAGE_YEAR), t.null]),
-    reportDetails: t.union([t.array(FLOW_REPORT_DETAIL), t.null]),
-    externalReference: t.union([FLOW_EXTERNAL_REFERENCE, t.null]),
-    origAmount: t.union([t.string, t.null]),
-    origCurrency: t.union([t.string, t.null]),
-    parkedParentSource: t.type({
-      organization: t.array(t.number),
-      OrgName: t.array(t.string),
-    }),
-  }),
-]);
-
 const CREATED_BY_OR_LAST_UPDATED_BY = t.type({
   name: t.string,
 });
 
-/** Delete when finishing off REST flow endpoint */
+/** Delete when finishing off REST flow endpoint (Maybe Matyas needs it) */
 const FLOW_REST = t.intersection([
   t.type({
     id: t.number,
@@ -216,21 +117,13 @@ export const GET_FLOW_RESULT = FLOW_REST;
 
 export type GetFlowResult = t.TypeOf<typeof GET_FLOW_RESULT>;
 
-export type FlowSearchResult = t.TypeOf<typeof FLOW_SEARCH_RESULT_REST>;
-
-export const SEARCH_FLOWS_RESULT_REST = t.type({
-  flows: t.array(FLOW_SEARCH_RESULT_REST),
-  flowCount: t.string,
-});
-
-export type SearchFlowsResultREST = t.TypeOf<typeof SEARCH_FLOWS_RESULT_REST>;
 const FlowLocation = t.type({
   id: t.number,
   name: t.string,
   direction: t.string,
 });
 
-// NEW CODE FROM HERE
+// GRAPHQL CODE FROM HERE
 const FlowOrganization = t.type({
   id: t.number,
   direction: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
@@ -341,55 +234,6 @@ export const SEARCH_FLOWS_RESULT = t.type({
 
 export type SearchFlowsResult = t.TypeOf<typeof SEARCH_FLOWS_RESULT>;
 
-export const SEARCH_FLOWS_REST_PARAMS = t.type({
-  flowSearch: t.partial({
-    activeStatus: t.type({
-      name: t.string,
-    }),
-    flowID: t.array(t.number),
-    amountUSD: t.number,
-    flowList: FLOW_LIST,
-    active: t.boolean,
-    orderBy: t.string,
-    orderDir: t.union([t.string, t.null]),
-    allReportDetails: t.boolean,
-    categories: t.array(FLOW_CATEGORY),
-    flowObjects: t.array(FLOW_OBJECT),
-    includeChildrenOfParkedFlows: t.boolean,
-    limit: t.number,
-    offset: t.number,
-  }),
-});
-export type SearchFlowsRESTParams = t.TypeOf<typeof SEARCH_FLOWS_REST_PARAMS>;
-
-const FILTERS = t.partial({
-  destinationCountries: t.array(t.string),
-  destinationOrganizations: t.array(t.string),
-  destinationUsageYears: t.array(t.string),
-  destinationProjects: t.array(t.string),
-  destinationPlans: t.array(t.string),
-  destinationGlobalClusters: t.array(t.string),
-  destinationEmergencies: t.array(t.string),
-  amountUSD: t.number,
-  flowID: t.string,
-  flowStatus: t.string,
-  flowType: t.string,
-  flowActiveStatus: t.string,
-  status: t.string,
-  reporterRefCode: t.number,
-  sourceSystemID: t.number,
-  legacyID: t.number,
-  keywords: t.array(t.string),
-  sourceCountries: t.array(t.string),
-  sourceOrganizations: t.array(t.string),
-  sourceUsageYears: t.array(t.string),
-  sourceProjects: t.array(t.string),
-  sourcePlans: t.array(t.string),
-  sourceGlobalClusters: t.array(t.string),
-  sourceEmergencies: t.array(t.string),
-  includeChildrenOfParkedFlows: t.boolean,
-});
-
 const FLOW_FILTERS = t.partial({
   flowFilters: t.partial({
     id: t.array(t.number),
@@ -435,7 +279,6 @@ export const NESTED_FLOW_FILTERS = t.partial({
 });
 export type NestedFlowFilters = t.TypeOf<typeof NESTED_FLOW_FILTERS>;
 
-export type FlowFiltersREST = t.TypeOf<typeof FILTERS>;
 export const SEARCH_FLOWS_PARAMS = t.partial({
   limit: t.number,
   prevPageCursor: t.number,
@@ -499,9 +342,6 @@ export type SearchFlowsBatchesResult = t.TypeOf<
 export interface Model {
   getFlowREST(params: GetFlowParams): Promise<GetFlowResult>;
   getFlow(params: GetFlowParams): Promise<GetFlowResult>;
-  searchFlowsREST(
-    params: SearchFlowsRESTParams
-  ): Promise<SearchFlowsResultREST>;
   searchFlows(params: SearchFlowsParams): Promise<SearchFlowsResult>;
   bulkRejectPendingFlows(
     params: BulkRejectPendingFlowsParams
