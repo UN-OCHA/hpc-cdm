@@ -29,6 +29,8 @@ import {
   TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
+  isCompatibleTableHeaderType,
+  isTableHeadersPropsKeyword,
 } from '../../utils/table-headers';
 
 import {
@@ -157,7 +159,7 @@ const EditableRow = ({
         >
           <StyledForm>
             <FieldsWrapper>
-              <C.TextFieldWrapper type="text" name="keyword" label="New name" />
+              <C.TextFieldWrapper name="keyword" label="New name" />
               <C.Switch name="public" label="public" />
             </FieldsWrapper>
             <C.ButtonSubmit color="primary" text="Save" />
@@ -222,6 +224,14 @@ export default function KeywordTable(props: KeywordTableProps) {
     lang: LanguageKey;
     data: categories.GetKeywordsResult;
   }) => {
+    const nonSafeTypedTableHeaders = decodeTableHeaders(
+      query.tableHeaders,
+      lang,
+      'keywords'
+    );
+    const tableHeaders = isTableHeadersPropsKeyword(nonSafeTypedTableHeaders)
+      ? nonSafeTypedTableHeaders
+      : [];
     return (
       <>
         {data
@@ -234,71 +244,69 @@ export default function KeywordTable(props: KeywordTableProps) {
           )
           .map((row) => (
             <TableRow key={`${row.id}`}>
-              {decodeTableHeaders(query.tableHeaders, lang, 'keywords').map(
-                (column) => {
-                  if (!column.active) {
-                    return null;
-                  }
-                  switch (column.identifierID) {
-                    case 'keyword.id':
-                      return (
-                        <TableCell
-                          key={`${row.id}keyword.id`}
-                          size="small"
-                          component="th"
-                          scope="row"
-                          data-test="keyword-table-id"
-                        >
-                          {row.id}
-                        </TableCell>
-                      );
-                    case 'keyword.name':
-                      return (
-                        <TableCell
-                          key={`${row.id}keyword.name`}
-                          component="th"
-                          size="small"
-                          scope="row"
-                          data-test="keyword-table-name"
-                        >
-                          <EditableRow
-                            lang={lang}
-                            row={row}
-                            entityEdited={entityEdited}
-                            setEntityEdited={setEntityEdited}
-                          />
-                        </TableCell>
-                      );
-                    case 'keyword.relatedFlows':
-                      return (
-                        <TableCell
-                          key={`${row.id}_keyword.relatedFlows`}
-                          size="small"
-                          data-test="_keyword-table-relatedFlows"
-                        >
-                          {row.refCount}
-                        </TableCell>
-                      );
-                    case 'keyword.public':
-                      return (
-                        <TableCell
-                          key={`${row.id}_keyword.public`}
-                          size="small"
-                          data-test="_keyword-table-public"
-                        >
-                          {
-                            row.description === 'public'
-                              ? 'Yes'
-                              : '--' /** TODO: Propperly implement this field instead of just putting Yes or --. */
-                          }
-                        </TableCell>
-                      );
-
-                    default:
-                      return null;
-                  }
+              {tableHeaders.map((column) => {
+                if (!column.active) {
+                  return null;
                 }
-              )}
+                switch (column.identifierID) {
+                  case 'keyword.id':
+                    return (
+                      <TableCell
+                        key={`${row.id}keyword.id`}
+                        size="small"
+                        component="th"
+                        scope="row"
+                        data-test="keyword-table-id"
+                      >
+                        {row.id}
+                      </TableCell>
+                    );
+                  case 'keyword.name':
+                    return (
+                      <TableCell
+                        key={`${row.id}keyword.name`}
+                        component="th"
+                        size="small"
+                        scope="row"
+                        data-test="keyword-table-name"
+                      >
+                        <EditableRow
+                          lang={lang}
+                          row={row}
+                          entityEdited={entityEdited}
+                          setEntityEdited={setEntityEdited}
+                        />
+                      </TableCell>
+                    );
+                  case 'keyword.relatedFlows':
+                    return (
+                      <TableCell
+                        key={`${row.id}_keyword.relatedFlows`}
+                        size="small"
+                        data-test="_keyword-table-relatedFlows"
+                      >
+                        {row.refCount}
+                      </TableCell>
+                    );
+                  case 'keyword.public':
+                    return (
+                      <TableCell
+                        key={`${row.id}_keyword.public`}
+                        size="small"
+                        data-test="_keyword-table-public"
+                      >
+                        {
+                          row.description === 'public'
+                            ? 'Yes'
+                            : '--' /** TODO: Propperly implement this field instead of just putting Yes or --. */
+                        }
+                      </TableCell>
+                    );
+
+                  default:
+                    return null;
+                }
+              })}
             </TableRow>
           ))}
       </>
@@ -311,17 +319,19 @@ export default function KeywordTable(props: KeywordTableProps) {
     lang: LanguageKey;
     data: categories.GetKeywordsResult;
   }) => {
+    const nonSafeTypedTableHeaders = decodeTableHeaders(
+      query.tableHeaders,
+      lang,
+      'keywords'
+    );
+    const tableHeaders = isTableHeadersPropsKeyword(nonSafeTypedTableHeaders)
+      ? nonSafeTypedTableHeaders
+      : [];
     return (
       <Table size="small">
         <TableHead>
           <TableRow>
-            {(
-              decodeTableHeaders(
-                query.tableHeaders,
-                lang,
-                'keywords'
-              ) as TableHeadersProps<KeywordHeaderID>[]
-            ).map((header) => {
+            {tableHeaders.map((header) => {
               if (!header.active) {
                 return null;
               }
@@ -439,16 +449,18 @@ export default function KeywordTable(props: KeywordTableProps) {
                           setQuery
                         )}
                         onClick={(element) => {
-                          setQuery({
-                            ...query,
-                            tableHeaders: encodeTableHeaders(
-                              element as any, // TO DO: remove any
-                              'keywords',
-                              query as Query,
-                              setQuery
-                            ),
-                          });
-                          setOpenSettings(false);
+                          if (isCompatibleTableHeaderType(element)) {
+                            setQuery({
+                              ...query,
+                              tableHeaders: encodeTableHeaders(
+                                element,
+                                'keywords',
+                                query as Query,
+                                setQuery
+                              ),
+                            });
+                            setOpenSettings(false);
+                          }
                         }}
                         elevation={6}
                         sx={{

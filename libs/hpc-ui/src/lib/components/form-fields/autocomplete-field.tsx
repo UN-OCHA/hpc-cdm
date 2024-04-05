@@ -1,11 +1,9 @@
-import { Autocomplete, AutocompleteProps, TextField } from '@mui/material';
+import { Autocomplete, AutocompleteProps } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 import { useState } from 'react';
 import tw from 'twin.macro';
+import { StyledTextField } from './text-field';
 
-const StyledTextField = tw(TextField)`
-      min-w-[10rem]
-      w-full`;
 const StyledAutocomplete = tw(Autocomplete)`
       min-w-[10rem]
       w-full`;

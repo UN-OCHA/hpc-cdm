@@ -23,6 +23,7 @@ export type Filters =
   | FlowsFilterValuesREST //  TODO: When removing the REST part, delete
   | PendingFlowsFilterValues
   | OrganizationFilterValues;
+
 export type FilterKeys =
   | keyof Strings['components']['flowsFilter']['filters']
   | keyof Strings['components']['pendingFlowsFilter']['filters']
@@ -44,6 +45,76 @@ export type Filter<T extends FilterKeys> = {
   };
 };
 
+export type FlowStatusType =
+  | 'commitment'
+  | 'carryover'
+  | 'paid'
+  | 'pledged'
+  | 'parked'
+  | 'pass_through'
+  | 'standard';
+
+/**
+ * Type guard functions
+ */
+
+const filterValueIsString = (value: FilterValues): value is string => {
+  return typeof value === 'string';
+};
+
+const filterValueIsArrayString = (value: FilterValues): value is string[] => {
+  return Array.isArray(value) && typeof value[0] === 'string';
+};
+
+const filterValueIsBoolean = (value: FilterValues): value is boolean => {
+  return typeof value === 'boolean';
+};
+
+const filterValueIsFormObjectValue = (
+  value: FilterValues
+): value is FormObjectValue => {
+  return (
+    typeof value === 'object' &&
+    !Array.isArray(value) &&
+    value !== null &&
+    Object.keys(value).includes('displayLabel') &&
+    Object.keys(value).includes('value')
+  );
+};
+
+const filterValueIsArrayFormObjectValue = (
+  value: FilterValues
+): value is Array<FormObjectValue> => {
+  return Array.isArray(value) && typeof value[0] !== 'string';
+};
+
+const filterValueIsDayJS = (value: FilterValues): value is Dayjs => {
+  return (
+    typeof value === 'object' &&
+    !Array.isArray(value) &&
+    value !== null &&
+    !filterValueIsFormObjectValue(value)
+  );
+};
+
+const filterValueIsFlowStatusType = (
+  value: FilterValues
+): value is FlowStatusType => {
+  const values = [
+    'commitment',
+    'carryover',
+    'paid',
+    'pledged',
+    'parked',
+    'pass_through',
+    'standard',
+  ];
+  if (typeof value === 'string') {
+    return values.includes(value);
+  }
+  return false;
+};
+
 const parseInInitialValues = <T extends Filters>(
   filters: T,
   initialValues: T
@@ -57,7 +128,7 @@ export const parseOutInitialValues = <T extends Filters>(
   filters: T,
   initialValues: T
 ) => {
-  const res: T = {} as T;
+  const res = {} as T;
   for (const key in filters) {
     if (JSON.stringify(filters[key]) !== JSON.stringify(initialValues[key]))
       res[key] = filters[key];
@@ -106,22 +177,6 @@ type ParsedFlowFiltersREST = {
   includeChildrenOfParkedFlows?: boolean;
 };
 
-function instanceOfFormObjectValue(
-  object: NonNullable<unknown>
-): object is FormObjectValue {
-  try {
-    return (
-      typeof object !== 'string' &&
-      typeof object !== 'boolean' &&
-      typeof object !== 'number' &&
-      'displayLabel' in object &&
-      'value' in object
-    );
-  } catch {
-    console.warn('Unsuportted value supplied to function');
-    return false;
-  }
-}
 export function isKey<T extends object>(x: T, k: PropertyKey): k is keyof T {
   return k in x;
 }
@@ -172,11 +227,11 @@ const parseCategories = (
 ) => {
   if (categories) {
     const res: { name: string; group: string }[] = [];
-    categories.map((category) => {
+    for (const category of categories) {
       if (category.values) {
         res.push({ name: category.values, group: category.group });
       }
-    });
+    }
     return res;
   }
 };
@@ -228,7 +283,7 @@ export const parseFormFilters = <
         ? fieldValue
             .map((x) => (typeof x === 'string' ? x : x.displayLabel))
             .join('<||>')
-        : instanceOfFormObjectValue(fieldValue)
+        : filterValueIsFormObjectValue(fieldValue)
         ? fieldValue.displayLabel
         : fieldValue.toString();
 
@@ -236,6 +291,7 @@ export const parseFormFilters = <
         JSON.stringify(parsedFormValue[key]?.value) !==
         JSON.stringify(fieldValue)
       ) {
+        //  Type missmatch is due to the typing is only accepting string values for keys, instead of string | number | symbol
         parsedFormValue[key as unknown as T] = {
           displayValue: displayValue,
           value: fieldValue,
@@ -269,13 +325,15 @@ export const parseFlowFiltersREST = (
         case 'sourceProjects':
         case 'sourceUsageYears': {
           const extractedDetails = extractDirectionObject(key);
-          if (extractedDetails) {
+          const value = filters[key]?.value;
+          if (extractedDetails && value) {
+            if (!filterValueIsArrayFormObjectValue(value)) {
+              break;
+            }
             res.flowObjects = [
               ...(res.flowObjects ? res.flowObjects : []),
               ...parseFlowObject({
-                values: formValueToID(
-                  filters[key]?.value as Array<FormObjectValue>
-                ),
+                values: formValueToID(value),
                 objectType: extractedDetails.object,
                 refDirection: extractedDetails.direction,
               }),
@@ -284,72 +342,113 @@ export const parseFlowFiltersREST = (
           break;
         }
         case 'amountUSD': {
-          const amountUSD = parseInt(filters.amountUSD?.value as string);
-          res.amountUSD = amountUSD;
+          if (!filters.amountUSD) {
+            break;
+          }
+          const amountUSD = filters.amountUSD.value;
+          if (filterValueIsString(amountUSD)) {
+            res.amountUSD = valueToInteger(amountUSD);
+          }
           break;
         }
         case 'flowID': {
-          const ids = (filters.flowID?.value as string[]).map((x) =>
-            parseInt(x)
-          );
-          res.flowID = ids;
+          if (!filters.flowID) {
+            break;
+          }
+          const ids = filters.flowID.value;
+          if (filterValueIsArrayString(ids)) {
+            res.flowID = ids.map((x) => valueToInteger(x));
+          }
           break;
         }
         case 'flowActiveStatus': {
-          res.flowActiveStatus = {
-            activeStatus: { name: filters.flowActiveStatus?.value as string },
-          };
+          if (!filters.flowActiveStatus) {
+            break;
+          }
+          const activeStatus = filters.flowActiveStatus.value;
+          if (filterValueIsString(activeStatus)) {
+            res.flowActiveStatus = {
+              activeStatus: { name: activeStatus },
+            };
+          }
           break;
         }
         case 'keywords': {
-          const parsedCategories = parseCategories(
-            formValueToLabel(
-              filters.keywords?.value as Array<FormObjectValue>
-            ).map(
-              (
-                keyword
-              ): { values: string; group: categories.CategoryGroup } => {
-                return { values: keyword, group: 'keywords' };
-              }
-            )
-          );
-          res.categories = [
-            ...(res.categories ? res.categories : []),
-            ...(parsedCategories ? parsedCategories : []),
-          ];
+          if (!filters.keywords) {
+            break;
+          }
+          const keywords = filters.keywords.value;
+          if (filterValueIsArrayFormObjectValue(keywords)) {
+            const parsedCategories = parseCategories(
+              formValueToLabel(keywords).map(
+                (
+                  keyword
+                ): { values: string; group: categories.CategoryGroup } => {
+                  return { values: keyword, group: 'keywords' };
+                }
+              )
+            );
+            res.categories = [
+              ...(res.categories ? res.categories : []),
+              ...(parsedCategories ? parsedCategories : []),
+            ];
+          }
           break;
         }
         case 'flowStatus': {
-          res.categories = [
-            ...(res.categories ? res.categories : []),
-            {
-              name: filters.flowStatus?.value as string,
-              group: 'flowStatus',
-            },
-          ];
+          if (!filters.flowStatus) {
+            break;
+          }
+          const flowStatus = filters.flowStatus.value;
+          if (filterValueIsString(flowStatus)) {
+            res.categories = [
+              ...(res.categories ? res.categories : []),
+              {
+                name: flowStatus,
+                group: 'flowStatus',
+              },
+            ];
+          }
           break;
         }
         case 'flowType': {
-          res.categories = [
-            ...(res.categories ? res.categories : []),
-            {
-              name: filters.flowType?.value as string,
-              group: 'flowStatus',
-            },
-          ];
-
+          if (!filters.flowType) {
+            break;
+          }
+          const flowType = filters.flowType.value;
+          if (filterValueIsString(flowType)) {
+            res.categories = [
+              ...(res.categories ? res.categories : []),
+              {
+                name: flowType,
+                group: 'flowStatus',
+              },
+            ];
+          }
           break;
         }
         case 'includeChildrenOfParkedFlows': {
-          res.includeChildrenOfParkedFlows = filters[key]?.value as boolean;
+          if (!filters.includeChildrenOfParkedFlows) {
+            break;
+          }
+          const value = filters.includeChildrenOfParkedFlows.value;
+          if (filterValueIsBoolean(value)) {
+            res.includeChildrenOfParkedFlows = value;
+          }
           break;
         }
         case 'restricted': {
           break;
         }
         default: {
-          const remainingKey: keyof ParsedFlowFiltersREST = key;
-          res[remainingKey] = filters[key]?.value as string;
+          const remainingValue = filters[key];
+          if (!remainingValue) {
+            break;
+          }
+          const value = remainingValue.value;
+          if (filterValueIsString(value)) {
+            res[key] = value;
+          }
           break;
         }
       }
@@ -358,14 +457,13 @@ export const parseFlowFiltersREST = (
   return res;
 };
 
-const parseActiveStatus = (
-  activeStatus: 'All' | 'true' | 'false'
-): boolean | undefined => {
+const parseActiveStatus = (activeStatus: string): boolean | undefined => {
   if (activeStatus === 'true') return true;
   else if (activeStatus === 'false') return false;
 
   return undefined;
 };
+
 export const parseFlowFilters = (
   filters: Filter<keyof Strings['components']['flowsFilter']['filters']>,
   pending?: boolean
@@ -402,79 +500,124 @@ export const parseFlowFilters = (
         case 'sourceProjects':
         case 'sourceUsageYears': {
           const extractedDetails = extractDirectionObject(key);
-          if (extractedDetails) {
-            res.flowObjectFilters = [
-              ...res.flowObjectFilters,
-              ...(filters[key]?.value as Array<FormObjectValue>).map(
-                (flowObject) => ({
+          const value = filters[key]?.value;
+          if (extractedDetails && value) {
+            if (filterValueIsArrayFormObjectValue(value)) {
+              res.flowObjectFilters = [
+                ...res.flowObjectFilters,
+                ...value.map((flowObject) => ({
                   objectID: valueToInteger(flowObject.value),
                   direction: extractedDetails.direction,
                   objectType: extractedDetails.object,
-                })
-              ),
-            ];
+                })),
+              ];
+            }
           }
           break;
         }
         case 'reporterRefCode':
         case 'sourceSystemID': {
-          res.nestedFlowFilters[key] = filters[key]?.value as string;
+          const value = filters[key]?.value;
+          if (!value) {
+            break;
+          }
+          if (filterValueIsString(value)) {
+            res.nestedFlowFilters[key] = value;
+          }
           break;
         }
         case 'legacyID': {
-          const parsedValue = parseInt(filters[key]?.value as string);
-          res.nestedFlowFilters[key] = parsedValue;
+          const legacyID = filters[key]?.value;
+          if (!legacyID) {
+            break;
+          }
+          if (filterValueIsString(legacyID)) {
+            res.nestedFlowFilters[key] = valueToInteger(legacyID);
+          }
           break;
         }
         case 'amountUSD': {
-          const parsedValue = parseInt(filters[key]?.value as string);
-          res.flowFilters[key] = parsedValue;
+          const amountUSD = filters[key]?.value;
+          if (!amountUSD) {
+            break;
+          }
+          if (filterValueIsString(amountUSD)) {
+            res.flowFilters[key] = valueToInteger(amountUSD);
+          }
           break;
         }
         case 'flowID': {
-          const ids = (filters.flowID?.value as string[]).map((x) =>
-            parseInt(x)
-          );
-          res.flowFilters.id = ids;
+          const ids = filters.flowID?.value;
+          if (!ids) {
+            break;
+          }
+          if (filterValueIsArrayString(ids)) {
+            res.flowFilters.id = ids.map((id) => valueToInteger(id));
+          }
           break;
         }
         case 'flowType':
         case 'flowStatus': {
-          const filterValue = filters[key];
-          if (filterValue) {
-            res[(filterValue.value as FormObjectValue).value as 'commitment'] =
-              true; //FIXME: Propperly write this, this can be 'parked', 'commitment', 'pledged'...
+          const filterValue = filters[key]?.value;
+          if (!filterValue) {
+            break;
+          }
+          if (filterValueIsFlowStatusType(filterValue)) {
+            res[filterValue] = true;
           }
           break;
         }
         case 'restricted': {
-          res.flowFilters.restricted = filters.restricted?.value as boolean;
+          const restricted = filters.restricted?.value;
+          if (!restricted) {
+            break;
+          }
+          if (filterValueIsBoolean(restricted)) {
+            res.flowFilters.restricted = restricted;
+          }
           break;
         }
         case 'includeChildrenOfParkedFlows': {
-          res[key] = filters[key]?.value as boolean;
+          const value = filters.includeChildrenOfParkedFlows?.value;
+          if (!value) {
+            break;
+          }
+          if (filterValueIsBoolean(value)) {
+            res[key] = value;
+          }
           break;
         }
         case 'flowActiveStatus': {
-          res.flowFilters.activeStatus = parseActiveStatus(
-            (filters[key]?.value as FormObjectValue).value as
-              | 'All'
-              | 'false'
-              | 'true'
-          );
+          const flowActiveStatus = filters[key]?.value;
+          if (!flowActiveStatus) {
+            break;
+          }
+          if (
+            filterValueIsFormObjectValue(flowActiveStatus) &&
+            typeof flowActiveStatus.value === 'string'
+          ) {
+            res.flowFilters.activeStatus = parseActiveStatus(
+              flowActiveStatus.value
+            );
+          }
           break;
         }
         case 'keywords': {
-          const parsedCategories = (
-            filters.keywords?.value as Array<FormObjectValue>
-          ).map((keyword): { id: number; group: categories.CategoryGroup } => {
-            return { id: valueToInteger(keyword.value), group: 'keywords' };
-          });
-
-          res.flowCategoryFilters = [
-            ...res.flowCategoryFilters,
-            ...(parsedCategories ? parsedCategories : []),
-          ];
+          const keywords = filters.keywords?.value;
+          if (!keywords) {
+            break;
+          }
+          if (filterValueIsArrayFormObjectValue(keywords)) {
+            const parsedCategories = keywords.map(
+              (keyword): { id: number; group: categories.CategoryGroup } => {
+                return { id: valueToInteger(keyword.value), group: 'keywords' };
+              }
+            );
+            res.flowCategoryFilters = [
+              ...res.flowCategoryFilters,
+              ...(parsedCategories ? parsedCategories : []),
+            ];
+          }
           break;
         }
       }
@@ -492,17 +635,24 @@ export const parseOrganizationFilters = (
       switch (key) {
         case 'parentOrganization':
         case 'organizationType': {
-          const val = filters[key]?.value as FormObjectValue;
-          res.search[key] = {
-            name: val.displayLabel,
-            id: valueToInteger(val.value),
-          };
+          const value = filters[key]?.value;
+          if (!value) {
+            break;
+          }
+          if (filterValueIsFormObjectValue(value)) {
+            res.search[key] = {
+              name: value.displayLabel,
+              id: valueToInteger(value.value),
+            };
+          }
           break;
         }
         case 'locations': {
-          const locations = filters.locations
-            ?.value as OrganizationFilterValues['locations'];
-          if (locations) {
+          const locations = filters.locations?.value;
+          if (!locations) {
+            break;
+          }
+          if (filterValueIsFormObjectValue(locations)) {
             res.search[key] = [
               {
                 name: locations.displayLabel,
@@ -513,13 +663,37 @@ export const parseOrganizationFilters = (
           break;
         }
         case 'organization': {
-          res.search.organization = {
-            name: filters?.organization?.value as string,
-          };
+          const organization = filters.organization?.value;
+          if (!organization) {
+            break;
+          }
+          if (filterValueIsString(organization)) {
+            res.search.organization = {
+              name: organization,
+            };
+          }
+          break;
+        }
+        case 'date': {
+          const date = filters.date?.value;
+          if (!date) {
+            break;
+          }
+          if (filterValueIsDayJS(date)) {
+            res.search.date = date.toString();
+          } else if (filterValueIsString(date)) {
+            res.search.date = date;
+          }
           break;
         }
         default: {
-          res.search[key] = filters[key]?.value as string;
+          const value = filters[key]?.value;
+          if (!value) {
+            break;
+          }
+          if (filterValueIsString(value)) {
+            res.search[key] = value;
+          }
           break;
         }
       }

@@ -116,7 +116,6 @@ export const FilterOrganizationsTable = (props: Props) => {
                   lang,
                   (s) => s.components.organizationsFilter.filters.organization
                 )}
-                type="text"
               />
               <C.AsyncAutocompleteSelect
                 label={t.t(

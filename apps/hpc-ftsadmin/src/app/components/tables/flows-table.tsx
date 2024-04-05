@@ -38,6 +38,8 @@ import {
   TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
+  isCompatibleTableHeaderType,
+  isTableHeadersPropsFlow,
 } from '../../utils/table-headers';
 import { downloadExcel } from '../../utils/download-excel';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -213,6 +215,13 @@ export default function FlowsTable(props: FlowsTableProps) {
     const [selectedRows, setSelectedRows] = useState<
       { id: number; versionID: number }[]
     >([]);
+    const nonSafeTypedTableHeaders = decodeTableHeaders(
+      query.tableHeaders,
+      lang
+    );
+    const tableHeaders = isTableHeadersPropsFlow(nonSafeTypedTableHeaders)
+      ? nonSafeTypedTableHeaders
+      : [];
     const handleCheckboxChange = (
       event: React.ChangeEvent<HTMLInputElement>,
       row: flows.Flow
@@ -263,7 +272,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                 />
               </TableCell>
             )}
-            {decodeTableHeaders(query.tableHeaders, lang).map((column) => {
+            {tableHeaders.map((column) => {
               if (!column.active) {
                 return null;
               }
@@ -619,16 +628,19 @@ export default function FlowsTable(props: FlowsTableProps) {
     lang: LanguageKey;
     data: flows.SearchFlowsResult;
   }) => {
+    const nonSafeTypedTableHeaders = decodeTableHeaders(
+      query.tableHeaders,
+      lang
+    );
+    const tableHeaders = isTableHeadersPropsFlow(nonSafeTypedTableHeaders)
+      ? nonSafeTypedTableHeaders
+      : [];
     return (
       <Table size="small">
         <TableHead>
           <TableRow>
             {props.pending && <TableCell size="small" />}
-            {(
-              decodeTableHeaders(query.tableHeaders, lang) as Array<
-                TableHeadersProps<FlowHeaderID>
-              >
-            ).map((header) => {
+            {tableHeaders.map((header) => {
               if (!header.active) {
                 return null;
               }
@@ -652,7 +664,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                         query.orderBy === header.identifierID
                           ? (query.orderDir.toLowerCase() as Lowercase<
                               typeof query.orderDir
-                            >)
+                            >) //  Safe type assertion
                           : 'desc'
                       }
                       onClick={() => handleSort(header.identifierID)}
@@ -857,17 +869,19 @@ export default function FlowsTable(props: FlowsTableProps) {
                             query,
                             setQuery
                           )}
-                          onClick={(element) =>
-                            setQuery({
-                              ...query,
-                              tableHeaders: encodeTableHeaders(
-                                element as any, // TO DO: remove any
-                                'flows',
-                                query,
-                                setQuery
-                              ),
-                            })
-                          }
+                          onClick={(element) => {
+                            if (isCompatibleTableHeaderType(element)) {
+                              setQuery({
+                                ...query,
+                                tableHeaders: encodeTableHeaders(
+                                  element,
+                                  'flows',
+                                  query,
+                                  setQuery
+                                ),
+                              });
+                            }
+                          }}
                           elevation={6}
                           sx={{
                             width: '400px',

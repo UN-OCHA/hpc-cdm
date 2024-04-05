@@ -16,8 +16,8 @@ const CheckBox = ({
 }: {
   name: string;
   label?: string;
-  value?: any;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void | any;
+  value?: unknown;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void | unknown;
   size?: 'small' | 'medium';
 }) => {
   const [field] = useField(name);
