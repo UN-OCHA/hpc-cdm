@@ -126,7 +126,6 @@ export default function FlowsTable(props: FlowsTableProps) {
   };
 
   const handleChangePage = (
-    event: unknown,
     newPage: number,
     prevPageCursor: number,
     nextPageCursor: number
@@ -917,9 +916,8 @@ export default function FlowsTable(props: FlowsTableProps) {
                       count={data.searchFlows.total}
                       rowsPerPage={query.rowsPerPage}
                       page={query.page}
-                      onPageChange={(event, newPage) =>
+                      onPageChange={(_, newPage) =>
                         handleChangePage(
-                          event,
                           newPage,
                           data.searchFlows.prevPageCursor,
                           data.searchFlows.nextPageCursor
@@ -955,9 +953,8 @@ export default function FlowsTable(props: FlowsTableProps) {
                   count={data.searchFlows.total}
                   rowsPerPage={query.rowsPerPage}
                   page={query.page}
-                  onPageChange={(event, newPage) =>
+                  onPageChange={(_, newPage) =>
                     handleChangePage(
-                      event,
                       newPage,
                       data.searchFlows.prevPageCursor,
                       data.searchFlows.nextPageCursor

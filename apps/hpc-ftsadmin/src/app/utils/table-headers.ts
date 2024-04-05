@@ -255,12 +255,12 @@ for (const [index, header] of Object.entries(POSSIBLE_FLOW_HEADER_VALUES)) {
 }
 export const DEFAULT_ORGANIZATION_TABLE_HEADERS: TableHeadersProps<OrganizationHeaderID>[] =
   [];
-for (const [index, header] of Object.entries(POSSIBLE_ORGANIZATION_VALUES)) {
+for (const [, header] of Object.entries(POSSIBLE_ORGANIZATION_VALUES)) {
   DEFAULT_ORGANIZATION_TABLE_HEADERS.push(header);
 }
 export const DEFAULT_KEYWORD_TABLE_HEADERS: TableHeadersProps<KeywordHeaderID>[] =
   [];
-for (const [index, header] of Object.entries(POSSIBLE_KEYWORD_VALUES)) {
+for (const [, header] of Object.entries(POSSIBLE_KEYWORD_VALUES)) {
   DEFAULT_KEYWORD_TABLE_HEADERS.push(header);
 }
 
