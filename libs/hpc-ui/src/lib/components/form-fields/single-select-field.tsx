@@ -35,24 +35,24 @@ const SingleSelect = ({
   readonly,
   ...otherProps
 }: SingleSelectProps) => {
-  const { setFieldValue } = useFormikContext<string>();
+  const { setFieldValue } = useFormikContext<FormObjectValue>();
   const [field, meta] = useField(name);
 
-  const handleChange = (event: SelectChangeEvent) => {
+  const handleChange = (event: SelectChangeEvent<FormObjectValue>) => {
     const {
       target: { value },
     } = event;
     setFieldValue(name, value);
   };
 
-  const singleSelectConfig: SelectProps<string> = {
+  const singleSelectConfig: SelectProps<FormObjectValue> = {
     ...field,
     ...otherProps,
     labelId: `${label.toLowerCase().replace(' ', '-').trim()}-label`,
     label: label,
     inputProps: { readOnly: readonly },
     renderValue: (value) => {
-      return (value as unknown as FormObjectValue).displayLabel;
+      return value.displayLabel;
     },
     input: (
       <OutlinedInput
@@ -86,7 +86,7 @@ const SingleSelect = ({
         {options.map((value) => (
           <MenuItem
             key={`${value.displayLabel}_${value.value}`}
-            value={value as any}
+            value={value as any} //  Object type is not supported, but it works
           >
             {value.displayLabel}
           </MenuItem>

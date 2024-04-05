@@ -32,6 +32,8 @@ import {
   TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
+  isCompatibleTableHeaderType,
+  isTableHeadersPropsOrganization,
 } from '../../utils/table-headers';
 import { Strings } from '../../../i18n/iface';
 import { downloadExcel } from '../../utils/download-excel';
@@ -139,6 +141,16 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     lang: LanguageKey;
     data: organizations.SearchOrnganizationResult;
   }) => {
+    const nonSafeTypedTableHeaders = decodeTableHeaders(
+      query.tableHeaders,
+      lang,
+      'organizations'
+    );
+    const tableHeaders = isTableHeadersPropsOrganization(
+      nonSafeTypedTableHeaders
+    )
+      ? nonSafeTypedTableHeaders
+      : [];
     return (
       <>
         {data.organizations.map((row) => (
@@ -146,118 +158,116 @@ export default function OrganizationTable(props: OrganizationTableProps) {
             key={`${row.id}`}
             onClick={() => navigate(paths.organization(row.id))}
           >
-            {decodeTableHeaders(query.tableHeaders, lang, 'organizations').map(
-              (column) => {
-                if (!column.active) {
-                  return null;
-                }
-                switch (column.identifierID) {
-                  case 'organization.id':
-                    return (
-                      <TableCell
-                        key={`${row.id}_organization.id`}
-                        size="small"
-                        component="th"
-                        scope="row"
-                        data-test="organization-table-id"
-                      >
-                        {row.id}
-                      </TableCell>
-                    );
-                  case 'organization.name':
-                    return (
-                      <TableCell
-                        key={`${row.id}_organization.name`}
-                        component="th"
-                        size="small"
-                        scope="row"
-                        data-test="organization-table-name"
-                      >
-                        {row.name}
-                      </TableCell>
-                    );
-                  case 'organization.abbreviation':
-                    return (
-                      <TableCell
-                        key={`${row.id}_organization.abbreviation`}
-                        size="small"
-                        data-test="organization-table-abbreviation"
-                      >
-                        {row.abbreviation}
-                      </TableCell>
-                    );
-                  case 'organization.type':
-                    return (
-                      <TableCell
-                        key={`${row.id}_organization.type`}
-                        size="small"
-                        data-test="organization-table-type"
-                      >
-                        {(() => {
-                          const res = row.categories.filter(
-                            (cat) =>
-                              cat.group === 'organizationType' &&
-                              cat.parentID === null
-                          );
-                          return res.length > 0 ? res.map((x) => x.name) : '--';
-                        })()}
-                      </TableCell>
-                    );
-                  case 'organization.subType':
-                    return (
-                      <TableCell
-                        key={`${row.id}_organization.subType`}
-                        size="small"
-                        data-test="organization-table-subType"
-                      >
-                        {(() => {
-                          const res = row.categories.filter(
-                            (cat) =>
-                              cat.group === 'organizationType' &&
-                              cat.parentID !== null
-                          );
-                          return res.length > 0 ? res.map((x) => x.name) : '--';
-                        })()}
-                      </TableCell>
-                    );
-                  case 'organization.location':
-                    return (
-                      <TableCell
-                        key={`${row.id}_organization.location`}
-                        size="small"
-                        data-test="organization-table-location"
-                      >
-                        {row.locations.length > 0
-                          ? row.locations.map((x) => x.name)
-                          : '--'}
-                      </TableCell>
-                    );
-                  case 'organization.createdBy':
-                    return (
-                      <TableCell
-                        key={`${row.id}_organization.createdBy`}
-                        size="small"
-                        data-test="organization-table-created-by"
-                      >
-                        {parseUpdatedCreatedBy(row.create, lang)}
-                        {}
-                      </TableCell>
-                    );
-                  case 'organization.updatedBy':
-                    return (
-                      <TableCell
-                        key={`${row.id}_organization.updatedBy`}
-                        size="small"
-                        data-test="organization-table-updated-by"
-                      >
-                        {parseUpdatedCreatedBy(row.update, lang)}
-                      </TableCell>
-                    );
-                  default:
-                    return null;
-                }
+            {tableHeaders.map((column) => {
+              if (!column.active) {
+                return null;
               }
-            )}
+              switch (column.identifierID) {
+                case 'organization.id':
+                  return (
+                    <TableCell
+                      key={`${row.id}_organization.id`}
+                      size="small"
+                      component="th"
+                      scope="row"
+                      data-test="organization-table-id"
+                    >
+                      {row.id}
+                    </TableCell>
+                  );
+                case 'organization.name':
+                  return (
+                    <TableCell
+                      key={`${row.id}_organization.name`}
+                      component="th"
+                      size="small"
+                      scope="row"
+                      data-test="organization-table-name"
+                    >
+                      {row.name}
+                    </TableCell>
+                  );
+                case 'organization.abbreviation':
+                  return (
+                    <TableCell
+                      key={`${row.id}_organization.abbreviation`}
+                      size="small"
+                      data-test="organization-table-abbreviation"
+                    >
+                      {row.abbreviation}
+                    </TableCell>
+                  );
+                case 'organization.type':
+                  return (
+                    <TableCell
+                      key={`${row.id}_organization.type`}
+                      size="small"
+                      data-test="organization-table-type"
+                    >
+                      {(() => {
+                        const res = row.categories.filter(
+                          (cat) =>
+                            cat.group === 'organizationType' &&
+                            cat.parentID === null
+                        );
+                        return res.length > 0 ? res.map((x) => x.name) : '--';
+                      })()}
+                    </TableCell>
+                  );
+                case 'organization.subType':
+                  return (
+                    <TableCell
+                      key={`${row.id}_organization.subType`}
+                      size="small"
+                      data-test="organization-table-subType"
+                    >
+                      {(() => {
+                        const res = row.categories.filter(
+                          (cat) =>
+                            cat.group === 'organizationType' &&
+                            cat.parentID !== null
+                        );
+                        return res.length > 0 ? res.map((x) => x.name) : '--';
+                      })()}
+                    </TableCell>
+                  );
+                case 'organization.location':
+                  return (
+                    <TableCell
+                      key={`${row.id}_organization.location`}
+                      size="small"
+                      data-test="organization-table-location"
+                    >
+                      {row.locations.length > 0
+                        ? row.locations.map((x) => x.name)
+                        : '--'}
+                    </TableCell>
+                  );
+                case 'organization.createdBy':
+                  return (
+                    <TableCell
+                      key={`${row.id}_organization.createdBy`}
+                      size="small"
+                      data-test="organization-table-created-by"
+                    >
+                      {parseUpdatedCreatedBy(row.create, lang)}
+                      {}
+                    </TableCell>
+                  );
+                case 'organization.updatedBy':
+                  return (
+                    <TableCell
+                      key={`${row.id}_organization.updatedBy`}
+                      size="small"
+                      data-test="organization-table-updated-by"
+                    >
+                      {parseUpdatedCreatedBy(row.update, lang)}
+                    </TableCell>
+                  );
+                default:
+                  return null;
+              }
+            })}
           </TableRowClick>
         ))}
       </>
@@ -270,17 +280,21 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     lang: LanguageKey;
     data: organizations.SearchOrnganizationResult;
   }) => {
+    const nonSafeTypedTableHeaders = decodeTableHeaders(
+      query.tableHeaders,
+      lang,
+      'organizations'
+    );
+    const tableHeaders = isTableHeadersPropsOrganization(
+      nonSafeTypedTableHeaders
+    )
+      ? nonSafeTypedTableHeaders
+      : [];
     return (
       <Table size="small">
         <TableHead>
           <TableRow>
-            {(
-              decodeTableHeaders(
-                query.tableHeaders,
-                lang,
-                'organizations'
-              ) as TableHeadersProps<OrganizationHeaderID>[]
-            ).map((header) => {
+            {tableHeaders.map((header) => {
               if (!header.active) {
                 return null;
               }
@@ -421,17 +435,19 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                           query,
                           setQuery
                         )}
-                        onClick={(element) =>
-                          setQuery({
-                            ...query,
-                            tableHeaders: encodeTableHeaders(
-                              element as any, // TODO: remove any
-                              'organizations',
-                              query,
-                              setQuery
-                            ),
-                          })
-                        }
+                        onClick={(element) => {
+                          if (isCompatibleTableHeaderType(element)) {
+                            setQuery({
+                              ...query,
+                              tableHeaders: encodeTableHeaders(
+                                element,
+                                'organizations',
+                                query,
+                                setQuery
+                              ),
+                            });
+                          }
+                        }}
                         elevation={6}
                         sx={{
                           width: '400px',

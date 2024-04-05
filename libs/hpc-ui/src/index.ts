@@ -30,6 +30,7 @@ import MainNavigation from './lib/components/main-navigation';
 import MultiTextField from './lib/components/form-fields/multi-text-field';
 import MultiSelect from './lib/components/form-fields/multi-select-field';
 import NotFound from './lib/components/not-found';
+import NumberField from './lib/components/form-fields/number-field';
 import PageTitle from './lib/components/page-title';
 import * as sidebarNavigation from './lib/components/sidebar-navigation';
 import SearchFilter from './lib/components/search-filter';
@@ -72,6 +73,7 @@ const COMPONENTS = {
   MultiSelectWrapper: MultiSelect,
   MultiTextField,
   NotFound,
+  NumberField,
   PageTitle,
   SidebarNavigation: sidebarNavigation.default,
   SingleSelect,
