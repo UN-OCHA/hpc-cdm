@@ -190,6 +190,10 @@ const CREATED_BY_OR_LAST_UPDATED_BY = t.type({
 });
 
 /** Delete when finishing off REST flow endpoint */
+const DELETE_RESULT = t.type({
+  data: t.string,
+  status: t.string,
+});
 const FLOW_REST = t.intersection([
   t.type({
     id: t.number,
@@ -266,6 +270,7 @@ const FLOW_REST = t.intersection([
 ]);
 
 export type FlowREST = t.TypeOf<typeof FLOW_REST>;
+export type DeleteResult = t.TypeOf<typeof DELETE_RESULT>;
 
 export const GET_FLOW_PARAMS = t.intersection([
   t.type({
@@ -279,6 +284,7 @@ export const GET_FLOW_PARAMS = t.intersection([
 export type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
 
 export const GET_FLOW_RESULT = FLOW_REST;
+export const DELETE_FLOW_RESULT = DELETE_RESULT;
 
 export type GetFlowResult = t.TypeOf<typeof GET_FLOW_RESULT>;
 
@@ -619,12 +625,16 @@ export type GetValidateFlowParams = t.TypeOf<typeof GET_VALIDATE_FLOWS_PARAMS>;
 export const CREATE_FLOW = t.type({
   flow: GET_VALIDATE_FLOWS_PARAMS,
 });
-
+export const DELETE_FLOW = t.type({
+  VersionID: t.number,
+  FlowID: t.number,
+});
 export const CREATE_FLOW_OPTION = t.type({
   adding: t.boolean,
   originalFlow: t.any,
 });
 
+export type DeleteFlowParams = t.TypeOf<typeof DELETE_FLOW>;
 export type CreateFlowParams = t.TypeOf<typeof CREATE_FLOW>;
 export type CreateFlowOptions = t.TypeOf<typeof CREATE_FLOW_OPTION>;
 
@@ -648,4 +658,5 @@ export interface Model {
   ): Promise<ValidationResult[]>;
   createFlow(params: CreateFlowParams): Promise<FlowREST>;
   updateFlow(params: CreateFlowParams): Promise<FlowREST>;
+  deleteFlow(params: DeleteFlowParams): Promise<DeleteResult>;
 }

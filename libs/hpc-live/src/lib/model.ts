@@ -711,6 +711,16 @@ export class LiveModel implements Model {
           },
           resultType: flows.GET_FLOW_RESULT,
         }),
+      deleteFlow: (params) =>
+        this.call({
+          pathname: `/v1/flow/delete/${params.FlowID}/version/${params.VersionID}`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.DELETE_FLOW_RESULT,
+        }),
       getTotalAmountUSD: (params) => {
         const query = `query{
             searchFlowsTotalAmountUSD${searchFlowsParams(params)}{

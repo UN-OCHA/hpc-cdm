@@ -7,9 +7,15 @@ import { FormikErrors } from 'formik';
 import * as t from 'io-ts';
 import { util as codecs } from '@unocha/hpc-data';
 import GppMaybeIcon from '@mui/icons-material/GppMaybe';
-
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Stack from '@mui/material/Stack';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import MuiAlert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import _ from 'lodash';
+import useSharePath from './Hooks/SharePath';
 import { C, dialogs, dataLoader } from '@unocha/hpc-ui';
-
 import {
   Table,
   TableBody,
@@ -23,13 +29,12 @@ import {
   Collapse,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-
 import { Environment } from '../../environments/interface';
 import { MdAdd, MdRemove, MdClose, MdCheck } from 'react-icons/md';
 import { usageYears, forms, governingEntities } from '@unocha/hpc-data';
-import { isValidDate, isValidYear } from '../utils/validation';
 import { getEnv } from '../context';
 import { editFlowSetting } from '../paths';
+import { flows } from '../paths';
 
 export type AutoCompleteSeletionType = forms.InputSelectValueType;
 
@@ -38,6 +43,11 @@ const INPUT_SELECT_VALUE_TYPE = forms.INPUT_SELECT_VALUE_TYPE;
 type UniqueDataType = {
   [key: string]: string[];
 };
+
+export interface DeleteFlowParams {
+  VersionID: number;
+  FlowID: number;
+}
 
 export interface ReportDetailType {
   verified: string;
@@ -203,6 +213,9 @@ interface Props {
   inputEntries: InputEntriesType;
   initializeInputEntries: () => void;
   rejectInputEntry: (key: string) => void;
+  currentVersionID?: number;
+  currentFlowID?: number;
+  currentVersionActiveStatus?: boolean;
 }
 
 const StyledAddChildWarning = tw.div`
@@ -244,6 +257,7 @@ items-center
 `;
 const StyledAnchor = tw.a`
 underline
+ml-[15px]
 `;
 const StyledAnchorDiv = tw.div`
 text-right
@@ -379,6 +393,9 @@ export const FlowForm = (props: Props) => {
     versionId,
     initializeInputEntries,
     rejectInputEntry,
+    currentVersionID,
+    currentFlowID,
+    currentVersionActiveStatus,
   } = props;
   const { confirm } = dialogs;
   const env = getEnv();
@@ -541,6 +558,7 @@ export const FlowForm = (props: Props) => {
         })),
       },
     };
+
     let data = {
       id: isEdit && flowId ? flowId : null,
       versionID: isEdit && versionId ? versionId : null,
@@ -663,65 +681,14 @@ export const FlowForm = (props: Props) => {
     data = collapseCategories(data);
     return data;
   };
-  const handleSubmit = async (values: FormValues) => {
-    const data = normalizeFlowData(values);
-    console.log(values);
 
-    const response = await env.model.flows.validateFlow(data, {
-      adding: !isEdit,
-      originalFlow: {},
-    });
-    let flag = true;
-    response.forEach((obj) => {
-      if (obj) {
-        const { success, message, confirmed } = obj;
-        if (!success) {
-          if (confirmed) {
-            const confirm = window.confirm(confirmed);
-            if (!confirm) {
-              setOpenAlerts([...openAlerts, { message, id: alertId }]);
-              setAlertId((prevId) => prevId + 1);
-              flag = false;
-            }
-          } else if (message) {
-            setOpenAlerts([...openAlerts, { message, id: alertId }]);
-            setAlertId((prevId) => prevId + 1);
-            flag = false;
-          }
-        }
-      }
-    });
-
-    if (flag) {
-      if (!isEdit) {
-        const response = await env.model.flows.createFlow({ flow: data });
-        const path = editFlowSetting(response.id, response.versionID);
-        window.open(path, '_self');
-      } else {
-        try {
-          const response = await env.model.flows.updateFlow({ flow: data });
-          console.log(response);
-        } catch (err: any) {
-          setOpenAlerts([...openAlerts, { message: err.message, id: alertId }]);
-          setAlertId((prevId) => prevId + 1);
-        }
-      }
-    }
-    // if  (values.reportDetails.some(detail => Object.values(detail).some(field => !field))) {
-    //         alert("Please fill all fields in the current reporting detail before adding another.");
-    //         <C.TextFieldWrapper
-    //             name = {"sourceOrganizations"}
-    //             type = "text"
-    //             style ={{ backgroundColor: 'your_color_here' }}
-    //         />
-    //     }
-    handleSave();
-  };
-
+  const [alertflag, setAlertFlag] = useState<boolean>(false);
+  const [sharePath, setSharePath] = useSharePath('');
+  const [readOnly, setReadOnly] = useState<boolean>(false);
+  const [linkCheck, setLinkCheck] = useState<boolean>(false);
   const handleSave = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [showWarningMessage, setShowWarningMessage] = useState<boolean>(false);
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
@@ -778,6 +745,24 @@ export const FlowForm = (props: Props) => {
   };
 
   useEffect(() => {
+    if (currentVersionActiveStatus) {
+      setReadOnly(false);
+    } else {
+      setReadOnly(true);
+    }
+  }, []);
+  // useEffect(() => {
+  //   if (versionData) {
+  //     if (!currentVersionActiveStatus) {
+  //       currentVersionID === versionData.length
+  //         ? setReadOnly(false)
+  //         : setReadOnly(true);
+  //     } else {
+  //       setReadOnly(false);
+  //     }
+  //   }
+  // }, []);
+  useEffect(() => {
     if (initialValue.parentFlow && initialValue.parentFlow.length) {
       setShowParentFlow(true);
     }
@@ -787,6 +772,58 @@ export const FlowForm = (props: Props) => {
       setShowChildFlow(true);
     }
   }, [initialValue.childFlow]);
+
+  const handleSubmit = async (values: FormValues) => {
+    const data = normalizeFlowData(values);
+    const response = await env.model.flows.validateFlow(data, {
+      adding: !isEdit,
+      originalFlow: {},
+    });
+    let flag = true;
+    response.forEach((obj) => {
+      if (obj) {
+        const { success, message, confirmed } = obj;
+        if (!success) {
+          if (confirmed) {
+            const confirm = window.confirm(confirmed);
+            if (!confirm) {
+              setOpenAlerts([...openAlerts, { message, id: alertId }]);
+              setAlertId((prevId) => prevId + 1);
+              flag = false;
+              handleSave();
+            }
+          } else if (message) {
+            setOpenAlerts([...openAlerts, { message, id: alertId }]);
+            setAlertId((prevId) => prevId + 1);
+            flag = false;
+            handleSave();
+          }
+        }
+      }
+    });
+
+    if (flag) {
+      if (!isEdit) {
+        setAlertFlag(true);
+        const response = await env.model.flows.createFlow({ flow: data });
+        const path = editFlowSetting(response.id, response.versionID);
+        window.open(path, '_self');
+      } else {
+        try {
+          const response = await env.model.flows.updateFlow({ flow: data });
+          if (response) {
+            const path = editFlowSetting(response.id, response.versionID);
+            setAlertFlag(true);
+            setSharePath(path);
+          }
+        } catch (err: any) {
+          setOpenAlerts([...openAlerts, { message: err.message, id: alertId }]);
+          setAlertId((prevId) => prevId + 1);
+          handleSave();
+        }
+      }
+    }
+  };
 
   const setObjectsWithArray = (
     fetchedObject: any,
@@ -1175,10 +1212,11 @@ export const FlowForm = (props: Props) => {
         const response = await environment.model.categories.getCategories({
           query: category,
         });
+        console.log(response, 'response');
         return response.map(
           (responseValue): AutoCompleteSeletionType => ({
             displayLabel: responseValue.name,
-            value: responseValue.id,
+            value: responseValue.id.toString(),
           })
         );
       };
@@ -1277,6 +1315,34 @@ export const FlowForm = (props: Props) => {
     destinationUsageYears: fetchKeywords,
   };
 
+  const params: DeleteFlowParams = {
+    VersionID: currentVersionID ?? 0,
+    FlowID: currentFlowID ?? 0,
+  };
+
+  const deleteFlow = async () => {
+    if (linkCheck) {
+      window.confirm(
+        'All linked flows must be unlinked before this flow can be deleted. Unlink flows and choose Delete flow again.'
+      );
+      return;
+    }
+
+    // if (updateState) {
+    //   window.confirm(
+    //     'You have made changes to this flow but have selected to delete it. Click "ok" to confirm that any changes will not be saved and this flow will be deleted as is.'
+    //   );
+    // }
+
+    try {
+      const response = await env.model.flows.deleteFlow(params);
+      const path = flows();
+      window.open(path, '_self');
+    } catch (err: any) {
+      setOpenAlerts([...openAlerts, { message: err.message, id: alertId }]);
+      setAlertId((prevId) => prevId + 1);
+    }
+  };
   const updateFlowObjects = async (
     objectType: string,
     flowObject: any,
@@ -1307,6 +1373,7 @@ export const FlowForm = (props: Props) => {
   };
 
   const validateForm = (values: FormValues) => {
+    console.log(values, 'values%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
     const result = validationSchema.decode(values);
     if (isRight(result)) {
       return {};
@@ -1376,12 +1443,14 @@ export const FlowForm = (props: Props) => {
     }
   };
 
+  if (alertflag) handleSave();
+
   return (
     <Formik
       initialValues={initialValue}
+      onSubmit={handleSubmit}
       validate={(values) => validateForm(values)}
       enableReinitialize
-      onSubmit={handleSubmit}
     >
       {({ values, setFieldValue }) => {
         return (
@@ -1406,7 +1475,34 @@ export const FlowForm = (props: Props) => {
                 {alert.message}
               </Alert>
             ))}
-            <StyledLayoutRow>
+            <div>
+              {alertflag && (
+                <MuiAlert
+                  severity="success"
+                  style={{ marginBottom: '20px' }}
+                  onClose={() => {
+                    setAlertFlag(false);
+                  }}
+                >
+                  <AlertTitle>Success</AlertTitle>
+                  Flow
+                  <a
+                    href={`${sharePath}`}
+                    style={{ textDecoration: 'underline' }}
+                  >
+                    {' '}
+                    {currentFlowID}{' '}
+                  </a>
+                  {`"${values.flowDescription}" updated`}
+                </MuiAlert>
+              )}
+            </div>
+            <StyledLayoutRow
+              style={{
+                pointerEvents: readOnly ? 'none' : 'auto',
+                opacity: readOnly ? 0.6 : 1,
+              }}
+            >
               <StyledHalfSection>
                 <StyledFullSection>
                   <C.FormSection title="Funding Source(s)" isLeftSection>
@@ -1725,7 +1821,12 @@ export const FlowForm = (props: Props) => {
                 </StyledFullSection>
               </StyledHalfSection>
             </StyledLayoutRow>
-            <StyledFullSection>
+            <StyledFullSection
+              style={{
+                pointerEvents: readOnly ? 'none' : 'auto',
+                opacity: readOnly ? 0.6 : 1,
+              }}
+            >
               <C.FormSection title="Flow">
                 <StyledRow>
                   <StyledHalfSection>
@@ -1899,7 +2000,12 @@ export const FlowForm = (props: Props) => {
                 />
               </C.FormSection>
             </StyledFullSection>
-            <StyledFullSection>
+            <StyledFullSection
+              style={{
+                pointerEvents: readOnly ? 'none' : 'auto',
+                opacity: readOnly ? 0.6 : 1,
+              }}
+            >
               <C.FormSection title="Linked Flows">
                 <StyledLabel>Parent Flow</StyledLabel>
                 {isShowParentFlow && (
@@ -1986,6 +2092,7 @@ export const FlowForm = (props: Props) => {
                                         'includeChildrenOfParkedFlows',
                                         true
                                       );
+                                      setLinkCheck(false);
                                       setNewMoneyCheckboxDisabled(
                                         !newMoneyCheckboxDisabled
                                       );
@@ -2088,6 +2195,7 @@ export const FlowForm = (props: Props) => {
                                         setFieldValue,
                                         index
                                       );
+                                      setLinkCheck(false);
                                       // setShowChildFlow(false);
                                       setShowWarningMessage(false);
                                     }}
@@ -2129,11 +2237,11 @@ export const FlowForm = (props: Props) => {
                             ),
                             callback: (value: any) => {
                               setShowParentFlow(true);
-                              setIsDisabled(false);
                               setFieldValue(
                                 'includeChildrenOfParkedFlows',
                                 false
                               );
+                              setLinkCheck(true);
                               setNewMoneyCheckboxDisabled(
                                 !newMoneyCheckboxDisabled
                               );
@@ -2168,6 +2276,7 @@ export const FlowForm = (props: Props) => {
                           callback: (value: any) => {
                             setShowChildFlow(true);
                             setShowWarningMessage(true);
+                            setLinkCheck(true);
                           },
                         });
                       }}
@@ -2184,7 +2293,13 @@ export const FlowForm = (props: Props) => {
                 <>
                   {values.reportDetails.length > 0 &&
                     values.reportDetails.map((_, index) => (
-                      <StyledFullSection key={index}>
+                      <StyledFullSection
+                        key={index}
+                        style={{
+                          pointerEvents: readOnly ? 'none' : 'auto',
+                          opacity: readOnly ? 0.6 : 1,
+                        }}
+                      >
                         <C.FormSection title="Reporting Details">
                           <StyledRow>
                             <StyledHalfSection>
@@ -2238,7 +2353,13 @@ export const FlowForm = (props: Props) => {
                               {values.reportDetails.length > 1 && (
                                 <C.Button
                                   onClick={() => {
-                                    remove(index);
+                                    if (
+                                      window.confirm(
+                                        'Click OK if you are sure you want to remove this reporting detail.'
+                                      )
+                                    ) {
+                                      remove(index);
+                                    }
                                   }}
                                   color="secondary"
                                   text="Remove Reporting Detail"
@@ -2282,14 +2403,16 @@ export const FlowForm = (props: Props) => {
                         </C.FormSection>
                       </StyledFullSection>
                     ))}
-                  <StyledFormButton
-                    onClick={() => {
-                      push(initialReportDetail);
-                    }}
-                    color="primary"
-                    text="Add Reporting Detail"
-                    startIcon={MdAdd}
-                  />
+                  {!readOnly && (
+                    <StyledFormButton
+                      onClick={() => {
+                        push(initialReportDetail);
+                      }}
+                      color="primary"
+                      text="Add Reporting Detail"
+                      startIcon={MdAdd}
+                    />
+                  )}
                 </>
               )}
             </FieldArray>
@@ -2559,10 +2682,39 @@ export const FlowForm = (props: Props) => {
               </div>
             )}
             <StyledDiv>
-              <C.ButtonSubmit
-                color="primary"
-                text={isEdit ? 'Save' : 'Create'}
-              />
+              {!readOnly && (
+                <C.ButtonSubmit
+                  color="primary"
+                  text={isEdit ? 'Save' : 'Create'}
+                />
+              )}
+              {currentVersionID ? (
+                <Stack direction="row" spacing={2}>
+                  {isEdit && (
+                    <Button
+                      variant="outlined"
+                      startIcon={<DeleteIcon />}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (
+                          window.confirm(
+                            'Are you sure you want to delete this version of this flow? Any parent or child flows linked to this flow must be unlinked before the flow can be deleted. Only this version will be deleted.'
+                          )
+                        ) {
+                          deleteFlow();
+                        }
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                  <Button variant="outlined" startIcon={<ContentCopyIcon />}>
+                    COPY
+                  </Button>
+                </Stack>
+              ) : (
+                <></>
+              )}
             </StyledDiv>
           </Form>
         );

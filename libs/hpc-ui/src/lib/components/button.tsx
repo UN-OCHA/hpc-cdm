@@ -124,27 +124,44 @@ const BaseButton = (props: Props) => {
 };
 
 const StyledBaseButton = styled(BaseButton)`
-  height: 3rem;
   display: inline-flex;
-  padding: 0 ${(p) => p.theme.marginPx.md}px;
-  box-sizing: border-box;
-  background: none;
-  border: 1px solid ${(p) => p.theme.colors.pallete.gray.light};
-  color: ${(p) => p.theme.colors.pallete.gray.light};
+  -webkit-box-align: center;
   align-items: center;
-  border-radius: 2px;
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 1.2rem;
+  -webkit-box-pack: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0px;
   cursor: pointer;
-  outline: none;
+  user-select: none;
+  vertical-align: middle;
+  appearance: none;
+  text-decoration: none;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  font-size: 1.5rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  min-width: 64px;
+  padding: 5px 15px;
+  border-radius: 4px;
+  transition:
+    background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+    box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+    color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border: 1px solid rgba(25, 118, 210, 0.5);
+  color: rgb(25, 118, 210);
 
   &:hover,
   &:focus,
   &.${CLS.ACTIVE} {
     text-decoration: none;
-    background-color: ${(p) => p.theme.colors.pallete.gray.light};
-    color: #fff;
+    background-color: rgba(25, 118, 210, 0.04);
+    border: 1px solid rgb(25, 118, 210);
   }
 
   &.${CLS.CONDENSED} {
@@ -152,14 +169,15 @@ const StyledBaseButton = styled(BaseButton)`
   }
 
   &.${COLOR_CLS.primary} {
-    border: 1px solid ${(p) => p.theme.colors.primary.normal};
-    color: ${(p) => p.theme.colors.primary.normal};
+    text-decoration: none;
+    background-color: transparent;
+    border: 1px solid rgb(25, 118, 210);
 
     &:hover,
     &:focus,
     &.${CLS.ACTIVE} {
-      background-color: ${(p) => p.theme.colors.primary.normal};
-      color: #fff;
+      background-color: rgba(25, 118, 210, 0.04);
+      border: 1px solid rgb(25, 118, 210);
     }
   }
 
