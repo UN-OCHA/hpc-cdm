@@ -718,6 +718,12 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
+        deleteFlow: dummyEndpoint(
+          'flows.deleteFlow',
+          async (params: flows.DeleteFlowParams) => {
+            throw new errors.NotFoundError();
+          }
+        ),
         updateFlow: dummyEndpoint(
           'flows.updateFlow',
           async (params: flows.CreateFlowParams) => {
