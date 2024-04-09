@@ -97,6 +97,68 @@ const YellowTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
+const initialFormData = {
+  amountUSD: 0,
+  amountOriginal: 0,
+  exchangeRateUsed: 0,
+  keywords: [],
+  flowStatus: '',
+  flowType: { value: 133, displayLabel: 'Standard' },
+  flowDescription: '',
+  firstReported: dayjs().format('MM/DD/YYYY'),
+  decisionDate: null,
+  budgetYear: '',
+  flowDate: '',
+  contributionType: { value: 50, displayLabel: 'Financial' },
+  earmarkingType: '',
+  method: { value: 156, displayLabel: 'Traditional aid' },
+  beneficiaryGroup: '',
+  inactiveReason: '',
+  notes: '',
+  sourceOrganizations: [],
+  sourceLocations: [],
+  sourceUsageYears: [],
+  sourceProjects: [],
+  sourcePlans: [],
+  sourceGoverningEntities: [],
+  sourceGlobalClusters: [],
+  sourceEmergencies: [],
+  destinationOrganizations: [],
+  destinationLocations: [],
+  destinationUsageYears: [],
+  destinationProjects: [],
+  destinationPlans: [],
+  destinationGoverningEntities: [],
+  destinationGlobalClusters: [],
+  destinationEmergencies: [],
+  origCurrency: '',
+  includeChildrenOfParkedFlows: true,
+  reportDetails: [
+    {
+      verified: 'verified',
+      reportSource: 'primary',
+      reporterReferenceCode: '',
+      reportChannel: '',
+      reportedOrganization: { value: '', displayLabel: '' },
+      reportedDate: '',
+      reporterContactInformation: '',
+      sourceSystemRecordId: '',
+      reportFiles: [
+        {
+          title: '',
+        },
+      ],
+      reportFileTitle: '',
+      reportUrlTitle: '',
+      reportUrl: '',
+    },
+  ],
+  parentFlow: [],
+  childFlow: [],
+  isParkedParent: false,
+  sources: {},
+};
+
 const initialInputEntries = {
   amountUSD: null,
   keywords: null,
@@ -139,67 +201,9 @@ export default (props: Props) => {
     flowId: string;
     versionId: string;
   }>();
-  const [flowData, setFlowData] = useState<FormValues>({
-    amountUSD: 0,
-    amountOriginal: 0,
-    exchangeRateUsed: 0,
-    keywords: [],
-    flowStatus: '',
-    flowType: { value: 133, displayLabel: 'Standard' },
-    flowDescription: '',
-    firstReported: dayjs().format('MM/DD/YYYY'),
-    decisionDate: null,
-    budgetYear: '',
-    flowDate: '',
-    contributionType: { value: 50, displayLabel: 'Financial' },
-    earmarkingType: '',
-    method: { value: 156, displayLabel: 'Traditional aid' },
-    beneficiaryGroup: '',
-    inactiveReason: '',
-    notes: '',
-    sourceOrganizations: [],
-    sourceLocations: [],
-    sourceUsageYears: [],
-    sourceProjects: [],
-    sourcePlans: [],
-    sourceGoverningEntities: [],
-    sourceGlobalClusters: [],
-    sourceEmergencies: [],
-    destinationOrganizations: [],
-    destinationLocations: [],
-    destinationUsageYears: [],
-    destinationProjects: [],
-    destinationPlans: [],
-    destinationGoverningEntities: [],
-    destinationGlobalClusters: [],
-    destinationEmergencies: [],
-    origCurrency: '',
-    includeChildrenOfParkedFlows: true,
-    reportDetails: [
-      {
-        verified: 'verified',
-        reportSource: 'primary',
-        reporterReferenceCode: '',
-        reportChannel: '',
-        reportedOrganization: { value: '', displayLabel: '' },
-        reportedDate: '',
-        reporterContactInformation: '',
-        sourceSystemRecordId: '',
-        reportFiles: [
-          {
-            title: '',
-          },
-        ],
-        reportFileTitle: '',
-        reportUrlTitle: '',
-        reportUrl: '',
-      },
-    ],
-    parentFlow: [],
-    childFlow: [],
-    isParkedParent: false,
-    sources: {},
-  });
+  const [flowData, setFlowData] = useState<FormValues>(
+    JSON.parse(JSON.stringify(initialFormData))
+  );
   const [inputEntries, setInputEntries] = useState<InputEntriesType>(
     JSON.parse(JSON.stringify(initialInputEntries))
   );
@@ -213,6 +217,10 @@ export default (props: Props) => {
   const [latestVersion, setLatestVersion] = useState<number>(
     parseInt(versionId as string)
   );
+  const [currentVersionID, setCurrentVersionID] = useState<number>(0);
+  const [currentFlowID, setCurrentFlowID] = useState<number>(0);
+  const [currentVersionActiveStatus, setCurrentVersionActiveStatus] =
+    useState<boolean>(true);
   const [flowDetail, setFlowDetail] = useState<flows.FlowREST | null>(null);
   const [activeVersionID, setActiveVersionID] = useState<number>(0);
   const [isPendingFlow, setIsPendingFlow] = useState<boolean>(false);
@@ -621,6 +629,8 @@ export default (props: Props) => {
     ) {
       const currentVersionData = state.data[parseInt(versionId as string) - 1];
       setFlowDetail(currentVersionData);
+      setCurrentVersionID(currentVersionData.versionID);
+      setCurrentFlowID(currentVersionData.id);
       if (
         currentVersionData.versions.length !== latestVersion ||
         fullState.type !== 'success'
@@ -636,6 +646,9 @@ export default (props: Props) => {
           false
         ) as AutoCompleteSeletionType
       ).displayLabel;
+      setCurrentVersionActiveStatus(
+        currentVersionData.activeStatus || inactiveReason === 'Pending review'
+      );
       const isActiveVsPending =
         fullData.length > 1 && inactiveReason === 'Pending review';
       const data = isActiveVsPending
@@ -1358,6 +1371,12 @@ export default (props: Props) => {
     }
   }, [state, fullState, props.isEdit]);
 
+  useEffect(() => {
+    if (!props.isEdit) {
+      setFlowData(JSON.parse(JSON.stringify(initialFormData)));
+    }
+  }, [props.isEdit]);
+
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -1533,6 +1552,9 @@ export default (props: Props) => {
                     versionId={versionId}
                     initializeInputEntries={initializeInputEntries}
                     rejectInputEntry={rejectInputEntry}
+                    currentVersionID={currentVersionID}
+                    currentFlowID={currentFlowID}
+                    currentVersionActiveStatus={currentVersionActiveStatus}
                   />
                 )}
               </div>
