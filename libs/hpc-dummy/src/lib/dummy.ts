@@ -16,6 +16,7 @@ import {
   usageYears,
   currencies,
   governingEntities,
+  fileUpload,
 } from '@unocha/hpc-data';
 import isEqual from 'lodash/isEqual';
 
@@ -1082,6 +1083,14 @@ export class Dummy {
               parentId: null,
               children: [],
             };
+          }
+        ),
+      },
+      fileUpload: {
+        fileUploadModel: dummyEndpoint(
+          'fileUpload.fileUploadModel',
+          async (file: File) => {
+            throw new errors.NotFoundError();
           }
         ),
       },

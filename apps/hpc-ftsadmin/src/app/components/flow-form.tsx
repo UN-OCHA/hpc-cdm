@@ -31,7 +31,13 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { Environment } from '../../environments/interface';
 import { MdAdd, MdRemove, MdClose, MdCheck } from 'react-icons/md';
-import { usageYears, forms, governingEntities } from '@unocha/hpc-data';
+import {
+  usageYears,
+  forms,
+  governingEntities,
+  fileUpload,
+} from '@unocha/hpc-data';
+import { isValidDate, isValidYear } from '../utils/validation';
 import { getEnv } from '../context';
 import { editFlowSetting } from '../paths';
 import { flows } from '../paths';
@@ -1288,6 +1294,21 @@ export const FlowForm = (props: Props) => {
     };
     return [newVersion1, newVersion2];
   };
+  const [uploadedFile, setUploadedFile] =
+    useState<fileUpload.FileUploadResult | null>(null);
+  const handleFileChange = async (event: any) => {
+    try {
+      console.log('asdfasdfasdf');
+      const setfile: File = event.target.files[0];
+      console.log('<<<<', setfile);
+      const responseData =
+        await environment.model.fileUpload.fileUploadModel(setfile);
+      setUploadedFile(responseData);
+      console.log(responseData, 'reasdasdff');
+    } catch (error) {
+      console.log(error, 'error');
+    }
+  };
   useEffect(() => {
     if (comparingVersions.length === 2) {
       const compared = compareVersions(comparingVersions);
@@ -2339,7 +2360,20 @@ export const FlowForm = (props: Props) => {
                                   name={`reportDetails[${index}].reportFileTitle`}
                                   type="text"
                                 />
-                                <C.FileUpload />
+                                <C.FileUpload
+                                  name=""
+                                  label=""
+                                  onChange={handleFileChange}
+                                  // fnPromise={
+                                  //   environment.model.fileUpload.fileUploadModel
+                                  // }
+                                />
+                                {/* <Button color="primary">{uploadedFile && uploadedFile.name}</Button> */}
+                                {/* <C.FileDownload
+                                  name=""
+                                  label=""
+                                  responseResult={uploadedFile}
+                                /> */}
                                 <C.TextFieldWrapper
                                   label="Title"
                                   name={`reportDetails[${index}].reportUrlTitle`}

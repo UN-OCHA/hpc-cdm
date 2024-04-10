@@ -12,6 +12,7 @@ import {
   reportingWindows,
   access,
   errors,
+  fileUpload,
   util as dataUtil,
   categories,
   plans,
@@ -40,7 +41,7 @@ interface RequestInit {
   headers: {
     [id: string]: string;
   };
-  body?: string | ArrayBuffer;
+  body?: string | ArrayBuffer | FormData;
   signal?: AbortSignal;
 }
 
@@ -389,6 +390,10 @@ export class LiveModel implements Model {
           type: 'raw';
           data: string | ArrayBuffer;
           contentType: string;
+        }
+      | {
+          type: 'form-data';
+          data: FormData;
         };
     signal?: AbortSignal;
   }) => {
@@ -400,7 +405,8 @@ export class LiveModel implements Model {
         init.headers['Content-Type'] = 'application/json';
       } else {
         init.body = body.data;
-        init.headers['Content-Type'] = body.contentType;
+        if (body.type !== 'form-data')
+          init.headers['Content-Type'] = body.contentType;
       }
     }
     const res = await this.fetch(url.href, init);
@@ -788,6 +794,26 @@ export class LiveModel implements Model {
           },
           resultType: locations.GET_LOCATION_RESULT,
         }),
+    };
+  }
+  get fileUpload(): fileUpload.Model {
+    console.log('asd');
+
+    return {
+      fileUploadModel: (file) => {
+        const fd = new FormData();
+        fd.append('data', file);
+
+        return this.call({
+          pathname: `/v1/files/fts`,
+          method: 'POST',
+          body: {
+            type: 'form-data',
+            data: fd,
+          },
+          resultType: fileUpload.FILE_UPLOAD_RESULT,
+        });
+      },
     };
   }
   get organizations(): organizations.Model {
