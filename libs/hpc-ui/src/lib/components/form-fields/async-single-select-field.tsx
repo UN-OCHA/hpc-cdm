@@ -64,7 +64,7 @@ const AsyncSingleSelect = ({
   ...otherProps
 }: AsyncSingleSelectProps) => {
   const { setFieldValue } = useFormikContext<string>();
-  const [field, meta, helpers] = useField<string | number | FormObjectValue>(
+  const [field, meta, helpers] = useField<FormObjectValue | string | number>(
     name
   );
   const [open, setOpen] = useState(false);
@@ -94,7 +94,9 @@ const AsyncSingleSelect = ({
           setFieldValue(
             name,
             response.find(
-              (value) => value.value === (field.value as FormObjectValue).value
+              (value) =>
+                value.value.toString() ===
+                (field.value as FormObjectValue).value.toString()
             )
           );
         }
@@ -105,9 +107,8 @@ const AsyncSingleSelect = ({
       }
     })();
   }, [loading]);
-
   const handleChange = (
-    event: SelectChangeEvent<string | number | FormObjectValue>
+    event: SelectChangeEvent<FormObjectValue | string | number>
   ) => {
     const {
       target: { value },
@@ -118,7 +119,7 @@ const AsyncSingleSelect = ({
       setFieldValue(name, value);
     }
   };
-  const singleSelectConfig: SelectProps<string | number | FormObjectValue> = {
+  const singleSelectConfig: SelectProps<FormObjectValue | string | number> = {
     ...field,
     ...otherProps,
     labelId: `${label.toLowerCase().replace(' ', '-').trim()}-label`,
@@ -127,7 +128,7 @@ const AsyncSingleSelect = ({
       <OutlinedInput
         onBlur={onBlur}
         error={!!errorMsg}
-        value={field.value}
+        value={(field.value as FormObjectValue).displayLabel}
         endAdornment={
           <CircularProgressBox>
             {field.value && (
@@ -171,7 +172,10 @@ const AsyncSingleSelect = ({
                 key={value.value}
                 value={
                   returnObject
-                    ? value
+                    ? value.displayLabel ===
+                      (field.value as FormObjectValue).displayLabel
+                      ? field.value
+                      : value
                     : hasNameValue
                     ? value.displayLabel
                     : value.value
