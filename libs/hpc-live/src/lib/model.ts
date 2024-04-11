@@ -797,8 +797,6 @@ export class LiveModel implements Model {
     };
   }
   get fileUpload(): fileUpload.Model {
-    console.log('asd');
-
     return {
       fileUploadModel: (file) => {
         const fd = new FormData();

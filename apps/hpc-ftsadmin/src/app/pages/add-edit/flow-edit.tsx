@@ -513,9 +513,6 @@ export default (props: Props) => {
                 : ''
             }`,
             value: JSON.stringify({
-              id: value.id,
-              parentID: value.id,
-              description: value.description,
               src_org_name:
                 value.organizations && value.organizations[0]
                   ? value.organizations[0].name
@@ -532,12 +529,7 @@ export default (props: Props) => {
                 value.organizations && value.organizations[1]
                   ? value.organizations[1].abbreviation
                   : '',
-              budgetYear: value.budgetYear,
-              flowDate: value.flowDate,
-              amountUSD: value.amountUSD,
-              origAmount: value.origAmount,
-              origCurrency: value.origCurrency,
-              versionID: value.versionID,
+              ...value,
             }),
           };
         });
@@ -547,6 +539,7 @@ export default (props: Props) => {
           isParkedParent,
           sources,
           parentFlow: parentFlowData,
+          includeChildrenOfParkedFlows: false,
         });
       };
 
