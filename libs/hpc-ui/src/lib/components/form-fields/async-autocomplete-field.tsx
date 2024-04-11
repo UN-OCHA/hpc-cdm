@@ -259,8 +259,6 @@ const AsyncAutocompleteSelect = ({
                   : ''
               }`,
               value: JSON.stringify({
-                id: value.id,
-                description: value.description,
                 src_org_name:
                   value.organizations && value.organizations[0]
                     ? value.organizations[0].name
@@ -277,10 +275,7 @@ const AsyncAutocompleteSelect = ({
                   value.organizations && value.organizations[1]
                     ? value.organizations[1].abbreviation
                     : '',
-                budgetYear: value.budgetYear,
-                flowDate: value.flowDate,
-                amountUSD: value.amountUSD,
-                origAmount: value.origAmount,
+                ...value,
               }),
             };
           } else {
@@ -336,16 +331,6 @@ const AsyncAutocompleteSelect = ({
     }
   }, [open]);
 
-  // useEffect(() => {
-  //   if (field.value && typeof field.value === 'string' && options.length > 0) {
-  //     helpers.setValue(
-  //       options.filter(
-  //         (option) => option.displayLabel === (field.value as unknown)
-  //       )[0]
-  //     );
-  //   }
-  // }, [field.value, options, helpers]);
-
   if (!withoutFormik) {
     return (
       <FormikAsyncAutocompleteSelect
@@ -365,10 +350,6 @@ const AsyncAutocompleteSelect = ({
       />
     );
   }
-  // const [field, meta, helpers] = useField<
-  //   FormObjectValue[] | FormObjectValue | string
-  // >(name);
-  // const { values, setFieldValue } = useFormikContext<FormikValues>();
 
   const configAutocomplete: AutocompleteProps<
     FormObjectValue,
