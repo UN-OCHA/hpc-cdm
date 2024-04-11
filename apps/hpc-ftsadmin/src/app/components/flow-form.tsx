@@ -36,8 +36,8 @@ import {
   forms,
   governingEntities,
   fileUpload,
+  flows as flowsResponse,
 } from '@unocha/hpc-data';
-import { isValidDate, isValidYear } from '../utils/validation';
 import { getEnv } from '../context';
 import { editFlowSetting } from '../paths';
 import { flows } from '../paths';
@@ -386,6 +386,8 @@ const flowValuesForDisplay = [
   'notes',
 ] as const;
 
+let parentValue = '';
+
 export const FlowForm = (props: Props) => {
   const {
     environment,
@@ -590,7 +592,7 @@ export const FlowForm = (props: Props) => {
       parents: values.parentFlow
         ? values.parentFlow.map((item) => JSON.parse(item.value as string))
         : [],
-      reportDetails: values.reportDetails.map((item) => {
+      reportDetails: values.reportDetails.map((item, index) => {
         return {
           // id: 587806,
           // flowID: 245996,
@@ -606,19 +608,6 @@ export const FlowForm = (props: Props) => {
           organization: {
             id: item.reportedOrganization.value,
             name: item.reportedOrganization.displayLabel,
-            // nativeName: null,
-            // abbreviation: 'Switzerland',
-            // url: null,
-            // parentID: null,
-            // comments: null,
-            // verified: true,
-            // notes: null,
-            // active: true,
-            // collectiveInd: false,
-            // newOrganizationId: null,
-            // createdAt: '2017-01-14T00:53:57.380Z',
-            // updatedAt: '2017-01-14T00:53:57.380Z',
-            // deletedAt: null,
           },
           reportFiles: [
             {
@@ -627,30 +616,22 @@ export const FlowForm = (props: Props) => {
               url: item.reportUrl,
             },
             {
-              type: 'file',
+              fileAssetID: uploadedFile && uploadedFile[index].id,
+              reportFiles: [
+                {
+                  fieldType: 'file',
+                  fileAssetId: uploadedFile && uploadedFile[index].id,
+                  type: 'file',
+                },
+              ],
               title: item.reportFileTitle,
+              type: 'file',
             },
           ],
           reportChannel: {
             id: item.reportChannel && item.reportChannel.value,
             name: item.reportChannel && item.reportChannel.displayLabel,
-            // description: null,
-            // parentID: null,
-            // code: null,
-            // group: 'reportChannel',
-            // includeTotals: null,
-            // createdAt: '2017-01-13T22:18:02.866Z',
-            // updatedAt: '2017-01-13T22:18:02.866Z',
-            // categoryRef: {
-            //   objectID: 587806,
-            //   versionID: 1,
-            //   objectType: 'reportDetail',
-            //   categoryID: 138,
-            //   createdAt: '2024-03-24T15:17:42.977Z',
-            //   updatedAt: '2024-03-24T15:17:42.977Z',
-            // },
           },
-          // isEmpty: false,
         };
       }),
       flowType: {
@@ -757,17 +738,6 @@ export const FlowForm = (props: Props) => {
       setReadOnly(true);
     }
   }, []);
-  // useEffect(() => {
-  //   if (versionData) {
-  //     if (!currentVersionActiveStatus) {
-  //       currentVersionID === versionData.length
-  //         ? setReadOnly(false)
-  //         : setReadOnly(true);
-  //     } else {
-  //       setReadOnly(false);
-  //     }
-  //   }
-  // }, []);
   useEffect(() => {
     if (initialValue.parentFlow && initialValue.parentFlow.length) {
       setShowParentFlow(true);
@@ -1218,7 +1188,6 @@ export const FlowForm = (props: Props) => {
         const response = await environment.model.categories.getCategories({
           query: category,
         });
-        console.log(response, 'response');
         return response.map(
           (responseValue): AutoCompleteSeletionType => ({
             displayLabel: responseValue.name,
@@ -1294,17 +1263,16 @@ export const FlowForm = (props: Props) => {
     };
     return [newVersion1, newVersion2];
   };
-  const [uploadedFile, setUploadedFile] =
-    useState<fileUpload.FileUploadResult | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<
+    fileUpload.FileUploadResult[]
+  >([]);
   const handleFileChange = async (event: any) => {
     try {
-      console.log('asdfasdfasdf');
       const setfile: File = event.target.files[0];
-      console.log('<<<<', setfile);
       const responseData =
         await environment.model.fileUpload.fileUploadModel(setfile);
-      setUploadedFile(responseData);
-      console.log(responseData, 'reasdasdff');
+      uploadedFile.push(responseData);
+      setUploadedFile([...uploadedFile]);
     } catch (error) {
       console.log(error, 'error');
     }
@@ -1394,7 +1362,6 @@ export const FlowForm = (props: Props) => {
   };
 
   const validateForm = (values: FormValues) => {
-    console.log(values, 'values%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
     const result = validationSchema.decode(values);
     if (isRight(result)) {
       return {};
@@ -1466,6 +1433,110 @@ export const FlowForm = (props: Props) => {
 
   if (alertflag) handleSave();
 
+  const handleParentFlow = (
+    values: any,
+    parentValueString: string,
+    setValues: any
+  ) => {
+    parentValue = parentValueString;
+    const defaultValueParent: flowsResponse.GetFlowResult =
+      JSON.parse(parentValueString);
+
+    const indexOrg = defaultValueParent.organizations.findIndex(
+      (org) => org.flowObject?.refDirection === 'destination'
+    );
+    const indexYear = defaultValueParent.usageYears.findIndex(
+      (org) => org.flowObject?.refDirection === 'destination'
+    );
+    const indexLoc = defaultValueParent.locations.findIndex(
+      (org) => org.flowObject?.refDirection === 'destination'
+    );
+    const indexEmr =
+      defaultValueParent.emergencies?.findIndex(
+        (org) => org.flowObject?.refDirection === 'destination'
+      ) ?? -1;
+    const indexGlo =
+      defaultValueParent.globalClusters?.findIndex(
+        (org) => org.flowObject?.refDirection === 'destination'
+      ) ?? -1;
+    const indexPln =
+      defaultValueParent.plans?.findIndex(
+        (org) => org.flowObject?.refDirection === 'destination'
+      ) ?? -1;
+    // const indexEnt = defaultValueParent.governingEntities?.findIndex((org) => org.flowObject?.refDirection === 'destination') ?? -1;
+    const indexPro =
+      defaultValueParent.projects?.findIndex(
+        (org) => org.flowObject?.refDirection === 'destination'
+      ) ?? -1;
+
+    const _sourceOrganizations =
+      indexOrg > -1
+        ? {
+            displayLabel: `${defaultValueParent.organizations[indexOrg].name} [${defaultValueParent.organizations[indexOrg].abbreviation}]`,
+            value: defaultValueParent.organizations[indexOrg].id,
+          }
+        : null;
+    const _sourceUsageYears =
+      indexYear > -1
+        ? {
+            displayLabel: `${defaultValueParent.usageYears[indexYear].year}`,
+            value: defaultValueParent.usageYears[indexYear].id,
+          }
+        : null;
+    const _sourceLocations =
+      indexLoc > -1
+        ? {
+            displayLabel: `${defaultValueParent.locations[indexLoc].name}`,
+            value: defaultValueParent.locations[indexLoc].id,
+          }
+        : null;
+    const _sourceEmergencies =
+      indexEmr > -1 && defaultValueParent.emergencies
+        ? {
+            displayLabel: `${defaultValueParent.emergencies[indexEmr].name}`,
+            value: defaultValueParent.emergencies[indexEmr].id,
+          }
+        : null;
+    const _sourceGlobalClusters =
+      indexGlo > -1 && defaultValueParent.globalClusters
+        ? {
+            displayLabel: `${defaultValueParent.globalClusters[indexGlo].name}`,
+            value: defaultValueParent.globalClusters[indexGlo].id,
+          }
+        : null;
+    const _sourcePlans =
+      indexPln > -1 && defaultValueParent.plans
+        ? {
+            displayLabel: `${defaultValueParent.plans[indexPln].planVersion.name}`,
+            value: defaultValueParent.plans[indexPln].id,
+          }
+        : null;
+    // const _sourceGoverningEntities = indexEnt>-1 ? {
+    //   displayLabel: `${defaultValueParent.governingEntities[indexEnt].name}`,
+    //   value: defaultValueParent.governingEntities[indexEnt].id,
+    // } : null
+    const _sourceProjects =
+      indexPro > -1 && defaultValueParent.projects
+        ? {
+            displayLabel: `${defaultValueParent.projects[indexPro].projectVersions[indexPro].name}`,
+            value: defaultValueParent.projects[indexPro].id,
+          }
+        : null;
+    setValues({
+      ...values,
+      sourceOrganizations: _sourceOrganizations ? [_sourceOrganizations] : [],
+      sourceUsageYears: _sourceUsageYears ? [_sourceUsageYears] : [],
+      sourceLocations: _sourceLocations ? [_sourceLocations] : [],
+      sourceEmergencies: _sourceEmergencies ? [_sourceEmergencies] : [],
+      sourceGlobalClusters: _sourceGlobalClusters
+        ? [_sourceGlobalClusters]
+        : [],
+      sourcePlans: _sourcePlans ? [_sourcePlans] : [],
+      // sourceGoverningEntities: _sourceGoverningEntities ? [_sourceGoverningEntities] : [],
+      sourceProjects: _sourceProjects ? [_sourceProjects] : [],
+    });
+  };
+
   return (
     <Formik
       initialValues={initialValue}
@@ -1473,7 +1544,17 @@ export const FlowForm = (props: Props) => {
       validate={(values) => validateForm(values)}
       enableReinitialize
     >
-      {({ values, setFieldValue }) => {
+      {({ values, setFieldValue, setValues }) => {
+        if (values.parentFlow && values.parentFlow[0]) {
+          const parentValueString = String(
+            values.parentFlow &&
+              values.parentFlow[0] &&
+              values.parentFlow[0].value
+          );
+          if (parentValue !== parentValueString) {
+            handleParentFlow(values, parentValueString, setValues);
+          }
+        }
         return (
           <Form>
             {openAlerts.map((alert) => (
@@ -1525,15 +1606,22 @@ export const FlowForm = (props: Props) => {
               }}
             >
               <StyledHalfSection>
-                <StyledFullSection>
+                <StyledFullSection
+                  style={{
+                    pointerEvents: isShowParentFlow ? 'none' : 'auto',
+                  }}
+                >
                   <C.FormSection title="Funding Source(s)" isLeftSection>
-                    {initialValue.parentFlow &&
-                    initialValue.parentFlow.length ? (
-                      <StyledParentInfo>
+                    {values.parentFlow && values.parentFlow.length ? (
+                      <StyledParentInfo
+                        style={{
+                          pointerEvents: 'auto',
+                        }}
+                      >
                         Source associated with Parent Destination. To edit these
                         fields, remove the Parent flow or make changes directly
                         to the Parent flow at&nbsp;(
-                        {initialValue.parentFlow.map((item) => (
+                        {values.parentFlow.map((item) => (
                           <StyledAnchor
                             href={`flows/edit/${
                               JSON.parse(
@@ -1855,7 +1943,7 @@ export const FlowForm = (props: Props) => {
                       label="Is this flow new money?"
                       name="includeChildrenOfParkedFlows"
                       size="small"
-                      disabled={newMoneyCheckboxDisabled}
+                      disabled={isShowParentFlow}
                     />
                     <StyledFormRow>
                       <C.TextFieldWrapper
@@ -2364,16 +2452,7 @@ export const FlowForm = (props: Props) => {
                                   name=""
                                   label=""
                                   onChange={handleFileChange}
-                                  // fnPromise={
-                                  //   environment.model.fileUpload.fileUploadModel
-                                  // }
                                 />
-                                {/* <Button color="primary">{uploadedFile && uploadedFile.name}</Button> */}
-                                {/* <C.FileDownload
-                                  name=""
-                                  label=""
-                                  responseResult={uploadedFile}
-                                /> */}
                                 <C.TextFieldWrapper
                                   label="Title"
                                   name={`reportDetails[${index}].reportUrlTitle`}
