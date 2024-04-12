@@ -6,27 +6,13 @@
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/hpc-ui/**/*.js",
-          "libs/hpc-ui/**/*.jsx",
-          "libs/hpc-ui/**/*.ts",
-          "libs/hpc-ui/**/*.tsx",
-          "libs/hpc-ui/**/*.spec.ts",
-          "libs/hpc-ui/**/*.spec.tsx",
-          "libs/hpc-ui/**/*.spec.js",
-          "libs/hpc-ui/**/*.spec.jsx",
-          "libs/hpc-ui/**/*.d.ts"
-        ]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/hpc-ui/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/hpc-ui/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/hpc-ui"]
     }

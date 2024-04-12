@@ -6,24 +6,13 @@
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/hpc-live/**/*.ts",
-          "libs/hpc-live/**/*.spec.ts",
-          "libs/hpc-live/**/*.spec.tsx",
-          "libs/hpc-live/**/*.spec.js",
-          "libs/hpc-live/**/*.spec.jsx",
-          "libs/hpc-live/**/*.d.ts"
-        ]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/hpc-live/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/hpc-live/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/hpc-live"]
     }
