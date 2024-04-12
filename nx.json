@@ -1,7 +1,4 @@
 {
-  "affected": {
-    "defaultBase": "HEAD"
-  },
   "defaultProject": "hpc-cdm",
   "generators": {
     "@nrwl/next": {
@@ -114,5 +111,7 @@
       "!{projectRoot}/src/test-setup.[jt]s"
     ]
   },
-  "parallel": 1
+  "parallel": 1,
+  "useInferencePlugins": false,
+  "defaultBase": "HEAD"
 }
