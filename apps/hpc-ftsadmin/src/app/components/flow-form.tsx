@@ -670,10 +670,14 @@ export const FlowForm = (props: Props) => {
   };
 
   const [alertflag, setAlertFlag] = useState<boolean>(false);
+  const [validationFlag, setValidationFlag] = useState<boolean>(false);
   const [sharePath, setSharePath] = useSharePath('');
   const [readOnly, setReadOnly] = useState<boolean>(false);
   const [linkCheck, setLinkCheck] = useState<boolean>(false);
   const handleSave = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const validationAlert = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const [showWarningMessage, setShowWarningMessage] = useState<boolean>(false);
@@ -1354,7 +1358,6 @@ export const FlowForm = (props: Props) => {
         values
       );
     }
-    console.log(values, 'asd');
     if (objectType === 'sourcePlans') {
       handleShowSourceGoverningEntities(flowObject.length !== 0);
     }
@@ -1387,6 +1390,15 @@ export const FlowForm = (props: Props) => {
           } else if (Array.isArray(value) && value.length === 0) {
             errors[errorKey] = 'This field is required.';
           }
+        }
+        if (key === 'amountUSD' && (value === 0 || (value && value === '0'))) {
+          errors['amountUSD'] = 'The amount must be greater than zero.';
+        }
+        if (key === 'flowType' && !value) {
+          errors['flowType'] = 'This field is required.';
+        }
+        if (key === 'method' && !value) {
+          errors['method'] = 'This field is required.';
         }
         if (key === 'reportDetails') {
           const res = result.left.filter((err) =>
@@ -1436,11 +1448,12 @@ export const FlowForm = (props: Props) => {
           }
         }
       });
+      setValidationFlag(true);
       return errors;
     }
   };
-
   if (alertflag) handleSave();
+  if (validationFlag) validationAlert();
 
   const handleParentFlow = (
     values: any,
@@ -1552,6 +1565,7 @@ export const FlowForm = (props: Props) => {
       onSubmit={handleSubmit}
       validate={(values) => validateForm(values)}
       enableReinitialize
+      validateOnChange={false}
     >
       {({ values, setFieldValue, setValues }) => {
         if (values.parentFlow && values.parentFlow[0]) {
@@ -1586,6 +1600,21 @@ export const FlowForm = (props: Props) => {
                 {alert.message}
               </Alert>
             ))}
+            <div>
+              {validationFlag && (
+                <MuiAlert
+                  severity="error"
+                  style={{ marginBottom: '20px' }}
+                  onClose={() => {
+                    setValidationFlag(false);
+                  }}
+                >
+                  <AlertTitle>Validation</AlertTitle>
+                  Please complete all required fields marked with an asterisk
+                  (*) to proceed.
+                </MuiAlert>
+              )}
+            </div>
             <div>
               {alertflag && (
                 <MuiAlert
@@ -1680,7 +1709,7 @@ export const FlowForm = (props: Props) => {
                     )}
 
                     <C.AsyncAutocompleteSelect
-                      label="Organization(s)"
+                      label="Organization(s)*"
                       name="sourceOrganizations"
                       fnPromise={
                         environment.model.organizations
@@ -1697,7 +1726,7 @@ export const FlowForm = (props: Props) => {
                     <StyledRow>
                       <StyledHalfSection>
                         <C.AsyncAutocompleteSelect
-                          label="Usage Year(s)"
+                          label="Usage Year(s)*"
                           name="sourceUsageYears"
                           fnPromise={environment.model.usageYears.getUsageYears}
                           isMulti
@@ -1823,7 +1852,7 @@ export const FlowForm = (props: Props) => {
                       </StyledAddChildWarning>
                     )}
                     <C.AsyncAutocompleteSelect
-                      label="Organization(s)"
+                      label="Organization(s)*"
                       name="destinationOrganizations"
                       fnPromise={
                         environment.model.organizations
@@ -1837,7 +1866,7 @@ export const FlowForm = (props: Props) => {
                     <StyledRow>
                       <StyledHalfSection>
                         <C.AsyncAutocompleteSelect
-                          label="Usage Year(s)"
+                          label="Usage Year(s)*"
                           name="destinationUsageYears"
                           fnPromise={environment.model.usageYears.getUsageYears}
                           isMulti
@@ -1956,7 +1985,7 @@ export const FlowForm = (props: Props) => {
                     />
                     <StyledFormRow>
                       <C.TextFieldWrapper
-                        label="Funding Amount in USD"
+                        label="Funding Amount in USD*"
                         name="amountUSD"
                         type="currency"
                         thousandSeparator
@@ -2016,7 +2045,7 @@ export const FlowForm = (props: Props) => {
                       ></C.Button>
                     </C.Section>
                     <C.TextFieldWrapper
-                      label="Funding Flow Description"
+                      label="Funding Flow Description*"
                       placeholder="1-2 sentences for flow name"
                       name="flowDescription"
                       multiline
@@ -2028,7 +2057,7 @@ export const FlowForm = (props: Props) => {
                     <StyledFormRow>
                       <C.DatePicker
                         name="firstReported"
-                        label="First Reported"
+                        label="First Reported*"
                       />
                       <C.DatePicker
                         name="decisionDate"
@@ -2043,7 +2072,7 @@ export const FlowForm = (props: Props) => {
                   </StyledHalfSection>
                   <StyledHalfSection>
                     <C.AsyncSingleSelect
-                      label="Flow Type"
+                      label="Flow Type*"
                       name="flowType"
                       fnPromise={fetchCategory('flowType')}
                       returnObject
@@ -2051,14 +2080,14 @@ export const FlowForm = (props: Props) => {
                       rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncSingleSelect
-                      label="Flow Status"
+                      label="Flow Status*"
                       name="flowStatus"
                       fnPromise={fetchCategory('flowStatus')}
                       returnObject
                       entryInfo={inputEntries.flowStatus}
                       rejectInputEntry={rejectInputEntry}
                     />
-                    <C.DatePicker name="flowDate" label="Flow Date" />
+                    <C.DatePicker name="flowDate" label="Flow Date*" />
                     <C.AsyncSingleSelect
                       label="Contribution Type"
                       name="contributionType"
@@ -2076,7 +2105,7 @@ export const FlowForm = (props: Props) => {
                       rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncSingleSelect
-                      label="Aid Modality"
+                      label="Aid Modality*"
                       name="method"
                       fnPromise={fetchCategory('method')}
                       returnObject
@@ -2422,7 +2451,7 @@ export const FlowForm = (props: Props) => {
                           opacity: readOnly ? 0.6 : 1,
                         }}
                       >
-                        <C.FormSection title="Reporting Details">
+                        <C.FormSection title="Reporting Details*">
                           <StyledRow>
                             <StyledHalfSection>
                               <C.RadioGroup
@@ -2431,11 +2460,11 @@ export const FlowForm = (props: Props) => {
                                   { value: 'primary', label: 'Primary' },
                                   { value: 'secondary', label: 'Secondary' },
                                 ]}
-                                label="Report Source"
+                                label="Report Source*"
                                 row
                               />
                               <C.AsyncAutocompleteSelect
-                                label="Reported By Organization"
+                                label="Reported By Organization*"
                                 name={`reportDetails[${index}].reportedOrganization`}
                                 placeholder="Reported by Organization"
                                 fnPromise={
@@ -2444,7 +2473,7 @@ export const FlowForm = (props: Props) => {
                                 }
                               />
                               <C.AsyncSingleSelect
-                                label="Reported Channel"
+                                label="Reported Channel*"
                                 name={`reportDetails[${index}].reportChannel`}
                                 fnPromise={fetchCategory('reportChannel')}
                                 returnObject
@@ -2504,13 +2533,13 @@ export const FlowForm = (props: Props) => {
                                       label: 'Unverified',
                                     },
                                   ]}
-                                  label="Verified"
+                                  label="Verified*"
                                   row
                                 />
                               </StyledRadioDiv>
                               <C.DatePicker
                                 name={`reportDetails[${index}].reportedDate`}
-                                label="Date Reported"
+                                label="Date Reported*"
                               />
                               <C.TextFieldWrapper
                                 label="Reporter Reference Code"
