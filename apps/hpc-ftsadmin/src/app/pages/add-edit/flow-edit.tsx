@@ -223,6 +223,8 @@ export default (props: Props) => {
     useState<boolean>(true);
   const [flowDetail, setFlowDetail] = useState<flows.FlowREST | null>(null);
   const [activeVersionID, setActiveVersionID] = useState<number>(0);
+  const [pendingVersionID, setPendingVersionID] = useState<number>();
+  const [pendingVersionV1, setPendingVersionV1] = useState<boolean>(false);
   const [isPendingFlow, setIsPendingFlow] = useState<boolean>(false);
   const [isRestricted, setIsRestricted] = useState<boolean>(false);
   const [parentFlow, setParentFlow] = useState<AutoCompleteSeletionType[]>([]);
@@ -502,32 +504,56 @@ export default (props: Props) => {
         // setSources(sources);
 
         const parentFlowData = parentResults.map((value) => {
+          const refDirectionIndexSrc =
+            value && value.organizations
+              ? value.organizations.findIndex(
+                  (org) => org.flowObject?.refDirection === 'source'
+                )
+              : -1;
+          const refDirectionIndexDes =
+            value && value.organizations
+              ? value.organizations.findIndex(
+                  (org) => org.flowObject?.refDirection === 'destination'
+                )
+              : -1;
+          const refDirectionLocIndexDes =
+            value && value.locations
+              ? value.locations.findIndex(
+                  (org) => org.flowObject?.refDirection === 'destination'
+                )
+              : -1;
           return {
             displayLabel: `Flow ${value.id}: ${value.description} Source: ${
-              value.organizations && value.organizations[0]
-                ? value.organizations[0].name
+              value.organizations && value.organizations[refDirectionIndexSrc]
+                ? value.organizations[refDirectionIndexSrc].name
                 : ''
             } | Destination: ${
-              value.organizations && value.organizations[1]
-                ? value.organizations[1].name
+              value.organizations && value.organizations[refDirectionIndexDes]
+                ? value.organizations[refDirectionIndexDes].name
                 : ''
             }`,
             value: JSON.stringify({
               src_org_name:
-                value.organizations && value.organizations[0]
-                  ? value.organizations[0].name
+                value.organizations && value.organizations[refDirectionIndexSrc]
+                  ? value.organizations[refDirectionIndexSrc].name
                   : '',
               src_org_abbreviation:
-                value.organizations && value.organizations[0]
-                  ? value.organizations[0].abbreviation
+                value.organizations && value.organizations[refDirectionIndexSrc]
+                  ? value.organizations[refDirectionIndexSrc].abbreviation
                   : '',
               dest_org_name:
-                value.organizations && value.organizations[1]
-                  ? value.organizations[1].name
+                value.organizations && value.organizations[refDirectionIndexDes]
+                  ? value.organizations[refDirectionIndexDes].name
                   : '',
               dest_org_abbreviation:
-                value.organizations && value.organizations[1]
-                  ? value.organizations[1].abbreviation
+                value.organizations && value.organizations[refDirectionIndexDes]
+                  ? value.organizations[refDirectionIndexDes].abbreviation
+                  : '',
+              dest_loc_name:
+                value.locations &&
+                value.locations[refDirectionLocIndexDes] &&
+                refDirectionLocIndexDes > -1
+                  ? value.locations[refDirectionLocIndexDes].name
                   : '',
               ...value,
             }),
@@ -561,34 +587,58 @@ export default (props: Props) => {
         );
 
         const childFlowData = childResults.map((value) => {
+          const refDirectionIndexSrc =
+            value && value.organizations
+              ? value.organizations.findIndex(
+                  (org) => org.flowObject?.refDirection === 'source'
+                )
+              : -1;
+          const refDirectionIndexDes =
+            value && value.organizations
+              ? value.organizations.findIndex(
+                  (org) => org.flowObject?.refDirection === 'destination'
+                )
+              : -1;
+          const refDirectionLocIndexDes =
+            value && value.locations
+              ? value.locations.findIndex(
+                  (org) => org.flowObject?.refDirection === 'destination'
+                )
+              : -1;
           return {
             displayLabel: `Flow ${value.id}: ${value.description} Source: ${
-              value.organizations && value.organizations[0]
-                ? value.organizations[0].name
+              value.organizations && value.organizations[refDirectionIndexSrc]
+                ? value.organizations[refDirectionIndexSrc].name
                 : ''
             } | Destination: ${
-              value.organizations && value.organizations[1]
-                ? value.organizations[1].name
+              value.organizations && value.organizations[refDirectionIndexDes]
+                ? value.organizations[refDirectionIndexDes].name
                 : ''
             }`,
             value: JSON.stringify({
               id: value.id,
               description: value.description,
               src_org_name:
-                value.organizations && value.organizations[0]
-                  ? value.organizations[0].name
+                value.organizations && value.organizations[refDirectionIndexSrc]
+                  ? value.organizations[refDirectionIndexSrc].name
                   : '',
               src_org_abbreviation:
-                value.organizations && value.organizations[0]
-                  ? value.organizations[0].abbreviation
+                value.organizations && value.organizations[refDirectionIndexSrc]
+                  ? value.organizations[refDirectionIndexSrc].abbreviation
                   : '',
               dest_org_name:
-                value.organizations && value.organizations[1]
-                  ? value.organizations[1].name
+                value.organizations && value.organizations[refDirectionIndexDes]
+                  ? value.organizations[refDirectionIndexDes].name
                   : '',
               dest_org_abbreviation:
-                value.organizations && value.organizations[1]
-                  ? value.organizations[1].abbreviation
+                value.organizations && value.organizations[refDirectionIndexDes]
+                  ? value.organizations[refDirectionIndexDes].abbreviation
+                  : '',
+              dest_loc_name:
+                value.locations &&
+                value.locations[refDirectionLocIndexDes] &&
+                refDirectionLocIndexDes > -1
+                  ? value.locations[refDirectionLocIndexDes].name
                   : '',
               budgetYear: value.budgetYear,
               flowDate: value.flowDate,
@@ -938,7 +988,7 @@ export default (props: Props) => {
         pending:
           (
             getFormValueFromCategory(
-              data,
+              flowItemData,
               'inactiveReason',
               false
             ) as AutoCompleteSeletionType
@@ -1312,6 +1362,9 @@ export default (props: Props) => {
         return d.activeStatus;
       })[0]?.versionID;
 
+      const pendingId = versionDetails.findIndex((data) => data.pending) + 1;
+      setPendingVersionID(pendingId);
+
       setActiveVersionID(activeMatch);
       setFlowData({
         ...flowData,
@@ -1365,6 +1418,14 @@ export default (props: Props) => {
   }, [state, fullState, props.isEdit]);
 
   useEffect(() => {
+    if (pendingVersionID && pendingVersionID > 1) {
+      setPendingVersionV1(true);
+    } else {
+      setPendingVersionV1(false);
+    }
+  }, [pendingVersionID]);
+
+  useEffect(() => {
     if (!props.isEdit) {
       setFlowData(JSON.parse(JSON.stringify(initialFormData)));
     }
@@ -1416,43 +1477,31 @@ export default (props: Props) => {
                           <StyledSubTitle>
                             <StyledInactiveTitle>
                               <div>
-                                {isRestricted ? (
+                                {isRestricted && (
                                   <>
                                     This flow is marked as Restricted and will
                                     not be included in the funding totals on the
                                     FTS website.
                                   </>
-                                ) : (
-                                  !flowDetail.activeStatus &&
-                                  !isPendingFlow && (
+                                )}
+                              </div>
+                              <div>
+                                {isPendingFlow &&
+                                flowDetail.versionID === pendingVersionID ? (
+                                  pendingVersionV1 ? (
+                                    <>This is a pending update.</>
+                                  ) : (
                                     <>
                                       This flow is not active because it has
                                       been marked as {flowData.inactiveReason}.
                                     </>
                                   )
-                                )}
-                              </div>
-                              <div>
-                                {isPendingFlow ? (
-                                  flowData.inactiveReason ===
-                                  'Pending review' ? (
-                                    <>This is a pending update.</>
-                                  ) : (
+                                ) : !flowDetail.activeStatus ? (
+                                  <>
                                     <>
-                                      There is a pending update to this flow.
-                                      Review pending{' '}
-                                      <a
-                                        href={`flows/edit/${flowDetail.id}/version/${activeVersionID}`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                      >
-                                        Flow {flowDetail.id}, v{activeVersionID}
-                                      </a>
-                                      .
+                                      This flow is not active because it has
+                                      been marked as {flowData.inactiveReason}.
                                     </>
-                                  )
-                                ) : (
-                                  !flowDetail.activeStatus && (
                                     <>
                                       See{' '}
                                       <a
@@ -1462,23 +1511,45 @@ export default (props: Props) => {
                                       >
                                         Flow {flowDetail.id}, v{activeVersionID}
                                       </a>{' '}
-                                      for the current active version.
+                                      for the current active version. and{' '}
+                                      <a
+                                        href={`flows/edit/${flowDetail.id}/version/${pendingVersionID}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                      >
+                                        Flow {flowDetail.id}, v
+                                        {pendingVersionID}
+                                      </a>{' '}
+                                      for the current pending version.
                                     </>
-                                  )
+                                  </>
+                                ) : (
+                                  <>
+                                    There is a pending update to this flow.
+                                    Review pending{' '}
+                                    <a
+                                      href={`flows/edit/${flowDetail.id}/version/${activeVersionID}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                    >
+                                      Flow {flowDetail.id}, v{activeVersionID}
+                                    </a>
+                                    .
+                                  </>
                                 )}
                               </div>
                             </StyledInactiveTitle>
                           </StyledSubTitle>
                           <StyledSubTitle>
                             Updated{' '}
-                            {dayjs(flowDetail.updatedAtDisplay).format(
+                            {dayjs(flowDetail.updatedAt).format(
                               'Do MMMM YYYY [at] h:mm:ss a'
                             )}{' '}
                             by {displayUserName(flowDetail.lastUpdatedBy)}
                           </StyledSubTitle>
                           <StyledSubTitle>
                             Created{' '}
-                            {dayjs(flowDetail.createdAtDisplay).format(
+                            {dayjs(flowDetail.createdAt).format(
                               'Do MMMM YYYY [at] h:mm:ss a'
                             )}{' '}
                             by {displayUserName(flowDetail.createdBy)}

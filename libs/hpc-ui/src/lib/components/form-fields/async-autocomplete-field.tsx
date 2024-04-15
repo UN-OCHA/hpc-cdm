@@ -289,6 +289,12 @@ const AsyncAutocompleteSelect = ({
                   refDirectionIndexDes > -1
                     ? value.organizations[refDirectionIndexDes].abbreviation
                     : '',
+                dest_loc_name:
+                  value.locations &&
+                  value.locations[refDirectionLocIndexDes] &&
+                  refDirectionLocIndexDes > -1
+                    ? value.locations[refDirectionLocIndexDes].name
+                    : '',
                 ...value,
               }),
             };
