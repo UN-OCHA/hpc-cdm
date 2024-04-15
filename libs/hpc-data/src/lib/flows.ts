@@ -586,7 +586,7 @@ export interface Model {
   getFlowsDownloadXLSX(
     params: SearchFlowsParams
   ): Promise<SearchFlowsBatchesResult>;
-  getAutocompleteFlows(params: GetFlowsAutocompleteParams): Promise<FlowResult>;
+  getAutocompleteFlows(params: GetFlowsAutocompleteParams): Promise<FlowRESTResult>;
   validateFlow(
     params: GetValidateFlowParams,
     options: CreateFlowOptions
