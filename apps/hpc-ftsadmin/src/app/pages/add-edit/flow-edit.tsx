@@ -1528,11 +1528,11 @@ export default (props: Props) => {
                                     There is a pending update to this flow.
                                     Review pending{' '}
                                     <a
-                                      href={`flows/edit/${flowDetail.id}/version/${activeVersionID}`}
+                                      href={`flows/edit/${flowDetail.id}/version/${pendingVersionID}`}
                                       target="_blank"
                                       rel="noreferrer"
                                     >
-                                      Flow {flowDetail.id}, v{activeVersionID}
+                                      Flow {flowDetail.id}, v{pendingVersionID}
                                     </a>
                                     .
                                   </>
