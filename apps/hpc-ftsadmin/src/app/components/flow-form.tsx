@@ -1339,6 +1339,14 @@ export const FlowForm = (props: Props) => {
     values?: any
   ) => {
     if (flowObject.length > 0 && dictExecutedForEachObject[objectType]) {
+      flowObject.sort(
+        (
+          a: { displayLabel: string; value: number },
+          b: { displayLabel: string; value: number }
+        ) => {
+          return a.displayLabel.localeCompare(b.displayLabel);
+        }
+      );
       await dictExecutedForEachObject[objectType](
         objectType,
         flowObject,
@@ -1346,6 +1354,7 @@ export const FlowForm = (props: Props) => {
         values
       );
     }
+    console.log(values, 'asd');
     if (objectType === 'sourcePlans') {
       handleShowSourceGoverningEntities(flowObject.length !== 0);
     }
@@ -2025,14 +2034,12 @@ export const FlowForm = (props: Props) => {
                         name="decisionDate"
                         label="Decision Dateⓢ"
                       />
-                    </StyledFormRow>
-                    <StyledHalfSection>
                       <C.TextFieldWrapper
                         label="Donor Budget Year"
                         name="budgetYear"
                         type="text"
                       />
-                    </StyledHalfSection>
+                    </StyledFormRow>
                   </StyledHalfSection>
                   <StyledHalfSection>
                     <C.AsyncSingleSelect
@@ -2061,7 +2068,7 @@ export const FlowForm = (props: Props) => {
                       rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncSingleSelect
-                      label="Gb Earmarking"
+                      label="GB Earmarking"
                       name="earmarkingType"
                       fnPromise={fetchCategory('earmarkingType')}
                       returnObject
@@ -2150,13 +2157,13 @@ export const FlowForm = (props: Props) => {
                                   {
                                     JSON.parse(
                                       item?.value ? item?.value.toString() : ''
-                                    ).dest_org_name
+                                    ).src_org_name
                                   }{' '}
                                   |{' '}
                                   {
                                     JSON.parse(
                                       item?.value ? item?.value.toString() : ''
-                                    ).dest_org_abbreviation
+                                    ).src_org_abbreviation
                                   }{' '}
                                   |{' '}
                                   {
@@ -2253,13 +2260,19 @@ export const FlowForm = (props: Props) => {
                                   {
                                     JSON.parse(
                                       item?.value ? item?.value.toString() : ''
-                                    ).org_name
+                                    ).dest_org_name
                                   }{' '}
                                   |{' '}
                                   {
                                     JSON.parse(
                                       item?.value ? item?.value.toString() : ''
-                                    ).org_abbreviation
+                                    ).dest_org_abbreviation
+                                  }{' '}
+                                  |{' '}
+                                  {
+                                    JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).dest_loc_name
                                   }{' '}
                                   |{' '}
                                   {
