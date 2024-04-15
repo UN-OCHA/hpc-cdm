@@ -61,7 +61,7 @@ type APIAutocompleteResult =
   | globalClusters.GetGlobalClustersResult
   | usageYears.GetUsageYearsResult
   | governingEntities.GetGoverningEntityResult
-  | flows.FlowResult
+  | flows.FlowRESTResult
   | currencies.GetCurrenciesResult;
 
 type AsyncAutocompleteSelectProps = {
@@ -147,11 +147,7 @@ const AsyncAutocompleteSelect = ({
   ): result is plans.GetPlansAutocompleteResult {
     return plans.GET_PLANS_AUTOCOMPLETE_RESULT.is(result);
   }
-  function isFlowsResult(
-    result: APIAutocompleteResult
-  ): result is flows.FlowResult {
-    return flows.FLOW_RESULT.is(result);
-  }
+
   useEffect(() => {
     let active = true;
     if (
@@ -174,17 +170,9 @@ const AsyncAutocompleteSelect = ({
         options.at(-1)?.displayLabel !== (actualYear + 5).toString())
     ) {
       setOptions(
-        data
-          .filter((x) =>
-            x.displayLabel.toUpperCase().includes(inputValue.toUpperCase())
-          )
-          .sort((a, b) =>
-            a.displayLabel < b.displayLabel
-              ? -1
-              : a.displayLabel > b.displayLabel
-              ? 1
-              : 0
-          )
+        data.filter((x) =>
+          x.displayLabel.toUpperCase().includes(inputValue.toUpperCase())
+        )
       );
     }
 
@@ -247,33 +235,69 @@ const AsyncAutocompleteSelect = ({
               value: responseValue.id,
             };
           } else if (name === 'parentFlow' || name === 'childFlow') {
-            const value = responseValue as flows.Flow;
+            const value = responseValue as flows.FlowREST;
+            const refDirectionIndexSrc =
+              value && value.organizations
+                ? value.organizations.findIndex(
+                    (org) => org.flowObject?.refDirection === 'source'
+                  )
+                : -1;
+            const refDirectionIndexDes =
+              value && value.organizations
+                ? value.organizations.findIndex(
+                    (org) => org.flowObject?.refDirection === 'destination'
+                  )
+                : -1;
+            const refDirectionLocIndexDes =
+              value && value.locations
+                ? value.locations.findIndex(
+                    (org) => org.flowObject?.refDirection === 'destination'
+                  )
+                : -1;
             return {
               displayLabel: `Flow ${value.id}: ${value.description} Source: ${
-                value.organizations && value.organizations[0]
-                  ? value.organizations[0].name
+                value.organizations &&
+                value.organizations[refDirectionIndexSrc] &&
+                refDirectionIndexSrc > -1
+                  ? value.organizations[refDirectionIndexSrc].name
                   : ''
               } | Destination: ${
-                value.organizations && value.organizations[1]
-                  ? value.organizations[1].name
+                value.organizations &&
+                value.organizations[refDirectionIndexDes] &&
+                refDirectionIndexDes > -1
+                  ? value.organizations[refDirectionIndexDes].name
                   : ''
               }`,
               value: JSON.stringify({
                 src_org_name:
-                  value.organizations && value.organizations[0]
-                    ? value.organizations[0].name
+                  value.organizations &&
+                  value.organizations[refDirectionIndexSrc] &&
+                  refDirectionIndexSrc > -1
+                    ? value.organizations[refDirectionIndexSrc].name
                     : '',
                 src_org_abbreviation:
-                  value.organizations && value.organizations[0]
-                    ? value.organizations[0].abbreviation
+                  value.organizations &&
+                  value.organizations[refDirectionIndexSrc] &&
+                  refDirectionIndexSrc > -1
+                    ? value.organizations[refDirectionIndexSrc].abbreviation
                     : '',
                 dest_org_name:
-                  value.organizations && value.organizations[1]
-                    ? value.organizations[1].name
+                  value.organizations &&
+                  value.organizations[refDirectionIndexDes] &&
+                  refDirectionIndexDes > -1
+                    ? value.organizations[refDirectionIndexDes].name
                     : '',
                 dest_org_abbreviation:
-                  value.organizations && value.organizations[1]
-                    ? value.organizations[1].abbreviation
+                  value.organizations &&
+                  value.organizations[refDirectionIndexDes] &&
+                  refDirectionIndexDes > -1
+                    ? value.organizations[refDirectionIndexDes].abbreviation
+                    : '',
+                dest_loc_name:
+                  value.locations &&
+                  value.locations[refDirectionLocIndexDes] &&
+                  refDirectionLocIndexDes > -1
+                    ? value.locations[refDirectionLocIndexDes].name
                     : '',
                 ...value,
               }),
@@ -623,19 +647,11 @@ const FormikAsyncAutocompleteSelect = ({
         options.at(-1)?.displayLabel !== (actualYear + 5).toString())
     ) {
       setOptions(
-        data
-          .filter((x) =>
-            x.displayLabel
-              .toUpperCase()
-              .includes(debouncedInputValue.toUpperCase())
-          )
-          .sort((a, b) =>
-            a.displayLabel < b.displayLabel
-              ? -1
-              : a.displayLabel > b.displayLabel
-              ? 1
-              : 0
-          )
+        data.filter((x) =>
+          x.displayLabel
+            .toUpperCase()
+            .includes(debouncedInputValue.toUpperCase())
+        )
       );
     }
 

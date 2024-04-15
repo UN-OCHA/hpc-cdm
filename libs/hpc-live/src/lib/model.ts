@@ -541,7 +541,7 @@ export class LiveModel implements Model {
       getAutocompleteFlows: (params) =>
         this.call({
           pathname: `/v1/object/autocomplete/id/flow/${params.query}`,
-          resultType: flows.FLOW_RESULT,
+          resultType: flows.FLOW_REST_RESULT,
         }),
       /**
        * TODO: Dynamically fetch only necessary fields, Ex: if we don't display 'NewMoney' we shouldn't ask for it

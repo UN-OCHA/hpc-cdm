@@ -194,7 +194,7 @@ const DELETE_RESULT = t.type({
   data: t.string,
   status: t.string,
 });
-const FLOW_REST = t.intersection([
+export const FLOW_REST = t.intersection([
   t.type({
     id: t.number,
     versionID: t.number,
@@ -270,6 +270,8 @@ const FLOW_REST = t.intersection([
 ]);
 
 export type FlowREST = t.TypeOf<typeof FLOW_REST>;
+export const FLOW_REST_RESULT = t.array(FLOW_REST);
+export type FlowRESTResult = t.TypeOf<typeof FLOW_REST_RESULT>;
 export type DeleteResult = t.TypeOf<typeof DELETE_RESULT>;
 
 export const GET_FLOW_PARAMS = t.intersection([
@@ -651,7 +653,9 @@ export interface Model {
   getTotalAmountUSD(
     params: GetTotalAmountUSDParams
   ): Promise<GetTotalAmountUSDResult>;
-  getAutocompleteFlows(params: GetFlowsAutocompleteParams): Promise<FlowResult>;
+  getAutocompleteFlows(
+    params: GetFlowsAutocompleteParams
+  ): Promise<FlowRESTResult>;
   validateFlow(
     params: GetValidateFlowParams,
     options: CreateFlowOptions
