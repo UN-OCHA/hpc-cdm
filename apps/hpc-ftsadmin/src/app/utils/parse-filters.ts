@@ -1,11 +1,15 @@
-import { categories, flows, organizations } from '@unocha/hpc-data';
+import {
+  categories,
+  flows,
+  organizations,
+  FormObjectValue,
+} from '@unocha/hpc-data';
 import { PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
 import { Strings } from '../../i18n/iface';
 import { OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { Dayjs } from 'dayjs';
 import { FlowsFilterValues } from '../components/filters/filter-flows-table';
 import { valueToInteger } from './map-functions';
-import { FormObjectValue } from '@unocha/hpc-ui';
 
 /**
  * The whole idea of this filtering system is to parse every Filter Form to a common type, in this case Filter<T>
@@ -43,7 +47,7 @@ export type FlowStatusType =
   | 'commitment'
   | 'carryover'
   | 'paid'
-  | 'pledged'
+  | 'pledge'
   | 'parked'
   | 'pass_through'
   | 'standard';
@@ -52,7 +56,7 @@ export type FlowStatusType =
  * Type guard functions
  */
 
-const filterValueIsString = (value: FilterValues): value is string => {
+const filterValueIsString = (value: FilterValues | number): value is string => {
   return typeof value === 'string';
 };
 
@@ -92,13 +96,13 @@ const filterValueIsDayJS = (value: FilterValues): value is Dayjs => {
 };
 
 const filterValueIsFlowStatusType = (
-  value: FilterValues
+  value: FilterValues | number
 ): value is FlowStatusType => {
   const values = [
     'commitment',
     'carryover',
     'paid',
-    'pledged',
+    'pledge',
     'parked',
     'pass_through',
     'standard',
@@ -252,7 +256,10 @@ const parseActiveStatus = (activeStatus: string): boolean | undefined => {
 };
 
 export const parseFlowFilters = (
-  filters: Filter<keyof Strings['components']['flowsFilter']['filters']>,
+  filters: Filter<
+    | keyof Strings['components']['flowsFilter']['filters']
+    | keyof Strings['components']['pendingFlowsFilter']['filters']
+  >,
   pending?: boolean
 ): flows.SearchFlowsParams => {
   const res: flows.SearchFlowsParams = {
@@ -346,11 +353,13 @@ export const parseFlowFilters = (
         case 'flowType':
         case 'flowStatus': {
           const filterValue = filters[key]?.value;
+          console.log(filterValue);
           if (!filterValue) {
             break;
           }
-          if (filterValueIsFlowStatusType(filterValue)) {
-            res[filterValue] = true;
+          if (filterValueIsFormObjectValue(filterValue)) {
+            const statusType = filterValue.value;
+            if (filterValueIsFlowStatusType(statusType)) res[statusType] = true;
           }
           break;
         }
@@ -404,6 +413,33 @@ export const parseFlowFilters = (
               ...res.flowCategoryFilters,
               ...(parsedCategories ? parsedCategories : []),
             ];
+          }
+          break;
+        }
+        case 'dataProvider': {
+          const dataProvider = filters.dataProvider?.value;
+          if (!dataProvider) {
+            break;
+          }
+          if (
+            filterValueIsFormObjectValue(dataProvider) &&
+            filterValueIsString(dataProvider.value)
+          ) {
+            res.nestedFlowFilters.systemID = dataProvider.value;
+          }
+          break;
+        }
+        case 'status': {
+          const status = filters.status?.value;
+          if (!status) {
+            break;
+          }
+          if (
+            filterValueIsFormObjectValue(status) &&
+            filterValueIsString(status.value) &&
+            (status.value === 'new' || status.value === 'updated')
+          ) {
+            res.status = status.value;
           }
           break;
         }
@@ -478,8 +514,11 @@ export const parseOrganizationFilters = (
           if (!value) {
             break;
           }
-          if (filterValueIsString(value)) {
-            res.search[key] = value;
+          if (
+            filterValueIsFormObjectValue(value) &&
+            filterValueIsString(value.value)
+          ) {
+            res.search[key] = value.value;
           }
           break;
         }

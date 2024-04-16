@@ -4,7 +4,6 @@ import {
   Switch as SwitchMUI,
 } from '@mui/material';
 import { useField } from 'formik';
-import React from 'react';
 
 type SwitchSize = 'small' | 'medium';
 type SwitchColor = 'primary' | 'error' | 'success';

@@ -1,6 +1,5 @@
-import { categories } from '@unocha/hpc-data';
+import { categories, FormObjectValue } from '@unocha/hpc-data';
 import { Environment } from '../../environments/interface';
-import { FormObjectValue } from '@unocha/hpc-ui';
 
 /** Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop */
 
