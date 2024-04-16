@@ -22,7 +22,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
 import tw from 'twin.macro';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   decodeFilters,
   encodeFilters,
@@ -52,7 +52,6 @@ import {
   TableHeaderButton,
   TableRowClick,
   TopRowContainer,
-  TotalAmountUSD,
   handleTableSettingsInfoClose,
 } from './table-utils';
 import { useNavigate } from 'react-router-dom';
@@ -71,33 +70,18 @@ export interface FlowsTableProps {
   pending?: boolean;
 }
 
-export interface ParsedFilters {
-  flowID?: number;
-  amountUSD?: number;
-  sourceSystemID?: number;
-  flowActiveStatus?: { activeStatus: { name: string } };
-  status?: { status: string };
-  reporterRefCode?: number;
-  legacyID?: number;
-  flowObjects?: flows.FlowObject[];
-  categories?: flows.FlowCategory[];
-  includeChildrenOfParkedFlows?: boolean;
-  nestedFlowFilters?: flows.NestedFlowFilters;
-}
-
 export default function FlowsTable(props: FlowsTableProps) {
   const env = getEnv();
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
   const filters = decodeFilters(props.query.filters, props.initialValues);
-  const attributes = parseFormFilters(filters, props.initialValues);
-  const [totalAmountUSD, setTotalAmountUSD] = useState<string>();
+  const tableFilters = parseFormFilters(filters, props.initialValues);
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
   const [tableInfoDisplay, setTableInfoDisplay] = useState(
     util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
-  const parsedFilters = parseFlowFilters(attributes, props.pending);
+  const parsedFilters = parseFlowFilters(tableFilters, props.pending);
   const navigate = useNavigate();
   const [state, load] = useDataLoader([query], () =>
     env.model.flows.searchFlows({
@@ -110,10 +94,6 @@ export default function FlowsTable(props: FlowsTableProps) {
       nextPageCursor: query.nextPageCursor,
     })
   );
-  useEffect(() => {
-    setTotalAmountUSD(undefined);
-  }, [query.filters]);
-
   const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
     if (isKey(filters, fieldName)) {
       filters[fieldName] = undefined;
@@ -735,50 +715,17 @@ export default function FlowsTable(props: FlowsTableProps) {
   };
 
   const isAnyFilterActive = () => {
-    // First check shortcut filters
-    if (
-      parsedFilters.carryover ||
-      parsedFilters.pass_through ||
-      parsedFilters.parked ||
-      parsedFilters.commitment ||
-      parsedFilters.standard
-    ) {
-      return true;
+    let key: keyof typeof tableFilters;
+    for (key in tableFilters) {
+      const savedKey = key;
+      const val = tableFilters[savedKey];
+      if (val) {
+        return true;
+      }
     }
-
-    // Check if there are any filter inside flowFilters but activeStatus
-    const flowFilters = parsedFilters.flowFilters;
-    if (
-      flowFilters?.activeStatus ||
-      flowFilters?.amountUSD ||
-      flowFilters?.id ||
-      flowFilters?.restricted
-    ) {
-      return true;
-    }
-
-    // Check if there are any filter inside nestedFlowFilters
-    const nestedFlowFilters = parsedFilters.nestedFlowFilters;
-    if (
-      nestedFlowFilters?.reporterRefCode ||
-      nestedFlowFilters?.legacyID ||
-      nestedFlowFilters?.sourceSystemID
-    ) {
-      return true;
-    }
-
-    // Check if there are any filter inside flowCategoryFilters
-    const flowCategoryFilters = parsedFilters.flowCategoryFilters ?? [];
-    if (flowCategoryFilters.length > 0) {
-      return true;
-    }
-
-    // Check if there are any filter inside flowObjectFilters
-    const flowObjectFilters = parsedFilters.flowObjectFilters ?? [];
-    if (flowObjectFilters.length > 0) {
-      return true;
-    }
+    return props.pending;
   };
+
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -800,17 +747,12 @@ export default function FlowsTable(props: FlowsTableProps) {
                     lang={lang}
                     chipSpacing={chipSpacing}
                     handleChipDelete={handleChipDelete}
-                    parsedFilters={attributes}
-                    tableType="flowsFilter"
+                    tableFilters={tableFilters}
+                    tableType={
+                      props.pending ? 'pendingFlowsFilter' : 'flowsFilter'
+                    }
                   />
                   <TopRowContainer>
-                    <TotalAmountUSD
-                      abortSignal={props.abortSignal}
-                      parsedFilters={parsedFilters}
-                      lang={lang}
-                      setAmount={setTotalAmountUSD}
-                      amount={totalAmountUSD}
-                    />
                     <C.AsyncIconButton
                       fnPromise={() =>
                         new Promise<void>((resolve) => {

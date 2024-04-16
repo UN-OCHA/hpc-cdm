@@ -418,6 +418,11 @@ export class LiveModel implements Model {
         otherUser: string;
         code?: string;
         message: errors.UserErrorKey;
+        details?: {
+          code: string;
+          detail: string;
+          table: string;
+        };
       };
       if (json?.code === 'ConflictError') {
         throw new errors.ConflictError(json.timestamp, json.otherUser);
@@ -426,6 +431,16 @@ export class LiveModel implements Model {
         errors.USER_ERROR_KEYS.includes(json?.message)
       ) {
         throw new errors.UserError(json.message);
+      } else if (
+        json?.code === 'BadRequestError' &&
+        json.details?.code === '23505' && // error code for duplicate primary key
+        json.details.detail &&
+        json.details.table
+      ) {
+        throw new errors.DuplicateError(
+          json.details.detail,
+          json.details.table
+        );
       } else {
         const message =
           json?.code && json?.message
@@ -649,25 +664,6 @@ export class LiveModel implements Model {
           },
           resultType: flows.BULK_REJECT_PENDING_FLOWS_RESULT,
         }),
-      getTotalAmountUSD: (params) => {
-        const query = `query{
-            searchFlowsTotalAmountUSD${searchFlowsParams(params)}{
-              totalAmountUSD
-            }
-          }`;
-        return this.call({
-          pathname: `/v4/graphql`,
-          method: 'POST',
-          body: {
-            type: 'json',
-            data: {
-              query: query,
-            },
-          },
-          resultType: flows.GET_TOTAL_AMOUNT_USD_RESULT,
-          signal: params.signal,
-        });
-      },
       getFlowsDownloadXLSX: (params) => {
         const query = `query {
           searchFlowsBatches${searchFlowsParams(params)} {
