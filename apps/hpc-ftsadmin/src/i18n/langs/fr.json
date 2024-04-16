@@ -83,7 +83,8 @@
       "sortBy": "Trier par",
       "totalAmount": "Montant Total：",
       "rejectPendingFlows": "Rejeter les flux en attente",
-      "downloadDisabled": "Le rejet n'est autorisé que lorsqu'un filtre est appliqué",
+      "downloadDisabled": "Le téléchargement est uniquement autorisé lorsqu'au moins un filtre est appliqué",
+      "totalAmountDisabled": "Le montant total est uniquement autorisé lorsqu'au moins un filtre est appliqué",
       "tableSettings": {
         "title": "Paramètres du tableau",
         "save": "Enregistrer",
@@ -128,6 +129,12 @@
         "destinationGlobalClusters": "Regroupement(s) mondial(aux) de destination",
         "destinationEmergencies": "Urgence(s) de destination"
       },
+      "errors": {
+        "flowID": "Fournissez uniquement des entiers positifs en tant que valeurs"
+      },
+      "info": {
+        "filterInfo": "Utiliser des valeurs séparées par des virgules créera plusieurs valeurs. La copie et le collage fonctionnent également avec cette fonctionnalité."
+      },
       "showMore": "Afficher plus",
       "tooltips": {
         "filters": "Filtres"
@@ -144,6 +151,17 @@
         "text": "Êtes-vous sûr de vouloir supprimer ce Mot-Clé ?",
         "principalButton": "Supprimer",
         "secondaryButton": "Annuler"
+      },
+      "errors": {
+        "unknown": "Erreur inattendue lors de la création/mise à jour du mot-clé.",
+        "duplicate": "Un mot-clé avec le nom {keywordName} existe déjà. Veuillez choisir un nom différent."
+      },
+      "labels": {
+        "newName": "Nouveau Nom",
+        "save": "Enregistrer",
+        "public": "Public",
+        "cancel": "Annuler",
+        "delete": "Supprimer"
       }
     },
     "pendingFlowsFilter": {
@@ -243,9 +261,13 @@
         "comments": "Description de l'organisation"
       },
       "errors": {
-        "conflict": "Le nom de cette organisation existe déjà",
-        "unknown": "Erreur inattendue lors de la création/mise à jour de l'organisation",
-        "user_error": "Valeurs incorrectes fournies ou le nom de l'organisation existe déjà"
+        "duplicate": "Une organisation avec le nom {organizationName} existe déjà. Veuillez choisir un nom différent.",
+        "unknown": "Erreur inattendue lors de la création/mise à jour de l'organisation"
+      },
+      "formErrors": {
+        "name": "Nom de l'Organisation est un champ obligatoire",
+        "abbreviation": "Abréviation de l'Organisation est un champ obligatoire",
+        "organizationType": "Type d'Organisation est un champ obligatoire"
       },
       "modal": {
         "text": "Êtes-vous sûr de vouloir supprimer ce flux ? Toutes les informations seront supprimées.",

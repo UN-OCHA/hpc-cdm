@@ -83,7 +83,8 @@
       "sortBy": "Ordenar por",
       "totalAmount": "Monto Total：",
       "rejectPendingFlows": "Rechazar flujos pendientes",
-      "downloadDisabled": "Descarga solo permitida cuando se aplica algún filtro",
+      "downloadDisabled": "La descarga solo está permitida cuando se aplica al menos un filtro",
+      "totalAmountDisabled": "El monto total solo está permitido cuando se aplica al menos un filtro",
       "tableSettings": {
         "title": "Configuración de la tabla",
         "save": "Guardar",
@@ -128,6 +129,12 @@
         "destinationGlobalClusters": "Clusters Globales Destino",
         "destinationEmergencies": "Emergencia(s) Destino"
       },
+      "errors": {
+        "flowID": "Proporcione solo enteros positivos como valores"
+      },
+      "info": {
+        "filterInfo": "Usar valores separados por ',' creará múltiples valores. Copiar y pegar también funciona con esta funcionalidad."
+      },
       "showMore": "Mostrar Más",
       "tooltips": {
         "filters": "Filtros"
@@ -144,6 +151,17 @@
         "text": "¿Estás seguro de que quieres eliminar esta Palabra Clave?",
         "principalButton": "Eliminar",
         "secondaryButton": "Cancelar"
+      },
+      "errors": {
+        "unknown": "Error inesperado al crear/actualizar la palabra clave.",
+        "duplicate": "Ya existe una palabra clave con el nombre {keywordName}. Por favor, elige un nombre diferente."
+      },
+      "labels": {
+        "newName": "Nuevo Nombre",
+        "save": "Guardar",
+        "public": "Público",
+        "cancel": "Cancelar",
+        "delete": "Eliminar"
       }
     },
     "pendingFlowsFilter": {
@@ -243,9 +261,13 @@
         "comments": "Descripción de la organización"
       },
       "errors": {
-        "conflict": "El nombre de esta organización ya existe",
-        "unknown": "Error inesperado al crear/actualizar la organización",
-        "user_error": "Valores incorrectos proporcionados o el nombre de la organización ya existe"
+        "duplicate": "Ya existe una organización con el nombre {organizationName}. Por favor, elige un nombre diferente.",
+        "unknown": "Error inesperado al crear/actualizar la organización"
+      },
+      "formErrors": {
+        "name": "Nombre de la Organización es un campo obligatorio",
+        "abbreviation": "Abreviatura de la Organización es un campo obligatorio",
+        "organizationType": "Tipo de Organización es un campo obligatorio"
       },
       "modal": {
         "text": "¿Estás seguro de que quieres eliminar este flujo? Toda la información sera eliminada.",

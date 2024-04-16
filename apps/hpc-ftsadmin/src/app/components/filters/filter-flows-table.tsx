@@ -1,9 +1,9 @@
 import { Form, Formik, FormikState } from 'formik';
 import * as io from 'io-ts';
 import tw from 'twin.macro';
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 
-import { C, FormObjectValue } from '@unocha/hpc-ui';
+import { C } from '@unocha/hpc-ui';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import { t } from '../../../i18n';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
@@ -11,7 +11,7 @@ import { util } from '@unocha/hpc-core';
 import { Alert } from '@mui/material';
 import { Query } from '../tables/table-utils';
 import { AppContext } from '../../context';
-import { util as codecs } from '@unocha/hpc-data';
+import { util as codecs, FormObjectValue } from '@unocha/hpc-data';
 import validateForm from '../../utils/form-validation';
 import {
   fnCategories,
@@ -33,8 +33,8 @@ export interface FlowsFilterValues {
   flowID?: string[];
   amountUSD?: string;
   keywords?: Array<FormObjectValue>;
-  flowStatus?: FormObjectValue | '';
-  flowType?: FormObjectValue | '';
+  flowStatus?: FormObjectValue | null;
+  flowType?: FormObjectValue | null;
   flowActiveStatus?: string;
   reporterRefCode?: string;
   sourceSystemID?: string;
@@ -60,8 +60,8 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   flowID: [],
   amountUSD: '',
   keywords: [],
-  flowStatus: '',
-  flowType: '',
+  flowStatus: null,
+  flowType: null,
   flowActiveStatus: '',
   reporterRefCode: '',
   sourceSystemID: '',
@@ -86,16 +86,6 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
 
 const FORM_VALIDATION = io.partial({
   flowID: io.array(codecs.POSITIVE_INTEGER_FROM_STRING),
-  amountUSD: io.union([
-    codecs.POSITIVE_NUMBER_FROM_STRING,
-    codecs.EMPTY_STRING,
-  ]),
-  reporterRefCode: io.union([codecs.NON_EMPTY_STRING, codecs.EMPTY_STRING]),
-  sourceSystemID: io.union([codecs.NON_EMPTY_STRING, codecs.EMPTY_STRING]),
-  legacyID: io.union([
-    codecs.POSITIVE_INTEGER_FROM_STRING,
-    codecs.EMPTY_STRING,
-  ]),
 });
 
 const StyledDiv = tw.div`
@@ -198,8 +188,7 @@ export const FilterFlowsTable = (props: Props) => {
                   ...tw` mt-4`,
                 }}
               >
-                Using ',' sepparated values will create multiple values. Copy
-                and paste also works with this functionality
+                {t.t(lang, (s) => s.components.flowsFilter.info.filterInfo)}
               </Alert>
               <C.MultiTextField
                 label={t.t(
@@ -207,6 +196,10 @@ export const FilterFlowsTable = (props: Props) => {
                   (s) => s.components.flowsFilter.filters.flowID
                 )}
                 name="flowID"
+                errorMessage={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.errors.flowID
+                )}
               />
               <C.NumberField
                 label={t.t(
@@ -230,13 +223,12 @@ export const FilterFlowsTable = (props: Props) => {
                 title={t.t(lang, (s) => s.components.flowsFilter.showMore)}
                 type="secondary"
               >
-                <C.AsyncSingleSelect
+                <C.AsyncAutocompleteSelect
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.flowStatus
                   )}
                   name="flowStatus"
-                  returnObject
                   fnPromise={async () => {
                     const response =
                       await environment.model.categories.getCategories({
@@ -251,15 +243,14 @@ export const FilterFlowsTable = (props: Props) => {
                       };
                     });
                   }}
-                  hasNameValue
+                  isAutocompleteAPI={false}
                 />
-                <C.AsyncSingleSelect
+                <C.AsyncAutocompleteSelect
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.flowType
                   )}
                   name="flowType"
-                  returnObject
                   fnPromise={async () => {
                     const response =
                       await environment.model.categories.getCategories({
@@ -274,12 +265,9 @@ export const FilterFlowsTable = (props: Props) => {
                       };
                     });
                   }}
-                  preOptions={
-                    queryFilters.flowType ? [queryFilters.flowType] : undefined
-                  }
-                  hasNameValue
+                  isAutocompleteAPI={false}
                 />
-                <C.SingleSelect
+                <C.AutocompleteSelect
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.flowActiveStatus
@@ -291,19 +279,22 @@ export const FilterFlowsTable = (props: Props) => {
                     { displayLabel: 'Inactive', value: 'false' },
                   ]}
                 />
-                <C.TextFieldWrapper
+                <C.NumberField
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.reporterRefCode
                   )}
+                  type="number"
                   name="reporterRefCode"
                 />
-                <C.TextFieldWrapper
+                <C.NumberField
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.sourceSystemID
                   )}
                   name="sourceSystemID"
+                  allowNegative
+                  type="number"
                 />
                 <C.NumberField
                   label={t.t(

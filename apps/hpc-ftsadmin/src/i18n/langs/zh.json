@@ -83,7 +83,8 @@
       "totalAmount": "总金额：",
       "sortBy": "排序方式",
       "rejectPendingFlows": "拒绝待处理的资金流",
-      "downloadDisabled": "只有在使用过滤器时才允许排放",
+      "downloadDisabled": "只有在至少应用了一个过滤器时才允许下载",
+      "totalAmountDisabled": "只有在至少应用了一个过滤器时才允许总金额",
       "tableSettings": {
         "title": "表格设置",
         "save": "保存",
@@ -131,6 +132,12 @@
         "details": "详情",
         "status": "状态"
       },
+      "errors": {
+        "flowID": "只提供正整数作为值"
+      },
+      "info": {
+        "filterInfo": "使用逗号分隔的值将创建多个值。复制和粘贴也适用于此功能。"
+      },
       "showMore": "显示更多",
       "tooltips": {
         "filters": "筛选器"
@@ -147,6 +154,17 @@
         "text": "确定要删除此关键词吗？",
         "principalButton": "删除",
         "secondaryButton": "取消"
+      },
+      "errors": {
+        "unknown": "创建/更新关键字时发生意外错误。",
+        "duplicate": "已经存在名为 {keywordName} 的关键字。请选择一个不同的名称。"
+      },
+      "labels": {
+        "newName": "新名称",
+        "save": "保存",
+        "public": "公开",
+        "cancel": "取消",
+        "delete": "删除"
       }
     },
     "pendingFlowsFilter": {
@@ -246,9 +264,13 @@
         "comments": "组织描述"
       },
       "errors": {
-        "conflict": "该组织名称已存在",
-        "unknown": "创建/更新组织时发生意外错误",
-        "user_error": "提供的值不正确或组织名称已存在"
+        "duplicate": "已经存在名为 {organizationName} 的组织。请选择一个不同的名称。",
+        "unknown": "创建/更新组织时发生意外错误"
+      },
+      "formErrors": {
+        "name": "组织名称是必填字段",
+        "abbreviation": "组织缩写是必填字段",
+        "organizationType": "组织类型是必填字段"
       },
       "modal": {
         "text": "您确定要删除此流程吗？所有信息将被删除。",

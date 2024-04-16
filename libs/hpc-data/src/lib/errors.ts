@@ -1,6 +1,7 @@
 const NOT_FOUND_ERROR = 'not_found';
 const ABORT_ERROR = 'abort_error';
 const CONFLICT_ERROR = 'conflict';
+const DUPLICATE_ERROR = 'duplicate';
 const USER_ERROR = 'user_error';
 
 export const USER_ERROR_KEYS = [
@@ -73,3 +74,44 @@ export class ConflictError extends Error {
 export const isConflictError = (error: Error): error is ConflictError =>
   error instanceof ConflictError ||
   (error && (error as ConflictError).code === CONFLICT_ERROR);
+
+/**
+ * An error thrown when the user creates a new Entity with a
+ * duplicated primary key of an already existing one
+ */
+export class DuplicateError extends Error {
+  public readonly code = DUPLICATE_ERROR;
+  public readonly details: string;
+  public readonly table: string;
+  public readonly key: string;
+  public readonly value: string;
+  public constructor(
+    /**
+     * Details where we can get the field and key that is conflicting
+     */
+    details: string,
+    /**
+     * Table where conflicts appear
+     */
+    table: string
+  ) {
+    super(DUPLICATE_ERROR);
+    this.details = details;
+    this.table = table;
+    const match = /^Key \(([a-zA-Z]+)\)=\((.+)\) already exists\.$/.exec(
+      details
+    );
+    if (match) {
+      const [, key, value] = match;
+      this.key = key;
+      this.value = value;
+    } else {
+      this.key = 'ERROR WHILE APPLYING REGEX';
+      this.value = 'ERROR WHILE APPLYING REGEX';
+    }
+  }
+}
+
+export const isDuplicateError = (error: Error): error is DuplicateError =>
+  error instanceof DuplicateError ||
+  (error && (error as DuplicateError).code === DUPLICATE_ERROR);

@@ -1,20 +1,19 @@
 import { Form, Formik } from 'formik';
 import tw from 'twin.macro';
 
-import { C, FormObjectValue } from '@unocha/hpc-ui';
+import { C } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
-import { useContext, useEffect, useState } from 'react';
-import { organizations } from '@unocha/hpc-data';
+import { useContext, useState } from 'react';
+import { organizations, FormObjectValue } from '@unocha/hpc-data';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../paths';
 import { errors } from '@unocha/hpc-data';
-import { Alert, Fade } from '@mui/material';
 import { Strings } from '../../i18n/iface';
 import DeleteIcon from '@mui/icons-material/Delete';
 import * as io from 'io-ts';
 import { util as codecs } from '@unocha/hpc-data';
-import validateForm from '../utils/form-validation';
+import validateForm, { parseFieldError } from '../utils/form-validation';
 import {
   fnCategories,
   fnLocations,
@@ -69,8 +68,6 @@ gap-x-4
 const AlignButton = tw.div`
 self-center
 `;
-const AlertWrapper = tw.div`
-mb-4`;
 
 const InfoText = tw.p`
 mb-0
@@ -123,27 +120,20 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
     useState<
       keyof Strings['components']['organizationUpdateCreate']['errors']
     >();
-
+  const [errorValue, setErrorValue] = useState('');
   const FORM_VALIDATION = io.partial({
     name: codecs.NON_EMPTY_STRING,
     abbreviation: codecs.NON_EMPTY_STRING,
     organizationTypes: codecs.NON_EMPTY_ARRAY,
   });
-
-  useEffect(() => {
-    setTimeout(() => {
-      setError(undefined);
-    }, 5000);
-  }, [error]);
-
   const handleSubmit = async (values: AddEditOrganizationValues) => {
     if (id && load) {
       await environment.model.organizations
         .updateOrganization(formToUpdate(values, id))
         .finally(load)
         .catch((err) => {
-          window.scrollTo(0, 0);
-          if (errors.isConflictError(err)) {
+          if (errors.isDuplicateError(err)) {
+            setErrorValue(err.value);
             setError(err.code);
           } else {
             setError('unknown');
@@ -156,14 +146,31 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
           navigate(paths.organization(org.id));
         })
         .catch((err) => {
-          window.scrollTo(0, 0);
-          if (errors.isUserError(err)) {
+          if (errors.isDuplicateError(err)) {
+            setErrorValue(err.value);
             setError(err.code);
           } else {
             setError('unknown');
           }
         });
     }
+  };
+  const parseError = (
+    error:
+      | keyof Strings['components']['organizationUpdateCreate']['errors']
+      | undefined
+  ): string | undefined => {
+    if (!error) {
+      return undefined;
+    }
+    const traducedError = t.t(
+      lang,
+      (s) => s.components.organizationUpdateCreate.errors[error]
+    );
+    if (error === 'duplicate') {
+      return traducedError.replace('{organizationName}', errorValue);
+    }
+    return traducedError;
   };
   return (
     <Formik
@@ -176,30 +183,29 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
     >
       {({ initialValues }) => (
         <Form>
-          <Fade in={!!error}>
-            <AlertWrapper>
-              <Alert
-                severity="error"
-                sx={{
-                  display: 'flex',
-                  ...tw`mx-8 mt-4 transition-all`,
-                }}
+          <C.ErrorAlert
+            setError={
+              setError as React.Dispatch<
+                React.SetStateAction<string | undefined>
               >
-                {error &&
-                  t.t(
-                    lang,
-                    (s) => s.components.organizationUpdateCreate.errors[error]
-                  )}
-              </Alert>
-            </AlertWrapper>
-          </Fade>
-
+            }
+            error={parseError(error)}
+          />
           <C.TextFieldWrapper
             label={t.t(
               lang,
               (s) => s.components.organizationUpdateCreate.fields.name
             )}
             name="name"
+            error={(metaError) =>
+              parseFieldError(
+                metaError,
+                t.t(
+                  lang,
+                  (s) => s.components.organizationUpdateCreate.formErrors.name
+                )
+              )
+            }
             required
           />
           <C.TextFieldWrapper
@@ -208,6 +214,17 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.abbreviation
             )}
             name="abbreviation"
+            error={(metaError) =>
+              parseFieldError(
+                metaError,
+                t.t(
+                  lang,
+                  (s) =>
+                    s.components.organizationUpdateCreate.formErrors
+                      .abbreviation
+                )
+              )
+            }
             required
           />
           <C.TextFieldWrapper
@@ -274,6 +291,17 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
             isAutocompleteAPI={false}
             isMulti
             required
+            error={(metaError) =>
+              parseFieldError(
+                metaError,
+                t.t(
+                  lang,
+                  (s) =>
+                    s.components.organizationUpdateCreate.formErrors
+                      .organizationType
+                )
+              )
+            }
           />
           <InfoText>
             {t.t(
@@ -281,19 +309,19 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.text.organizationType
             )}
           </InfoText>
-          <C.SingleSelect
+          <C.AutocompleteSelect
             label={t.t(
               lang,
               (s) =>
                 s.components.organizationUpdateCreate.fields.organizationLevel
             )}
             name="organizationLevel"
-            options={[
+            options={
               initialValues.organizationLevel
-                ? initialValues.organizationLevel
-                : { displayLabel: '', value: '' },
-            ]}
-            readonly
+                ? [initialValues.organizationLevel]
+                : []
+            }
+            readOnly
           />
 
           <C.Divider />
