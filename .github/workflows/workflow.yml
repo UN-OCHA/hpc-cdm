@@ -31,7 +31,7 @@ jobs:
         env:
           AWS_REGION: us-east-1
 
-      - uses: UN-OCHA/hpc-actions@develop
+      - uses: UN-OCHA/hpc-actions@HPC-8676
         env:
           CONFIG_FILE: .github/workflow.config.json
           GITHUB_TOKEN: ${{ secrets.HPC_BOT_TOKEN }}
