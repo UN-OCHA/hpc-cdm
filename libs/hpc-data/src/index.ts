@@ -14,6 +14,7 @@ import * as projects from './lib/projects';
 import * as reportingWindows from './lib/reporting-windows';
 import * as usageYears from './lib/usageYears';
 import * as util from './lib/util';
+import { FormObjectValue } from './lib/util';
 
 export interface Model {
   access: access.Model;
@@ -48,4 +49,5 @@ export {
   usageYears,
   util,
   systems,
+  FormObjectValue,
 };

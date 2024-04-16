@@ -20,12 +20,14 @@ const MultiTextField = ({
   label,
   placeholder,
   type,
+  errorMessage,
   ...otherProps
 }: {
   name: string;
   label: string;
   placeholder?: string;
   type?: 'text' | 'currency';
+  errorMessage?: string;
 }) => {
   const { setFieldValue } = useFormikContext<string[]>();
   const [field, meta] = useField<string[]>(name);
@@ -56,7 +58,12 @@ const MultiTextField = ({
             }
           : { ...params.InputProps },
       error: meta && meta.touched && meta.error ? true : false,
-      helperText: meta && meta.touched && meta.error ? meta.error : undefined,
+      helperText:
+        meta && meta.touched && meta.error
+          ? errorMessage
+            ? meta.error.replace('{validationError}', errorMessage)
+            : meta.error
+          : undefined,
     };
   };
 

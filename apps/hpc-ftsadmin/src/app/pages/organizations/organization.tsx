@@ -1,10 +1,4 @@
-import {
-  C,
-  CLASSES,
-  FormObjectValue,
-  combineClasses,
-  useDataLoader,
-} from '@unocha/hpc-ui';
+import { C, CLASSES, combineClasses, useDataLoader } from '@unocha/hpc-ui';
 import { t } from '../../../i18n';
 import PageMeta from '../../components/page-meta';
 import { AppContext, getEnv } from '../../context';
@@ -13,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import OrganizationForm, {
   AddEditOrganizationValues,
 } from '../../components/organization-form';
-import { organizations } from '@unocha/hpc-data';
+import { organizations, FormObjectValue } from '@unocha/hpc-data';
 
 interface Props {
   className?: string;
@@ -159,7 +153,7 @@ export default (props: Props) => {
                       <InfoText>
                         {t.t(
                           lang,
-                          (s) => s.components.organizationUpdateCreate.update
+                          (s) => s.components.organizationUpdateCreate.text.edit
                         )}
                       </InfoText>
                       <OrganizationForm
@@ -181,7 +175,7 @@ export default (props: Props) => {
                   <InfoText>
                     {t.t(
                       lang,
-                      (s) => s.components.organizationUpdateCreate.create
+                      (s) => s.components.organizationUpdateCreate.text.create
                     )}
                   </InfoText>
                   <OrganizationForm />
