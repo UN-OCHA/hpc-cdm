@@ -249,7 +249,8 @@ const FLOW_FILTERS = t.partial({
   commitment: t.boolean,
   carryover: t.boolean,
   paid: t.boolean,
-  pledged: t.boolean,
+  status: t.union([t.literal('updated'), t.literal('new')]),
+  pledge: t.boolean,
   parked: t.boolean,
   pass_through: t.boolean,
   standard: t.boolean,
@@ -260,6 +261,7 @@ const FLOW_FILTERS = t.partial({
     reporterRefCode: t.string,
     legacyID: t.number,
     sourceSystemID: t.string,
+    systemID: t.string,
   }),
 });
 
@@ -313,23 +315,6 @@ export type BulkRejectPendingFlowsResults = t.TypeOf<
   typeof BULK_REJECT_PENDING_FLOWS_RESULT
 >;
 
-export const GET_TOTAL_AMOUNT_USD_PARAMS = t.partial({
-  ...FLOW_FILTERS.props,
-  signal: AbortSignalType,
-});
-export type GetTotalAmountUSDParams = t.TypeOf<
-  typeof GET_TOTAL_AMOUNT_USD_PARAMS
->;
-
-export const GET_TOTAL_AMOUNT_USD_RESULT = t.type({
-  searchFlowsTotalAmountUSD: t.type({
-    totalAmountUSD: t.string,
-  }),
-});
-export type GetTotalAmountUSDResult = t.TypeOf<
-  typeof GET_TOTAL_AMOUNT_USD_RESULT
->;
-
 export const SEARCH_FLOWS_BATCHES_RESULT = t.type({
   searchFlowsBatches: t.type({
     flows: FLOW_RESULT,
@@ -346,9 +331,6 @@ export interface Model {
   bulkRejectPendingFlows(
     params: BulkRejectPendingFlowsParams
   ): Promise<BulkRejectPendingFlowsResults>;
-  getTotalAmountUSD(
-    params: GetTotalAmountUSDParams
-  ): Promise<GetTotalAmountUSDResult>;
   getFlowsDownloadXLSX(
     params: SearchFlowsParams
   ): Promise<SearchFlowsBatchesResult>;

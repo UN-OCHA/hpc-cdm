@@ -690,17 +690,6 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
-        getTotalAmountUSD: dummyEndpoint(
-          'flows.getTotalAmountUSD',
-          async () => {
-            return {
-              searchFlowsTotalAmountUSD: {
-                totalAmountUSD: '100,639,059.00',
-                flowsCount: 6,
-              },
-            };
-          }
-        ),
         getFlowsDownloadXLSX: dummyEndpoint(
           'flows.getFlowsDownloadXLSX',
           async () => {
