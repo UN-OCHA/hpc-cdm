@@ -374,7 +374,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
               <ChipDiv>
                 <RenderChipsRow
                   tableType="organizationsFilter"
-                  parsedFilters={parsedFilters}
+                  tableFilters={parsedFilters}
                   lang={lang}
                   chipSpacing={chipSpacing}
                   handleChipDelete={handleChipDelete}
