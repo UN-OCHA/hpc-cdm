@@ -43,6 +43,25 @@ jobs:
         env:
           AWS_REGION: us-east-1
 
+      - name: '[FOR TESTING] Print affected'
+        run: |
+          if [[ -z "${{ env.NX_BASE }}" ]]; then
+            BASE_REF=${GITHUB_BASE_REF}
+          else
+            BASE_REF=${{ env.NX_BASE }}
+          fi
+
+          if [[ -z "${{ env.NX_HEAD }}" ]]; then
+            HEAD_REF=${GITHUB_HEAD_REF}
+          else
+            HEAD_REF=${{ env.NX_HEAD }}
+          fi
+
+          echo "BASE_REF = $BASE_REF"
+          echo "HEAD_REF = $HEAD_REF"
+          affectedApps=$(npx nx show projects --affected --type app --exclude=*-e2e --base=$BASE_REF --head=$HEAD_REF | xargs | tr ' ' ',')
+          echo "Affected apps = $affectedApps"
+
       - name: Get affected apps
         id: affectedApps
         run: |
