@@ -12,6 +12,7 @@ interface TextFieldWrapperProps {
   label: string;
   placeholder?: string;
   textarea?: boolean;
+  error?: (metaError: string) => string | undefined;
   required?: boolean;
 }
 const TextFieldWrapper = ({
@@ -19,6 +20,7 @@ const TextFieldWrapper = ({
   label,
   placeholder,
   textarea,
+  error,
   required,
   ...otherProps
 }: TextFieldWrapperProps) => {
@@ -37,7 +39,7 @@ const TextFieldWrapper = ({
   };
   if (meta && meta.touched && meta.error) {
     configTextField.error = true;
-    configTextField.helperText = meta.error;
+    configTextField.helperText = error ? error(meta.error) : meta.error;
   }
   return <StyledTextField {...configTextField} />;
 };

@@ -14,12 +14,14 @@ import {
   Tooltip,
 } from '@mui/material';
 import { categories } from '@unocha/hpc-data';
+import { errors } from '@unocha/hpc-data';
 import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
-import React, { useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
 import CancelIcon from '@mui/icons-material/Cancel';
 import * as paths from '../../paths';
@@ -46,6 +48,7 @@ import tw from 'twin.macro';
 import { Form, Formik } from 'formik';
 import { util } from '@unocha/hpc-core';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
+import { Strings } from '../../../i18n/iface';
 
 export type KeywordQuery = {
   orderBy: string;
@@ -64,9 +67,15 @@ function by<T>(
   order: 'ASC' | 'DESC' = 'ASC',
   isNumber?: boolean
 ): (a: T, b: T) => number {
+  const isString = (value: unknown): value is string =>
+    typeof value === 'string';
+
   return (a, b) => {
-    const x = isNumber ? parseInt(a[property] as string) : a[property];
-    const y = isNumber ? parseInt(b[property] as string) : b[property];
+    const aProp = a[property];
+    const x = isNumber && isString(aProp) ? parseInt(aProp) : aProp;
+    const bProp = b[property];
+    const y = isNumber && isString(bProp) ? parseInt(bProp) : bProp;
+
     if (x > y) {
       if (order === 'ASC') {
         return 1;
@@ -110,6 +119,17 @@ const FieldsWrapper = tw.div`
 flex
 gap-x-8
 `;
+const KeywordTableContext = createContext<{
+  setError?: React.Dispatch<
+    React.SetStateAction<
+      | {
+          code: keyof Strings['components']['keywordTable']['errors'];
+          value: string;
+        }
+      | undefined
+    >
+  >;
+}>({});
 
 type EditableRowProps = {
   lang: LanguageKey;
@@ -124,6 +144,7 @@ const EditableRow = ({
   entityEdited,
 }: EditableRowProps) => {
   const keywordIconSize = tw`h-8 w-8`;
+  const { setError } = useContext(KeywordTableContext);
   const env = getEnv();
   const [isEdit, setEdit] = useState(false);
 
@@ -152,18 +173,47 @@ const EditableRow = ({
             };
             env.model.categories
               .updateKeyword(modfiedKeyword)
-              .then(() => setEntityEdited(!entityEdited))
-              .catch((err) => console.error(err)); //  TODO: Propperly handle this error
+              .then(() => {
+                setEntityEdited(!entityEdited);
+              })
+              .catch((err) => {
+                if (errors.isDuplicateError(err)) {
+                  if (setError) {
+                    setError({ code: err.code, value: err.value });
+                  }
+                } else {
+                  if (setError) {
+                    setError({ code: 'unknown', value: 'unknown' });
+                  }
+                }
+              });
             setEdit(false);
           }}
         >
           <StyledForm>
             <FieldsWrapper>
-              <C.TextFieldWrapper name="keyword" label="New name" />
-              <C.Switch name="public" label="public" />
+              <C.TextFieldWrapper
+                name="keyword"
+                label={t.t(
+                  lang,
+                  (s) => s.components.keywordTable.labels.newName
+                )}
+              />
+              <C.Switch
+                name="public"
+                label={t.t(
+                  lang,
+                  (s) => s.components.keywordTable.labels.public
+                )}
+              />
             </FieldsWrapper>
-            <C.ButtonSubmit color="primary" text="Save" />
-            <Tooltip title="Cancel">
+            <C.ButtonSubmit
+              color="primary"
+              text={t.t(lang, (s) => s.components.keywordTable.labels.save)}
+            />
+            <Tooltip
+              title={t.t(lang, (s) => s.components.keywordTable.labels.cancel)}
+            >
               <IconButton size="small" onClick={() => setEdit(false)}>
                 <CancelIcon sx={keywordIconSize} />
               </IconButton>
@@ -180,7 +230,7 @@ const EditableRow = ({
         IconComponent={DeleteIcon}
         confirmModal={t.get(lang, (s) => s.components.keywordTable.modal)}
         redirectAfterFetch={paths.keywords()}
-        tooltipText="Delete"
+        tooltipText={t.t(lang, (s) => s.components.keywordTable.labels.delete)}
         iconSx={keywordIconSize}
       />
     </IconContainer>
@@ -199,6 +249,10 @@ export default function KeywordTable(props: KeywordTableProps) {
   const [tableInfoDisplay, setTableInfoDisplay] = useState(
     util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
+  const [error, setError] = useState<{
+    code: keyof Strings['components']['keywordTable']['errors'];
+    value: string;
+  }>();
 
   const handleSort = (newSort: KeywordHeaderID) => {
     const changeDir = newSort === query.orderBy;
@@ -295,11 +349,7 @@ export default function KeywordTable(props: KeywordTableProps) {
                         size="small"
                         data-test="_keyword-table-public"
                       >
-                        {
-                          row.description === 'public'
-                            ? 'Yes'
-                            : '--' /** TODO: Propperly implement this field instead of just putting Yes or --. */
-                        }
+                        {row.description === 'public' ? <CheckIcon /> : '--'}
                       </TableCell>
                     );
 
@@ -391,6 +441,33 @@ export default function KeywordTable(props: KeywordTableProps) {
     );
   };
 
+  const parseError = (
+    error:
+      | {
+          code: keyof Strings['components']['organizationUpdateCreate']['errors'];
+          value: string;
+        }
+      | undefined,
+    lang: LanguageKey
+  ): string | undefined => {
+    if (!error) {
+      return undefined;
+    }
+    const errorCode = error.code;
+
+    if (!errorCode) {
+      return undefined;
+    }
+    const traducedError = t.t(
+      lang,
+      (s) => s.components.keywordTable.errors[errorCode]
+    );
+    if (error.code === 'duplicate') {
+      return traducedError.replace('{keywordName}', error.value);
+    }
+    return traducedError;
+  };
+
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -405,7 +482,11 @@ export default function KeywordTable(props: KeywordTableProps) {
           }}
         >
           {(data) => (
-            <>
+            <KeywordTableContext.Provider value={{ setError: setError }}>
+              <C.ErrorAlert
+                setError={setError}
+                error={parseError(error, lang)}
+              />
               <ChipDiv>
                 <TopRowContainer>
                   <TableHeaderButton
@@ -504,7 +585,7 @@ export default function KeywordTable(props: KeywordTableProps) {
                   <TableComponent lang={lang} data={data} />
                 </TableContainer>
               </Box>
-            </>
+            </KeywordTableContext.Provider>
           )}
         </StyledLoader>
       )}
