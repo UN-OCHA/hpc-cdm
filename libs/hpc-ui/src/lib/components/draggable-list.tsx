@@ -1,4 +1,9 @@
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from 'react-beautiful-dnd';
 import React, { ReactNode, useState } from 'react';
 import { Paper, Switch, Typography } from '@mui/material';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -109,7 +114,7 @@ const DraggableList = ({
 }: DraggableListProps) => {
   const [values, setValues] =
     React.useState<DraggableListItemProps[]>(queryValues);
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
       return;
     }
