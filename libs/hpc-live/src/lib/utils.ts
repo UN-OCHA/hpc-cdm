@@ -41,9 +41,7 @@ function parseFilterToGraphQL(obj: Record<string, any>): string {
 
   return `{${keyValuePairs.join(', ')}}`;
 }
-/**
- * Also valid for TotalAmountUSD() params
- */
+
 export const searchFlowsParams = (params: flows.SearchFlowsParams): string => {
   let queryParams = '';
   let key: keyof typeof params;
@@ -57,7 +55,7 @@ export const searchFlowsParams = (params: flows.SearchFlowsParams): string => {
       case 'standard':
       case 'pass_through':
       case 'pending':
-      case 'pledged':
+      case 'pledge':
       case 'includeChildrenOfParkedFlows':
         if (params[unmutableKey])
           queryParams = queryParams.concat(unmutableKey, ': true ');
