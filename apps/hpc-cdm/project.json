@@ -73,28 +73,13 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/hpc-cdm/**/*.js",
-          "apps/hpc-cdm/**/*.jsx",
-          "apps/hpc-cdm/**/*.ts",
-          "apps/hpc-cdm/**/*.tsx",
-          "apps/hpc-cdm/src/app/components/enketo-form/enketo-core.d.ts",
-          "apps/hpc-cdm/**/*.spec.ts",
-          "apps/hpc-cdm/**/*.spec.tsx",
-          "apps/hpc-cdm/**/*.spec.js",
-          "apps/hpc-cdm/**/*.spec.jsx",
-          "apps/hpc-cdm/**/*.d.ts"
-        ]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/hpc-cdm/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/hpc-cdm/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/hpc-cdm"]
     }
