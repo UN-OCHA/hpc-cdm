@@ -2,17 +2,9 @@ import tw from 'twin.macro';
 import { LanguageKey, t } from '../../../i18n';
 import { FilterKeys, Filter, isKey } from '../../utils/parse-filters';
 import EllipsisText from '../../utils/ellipsis-text';
-import {
-  Chip,
-  CircularProgress,
-  IconButton,
-  TableRow,
-  Tooltip,
-} from '@mui/material';
+import { Chip, IconButton, TableRow, Tooltip } from '@mui/material';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
-import { C, dataLoader } from '@unocha/hpc-ui';
-import { getEnv } from '../../context';
-import { flows } from '@unocha/hpc-data';
+import { C } from '@unocha/hpc-ui';
 import { util } from '@unocha/hpc-core';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
 
@@ -62,23 +54,23 @@ px-2
 rounded-full
 `;
 export const RenderChipsRow = ({
-  parsedFilters,
+  tableFilters,
   lang,
   handleChipDelete,
   tableType,
   chipSpacing = { m: 0.5 },
 }: {
-  parsedFilters: Filter<FilterKeys>;
+  tableFilters: Filter<FilterKeys>;
   lang: LanguageKey;
   handleChipDelete: <T extends FilterKeys>(fieldName: T) => void;
   tableType: 'organizationsFilter' | 'flowsFilter' | 'pendingFlowsFilter';
   chipSpacing?: { m: number };
 }) => {
   const chipList: Array<JSX.Element> = [];
-  let key: keyof typeof parsedFilters;
-  for (key in parsedFilters) {
+  let key: keyof typeof tableFilters;
+  for (key in tableFilters) {
     const savedKey = key;
-    const val = parsedFilters[savedKey];
+    const val = tableFilters[savedKey];
     if (!val) return;
     const { displayValue } = val;
     chipList.push(
@@ -145,66 +137,6 @@ export const RenderChipsRow = ({
     );
   }
   return chipList;
-};
-
-const TotalAmountUSDContainer = tw.div`
-self-center
-`;
-const AmountSpan = tw.span`
-font-bold
-`;
-interface TotalAmountUSDProps {
-  lang: LanguageKey;
-  parsedFilters: flows.FlowFilters;
-  abortSignal?: AbortSignal;
-  setAmount: (value: string) => void;
-  amount?: string;
-}
-export const TotalAmountUSD = ({
-  lang,
-  parsedFilters,
-  abortSignal,
-  setAmount,
-  amount,
-}: TotalAmountUSDProps) => {
-  const env = getEnv();
-  return (
-    <TotalAmountUSDContainer>
-      <span>{t.t(lang, (s) => s.components.flowsTable.totalAmount)}</span>
-      {!amount ? (
-        <C.Loader
-          loader={dataLoader([], () =>
-            env.model.flows.getTotalAmountUSD({
-              ...parsedFilters,
-              signal: abortSignal,
-            })
-          )}
-          strings={{
-            ...t.get(lang, (s) => s.components.loader),
-            notFound: {
-              ...t.get(lang, (s) => s.components.notFound),
-              ...t.get(lang, (s) => s.components.flowsTable.notFound),
-            },
-          }}
-          customLoadingElement={<CircularProgress size={15} />}
-        >
-          {(totalAmountUSDData) => {
-            setAmount(
-              totalAmountUSDData.searchFlowsTotalAmountUSD.totalAmountUSD
-            );
-            return (
-              <AmountSpan>
-                {totalAmountUSDData.searchFlowsTotalAmountUSD.totalAmountUSD}{' '}
-                USD
-              </AmountSpan>
-            );
-          }}
-        </C.Loader>
-      ) : (
-        <AmountSpan>{amount} USD</AmountSpan>
-      )}
-    </TotalAmountUSDContainer>
-  );
 };
 
 /** Handle function to control the information text in the Draggable List components of tables */
