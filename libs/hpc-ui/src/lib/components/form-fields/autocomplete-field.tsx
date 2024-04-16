@@ -1,8 +1,8 @@
 import { Autocomplete, AutocompleteProps } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
-import { useState } from 'react';
 import tw from 'twin.macro';
 import { StyledTextField } from './text-field';
+import { FormObjectValue } from '@unocha/hpc-data';
 
 const StyledAutocomplete = tw(Autocomplete)`
       min-w-[10rem]
@@ -12,30 +12,23 @@ const AutocompleteSelect = ({
   name,
   label,
   options,
-  preOptions,
   placeholder,
+  readOnly,
   isMulti,
   ...otherProps
 }: {
   name: string;
   label: string;
-  options: string[];
-  preOptions?: string[];
+  options: Array<FormObjectValue>;
   placeholder?: string;
+  readOnly?: boolean;
   isMulti?: boolean;
 }) => {
   const { setFieldValue } = useFormikContext();
-  const [field] = useField(name);
-  const [selectOptions, setSelectOptions] = useState(
-    preOptions ? preOptions : []
-  );
-  const handleInputChange = (newInputValue: string) =>
-    newInputValue.length === 0 && preOptions
-      ? setSelectOptions(preOptions)
-      : setSelectOptions(options);
+  const [field] = useField<FormObjectValue>(name);
 
   const configAutocomplete: AutocompleteProps<
-    string,
+    FormObjectValue,
     boolean,
     boolean,
     boolean
@@ -43,10 +36,11 @@ const AutocompleteSelect = ({
     ...field,
     ...otherProps,
     multiple: isMulti,
-    options: selectOptions,
-    getOptionLabel: (op) => op,
+    readOnly,
+    options: options,
+    isOptionEqualToValue: (option, value) => option.value === value.value,
+    getOptionLabel: (op) => (typeof op === 'string' ? op : op.displayLabel),
     ChipProps: { size: 'small' },
-    onInputChange: (_, newInputValue) => handleInputChange(newInputValue),
     onChange: (_, newValue) => {
       // For multiple selections, newValue will be an array of selected values
       setFieldValue(name, newValue);
