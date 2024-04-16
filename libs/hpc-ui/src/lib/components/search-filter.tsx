@@ -3,7 +3,6 @@ import { styled } from '../theme';
 import tw from 'twin.macro';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Drawer, IconButton, Tooltip } from '@mui/material';
-import { organizations } from '@unocha/hpc-data';
 interface Props {
   className?: string;
   title?: string;
@@ -20,9 +19,7 @@ export interface SearchFields {
 interface FieldConfig {
   isMulti?: boolean;
   hasAutocomplete?: boolean;
-  fnPromise?: ({
-    query,
-  }: organizations.GetOrganizationsAutocompleteParams) => Promise<organizations.GetOrganizationsResult>;
+  fnPromise?: ({ query }: { query: string }) => Promise<unknown>;
   selectFields?: { value: string | number; name: string }[];
 }
 

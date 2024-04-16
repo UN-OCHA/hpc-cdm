@@ -1,7 +1,8 @@
 import { Form, Formik, FormikState } from 'formik';
 import tw from 'twin.macro';
 
-import { C, FormObjectValue } from '@unocha/hpc-ui';
+import { C } from '@unocha/hpc-ui';
+import { util as codecs, FormObjectValue } from '@unocha/hpc-data';
 import { Environment } from '../../../environments/interface';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import { LanguageKey, t } from '../../../i18n';
@@ -52,7 +53,7 @@ export const FilterOrganizationsTable = (props: Props) => {
   );
 
   const FORM_VALIDATION = io.partial({
-    organization: io.string,
+    date: codecs.VALID_DAYJS_DATE,
   });
 
   const handleSubmit = (values: OrganizationFilterValues) => {
@@ -125,6 +126,7 @@ export const FilterOrganizationsTable = (props: Props) => {
                 )}
                 name="organizationType"
                 fnPromise={() => fnCategories('organizationType', environment)}
+                isAutocompleteAPI={false}
               />
               <C.AsyncAutocompleteSelect
                 label={t.t(
@@ -153,7 +155,7 @@ export const FilterOrganizationsTable = (props: Props) => {
                   (s) => s.components.organizationsFilter.filters.date
                 )}
               />
-              <C.SingleSelect
+              <C.AutocompleteSelect
                 name="status"
                 label={t.t(
                   lang,

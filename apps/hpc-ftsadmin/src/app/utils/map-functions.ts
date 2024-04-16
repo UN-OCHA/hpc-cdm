@@ -1,7 +1,6 @@
-import { organizations } from '@unocha/hpc-data';
+import { organizations, FormObjectValue } from '@unocha/hpc-data';
 import { LanguageKey } from '../../i18n';
 import dayjs from 'dayjs';
-import { FormObjectValue } from '@unocha/hpc-ui';
 
 export const valueToInteger = (value: string | number) => {
   return typeof value === 'number' ? value : parseInt(value);

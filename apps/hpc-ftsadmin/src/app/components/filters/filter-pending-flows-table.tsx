@@ -1,15 +1,13 @@
 import { Form, Formik, FormikState } from 'formik';
 import tw from 'twin.macro';
 
-import { C, FormObjectValue } from '@unocha/hpc-ui';
+import { C } from '@unocha/hpc-ui';
+import { FormObjectValue } from '@unocha/hpc-data';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import { t } from '../../../i18n';
 import { Query } from '../tables/table-utils';
 import { useContext } from 'react';
 import { AppContext } from '../../context';
-import validateForm from '../../utils/form-validation';
-import * as io from 'io-ts';
-import { util as codecs } from '@unocha/hpc-data';
 import {
   fnLocations,
   fnOrganizations,
@@ -21,8 +19,8 @@ interface Props {
   handleAbortController: () => void;
 }
 export interface PendingFlowsFilterValues {
-  status?: string;
-  dataProvider?: string;
+  status?: FormObjectValue | null;
+  dataProvider?: FormObjectValue | null;
   reporterRefCode?: string;
   sourceOrganizations?: Array<FormObjectValue>;
   sourceCountries?: Array<FormObjectValue>;
@@ -33,8 +31,8 @@ export interface PendingFlowsFilterValues {
 }
 
 export const PENDING_FLOWS_FILTER_INITIAL_VALUES: PendingFlowsFilterValues = {
-  status: '',
-  dataProvider: '',
+  status: null,
+  dataProvider: null,
   reporterRefCode: '',
   sourceOrganizations: [],
   sourceCountries: [],
@@ -54,10 +52,6 @@ export const FilterPendingFlowsTable = (props: Props) => {
   const { setQuery, query, handleAbortController } = props;
   const { lang, env } = useContext(AppContext);
   const environment = env();
-
-  const FORM_VALIDATION = io.partial({
-    reporterRefCode: codecs.POSITIVE_INTEGER_FROM_STRING,
-  });
 
   const handleSubmit = (values: PendingFlowsFilterValues) => {
     const encodedFilters = encodeFilters(
@@ -100,7 +94,6 @@ export const FilterPendingFlowsTable = (props: Props) => {
           query.filters,
           PENDING_FLOWS_FILTER_INITIAL_VALUES
         )}
-        validate={(values) => validateForm(values, FORM_VALIDATION)}
         onSubmit={handleSubmit}
       >
         {({ resetForm }) => (
@@ -125,21 +118,21 @@ export const FilterPendingFlowsTable = (props: Props) => {
                 (s) => s.components.pendingFlowsFilter.filters.details
               )}
             >
-              <C.SingleSelect
+              <C.AutocompleteSelect
                 label={t.t(
                   lang,
                   (s) => s.components.pendingFlowsFilter.filters.status
                 )}
                 name="status"
                 options={[
-                  { displayLabel: 'New', value: 'New' },
-                  { displayLabel: 'Update', value: 'Update' },
+                  { displayLabel: 'New', value: 'new' },
+                  { displayLabel: 'Update', value: 'updated' },
                 ]}
               />
-              <C.AsyncSingleSelect
+              <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
-                  (s) => s.components.pendingFlowsFilter.filters.flowType
+                  (s) => s.components.pendingFlowsFilter.filters.dataProvider
                 )}
                 name="dataProvider"
                 fnPromise={async () => {
@@ -151,6 +144,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                     };
                   });
                 }}
+                isAutocompleteAPI={false}
               />
               <C.NumberField
                 label={t.t(
