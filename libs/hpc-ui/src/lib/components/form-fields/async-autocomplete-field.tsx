@@ -4,9 +4,9 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
-import { FormObjectValue } from './types/types';
+import { FormObjectValue } from '@unocha/hpc-data';
 import { StyledTextField } from './text-field';
 
 const StyledAutocomplete = tw(Autocomplete)`
@@ -20,6 +20,7 @@ type AsyncAutocompleteSelectProps = {
   fnPromise: ({ query }: { query: string }) => Promise<Array<FormObjectValue>>;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
+  error?: (metaError: string) => string | undefined;
   required?: boolean;
 };
 const AsyncAutocompleteSelect = ({
@@ -28,6 +29,7 @@ const AsyncAutocompleteSelect = ({
   placeholder,
   fnPromise,
   isMulti,
+  error,
   isAutocompleteAPI,
   required,
   ...otherProps
@@ -52,17 +54,9 @@ const AsyncAutocompleteSelect = ({
     }
     if (data.length > 0 && (inputValue.length >= 3 || !isAutocompleteAPI)) {
       setOptions(
-        data
-          .filter((x) =>
-            x.displayLabel.toUpperCase().includes(inputValue.toUpperCase())
-          )
-          .sort((a, b) =>
-            a.displayLabel < b.displayLabel
-              ? -1
-              : a.displayLabel > b.displayLabel
-              ? 1
-              : 0
-          )
+        data.filter((x) =>
+          x.displayLabel.toUpperCase().includes(inputValue.toUpperCase())
+        )
       );
     }
 
@@ -75,6 +69,7 @@ const AsyncAutocompleteSelect = ({
           query: inputValue,
         });
         setData(response);
+        console.log(response);
         if (active) {
           setOptions(response);
         }
@@ -139,19 +134,24 @@ const AsyncAutocompleteSelect = ({
       <StyledTextField
         {...params}
         size="small"
-        label={label}
-        required={required}
+        label={`${label}${required ? '*' : ''}`}
         InputProps={{
           ...params.InputProps,
           endAdornment: (
-            <React.Fragment>
+            <>
               {loading ? <CircularProgress color="inherit" size={20} /> : null}
               {params.InputProps.endAdornment}
-            </React.Fragment>
+            </>
           ),
         }}
         error={meta && meta.touched && meta.error ? true : false}
-        helperText={meta && meta.touched && meta.error ? meta.error : undefined}
+        helperText={
+          meta && meta.touched && meta.error
+            ? error
+              ? error(meta.error)
+              : meta.error
+            : undefined
+        }
       />
     ),
   };
