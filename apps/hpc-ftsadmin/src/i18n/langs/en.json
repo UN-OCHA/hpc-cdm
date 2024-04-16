@@ -83,7 +83,8 @@
       "parkedSource": "Parked source",
       "sortBy": "Sort by",
       "rejectPendingFlows": "Reject Pending Flows",
-      "downloadDisabled": "Download only allowed when there are at least a filter applied",
+      "downloadDisabled": "Download only allowed when there is at least one filter applied",
+      "totalAmountDisabled": "Total Amount only allowed when there are is least one filter applied",
       "tableSettings": {
         "title": "Table Settings",
         "save": "Save",
@@ -100,6 +101,9 @@
         "flowDetails": "Flow Details",
         "sourceDetails": "Source Details",
         "destinationDetails": "Destination Details"
+      },
+      "info": {
+        "filterInfo": "Using ',' sepparated values will create multiple values. Copy and paste also works with this functionality"
       },
       "filters": {
         "includeChildrenOfParkedFlows": "Include children of matching parked flows",
@@ -128,6 +132,9 @@
         "destinationGlobalClusters": "Destination Global Cluster(s)",
         "destinationEmergencies": "Destination Emergency(ies)"
       },
+      "errors": {
+        "flowID": "Provide only positive integers as values"
+      },
       "showMore": "Show More",
       "tooltips": {
         "filters": "Filters"
@@ -144,6 +151,17 @@
         "text": "Are you sure you want to delete this keyword?",
         "principalButton": "Delete",
         "secondaryButton": "Cancel"
+      },
+      "errors": {
+        "unknown": "Unexpected error while creating/updating keyword.",
+        "duplicate": "A keyword with name {keywordName} already exists. Please choose a different name."
+      },
+      "labels": {
+        "newName": "New Name",
+        "save": "Save",
+        "public": "Public",
+        "cancel": "Cancel",
+        "delete": "Delete"
       }
     },
     "pendingFlowsFilter": {
@@ -244,9 +262,13 @@
         "comments": "Organization Description"
       },
       "errors": {
-        "conflict": "This organization's name already exists",
-        "unknown": "Unexpected error while creating/updating organization",
-        "user_error": "Incorrect values provided or organization's name already exists"
+        "duplicate": "An organization with name {organizationName} already exists. Please choose a different name.",
+        "unknown": "Unexpected error while creating/updating organization"
+      },
+      "formErrors": {
+        "name": "Organization Name is a required field",
+        "abbreviation": "Organization Abbreviation is a required field",
+        "organizationType": "Organization Type is a required field"
       },
       "modal": {
         "text": "Are you sure you want to delete this flow? All the information will be deleted.",
