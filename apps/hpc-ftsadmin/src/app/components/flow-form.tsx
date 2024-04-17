@@ -741,7 +741,7 @@ export const FlowForm = (props: Props) => {
     } else {
       setReadOnly(true);
     }
-  }, []);
+  }, [currentVersionActiveStatus]);
   useEffect(() => {
     if (initialValue.parentFlow && initialValue.parentFlow.length) {
       setShowParentFlow(true);
@@ -802,6 +802,13 @@ export const FlowForm = (props: Props) => {
           handleSave();
         }
       }
+    }
+  };
+
+  const handleAlert = (values: FormValues) => {
+    const errors = validateForm(values);
+    if (Object.keys(errors).length !== 0) {
+      setValidationFlag(true);
     }
   };
 
@@ -1376,6 +1383,7 @@ export const FlowForm = (props: Props) => {
   const validateForm = (values: FormValues) => {
     const result = validationSchema.decode(values);
     if (isRight(result)) {
+      setValidationFlag(false);
       return {};
     } else {
       const errors: Record<string, string | Record<string, string>[]> = {};
@@ -1448,7 +1456,7 @@ export const FlowForm = (props: Props) => {
           }
         }
       });
-      setValidationFlag(true);
+      if (Object.keys(errors).length === 0) setValidationFlag(false);
       return errors;
     }
   };
@@ -2841,6 +2849,7 @@ export const FlowForm = (props: Props) => {
                 <C.ButtonSubmit
                   color="primary"
                   text={isEdit ? 'Save' : 'Create'}
+                  onClick={() => handleAlert(values)}
                 />
               )}
               {currentVersionID ? (
