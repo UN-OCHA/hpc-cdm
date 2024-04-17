@@ -4,7 +4,8 @@ COPY . .
 ARG ENVIRONMENT=production
 RUN npm run remove-unneeded-deps && \
     npm install && \
-    npm run build hpc-cdm -- --output-path=/srv/src/dist --configuration=$ENVIRONMENT
+    # Output path is relative to working directory
+    npm run build hpc-cdm -- --output-path=dist/ --configuration=$ENVIRONMENT
 
 FROM public.ecr.aws/unocha/nginx:stable-beagle
 
