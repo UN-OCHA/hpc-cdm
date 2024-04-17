@@ -1428,6 +1428,8 @@ export default (props: Props) => {
   useEffect(() => {
     if (!props.isEdit) {
       setFlowData(JSON.parse(JSON.stringify(initialFormData)));
+      setCurrentVersionActiveStatus(true);
+      setInputEntries(JSON.parse(JSON.stringify(initialInputEntries)));
     }
   }, [props.isEdit]);
 
@@ -1486,32 +1488,50 @@ export default (props: Props) => {
                                 )}
                               </div>
                               <div>
-                                {isPendingFlow &&
-                                flowDetail.versionID === pendingVersionID ? (
-                                  pendingVersionV1 ? (
-                                    <>This is a pending update.</>
+                                {isPendingFlow ? (
+                                  flowDetail.versionID === pendingVersionID ? (
+                                    pendingVersionV1 ? (
+                                      <>This is a pending update.</>
+                                    ) : (
+                                      <>
+                                        This flow is not active because it has
+                                        been marked as {flowData.inactiveReason}
+                                        .
+                                      </>
+                                    )
+                                  ) : !flowDetail.activeStatus ? (
+                                    <>
+                                      <>
+                                        This flow is not active because it has
+                                        been marked as {flowData.inactiveReason}
+                                        .
+                                      </>
+                                      <>
+                                        See{' '}
+                                        <a
+                                          href={`flows/edit/${flowDetail.id}/version/${activeVersionID}`}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                        >
+                                          Flow {flowDetail.id}, v
+                                          {activeVersionID}
+                                        </a>{' '}
+                                        for the current active version. and{' '}
+                                        <a
+                                          href={`flows/edit/${flowDetail.id}/version/${pendingVersionID}`}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                        >
+                                          Flow {flowDetail.id}, v
+                                          {pendingVersionID}
+                                        </a>{' '}
+                                        for the current pending version.
+                                      </>
+                                    </>
                                   ) : (
                                     <>
-                                      This flow is not active because it has
-                                      been marked as {flowData.inactiveReason}.
-                                    </>
-                                  )
-                                ) : !flowDetail.activeStatus ? (
-                                  <>
-                                    <>
-                                      This flow is not active because it has
-                                      been marked as {flowData.inactiveReason}.
-                                    </>
-                                    <>
-                                      See{' '}
-                                      <a
-                                        href={`flows/edit/${flowDetail.id}/version/${activeVersionID}`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                      >
-                                        Flow {flowDetail.id}, v{activeVersionID}
-                                      </a>{' '}
-                                      for the current active version. and{' '}
+                                      There is a pending update to this flow.
+                                      Review pending{' '}
                                       <a
                                         href={`flows/edit/${flowDetail.id}/version/${pendingVersionID}`}
                                         target="_blank"
@@ -1519,23 +1539,12 @@ export default (props: Props) => {
                                       >
                                         Flow {flowDetail.id}, v
                                         {pendingVersionID}
-                                      </a>{' '}
-                                      for the current pending version.
+                                      </a>
+                                      .
                                     </>
-                                  </>
+                                  )
                                 ) : (
-                                  <>
-                                    There is a pending update to this flow.
-                                    Review pending{' '}
-                                    <a
-                                      href={`flows/edit/${flowDetail.id}/version/${pendingVersionID}`}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                    >
-                                      Flow {flowDetail.id}, v{pendingVersionID}
-                                    </a>
-                                    .
-                                  </>
+                                  ''
                                 )}
                               </div>
                             </StyledInactiveTitle>
