@@ -1428,8 +1428,8 @@ export default (props: Props) => {
   useEffect(() => {
     if (!props.isEdit) {
       setFlowData(JSON.parse(JSON.stringify(initialFormData)));
-      setCurrentVersionActiveStatus(true);
-      setInputEntries(JSON.parse(JSON.stringify(initialInputEntries)));
+      // setCurrentVersionActiveStatus(true);
+      // setInputEntries(JSON.parse(JSON.stringify(initialInputEntries)));
     }
   }, [props.isEdit]);
 

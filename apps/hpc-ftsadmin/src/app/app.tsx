@@ -232,11 +232,13 @@ export const App = () => {
                         />
                         <Route
                           path={paths.newFlow()}
-                          element={<FlowEdit isEdit={false} />}
+                          element={
+                            <FlowEdit key="new-flow-route" isEdit={false} />
+                          }
                         />
                         <Route
                           path={paths.editFlow()}
-                          element={<FlowEdit isEdit />}
+                          element={<FlowEdit key="edit-flow-route" isEdit />}
                         />
                         <Route element={<PageNotFound />} />
                       </Routes>
