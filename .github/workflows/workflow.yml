@@ -46,6 +46,12 @@ jobs:
         env:
           AWS_REGION: us-east-1
 
+      - name: Lint affected apps
+        run: npm run lint
+
+      - name: Build affected apps
+        run: npx nx affected:build
+
       - name: Get affected apps
         id: affectedApps
         run: |

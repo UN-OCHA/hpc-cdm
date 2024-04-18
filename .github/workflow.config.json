@@ -34,7 +34,6 @@
       "skipLogin": true
     }
   ],
-  "ci": ["./.github/ci.sh"],
   "mergebackLabels": ["mergeback"],
   "deployments": {
     "environments": [
