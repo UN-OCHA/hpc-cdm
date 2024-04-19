@@ -1,7 +1,7 @@
 import { LanguageKey, t } from '../../i18n';
 import { Strings } from '../../i18n/iface';
 import { Query } from '../components/tables/table-utils';
-import { FilterKeys } from './parse-filters';
+import { FilterKey } from './parse-filters';
 
 /** Declare which tables there can be */
 export type TableType = 'flows' | 'organizations' | 'keywords';
@@ -61,7 +61,7 @@ export interface TableHeadersProps<
 
 type HeaderType = {
   id: number;
-  label: FilterKeys;
+  label: FilterKey;
   active: boolean;
 };
 /** We create these POSSIBLE consts because in the future we want to add more fields than the default ones displayed */
