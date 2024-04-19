@@ -88,10 +88,10 @@ const SEARCH_ORGANIZATION = t.type({
   create: t.array(UPDATED_CREATED_BY),
   update: t.array(UPDATED_CREATED_BY),
 });
-export type SearchOrganiation = t.TypeOf<typeof SEARCH_ORGANIZATION>;
+export type SearchOrganization = t.TypeOf<typeof SEARCH_ORGANIZATION>;
 
 export const SEARCH_ORGANIZATIONS = t.array(SEARCH_ORGANIZATION);
-export type SearchOrganiations = t.TypeOf<typeof SEARCH_ORGANIZATIONS>;
+export type SearchOrganizations = t.TypeOf<typeof SEARCH_ORGANIZATIONS>;
 
 export const GET_ORGANIZATIONS_AUTOCOMPLETE_PARAMS = t.type({
   query: t.string,
@@ -109,7 +109,12 @@ export const SEARCH_ORGANIZATION_PARAMS = t.type({
   search: t.partial({
     status: t.string,
     date: t.string,
-    locations: t.array(t.type({ name: t.string, id: t.number })),
+    locations: t.array(
+      t.union([
+        t.type({ name: t.string, id: t.number }),
+        t.partial({ parentId: t.number }),
+      ])
+    ),
     verified: t.string,
     parentOrganization: t.type({ name: t.string, id: t.number }),
     organizationType: t.type({ name: t.string, id: t.number }),
@@ -131,7 +136,7 @@ export const SEARCH_ORGANIZATION_RESULT = t.type({
   organizations: SEARCH_ORGANIZATIONS,
 });
 
-export type SearchOrnganizationResult = t.TypeOf<
+export type SearchOrganizationResult = t.TypeOf<
   typeof SEARCH_ORGANIZATION_RESULT
 >;
 
@@ -156,7 +161,7 @@ export const CREATE_ORGANIZATION_PARAMS = t.type({
       url: t.string,
       notes: t.string,
       comments: t.string,
-      verfied: t.boolean,
+      verified: t.boolean,
       parentID: t.number,
     }),
   ]),
@@ -229,13 +234,25 @@ export const DELETE_ORGANIZATION_RESULT = t.undefined;
 export type DeleteOrganizationResult = t.TypeOf<
   typeof DELETE_ORGANIZATION_RESULT
 >;
+
+const MERGE_ORGANIZATIONS_PARAMS = t.type({
+  fromOrganizationIds: t.type({
+    organizationId: t.number,
+    organizationsToBeMerged: t.array(UPDATE_ORGANIZATION_PARAMS),
+  }),
+});
+export type MergeOrganizationsParams = t.TypeOf<
+  typeof MERGE_ORGANIZATIONS_PARAMS
+>;
+
+export type MergeOrganizationsResult = Organization;
 export interface Model {
   getAutocompleteOrganizations(
     params: GetOrganizationsAutocompleteParams
   ): Promise<GetOrganizationsResult>;
   searchOrganizations(
     params: SearchOrganizationParams
-  ): Promise<SearchOrnganizationResult>;
+  ): Promise<SearchOrganizationResult>;
   getOrganization(
     params: GetOrganizationParams
   ): Promise<GetOrganizationResult>;
@@ -248,4 +265,7 @@ export interface Model {
   deleteOrganization(
     params: DeleteOrganizationParams
   ): Promise<DeleteOrganizationResult>;
+  mergeOrganizations(
+    params: MergeOrganizationsParams
+  ): Promise<MergeOrganizationsResult>;
 }

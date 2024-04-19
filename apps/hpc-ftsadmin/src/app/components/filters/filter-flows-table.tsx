@@ -1,10 +1,8 @@
 import { Form, Formik, type FormikState } from 'formik';
 import * as io from 'io-ts';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import tw from 'twin.macro';
 
-import { Alert } from '@mui/material';
-import { util as helper } from '@unocha/hpc-core';
 import { util } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { t } from '../../../i18n';
@@ -20,8 +18,8 @@ import {
   fnUsageYears,
 } from '../../utils/fn-promises';
 import validateForm from '../../utils/form-validation';
-import { type LocalStorageSchema } from '../../utils/local-storage-type';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
+import InfoAlert from '../info-alert';
 import type { FlowQuery, SetQuery } from '../tables/table-utils';
 
 interface Props {
@@ -35,7 +33,7 @@ export interface FlowsFilterValues {
   keywords?: util.FormObjectValue[];
   flowStatus?: util.FormObjectValue | null;
   flowType?: util.FormObjectValue | null;
-  flowActiveStatus?: string;
+  flowActiveStatus?: util.FormObjectValue;
   reporterRefCode?: string;
   sourceSystemID?: string;
   legacyID?: string;
@@ -62,7 +60,7 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   keywords: [],
   flowStatus: null,
   flowType: null,
-  flowActiveStatus: '',
+  flowActiveStatus: { displayLabel: 'Active', value: 'true' },
   reporterRefCode: '',
   sourceSystemID: '',
   legacyID: '',
@@ -80,7 +78,7 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   destinationPlans: [],
   destinationGlobalClusters: [],
   destinationEmergencies: [],
-  includeChildrenOfParkedFlows: false,
+  includeChildrenOfParkedFlows: true,
   restricted: false,
 };
 
@@ -100,22 +98,11 @@ export const FilterFlowsTable = (props: Props) => {
 
   const { lang, env } = useContext(AppContext);
   const environment = env();
-  const [shouldDisplayInfoAlert, setShouldDisplayInfoAlert] = useState(
-    helper.getLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', true)
-  );
 
   const queryFilters = decodeFilters(
     query.filters,
     FLOWS_FILTER_INITIAL_VALUES
   );
-  const handleInfoAlertClose = () => {
-    helper.setLocalStorageItem<LocalStorageSchema>(
-      'filterCommaSeparate',
-      false
-    );
-    setShouldDisplayInfoAlert(false);
-  };
-
   const handleSubmit = (values: FlowsFilterValues) => {
     const encodedFilters = encodeFilters(values, FLOWS_FILTER_INITIAL_VALUES);
 
@@ -188,16 +175,14 @@ export const FilterFlowsTable = (props: Props) => {
                 (s) => s.components.flowsFilter.headers.flowDetails
               )}
             >
-              <Alert
-                severity="info"
-                onClose={handleInfoAlertClose}
-                sx={{
-                  display: shouldDisplayInfoAlert ? 'flex' : 'none',
-                  ...tw`mt-4`,
-                }}
-              >
-                {t.t(lang, (s) => s.components.flowsFilter.info.filterInfo)}
-              </Alert>
+              <InfoAlert
+                text={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.info.filterInfo
+                )}
+                localStorageKey="filterCommaSeparate"
+                sxProps={tw`mt-4`}
+              />
               <C.MultiTextField
                 label={t.t(
                   lang,
@@ -215,6 +200,7 @@ export const FilterFlowsTable = (props: Props) => {
                   (s) => s.components.flowsFilter.filters.amountUSD
                 )}
                 name="amountUSD"
+                allowNegative
                 type="currency"
               />
               <C.AsyncAutocompleteSelect
@@ -289,22 +275,19 @@ export const FilterFlowsTable = (props: Props) => {
                     { displayLabel: 'Inactive', value: 'false' },
                   ]}
                 />
-                <C.NumberField
+                <C.TextFieldWrapper
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.reporterRefCode
                   )}
-                  type="number"
                   name="reporterRefCode"
                 />
-                <C.NumberField
+                <C.TextFieldWrapper
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.sourceSystemID
                   )}
                   name="sourceSystemID"
-                  allowNegative
-                  type="number"
                 />
                 <C.NumberField
                   label={t.t(

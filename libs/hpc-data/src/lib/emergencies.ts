@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 
-const EMERGENCY = t.type({
+export const EMERGENCY = t.type({
   id: t.number,
   name: t.string,
   description: t.union([t.string, t.null]),

@@ -7,7 +7,6 @@ import DevEnvWarning from './lib/components/development-environment-warning';
 import Divider from './lib/components/divider';
 import DraggableList from './lib/components/draggable-list';
 import ErrorMessage from './lib/components/error-message';
-import ErrorAlert from './lib/components/error-message-alert';
 import AsyncAutocompleteSelect from './lib/components/form-fields/async-autocomplete-field';
 import AutocompleteSelect from './lib/components/form-fields/autocomplete-field';
 import CheckBox from './lib/components/form-fields/checkbox';
@@ -21,6 +20,7 @@ import List from './lib/components/list';
 import ListItem from './lib/components/list-item';
 import Loader from './lib/components/loader';
 import MainNavigation from './lib/components/main-navigation';
+import MessageAlert from './lib/components/message-alert';
 import NotFound from './lib/components/not-found';
 import PageTitle from './lib/components/page-title';
 import SearchFilter from './lib/components/search-filter';
@@ -50,7 +50,7 @@ const COMPONENTS = {
   Divider,
   DraggableList,
   ErrorMessage,
-  ErrorAlert,
+  MessageAlert,
   Header,
   List,
   ListItem,

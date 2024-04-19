@@ -27,7 +27,7 @@ export interface OrganizationFilterValues {
   parentOrganization?: util.FormObjectValue | null;
   locations?: util.FormObjectValue | null;
   date?: Dayjs | null;
-  status?: string;
+  status?: FormObjectValue;
 }
 
 export const ORGANIZATIONS_FILTER_INITIAL_VALUES: OrganizationFilterValues = {
@@ -36,7 +36,7 @@ export const ORGANIZATIONS_FILTER_INITIAL_VALUES: OrganizationFilterValues = {
   parentOrganization: null,
   locations: null,
   date: null,
-  status: '',
+  status: { displayLabel: 'Active', value: 'active' },
 };
 const StyledDiv = tw.div`
   my-6
@@ -151,6 +151,7 @@ export const FilterOrganizationsTable = (props: Props) => {
                 name="locations"
                 fnPromise={(query) => fnLocations(query, environment)}
                 isAutocompleteAPI
+                allowChildrenRender
               />
               <C.DatePicker
                 name="date"

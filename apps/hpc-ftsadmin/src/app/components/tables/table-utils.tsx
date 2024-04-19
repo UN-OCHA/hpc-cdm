@@ -1,17 +1,24 @@
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import { Chip, IconButton, TableRow, Tooltip } from '@mui/material';
-import { util } from '@unocha/hpc-core';
 import { C } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
 import EllipsisText from '../../utils/ellipsis-text';
-import { type LocalStorageSchema } from '../../utils/local-storage-type';
-import { type Filter, type FilterKeys, isKey } from '../../utils/parse-filters';
+import {
+  type Filter,
+  type FilterKey,
+  type FilterValue,
+  type Filters,
+  isKey,
+} from '../../utils/parse-filters';
 import type {
   FlowHeaderID,
   KeywordHeaderID,
   OrganizationHeaderID,
 } from '../../utils/table-headers';
+import { FLOWS_FILTER_INITIAL_VALUES } from '../filters/filter-flows-table';
+import { ORGANIZATIONS_FILTER_INITIAL_VALUES } from '../filters/filter-organization-table';
+import { PENDING_FLOWS_FILTER_INITIAL_VALUES } from '../filters/filter-pending-flows-table';
 
 export type Query = {
   orderDir: 'ASC' | 'DESC';
@@ -61,10 +68,6 @@ export const TableRowClick = tw(TableRow)`
   hover:bg-opacity-20
   hover:cursor-pointer
 `;
-export const RejectPendingFlowsButton = tw(C.ButtonSubmit)`
-  mt-8
-`;
-
 const ChipFilterValues = tw.div`
   bg-unocha-secondary-light
   inline-flex
@@ -79,12 +82,57 @@ export const RenderChipsRow = ({
   tableType,
   chipSpacing = { m: 0.5 },
 }: {
-  tableFilters: Filter<FilterKeys>;
+  tableFilters: Filter<FilterKey>;
   lang: LanguageKey;
-  handleChipDelete: <T extends FilterKeys>(fieldName: T) => void;
+  handleChipDelete: <T extends FilterKey>(fieldName: T) => void;
   tableType: 'organizationsFilter' | 'flowsFilter' | 'pendingFlowsFilter';
   chipSpacing?: { m: number };
 }) => {
+  const isKeyOf = <T extends Filters>(
+    initialValue: T,
+    key: FilterKey
+  ): key is keyof T & FilterKey => {
+    return Object.keys(initialValue).includes(key.toString());
+  };
+
+  const isValueInInitialValue = (
+    val: {
+      value: FilterValue;
+      displayValue: string;
+    },
+    key: FilterKey
+  ) => {
+    switch (tableType) {
+      case 'flowsFilter': {
+        if (isKeyOf(FLOWS_FILTER_INITIAL_VALUES, key)) {
+          return (
+            JSON.stringify(FLOWS_FILTER_INITIAL_VALUES[key]) ===
+            JSON.stringify(val.value)
+          );
+        }
+        break;
+      }
+      case 'organizationsFilter': {
+        if (isKeyOf(ORGANIZATIONS_FILTER_INITIAL_VALUES, key)) {
+          return (
+            JSON.stringify(ORGANIZATIONS_FILTER_INITIAL_VALUES[key]) ===
+            JSON.stringify(val.value)
+          );
+        }
+        break;
+      }
+      case 'pendingFlowsFilter': {
+        if (isKeyOf(PENDING_FLOWS_FILTER_INITIAL_VALUES, key)) {
+          return (
+            JSON.stringify(PENDING_FLOWS_FILTER_INITIAL_VALUES[key]) ===
+            JSON.stringify(val.value)
+          );
+        }
+        break;
+      }
+    }
+  };
+
   const chipList: JSX.Element[] = [];
   let key: keyof typeof tableFilters;
   for (key in tableFilters) {
@@ -151,20 +199,15 @@ export const RenderChipsRow = ({
           }
           size="small"
           color="primary"
-          onDelete={() => handleChipDelete(savedKey)}
+          onDelete={
+            isValueInInitialValue(val, savedKey)
+              ? undefined
+              : () => handleChipDelete(savedKey)
+          }
           deleteIcon={<CancelRoundedIcon sx={tw`-ms-1! me-1!`} />}
         />
       </Tooltip>
     );
   }
   return chipList;
-};
-
-/**
- * Handle function to control the information text in the Draggable List components of tables */
-export const handleTableSettingsInfoClose = (
-  setTableInfoDisplay: React.Dispatch<React.SetStateAction<boolean | undefined>>
-) => {
-  util.setLocalStorageItem<LocalStorageSchema>('tableSettings', false);
-  setTableInfoDisplay(false);
 };

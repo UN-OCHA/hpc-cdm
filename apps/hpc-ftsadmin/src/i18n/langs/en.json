@@ -34,6 +34,10 @@
       "info": "We were unable to find the page you were looking for",
       "back": "Go back"
     },
+    "noResultTable": {
+      "title": "No results found",
+      "description": "Your filters did not match any results. Please modify your filter selection"
+    },
     "invalidRouteParam": {
       "title": "Invalid route",
       "info": "Non-integer ID detected in URL",
@@ -52,7 +56,7 @@
       "headers": {
         "id": "ID",
         "status": "Status",
-        "updatedCreated": "Updated/ Created",
+        "updatedCreated": "Created/ Updated",
         "dataProvider": "Data Provider",
         "amountUSD": "Amount USD",
         "sourceOrganization": "Source Organization",
@@ -82,8 +86,15 @@
       "reportTooltip": "reported by {organization} on {date} via {channel}",
       "parkedSource": "Parked source",
       "sortBy": "Sort by",
-      "rejectPendingFlows": "Reject Pending Flows",
-      "downloadDisabled": "Download only allowed when there is at least one filter applied",
+      "rejectPendingFlows": {
+        "message": "Do you want to reject the selected pending flows?",
+        "button": "Yes",
+        "state": {
+          "error": "Unexpected error while bulk rejecting the selected pending flows",
+          "success": "All selected pending flows have been successfully rejected"
+        }
+      },
+      "downloadDisabled": "Download only allowed when there is at least one filter applied, and there is more than one flow on the table",
       "totalAmountDisabled": "Total Amount only allowed when there are is least one filter applied",
       "tableSettings": {
         "title": "Table Settings",
@@ -158,10 +169,38 @@
       },
       "labels": {
         "newName": "New Name",
+        "edit": "Edit",
         "save": "Save",
         "public": "Public",
         "cancel": "Cancel",
         "delete": "Delete"
+      }
+    },
+    "mergeModal": {
+      "description": "Merge {entity}",
+      "mergingEntity": "Merging {entity}",
+      "receivingEntity": "Receiving {entity} ",
+      "confirmationMessage": "Are you sure you want to merge {mergingEntities} into {receivingEntity}?",
+      "formError": {
+        "mergingEntity": "This field is required, please add at least one value",
+        "receivingEntity": "This field is required"
+      },
+      "error": {
+        "conflict": "There has been a conflict while merging {entities} ",
+        "unknown": "There has been an unknown error while merging {entities} "
+      },
+      "organization": {
+        "singular": "Organization",
+        "plural": "Organizations"
+      },
+      "keyword": {
+        "singular": "Keyword",
+        "plural": "Keywords"
+      },
+      "button": {
+        "yes": "Yes",
+        "cancel": "Cancel",
+        "next": "Next"
       }
     },
     "pendingFlowsFilter": {
@@ -235,6 +274,7 @@
         "title": "Organizations not found",
         "info": "We were unable to load organizations"
       },
+      "addOrganization": "Add Organization",
       "sortBy": "Sort by",
       "tableSettings": {
         "title": "Table Settings",
@@ -263,6 +303,7 @@
       },
       "errors": {
         "duplicate": "An organization with name {organizationName} already exists. Please choose a different name.",
+        "conflict": "An organization with provided name already exists. Please choose a different name.",
         "unknown": "Unexpected error while creating/updating organization"
       },
       "formErrors": {

@@ -4,7 +4,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SettingsIcon from '@mui/icons-material/Settings';
 import {
-  Alert,
   Box,
   IconButton,
   Modal,
@@ -23,7 +22,6 @@ import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
 import React, { createContext, useContext, useState } from 'react';
 import { type LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
-import * as paths from '../../paths';
 
 import {
   type KeywordHeaderID,
@@ -42,14 +40,13 @@ import {
   StyledLoader,
   TableHeaderButton,
   TopRowContainer,
-  handleTableSettingsInfoClose,
 } from './table-utils';
 
-import { util } from '@unocha/hpc-core';
 import { Form, Formik } from 'formik';
 import { type Strings } from '../../../i18n/iface';
-import { type LocalStorageSchema } from '../../utils/local-storage-type';
 import { parseError } from '../../utils/map-functions';
+import InfoAlert from '../info-alert';
+import MergeModal from '../merge-modal';
 
 export interface KeywordTableProps {
   headers: Array<TableHeadersProps<KeywordHeaderID>>;
@@ -115,7 +112,7 @@ const FieldsWrapper = tw.div`
   gap-x-8
 `;
 const KeywordTableContext = createContext<{
-  setError?: React.Dispatch<
+  setErrorUpdate?: React.Dispatch<
     React.SetStateAction<
       | {
           code: keyof Strings['components']['keywordTable']['errors'];
@@ -124,6 +121,7 @@ const KeywordTableContext = createContext<{
       | undefined
     >
   >;
+  setSuccessUpdate?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }>({});
 
 type EditableRowProps = {
@@ -139,7 +137,7 @@ const EditableRow = ({
   entityEdited,
 }: EditableRowProps) => {
   const keywordIconSize = tw`h-8 w-8`;
-  const { setError } = useContext(KeywordTableContext);
+  const { setErrorUpdate, setSuccessUpdate } = useContext(KeywordTableContext);
   const env = getEnv();
   const [isEdit, setEdit] = useState(false);
 
@@ -148,7 +146,9 @@ const EditableRow = ({
       {!isEdit ? (
         <>
           {row.name}
-          <Tooltip title="Edit">
+          <Tooltip
+            title={t.t(lang, (s) => s.components.keywordTable.labels.edit)}
+          >
             <IconButton size="small" onClick={() => setEdit(true)}>
               <EditIcon sx={keywordIconSize} />
             </IconButton>
@@ -169,15 +169,20 @@ const EditableRow = ({
             env.model.categories
               .updateKeyword(modfiedKeyword)
               .then(() => {
+                if (setSuccessUpdate) {
+                  setSuccessUpdate('Success!');
+                }
                 setEntityEdited(!entityEdited);
               })
               .catch((error) => {
                 if (errors.isDuplicateError(error)) {
-                  if (setError) {
-                    setError({ code: error.code, value: error.value });
+                  if (setErrorUpdate) {
+                    setErrorUpdate({ code: error.code, value: error.value });
                   }
-                } else if (setError) {
-                  setError({ code: 'unknown', value: 'unknown' });
+                } else {
+                  if (setErrorUpdate) {
+                    setErrorUpdate({ code: 'unknown', value: 'unknown' });
+                  }
                 }
               });
             setEdit(false);
@@ -222,9 +227,9 @@ const EditableRow = ({
         }
         IconComponent={DeleteIcon}
         confirmModal={t.get(lang, (s) => s.components.keywordTable.modal)}
-        redirectAfterFetch={paths.keywords()}
         tooltipText={t.t(lang, (s) => s.components.keywordTable.labels.delete)}
         iconSx={keywordIconSize}
+        reloadAfterSuccess
       />
     </IconContainer>
   );
@@ -239,13 +244,11 @@ const KeywordTable = (props: KeywordTableProps) => {
   const state = dataLoader([isEntityEdited], () =>
     env.model.categories.getKeywords()
   );
-  const [shouldDisplayTableInfo, setShouldDisplayTableInfo] = useState(
-    util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
-  );
-  const [error, setError] = useState<{
+  const [errorUpdate, setErrorUpdate] = useState<{
     code: keyof Strings['components']['keywordTable']['errors'];
     value: string;
   }>();
+  const [successUpdate, setSuccessUpdate] = useState<string>();
 
   const handleSort = (newSort: KeywordHeaderID) => {
     const shouldChangeDir = newSort === query.orderBy;
@@ -437,130 +440,132 @@ const KeywordTable = (props: KeywordTableProps) => {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <StyledLoader
-          loader={state}
-          strings={{
-            ...t.get(lang, (s) => s.components.loader),
-            notFound: {
-              ...t.get(lang, (s) => s.components.notFound),
-              ...t.get(lang, (s) => s.components.organizationTable.notFound),
-            },
-          }}
-        >
-          {(data) => (
-            <KeywordTableContext.Provider value={{ setError }}>
-              <C.ErrorAlert
-                setError={setError}
-                error={parseError(
-                  error?.code,
-                  'keywordTable',
-                  lang,
-                  error?.value
-                )}
-              />
-              <ChipDiv>
-                <TopRowContainer>
-                  <TableHeaderButton
-                    size="small"
-                    onClick={() => setShouldOpenSettings(!shouldOpenSettings)}
-                  >
-                    <SettingsIcon />
-                  </TableHeaderButton>
-                  <Modal
-                    open={shouldOpenSettings}
-                    onClose={() => setShouldOpenSettings(!shouldOpenSettings)}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Box
+        <>
+          <C.MessageAlert
+            setMessage={setSuccessUpdate}
+            message={successUpdate}
+            severity="success"
+          />
+          <StyledLoader
+            loader={state}
+            strings={{
+              ...t.get(lang, (s) => s.components.loader),
+              notFound: {
+                ...t.get(lang, (s) => s.components.notFound),
+                ...t.get(lang, (s) => s.components.organizationTable.notFound),
+              },
+            }}
+          >
+            {(data) => (
+              <KeywordTableContext.Provider
+                value={{ setErrorUpdate, setSuccessUpdate }}
+              >
+                <C.MessageAlert
+                  setMessage={setErrorUpdate}
+                  message={parseError(
+                    errorUpdate?.code,
+                    'keywordTable',
+                    lang,
+                    errorUpdate?.value
+                  )}
+                  severity="error"
+                />
+                <ChipDiv>
+                  <TopRowContainer>
+                    <MergeModal type="keyword" />
+                    <TableHeaderButton
+                      size="small"
+                      onClick={() => setShouldOpenSettings(!shouldOpenSettings)}
+                    >
+                      <SettingsIcon />
+                    </TableHeaderButton>
+                    <Modal
+                      open={shouldOpenSettings}
+                      onClose={() => setShouldOpenSettings(!shouldOpenSettings)}
                       sx={{
-                        maxHeight: '70vh',
-                        overflowY: 'scroll',
-                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}
                     >
-                      <C.DraggableList
-                        title={t.t(
-                          lang,
-                          (s) =>
-                            s.components.organizationTable.tableSettings.title
-                        )}
-                        buttonText={t.t(
-                          lang,
-                          (s) =>
-                            s.components.organizationTable.tableSettings.save
-                        )}
-                        queryValues={decodeTableHeaders(
-                          query.tableHeaders,
-                          lang,
-                          'keywords',
-                          query,
-                          setQuery
-                        )}
-                        onClick={(element) => {
-                          if (isCompatibleTableHeaderType(element)) {
-                            setQuery({
-                              ...query,
-                              tableHeaders: encodeTableHeaders(
-                                element,
-                                'keywords',
-                                query,
-                                setQuery
-                              ),
-                            });
-                            setShouldOpenSettings(false);
-                          }
-                        }}
-                        elevation={6}
+                      <Box
                         sx={{
-                          width: '400px',
-                          height: 'fit-content',
+                          maxHeight: '70vh',
+                          overflowY: 'auto',
+                          borderRadius: '10px',
                         }}
-                        children={
-                          <Alert
-                            severity="info"
-                            onClose={() =>
-                              handleTableSettingsInfoClose(
-                                setShouldDisplayTableInfo
-                              )
+                      >
+                        <C.DraggableList
+                          title={t.t(
+                            lang,
+                            (s) =>
+                              s.components.organizationTable.tableSettings.title
+                          )}
+                          buttonText={t.t(
+                            lang,
+                            (s) =>
+                              s.components.organizationTable.tableSettings.save
+                          )}
+                          queryValues={decodeTableHeaders(
+                            query.tableHeaders,
+                            lang,
+                            'keywords',
+                            query,
+                            setQuery
+                          )}
+                          onClick={(element) => {
+                            if (isCompatibleTableHeaderType(element)) {
+                              setQuery({
+                                ...query,
+                                tableHeaders: encodeTableHeaders(
+                                  element,
+                                  'keywords',
+                                  query,
+                                  setQuery
+                                ),
+                              });
+                              setShouldOpenSettings(false);
                             }
-                            sx={{
-                              display: shouldDisplayTableInfo ? 'flex' : 'none',
-                              ...tw`mx-8 mt-4`,
-                            }}
-                          >
-                            {t.t(
-                              lang,
-                              (s) =>
-                                s.components.organizationTable.tableSettings
-                                  .info
-                            )}
-                          </Alert>
-                        }
-                      />
-                    </Box>
-                  </Modal>
-                </TopRowContainer>
-              </ChipDiv>
-              <Box sx={{ overflowX: 'auto' }}>
-                <TableContainer
-                  sx={{
-                    width: '100%',
-                    display: 'table',
-                    tableLayout: 'fixed',
-                    lineHeight: '1.35',
-                    fontSize: '1.32rem',
-                  }}
-                >
-                  <TableComponent lang={lang} data={data} />
-                </TableContainer>
-              </Box>
-            </KeywordTableContext.Provider>
-          )}
-        </StyledLoader>
+                          }}
+                          elevation={6}
+                          sx={{
+                            width: '400px',
+                            height: 'fit-content',
+                          }}
+                          children={
+                            <InfoAlert
+                              text={t.t(
+                                lang,
+                                (s) =>
+                                  s.components.flowsTable.tableSettings.info
+                              )}
+                              localStorageKey="tableSettings"
+                              sxProps={tw`mx-8 mt-4`}
+                            />
+                          }
+                        />
+                      </Box>
+                    </Modal>
+                  </TopRowContainer>
+                </ChipDiv>
+                <Box sx={{ overflowX: 'auto', transform: 'rotateX(180deg)' }}>
+                  <TableContainer
+                    sx={{
+                      width: '100%',
+                      display: 'table',
+                      transform: 'rotateX(180deg)',
+                      tableLayout: 'fixed',
+                      lineHeight: '1.35',
+                      fontSize: '1.32rem',
+                    }}
+                  >
+                    <TableComponent lang={lang} data={data} />
+                  </TableContainer>
+                </Box>
+              </KeywordTableContext.Provider>
+            )}
+          </StyledLoader>
+        </>
       )}
     </AppContext.Consumer>
   );
