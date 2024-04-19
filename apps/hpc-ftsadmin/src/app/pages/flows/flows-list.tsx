@@ -88,7 +88,10 @@ export default (props: Props) => {
       'flow.updatedAt'
     ),
     orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
-    filters: withDefault(JsonParam, JSON.stringify({})),
+    filters: withDefault(
+      JsonParam,
+      JSON.stringify(FLOWS_FILTER_INITIAL_VALUES)
+    ),
     tableHeaders: withDefault(StringParam, encodeTableHeaders([])), //  Default value of table headers
     prevPageCursor: withDefault(NumberParam, undefined),
     nextPageCursor: withDefault(NumberParam, undefined),
