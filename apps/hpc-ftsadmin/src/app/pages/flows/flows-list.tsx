@@ -34,6 +34,8 @@ flex
 `;
 const LandingContainer = tw.div`
 w-full
+overflow-x-clip
+h-full
 `;
 export default (props: Props) => {
   const rowsPerPageOptions = [10, 25, 50, 100];
