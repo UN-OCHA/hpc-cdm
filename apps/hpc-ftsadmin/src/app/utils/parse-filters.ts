@@ -9,7 +9,7 @@ import { Strings } from '../../i18n/iface';
 import { OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { Dayjs } from 'dayjs';
 import { FlowsFilterValues } from '../components/filters/filter-flows-table';
-import { valueToInteger } from './map-functions';
+import { currencyToInteger, valueToInteger } from './map-functions';
 
 /**
  * The whole idea of this filtering system is to parse every Filter Form to a common type, in this case Filter<T>
@@ -347,7 +347,7 @@ export const parseFlowFilters = (
             break;
           }
           if (filterValueIsString(amountUSD)) {
-            res.flowFilters[key] = valueToInteger(amountUSD);
+            res.flowFilters[key] = currencyToInteger(amountUSD);
           }
           break;
         }
