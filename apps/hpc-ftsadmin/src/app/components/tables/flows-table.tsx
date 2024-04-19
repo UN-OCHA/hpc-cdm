@@ -870,10 +870,11 @@ export default function FlowsTable(props: FlowsTableProps) {
                   </TopRowContainer>
                 </ChipDiv>
 
-                <Box sx={{ overflowX: 'auto' }}>
+                <Box sx={{ overflowX: 'scroll', transform: 'rotateX(180deg)' }}>
                   <TableContainer
                     sx={{
                       width: '100%',
+                      transform: 'rotateX(180deg)',
                       display: 'table',
                       tableLayout: 'fixed',
                       lineHeight: '1.35',
