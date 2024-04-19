@@ -6,6 +6,10 @@ export const valueToInteger = (value: string | number) => {
   return typeof value === 'number' ? value : parseInt(value);
 };
 
+export const currencyToInteger = (value: string) => {
+  return parseInt(value.replace(',', ''));
+};
+
 export const formValueToID = (items: Array<FormObjectValue>): number[] => {
   return items.map((item) => valueToInteger(item.value));
 };
