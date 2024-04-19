@@ -1,6 +1,6 @@
 import tw from 'twin.macro';
 import { LanguageKey, t } from '../../../i18n';
-import { FilterKeys, Filter, isKey } from '../../utils/parse-filters';
+import { FilterKey, Filter, isKey } from '../../utils/parse-filters';
 import EllipsisText from '../../utils/ellipsis-text';
 import { Chip, IconButton, TableRow, Tooltip } from '@mui/material';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
@@ -60,9 +60,9 @@ export const RenderChipsRow = ({
   tableType,
   chipSpacing = { m: 0.5 },
 }: {
-  tableFilters: Filter<FilterKeys>;
+  tableFilters: Filter<FilterKey>;
   lang: LanguageKey;
-  handleChipDelete: <T extends FilterKeys>(fieldName: T) => void;
+  handleChipDelete: <T extends FilterKey>(fieldName: T) => void;
   tableType: 'organizationsFilter' | 'flowsFilter' | 'pendingFlowsFilter';
   chipSpacing?: { m: number };
 }) => {

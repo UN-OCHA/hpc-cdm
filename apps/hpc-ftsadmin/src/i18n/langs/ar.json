@@ -52,7 +52,7 @@
       "headers": {
         "id": "المعرف",
         "status": "الحالة",
-        "updatedCreated": "تم التحديث/تم الإنشاء",
+        "updatedCreated": "تم الإنشاء/تم التحديث",
         "dataProvider": "مزود البيانات",
         "amountUSD": "المبلغ بالدولار الأمريكي",
         "sourceOrganization": "المؤسسة المصدرة",
