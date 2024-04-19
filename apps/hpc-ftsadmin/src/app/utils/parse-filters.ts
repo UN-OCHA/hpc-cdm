@@ -364,7 +364,6 @@ export const parseFlowFilters = (
         case 'flowType':
         case 'flowStatus': {
           const filterValue = filters[key]?.value;
-          console.log(filterValue);
           if (!filterValue) {
             break;
           }
