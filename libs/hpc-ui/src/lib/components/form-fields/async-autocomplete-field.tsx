@@ -69,7 +69,6 @@ const AsyncAutocompleteSelect = ({
           query: inputValue,
         });
         setData(response);
-        console.log(response);
         if (active) {
           setOptions(response);
         }
