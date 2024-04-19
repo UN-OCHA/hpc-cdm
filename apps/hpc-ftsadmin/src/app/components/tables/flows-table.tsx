@@ -29,7 +29,7 @@ import {
   parseFormFilters,
   parseFlowFilters,
   isKey,
-  FilterKeys,
+  FilterKey,
 } from '../../utils/parse-filters';
 import { Form, Formik } from 'formik';
 import { PendingFlowsFilterValues } from '../filters/filter-pending-flows-table';
@@ -95,7 +95,7 @@ export default function FlowsTable(props: FlowsTableProps) {
       signal: props.abortSignal,
     })
   );
-  const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
+  const handleChipDelete = <T extends FilterKey>(fieldName: T) => {
     if (isKey(filters, fieldName)) {
       filters[fieldName] = undefined;
       setQuery({

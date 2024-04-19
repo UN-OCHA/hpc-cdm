@@ -52,7 +52,7 @@
       "headers": {
         "id": "ID",
         "status": "Statut",
-        "updatedCreated": "Mise à jour/Création",
+        "updatedCreated": "Création/ Mise à jour",
         "dataProvider": "Fournisseur de données",
         "amountUSD": "Montant USD",
         "sourceOrganization": "Organisation source",

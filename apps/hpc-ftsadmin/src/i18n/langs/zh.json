@@ -52,7 +52,7 @@
       "headers": {
         "id": "ID",
         "status": "状态",
-        "updatedCreated": "更新/创建",
+        "updatedCreated": "创建/更新",
         "dataProvider": "数据提供者",
         "amountUSD": "金额（美元）",
         "sourceOrganization": "源组织",
