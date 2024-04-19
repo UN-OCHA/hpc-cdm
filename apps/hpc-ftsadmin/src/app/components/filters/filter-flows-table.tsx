@@ -35,7 +35,7 @@ export interface FlowsFilterValues {
   keywords?: Array<FormObjectValue>;
   flowStatus?: FormObjectValue | null;
   flowType?: FormObjectValue | null;
-  flowActiveStatus?: string;
+  flowActiveStatus?: FormObjectValue;
   reporterRefCode?: string;
   sourceSystemID?: string;
   legacyID?: string;
@@ -62,7 +62,7 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   keywords: [],
   flowStatus: null,
   flowType: null,
-  flowActiveStatus: '',
+  flowActiveStatus: { displayLabel: 'Active', value: 'true' },
   reporterRefCode: '',
   sourceSystemID: '',
   legacyID: '',

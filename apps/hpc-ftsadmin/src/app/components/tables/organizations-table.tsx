@@ -22,7 +22,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import {
   decodeFilters,
   encodeFilters,
-  FilterKeys,
+  FilterKey,
   isKey,
   parseFormFilters,
   parseOrganizationFilters,
@@ -90,7 +90,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     })
   );
 
-  const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
+  const handleChipDelete = <T extends FilterKey>(fieldName: T) => {
     if (isKey(filters, fieldName)) {
       filters[fieldName] = undefined;
       setQuery({
