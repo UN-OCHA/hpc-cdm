@@ -6,6 +6,10 @@ export const valueToInteger = (value: string | number) => {
   return typeof value === 'number' ? value : parseInt(value);
 };
 
+export const currencyToInteger = (value: string) => {
+  return parseInt(value.replace(',', ''));
+};
+
 export const parseUpdatedCreatedBy = (
   updatedCreatedBy: Array<organizations.UpdatedCreatedBy>,
   lang: LanguageKey
