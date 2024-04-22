@@ -34,6 +34,10 @@
       "info": "No pudimos encontrar la página que estabas buscando",
       "back": "Volver"
     },
+    "noResultTable": {
+      "title": "No se encontraron resultados",
+      "description": "Sus filtros no coinciden con ningún resultado. Por favor, modifique su selección de filtros."
+    },
     "invalidRouteParam": {
       "title": "Ruta invalidad",
       "info": "Numero no entero ID detectado en la URL",
@@ -83,7 +87,7 @@
       "sortBy": "Ordenar por",
       "totalAmount": "Monto Total：",
       "rejectPendingFlows": "Rechazar flujos pendientes",
-      "downloadDisabled": "La descarga solo está permitida cuando se aplica al menos un filtro",
+      "downloadDisabled": "La descarga solo está permitida cuando se ha aplicado al menos un filtro y hay más de un flujo en la tabla",
       "totalAmountDisabled": "El monto total solo está permitido cuando se aplica al menos un filtro",
       "tableSettings": {
         "title": "Configuración de la tabla",

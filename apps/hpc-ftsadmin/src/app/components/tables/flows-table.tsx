@@ -59,6 +59,7 @@ import * as paths from '../../paths';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { util } from '@unocha/hpc-core';
 import { FlowsFilterValues } from '../filters/filter-flows-table';
+import NoResultTable from './no-result';
 
 export interface FlowsTableProps {
   headers: TableHeadersProps<FlowHeaderID>[];
@@ -714,7 +715,10 @@ export default function FlowsTable(props: FlowsTableProps) {
     return <TableComponent lang={lang} data={data} />;
   };
 
-  const isAnyFilterActive = () => {
+  const isAnyFilterActive = (flowsTotal: number) => {
+    if (flowsTotal === 0) {
+      return false;
+    }
     let key: keyof typeof tableFilters;
     for (key in tableFilters) {
       const savedKey = key;
@@ -740,6 +744,9 @@ export default function FlowsTable(props: FlowsTableProps) {
           }}
         >
           {(data) => {
+            if (data.searchFlows.total === 0) {
+              return <NoResultTable />;
+            }
             return (
               <>
                 <ChipDiv>
@@ -773,7 +780,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       }
                       IconComponent={DownloadIcon}
                       disabledText={
-                        !isAnyFilterActive()
+                        !isAnyFilterActive(data.searchFlows.total)
                           ? t.t(
                               lang,
                               (s) => s.components.flowsTable.downloadDisabled

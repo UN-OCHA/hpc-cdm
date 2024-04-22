@@ -18,7 +18,6 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
 import React, { useState } from 'react';
-import DownloadIcon from '@mui/icons-material/Download';
 import {
   decodeFilters,
   encodeFilters,
@@ -36,7 +35,6 @@ import {
   isTableHeadersPropsOrganization,
 } from '../../utils/table-headers';
 import { Strings } from '../../../i18n/iface';
-import { downloadExcel } from '../../utils/download-excel';
 import { parseUpdatedCreatedBy } from '../../utils/map-functions';
 import { OrganizationFilterValues } from '../filters/filter-organization-table';
 import {
@@ -54,6 +52,7 @@ import * as paths from '../../paths';
 import { util } from '@unocha/hpc-core';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
 import tw from 'twin.macro';
+import NoResultTable from './no-result';
 
 export interface OrganizationTableProps {
   headers: TableHeadersProps<OrganizationHeaderID>[];
@@ -369,151 +368,149 @@ export default function OrganizationTable(props: OrganizationTableProps) {
             },
           }}
         >
-          {(data) => (
-            <>
-              <ChipDiv>
-                <RenderChipsRow
-                  tableType="organizationsFilter"
-                  tableFilters={parsedFilters}
-                  lang={lang}
-                  chipSpacing={chipSpacing}
-                  handleChipDelete={handleChipDelete}
-                />
-                <TopRowContainer>
-                  <Link
-                    style={{ alignSelf: 'center' }}
-                    to={paths.addOrganization()}
-                  >
-                    Add Organization
-                  </Link>
-                  <C.AsyncIconButton
-                    fnPromise={() =>
-                      downloadExcel<organizations.SearchOrganiation>(
-                        data.organizations,
-                        'export'
-                      )
-                    }
-                    IconComponent={DownloadIcon}
+          {(data) => {
+            if (parseInt(data.count) === 0) {
+              return <NoResultTable />;
+            }
+            return (
+              <>
+                <ChipDiv>
+                  <RenderChipsRow
+                    tableType="organizationsFilter"
+                    tableFilters={parsedFilters}
+                    lang={lang}
+                    chipSpacing={chipSpacing}
+                    handleChipDelete={handleChipDelete}
                   />
-                  <TableHeaderButton
-                    size="small"
-                    onClick={() => setOpenSettings(!openSettings)}
-                  >
-                    <SettingsIcon />
-                  </TableHeaderButton>
-                  <Modal
-                    open={openSettings}
-                    onClose={() => setOpenSettings(!openSettings)}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Box
+                  <TopRowContainer>
+                    <Link
+                      style={{ alignSelf: 'center' }}
+                      to={paths.addOrganization()}
+                    >
+                      Add Organization
+                    </Link>
+                    <TableHeaderButton
+                      size="small"
+                      onClick={() => setOpenSettings(!openSettings)}
+                    >
+                      <SettingsIcon />
+                    </TableHeaderButton>
+                    <Modal
+                      open={openSettings}
+                      onClose={() => setOpenSettings(!openSettings)}
                       sx={{
-                        maxHeight: '70vh',
-                        overflowY: 'scroll',
-                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}
                     >
-                      <C.DraggableList
-                        title={t.t(
-                          lang,
-                          (s) =>
-                            s.components.organizationTable.tableSettings.title
-                        )}
-                        buttonText={t.t(
-                          lang,
-                          (s) =>
-                            s.components.organizationTable.tableSettings.save
-                        )}
-                        queryValues={decodeTableHeaders(
-                          query.tableHeaders,
-                          lang,
-                          'organizations',
-                          query,
-                          setQuery
-                        )}
-                        onClick={(element) => {
-                          if (isCompatibleTableHeaderType(element)) {
-                            setQuery({
-                              ...query,
-                              tableHeaders: encodeTableHeaders(
-                                element,
-                                'organizations',
-                                query,
-                                setQuery
-                              ),
-                            });
-                          }
-                        }}
-                        elevation={6}
+                      <Box
                         sx={{
-                          width: '400px',
-                          height: 'fit-content',
+                          maxHeight: '70vh',
+                          overflowY: 'scroll',
+                          borderRadius: '10px',
                         }}
-                        children={
-                          <Alert
-                            severity="info"
-                            onClose={() =>
-                              handleTableSettingsInfoClose(setTableInfoDisplay)
+                      >
+                        <C.DraggableList
+                          title={t.t(
+                            lang,
+                            (s) =>
+                              s.components.organizationTable.tableSettings.title
+                          )}
+                          buttonText={t.t(
+                            lang,
+                            (s) =>
+                              s.components.organizationTable.tableSettings.save
+                          )}
+                          queryValues={decodeTableHeaders(
+                            query.tableHeaders,
+                            lang,
+                            'organizations',
+                            query,
+                            setQuery
+                          )}
+                          onClick={(element) => {
+                            if (isCompatibleTableHeaderType(element)) {
+                              setQuery({
+                                ...query,
+                                tableHeaders: encodeTableHeaders(
+                                  element,
+                                  'organizations',
+                                  query,
+                                  setQuery
+                                ),
+                              });
                             }
-                            sx={{
-                              display: tableInfoDisplay ? 'flex' : 'none',
-                              ...tw`mx-8 mt-4`,
-                            }}
-                          >
-                            {t.t(
-                              lang,
-                              (s) =>
-                                s.components.organizationTable.tableSettings
-                                  .info
-                            )}
-                          </Alert>
-                        }
-                      />
-                    </Box>
-                  </Modal>
-                  <TablePagination
-                    sx={{ display: 'block' }}
-                    rowsPerPageOptions={rowsPerPageOptions}
-                    component="div"
-                    count={parseInt(data.count)}
-                    rowsPerPage={query.rowsPerPage}
-                    page={query.page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                  />
-                </TopRowContainer>
-              </ChipDiv>
+                          }}
+                          elevation={6}
+                          sx={{
+                            width: '400px',
+                            height: 'fit-content',
+                          }}
+                          children={
+                            <Alert
+                              severity="info"
+                              onClose={() =>
+                                handleTableSettingsInfoClose(
+                                  setTableInfoDisplay
+                                )
+                              }
+                              sx={{
+                                display: tableInfoDisplay ? 'flex' : 'none',
+                                ...tw`mx-8 mt-4`,
+                              }}
+                            >
+                              {t.t(
+                                lang,
+                                (s) =>
+                                  s.components.organizationTable.tableSettings
+                                    .info
+                              )}
+                            </Alert>
+                          }
+                        />
+                      </Box>
+                    </Modal>
+                    <TablePagination
+                      sx={{ display: 'block' }}
+                      rowsPerPageOptions={rowsPerPageOptions}
+                      component="div"
+                      count={parseInt(data.count)}
+                      rowsPerPage={query.rowsPerPage}
+                      page={query.page}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                  </TopRowContainer>
+                </ChipDiv>
 
-              <Box sx={{ overflowX: 'auto' }}>
-                <TableContainer
-                  sx={{
-                    width: '100%',
-                    display: 'table',
-                    tableLayout: 'fixed',
-                    lineHeight: '1.35',
-                    fontSize: '1.32rem',
-                  }}
-                >
-                  <TableComponent lang={lang} data={data} />
-                </TableContainer>
-              </Box>
-              <TablePagination
-                sx={{ display: 'block' }}
-                data-test="flows-table-pagination"
-                rowsPerPageOptions={rowsPerPageOptions}
-                component="div"
-                count={parseInt(data.count)}
-                rowsPerPage={query.rowsPerPage}
-                page={query.page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </>
-          )}
+                <Box sx={{ overflowX: 'auto' }}>
+                  <TableContainer
+                    sx={{
+                      width: '100%',
+                      display: 'table',
+                      tableLayout: 'fixed',
+                      lineHeight: '1.35',
+                      fontSize: '1.32rem',
+                    }}
+                  >
+                    <TableComponent lang={lang} data={data} />
+                  </TableContainer>
+                </Box>
+                <TablePagination
+                  sx={{ display: 'block' }}
+                  data-test="flows-table-pagination"
+                  rowsPerPageOptions={rowsPerPageOptions}
+                  component="div"
+                  count={parseInt(data.count)}
+                  rowsPerPage={query.rowsPerPage}
+                  page={query.page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </>
+            );
+          }}
         </StyledLoader>
       )}
     </AppContext.Consumer>
