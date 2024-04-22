@@ -159,13 +159,13 @@ export const POSSIBLE_FLOW_HEADER_VALUES: Record<
     id: 15,
     identifierID: 'reportDetail.sourceID',
     label: 'sourceID',
-    sortable: true,
+    sortable: false,
   },
   16: {
     id: 16,
     identifierID: 'reportDetail.reporterRefCode',
     label: 'reporterRefCode',
-    sortable: true,
+    sortable: false,
   },
 };
 
