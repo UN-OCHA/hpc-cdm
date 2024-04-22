@@ -53,7 +53,7 @@ export const FilterOrganizationsTable = (props: Props) => {
   );
 
   const FORM_VALIDATION = io.partial({
-    date: codecs.VALID_DAYJS_DATE,
+    date: io.union([codecs.VALID_DAYJS_DATE, io.null]),
   });
 
   const handleSubmit = (values: OrganizationFilterValues) => {
