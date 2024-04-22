@@ -11,7 +11,7 @@ import {
 } from '@unocha/hpc-data';
 import FlowForm, {
   FormValues,
-  AutoCompleteSeletionType,
+  AutoCompleteSelectionType,
   ReportDetailType,
   VersionDataType,
   InputEntriesType,
@@ -58,7 +58,7 @@ export const getSearchKeyValues = (
   formData: FormValues,
   key: keyof FormValues
 ) => {
-  return (formData[key] as AutoCompleteSeletionType[]).map((option) => {
+  return (formData[key] as AutoCompleteSelectionType[]).map((option) => {
     if (typeof option !== 'string') {
       return {
         value: option.value,
@@ -175,8 +175,8 @@ export const getNameOfFundingValue = (
 export type IndividualFormValueType =
   | number
   | string
-  | AutoCompleteSeletionType
-  | AutoCompleteSeletionType[]
+  | AutoCompleteSelectionType
+  | AutoCompleteSelectionType[]
   | null;
 
 export const compareSelectValues = (
