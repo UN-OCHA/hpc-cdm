@@ -723,7 +723,8 @@ export default function FlowsTable(props: FlowsTableProps) {
     for (key in tableFilters) {
       const savedKey = key;
       const val = tableFilters[savedKey];
-      if (val) {
+      //  Flow Active Status is active by default, but we will not consider as an applied filter
+      if (val && savedKey !== 'flowActiveStatus') {
         return true;
       }
     }
