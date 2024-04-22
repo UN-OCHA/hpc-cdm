@@ -279,12 +279,11 @@ export const FilterFlowsTable = (props: Props) => {
                     { displayLabel: 'Inactive', value: 'false' },
                   ]}
                 />
-                <C.NumberField
+                <C.TextFieldWrapper
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.reporterRefCode
                   )}
-                  type="number"
                   name="reporterRefCode"
                 />
                 <C.NumberField
