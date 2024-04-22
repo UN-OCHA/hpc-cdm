@@ -23,7 +23,8 @@ import FlowForm, {
   ReportDetailType,
   VersionDataType,
   InputEntriesType,
-  AutoCompleteSeletionType,
+  AutoCompleteSelectionType,
+  ReportFileType,
 } from '../../components/flow-form';
 import {
   FLOWS_FILTER_INITIAL_VALUES,
@@ -146,6 +147,10 @@ const initialFormData = {
       reportFiles: [
         {
           title: '',
+          fileName: '',
+          UploadFileUrl: '',
+          size: 0,
+          type: '',
         },
       ],
       reportFileTitle: '',
@@ -211,7 +216,7 @@ export default (props: Props) => {
     ReportDetailType[]
   >([]);
   const [versionData, setVersionData] = useState<VersionDataType[]>([]);
-  const [isSetupedInitialValue, setIsSetupedInitialValue] = useState<boolean>(
+  const [isSetupInitialValue, setIsSetupInitialValue] = useState<boolean>(
     !props.isEdit
   );
   const [latestVersion, setLatestVersion] = useState<number>(
@@ -227,8 +232,8 @@ export default (props: Props) => {
   const [pendingVersionV1, setPendingVersionV1] = useState<boolean>(false);
   const [isPendingFlow, setIsPendingFlow] = useState<boolean>(false);
   const [isRestricted, setIsRestricted] = useState<boolean>(false);
-  const [parentFlow, setParentFlow] = useState<AutoCompleteSeletionType[]>([]);
-  const [childFlow, setChildFlow] = useState<AutoCompleteSeletionType[]>([]);
+  const [parentFlow, setParentFlow] = useState<AutoCompleteSelectionType[]>([]);
+  const [childFlow, setChildFlow] = useState<AutoCompleteSelectionType[]>([]);
   const [parentIds, setParentIds] = useState<number[]>([]);
   const [childIds, setChildIds] = useState<number[]>([]);
   // const [isParkedParent, setIsParkedParent] = useState<boolean>(false);
@@ -687,7 +692,7 @@ export default (props: Props) => {
           currentVersionData,
           'inactiveReason',
           false
-        ) as AutoCompleteSeletionType
+        ) as AutoCompleteSelectionType
       ).displayLabel;
       setCurrentVersionActiveStatus(
         currentVersionData.activeStatus || inactiveReason === 'Pending review'
@@ -767,12 +772,12 @@ export default (props: Props) => {
         data,
         'keywords',
         true
-      ) as AutoCompleteSeletionType[];
+      ) as AutoCompleteSelectionType[];
       const earmarkingType = getFormValueFromCategory(
         data,
         'earmarkingType',
         false
-      ) as AutoCompleteSeletionType;
+      ) as AutoCompleteSelectionType;
       const sourceOrganizations = getFormValueFromFunding(
         data,
         'source',
@@ -881,27 +886,27 @@ export default (props: Props) => {
         data,
         'flowStatus',
         false
-      ) as AutoCompleteSeletionType;
+      ) as AutoCompleteSelectionType;
       const flowType = getFormValueFromCategory(
         data,
         'flowType',
         false
-      ) as AutoCompleteSeletionType;
+      ) as AutoCompleteSelectionType;
       const contributionType = getFormValueFromCategory(
         data,
         'contributionType',
         false
-      ) as AutoCompleteSeletionType;
+      ) as AutoCompleteSelectionType;
       const method = getFormValueFromCategory(
         data,
         'method',
         false
-      ) as AutoCompleteSeletionType;
+      ) as AutoCompleteSelectionType;
       const beneficiaryGroup = getFormValueFromCategory(
         data,
         'beneficiaryGroup',
         false
-      ) as AutoCompleteSeletionType;
+      ) as AutoCompleteSelectionType;
 
       const parentIds = data.parents.map((item) => item.parentID);
       const childIds = data.children.map((item) => item.childID);
@@ -927,12 +932,50 @@ export default (props: Props) => {
         reportedDate: dayjs(detail.date).format('MM/DD/YYYY'),
         reporterContactInformation: detail.contactInfo ?? '',
         sourceSystemRecordId: detail.sourceID ?? '',
-        reportFiles: (detail?.reportFiles ?? []).map((fileData) => ({
-          title: fileData.title,
-        })),
-        reportFileTitle: detail.reportFileTitle,
-        reportUrlTitle: detail.reportUrlTitle,
-        reportUrl: detail.reportUrl,
+        reportFiles: (detail?.reportFiles ?? []).reduce(
+          (refileData: ReportFileType[], fileData) => {
+            if (fileData.type === 'file') {
+              refileData.push({
+                title: fileData.title,
+                fileName: fileData.fileAssetEntity.originalname,
+                UploadFileUrl: fileData.fileAssetEntity.path,
+                fileAssetID: fileData.fileAssetID,
+                size: fileData.fileAssetEntity.size,
+                type: fileData.fileAssetEntity.mimetype,
+              });
+            }
+            return refileData;
+          },
+          []
+        ),
+        reportFileTitle:
+          detail.reportFiles &&
+          (detail.reportFiles.length > 1
+            ? (detail.reportFiles as ReportFileType[]).filter(
+                (fileData) => fileData.type === 'file'
+              )[0]?.title
+            : detail.reportFiles.filter(
+                (fileData) => fileData.type === 'file'
+              )[0]?.title),
+        reportUrlTitle:
+          detail.reportFiles &&
+          (detail.reportFiles as ReportFileType[]).filter(
+            (fileData) => fileData.type === 'url'
+          )[0]?.title,
+        reportUrl:
+          detail.reportFiles &&
+          (detail.reportFiles as ReportFileType[]).filter(
+            (fileData) => fileData.type === 'url'
+          )[0]?.url,
+        fileAsset:
+          detail.reportFiles &&
+          (detail.reportFiles.length > 1
+            ? (detail.reportFiles as ReportFileType[]).filter(
+                (fileData) => fileData.type === 'file'
+              )[0]?.fileAssetEntity
+            : detail.reportFiles.filter(
+                (fileData) => fileData.type === 'file'
+              )[0]?.fileAssetEntity),
       }));
       const prevReportDetails = state.data.reduce(
         (details, flowItemData, index) => {
@@ -958,13 +1001,41 @@ export default (props: Props) => {
                 reportedDate: dayjs(detail.date).format('MM/DD/YYYY'),
                 reporterContactInformation: detail.contactInfo ?? '',
                 sourceSystemRecordId: detail.sourceID ?? '',
-                reportFiles: (detail?.reportFiles ?? []).map((fileData) => ({
-                  title: fileData.title,
-                })),
-                versionId: index + 1,
-                reportFileTitle: detail.reportFileTitle,
-                reportUrlTitle: detail.reportUrlTitle,
-                reportUrl: detail.reportUrl,
+                reportFiles: (detail?.reportFiles ?? []).reduce(
+                  (refileData: ReportFileType[], fileData) => {
+                    if (fileData.type === 'file') {
+                      refileData.push({
+                        title: fileData.title,
+                        fileName: fileData.fileAssetEntity.originalname,
+                        UploadFileUrl: fileData.fileAssetEntity.path,
+                        fileAssetID: fileData.fileAssetID,
+                        size: fileData.fileAssetEntity.size,
+                        type: fileData.fileAssetEntity.mimetype,
+                      });
+                    }
+                    return refileData;
+                  },
+                  []
+                ),
+                reportFileTitle:
+                  detail.reportFiles &&
+                  (detail.reportFiles.length > 1
+                    ? (detail.reportFiles as ReportFileType[]).filter(
+                        (fileData) => fileData.type === 'file'
+                      )[0]?.title
+                    : detail.reportFiles.filter(
+                        (fileData) => fileData.type === 'file'
+                      )[0]?.title),
+                reportUrlTitle:
+                  detail.reportFiles &&
+                  (detail.reportFiles as ReportFileType[]).filter(
+                    (fileData) => fileData.type === 'url'
+                  )[0]?.title,
+                reportUrl:
+                  detail.reportFiles &&
+                  (detail.reportFiles as ReportFileType[]).filter(
+                    (fileData) => fileData.type === 'url'
+                  )[0]?.url,
               })),
             ];
           }
@@ -991,7 +1062,7 @@ export default (props: Props) => {
               flowItemData,
               'inactiveReason',
               false
-            ) as AutoCompleteSeletionType
+            ) as AutoCompleteSelectionType
           ).displayLabel === 'Pending review',
         source: {
           emergencies: getNameOfFundingValue(
@@ -1094,14 +1165,14 @@ export default (props: Props) => {
           currentVersionData,
           'keywords',
           true
-        ) as AutoCompleteSeletionType[];
+        ) as AutoCompleteSelectionType[];
         createInputEntryActiveFlow(pendingKeywords, keywords, 'keywords');
 
         const pendingEarmarkingType = getFormValueFromCategory(
           currentVersionData,
           'earmarkingType',
           false
-        ) as AutoCompleteSeletionType;
+        ) as AutoCompleteSelectionType;
         createInputEntryActiveFlow(
           pendingEarmarkingType,
           earmarkingType,
@@ -1122,21 +1193,21 @@ export default (props: Props) => {
           currentVersionData,
           'flowType',
           false
-        ) as AutoCompleteSeletionType;
+        ) as AutoCompleteSelectionType;
         createInputEntryActiveFlow(pendingFlowType, flowType, 'flowType');
 
         const pendingFlowStatus = getFormValueFromCategory(
           currentVersionData,
           'flowStatus',
           false
-        ) as AutoCompleteSeletionType;
+        ) as AutoCompleteSelectionType;
         createInputEntryActiveFlow(pendingFlowStatus, flowStatus, 'flowStatus');
 
         const pendingContributionType = getFormValueFromCategory(
           currentVersionData,
           'contributionType',
           false
-        ) as AutoCompleteSeletionType;
+        ) as AutoCompleteSelectionType;
         createInputEntryActiveFlow(
           pendingContributionType,
           contributionType,
@@ -1147,14 +1218,14 @@ export default (props: Props) => {
           currentVersionData,
           'method',
           false
-        ) as AutoCompleteSeletionType;
+        ) as AutoCompleteSelectionType;
         createInputEntryActiveFlow(pendingMethod, method, 'method');
 
         const pendingBeneficiaryGroup = getFormValueFromCategory(
           currentVersionData,
           'beneficiaryGroup',
           false
-        ) as AutoCompleteSeletionType;
+        ) as AutoCompleteSelectionType;
         createInputEntryActiveFlow(
           pendingBeneficiaryGroup,
           beneficiaryGroup,
@@ -1333,14 +1404,14 @@ export default (props: Props) => {
         //   currentVersionData,
         //   'parentFlow',
         //   false
-        // ) as AutoCompleteSeletionType;
+        // ) as AutoCompleteSelectionType;
         // createInputEntryActiveFlow(pendingParentFlow, parentFlow, 'parentFlow');
 
         // const pendingChildFlow = getFormValueFromCategory(
         //   currentVersionData,
         //   'childFlow',
         //   false
-        // ) as AutoCompleteSeletionType;
+        // ) as AutoCompleteSelectionType;
         // createInputEntryActiveFlow(pendingChildFlow, childFlow, 'childFlow');
       }
 
@@ -1405,7 +1476,7 @@ export default (props: Props) => {
         reportDetails,
       });
       setInputEntries({ ...inputEntries });
-      setIsSetupedInitialValue(true);
+      setIsSetupInitialValue(true);
       setPreviousReportDetails(prevReportDetails);
       setVersionData(versionDetails);
       setIsPendingFlow(versionDetails.some((detail) => detail.pending));
@@ -1612,7 +1683,7 @@ export default (props: Props) => {
                     </div>
                   </StyledTitle>
                 </C.PageTitle>
-                {isSetupedInitialValue && (
+                {isSetupInitialValue && (
                   <FlowForm
                     environment={env}
                     isEdit={props.isEdit}

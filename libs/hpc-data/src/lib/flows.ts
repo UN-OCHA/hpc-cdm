@@ -76,6 +76,18 @@ const FLOW_USAGE_YEAR = t.type({
   refDirection: FLOW_REF_DIRECTION,
 });
 
+const FILE_ASSET_TYPE = t.type({
+  collection: t.string,
+  createAt: t.string,
+  filename: t.string,
+  id: t.number,
+  mimetype: t.string,
+  originalname: t.string,
+  path: t.string,
+  size: t.number,
+  updatedAt: t.string,
+});
+
 const FLOW_REPORT_DETAIL = t.intersection([
   t.type({
     id: t.number,
@@ -97,8 +109,12 @@ const FLOW_REPORT_DETAIL = t.intersection([
     }),
     reportFiles: t.array(
       t.type({
+        url: t.string,
+        type: t.string,
         id: t.number,
         title: t.string,
+        fileAssetEntity: FILE_ASSET_TYPE,
+        fileAssetID: t.number,
       })
     ),
     reportFileTitle: t.string,

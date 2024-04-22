@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  ChangeEvent,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from 'react';
 import { Form, Formik, FieldArray } from 'formik';
 import tw from 'twin.macro';
 import dayjs from 'dayjs';
@@ -15,7 +21,7 @@ import MuiAlert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import _ from 'lodash';
 import useSharePath from './Hooks/SharePath';
-import { C, dialogs, dataLoader } from '@unocha/hpc-ui';
+import { C, dialogs } from '@unocha/hpc-ui';
 import {
   Table,
   TableBody,
@@ -26,7 +32,6 @@ import {
   Paper,
   Alert,
   IconButton,
-  Collapse,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Environment } from '../../environments/interface';
@@ -41,8 +46,9 @@ import {
 import { getEnv } from '../context';
 import { editFlowSetting } from '../paths';
 import { flows } from '../paths';
+import Link from '@mui/material/Link';
 
-export type AutoCompleteSeletionType = forms.InputSelectValueType;
+export type AutoCompleteSelectionType = forms.InputSelectValueType;
 
 const INPUT_SELECT_VALUE_TYPE = forms.INPUT_SELECT_VALUE_TYPE;
 
@@ -55,22 +61,42 @@ export interface DeleteFlowParams {
   FlowID: number;
 }
 
+export interface FileAssetEntityType {
+  collection?: string;
+  createAt?: string;
+  filename?: string;
+  id?: number;
+  mimetype?: string;
+  originalname?: string;
+  path?: string;
+  size?: number;
+  updatedAt?: string;
+}
+export interface ReportFileType {
+  title?: string;
+  fileName?: string;
+  UploadFileUrl?: string;
+  type?: string;
+  url?: string;
+  fileAssetID?: number;
+  size?: number;
+  fileAssetEntity?: FileAssetEntityType;
+}
 export interface ReportDetailType {
   verified: string;
   reportSource: string;
   reporterReferenceCode: string;
-  reportChannel: AutoCompleteSeletionType | '';
-  reportedOrganization: AutoCompleteSeletionType;
+  reportChannel: AutoCompleteSelectionType | '';
+  reportedOrganization: AutoCompleteSelectionType;
   reportedDate: string;
   reporterContactInformation: string;
   sourceSystemRecordId: string;
-  reportFiles: {
-    title: string;
-  }[];
+  reportFiles: ReportFileType[];
   reportFileTitle?: string;
   reportUrlTitle?: string;
   reportUrl?: string;
   versionId?: number;
+  fileAsset?: FileAssetEntityType;
 }
 
 export interface ParentFlowType {
@@ -79,42 +105,42 @@ export interface ParentFlowType {
 
 export interface FormValues {
   amountUSD: number;
-  keywords: AutoCompleteSeletionType[];
-  flowStatus: AutoCompleteSeletionType | '';
-  flowType: AutoCompleteSeletionType | '';
+  keywords: AutoCompleteSelectionType[];
+  flowStatus: AutoCompleteSelectionType | '';
+  flowType: AutoCompleteSelectionType | '';
   flowDescription: string;
   firstReported: string;
   decisionDate: string | null;
   budgetYear: string;
   flowDate: string;
-  contributionType: AutoCompleteSeletionType | '';
-  earmarkingType: AutoCompleteSeletionType | '';
-  method: AutoCompleteSeletionType | '';
-  beneficiaryGroup: AutoCompleteSeletionType | '';
+  contributionType: AutoCompleteSelectionType | '';
+  earmarkingType: AutoCompleteSelectionType | '';
+  method: AutoCompleteSelectionType | '';
+  beneficiaryGroup: AutoCompleteSelectionType | '';
   inactiveReason: string;
-  origCurrency: AutoCompleteSeletionType | string;
+  origCurrency: AutoCompleteSelectionType | string;
   amountOriginal: number | null;
   exchangeRateUsed: number | null;
   notes: string;
-  sourceOrganizations: AutoCompleteSeletionType[];
-  sourceLocations: AutoCompleteSeletionType[];
-  sourceUsageYears: AutoCompleteSeletionType[];
-  sourceProjects: AutoCompleteSeletionType[];
-  sourcePlans: AutoCompleteSeletionType[];
-  sourceGoverningEntities: AutoCompleteSeletionType[];
-  sourceGlobalClusters: AutoCompleteSeletionType[];
-  sourceEmergencies: AutoCompleteSeletionType[];
-  destinationOrganizations: AutoCompleteSeletionType[];
-  destinationLocations: AutoCompleteSeletionType[];
-  destinationUsageYears: AutoCompleteSeletionType[];
-  destinationProjects: AutoCompleteSeletionType[];
-  destinationPlans: AutoCompleteSeletionType[];
-  destinationGoverningEntities: AutoCompleteSeletionType[];
-  destinationGlobalClusters: AutoCompleteSeletionType[];
-  destinationEmergencies: AutoCompleteSeletionType[];
+  sourceOrganizations: AutoCompleteSelectionType[];
+  sourceLocations: AutoCompleteSelectionType[];
+  sourceUsageYears: AutoCompleteSelectionType[];
+  sourceProjects: AutoCompleteSelectionType[];
+  sourcePlans: AutoCompleteSelectionType[];
+  sourceGoverningEntities: AutoCompleteSelectionType[];
+  sourceGlobalClusters: AutoCompleteSelectionType[];
+  sourceEmergencies: AutoCompleteSelectionType[];
+  destinationOrganizations: AutoCompleteSelectionType[];
+  destinationLocations: AutoCompleteSelectionType[];
+  destinationUsageYears: AutoCompleteSelectionType[];
+  destinationProjects: AutoCompleteSelectionType[];
+  destinationPlans: AutoCompleteSelectionType[];
+  destinationGoverningEntities: AutoCompleteSelectionType[];
+  destinationGlobalClusters: AutoCompleteSelectionType[];
+  destinationEmergencies: AutoCompleteSelectionType[];
   reportDetails: ReportDetailType[];
-  parentFlow?: AutoCompleteSeletionType[];
-  childFlow?: AutoCompleteSeletionType[];
+  parentFlow?: AutoCompleteSelectionType[];
+  childFlow?: AutoCompleteSelectionType[];
   isParkedParent?: boolean;
   includeChildrenOfParkedFlows: boolean;
   sources?: Record<string, any[]>;
@@ -183,6 +209,8 @@ export interface InputEntriesType {
   childFlow: forms.InputEntryType[];
 }
 
+type UploadedItem = fileUpload.FileUploadResult | FileAssetEntityType;
+
 const reportChannelSchema = t.type({
   value: t.intersection([codecs.NON_EMPTY_STRING, t.string]),
   displayLabel: t.intersection([codecs.NON_EMPTY_STRING, t.string]),
@@ -192,6 +220,7 @@ const reportDetailsSchema = t.type({
   reportedOrganization: INPUT_SELECT_VALUE_TYPE,
   reportedDate: t.intersection([codecs.NON_EMPTY_STRING, t.string]),
   reportChannel: t.intersection([codecs.NON_EMPTY_STRING, reportChannelSchema]),
+  reportFileTitle: t.intersection([codecs.NON_EMPTY_STRING, t.string]),
 });
 
 const validationSchema = t.type({
@@ -223,6 +252,11 @@ interface Props {
   currentFlowID?: number;
   currentVersionActiveStatus?: boolean;
 }
+
+const StyledRepOrgLink = tw.div`
+  flex
+  ml-1
+`;
 
 const StyledAddChildWarning = tw.div`
   border border-solid border-yellow-600
@@ -327,6 +361,7 @@ const initialReportDetail = {
   reportSource: 'primary',
   reporterReferenceCode: '',
   reportChannel: '',
+  reportFileTitle: '',
   reportedOrganization: { value: '', displayLabel: '' },
   reportedDate: dayjs().format('MM/DD/YYYY'),
   reporterContactInformation: '',
@@ -490,7 +525,8 @@ export const FlowForm = (props: Props) => {
 
     return data;
   };
-
+  const [uploadFileFlag, setUploadFileFlag] = useState<boolean>(false);
+  const [uploadFlag, setUploadFlag] = useState<boolean>(false);
   const normalizeFlowData = (values: FormValues) => {
     const fundingObject = {
       src: {
@@ -576,7 +612,7 @@ export const FlowForm = (props: Props) => {
       firstReportedDate: values.firstReported,
       budgetYear: values.budgetYear,
       origAmount: values.amountOriginal,
-      origCurrency: (values.origCurrency as AutoCompleteSeletionType)
+      origCurrency: (values.origCurrency as AutoCompleteSelectionType)
         .displayLabel,
       exchangeRate: values.exchangeRateUsed,
       activeStatus: true,
@@ -600,35 +636,64 @@ export const FlowForm = (props: Props) => {
           contactInfo: item.reporterContactInformation,
           source: item.reportSource,
           date: item.reportedDate,
+          versionID: currentVersionID,
+          newlyAdded: addReportFlag,
           sourceID: null,
           refCode: '7F-10073.04',
           verified: true,
           organizationID: item.reportedOrganization.value,
-          categories: [],
+          categories: [item.reportChannel && item.reportChannel.value],
           organization: {
             id: item.reportedOrganization.value,
             name: item.reportedOrganization.displayLabel,
           },
-          reportFiles: [
-            {
-              type: 'url',
-              title: item.reportUrlTitle,
-              url: item.reportUrl,
-            },
-            {
-              fileAssetID: uploadedFile && uploadedFile[index].id,
-              reportFiles: [
-                {
-                  fieldType: 'file',
-                  fileAssetId: uploadedFile && uploadedFile[index].id,
-                  type: 'file',
-                },
-              ],
-              title: item.reportFileTitle,
-              type: 'file',
-            },
-          ],
+          reportFiles:
+            uploadFlag &&
+            uploadedFileArray[index] &&
+            (uploadedFileArray[index] as { id?: number })?.id
+              ? uploadFlag || uploadFileFlag
+                ? [
+                    {
+                      title: item.reportUrlTitle,
+                      type: 'url',
+                      url: item.reportUrl,
+                    },
+                    {
+                      fileAssetID:
+                        uploadedFileArray[index] &&
+                        (uploadedFileArray[index] as { id?: number })?.id,
+                      reportFiles: [
+                        {
+                          fieldType: 'file',
+                          fileAssetID:
+                            uploadedFileArray[index] &&
+                            (uploadedFileArray[index] as { id?: number })?.id,
+                          type: 'file',
+                        },
+                      ],
+                      title: item.reportFileTitle,
+                      type: 'file',
+                    },
+                  ]
+                : [
+                    {
+                      title: item.reportUrlTitle,
+                      type: 'url',
+                      url: item.reportUrl,
+                    },
+                  ]
+              : uploadFileFlag
+              ? [
+                  {
+                    title: item.reportUrlTitle,
+                    type: 'url',
+                    url: item.reportUrl,
+                  },
+                ]
+              : [],
+
           reportChannel: {
+            group: 'reportChannel',
             id: item.reportChannel && item.reportChannel.value,
             name: item.reportChannel && item.reportChannel.displayLabel,
           },
@@ -669,8 +734,12 @@ export const FlowForm = (props: Props) => {
     return data;
   };
 
-  const [alertflag, setAlertFlag] = useState<boolean>(false);
   const [validationFlag, setValidationFlag] = useState<boolean>(false);
+  const [uploadedFileArray, setUploadedFileArray] = useState<UploadedItem[]>([
+    {},
+  ]);
+  const [addReportFlag, setAddReportFlag] = useState<boolean>(false);
+  const [alertFlag, setAlertFlag] = useState<boolean>(false);
   const [sharePath, setSharePath] = useSharePath('');
   const [readOnly, setReadOnly] = useState<boolean>(false);
   const [linkCheck, setLinkCheck] = useState<boolean>(false);
@@ -734,7 +803,20 @@ export const FlowForm = (props: Props) => {
       console.warn('Both original amount and USD amount are missing.');
     }
   };
-
+  useEffect(() => {
+    const fileAssets: FileAssetEntityType[] = [];
+    if (isEdit) {
+      initialValue.reportDetails.forEach((detail) => {
+        if (detail?.fileAsset) {
+          fileAssets.push(detail.fileAsset);
+          setUploadedFileArray(fileAssets);
+        } else {
+          fileAssets.push({} as FileAssetEntityType);
+          setUploadedFileArray(fileAssets);
+        }
+      });
+    }
+  }, [initialValue.reportDetails]);
   useEffect(() => {
     if (currentVersionActiveStatus) {
       setReadOnly(false);
@@ -752,14 +834,91 @@ export const FlowForm = (props: Props) => {
       setShowChildFlow(true);
     }
   }, [initialValue.childFlow]);
-
+  const [remove, setRemove] = useState<boolean>(false);
+  const handleRemove = (index: number, values: FormValues) => {
+    if (window.confirm('Are you sure you want to remove this file?')) {
+      if (initialValue.reportDetails[index]?.reportFiles) {
+        values.reportDetails[index].reportFileTitle = '';
+        initialValue.reportDetails[index].reportFiles[0].fileName = '';
+        initialValue.reportDetails[index].reportFiles[0].title = '';
+        initialValue.reportDetails[index].reportFiles[0].fileAssetID =
+          undefined;
+        initialValue.reportDetails[index].reportFiles[0].UploadFileUrl = '';
+        const updatedArray = removeByIndexFromArray(uploadedFileArray, index);
+        setUploadedFileArray(updatedArray);
+      } else return;
+      setUploadFlag(false);
+      setRemove(true);
+    } else return;
+  };
+  const removeByIndexFromArray = (array: UploadedItem[], index: number) => {
+    const newArray = [...array];
+    newArray[index] = {};
+    return newArray;
+  };
+  if (remove === true) setRemove(false);
+  const SourceLink = (
+    setFieldValue: any,
+    values: FormValues,
+    indexKey: number,
+    index: number
+  ) => {
+    setFieldValue(
+      `reportDetails[${index}].reportedOrganization`,
+      values.sourceOrganizations[indexKey]
+    );
+  };
+  const DestinationLink = (
+    setFieldValue: any,
+    values: FormValues,
+    indexKey: number,
+    index: number
+  ) => {
+    setFieldValue(
+      `reportDetails[${index}].reportedOrganization`,
+      values.destinationOrganizations[indexKey]
+    );
+  };
   const handleSubmit = async (values: FormValues) => {
+    for (let i = 0; i < values.reportDetails.length; i++) {
+      if (
+        values.reportDetails[i].reportUrlTitle &&
+        values.reportDetails[i].reportUrl
+      ) {
+        setUploadFileFlag(true);
+      } else setUploadFileFlag(false);
+    }
     const data = normalizeFlowData(values);
     const response = await env.model.flows.validateFlow(data, {
       adding: !isEdit,
       originalFlow: {},
     });
     let flag = true;
+    let mismatchFound = false;
+    for (let i = 0; i < values.reportDetails.length; i++) {
+      const reportOrganizationLabel =
+        values.reportDetails[i].reportedOrganization.displayLabel;
+      const reportMatchesSource = values.sourceOrganizations.some(
+        (sourceOrg) => sourceOrg.displayLabel === reportOrganizationLabel
+      );
+      const reportMatchesDestination = values.destinationOrganizations.some(
+        (destOrg) => destOrg.displayLabel === reportOrganizationLabel
+      );
+
+      if (!reportMatchesSource && !reportMatchesDestination) {
+        mismatchFound = true;
+        break;
+      }
+    }
+    if (mismatchFound) {
+      if (
+        !window.confirm(
+          "Your flow's Report Detail organization doesn't match the source or destination organization or that of its parked parent. Are you sure this is right?"
+        )
+      ) {
+        return;
+      }
+    }
     response.forEach((obj) => {
       if (obj) {
         const { success, message, confirmed } = obj;
@@ -784,7 +943,6 @@ export const FlowForm = (props: Props) => {
 
     if (flag) {
       if (!isEdit) {
-        setAlertFlag(true);
         const response = await env.model.flows.createFlow({ flow: data });
         const path = editFlowSetting(response.id, response.versionID);
         window.open(path, '_self');
@@ -1193,6 +1351,35 @@ export const FlowForm = (props: Props) => {
     });
   };
 
+  const fetchDownload = async (index: number) => {
+    const fileAssetID =
+      initialValue.reportDetails[index]?.reportFiles[0]?.fileAssetID;
+    const name = initialValue.reportDetails[index]?.reportFiles[0]?.fileName;
+    if (fileAssetID) {
+      try {
+        const responseData =
+          await environment?.model.fileUpload.fileDownloadModel(fileAssetID);
+        if (responseData) {
+          const data = new Blob([responseData]);
+          const url = URL.createObjectURL(data);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${name ? name : 'downloaded_file'}`;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          }, 0);
+        } else {
+          console.error('No data received for download');
+        }
+      } catch (error) {
+        console.error(error, 'error');
+      }
+    }
+  };
+
   const fetchCategory = useCallback(
     (category: string) => {
       return async () => {
@@ -1200,7 +1387,7 @@ export const FlowForm = (props: Props) => {
           query: category,
         });
         return response.map(
-          (responseValue): AutoCompleteSeletionType => ({
+          (responseValue): AutoCompleteSelectionType => ({
             displayLabel: responseValue.name,
             value: responseValue.id.toString(),
           })
@@ -1209,7 +1396,6 @@ export const FlowForm = (props: Props) => {
     },
     [environment]
   );
-
   const extractUniqueFromArray = (array1: string[], array2: string[]) => {
     return array1.filter((item: string) => !array2.includes(item));
   };
@@ -1274,16 +1460,25 @@ export const FlowForm = (props: Props) => {
     };
     return [newVersion1, newVersion2];
   };
-  const [uploadedFile, setUploadedFile] = useState<
-    fileUpload.FileUploadResult[]
-  >([]);
-  const handleFileChange = async (event: any) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    setUploadFlag(true);
     try {
-      const setfile: File = event.target.files[0];
-      const responseData =
-        await environment.model.fileUpload.fileUploadModel(setfile);
-      uploadedFile.push(responseData);
-      setUploadedFile([...uploadedFile]);
+      const setFile: File | undefined = (event.target as HTMLInputElement)
+        .files?.[0];
+      if (setFile instanceof File) {
+        const responseData =
+          await environment.model.fileUpload.fileUploadModel(setFile);
+        setUploadedFileArray((prevUploadedFile) => {
+          const updateUploadedFile = [...prevUploadedFile];
+          updateUploadedFile[index] = responseData;
+          return updateUploadedFile;
+        });
+      } else {
+        console.error('No file selected for upload.');
+      }
     } catch (error) {
       console.log(error, 'error');
     }
@@ -1321,7 +1516,7 @@ export const FlowForm = (props: Props) => {
   };
 
   const deleteFlow = async () => {
-    if (linkCheck) {
+    if (linkCheck || isShowParentFlow || isShowChildFlow) {
       window.confirm(
         'All linked flows must be unlinked before this flow can be deleted. Unlink flows and choose Delete flow again.'
       );
@@ -1427,6 +1622,18 @@ export const FlowForm = (props: Props) => {
                 error['reportedDate'] = '';
               }
               if (
+                (res[index].reportFileTitle === '' ||
+                  res[index].reportFileTitle === undefined) &&
+                (uploadedFileArray[index] &&
+                (uploadedFileArray[index] as { id?: number })?.id
+                  ? true
+                  : false)
+              ) {
+                error['reportFileTitle'] = 'This field is required.';
+              } else {
+                error['reportFileTitle'] = '';
+              }
+              if (
                 res[index].reportedOrganization === null ||
                 res[index].reportedOrganization.displayLabel === ''
               ) {
@@ -1447,7 +1654,24 @@ export const FlowForm = (props: Props) => {
                   res[index].reportedOrganization !== '' &&
                   res[index].reportedDate !== ''
                 ) {
-                  return {};
+                  if (
+                    (res[index].reportFileTitle === undefined ||
+                      res[index].reportFileTitle === '') &&
+                    (uploadedFileArray[index] &&
+                    (uploadedFileArray[index] as { id?: number })?.id
+                      ? false
+                      : true)
+                  ) {
+                    return {};
+                  } else if (
+                    res[index].reportFileTitle !== undefined &&
+                    res[index].reportFileTitle !== '' &&
+                    uploadedFileArray[index]
+                  ) {
+                    return {};
+                  } else {
+                    errors['reportDetails'] = reportDetailError;
+                  }
                 } else {
                   errors['reportDetails'] = reportDetailError;
                 }
@@ -1460,8 +1684,8 @@ export const FlowForm = (props: Props) => {
       return errors;
     }
   };
-  if (alertflag) handleSave();
   if (validationFlag) validationAlert();
+  if (alertFlag) handleSave();
 
   const handleParentFlow = (
     values: any,
@@ -1624,7 +1848,7 @@ export const FlowForm = (props: Props) => {
               )}
             </div>
             <div>
-              {alertflag && (
+              {alertFlag && (
                 <MuiAlert
                   severity="success"
                   style={{ marginBottom: '20px' }}
@@ -1634,12 +1858,9 @@ export const FlowForm = (props: Props) => {
                 >
                   <AlertTitle>Success</AlertTitle>
                   Flow
-                  <a
-                    href={`${sharePath}`}
-                    style={{ textDecoration: 'underline' }}
-                  >
+                  <a href={sharePath} style={{ textDecoration: 'underline' }}>
                     {' '}
-                    {currentFlowID}{' '}
+                    {currentFlowID} ,V{sharePath.slice(-1)}{' '}
                   </a>
                   {`"${values.flowDescription}" updated`}
                 </MuiAlert>
@@ -1654,7 +1875,16 @@ export const FlowForm = (props: Props) => {
               <StyledHalfSection>
                 <StyledFullSection
                   style={{
-                    pointerEvents: isShowParentFlow ? 'none' : 'auto',
+                    pointerEvents: readOnly
+                      ? 'none'
+                      : isShowParentFlow && isEdit
+                      ? 'none'
+                      : 'auto',
+                    opacity: readOnly
+                      ? 0.6
+                      : isShowParentFlow && isEdit
+                      ? 0.6
+                      : 1,
                   }}
                 >
                   <C.FormSection title="Funding Source(s)" isLeftSection>
@@ -1989,7 +2219,13 @@ export const FlowForm = (props: Props) => {
                       label="Is this flow new money?"
                       name="includeChildrenOfParkedFlows"
                       size="small"
-                      disabled={isShowParentFlow}
+                      disabled={
+                        readOnly
+                          ? true
+                          : isShowParentFlow && isEdit
+                          ? true
+                          : false
+                      }
                     />
                     <StyledFormRow>
                       <C.TextFieldWrapper
@@ -2355,7 +2591,7 @@ export const FlowForm = (props: Props) => {
                                         index
                                       );
                                       setLinkCheck(false);
-                                      // setShowChildFlow(false);
+                                      setShowChildFlow(false);
                                       setShowWarningMessage(false);
                                     }}
                                     color="secondary"
@@ -2480,6 +2716,66 @@ export const FlowForm = (props: Props) => {
                                     .getAutocompleteOrganizations
                                 }
                               />
+                              {values.sourceOrganizations.length > 0 &&
+                                values.destinationOrganizations.length > 0 && (
+                                  <StyledRepOrgLink>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                      }}
+                                    >
+                                      {values.sourceOrganizations.map(
+                                        (org, indexKey) => (
+                                          <Link
+                                            href="#"
+                                            underline="hover"
+                                            onClick={(event) => {
+                                              event.preventDefault();
+                                              SourceLink(
+                                                setFieldValue,
+                                                values,
+                                                indexKey,
+                                                index
+                                              );
+                                            }}
+                                            key={indexKey}
+                                          >
+                                            {org.displayLabel}
+                                          </Link>
+                                        )
+                                      )}
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        marginLeft: '15px',
+                                      }}
+                                    >
+                                      {values.destinationOrganizations.map(
+                                        (org, indexKey) => (
+                                          <Link
+                                            href="#"
+                                            underline="hover"
+                                            onClick={(event) => {
+                                              event.preventDefault();
+                                              DestinationLink(
+                                                setFieldValue,
+                                                values,
+                                                indexKey,
+                                                index
+                                              );
+                                            }}
+                                            key={indexKey}
+                                          >
+                                            {`${org.displayLabel}`}
+                                          </Link>
+                                        )
+                                      )}
+                                    </div>
+                                  </StyledRepOrgLink>
+                                )}
                               <C.AsyncSingleSelect
                                 label="Reported Channel*"
                                 name={`reportDetails[${index}].reportChannel`}
@@ -2492,16 +2788,53 @@ export const FlowForm = (props: Props) => {
                                 type="text"
                               />
                               <StyledFieldset>
+                                <div style={{ fontWeight: 'bold' }}>
+                                  Report file:
+                                </div>
                                 <C.TextFieldWrapper
                                   label="Title"
                                   name={`reportDetails[${index}].reportFileTitle`}
                                   type="text"
                                 />
                                 <C.FileUpload
-                                  name=""
+                                  name={
+                                    initialValue.reportDetails[index]
+                                      ?.reportFiles &&
+                                    initialValue.reportDetails[index]
+                                      .reportFiles[0]?.fileName
+                                  }
                                   label=""
-                                  onChange={handleFileChange}
+                                  onChange={(
+                                    event: React.ChangeEvent<HTMLInputElement>,
+                                    index: number
+                                  ) => {
+                                    return handleFileChange(event, index);
+                                  }}
+                                  fnPromise={fetchDownload}
+                                  value={
+                                    uploadFlag ||
+                                    (initialValue.reportDetails[index]
+                                      ?.reportFiles &&
+                                      initialValue.reportDetails[index]
+                                        .reportFiles[0]?.UploadFileUrl)
+                                  }
+                                  index={index}
+                                  id={
+                                    initialValue.reportDetails[index]
+                                      ?.reportFiles[0]?.fileAssetID
+                                  }
+                                  deleteFunction={() => {
+                                    handleRemove(index, values);
+                                  }}
                                 />
+                                <div
+                                  style={{
+                                    fontWeight: 'bold',
+                                    marginTop: '10px',
+                                  }}
+                                >
+                                  Report url:
+                                </div>
                                 <C.TextFieldWrapper
                                   label="Title"
                                   name={`reportDetails[${index}].reportUrlTitle`}
@@ -2570,6 +2903,8 @@ export const FlowForm = (props: Props) => {
                     <StyledFormButton
                       onClick={() => {
                         push(initialReportDetail);
+                        setAddReportFlag(true);
+                        setUploadedFileArray([...uploadedFileArray, {}]);
                       }}
                       color="primary"
                       text="Add Reporting Detail"
@@ -2617,7 +2952,7 @@ export const FlowForm = (props: Props) => {
                             </TableCell>
                             <TableCell>{row.reportedDate}</TableCell>
                             <TableCell>
-                              {(row.reportChannel as AutoCompleteSeletionType)
+                              {(row.reportChannel as AutoCompleteSelectionType)
                                 .displayLabel ?? ''}
                             </TableCell>
                             <TableCell>{row.sourceSystemRecordId}</TableCell>

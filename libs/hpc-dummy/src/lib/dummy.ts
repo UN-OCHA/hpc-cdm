@@ -1093,6 +1093,12 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
+        fileDownloadModel: dummyEndpoint(
+          'fileDownload.fileDownloadModel',
+          async (id: number) => {
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       organizations: {
         getAutocompleteOrganizations: dummyEndpoint(
