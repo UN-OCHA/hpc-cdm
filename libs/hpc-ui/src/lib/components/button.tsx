@@ -146,7 +146,7 @@ const StyledBaseButton = styled(BaseButton)`
   letter-spacing: 0.02857em;
   text-transform: uppercase;
   min-width: 64px;
-  padding: 5px 15px;
+  padding: 2px 10px;
   border-radius: 4px;
   transition:
     background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,

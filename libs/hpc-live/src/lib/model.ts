@@ -48,8 +48,12 @@ interface RequestInit {
 interface Response {
   readonly ok: boolean;
   readonly statusText: string;
+  readonly headers: {
+    get: (arg0: string) => string | null;
+  };
   json(): Promise<unknown>;
   arrayBuffer(): Promise<ArrayBuffer>;
+  blob(): Promise<fileUpload.BlobType>;
 }
 
 interface FetchInterface {
@@ -374,6 +378,7 @@ export class LiveModel implements Model {
     resultType,
     body,
     signal,
+    DownloadFileFlag,
   }: {
     method?: HttpMethod;
     pathname: string;
@@ -396,6 +401,7 @@ export class LiveModel implements Model {
           data: FormData;
         };
     signal?: AbortSignal;
+    DownloadFileFlag?: boolean;
   }) => {
     const { url, init } = this.baseFetchInit({ pathname, method, queryParams });
     init.signal = signal;
@@ -411,12 +417,16 @@ export class LiveModel implements Model {
     }
     const res = await this.fetch(url.href, init);
     if (res.ok) {
-      const json: Res<T> | T = (await res.json()) as Res<T> | T;
       let responseData: T;
-      if ((json as Res<T>).data) {
-        responseData = (json as Res<T>).data;
+      if (!DownloadFileFlag) {
+        const json: Res<T> | T = (await res.json()) as Res<T> | T;
+        if ((json as Res<T>).data) {
+          responseData = (json as Res<T>).data;
+        } else {
+          responseData = json as T;
+        }
       } else {
-        responseData = json as T;
+        responseData = (await res.blob()) as T;
       }
       return responseData;
       // const decode = resultType.decode(responseData);
@@ -798,7 +808,7 @@ export class LiveModel implements Model {
   }
   get fileUpload(): fileUpload.Model {
     return {
-      fileUploadModel: (file) => {
+      fileUploadModel: (file: File) => {
         const fd = new FormData();
         fd.append('data', file);
 
@@ -810,6 +820,14 @@ export class LiveModel implements Model {
             data: fd,
           },
           resultType: fileUpload.FILE_UPLOAD_RESULT,
+        });
+      },
+      fileDownloadModel: (id: number) => {
+        return this.call({
+          pathname: `/v1/files/download/fts/${id}`,
+          method: 'GET',
+          resultType: fileUpload.BLOB_TYPE,
+          DownloadFileFlag: true,
         });
       },
     };

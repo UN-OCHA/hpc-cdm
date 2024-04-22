@@ -13,8 +13,17 @@ export const FILE_UPLOAD_RESULT = t.type({
   updatedAt: t.string,
 });
 
+export const BLOB_TYPE = new t.Type<Blob>(
+  'Blob',
+  (input: unknown): input is Blob => input instanceof Blob,
+  (input, context) =>
+    input instanceof Blob ? t.success(input) : t.failure(input, context),
+  t.identity
+);
+export type BlobType = t.TypeOf<typeof BLOB_TYPE>;
 export type FileUploadResult = t.TypeOf<typeof FILE_UPLOAD_RESULT>;
 
 export interface Model {
   fileUploadModel(file: File): Promise<FileUploadResult>;
+  fileDownloadModel(id: number): Promise<BlobType>;
 }
