@@ -34,6 +34,10 @@
       "info": "我们找不到您要查找的页面",
       "back": "返回"
     },
+    "noResultTable": {
+      "title": "未找到结果",
+      "description": "您的筛选条件没有匹配任何结果。请修改您的筛选条件选择。"
+    },
     "invalidRouteParam": {
       "title": "无效路由",
       "info": "在URL中检测到非整数ID",
@@ -83,7 +87,7 @@
       "totalAmount": "总金额：",
       "sortBy": "排序方式",
       "rejectPendingFlows": "拒绝待处理的资金流",
-      "downloadDisabled": "只有在至少应用了一个过滤器时才允许下载",
+      "downloadDisabled": "只有在应用了至少一个过滤器并且表格中有多个流时才允许下载",
       "totalAmountDisabled": "只有在至少应用了一个过滤器时才允许总金额",
       "tableSettings": {
         "title": "表格设置",
