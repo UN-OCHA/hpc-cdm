@@ -774,9 +774,7 @@ export const FlowForm = (props: Props) => {
   const [isShowParentFlow, setShowParentFlow] = useState(
     initialValue.parentFlow && initialValue.parentFlow.length ? true : false
   );
-  const [isShowChildFlow, setShowChildFlow] = useState(
-    initialValue.childFlow && initialValue.childFlow.length ? true : false
-  );
+  const [isShowChildFlow, setShowChildFlow] = useState(0);
   const [openAlerts, setOpenAlerts] = useState<
     { message: string; id: number }[]
   >([]);
@@ -804,6 +802,11 @@ export const FlowForm = (props: Props) => {
     }
   };
   useEffect(() => {
+    if (initialValue?.childFlow) {
+      setShowChildFlow(initialValue?.childFlow.length);
+    }
+  }, [initialValue]);
+  useEffect(() => {
     const fileAssets: FileAssetEntityType[] = [];
     if (isEdit) {
       initialValue.reportDetails.forEach((detail) => {
@@ -829,11 +832,6 @@ export const FlowForm = (props: Props) => {
       setShowParentFlow(true);
     }
   }, [initialValue.parentFlow]);
-  useEffect(() => {
-    if (initialValue.childFlow && initialValue.childFlow.length) {
-      setShowChildFlow(true);
-    }
-  }, [initialValue.childFlow]);
   const [remove, setRemove] = useState<boolean>(false);
   const handleRemove = (index: number, values: FormValues) => {
     if (window.confirm('Are you sure you want to remove this file?')) {
@@ -880,6 +878,86 @@ export const FlowForm = (props: Props) => {
     );
   };
   const handleSubmit = async (values: FormValues) => {
+    if (isShowParentFlow && isShowChildFlow > 0) {
+      let childAmountSum = 0;
+      let parentAmountSum = 0;
+      values.childFlow &&
+        values.childFlow.map((item, index) => {
+          childAmountSum += JSON.parse(item.value.toString())
+            ? parseInt(JSON.parse(item.value.toString()).amountUSD)
+            : 0;
+        });
+      values.parentFlow &&
+        values.parentFlow.map((item, index) => {
+          parentAmountSum += JSON.parse(item.value.toString())
+            ? parseInt(JSON.parse(item.value.toString()).amountUSD)
+            : 0;
+        });
+      if (childAmountSum > parentAmountSum) {
+        if (
+          !window.confirm(
+            `Please note, the Funding Amount on this parent flow ($${parentAmountSum}) is less than the sum of its children's amount ($${childAmountSum}). Do you want to proceed?`
+          )
+        ) {
+          return;
+        }
+      }
+    }
+    if (isShowParentFlow || isShowChildFlow > 0) {
+      let childAmountSum = 0;
+      values.childFlow &&
+        values.childFlow.map((item, index) => {
+          childAmountSum += JSON.parse(item.value.toString())
+            ? parseInt(JSON.parse(item.value.toString()).amountUSD)
+            : 0;
+        });
+      if (childAmountSum > values.amountUSD) {
+        if (
+          !window.confirm(
+            `Please note, the Funding Amount on this parent flow ($${values.amountUSD}) is less than the sum of its children's amount ($${childAmountSum}). Do you want to proceed?`
+          )
+        )
+          return;
+      }
+    }
+    const parentFlow = values.parentFlow;
+    if (parentFlow) {
+      for (let index = 0; index < parentFlow.length; index++) {
+        const item = parentFlow[index];
+        if (
+          values.origCurrency !==
+          (JSON.parse(item.value.toString())
+            ? JSON.parse(item.value.toString()).origCurrency
+            : undefined)
+        ) {
+          if (
+            window.confirm(
+              "This flow's foreign currency must be the same as its parked parent flow."
+            )
+          ) {
+            return;
+          } else return;
+        }
+      }
+    }
+    const childFlow = values.childFlow;
+    if (childFlow) {
+      for (let index = 0; index < childFlow.length; index++) {
+        const item = childFlow[index];
+        if (
+          JSON.parse(item.value.toString()) &&
+          values.origCurrency !== JSON.parse(item.value.toString()).origCurrency
+        ) {
+          if (
+            window.confirm(
+              'The child flow must have the same currency as this parked flow. Please update the child flow first before linking it to this flow.'
+            )
+          ) {
+            return;
+          } else return;
+        }
+      }
+    }
     for (let i = 0; i < values.reportDetails.length; i++) {
       if (
         values.reportDetails[i].reportUrlTitle &&
@@ -1516,7 +1594,7 @@ export const FlowForm = (props: Props) => {
   };
 
   const deleteFlow = async () => {
-    if (linkCheck || isShowParentFlow || isShowChildFlow) {
+    if (linkCheck || isShowParentFlow || isShowChildFlow > 0) {
       window.confirm(
         'All linked flows must be unlinked before this flow can be deleted. Unlink flows and choose Delete flow again.'
       );
@@ -1574,7 +1652,6 @@ export const FlowForm = (props: Props) => {
       values['childFlow'].filter((item: any, ind: number) => ind !== index)
     );
   };
-
   const validateForm = (values: FormValues) => {
     const result = validationSchema.decode(values);
     if (isRight(result)) {
@@ -1594,7 +1671,10 @@ export const FlowForm = (props: Props) => {
             errors[errorKey] = 'This field is required.';
           }
         }
-        if (key === 'amountUSD' && (value === 0 || (value && value === '0'))) {
+        if (
+          key === 'amountUSD' &&
+          (value === 0 || (value && (value === '0' || (value as number) < 0)))
+        ) {
           errors['amountUSD'] = 'The amount must be greater than zero.';
         }
         if (key === 'flowType' && !value) {
@@ -1686,7 +1766,6 @@ export const FlowForm = (props: Props) => {
   };
   if (validationFlag) validationAlert();
   if (alertFlag) handleSave();
-
   const handleParentFlow = (
     values: any,
     parentValueString: string,
@@ -2412,12 +2491,32 @@ export const FlowForm = (props: Props) => {
                                 }}
                               >
                                 <TableCell>
-                                  #
-                                  {
-                                    JSON.parse(
-                                      item?.value ? item?.value.toString() : ''
-                                    ).id
-                                  }
+                                  <a
+                                    href={`/flows/edit/${
+                                      JSON.parse(
+                                        item?.value
+                                          ? item?.value.toString()
+                                          : ''
+                                      ).id
+                                    }/version/${
+                                      JSON.parse(
+                                        item?.value
+                                          ? item?.value.toString()
+                                          : ''
+                                      ).versionID
+                                    }`}
+                                    style={{ textDecoration: 'underline' }}
+                                    target="_blank"
+                                  >
+                                    #
+                                    {
+                                      JSON.parse(
+                                        item?.value
+                                          ? item?.value.toString()
+                                          : ''
+                                      ).id
+                                    }
+                                  </a>
                                 </TableCell>
                                 <TableCell>
                                   {
@@ -2499,114 +2598,148 @@ export const FlowForm = (props: Props) => {
                   </StyledRow>
                 )}
                 <StyledLabel>Child Flow</StyledLabel>
-                {isShowChildFlow && (
-                  <StyledRow>
-                    <TableContainer component={Paper}>
-                      <Table>
-                        <TableBody>
-                          {values.childFlow &&
-                            values.childFlow.map((item, index) => (
-                              <TableRow
-                                key={index}
-                                sx={{
-                                  '&:last-child td, &:last-child th': {
-                                    border: 0,
-                                  },
-                                }}
-                              >
-                                <TableCell>
-                                  #
-                                  {
-                                    JSON.parse(
-                                      item?.value ? item?.value.toString() : ''
-                                    ).id
-                                  }
-                                </TableCell>
-                                <TableCell>
-                                  {
-                                    JSON.parse(
-                                      item?.value ? item?.value.toString() : ''
-                                    ).description
-                                  }
-                                </TableCell>
-                                <TableCell>
-                                  {
-                                    JSON.parse(
-                                      item?.value ? item?.value.toString() : ''
-                                    ).dest_org_name
-                                  }{' '}
-                                  |{' '}
-                                  {
-                                    JSON.parse(
-                                      item?.value ? item?.value.toString() : ''
-                                    ).dest_org_abbreviation
-                                  }{' '}
-                                  |{' '}
-                                  {
-                                    JSON.parse(
-                                      item?.value ? item?.value.toString() : ''
-                                    ).dest_loc_name
-                                  }{' '}
-                                  |{' '}
-                                  {
-                                    JSON.parse(
-                                      item?.value ? item?.value.toString() : ''
-                                    ).budgetYear
-                                  }
-                                </TableCell>
-                                <TableCell>
-                                  {dayjs(
-                                    JSON.parse(
-                                      item?.value ? item?.value.toString() : ''
-                                    ).flowDate
-                                  ).format('MM/DD/YYYY')}
-                                </TableCell>
-                                <TableCell>
-                                  US$
-                                  {parseFloat(
-                                    JSON.parse(
-                                      item?.value ? item?.value.toString() : ''
-                                    ).amountUSD
-                                  ).toLocaleString('en-US')}
-                                </TableCell>
-                                <TableCell>
-                                  {JSON.parse(
-                                    item?.value ? item?.value.toString() : ''
-                                  ).origAmount &&
-                                    'EUR' +
-                                      parseFloat(
+                <StyledRow>
+                  <TableContainer component={Paper}>
+                    <Table>
+                      <TableBody>
+                        {values.childFlow &&
+                          values.childFlow.map(
+                            (item, index) =>
+                              isShowChildFlow > index && (
+                                <TableRow
+                                  key={index}
+                                  sx={{
+                                    '&:last-child td, &:last-child th': {
+                                      border: 0,
+                                    },
+                                  }}
+                                >
+                                  <TableCell>
+                                    <a
+                                      href={`/flows/edit/${
                                         JSON.parse(
                                           item?.value
                                             ? item?.value.toString()
                                             : ''
-                                        ).origAmount
-                                      ).toLocaleString('en-US')}
-                                </TableCell>
-                                <TableCell>
-                                  <C.Button
-                                    onClick={() => {
-                                      handleChildFlow(
-                                        values,
-                                        setFieldValue,
-                                        index
-                                      );
-                                      setLinkCheck(false);
-                                      setShowChildFlow(false);
-                                      setShowWarningMessage(false);
-                                    }}
-                                    color="secondary"
-                                    text="unlink"
-                                    startIcon={MdRemove}
-                                  />
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </StyledRow>
-                )}
-
+                                        ).id
+                                      }/version/${
+                                        JSON.parse(
+                                          item?.value
+                                            ? item?.value.toString()
+                                            : ''
+                                        ).versionID
+                                      }`}
+                                      style={{ textDecoration: 'underline' }}
+                                      target="_blank"
+                                    >
+                                      #
+                                      {
+                                        JSON.parse(
+                                          item?.value
+                                            ? item?.value.toString()
+                                            : ''
+                                        ).id
+                                      }
+                                    </a>
+                                  </TableCell>
+                                  <TableCell>
+                                    {
+                                      JSON.parse(
+                                        item?.value
+                                          ? item?.value.toString()
+                                          : ''
+                                      ).description
+                                    }
+                                  </TableCell>
+                                  <TableCell>
+                                    {
+                                      JSON.parse(
+                                        item?.value
+                                          ? item?.value.toString()
+                                          : ''
+                                      ).dest_org_name
+                                    }{' '}
+                                    |{' '}
+                                    {
+                                      JSON.parse(
+                                        item?.value
+                                          ? item?.value.toString()
+                                          : ''
+                                      ).dest_org_abbreviation
+                                    }{' '}
+                                    |{' '}
+                                    {
+                                      JSON.parse(
+                                        item?.value
+                                          ? item?.value.toString()
+                                          : ''
+                                      ).dest_loc_name
+                                    }{' '}
+                                    |{' '}
+                                    {
+                                      JSON.parse(
+                                        item?.value
+                                          ? item?.value.toString()
+                                          : ''
+                                      ).budgetYear
+                                    }
+                                  </TableCell>
+                                  <TableCell>
+                                    {dayjs(
+                                      JSON.parse(
+                                        item?.value
+                                          ? item?.value.toString()
+                                          : ''
+                                      ).flowDate
+                                    ).format('MM/DD/YYYY')}
+                                  </TableCell>
+                                  <TableCell>
+                                    US$
+                                    {parseFloat(
+                                      JSON.parse(
+                                        item?.value
+                                          ? item?.value.toString()
+                                          : ''
+                                      ).amountUSD
+                                    ).toLocaleString('en-US')}
+                                  </TableCell>
+                                  <TableCell>
+                                    {JSON.parse(
+                                      item?.value ? item?.value.toString() : ''
+                                    ).origAmount &&
+                                      'EUR' +
+                                        parseFloat(
+                                          JSON.parse(
+                                            item?.value
+                                              ? item?.value.toString()
+                                              : ''
+                                          ).origAmount
+                                        ).toLocaleString('en-US')}
+                                  </TableCell>
+                                  <TableCell>
+                                    <C.Button
+                                      onClick={() => {
+                                        handleChildFlow(
+                                          values,
+                                          setFieldValue,
+                                          index
+                                        );
+                                        setShowChildFlow(isShowChildFlow - 1);
+                                        setLinkCheck(false);
+                                        setShowWarningMessage(false);
+                                      }}
+                                      color="secondary"
+                                      text="unlink"
+                                      startIcon={MdRemove}
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              )
+                          )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </StyledRow>
                 <StyledLinkedFlowRow>
                   <StyledRow>
                     {!isShowParentFlow && (
@@ -2669,7 +2802,7 @@ export const FlowForm = (props: Props) => {
                             />
                           ),
                           callback: (value: any) => {
-                            setShowChildFlow(true);
+                            setShowChildFlow(isShowChildFlow + 1);
                             setShowWarningMessage(true);
                             setLinkCheck(true);
                           },

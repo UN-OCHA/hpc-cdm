@@ -560,6 +560,7 @@ export default (props: Props) => {
                 refDirectionLocIndexDes > -1
                   ? value.locations[refDirectionLocIndexDes].name
                   : '',
+              versionId: value.versionID,
               ...value,
             }),
           };
@@ -649,6 +650,7 @@ export default (props: Props) => {
               flowDate: value.flowDate,
               amountUSD: value.amountUSD,
               origAmount: value.origAmount,
+              versionID: value.versionID,
             }),
           };
         });
