@@ -2631,6 +2631,7 @@ export const FlowForm = (props: Props) => {
                                       }`}
                                       style={{ textDecoration: 'underline' }}
                                       target="_blank"
+                                      rel="noreferrer"
                                     >
                                       #
                                       {
