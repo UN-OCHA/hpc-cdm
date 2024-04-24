@@ -47,7 +47,7 @@ const DatePicker = ({
         <BaseDatePicker
           {...field}
           {...otherProps}
-          format="YYYY/MM/DD"
+          format="DD/MM/YYYY"
           value={
             enableButton
               ? field.value === null
