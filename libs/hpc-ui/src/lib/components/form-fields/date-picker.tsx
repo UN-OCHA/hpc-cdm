@@ -44,8 +44,9 @@ const DatePicker = ({
   useEffect(() => {
     if (cleared) {
       const timeout = setTimeout(() => {
+        helpers.setValue(null);
         setCleared(false);
-      }, 1000);
+      }, 100);
 
       return () => clearTimeout(timeout);
     }
