@@ -194,31 +194,31 @@ export const POSSIBLE_ORGANIZATION_VALUES: Record<
   4: {
     id: 4,
     identifierID: 'organization.type',
-    sortable: true,
+    sortable: false,
     label: 'type',
   },
   5: {
     id: 5,
     identifierID: 'organization.subType',
-    sortable: true,
+    sortable: false,
     label: 'subType',
   },
   6: {
     id: 6,
     identifierID: 'organization.location',
-    sortable: true,
+    sortable: false,
     label: 'location',
   },
   7: {
     id: 7,
     identifierID: 'organization.createdBy',
-    sortable: true,
+    sortable: false,
     label: 'createdBy',
   },
   8: {
     id: 8,
     identifierID: 'organization.updatedBy',
-    sortable: true,
+    sortable: false,
     label: 'updatedBy',
   },
 };
