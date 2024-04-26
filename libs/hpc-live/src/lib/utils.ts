@@ -71,6 +71,7 @@ export const searchFlowsParams = (params: flows.SearchFlowsParams): string => {
         break;
       case 'sortField':
       case 'sortOrder':
+      case 'status':
         if (params[unmutableKey])
           queryParams = queryParams.concat(
             unmutableKey,
