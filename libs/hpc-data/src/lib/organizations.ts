@@ -109,7 +109,12 @@ export const SEARCH_ORGANIZATION_PARAMS = t.type({
   search: t.partial({
     status: t.string,
     date: t.string,
-    locations: t.array(t.type({ name: t.string, id: t.number })),
+    locations: t.array(
+      t.union([
+        t.type({ name: t.string, id: t.number }),
+        t.partial({ parentId: t.number }),
+      ])
+    ),
     verified: t.string,
     parentOrganization: t.type({ name: t.string, id: t.number }),
     organizationType: t.type({ name: t.string, id: t.number }),
