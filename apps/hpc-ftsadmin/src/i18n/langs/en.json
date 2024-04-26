@@ -86,7 +86,10 @@
       "reportTooltip": "reported by {organization} on {date} via {channel}",
       "parkedSource": "Parked source",
       "sortBy": "Sort by",
-      "rejectPendingFlows": "Reject Pending Flows",
+      "rejectPendingFlows": {
+        "message": "Do you want to reject the selected pending flows?",
+        "button": "Yes"
+      },
       "downloadDisabled": "Download only allowed when there is at least one filter applied, and there is more than one flow on the table",
       "totalAmountDisabled": "Total Amount only allowed when there are is least one filter applied",
       "tableSettings": {
