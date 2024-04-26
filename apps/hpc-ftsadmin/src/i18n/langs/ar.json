@@ -86,7 +86,10 @@
       "parkedSource": "المصدر المتوقف",
       "sortBy": "الترتيب حسب",
       "totalAmount": "المبلغ الإجمالي: ",
-      "rejectPendingFlows": "رفض الأنسجة المعلقة",
+      "rejectPendingFlows": {
+        "message": "هل ترغب في رفض تدفقات الانتظار المحددة؟",
+        "button": "نعم"
+      },
       "downloadDisabled": "التنزيل مسموح به فقط عند وجود تطبيق للتصفية وهناك أكثر من تدفق في الجدول",
       "totalAmountDisabled": "المبلغ الإجمالي مسموح به فقط عند وجود على الأقل تطبيق فلتر واحد",
       "tableSettings": {
