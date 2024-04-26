@@ -4,6 +4,8 @@ import {
   Chip,
   IconButton,
   Modal,
+  Portal,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -46,7 +48,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 import {
   ChipDiv,
   Query,
-  RejectPendingFlowsButton,
   RenderChipsRow,
   StyledLoader,
   TableHeaderButton,
@@ -702,13 +703,30 @@ export default function FlowsTable(props: FlowsTableProps) {
           initialValues={PENDING_FLOWS_INITIAL_VALUES}
           onSubmit={handleSubmit}
         >
-          <Form>
-            <TableComponent lang={lang} data={data} />
-            <RejectPendingFlowsButton
-              color="primary"
-              text="Reject Selected Flows"
-            />
-          </Form>
+          {({ values, submitForm }) => (
+            <Form>
+              <TableComponent lang={lang} data={data} />
+              <Portal>
+                <Snackbar
+                  open={values.flows.length > 0}
+                  message={t.t(
+                    lang,
+                    (s) => s.components.flowsTable.rejectPendingFlows.message
+                  )}
+                  action={
+                    <C.ButtonSubmit
+                      color="neutral"
+                      text={t.t(
+                        lang,
+                        (s) => s.components.flowsTable.rejectPendingFlows.button
+                      )}
+                      onClick={() => submitForm()}
+                    />
+                  }
+                />
+              </Portal>
+            </Form>
+          )}
         </Formik>
       );
     }
