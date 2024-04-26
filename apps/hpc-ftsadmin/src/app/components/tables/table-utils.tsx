@@ -1,12 +1,21 @@
 import tw from 'twin.macro';
 import { LanguageKey, t } from '../../../i18n';
-import { FilterKey, Filter, isKey } from '../../utils/parse-filters';
+import {
+  FilterKey,
+  Filter,
+  isKey,
+  FilterValue,
+  Filters,
+} from '../../utils/parse-filters';
 import EllipsisText from '../../utils/ellipsis-text';
 import { Chip, IconButton, TableRow, Tooltip } from '@mui/material';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import { C } from '@unocha/hpc-ui';
 import { util } from '@unocha/hpc-core';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
+import { FLOWS_FILTER_INITIAL_VALUES } from '../filters/filter-flows-table';
+import { ORGANIZATIONS_FILTER_INITIAL_VALUES } from '../filters/filter-organization-table';
+import { PENDING_FLOWS_FILTER_INITIAL_VALUES } from '../filters/filter-pending-flows-table';
 
 export type Query = {
   page: number;
@@ -63,6 +72,51 @@ export const RenderChipsRow = ({
   tableType: 'organizationsFilter' | 'flowsFilter' | 'pendingFlowsFilter';
   chipSpacing?: { m: number };
 }) => {
+  const isKeyOf = <T extends Filters>(
+    initialValue: T,
+    key: FilterKey
+  ): key is keyof T & FilterKey => {
+    return Object.keys(initialValue).includes(key.toString());
+  };
+
+  const isValueInInitialValue = (
+    val: {
+      value: FilterValue;
+      displayValue: string;
+    },
+    key: FilterKey
+  ) => {
+    switch (tableType) {
+      case 'flowsFilter': {
+        if (isKeyOf(FLOWS_FILTER_INITIAL_VALUES, key)) {
+          return (
+            JSON.stringify(FLOWS_FILTER_INITIAL_VALUES[key]) ===
+            JSON.stringify(val.value)
+          );
+        }
+        break;
+      }
+      case 'organizationsFilter': {
+        if (isKeyOf(ORGANIZATIONS_FILTER_INITIAL_VALUES, key)) {
+          return (
+            JSON.stringify(ORGANIZATIONS_FILTER_INITIAL_VALUES[key]) ===
+            JSON.stringify(val.value)
+          );
+        }
+        break;
+      }
+      case 'pendingFlowsFilter': {
+        if (isKeyOf(PENDING_FLOWS_FILTER_INITIAL_VALUES, key)) {
+          return (
+            JSON.stringify(PENDING_FLOWS_FILTER_INITIAL_VALUES[key]) ===
+            JSON.stringify(val.value)
+          );
+        }
+        break;
+      }
+    }
+  };
+
   const chipList: Array<JSX.Element> = [];
   let key: keyof typeof tableFilters;
   for (key in tableFilters) {
@@ -127,7 +181,11 @@ export const RenderChipsRow = ({
           }
           size="small"
           color="primary"
-          onDelete={() => handleChipDelete(savedKey)}
+          onDelete={
+            isValueInInitialValue(val, savedKey)
+              ? undefined
+              : () => handleChipDelete(savedKey)
+          }
           deleteIcon={<CancelRoundedIcon sx={tw`-ms-1! me-1!`} />}
         />
       </Tooltip>
