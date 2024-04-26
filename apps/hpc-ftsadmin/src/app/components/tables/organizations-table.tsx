@@ -238,7 +238,12 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                       data-test="organization-table-location"
                     >
                       {row.locations.length > 0
-                        ? row.locations.map((x) => x.name)
+                        ? row.locations.map(
+                            (x, index) =>
+                              `${x.name}${
+                                index === row.locations.length - 1 ? '' : ', '
+                              }`
+                          )
                         : '--'}
                     </TableCell>
                   );
