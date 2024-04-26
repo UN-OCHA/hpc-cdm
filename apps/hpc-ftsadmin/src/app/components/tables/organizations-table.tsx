@@ -412,7 +412,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                       <Box
                         sx={{
                           maxHeight: '70vh',
-                          overflowY: 'scroll',
+                          overflowY: 'auto',
                           borderRadius: '10px',
                         }}
                       >
@@ -489,11 +489,12 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                   </TopRowContainer>
                 </ChipDiv>
 
-                <Box sx={{ overflowX: 'auto' }}>
+                <Box sx={{ overflowX: 'auto', transform: 'rotateX(180deg)' }}>
                   <TableContainer
                     sx={{
                       width: '100%',
                       display: 'table',
+                      transform: 'rotateX(180deg)',
                       tableLayout: 'fixed',
                       lineHeight: '1.35',
                       fontSize: '1.32rem',
