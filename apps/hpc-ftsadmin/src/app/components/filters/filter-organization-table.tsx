@@ -146,6 +146,7 @@ export const FilterOrganizationsTable = (props: Props) => {
                 name="locations"
                 fnPromise={(query) => fnLocations(query, environment)}
                 isAutocompleteAPI
+                allowChildrenRender
               />
               <C.DatePicker
                 name="date"

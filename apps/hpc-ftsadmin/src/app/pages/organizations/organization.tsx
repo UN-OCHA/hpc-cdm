@@ -105,10 +105,33 @@ const parseOrganizationToInitialValue = (
   res.url = url ?? undefined;
   res.notes = notes ?? undefined;
   res.comments = comments ?? undefined;
-  res.locations = locations?.map((location) => ({
-    displayLabel: location.name,
-    value: location.id.toString(),
-  }));
+  if (locations) {
+    const preLocations: Array<FormObjectValue> = locations.map((location) => ({
+      displayLabel: location.name,
+      value: location.id.toString(),
+    }));
+    const locationsWithParent: Array<FormObjectValue> = preLocations.map(
+      (preLocation, index) => {
+        const locationParentID = locations[index].parentId;
+        if (locationParentID) {
+          const parent = preLocations.find(
+            (a) => a.value === locationParentID.toString()
+          );
+          if (parent) {
+            return {
+              ...preLocation,
+              parent: {
+                displayLabel: parent.displayLabel,
+                value: parent.value,
+              },
+            };
+          }
+        }
+        return preLocation;
+      }
+    );
+    res.locations = locationsWithParent;
+  }
   res.parent = parent
     ? { displayLabel: parent.name, value: parent.id.toString() }
     : undefined;

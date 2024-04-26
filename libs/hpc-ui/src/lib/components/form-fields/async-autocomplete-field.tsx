@@ -9,6 +9,20 @@ import tw from 'twin.macro';
 import { FormObjectValue } from '@unocha/hpc-data';
 import { StyledTextField } from './text-field';
 
+const FlexDiv = tw.div`ms-8 border-l border-l-slate-400 border-solid border-y-0 border-r-0`;
+const StyledLI = tw.li`w-full max-h-min`;
+const ChildrenOption = ({
+  children,
+  ...otherProps
+}: {
+  children: React.ReactNode;
+}) => {
+  return (
+    <FlexDiv>
+      <StyledLI {...otherProps}>{children}</StyledLI>
+    </FlexDiv>
+  );
+};
 const StyledAutocomplete = tw(Autocomplete)`
   min-w-[10rem]
   w-full
@@ -23,6 +37,7 @@ type AsyncAutocompleteSelectProps = {
   isAutocompleteAPI?: boolean;
   error?: (metaError: string) => string | undefined;
   required?: boolean;
+  allowChildrenRender?: boolean;
 };
 const AsyncAutocompleteSelect = ({
   name,
@@ -33,6 +48,7 @@ const AsyncAutocompleteSelect = ({
   error,
   isAutocompleteAPI,
   required,
+  allowChildrenRender,
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -53,9 +69,13 @@ const AsyncAutocompleteSelect = ({
       return undefined;
     }
     if (data.length > 0 && (inputValue.length >= 3 || !isAutocompleteAPI)) {
+      const filterOptions = (value?: string) =>
+        value ? value.toUpperCase().includes(inputValue.toUpperCase()) : false;
       setOptions(
-        data.filter((x) =>
-          x.displayLabel.toUpperCase().includes(inputValue.toUpperCase())
+        data.filter(
+          (x) =>
+            filterOptions(x.displayLabel) ||
+            (allowChildrenRender && filterOptions(x.parent?.displayLabel))
         )
       );
     }
@@ -121,12 +141,23 @@ const AsyncAutocompleteSelect = ({
     },
     loading,
     renderOption: (props, option) => {
-      return (
-        <li {...props} key={option.value}>
-          {option.displayLabel}
-        </li>
-      );
+      if (allowChildrenRender && option.parent) {
+        return (
+          <ChildrenOption {...props} key={option.value}>
+            {option.displayLabel}
+          </ChildrenOption>
+        );
+      } else {
+        return (
+          <li {...props} key={option.value}>
+            {option.displayLabel}
+          </li>
+        );
+      }
     },
+    getOptionDisabled: (option) =>
+      isMulti === true &&
+      field.value.find((a) => a.parent?.value === option.value) !== undefined,
     renderInput: (params) => (
       <StyledTextField
         {...params}
