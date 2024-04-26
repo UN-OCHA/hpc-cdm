@@ -1,7 +1,12 @@
 import * as t from 'io-ts';
 import { Dayjs, isDayjs } from 'dayjs';
 
-export type FormObjectValue = { displayLabel: string; value: string | number };
+export type FormObjectValue = {
+  displayLabel: string;
+  value: string | number;
+  parent?: FormObjectValue;
+  hasChildren?: boolean;
+};
 
 export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(
   data: t.Type<D>,
