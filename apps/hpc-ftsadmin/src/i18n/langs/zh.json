@@ -272,6 +272,7 @@
       },
       "errors": {
         "duplicate": "已经存在名为 {organizationName} 的组织。请选择一个不同的名称。",
+        "conflict": "已经存在使用提供的名称的组织。请选择一个不同的名称。",
         "unknown": "创建/更新组织时发生意外错误"
       },
       "formErrors": {
