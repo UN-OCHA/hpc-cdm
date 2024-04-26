@@ -805,7 +805,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       onClose={() => setOpenSettings(!openSettings)}
                       sx={tw`flex items-center justify-center`}
                     >
-                      <Box sx={tw`max-h-[70vh] overflow-y-scroll rounded-xl`}>
+                      <Box sx={tw`max-h-[70vh] overflow-y-auto rounded-xl`}>
                         <C.DraggableList
                           title={t.t(
                             lang,
@@ -876,7 +876,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                   </TopRowContainer>
                 </ChipDiv>
 
-                <Box sx={{ overflowX: 'scroll', transform: 'rotateX(180deg)' }}>
+                <Box sx={{ overflowX: 'auto', transform: 'rotateX(180deg)' }}>
                   <TableContainer
                     sx={{
                       width: '100%',
