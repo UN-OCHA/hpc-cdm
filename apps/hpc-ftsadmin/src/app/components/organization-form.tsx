@@ -75,6 +75,28 @@ mt-6
 italic
 text-unocha-textLight
 `;
+
+const parseFormValues = (values: AddEditOrganizationValues) => {
+  const locations: number[] = [];
+  if (values.locations) {
+    for (const loc of values.locations) {
+      locations.push(valueToInteger(loc.value));
+      if (loc.parent) {
+        locations.push(valueToInteger(loc.parent.value));
+      }
+    }
+  }
+  const parsedLocations =
+    locations.length > 0 ? [...new Set(locations)] : undefined;
+  const categories = values.organizationTypes.map((org) =>
+    valueToInteger(org.value)
+  );
+  const parentID = values.parent?.value
+    ? valueToInteger(values.parent.value)
+    : undefined;
+
+  return { categories, parentID, locations: parsedLocations };
+};
 const formToUpdate = (
   values: AddEditOrganizationValues,
   id: number
@@ -82,13 +104,7 @@ const formToUpdate = (
   const res: organizations.UpdateOrganizationParams = {
     ...values,
     id: id,
-    categories: values.organizationTypes.map((org) =>
-      valueToInteger(org.value)
-    ),
-    parentID: values.parent?.value
-      ? valueToInteger(values.parent.value)
-      : undefined,
-    locations: values.locations?.map((loc) => valueToInteger(loc.value)),
+    ...parseFormValues(values),
   };
   return res;
 };
@@ -99,13 +115,7 @@ const formToCreate = (
   const res: organizations.CreateOrganizationParams = {
     organization: {
       ...values,
-      categories: values.organizationTypes.map((org) =>
-        valueToInteger(org.value)
-      ),
-      parentID: values.parent?.value
-        ? valueToInteger(values.parent.value)
-        : undefined,
-      locations: values.locations?.map((loc) => valueToInteger(loc.value)),
+      ...parseFormValues(values),
     },
   };
   return res;
@@ -126,33 +136,30 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
     abbreviation: codecs.NON_EMPTY_STRING,
     organizationTypes: codecs.NON_EMPTY_ARRAY,
   });
+
+  const errorHandling = (err: Error) => {
+    if (errors.isDuplicateError(err)) {
+      setErrorValue(err.value);
+      setError(err.code);
+    } else if (errors.isConflictError(err)) setError(err.code);
+    else {
+      setError('unknown');
+    }
+  };
+
   const handleSubmit = async (values: AddEditOrganizationValues) => {
     if (id && load) {
       await environment.model.organizations
         .updateOrganization(formToUpdate(values, id))
         .finally(load)
-        .catch((err) => {
-          if (errors.isDuplicateError(err)) {
-            setErrorValue(err.value);
-            setError(err.code);
-          } else {
-            setError('unknown');
-          }
-        });
+        .catch((err) => errorHandling(err));
     } else {
       await environment.model.organizations
         .createOrganization(formToCreate(values))
         .then((org) => {
           navigate(paths.organization(org.id));
         })
-        .catch((err) => {
-          if (errors.isDuplicateError(err)) {
-            setErrorValue(err.value);
-            setError(err.code);
-          } else {
-            setError('unknown');
-          }
-        });
+        .catch((err) => errorHandling(err));
     }
   };
   const parseError = (
@@ -245,6 +252,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
             name="locations"
             fnPromise={(query) => fnLocations(query, environment)}
             isMulti
+            allowChildrenRender
           />
           <C.TextFieldWrapper
             label={t.t(

@@ -40,9 +40,30 @@ const defaultOptions = (
 export const fnLocations = async (
   query: { query: string },
   env: Environment
-) => {
+): Promise<Array<FormObjectValue>> => {
   const response = await env.model.locations.getAutocompleteLocations(query);
-  return defaultOptions(response);
+  const res: Array<FormObjectValue> = [];
+
+  for (const responseValue of response) {
+    const hasChildren =
+      responseValue.children && responseValue.children.length > 0;
+    const parentLocation: FormObjectValue = {
+      displayLabel: responseValue.name,
+      value: responseValue.id,
+      hasChildren: hasChildren,
+    };
+    res.push(parentLocation);
+    if (hasChildren) {
+      for (const responseLevelValue of responseValue.children) {
+        res.push({
+          displayLabel: responseLevelValue.name,
+          value: responseLevelValue.id,
+          parent: parentLocation,
+        });
+      }
+    }
+  }
+  return res;
 };
 
 export const fnProjects = async (
