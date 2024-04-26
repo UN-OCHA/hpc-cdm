@@ -98,9 +98,7 @@ export class DuplicateError extends Error {
     super(DUPLICATE_ERROR);
     this.details = details;
     this.table = table;
-    const match = /^Key \(([a-zA-Z]+)\)=\((.+)\) already exists\.$/.exec(
-      details
-    );
+    const match = /^Key \(([.]+)\)=\((.+)\) already exists\.$/.exec(details);
     if (match) {
       const [, key, value] = match;
       this.key = key;
