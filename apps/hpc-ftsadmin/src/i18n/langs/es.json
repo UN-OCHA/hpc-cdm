@@ -86,7 +86,10 @@
       "parkedSource": "Origen estacionado",
       "sortBy": "Ordenar por",
       "totalAmount": "Monto Total：",
-      "rejectPendingFlows": "Rechazar flujos pendientes",
+      "rejectPendingFlows": {
+        "message": "¿Desea rechazar los flujos pendientes seleccionados?",
+        "button": "Sí"
+      },
       "downloadDisabled": "La descarga solo está permitida cuando se ha aplicado al menos un filtro y hay más de un flujo en la tabla",
       "totalAmountDisabled": "El monto total solo está permitido cuando se aplica al menos un filtro",
       "tableSettings": {

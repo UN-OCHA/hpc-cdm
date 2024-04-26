@@ -42,10 +42,6 @@ export const TableRowClick = tw(TableRow)`
   hover:bg-opacity-20
   hover:cursor-pointer
 `;
-export const RejectPendingFlowsButton = tw(C.ButtonSubmit)`
-  mt-8
-`;
-
 const ChipFilterValues = tw.div`
   bg-unocha-secondary-light
   inline-flex

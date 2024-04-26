@@ -86,7 +86,10 @@
       "parkedSource": "Source stationnée",
       "sortBy": "Trier par",
       "totalAmount": "Montant Total：",
-      "rejectPendingFlows": "Rejeter les flux en attente",
+      "rejectPendingFlows": {
+        "message": "Voulez-vous rejeter les flux en attente sélectionnés ?",
+        "button": "Oui"
+      },
       "downloadDisabled": "Le téléchargement n'est autorisé que lorsqu'au moins un filtre est appliqué et qu'il y a plus d'un flux dans le tableau",
       "totalAmountDisabled": "Le montant total est uniquement autorisé lorsqu'au moins un filtre est appliqué",
       "tableSettings": {
