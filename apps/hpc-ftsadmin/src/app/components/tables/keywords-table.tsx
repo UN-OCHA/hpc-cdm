@@ -444,7 +444,7 @@ export default function KeywordTable(props: KeywordTableProps) {
   const parseError = (
     error:
       | {
-          code: keyof Strings['components']['organizationUpdateCreate']['errors'];
+          code: keyof Strings['components']['keywordTable']['errors'];
           value: string;
         }
       | undefined,

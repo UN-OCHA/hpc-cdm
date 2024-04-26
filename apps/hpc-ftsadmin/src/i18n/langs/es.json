@@ -269,6 +269,7 @@
       },
       "errors": {
         "duplicate": "Ya existe una organización con el nombre {organizationName}. Por favor, elige un nombre diferente.",
+        "conflict": "Ya existe una organización con el nombre seleccionado. Por favor, elige un nombre diferente.",
         "unknown": "Error inesperado al crear/actualizar la organización"
       },
       "formErrors": {
