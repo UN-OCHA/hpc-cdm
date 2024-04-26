@@ -490,12 +490,24 @@ export const parseOrganizationFilters = (
             break;
           }
           if (filterValueIsFormObjectValue(locations)) {
-            res.search[key] = [
-              {
-                name: locations.displayLabel,
-                id: valueToInteger(locations.value),
-              },
-            ];
+            const location = {
+              name: locations.displayLabel,
+              id: valueToInteger(locations.value),
+            };
+            if (locations.parent) {
+              res.search[key] = [
+                {
+                  ...location,
+                  parentId: valueToInteger(locations.parent.value),
+                },
+                {
+                  name: locations.parent.displayLabel,
+                  id: valueToInteger(locations.parent.value),
+                },
+              ];
+            } else {
+              res.search[key] = [location];
+            }
           }
           break;
         }
