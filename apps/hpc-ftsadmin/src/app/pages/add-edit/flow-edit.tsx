@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { isRight } from 'fp-ts/lib/Either';
 import * as ts from 'io-ts';
+import _, { values } from 'lodash';
 import {
   C,
   CLASSES,
@@ -231,6 +232,16 @@ export default (props: Props) => {
   const [pendingVersionID, setPendingVersionID] = useState<number>();
   const [pendingVersionV1, setPendingVersionV1] = useState<boolean>(false);
   const [isPendingFlow, setIsPendingFlow] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
+  const [isCancellation, setIsCancellation] = useState<boolean>(false);
+  const [isCancelled, setIsCancelled] = useState<boolean>(false);
+  const [isSuperseded, setIsSuperseded] = useState<boolean>(false);
+  const [isNewPending, setIsNewPending] = useState<boolean>(false);
+  const [isUpdatePending, setIsUpdatePending] = useState<boolean>(false);
+  const [canReactive, setCanReactive] = useState<boolean>(false);
+  const [pendingFieldsallApplied, setPendingFieldsallApplied] =
+    useState<boolean>(false);
+  const [allFieldsReviewed, setAllFieldsReviewed] = useState<boolean>(false);
   const [isRestricted, setIsRestricted] = useState<boolean>(false);
   const [parentFlow, setParentFlow] = useState<AutoCompleteSelectionType[]>([]);
   const [childFlow, setChildFlow] = useState<AutoCompleteSelectionType[]>([]);
@@ -353,7 +364,7 @@ export default (props: Props) => {
         );
       }
     });
-
+    setPendingFieldsallApplied(true);
     setInputEntries(tmpEntries);
   };
 
@@ -561,6 +572,7 @@ export default (props: Props) => {
                   ? value.locations[refDirectionLocIndexDes].name
                   : '',
               versionId: value.versionID,
+              origCurrency: value.origCurrency,
               ...value,
             }),
           };
@@ -579,8 +591,7 @@ export default (props: Props) => {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }, [parentIds]);
-
+  }, [parentIds, flowData?.childFlow]);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -651,10 +662,10 @@ export default (props: Props) => {
               amountUSD: value.amountUSD,
               origAmount: value.origAmount,
               versionID: value.versionID,
+              origCurrency: value.origCurrency,
             }),
           };
         });
-
         setFlowData({
           ...flowData,
           childFlow: childFlowData,
@@ -1066,6 +1077,30 @@ export default (props: Props) => {
               false
             ) as AutoCompleteSelectionType
           ).displayLabel === 'Pending review',
+        cancellation:
+          (
+            getFormValueFromCategory(
+              flowItemData,
+              'pendingStatus',
+              false
+            ) as AutoCompleteSelectionType
+          ).displayLabel === 'cancellation',
+        cancelled:
+          (
+            getFormValueFromCategory(
+              flowItemData,
+              'inactiveReason',
+              false
+            ) as AutoCompleteSelectionType
+          ).displayLabel === 'cancelled',
+        superseded:
+          (
+            getFormValueFromCategory(
+              flowItemData,
+              'inactiveReason',
+              false
+            ) as AutoCompleteSelectionType
+          ).displayLabel === 'superseded',
         source: {
           emergencies: getNameOfFundingValue(
             flowItemData,
@@ -1428,7 +1463,6 @@ export default (props: Props) => {
           }
         );
       }
-
       const activeMatch = data.versions.filter(function (
         d: flows.FlowSearchResult
       ) {
@@ -1437,6 +1471,38 @@ export default (props: Props) => {
 
       const pendingId = versionDetails.findIndex((data) => data.pending) + 1;
       setPendingVersionID(pendingId);
+
+      setIsPending(pendingId === currentVersionData.versionID);
+      setIsCancellation(
+        versionDetails.findIndex((data) => data.cancellation) > -1
+      );
+      setIsCancelled(versionDetails.findIndex((data) => data.cancelled) > -1);
+      setIsSuperseded(versionDetails.findIndex((data) => data.superseded) > -1);
+      setIsNewPending(!(activeMatch > -1));
+      setIsUpdatePending(activeMatch > -1);
+      if (isSuperseded) {
+        const inactiveVersions = currentVersionData.versions
+          .filter((data) => !data.activeStatus)
+          .sort(
+            (a, b) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          );
+        const noActiveVersions =
+          inactiveVersions.length === currentVersionData.versions.length;
+        const isTheRightVersion =
+          inactiveVersions &&
+          inactiveVersions.length > 1 &&
+          inactiveVersions[1].versionID === currentVersionData.versionID;
+        const isLatestVersionDeleted =
+          inactiveVersions &&
+          inactiveVersions[0] &&
+          !!inactiveVersions[0].deletedAt
+            ? true
+            : false;
+        setCanReactive(
+          noActiveVersions && isTheRightVersion && isLatestVersionDeleted
+        );
+      }
 
       setActiveVersionID(activeMatch);
       setFlowData({
@@ -1501,10 +1567,20 @@ export default (props: Props) => {
   useEffect(() => {
     if (!props.isEdit) {
       setFlowData(JSON.parse(JSON.stringify(initialFormData)));
-      // setCurrentVersionActiveStatus(true);
-      // setInputEntries(JSON.parse(JSON.stringify(initialInputEntries)));
     }
   }, [props.isEdit]);
+
+  useEffect(() => {
+    if (inputEntries) {
+      let isEmpty = true;
+      Object.values(inputEntries).map((key) => {
+        if (!_.isEmpty(key)) isEmpty = false;
+      });
+      if (isEmpty) {
+        setAllFieldsReviewed(true);
+      }
+    }
+  }, [inputEntries]);
 
   return (
     <AppContext.Consumer>
@@ -1701,6 +1777,16 @@ export default (props: Props) => {
                     currentVersionID={currentVersionID}
                     currentFlowID={currentFlowID}
                     currentVersionActiveStatus={currentVersionActiveStatus}
+                    isPending={isPending}
+                    isSuperseded={isSuperseded}
+                    isCancellation={isCancellation}
+                    isCancelled={isCancelled}
+                    isNewPending={isNewPending}
+                    isUpdatePending={isUpdatePending}
+                    canReactive={canReactive}
+                    pendingFieldsallApplied={pendingFieldsallApplied}
+                    allFieldsReviewed={allFieldsReviewed}
+                    pendingVersionV1={pendingVersionV1}
                   />
                 )}
               </div>

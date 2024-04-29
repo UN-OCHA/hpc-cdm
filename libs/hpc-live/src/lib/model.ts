@@ -735,6 +735,16 @@ export class LiveModel implements Model {
           },
           resultType: flows.GET_FLOW_RESULT,
         }),
+      updatePendingFlow: (params) =>
+        this.call({
+          pathname: `/v1/flow/update/${params.flow.id}`,
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.GET_FLOW_RESULT,
+        }),
       deleteFlow: (params) =>
         this.call({
           pathname: `/v1/flow/delete/${params.FlowID}/version/${params.VersionID}`,

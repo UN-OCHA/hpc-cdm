@@ -166,7 +166,12 @@ export const FLOW_EXTERNAL_DATA = t.type({
 });
 
 export type FlowExternalData = t.TypeOf<typeof FLOW_EXTERNAL_DATA>;
-
+const VERSION_TYPE = t.type({
+  id: t.number,
+  versionID: t.number,
+  activeStatus: t.boolean,
+  isPending: t.boolean,
+});
 const FLOW_SEARCH_RESULT_REST = t.intersection([
   t.type({
     id: t.number,
@@ -198,6 +203,7 @@ const FLOW_SEARCH_RESULT_REST = t.intersection([
       organization: t.array(t.number),
       OrgName: t.array(t.string),
     }),
+    deletedAt: t.union([t.string, t.null]),
   }),
 ]);
 
@@ -543,7 +549,7 @@ export const FUNDING_DETAIL = t.type({
 });
 
 export const GET_VALIDATE_FLOWS_PARAMS = t.type({
-  id: t.union([t.string, t.null]),
+  id: t.union([t.number, t.null]),
   amountUSD: t.number,
   flowDate: t.string,
   decisionDate: t.union([t.string, t.null]),
@@ -569,13 +575,20 @@ export const GET_VALIDATE_FLOWS_PARAMS = t.type({
   contributionTypes: FORM_FIELD,
   method: FORM_FIELD,
   earmarking: t.union([FORM_FIELD, t.null]),
-  isCancellation: t.union([t.boolean, t.null]),
+  isCancellation: t.union([t.boolean, t.null, t.undefined]),
+  cancelled: t.union([t.boolean, t.undefined, t.null]),
+  pendingStatus: t.union([t.boolean, t.undefined, t.array(t.string)]),
+  planEntities: t.union([t.boolean, t.undefined, t.array(t.string)]),
+  planIndicated: t.union([t.boolean, t.undefined, t.array(t.string)]),
+  isApprovedFlowVersion: t.union([t.boolean, t.undefined]),
+  isErrorCorrection: t.boolean,
+  inactiveReason: t.union([t.string, t.undefined, t.array(t.string)]),
+  rejected: t.boolean,
   src: FUNDING_DETAIL,
   dest: FUNDING_DETAIL,
 });
 
 export type GetValidateFlowParams = t.TypeOf<typeof GET_VALIDATE_FLOWS_PARAMS>;
-
 export const CREATE_FLOW = t.type({
   flow: GET_VALIDATE_FLOWS_PARAMS,
 });
@@ -608,6 +621,7 @@ export interface Model {
     options: CreateFlowOptions
   ): Promise<ValidationResult[]>;
   createFlow(params: CreateFlowParams): Promise<FlowREST>;
+  updatePendingFlow(params: CreateFlowParams): Promise<FlowREST>;
   updateFlow(params: CreateFlowParams): Promise<FlowREST>;
   deleteFlow(params: DeleteFlowParams): Promise<DeleteResult>;
 }
