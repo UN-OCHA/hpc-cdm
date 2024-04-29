@@ -38,7 +38,12 @@ const FormikCheckBox = ({
   const configCheckBox: CheckboxProps = {
     ...field,
     ...otherProps,
-    checked: field.value || false,
+    checked:
+      field.value === true
+        ? true
+        : field.value &&
+          typeof field.value === 'object' &&
+          field.value.some((item: any) => item.id === value.id),
     onChange: handleChange,
     disabled: disabled || false,
   };

@@ -45,37 +45,57 @@ const InputEntry = ({ info, setValue, rejectValue }: PropsType) => {
           </span>
         </div>
         {info.category === forms.InputEntryCategoriesEnum.ACTIVE_FLOW && (
-          <div>
-            <IconButton
-              aria-label="accept"
-              sx={{
-                color: THEME.colors.greenLight,
-                '&:hover': {
-                  backgroundColor: THEME.colors.greenLight,
-                  color: '#fff',
-                },
-                height: 20,
-                width: 20,
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginBottom: 6,
+            }}
+          >
+            <div
+              style={{
+                color: '#357A38',
               }}
-              onClick={setValue}
             >
-              <Check sx={{ height: 16, width: 16 }} />
-            </IconButton>
-            <IconButton
-              aria-label="reject"
-              sx={{
-                color: THEME.colors.secondary.normal,
-                '&:hover': {
-                  backgroundColor: THEME.colors.secondary.normal,
-                  color: '#fff',
-                },
-                height: 20,
-                width: 20,
+              <IconButton
+                aria-label="accept"
+                sx={{
+                  color: THEME.colors.greenLight,
+                  '&:hover': {
+                    backgroundColor: THEME.colors.greenLight,
+                    color: '#fff',
+                  },
+                  height: 20,
+                  width: 20,
+                }}
+                onClick={setValue}
+              >
+                <Check sx={{ height: 16, width: 16 }} />
+              </IconButton>
+              Accept
+            </div>
+            <div
+              style={{
+                color: '#FE3A40',
               }}
-              onClick={rejectValue}
             >
-              <Close sx={{ height: 16, width: 16 }} />
-            </IconButton>
+              <IconButton
+                aria-label="reject"
+                sx={{
+                  color: THEME.colors.secondary.normal,
+                  '&:hover': {
+                    backgroundColor: THEME.colors.secondary.normal,
+                    color: '#fff',
+                  },
+                  height: 20,
+                  width: 20,
+                }}
+                onClick={rejectValue}
+              >
+                <Close sx={{ height: 16, width: 16 }} />
+              </IconButton>
+              Reject
+            </div>
           </div>
         )}
       </div>
