@@ -309,7 +309,7 @@ export type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
 
 export const GET_FLOW_RESULT = FLOW_REST;
 export const DELETE_FLOW_RESULT = DELETE_RESULT;
-
+export type FlowSearchResult = t.TypeOf<typeof FLOW_SEARCH_RESULT_REST>;
 export type GetFlowResult = t.TypeOf<typeof GET_FLOW_RESULT>;
 
 const FlowLocation = t.type({
@@ -615,7 +615,9 @@ export interface Model {
   getFlowsDownloadXLSX(
     params: SearchFlowsParams
   ): Promise<SearchFlowsBatchesResult>;
-  getAutocompleteFlows(params: GetFlowsAutocompleteParams): Promise<FlowRESTResult>;
+  getAutocompleteFlows(
+    params: GetFlowsAutocompleteParams
+  ): Promise<FlowRESTResult>;
   validateFlow(
     params: GetValidateFlowParams,
     options: CreateFlowOptions

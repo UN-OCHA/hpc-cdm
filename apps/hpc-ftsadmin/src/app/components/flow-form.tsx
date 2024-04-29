@@ -1082,16 +1082,51 @@ export const FlowForm = (props: Props) => {
         const path = editFlowSetting(response.id, response.versionID);
         window.open(path, '_self');
       } else {
-        if (isPending && (approveFlag || rejectFlag)) {
-          if (
-            allFieldsReviewed ||
-            pendingFieldsallApplied ||
-            !pendingVersionV1
-          ) {
+        const dbFlow = await env.model.flows.getFlowREST({
+          id: currentFlowID!,
+          versionId: currentVersionID && currentVersionID,
+        });
+        if (
+          (versionData &&
+            Date.parse(versionData[versionData.length - 1].updatedTime) <
+              Date.parse(dbFlow.updatedAt)) ||
+          (versionData && versionData.length < dbFlow.versions.length)
+        ) {
+          window.confirm(
+            'This flow cannot be saved, as a concurrency conflict has been detected.Please refresh your screen to view the most up to date data.'
+          );
+        } else {
+          if (isPending && (approveFlag || rejectFlag)) {
+            if (
+              allFieldsReviewed ||
+              pendingFieldsallApplied ||
+              !pendingVersionV1
+            ) {
+              try {
+                const response = await env.model.flows.updatePendingFlow({
+                  flow: data,
+                });
+                if (response) {
+                  const path = editFlowSetting(response.id, response.versionID);
+                  setAlertFlag(true);
+                  setSharePath(path);
+                }
+              } catch (err: any) {
+                setOpenAlerts([
+                  ...openAlerts,
+                  { message: err.message, id: alertId },
+                ]);
+                setAlertId((prevId) => prevId + 1);
+                handleSave();
+              }
+            } else {
+              window.confirm(
+                'Some of the revised data on this flow still needs to be accepted or rejected before this update can be approved.'
+              );
+            }
+          } else {
             try {
-              const response = await env.model.flows.updatePendingFlow({
-                flow: data,
-              });
+              const response = await env.model.flows.updateFlow({ flow: data });
               if (response) {
                 const path = editFlowSetting(response.id, response.versionID);
                 setAlertFlag(true);
@@ -1105,26 +1140,6 @@ export const FlowForm = (props: Props) => {
               setAlertId((prevId) => prevId + 1);
               handleSave();
             }
-          } else {
-            window.confirm(
-              'Some of the revised data on this flow still needs to be accepted or rejected before this update can be approved.'
-            );
-          }
-        } else {
-          try {
-            const response = await env.model.flows.updateFlow({ flow: data });
-            if (response) {
-              const path = editFlowSetting(response.id, response.versionID);
-              setAlertFlag(true);
-              setSharePath(path);
-            }
-          } catch (err: any) {
-            setOpenAlerts([
-              ...openAlerts,
-              { message: err.message, id: alertId },
-            ]);
-            setAlertId((prevId) => prevId + 1);
-            handleSave();
           }
         }
       }
@@ -2030,7 +2045,7 @@ export const FlowForm = (props: Props) => {
                   Flow
                   <a href={sharePath} style={{ textDecoration: 'underline' }}>
                     {' '}
-                    {currentFlowID} ,V{sharePath.slice(-1)}{' '}
+                    {currentFlowID} ,V{sharePath.split('/').pop()}{' '}
                   </a>
                   {`"${values.flowDescription}" updated`}
                 </MuiAlert>
@@ -2047,14 +2062,10 @@ export const FlowForm = (props: Props) => {
                   style={{
                     pointerEvents: readOnly
                       ? 'none'
-                      : isShowParentFlow && isEdit
+                      : isShowParentFlow
                       ? 'none'
                       : 'auto',
-                    opacity: readOnly
-                      ? 0.6
-                      : isShowParentFlow && isEdit
-                      ? 0.6
-                      : 1,
+                    opacity: readOnly ? 0.6 : isShowParentFlow ? 0.6 : 1,
                   }}
                 >
                   <C.FormSection title="Funding Source(s)" isLeftSection>
@@ -2116,7 +2127,7 @@ export const FlowForm = (props: Props) => {
                       ''
                     )}
 
-                    <C.AsyncAutocompleteSelect
+                    <C.AsyncAutocompleteSelectFTSAdmin
                       label="Organization(s)*"
                       name="sourceOrganizations"
                       fnPromise={
@@ -2888,7 +2899,7 @@ export const FlowForm = (props: Props) => {
                           buttonCancel: 'Cancel',
                           buttonConfirm: 'Add Flow Link',
                           content: (
-                            <C.AsyncAutocompleteSelect
+                            <C.AsyncAutocompleteSelectFTSAdmin
                               label="Flow"
                               name="childFlow"
                               fnPromise={

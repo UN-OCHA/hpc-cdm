@@ -17,8 +17,8 @@ const FormikCheckBox = ({
   ...otherProps
 }: {
   name: string;
-  value?: unknown;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void | unknown;
+  value?: any;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void | any;
   label?: string | React.ReactNode;
   size?: 'small' | 'medium';
   disabled?: boolean;

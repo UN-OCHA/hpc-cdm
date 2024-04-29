@@ -54,7 +54,6 @@ export const searchFlowsParams = (params: flows.SearchFlowsParams): string => {
       case 'parked':
       case 'standard':
       case 'pass_through':
-      case 'pending':
       case 'pledge':
       case 'includeChildrenOfParkedFlows':
         if (params[unmutableKey])
