@@ -1,6 +1,4 @@
 import * as t from 'io-ts';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { util } from '@unocha/hpc-core';
 import {
   Model,
