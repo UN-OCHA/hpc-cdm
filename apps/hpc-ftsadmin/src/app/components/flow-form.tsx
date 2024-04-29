@@ -19,7 +19,7 @@ import Stack from '@mui/material/Stack';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import MuiAlert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import _ from 'lodash';
+import _, { values } from 'lodash';
 import useSharePath from './Hooks/SharePath';
 import { C, dialogs } from '@unocha/hpc-ui';
 import {
@@ -47,6 +47,7 @@ import { getEnv } from '../context';
 import { editFlowSetting } from '../paths';
 import { flows } from '../paths';
 import Link from '@mui/material/Link';
+import { id } from 'fp-ts/lib/Refinement';
 
 export type AutoCompleteSelectionType = forms.InputSelectValueType;
 
@@ -104,6 +105,7 @@ export interface ParentFlowType {
 }
 
 export interface FormValues {
+  id: string | null;
   amountUSD: number;
   keywords: AutoCompleteSelectionType[];
   flowStatus: AutoCompleteSelectionType | '';
@@ -144,6 +146,11 @@ export interface FormValues {
   isParkedParent?: boolean;
   includeChildrenOfParkedFlows: boolean;
   sources?: Record<string, any[]>;
+  submitAction?: string | undefined;
+  versions?: {
+    id: number | null;
+    isPending: boolean | null;
+  }[];
 }
 
 export interface VersionDataType {
@@ -251,6 +258,18 @@ interface Props {
   currentVersionID?: number;
   currentFlowID?: number;
   currentVersionActiveStatus?: boolean;
+  isPending?: boolean;
+  isSuperseded?: boolean;
+  isCancelled?: boolean;
+  isCancellation?: boolean;
+  isNewPending?: boolean;
+  isUpdatePending?: boolean;
+  canReactive?: boolean;
+  isErrorCorrection?: boolean;
+  isApprovedFlowVersion?: boolean;
+  pendingFieldsallApplied?: boolean;
+  allFieldsReviewed?: boolean;
+  pendingVersionV1?: boolean;
 }
 
 const StyledRepOrgLink = tw.div`
@@ -439,6 +458,16 @@ export const FlowForm = (props: Props) => {
     currentVersionID,
     currentFlowID,
     currentVersionActiveStatus,
+    isPending,
+    isSuperseded,
+    isCancelled,
+    isCancellation,
+    isNewPending,
+    isUpdatePending,
+    canReactive,
+    pendingFieldsallApplied,
+    allFieldsReviewed,
+    pendingVersionV1,
   } = props;
   const { confirm } = dialogs;
   const env = getEnv();
@@ -474,32 +503,10 @@ export const FlowForm = (props: Props) => {
       });
     }
 
-    return data;
+    return data as any;
   };
 
-  const collapseCategories = (
-    data: any
-    // inactiveReasons: any,
-    // isPending: any,
-    // approvePending: any
-  ) => {
-    // const rejectedReasonCat = inactiveReasons.find(
-    //   (reason: any) => reason.name === 'Rejected'
-    // );
-    // const cancelledReasonCat = inactiveReasons.find(
-    //   (reason: any) => reason.name === 'Cancelled'
-    // );
-
-    // if (data.rejected) {
-    //   data.inactiveReason.push(rejectedReasonCat);
-    // } else if (data.cancelled) {
-    //   data.inactiveReason.push(cancelledReasonCat);
-    // }
-
-    // if (isPending) {
-    //     data = decideIfPendingReviewShouldBeSet(data, approvePending, inactiveReasons);
-    // }
-
+  const collapseCategories = (data: any) => {
     data.categories = [
       data.flowType,
       data.flowStatuses,
@@ -604,8 +611,8 @@ export const FlowForm = (props: Props) => {
     };
 
     let data = {
-      id: isEdit && flowId ? flowId : null,
-      versionID: isEdit && versionId ? versionId : null,
+      id: isEdit && currentFlowID ? currentFlowID : null,
+      versionID: isEdit && currentVersionID ? currentVersionID : null,
       amountUSD: values.amountUSD,
       flowDate: values.flowDate,
       decisionDate: values.decisionDate,
@@ -622,17 +629,38 @@ export const FlowForm = (props: Props) => {
       versionStartDate: '',
       versionEndDate: '',
       flowObjects: collapseFlowObjects(fundingObject),
-      children: values.childFlow
-        ? values.childFlow.map((item) => JSON.parse(item.value as string))
-        : [],
-      parents: values.parentFlow
-        ? values.parentFlow.map((item) => JSON.parse(item.value as string))
-        : [],
+      children:
+        values.childFlow &&
+        values.childFlow.map((item: any, index: number) => {
+          return {
+            childID: JSON.parse(item.value as string).id,
+            origCurrency: JSON.parse(item.value as string).origCurrency,
+          };
+        }),
+      parents:
+        values.parentFlow &&
+        values.parentFlow.map((item: any, index: number) => {
+          return {
+            Parent: {
+              parentID: JSON.parse(item.value as string).id,
+              origCurrency: JSON.parse(item.value as string).origCurrency,
+            },
+            childID: currentFlowID,
+            parentID: JSON.parse(item.value as string).id,
+            origCurrency: JSON.parse(item.value as string).origCurrency,
+            id: JSON.parse(item.value as string).id,
+            parents:
+              values.parentFlow &&
+              values.parentFlow.map((key: any) => {
+                return {
+                  child: JSON.parse(key.value as string).id,
+                  parentID: 271736,
+                };
+              }),
+          };
+        }),
       reportDetails: values.reportDetails.map((item, index) => {
         return {
-          // id: 587806,
-          // flowID: 245996,
-          // versionID: 1,
           contactInfo: item.reporterContactInformation,
           source: item.reportSource,
           date: item.reportedDate,
@@ -725,8 +753,32 @@ export const FlowForm = (props: Props) => {
             name: values.earmarkingType.displayLabel,
           }
         : null,
-      isCancellation: null,
       categories: [],
+      isCancellation: isPending && null,
+      cancelled: isPending && isCancellation ? true : null,
+      pendingStatus: isPending && [],
+      planEntities: isPending && [],
+      planIndicated: isPending && [],
+      isApprovedFlowVersion: rejectFlag && approveFlag ? true : false,
+      inactiveReason:
+        isPending && isCancelled
+          ? 'Cancelled'
+          : isSuperseded
+          ? 'Superseded'
+          : [],
+      isErrorCorrection: isSuperseded ? true : isPending ? true : false,
+      rejected: rejectFlag ? true : false,
+      versions:
+        versionData &&
+        versionData.map((item: VersionDataType) => {
+          const items = {
+            id: item.flowId,
+            versionID: item.versionId,
+            activeStatus: item.activeStatus,
+            isPending: item.isPending,
+          };
+          return items;
+        }),
       ...fundingObject,
     };
 
@@ -734,6 +786,8 @@ export const FlowForm = (props: Props) => {
     return data;
   };
 
+  const [approveFlag, setApproveFlag] = useState<boolean>(false);
+  const [rejectFlag, setRejectFlag] = useState<boolean>(false);
   const [validationFlag, setValidationFlag] = useState<boolean>(false);
   const [uploadedFileArray, setUploadedFileArray] = useState<UploadedItem[]>([
     {},
@@ -779,7 +833,6 @@ export const FlowForm = (props: Props) => {
     { message: string; id: number }[]
   >([]);
   const [alertId, setAlertId] = useState(0);
-
   const handleClose = (id: number) => {
     setOpenAlerts(openAlerts.filter((alert) => alert.id !== id));
   };
@@ -877,18 +930,21 @@ export const FlowForm = (props: Props) => {
       values.destinationOrganizations[indexKey]
     );
   };
-  const handleSubmit = async (values: FormValues) => {
+  const handleSubmit = async (
+    values: FormValues,
+    submitAction: string | undefined
+  ) => {
     if (isShowParentFlow && isShowChildFlow > 0) {
       let childAmountSum = 0;
       let parentAmountSum = 0;
       values.childFlow &&
-        values.childFlow.map((item, index) => {
+        values.childFlow.map((item, _index) => {
           childAmountSum += JSON.parse(item.value.toString())
             ? parseInt(JSON.parse(item.value.toString()).amountUSD)
             : 0;
         });
       values.parentFlow &&
-        values.parentFlow.map((item, index) => {
+        values.parentFlow.map((item, _index) => {
           parentAmountSum += JSON.parse(item.value.toString())
             ? parseInt(JSON.parse(item.value.toString()).amountUSD)
             : 0;
@@ -906,7 +962,7 @@ export const FlowForm = (props: Props) => {
     if (isShowParentFlow || isShowChildFlow > 0) {
       let childAmountSum = 0;
       values.childFlow &&
-        values.childFlow.map((item, index) => {
+        values.childFlow.map((item, _index) => {
           childAmountSum += JSON.parse(item.value.toString())
             ? parseInt(JSON.parse(item.value.toString()).amountUSD)
             : 0;
@@ -921,22 +977,19 @@ export const FlowForm = (props: Props) => {
       }
     }
     const parentFlow = values.parentFlow;
-    if (parentFlow) {
+    if (parentFlow?.length) {
       for (let index = 0; index < parentFlow.length; index++) {
         const item = parentFlow[index];
         if (
-          values.origCurrency !==
-          (JSON.parse(item.value.toString())
-            ? JSON.parse(item.value.toString()).origCurrency
-            : undefined)
+          (typeof values.origCurrency !== 'string' &&
+            values.origCurrency.displayLabel) !==
+          (JSON.parse(item.value.toString()) &&
+            JSON.parse(item.value.toString()).origCurrency)
         ) {
-          if (
-            window.confirm(
-              "This flow's foreign currency must be the same as its parked parent flow."
-            )
-          ) {
-            return;
-          } else return;
+          window.confirm(
+            "This flow's foreign currency must be the same as its parked parent flow."
+          );
+          return;
         }
       }
     }
@@ -945,16 +998,15 @@ export const FlowForm = (props: Props) => {
       for (let index = 0; index < childFlow.length; index++) {
         const item = childFlow[index];
         if (
-          JSON.parse(item.value.toString()) &&
-          values.origCurrency !== JSON.parse(item.value.toString()).origCurrency
+          (typeof values.origCurrency !== 'string' &&
+            values.origCurrency?.displayLabel) !==
+          (JSON.parse(item.value.toString()) &&
+            JSON.parse(item.value.toString()).origCurrency)
         ) {
-          if (
-            window.confirm(
-              'The child flow must have the same currency as this parked flow. Please update the child flow first before linking it to this flow.'
-            )
-          ) {
-            return;
-          } else return;
+          window.confirm(
+            'The child flow must have the same currency as this parked flow. Please update the child flow first before linking it to this flow.'
+          );
+          return;
         }
       }
     }
@@ -967,6 +1019,11 @@ export const FlowForm = (props: Props) => {
       } else setUploadFileFlag(false);
     }
     const data = normalizeFlowData(values);
+    if (submitAction === 'approve') {
+      data.isApprovedFlowVersion = true;
+    } else if (submitAction === 'reject') {
+      data.rejected = true;
+    }
     const response = await env.model.flows.validateFlow(data, {
       adding: !isEdit,
       originalFlow: {},
@@ -1025,17 +1082,50 @@ export const FlowForm = (props: Props) => {
         const path = editFlowSetting(response.id, response.versionID);
         window.open(path, '_self');
       } else {
-        try {
-          const response = await env.model.flows.updateFlow({ flow: data });
-          if (response) {
-            const path = editFlowSetting(response.id, response.versionID);
-            setAlertFlag(true);
-            setSharePath(path);
+        if (isPending && (approveFlag || rejectFlag)) {
+          if (
+            allFieldsReviewed ||
+            pendingFieldsallApplied ||
+            !pendingVersionV1
+          ) {
+            try {
+              const response = await env.model.flows.updatePendingFlow({
+                flow: data,
+              });
+              if (response) {
+                const path = editFlowSetting(response.id, response.versionID);
+                setAlertFlag(true);
+                setSharePath(path);
+              }
+            } catch (err: any) {
+              setOpenAlerts([
+                ...openAlerts,
+                { message: err.message, id: alertId },
+              ]);
+              setAlertId((prevId) => prevId + 1);
+              handleSave();
+            }
+          } else {
+            window.confirm(
+              'Some of the revised data on this flow still needs to be accepted or rejected before this update can be approved.'
+            );
           }
-        } catch (err: any) {
-          setOpenAlerts([...openAlerts, { message: err.message, id: alertId }]);
-          setAlertId((prevId) => prevId + 1);
-          handleSave();
+        } else {
+          try {
+            const response = await env.model.flows.updateFlow({ flow: data });
+            if (response) {
+              const path = editFlowSetting(response.id, response.versionID);
+              setAlertFlag(true);
+              setSharePath(path);
+            }
+          } catch (err: any) {
+            setOpenAlerts([
+              ...openAlerts,
+              { message: err.message, id: alertId },
+            ]);
+            setAlertId((prevId) => prevId + 1);
+            handleSave();
+          }
         }
       }
     }
@@ -1601,12 +1691,6 @@ export const FlowForm = (props: Props) => {
       return;
     }
 
-    // if (updateState) {
-    //   window.confirm(
-    //     'You have made changes to this flow but have selected to delete it. Click "ok" to confirm that any changes will not be saved and this flow will be deleted as is.'
-    //   );
-    // }
-
     try {
       const response = await env.model.flows.deleteFlow(params);
       const path = flows();
@@ -1645,11 +1729,20 @@ export const FlowForm = (props: Props) => {
       handleShowDestinationGoverningEntities(flowObject.length !== 0);
     }
   };
-
+  const handleParentLinkedFlow = (
+    values: any,
+    setFieldValue: any,
+    index: number
+  ) => {
+    setFieldValue(
+      'parentFlow',
+      values['parentFlow'].filter((_item: any, ind: number) => ind !== index)
+    );
+  };
   const handleChildFlow = (values: any, setFieldValue: any, index: number) => {
     setFieldValue(
       'childFlow',
-      values['childFlow'].filter((item: any, ind: number) => ind !== index)
+      values['childFlow'].filter((_item: any, ind: number) => ind !== index)
     );
   };
   const validateForm = (values: FormValues) => {
@@ -1844,10 +1937,6 @@ export const FlowForm = (props: Props) => {
             value: defaultValueParent.plans[indexPln].id,
           }
         : null;
-    // const _sourceGoverningEntities = indexEnt>-1 ? {
-    //   displayLabel: `${defaultValueParent.governingEntities[indexEnt].name}`,
-    //   value: defaultValueParent.governingEntities[indexEnt].id,
-    // } : null
     const _sourceProjects =
       indexPro > -1 && defaultValueParent.projects
         ? {
@@ -1873,7 +1962,9 @@ export const FlowForm = (props: Props) => {
   return (
     <Formik
       initialValues={initialValue}
-      onSubmit={handleSubmit}
+      onSubmit={(values, { setSubmitting }) =>
+        handleSubmit(values, values.submitAction)
+      }
       validate={(values) => validateForm(values)}
       enableReinitialize
       validateOnChange={false}
@@ -2507,6 +2598,7 @@ export const FlowForm = (props: Props) => {
                                     }`}
                                     style={{ textDecoration: 'underline' }}
                                     target="_blank"
+                                    rel="noreferrer"
                                   >
                                     #
                                     {
@@ -2575,6 +2667,11 @@ export const FlowForm = (props: Props) => {
                                 <TableCell>
                                   <C.Button
                                     onClick={() => {
+                                      handleParentLinkedFlow(
+                                        values,
+                                        setFieldValue,
+                                        index
+                                      );
                                       setShowParentFlow(false);
                                       setFieldValue(
                                         'includeChildrenOfParkedFlows',
@@ -2764,7 +2861,7 @@ export const FlowForm = (props: Props) => {
                                 setFieldValue={setFieldValue}
                               />
                             ),
-                            callback: (value: any) => {
+                            callback: (_value: any) => {
                               setShowParentFlow(true);
                               setFieldValue(
                                 'includeChildrenOfParkedFlows',
@@ -2802,10 +2899,10 @@ export const FlowForm = (props: Props) => {
                               setFieldValue={setFieldValue}
                             />
                           ),
-                          callback: (value: any) => {
-                            setShowChildFlow(isShowChildFlow + 1);
+                          callback: () => {
                             setShowWarningMessage(true);
                             setLinkCheck(true);
+                            setShowChildFlow(isShowChildFlow + 1);
                           },
                         });
                       }}
@@ -3271,7 +3368,7 @@ export const FlowForm = (props: Props) => {
                 </C.FormSection>
               </StyledFullSection>
             )}
-            {initialValue.inactiveReason === 'Pending review' && (
+            {isPending && pendingVersionV1 && (
               <div style={{ float: 'right', marginRight: 25 }}>
                 <StyledFormButton
                   onClick={() => {
@@ -3314,12 +3411,70 @@ export const FlowForm = (props: Props) => {
               </div>
             )}
             <StyledDiv>
-              {!readOnly && (
-                <C.ButtonSubmit
-                  color="primary"
-                  text={isEdit ? 'Save' : 'Create'}
-                  onClick={() => handleAlert(values)}
-                />
+              {!readOnly && !isPending && (
+                <>
+                  <C.ButtonSubmit
+                    color="secondary"
+                    text={
+                      isCancelled || canReactive
+                        ? 'Reactive'
+                        : isEdit
+                        ? 'Save & View All'
+                        : 'Create & View All'
+                    }
+                    name="submitAction"
+                    value="saveall"
+                    onClick={() => {
+                      handleAlert(values);
+                      setApproveFlag(false);
+                      setRejectFlag(false);
+                      setFieldValue('submitAction', 'save');
+                    }}
+                  />
+                  <C.ButtonSubmit
+                    color="primary"
+                    text={
+                      isCancelled || canReactive
+                        ? 'Reactive'
+                        : isEdit
+                        ? 'Save'
+                        : 'Create'
+                    }
+                    name="submitAction"
+                    value="save"
+                    onClick={() => {
+                      handleAlert(values);
+                      setApproveFlag(false);
+                      setRejectFlag(false);
+                      setFieldValue('submitAction', 'save');
+                    }}
+                  />
+                </>
+              )}
+              {isPending && (
+                <>
+                  <C.ButtonSubmit
+                    color="primary"
+                    text={'Save & Approve'}
+                    name="submitAction"
+                    value="approve"
+                    onClick={() => {
+                      setApproveFlag(true);
+                      setFieldValue('submitAction', 'approve');
+                    }}
+                  />
+                  <C.ButtonSubmit
+                    color="primary"
+                    text={'Mark As Rejected'}
+                    name="submitAction"
+                    value="rejected"
+                    onClick={() => {
+                      setRejectFlag(true);
+                      setApproveFlag(true);
+                      setFieldValue('submitAction', 'rejected');
+                    }}
+                  />
+                </>
               )}
               {currentVersionID ? (
                 <Stack direction="row" spacing={2}>

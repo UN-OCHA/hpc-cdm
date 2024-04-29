@@ -38,6 +38,8 @@ interface Props {
         to: string;
       };
   text?: string;
+  name?: string;
+  value?: string;
   startIcon?: IconType | false;
   endIcon?: IconType | false;
   /**
@@ -59,6 +61,8 @@ const BaseButton = (props: Props) => {
     color,
     behaviour,
     text,
+    name,
+    value,
     startIcon: StartIcon,
     endIcon: EndIcon,
     displayCaret,
@@ -108,6 +112,8 @@ const BaseButton = (props: Props) => {
       className={className}
       onClick={behaviour.onClick}
       type={behaviour.type}
+      name={name}
+      value={value}
       ref={ref as React.RefObject<HTMLButtonElement>}
     >
       {contents}
