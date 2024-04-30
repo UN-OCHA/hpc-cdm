@@ -50,4 +50,7 @@ const NumberField = ({
   );
 };
 
+NumberField.defaultProps = {
+  allowNegative: false,
+};
 export default NumberField;
