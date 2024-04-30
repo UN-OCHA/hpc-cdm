@@ -38,9 +38,7 @@ const FormSection = ({
     [isLeftSection, isRightSection]
   );
   const cardInlineStyle = useMemo(
-    () => ({
-      boxShadow: '0px 2px 15px rgba(0, 0, 255, 0.5)',
-    }),
+    () => tw`shadow-[0_3px_10px_rgb(0,0,0,0.2)]`,
     []
   );
 
