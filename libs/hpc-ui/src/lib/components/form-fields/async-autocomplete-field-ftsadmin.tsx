@@ -384,7 +384,6 @@ const AsyncAutocompleteSelect = ({
     // ...field,
     ...otherProps,
     multiple: isMulti,
-    placeholder: placeholder,
     onOpen: () => {
       setOpen(true);
     },
@@ -479,6 +478,7 @@ const AsyncAutocompleteSelect = ({
         {...params}
         size="small"
         label={label}
+        placeholder={placeholder}
         required={requiered}
         InputProps={{
           ...params.InputProps,
@@ -798,7 +798,6 @@ const FormikAsyncAutocompleteSelect = ({
     ...field,
     ...otherProps,
     multiple: isMulti,
-    placeholder: placeholder,
     onOpen: () => {
       setOpen(true);
     },
@@ -888,6 +887,7 @@ const FormikAsyncAutocompleteSelect = ({
         {...params}
         size="small"
         label={label}
+        placeholder={placeholder}
         required={requiered}
         error={!!errorMsg}
         helperText={errorMsg}
