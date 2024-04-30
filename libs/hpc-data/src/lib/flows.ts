@@ -450,7 +450,10 @@ const FLOW_FILTERS = t.partial({
     restricted: t.boolean,
   }),
   flowObjectFilters: t.array(
-    t.type({ objectID: t.number, direction: t.string, objectType: t.string })
+    t.union([
+      t.type({ objectID: t.number, direction: t.string, objectType: t.string }),
+      t.partial({ inclusive: t.boolean }),
+    ])
   ),
   commitment: t.boolean,
   carryover: t.boolean,

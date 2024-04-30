@@ -314,6 +314,7 @@ export const parseFlowFilters = (
                   objectID: valueToInteger(flowObject.value),
                   direction: extractedDetails.direction,
                   objectType: extractedDetails.object,
+                  inclusive: true,
                 })),
               ];
             }
