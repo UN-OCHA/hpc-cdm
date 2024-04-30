@@ -934,6 +934,19 @@ export const FlowForm = (props: Props) => {
     values: FormValues,
     submitAction: string | undefined
   ) => {
+    if (values.childFlow) {
+      for (let i = 0; i < values.childFlow.length; i++) {
+        if (
+          values.destinationUsageYears.length >= 2 &&
+          JSON.parse(values.childFlow[i].value as string).activeStatus === true
+        ) {
+          values.flowType = {
+            displayLabel: 'Parked',
+            value: '1252',
+          };
+        }
+      }
+    }
     if (isShowParentFlow && isShowChildFlow > 0) {
       let childAmountSum = 0;
       let parentAmountSum = 0;
@@ -1075,7 +1088,6 @@ export const FlowForm = (props: Props) => {
         }
       }
     });
-
     if (flag) {
       if (!isEdit) {
         const response = await env.model.flows.createFlow({ flow: data });
@@ -1084,11 +1096,11 @@ export const FlowForm = (props: Props) => {
       } else {
         const dbFlow = await env.model.flows.getFlowREST({
           id: currentFlowID!,
-          versionId: currentVersionID && currentVersionID,
         });
         if (
           (versionData &&
-            Date.parse(versionData[versionData.length - 1].updatedTime) <
+            currentVersionID &&
+            Date.parse(versionData[currentVersionID - 1].updatedTime) <
               Date.parse(dbFlow.updatedAt)) ||
           (versionData && versionData.length < dbFlow.versions.length)
         ) {

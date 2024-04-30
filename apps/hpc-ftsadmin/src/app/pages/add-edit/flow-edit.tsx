@@ -633,6 +633,7 @@ export default (props: Props) => {
                 : ''
             }`,
             value: JSON.stringify({
+              activeStatus: value.activeStatus,
               id: value.id,
               description: value.description,
               src_org_name:
