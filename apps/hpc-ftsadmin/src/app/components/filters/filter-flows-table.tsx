@@ -207,6 +207,7 @@ export const FilterFlowsTable = (props: Props) => {
                   (s) => s.components.flowsFilter.filters.amountUSD
                 )}
                 name="amountUSD"
+                allowNegative
                 type="currency"
               />
               <C.AsyncAutocompleteSelect
