@@ -120,7 +120,6 @@ const AsyncAutocompleteSelect = ({
     ...field,
     ...otherProps,
     multiple: isMulti,
-    placeholder: placeholder,
     onOpen: () => {
       setOpen(true);
     },
@@ -164,6 +163,7 @@ const AsyncAutocompleteSelect = ({
       <StyledTextField
         {...params}
         size="small"
+        placeholder={placeholder}
         label={`${label}${required ? '*' : ''}`}
         InputProps={{
           ...params.InputProps,
