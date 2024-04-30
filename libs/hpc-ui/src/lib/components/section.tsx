@@ -62,7 +62,7 @@ const Section = ({ title, type, noGap, children }: SectionProps) => {
         />
       </SectionTitle>
 
-      <Container noGap>{children}</Container>
+      <Container noGap={noGap}>{children}</Container>
     </SectionContainer>
   );
 };
