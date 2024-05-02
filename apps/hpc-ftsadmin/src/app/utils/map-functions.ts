@@ -7,7 +7,7 @@ export const valueToInteger = (value: string | number) => {
 };
 
 export const currencyToInteger = (value: string) => {
-  return parseInt(value.replace(',', ''));
+  return parseInt(value.replace(/,/g, ''));
 };
 
 export const formValueToID = (items: Array<FormObjectValue>): number[] => {
