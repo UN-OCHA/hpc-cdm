@@ -587,6 +587,12 @@ export class Dummy {
             };
           }
         ),
+        mergeKeywords: dummyEndpoint(
+          'categories.mergeKeywords',
+          async (): Promise<categories.MergeKeywordResult> => {
+            return undefined;
+          }
+        ),
       },
       emergencies: {
         getAutocompleteEmergencies: dummyEndpoint(
@@ -1308,6 +1314,29 @@ export class Dummy {
           'organizations.deleteOrganization',
           async (): Promise<organizations.DeleteOrganizationResult> => {
             return undefined;
+          }
+        ),
+        mergeOrganizations: dummyEndpoint(
+          'organizations.mergeOrganization',
+          async (): Promise<organizations.MergeOrganizationsResult> => {
+            return {
+              id: 9093,
+              name: 'Association pour le Secours et le Développement',
+              nativeName: '',
+              abbreviation: 'ASD',
+              url: null,
+              parentID: null,
+              comments:
+                'Développement coordonne ses programmes autour de 6 domaines d’activités : • Nutrition, santé, pratiques de soins • Sécurité alimentaire et moyens d’existence • Eau, assainissement et hygiène • Plaidoyer et sensibilisation • Abris • Education',
+              verified: true,
+              notes: null,
+              active: true,
+              collectiveInd: false,
+              newOrganizationId: null,
+              createdAt: '2017-10-29T20:45:26.233Z',
+              updatedAt: '2019-05-14T12:19:16.995Z',
+              deletedAt: null,
+            };
           }
         ),
       },

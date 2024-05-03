@@ -171,6 +171,33 @@
         "delete": "Delete"
       }
     },
+    "mergeModal": {
+      "description": "Merge {entity}",
+      "mergingEntity": "Merging {entity}",
+      "receivingEntity": "Receiving {entity} ",
+      "confirmationMessage": "Are you sure you want to merge {mergingEntities} into {receivingEntity}?",
+      "formError": {
+        "mergingEntity": "This field is required, please add at least one value",
+        "receivingEntity": "This field is required"
+      },
+      "error": {
+        "conflict": "There has been a conflict while merging {entities} ",
+        "unknown": "There has been an unknown error while merging {entities} "
+      },
+      "organization": {
+        "singular": "Organization",
+        "plural": "Organizations"
+      },
+      "keyword": {
+        "singular": "Keyword",
+        "plural": "Keywords"
+      },
+      "button": {
+        "yes": "Yes",
+        "cancel": "Cancel",
+        "next": "Next"
+      }
+    },
     "pendingFlowsFilter": {
       "title": "Filters",
       "button": {
@@ -242,6 +269,7 @@
         "title": "Organizations not found",
         "info": "We were unable to load organizations"
       },
+      "addOrganization": "Add Organization",
       "sortBy": "Sort by",
       "tableSettings": {
         "title": "Table Settings",

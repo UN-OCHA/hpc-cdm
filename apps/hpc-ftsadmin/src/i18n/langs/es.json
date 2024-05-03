@@ -171,6 +171,33 @@
         "delete": "Eliminar"
       }
     },
+    "mergeModal": {
+      "description": "Fusionar {entity}",
+      "mergingEntity": "Fusionando {entity}",
+      "receivingEntity": "Entidad receptora {entity}",
+      "confirmationMessage": "¿Estás seguro de que quieres fusionar {mergingEntities} en {receivingEntity}?",
+      "formError": {
+        "mergingEntity": "Este campo es obligatorio, por favor agregue al menos un valor",
+        "receivingEntity": "Este campo es obligatorio"
+      },
+      "error": {
+        "conflict": "Se ha producido un conflicto al fusionar {entities}",
+        "unknown": "Se ha producido un error desconocido al fusionar {entities}"
+      },
+      "organization": {
+        "singular": "Organización",
+        "plural": "Organizaciones"
+      },
+      "keyword": {
+        "singular": "Palabra clave",
+        "plural": "Palabras clave"
+      },
+      "button": {
+        "yes": "Sí",
+        "cancel": "Cancelar",
+        "next": "Siguiente"
+      }
+    },
     "pendingFlowsFilter": {
       "title": "Filtros",
       "button": {
@@ -241,6 +268,7 @@
         "title": "Organizaciones no encontradas",
         "info": "No pudimos cargar las organizaciones"
       },
+      "addOrganization": "Añadir Organización",
       "sortBy": "Ordenar por",
       "tableSettings": {
         "title": "Configuración de la tabla",
