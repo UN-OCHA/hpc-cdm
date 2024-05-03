@@ -165,6 +165,7 @@
       },
       "labels": {
         "newName": "New Name",
+        "edit": "Edit",
         "save": "Save",
         "public": "Public",
         "cancel": "Cancel",

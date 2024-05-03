@@ -154,7 +154,9 @@ const EditableRow = ({
       {!isEdit ? (
         <>
           {row.name}
-          <Tooltip title="Edit">
+          <Tooltip
+            title={t.t(lang, (s) => s.components.keywordTable.labels.edit)}
+          >
             <IconButton size="small" onClick={() => setEdit(true)}>
               <EditIcon sx={keywordIconSize} />
             </IconButton>
