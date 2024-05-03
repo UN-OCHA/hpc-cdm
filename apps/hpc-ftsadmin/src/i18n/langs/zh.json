@@ -168,6 +168,7 @@
       },
       "labels": {
         "newName": "新名称",
+        "edit": "编辑",
         "save": "保存",
         "public": "公开",
         "cancel": "取消",
