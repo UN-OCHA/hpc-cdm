@@ -148,7 +148,7 @@ export const SearchFilter = ({ className, title, children }: Props) => {
         onMouseDown={(e) => handleMouseDown(e)}
         style={{ width: isOpen ? '3px' : '0px' }}
       />
-      <Tooltip title="Filters">
+      <Tooltip title={title}>
         <HideDrawerButton onClick={() => setOpen(!isOpen)} autoFocus={isOpen}>
           <ChevronLeftIcon
             sx={{
