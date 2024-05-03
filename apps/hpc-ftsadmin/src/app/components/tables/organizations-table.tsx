@@ -161,6 +161,11 @@ export default function OrganizationTable(props: OrganizationTableProps) {
           <TableRowClick
             key={`${row.id}`}
             onClick={() => navigate(paths.organization(row.id))}
+            sx={{
+              '&:hover': {
+                backgroundColor: tw`bg-unocha-primary bg-opacity-10`,
+              },
+            }}
           >
             {tableHeaders.map((column) => {
               if (!column.active) {
