@@ -37,7 +37,27 @@ type AsyncAutocompleteSelectProps = {
   error?: (metaError: string) => string | undefined;
   required?: boolean;
   allowChildrenRender?: boolean;
+  removeOptions?: Array<FormObjectValue>;
 };
+
+/** Removes FormObjectValue objects from first array if in the second array there is any FormObjectValue whose 'value' property
+ *  equals any inside the firstArray, if no second array provided, returns first array */
+const removeFormObjectValueFromFirstArray = (
+  firstArray: Array<FormObjectValue>,
+  secondArray: Array<FormObjectValue> | undefined
+) => {
+  if (secondArray) {
+    return firstArray.filter(
+      (firstArrayObject) =>
+        !secondArray.some(
+          (secondArrayObject) =>
+            firstArrayObject.value === secondArrayObject.value
+        )
+    );
+  }
+  return firstArray;
+};
+
 const AsyncAutocompleteSelect = ({
   name,
   label,
@@ -48,6 +68,7 @@ const AsyncAutocompleteSelect = ({
   isAutocompleteAPI,
   required,
   allowChildrenRender,
+  removeOptions,
   ...otherProps
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
@@ -88,7 +109,7 @@ const AsyncAutocompleteSelect = ({
         const response = await fnPromise({
           query: inputValue,
         });
-        setData(response);
+        setData(removeFormObjectValueFromFirstArray(response, removeOptions));
         if (active) {
           setOptions(response);
         }
@@ -165,6 +186,11 @@ const AsyncAutocompleteSelect = ({
         size="small"
         placeholder={placeholder}
         label={`${label}${required ? '*' : ''}`}
+        inputProps={{
+          ...params.inputProps,
+          /** Needed to support native <input /> required on 'multiple' autocomplete select */
+          required: isMulti && required ? field.value.length === 0 : undefined,
+        }}
         InputProps={{
           ...params.InputProps,
           endAdornment: (

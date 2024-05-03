@@ -580,6 +580,12 @@ export class LiveModel implements Model {
           },
           resultType: categories.CATEGORY,
         }),
+      mergeKeywords: (params) =>
+        this.call({
+          pathname: `v2/category/merge/${params.receivingKeywordID}/${params.mergingKeywordID}`,
+          method: 'GET',
+          resultType: categories.MERGE_KEYWORD_RESULT,
+        }),
     };
   }
   get emergencies(): emergencies.Model {
@@ -893,6 +899,16 @@ export class LiveModel implements Model {
           pathname: `/v1/organization/delete/${params.id}`,
           method: 'POST',
           resultType: organizations.DELETE_ORGANIZATION_RESULT,
+        }),
+      mergeOrganizations: (params) =>
+        this.call({
+          pathname: `/v1/organization/merge/${params.fromOrganizationIds.organizationId}`,
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: organizations.ORGANIZATION,
         }),
     };
   }
