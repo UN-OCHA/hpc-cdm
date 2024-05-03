@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Chip,
   IconButton,
@@ -53,13 +52,12 @@ import {
   TableHeaderButton,
   TableRowClick,
   TopRowContainer,
-  handleTableSettingsInfoClose,
 } from './table-utils';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { util } from '@unocha/hpc-core';
 import { FlowsFilterValues } from '../filters/filter-flows-table';
 import NoResultTable from './no-result';
 import { editFlowSetting } from '../../paths';
+import InfoAlert from '../info-alert';
 
 export interface FlowsTableProps {
   headers: TableHeadersProps<FlowHeaderID>[];
@@ -73,16 +71,17 @@ export interface FlowsTableProps {
 
 export default function FlowsTable(props: FlowsTableProps) {
   const env = getEnv();
+
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
+
   const filters = decodeFilters(props.query.filters, props.initialValues);
   const tableFilters = parseFormFilters(filters, props.initialValues);
+  const parsedFilters = parseFlowFilters(tableFilters, props.pending);
+
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
-  const [tableInfoDisplay, setTableInfoDisplay] = useState(
-    util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
-  );
-  const parsedFilters = parseFlowFilters(tableFilters, props.pending);
+
   const [state, load] = useDataLoader([query], () =>
     env.model.flows.searchFlows({
       limit: query.rowsPerPage,
@@ -94,6 +93,7 @@ export default function FlowsTable(props: FlowsTableProps) {
       nextPageCursor: query.nextPageCursor,
     })
   );
+
   const handleChipDelete = <T extends FilterKey>(fieldName: T) => {
     if (isKey(filters, fieldName)) {
       filters[fieldName] = undefined;
@@ -859,24 +859,15 @@ export default function FlowsTable(props: FlowsTableProps) {
                             height: 'fit-content',
                           }}
                           children={
-                            <Alert
-                              severity="info"
-                              onClose={() =>
-                                handleTableSettingsInfoClose(
-                                  setTableInfoDisplay
-                                )
-                              }
-                              sx={{
-                                display: tableInfoDisplay ? 'flex' : 'none',
-                                ...tw`mx-8 mt-4`,
-                              }}
-                            >
-                              {t.t(
+                            <InfoAlert
+                              text={t.t(
                                 lang,
                                 (s) =>
                                   s.components.flowsTable.tableSettings.info
                               )}
-                            </Alert>
+                              localStorageKey="tableSettings"
+                              sxProps={tw`mx-8 mt-4`}
+                            />
                           }
                         />
                       </Box>
