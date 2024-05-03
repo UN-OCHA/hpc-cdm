@@ -172,6 +172,33 @@
         "delete": "حذف"
       }
     },
+    "mergeModal": {
+      "description": "دمج {entity}",
+      "mergingEntity": "دمج {entity}",
+      "receivingEntity": "استلام {entity} ",
+      "confirmationMessage": "هل أنت متأكد أنك تريد دمج {mergingEntities} في {receivingEntity}؟",
+      "formError": {
+        "mergingEntity": "هذا الحقل مطلوب، يرجى إضافة قيمة واحدة على الأقل",
+        "receivingEntity": "هذا الحقل مطلوب"
+      },
+      "error": {
+        "conflict": "حدث تضارب أثناء دمج {entities} ",
+        "unknown": "حدث خطأ غير معروف أثناء دمج {entities} "
+      },
+      "organization": {
+        "singular": "منظمة",
+        "plural": "منظمات"
+      },
+      "keyword": {
+        "singular": "كلمة مفتاحية",
+        "plural": "كلمات مفتاحية"
+      },
+      "button": {
+        "yes": "نعم",
+        "cancel": "إلغاء",
+        "next": "التالي"
+      }
+    },
     "pendingFlowsFilter": {
       "title": "المرشحات",
       "button": {
@@ -242,6 +269,7 @@
         "title": "لم يتم العثور على منظمات",
         "info": "لم نتمكن من تحميل المنظمات"
       },
+      "addOrganization": "+ المنظمة",
       "sortBy": "ترتيب حسب",
       "tableSettings": {
         "title": "إعدادات الجدول",
