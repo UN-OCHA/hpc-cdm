@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { combineClasses } from '../classes';
 import { styled } from '../theme';
 import Caret from '../assets/icons/caret';
+import { CircularProgress } from '@mui/material';
 
 const CLS = {
   ACTIVE: 'active',
@@ -47,6 +48,10 @@ interface Props {
    */
   displayCaret?: boolean;
   /**
+   * If true, add a loading icon
+   */
+  displayLoading?: boolean;
+  /**
    * If true, set the styling of this button to "active",
    * similar visually to hover of focus styling.
    */
@@ -64,6 +69,7 @@ const BaseButton = (props: Props) => {
     startIcon: StartIcon,
     endIcon: EndIcon,
     displayCaret,
+    displayLoading,
     active,
     condensed,
     autoFocus,
@@ -93,6 +99,7 @@ const BaseButton = (props: Props) => {
       {children && <span>{children}</span>}
       {EndIcon && <EndIcon size={16} />}
       {displayCaret && <Caret direction="end" size={16} />}
+      {displayLoading && <CircularProgress size={16} color="inherit" />}
     </>
   );
 
