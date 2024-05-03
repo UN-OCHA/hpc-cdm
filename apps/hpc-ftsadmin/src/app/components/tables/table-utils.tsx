@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import tw from 'twin.macro';
 import { LanguageKey, t } from '../../../i18n';
 import {
@@ -12,8 +11,6 @@ import EllipsisText from '../../utils/ellipsis-text';
 import { Chip, IconButton, TableRow, Tooltip } from '@mui/material';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import { C } from '@unocha/hpc-ui';
-import { util } from '@unocha/hpc-core';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { FLOWS_FILTER_INITIAL_VALUES } from '../filters/filter-flows-table';
 import { ORGANIZATIONS_FILTER_INITIAL_VALUES } from '../filters/filter-organization-table';
 import { PENDING_FLOWS_FILTER_INITIAL_VALUES } from '../filters/filter-pending-flows-table';
@@ -193,12 +190,4 @@ export const RenderChipsRow = ({
     );
   }
   return chipList;
-};
-
-/** Handle function to control the information text in the Draggable List components of tables */
-export const handleTableSettingsInfoClose = (
-  setTableInfoDisplay: React.Dispatch<React.SetStateAction<boolean | undefined>>
-) => {
-  util.setLocalStorageItem<LocalStorageSchema>('tableSettings', false);
-  setTableInfoDisplay(false);
 };

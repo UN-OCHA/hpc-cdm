@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   IconButton,
   Modal,
@@ -41,15 +40,13 @@ import {
   StyledLoader,
   TableHeaderButton,
   TopRowContainer,
-  handleTableSettingsInfoClose,
 } from './table-utils';
 import tw from 'twin.macro';
 
 import { Form, Formik } from 'formik';
-import { util } from '@unocha/hpc-core';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { Strings } from '../../../i18n/iface';
-import { MergeModal } from '../merge-modal';
+import MergeModal from '../merge-modal';
+import InfoAlert from '../info-alert';
 
 export type KeywordQuery = {
   orderBy: string;
@@ -248,9 +245,6 @@ export default function KeywordTable(props: KeywordTableProps) {
   const [entityEdited, setEntityEdited] = useState(false);
   const state = dataLoader([entityEdited], () =>
     env.model.categories.getKeywords()
-  );
-  const [tableInfoDisplay, setTableInfoDisplay] = useState(
-    util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
   const [error, setError] = useState<{
     code: keyof Strings['components']['keywordTable']['errors'];
@@ -553,23 +547,14 @@ export default function KeywordTable(props: KeywordTableProps) {
                           height: 'fit-content',
                         }}
                         children={
-                          <Alert
-                            severity="info"
-                            onClose={() =>
-                              handleTableSettingsInfoClose(setTableInfoDisplay)
-                            }
-                            sx={{
-                              display: tableInfoDisplay ? 'flex' : 'none',
-                              ...tw`mx-8 mt-4`,
-                            }}
-                          >
-                            {t.t(
+                          <InfoAlert
+                            text={t.t(
                               lang,
-                              (s) =>
-                                s.components.organizationTable.tableSettings
-                                  .info
+                              (s) => s.components.flowsTable.tableSettings.info
                             )}
-                          </Alert>
+                            localStorageKey="tableSettings"
+                            sxProps={tw`mx-8 mt-4`}
+                          />
                         }
                       />
                     </Box>
