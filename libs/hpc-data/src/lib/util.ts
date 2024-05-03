@@ -144,6 +144,22 @@ export const NON_EMPTY_ARRAY = new t.Type<Array<unknown>, Array<unknown>>(
 );
 
 /**
+ * Accepts any value except null.
+ */
+export const NON_NULL_VALUE = new t.Type<unknown, unknown>(
+  'NON_NULL_VALUE',
+  t.unknown.is,
+  (v, c) => {
+    if (v === null) {
+      return t.failure(v, c);
+    } else {
+      return t.success(v);
+    }
+  },
+  t.identity
+);
+
+/**
  * Accepts either an integer array, or a string of comma separated integers.
  */
 export const INTEGER_ARRAY_FROM_STRING = new t.Type<number[], number[]>(

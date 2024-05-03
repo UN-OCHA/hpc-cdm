@@ -79,9 +79,19 @@ export type DeleteKeywordParams = t.TypeOf<typeof DELETE_KEYWORD_PARAMS>;
 export const DELETE_KEYWORD_RESULT = t.undefined;
 export type DeleteKeywordResult = t.TypeOf<typeof DELETE_KEYWORD_RESULT>;
 
+export const MERGE_KEYWORDS_PARAMS = t.type({
+  receivingKeywordID: t.number,
+  mergingKeywordID: t.number,
+});
+export type MergeKeywordParams = t.TypeOf<typeof MERGE_KEYWORDS_PARAMS>;
+
+export const MERGE_KEYWORD_RESULT = t.undefined;
+export type MergeKeywordResult = t.TypeOf<typeof MERGE_KEYWORD_RESULT>;
+
 export interface Model {
   getCategories(params: GetCategoriesParams): Promise<GetCategoriesResult>;
   getKeywords(): Promise<GetKeywordsResult>;
   deleteKeyword(params: DeleteKeywordParams): Promise<DeleteKeywordResult>;
   updateKeyword(params: Keyword): Promise<Category>;
+  mergeKeywords(params: MergeKeywordParams): Promise<MergeKeywordResult>;
 }

@@ -50,6 +50,7 @@ import { util } from '@unocha/hpc-core';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { Strings } from '../../../i18n/iface';
 import { parseError } from '../../utils/map-functions';
+import { MergeModal } from '../merge-modal';
 
 export type KeywordQuery = {
   orderBy: string;
@@ -470,6 +471,7 @@ export default function KeywordTable(props: KeywordTableProps) {
               />
               <ChipDiv>
                 <TopRowContainer>
+                  <MergeModal type="keyword" />
                   <TableHeaderButton
                     size="small"
                     onClick={() => setOpenSettings(!openSettings)}

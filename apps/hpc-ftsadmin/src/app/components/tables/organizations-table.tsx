@@ -47,13 +47,18 @@ import {
   TopRowContainer,
   handleTableSettingsInfoClose,
 } from './table-utils';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as paths from '../../paths';
 import { util } from '@unocha/hpc-core';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
 import tw from 'twin.macro';
 import NoResultTable from './no-result';
+import { MergeModal } from '../merge-modal';
 
+const ButtonWrapper = tw.div`
+  self-center
+  me-4
+`;
 export interface OrganizationTableProps {
   headers: TableHeadersProps<OrganizationHeaderID>[];
   initialValues: OrganizationFilterValues;
@@ -100,7 +105,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_: unknown, newPage: number) => {
     setQuery({
       ...query,
       page: newPage,
@@ -388,12 +393,17 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                     handleChipDelete={handleChipDelete}
                   />
                   <TopRowContainer>
-                    <Link
-                      style={{ alignSelf: 'center' }}
-                      to={paths.addOrganization()}
-                    >
-                      Add Organization
-                    </Link>
+                    <ButtonWrapper>
+                      <C.ButtonLink
+                        to={paths.addOrganization()}
+                        text={t.t(
+                          lang,
+                          (s) => s.components.organizationTable.addOrganization
+                        )}
+                        color="neutral"
+                      />
+                    </ButtonWrapper>
+                    <MergeModal type="organization" />
                     <TableHeaderButton
                       size="small"
                       onClick={() => setOpenSettings(!openSettings)}
