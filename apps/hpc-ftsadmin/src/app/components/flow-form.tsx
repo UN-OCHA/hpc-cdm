@@ -44,9 +44,10 @@ import {
   flows as flowsResponse,
 } from '@unocha/hpc-data';
 import { getEnv } from '../context';
-import { editFlowSetting } from '../paths';
+import { editFlowSetting, copyFlow } from '../paths';
 import { flows } from '../paths';
 import Link from '@mui/material/Link';
+import { useNavigate } from 'react-router-dom';
 import { id } from 'fp-ts/lib/Refinement';
 
 export type AutoCompleteSelectionType = forms.InputSelectValueType;
@@ -718,6 +719,8 @@ export const FlowForm = (props: Props) => {
                     url: item.reportUrl,
                   },
                 ]
+              : item.reportFiles
+              ? item.reportFiles
               : [],
 
           reportChannel: {
@@ -1154,6 +1157,19 @@ export const FlowForm = (props: Props) => {
             }
           }
         }
+      }
+    }
+  };
+  const navigate = useNavigate();
+  const handleCopy = (values: FormValues) => {
+    if (currentFlowID && currentVersionID) {
+      const isCopy = true;
+      const path = copyFlow();
+      if (typeof path === 'string') {
+        const valuesWithFiles = { ...values, isCopy };
+        navigate(path, { state: valuesWithFiles });
+      } else {
+        console.error('Path is not a string', path);
       }
     }
   };
@@ -3519,7 +3535,11 @@ export const FlowForm = (props: Props) => {
                       Delete
                     </Button>
                   )}
-                  <Button variant="outlined" startIcon={<ContentCopyIcon />}>
+                  <Button
+                    variant="outlined"
+                    startIcon={<ContentCopyIcon />}
+                    onClick={() => handleCopy(values)}
+                  >
                     COPY
                   </Button>
                 </Stack>

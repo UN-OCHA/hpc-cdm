@@ -40,6 +40,7 @@ export const addOrganization = () => replacePlaceholders(ADD_ORGANIZATION, {});
 export const keywords = () => replacePlaceholders(KEYWORDS, {});
 
 export const newFlow = () => replacePlaceholders(NEW_FLOW, {});
+export const copyFlow = () => replacePlaceholders(NEW_FLOW, {});
 
 export const editFlowSetting = (flowId: number, versionId: number) =>
   replacePlaceholders(EDIT_FLOW, {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { Tooltip, TooltipProps, tooltipClasses } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import dayjs from 'dayjs';
@@ -948,7 +948,7 @@ export default (props: Props) => {
         sourceSystemRecordId: detail.sourceID ?? '',
         reportFiles: (detail?.reportFiles ?? []).reduce(
           (refileData: ReportFileType[], fileData) => {
-            if (fileData.type === 'file') {
+            if (fileData.type !== 'url') {
               refileData.push({
                 title: fileData.title,
                 fileName: fileData.fileAssetEntity.originalname,
@@ -966,10 +966,10 @@ export default (props: Props) => {
           detail.reportFiles &&
           (detail.reportFiles.length > 1
             ? (detail.reportFiles as ReportFileType[]).filter(
-                (fileData) => fileData.type === 'file'
+                (fileData) => fileData.type !== 'url'
               )[0]?.title
             : detail.reportFiles.filter(
-                (fileData) => fileData.type === 'file'
+                (fileData) => fileData.type !== 'url'
               )[0]?.title),
         reportUrlTitle:
           detail.reportFiles &&
@@ -985,10 +985,10 @@ export default (props: Props) => {
           detail.reportFiles &&
           (detail.reportFiles.length > 1
             ? (detail.reportFiles as ReportFileType[]).filter(
-                (fileData) => fileData.type === 'file'
+                (fileData) => fileData.type !== 'url'
               )[0]?.fileAssetEntity
             : detail.reportFiles.filter(
-                (fileData) => fileData.type === 'file'
+                (fileData) => fileData.type !== 'url'
               )[0]?.fileAssetEntity),
       }));
       const prevReportDetails = state.data.reduce(
@@ -1017,7 +1017,7 @@ export default (props: Props) => {
                 sourceSystemRecordId: detail.sourceID ?? '',
                 reportFiles: (detail?.reportFiles ?? []).reduce(
                   (refileData: ReportFileType[], fileData) => {
-                    if (fileData.type === 'file') {
+                    if (fileData.type !== 'url') {
                       refileData.push({
                         title: fileData.title,
                         fileName: fileData.fileAssetEntity.originalname,
@@ -1035,10 +1035,10 @@ export default (props: Props) => {
                   detail.reportFiles &&
                   (detail.reportFiles.length > 1
                     ? (detail.reportFiles as ReportFileType[]).filter(
-                        (fileData) => fileData.type === 'file'
+                        (fileData) => fileData.type !== 'url'
                       )[0]?.title
                     : detail.reportFiles.filter(
-                        (fileData) => fileData.type === 'file'
+                        (fileData) => fileData.type !== 'url'
                       )[0]?.title),
                 reportUrlTitle:
                   detail.reportFiles &&
@@ -1582,6 +1582,8 @@ export default (props: Props) => {
       }
     }
   }, [inputEntries]);
+  const location = useLocation();
+  const copyValues = location.state;
 
   return (
     <AppContext.Consumer>
@@ -1766,7 +1768,7 @@ export default (props: Props) => {
                   <FlowForm
                     environment={env}
                     isEdit={props.isEdit}
-                    initialValue={flowData}
+                    initialValue={copyValues?.isCopy ? copyValues : flowData}
                     prevDetails={previousReportDetails}
                     versionData={versionData}
                     isRestricted={isRestricted}

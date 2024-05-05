@@ -228,6 +228,10 @@ export const App = () => {
                           }
                         />
                         <Route
+                          path={paths.copyFlow()}
+                          element={<FlowEdit key="copy-flow-route" isEdit />}
+                        />
+                        <Route
                           path={paths.editFlow()}
                           element={<FlowEdit key="edit-flow-route" isEdit />}
                         />
