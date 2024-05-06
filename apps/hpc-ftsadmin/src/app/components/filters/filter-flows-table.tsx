@@ -78,7 +78,7 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   destinationPlans: [],
   destinationGlobalClusters: [],
   destinationEmergencies: [],
-  includeChildrenOfParkedFlows: false,
+  includeChildrenOfParkedFlows: true,
   restricted: false,
 };
 
