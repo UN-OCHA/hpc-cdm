@@ -56,7 +56,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../paths';
 import { util } from '@unocha/hpc-core';
-import { FlowsFilterValues } from '../filters/filter-flows-table';
+import {
+  FLOWS_FILTER_INITIAL_VALUES,
+  FlowsFilterValues,
+} from '../filters/filter-flows-table';
 import NoResultTable from './no-result';
 import InfoAlert from '../info-alert';
 
@@ -75,6 +78,7 @@ export default function FlowsTable(props: FlowsTableProps) {
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
   const filters = decodeFilters(props.query.filters, props.initialValues);
+  console.log(props.query.filters);
   const tableFilters = parseFormFilters(filters, props.initialValues);
   const parsedFilters = parseFlowFilters(tableFilters, props.pending);
   const [query, setQuery] = [props.query, props.setQuery];
@@ -733,6 +737,11 @@ export default function FlowsTable(props: FlowsTableProps) {
     return <TableComponent lang={lang} data={data} />;
   };
 
+  const isFlowFilterValueKey = (
+    key: string
+  ): key is keyof FlowsFilterValues => {
+    return Object.keys(FLOWS_FILTER_INITIAL_VALUES).includes(key);
+  };
   const isAnyFilterActive = (flowsTotal: number) => {
     if (flowsTotal === 0) {
       return false;
@@ -740,9 +749,12 @@ export default function FlowsTable(props: FlowsTableProps) {
     let key: keyof typeof tableFilters;
     for (key in tableFilters) {
       const savedKey = key;
-      const val = tableFilters[savedKey];
-      //  Flow Active Status is active by default, but we will not consider as an applied filter
-      if (val && savedKey !== 'flowActiveStatus') {
+      const val = tableFilters[savedKey]?.value;
+      if (
+        isFlowFilterValueKey(savedKey) &&
+        JSON.stringify(val) !==
+          JSON.stringify(FLOWS_FILTER_INITIAL_VALUES[savedKey])
+      ) {
         return true;
       }
     }
