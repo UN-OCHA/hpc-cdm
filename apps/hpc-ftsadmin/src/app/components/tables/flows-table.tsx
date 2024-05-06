@@ -80,6 +80,7 @@ export default function FlowsTable(props: FlowsTableProps) {
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
   const filters = decodeFilters(props.query.filters, props.initialValues);
+  console.log(props.query.filters);
   const tableFilters = parseFormFilters(filters, props.initialValues);
   const parsedFilters = parseFlowFilters(tableFilters, props.pending);
   const [query, setQuery] = [props.query, props.setQuery];
