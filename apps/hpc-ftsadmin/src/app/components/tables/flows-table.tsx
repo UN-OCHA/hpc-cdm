@@ -414,7 +414,10 @@ export default function FlowsTable(props: FlowsTableProps) {
                       data-test="flows-table-plans"
                     >
                       {row.plans?.length
-                        ? row.plans.map((plan) => plan.name).join(', ')
+                        ? row.plans
+                            .filter((plan) => plan.direction === 'destination')
+                            .map((plan) => plan.name)
+                            .join(', ')
                         : '--'}
                     </TableCell>
                   );
