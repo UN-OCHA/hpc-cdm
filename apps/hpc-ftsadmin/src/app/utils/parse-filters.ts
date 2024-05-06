@@ -129,7 +129,8 @@ const parseInInitialValues = <T extends Filters>(
   initialValues: T
 ) => {
   for (const key in initialValues) {
-    filters[key] = filters[key] ? filters[key] : initialValues[key];
+    filters[key] =
+      filters[key] !== undefined ? filters[key] : initialValues[key];
   }
   return filters;
 };
