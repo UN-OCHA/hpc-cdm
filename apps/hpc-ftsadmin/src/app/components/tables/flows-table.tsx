@@ -173,7 +173,7 @@ export default function FlowsTable(props: FlowsTableProps) {
             .replace('{organization}', org.name)
             .replace(
               '{date}',
-              Intl.DateTimeFormat().format(new Date(rd[0].date))
+              Intl.DateTimeFormat('en-GB').format(new Date(rd[0].date))
             )
             .replace('{channel}', rd[0].channel)}
         >
@@ -297,7 +297,9 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-updated"
                     >
-                      {Intl.DateTimeFormat().format(new Date(row.updatedAt))}
+                      {Intl.DateTimeFormat('en-GB').format(
+                        new Date(row.updatedAt)
+                      )}
                     </TableCell>
                   );
                 case 'externalReference.systemID':
@@ -523,7 +525,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       data-test="flows-table-decisionDate"
                     >
                       {row.decisionDate
-                        ? Intl.DateTimeFormat().format(
+                        ? Intl.DateTimeFormat('en-GB').format(
                             new Date(row.decisionDate)
                           )
                         : '--'}
@@ -547,7 +549,9 @@ export default function FlowsTable(props: FlowsTableProps) {
                       data-test="flows-table-flowDate"
                     >
                       {row.flowDate
-                        ? Intl.DateTimeFormat().format(new Date(row.flowDate))
+                        ? Intl.DateTimeFormat('en-GB').format(
+                            new Date(row.flowDate)
+                          )
                         : '--'}
                     </TableCell>
                   );
