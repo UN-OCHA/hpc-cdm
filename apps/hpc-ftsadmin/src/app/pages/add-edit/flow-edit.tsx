@@ -107,7 +107,7 @@ const initialFormData = {
   flowStatus: '',
   flowType: { value: 133, displayLabel: 'Standard' },
   flowDescription: '',
-  firstReported: dayjs().format('MM/DD/YYYY'),
+  firstReported: dayjs(),
   decisionDate: null,
   budgetYear: '',
   flowDate: '',
@@ -1766,6 +1766,7 @@ export default (props: Props) => {
                 </C.PageTitle>
                 {isSetupInitialValue && (
                   <FlowForm
+                    currentVersionData={flowDetail}
                     environment={env}
                     isEdit={props.isEdit}
                     initialValue={copyValues?.isCopy ? copyValues : flowData}

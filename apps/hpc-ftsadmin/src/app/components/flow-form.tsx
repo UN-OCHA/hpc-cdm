@@ -19,7 +19,7 @@ import Stack from '@mui/material/Stack';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import MuiAlert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import _, { values } from 'lodash';
+import _, { set, values } from 'lodash';
 import useSharePath from './Hooks/SharePath';
 import { C, dialogs } from '@unocha/hpc-ui';
 import {
@@ -120,7 +120,8 @@ export interface FormValues {
   earmarkingType: AutoCompleteSelectionType | '';
   method: AutoCompleteSelectionType | '';
   beneficiaryGroup: AutoCompleteSelectionType | '';
-  inactiveReason: string;
+  inactiveReason: any[] | string;
+  childMethod: object;
   origCurrency: AutoCompleteSelectionType | string;
   amountOriginal: number | null;
   exchangeRateUsed: number | null;
@@ -245,6 +246,7 @@ const validationSchema = t.type({
 });
 
 interface Props {
+  currentVersionData: flowsResponse.FlowREST | null;
   environment: Environment;
   isEdit: boolean;
   initialValue: FormValues;
@@ -266,8 +268,8 @@ interface Props {
   isNewPending?: boolean;
   isUpdatePending?: boolean;
   canReactive?: boolean;
-  isErrorCorrection?: boolean;
-  isApprovedFlowVersion?: boolean;
+  isErrorCorrection?: boolean | null;
+  isApprovedFlowVersion?: boolean | null;
   pendingFieldsallApplied?: boolean;
   allFieldsReviewed?: boolean;
   pendingVersionV1?: boolean;
@@ -445,6 +447,7 @@ let parentValue = '';
 
 export const FlowForm = (props: Props) => {
   const {
+    currentVersionData,
     environment,
     initialValue,
     isEdit,
@@ -520,15 +523,19 @@ export const FlowForm = (props: Props) => {
       data.pendingStatus,
       data.earmarking,
     ].filter((category) => category !== undefined);
-
     data.categories = data.categories
       .map((value: any) => {
         if (value && value.id) {
           return value.id;
+        } else if (value[0]) {
+          return value[0].id;
         }
       })
       .filter(function (value: any) {
         return value;
+      })
+      .map((value: any) => {
+        return parseInt(value);
       });
 
     return data;
@@ -619,16 +626,17 @@ export const FlowForm = (props: Props) => {
       decisionDate: values.decisionDate,
       firstReportedDate: values.firstReported,
       budgetYear: values.budgetYear,
-      origAmount: values.amountOriginal,
+      origAmount: values.amountOriginal ? values.amountOriginal : null,
       origCurrency: (values.origCurrency as AutoCompleteSelectionType)
-        .displayLabel,
-      exchangeRate: values.exchangeRateUsed,
+        ? (values.origCurrency as AutoCompleteSelectionType)?.displayLabel
+        : null,
+      exchangeRate: values.exchangeRateUsed ? values.exchangeRateUsed : null,
       activeStatus: true,
       restricted: false,
       newMoney: true,
       description: values.flowDescription,
-      versionStartDate: '',
-      versionEndDate: '',
+      versionStartDate: currentVersionData?.versionStartDate,
+      versionEndDate: currentVersionData?.versionEndDate,
       flowObjects: collapseFlowObjects(fundingObject),
       children:
         values.childFlow &&
@@ -733,44 +741,68 @@ export const FlowForm = (props: Props) => {
       flowType: {
         id: values.flowType && values.flowType.value,
         name: values.flowType && values.flowType.displayLabel,
+        group: 'flowType',
       },
       keywords: values.keywords.map((item) => ({
         id: item.value,
         name: item.displayLabel,
+        group: 'keywords',
       })),
       flowStatuses: {
         id: values.flowStatus && values.flowStatus.value,
         name: values.flowStatus && values.flowStatus.displayLabel,
+        group: 'flowStatus',
       },
       contributionTypes: {
         id: values.contributionType && values.contributionType.value,
         name: values.contributionType && values.contributionType.displayLabel,
+        group: 'contributionType',
       },
       method: {
         id: values.method && values.method.value,
         name: values.method && values.method.displayLabel,
+        group: 'method',
       },
       earmarking: values.earmarkingType
         ? {
             id: values.earmarkingType.value,
             name: values.earmarkingType.displayLabel,
+            group: 'earmarkingType',
           }
         : null,
-      categories: [],
-      isCancellation: isPending && null,
+      categories: [] as (string | number)[],
+      isCancellation: isPending ? true : !isPending ? false : null,
       cancelled: isPending && isCancellation ? true : null,
-      pendingStatus: isPending && [],
-      planEntities: isPending && [],
-      planIndicated: isPending && [],
-      isApprovedFlowVersion: rejectFlag && approveFlag ? true : false,
-      inactiveReason:
-        isPending && isCancelled
-          ? 'Cancelled'
-          : isSuperseded
-          ? 'Superseded'
-          : [],
-      isErrorCorrection: isSuperseded ? true : isPending ? true : false,
-      rejected: rejectFlag ? true : false,
+      pendingStatus: isPending ? true : !isPending ? false : [],
+      planEntities: isPending ? true : !isPending ? false : [],
+      planIndicated: isPending ? true : !isPending ? false : [],
+      isApprovedFlowVersion:
+        rejectFlag && approveFlag
+          ? true
+          : !(rejectFlag && approveFlag)
+          ? false
+          : null,
+      inactiveReason: [
+        {
+          id: null as null | number | string,
+          name: '' as string | undefined,
+          description: null,
+          parentID: null,
+          code: null,
+          group: '',
+          includeTotals: null,
+          createdAt: '',
+          updatedAt: '',
+        },
+      ],
+      isErrorCorrection: isSuperseded
+        ? true
+        : isPending
+        ? true
+        : !isSuperseded && isPending
+        ? false
+        : null,
+      rejected: rejectFlag ? true : !rejectFlag ? false : null,
       versions:
         versionData &&
         versionData.map((item: VersionDataType) => {
@@ -778,7 +810,8 @@ export const FlowForm = (props: Props) => {
             id: item.flowId,
             versionID: item.versionId,
             activeStatus: item.activeStatus,
-            isPending: item.isPending,
+            isPending: item.isPending ? item.isPending : false,
+            isCancelled: item.isCancelled ? item.isCancelled : false,
           };
           return items;
         }),
@@ -789,9 +822,12 @@ export const FlowForm = (props: Props) => {
     return data;
   };
 
+  const [parentCurrencyFlag, setParentCurrencyFlag] = useState<boolean>(false);
+  const [childCurrencyFlag, setChildCurrencyFlag] = useState<boolean>(false);
   const [approveFlag, setApproveFlag] = useState<boolean>(false);
   const [rejectFlag, setRejectFlag] = useState<boolean>(false);
   const [validationFlag, setValidationFlag] = useState<boolean>(false);
+  const [inactiveFlag, setInactiveFlag] = useState<boolean>(false);
   const [uploadedFileArray, setUploadedFileArray] = useState<UploadedItem[]>([
     {},
   ]);
@@ -997,15 +1033,23 @@ export const FlowForm = (props: Props) => {
       for (let index = 0; index < parentFlow.length; index++) {
         const item = parentFlow[index];
         if (
-          (typeof values.origCurrency !== 'string' &&
-            values.origCurrency.displayLabel) !==
-          (JSON.parse(item.value.toString()) &&
-            JSON.parse(item.value.toString()).origCurrency)
+          (typeof values?.origCurrency !== 'string' &&
+            values.origCurrency?.displayLabel) ||
+          !(
+            JSON.parse(item.value.toString()) &&
+            JSON.parse(item.value.toString())?.origCurrency === null
+          )
         ) {
-          window.confirm(
-            "This flow's foreign currency must be the same as its parked parent flow."
-          );
-          return;
+          if (
+            (typeof values?.origCurrency !== 'string' &&
+              values.origCurrency?.displayLabel) !==
+            (JSON.parse(item.value.toString()) &&
+              JSON.parse(item.value.toString())?.origCurrency)
+          ) {
+            handleSave();
+            setParentCurrencyFlag(true);
+            return;
+          }
         }
       }
     }
@@ -1014,15 +1058,23 @@ export const FlowForm = (props: Props) => {
       for (let index = 0; index < childFlow.length; index++) {
         const item = childFlow[index];
         if (
-          (typeof values.origCurrency !== 'string' &&
-            values.origCurrency?.displayLabel) !==
-          (JSON.parse(item.value.toString()) &&
-            JSON.parse(item.value.toString()).origCurrency)
+          (typeof values?.origCurrency !== 'string' &&
+            values.origCurrency?.displayLabel) ||
+          !(
+            JSON.parse(item.value.toString()) &&
+            JSON.parse(item.value.toString())?.origCurrency === null
+          )
         ) {
-          window.confirm(
-            'The child flow must have the same currency as this parked flow. Please update the child flow first before linking it to this flow.'
-          );
-          return;
+          if (
+            (typeof values.origCurrency !== 'string' &&
+              values.origCurrency?.displayLabel) !==
+            (JSON.parse(item.value.toString()) &&
+              JSON.parse(item.value.toString()).origCurrency)
+          ) {
+            handleSave();
+            setChildCurrencyFlag(true);
+            return;
+          }
         }
       }
     }
@@ -1035,10 +1087,60 @@ export const FlowForm = (props: Props) => {
       } else setUploadFileFlag(false);
     }
     const data = normalizeFlowData(values);
+    const inactiveReasons = await fetchCategory('inactiveReason')();
     if (submitAction === 'approve') {
       data.isApprovedFlowVersion = true;
-    } else if (submitAction === 'reject') {
+    } else if (submitAction === 'rejected') {
+      data.activeStatus = false;
       data.rejected = true;
+      data.inactiveReason = [
+        {
+          id:
+            inactiveReasons.find((item) => item.displayLabel === 'Rejected')
+              ?.value || null,
+          name: inactiveReasons.find((item) => item.displayLabel === 'Rejected')
+            ?.displayLabel,
+          description: null,
+          parentID: null,
+          code: null,
+          group: 'inactiveReason',
+          includeTotals: null,
+          createdAt: currentVersionData ? currentVersionData.createdAt : '',
+          updatedAt: currentVersionData ? currentVersionData.updatedAt : '',
+        },
+      ];
+    } else if (submitAction === 'inactive') {
+      if (isShowParentFlow || isShowChildFlow > 0) {
+        setInactiveFlag(true);
+      }
+      const categoryValue =
+        inactiveReasons.find((item) => item.displayLabel === 'Cancelled')
+          ?.value ?? null;
+      if (categoryValue) {
+        data.categories.push(parseInt(categoryValue.toString()));
+      }
+      data.activeStatus = false;
+      data.cancelled = true;
+      data.isCancellation = null;
+      data.rejected = null;
+      data.newMoney = false;
+      data.inactiveReason = [
+        {
+          id:
+            inactiveReasons.find((item) => item.displayLabel === 'Cancelled')
+              ?.value || null,
+          name: inactiveReasons.find(
+            (item) => item.displayLabel === 'Cancelled'
+          )?.displayLabel,
+          description: null,
+          parentID: null,
+          code: null,
+          group: 'inactiveReason',
+          includeTotals: null,
+          createdAt: currentVersionData ? currentVersionData.createdAt : '',
+          updatedAt: currentVersionData ? currentVersionData.updatedAt : '',
+        },
+      ];
     }
     const response = await env.model.flows.validateFlow(data, {
       adding: !isEdit,
@@ -1095,7 +1197,7 @@ export const FlowForm = (props: Props) => {
       if (!isEdit) {
         const response = await env.model.flows.createFlow({ flow: data });
         const path = editFlowSetting(response.id, response.versionID);
-        window.open(path, '_self');
+        //window.open(path, '_self');
       } else {
         const dbFlow = await env.model.flows.getFlowREST({
           id: currentFlowID!,
@@ -2046,6 +2148,21 @@ export const FlowForm = (props: Props) => {
               </Alert>
             ))}
             <div>
+              {inactiveFlag && (
+                <MuiAlert
+                  severity="error"
+                  style={{ marginBottom: '20px' }}
+                  onClose={() => {
+                    setInactiveFlag(false);
+                  }}
+                >
+                  <AlertTitle>Set as inactive?</AlertTitle>
+                  All linked flows must be unlinked before this flow can be
+                  cancelled. Unlink flows and choose choose flow again.
+                </MuiAlert>
+              )}
+            </div>
+            <div>
               {validationFlag && (
                 <MuiAlert
                   severity="error"
@@ -2057,6 +2174,35 @@ export const FlowForm = (props: Props) => {
                   <AlertTitle>Validation</AlertTitle>
                   Please complete all required fields marked with an asterisk
                   (*) to proceed.
+                </MuiAlert>
+              )}
+            </div>
+            <div>
+              {parentCurrencyFlag && (
+                <MuiAlert
+                  severity="error"
+                  style={{ marginBottom: '20px' }}
+                  onClose={() => {
+                    setParentCurrencyFlag(false);
+                  }}
+                >
+                  This flow's foreign currency must be the same as its parked
+                  parent flow.
+                </MuiAlert>
+              )}
+            </div>
+            <div>
+              {childCurrencyFlag && (
+                <MuiAlert
+                  severity="error"
+                  style={{ marginBottom: '20px' }}
+                  onClose={() => {
+                    setChildCurrencyFlag(false);
+                  }}
+                >
+                  The child flow must have the same currency as this parked
+                  flow. Please update the child flow first before linking it to
+                  this flow.
                 </MuiAlert>
               )}
             </div>
@@ -2679,7 +2825,7 @@ export const FlowForm = (props: Props) => {
                                   {dayjs(
                                     JSON.parse(
                                       item?.value ? item?.value.toString() : ''
-                                    ).flowDate
+                                    )
                                   ).format('MM/DD/YYYY')}
                                 </TableCell>
                                 <TableCell>
@@ -3486,6 +3632,21 @@ export const FlowForm = (props: Props) => {
                       setApproveFlag(false);
                       setRejectFlag(false);
                       setFieldValue('submitAction', 'save');
+                    }}
+                  />
+                  <C.ButtonSubmit
+                    color="primary"
+                    text={'Set as inactive'}
+                    name="submitAction"
+                    value="inactive"
+                    onClick={async () => {
+                      window.confirm(
+                        'Are you sure you want to set this flow as inactive? Any parent or child flows linked to this flow must be unlinked before the flow can be set as inactive.'
+                      );
+                      handleAlert(values);
+                      setApproveFlag(false);
+                      setRejectFlag(false);
+                      setFieldValue('submitAction', 'inactive');
                     }}
                   />
                 </>
