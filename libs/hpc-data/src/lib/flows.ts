@@ -159,7 +159,15 @@ export const FLOW_EXTERNAL_REFERENCE = t.intersection([
 export type FlowExternalReference = t.TypeOf<typeof FLOW_EXTERNAL_REFERENCE>;
 
 export const FLOW_EXTERNAL_DATA = t.type({
+  createdAt: t.string,
+  externalRefDate: t.null,
+  externalRefID: t.null,
+  flowID: t.number,
   id: t.number,
+  matched: t.boolean,
+  systemID: t.string,
+  updatedAt: t.string,
+  versionID: t.number,
   data: t.string,
   objectType: t.string,
   refDirection: t.string,
@@ -287,7 +295,7 @@ export const FLOW_REST = t.intersection([
       t.null,
     ]),
     externalReferences: t.array(t.union([FLOW_EXTERNAL_REFERENCE, t.null])),
-    externalData: t.array(t.union([FLOW_EXTERNAL_DATA, t.null])),
+    externalData: t.array(FLOW_EXTERNAL_DATA),
   }),
 ]);
 
@@ -551,6 +559,18 @@ export const FUNDING_DETAIL = t.type({
   plan: t.array(FORM_FIELD),
 });
 
+export const INACTIVEREASON = t.type({
+  id: t.union([t.number, t.null, t.string]),
+  name: t.union([t.undefined, t.null, t.string]),
+  description: t.null,
+  parentID: t.null,
+  code: t.null,
+  group: t.string,
+  includeTotals: t.null,
+  createdAt: t.string,
+  updatedAt: t.string,
+});
+
 export const GET_VALIDATE_FLOWS_PARAMS = t.type({
   id: t.union([t.number, t.null]),
   amountUSD: t.number,
@@ -558,16 +578,16 @@ export const GET_VALIDATE_FLOWS_PARAMS = t.type({
   decisionDate: t.union([t.string, t.null]),
   firstReportedDate: t.string,
   budgetYear: t.string,
-  categories: t.array(t.string),
+  categories: t.array(t.union([t.string, t.number])),
   origAmount: t.union([t.number, t.null]),
-  origCurrency: t.string,
+  origCurrency: t.union([t.string, t.null]),
   exchangeRate: t.union([t.number, t.null]),
   activeStatus: t.boolean,
   restricted: t.boolean,
   newMoney: t.boolean,
   description: t.string,
-  versionStartDate: t.string,
-  versionEndDate: t.string,
+  versionStartDate: t.union([t.string, t.undefined, t.null]),
+  versionEndDate: t.union([t.string, t.undefined, t.null]),
   flowObjects: t.array(FLOW_OBJECT),
   children: t.any,
   parents: t.any,
@@ -583,10 +603,14 @@ export const GET_VALIDATE_FLOWS_PARAMS = t.type({
   pendingStatus: t.union([t.boolean, t.undefined, t.array(t.string)]),
   planEntities: t.union([t.boolean, t.undefined, t.array(t.string)]),
   planIndicated: t.union([t.boolean, t.undefined, t.array(t.string)]),
-  isApprovedFlowVersion: t.union([t.boolean, t.undefined]),
-  isErrorCorrection: t.boolean,
-  inactiveReason: t.union([t.string, t.undefined, t.array(t.string)]),
-  rejected: t.boolean,
+  isApprovedFlowVersion: t.union([t.boolean, t.undefined, t.null]),
+  isErrorCorrection: t.union([t.boolean, t.undefined, t.null]),
+  inactiveReason: t.union([
+    t.string,
+    t.undefined,
+    t.array(t.union([INACTIVEREASON, t.undefined])),
+  ]),
+  rejected: t.union([t.boolean, t.null]),
   src: FUNDING_DETAIL,
   dest: FUNDING_DETAIL,
 });
