@@ -147,6 +147,7 @@ export interface FormValues {
   childFlow?: AutoCompleteSelectionType[];
   isParkedParent?: boolean;
   includeChildrenOfParkedFlows: boolean;
+  isErrorCorrectionValue: boolean;
   sources?: Record<string, any[]>;
   submitAction?: string | undefined;
   versions?: {
@@ -385,7 +386,7 @@ const initialReportDetail = {
   reportChannel: '',
   reportFileTitle: '',
   reportedOrganization: { value: '', displayLabel: '' },
-  reportedDate: dayjs().format('MM/DD/YYYY'),
+  reportedDate: dayjs().format('DD/MM/YYYY'),
   reporterContactInformation: '',
   sourceSystemRecordId: '',
 };
@@ -521,8 +522,8 @@ export const FlowForm = (props: Props) => {
       data.inactiveReason,
       data.beneficiaryGroup,
       data.pendingStatus,
-      data.earmarking,
-    ].filter((category) => category !== undefined);
+      data.earmarking !== null && data.earmarking.id,
+    ].filter((category) => category);
     data.categories = data.categories
       .map((value: any) => {
         if (value && value.id) {
@@ -795,7 +796,9 @@ export const FlowForm = (props: Props) => {
           updatedAt: '',
         },
       ],
-      isErrorCorrection: isSuperseded
+      isErrorCorrection: values.isErrorCorrectionValue
+        ? true
+        : isSuperseded
         ? true
         : isPending
         ? true
@@ -822,6 +825,7 @@ export const FlowForm = (props: Props) => {
     return data;
   };
 
+  const [unsavedChange, setUnsavedChange] = useState<boolean>(false);
   const [parentCurrencyFlag, setParentCurrencyFlag] = useState<boolean>(false);
   const [childCurrencyFlag, setChildCurrencyFlag] = useState<boolean>(false);
   const [approveFlag, setApproveFlag] = useState<boolean>(false);
@@ -1112,115 +1116,153 @@ export const FlowForm = (props: Props) => {
     } else if (submitAction === 'inactive') {
       if (isShowParentFlow || isShowChildFlow > 0) {
         setInactiveFlag(true);
+      } else {
+        const categoryValue =
+          inactiveReasons.find((item) => item.displayLabel === 'Cancelled')
+            ?.value ?? null;
+        if (categoryValue) {
+          data.categories.push(parseInt(categoryValue.toString()));
+        }
+        data.activeStatus = false;
+        data.cancelled = true;
+        data.isCancellation = null;
+        data.rejected = null;
+        data.newMoney = false;
+        data.inactiveReason = [
+          {
+            id:
+              inactiveReasons.find((item) => item.displayLabel === 'Cancelled')
+                ?.value || null,
+            name: inactiveReasons.find(
+              (item) => item.displayLabel === 'Cancelled'
+            )?.displayLabel,
+            description: null,
+            parentID: null,
+            code: null,
+            group: 'inactiveReason',
+            includeTotals: null,
+            createdAt: currentVersionData ? currentVersionData.createdAt : '',
+            updatedAt: currentVersionData ? currentVersionData.updatedAt : '',
+          },
+        ];
       }
-      const categoryValue =
-        inactiveReasons.find((item) => item.displayLabel === 'Cancelled')
-          ?.value ?? null;
-      if (categoryValue) {
-        data.categories.push(parseInt(categoryValue.toString()));
-      }
-      data.activeStatus = false;
-      data.cancelled = true;
-      data.isCancellation = null;
-      data.rejected = null;
-      data.newMoney = false;
-      data.inactiveReason = [
-        {
-          id:
-            inactiveReasons.find((item) => item.displayLabel === 'Cancelled')
-              ?.value || null,
-          name: inactiveReasons.find(
-            (item) => item.displayLabel === 'Cancelled'
-          )?.displayLabel,
-          description: null,
-          parentID: null,
-          code: null,
-          group: 'inactiveReason',
-          includeTotals: null,
-          createdAt: currentVersionData ? currentVersionData.createdAt : '',
-          updatedAt: currentVersionData ? currentVersionData.updatedAt : '',
-        },
-      ];
     }
-    const response = await env.model.flows.validateFlow(data, {
-      adding: !isEdit,
-      originalFlow: {},
-    });
-    let flag = true;
-    let mismatchFound = false;
-    for (let i = 0; i < values.reportDetails.length; i++) {
-      const reportOrganizationLabel =
-        values.reportDetails[i].reportedOrganization.displayLabel;
-      const reportMatchesSource = values.sourceOrganizations.some(
-        (sourceOrg) => sourceOrg.displayLabel === reportOrganizationLabel
-      );
-      const reportMatchesDestination = values.destinationOrganizations.some(
-        (destOrg) => destOrg.displayLabel === reportOrganizationLabel
-      );
+    if (!inactiveFlag) {
+      const response = await env.model.flows.validateFlow(data, {
+        adding: !isEdit,
+        originalFlow: {},
+      });
+      let flag = true;
+      let mismatchFound = false;
+      for (let i = 0; i < values.reportDetails.length; i++) {
+        const reportOrganizationLabel =
+          values.reportDetails[i].reportedOrganization.displayLabel;
+        const reportMatchesSource = values.sourceOrganizations.some(
+          (sourceOrg) => sourceOrg.displayLabel === reportOrganizationLabel
+        );
+        const reportMatchesDestination = values.destinationOrganizations.some(
+          (destOrg) => destOrg.displayLabel === reportOrganizationLabel
+        );
 
-      if (!reportMatchesSource && !reportMatchesDestination) {
-        mismatchFound = true;
-        break;
+        if (!reportMatchesSource && !reportMatchesDestination) {
+          mismatchFound = true;
+          break;
+        }
       }
-    }
-    if (mismatchFound) {
-      if (
-        !window.confirm(
-          "Your flow's Report Detail organization doesn't match the source or destination organization or that of its parked parent. Are you sure this is right?"
-        )
-      ) {
-        return;
+      if (mismatchFound) {
+        if (
+          !window.confirm(
+            "Your flow's Report Detail organization doesn't match the source or destination organization or that of its parked parent. Are you sure this is right?"
+          )
+        ) {
+          return;
+        }
       }
-    }
-    response.forEach((obj) => {
-      if (obj) {
-        const { success, message, confirmed } = obj;
-        if (!success) {
-          if (confirmed) {
-            const confirm = window.confirm(confirmed);
-            if (!confirm) {
+      response.forEach((obj) => {
+        if (obj) {
+          const { success, message, confirmed } = obj;
+          if (!success) {
+            if (confirmed) {
+              const confirm = window.confirm(confirmed);
+              if (!confirm) {
+                setOpenAlerts([...openAlerts, { message, id: alertId }]);
+                setAlertId((prevId) => prevId + 1);
+                flag = false;
+                handleSave();
+              }
+            } else if (message) {
               setOpenAlerts([...openAlerts, { message, id: alertId }]);
               setAlertId((prevId) => prevId + 1);
               flag = false;
               handleSave();
             }
-          } else if (message) {
-            setOpenAlerts([...openAlerts, { message, id: alertId }]);
-            setAlertId((prevId) => prevId + 1);
-            flag = false;
-            handleSave();
           }
         }
-      }
-    });
-    if (flag) {
-      if (!isEdit) {
-        const response = await env.model.flows.createFlow({ flow: data });
-        const path = editFlowSetting(response.id, response.versionID);
-        //window.open(path, '_self');
-      } else {
-        const dbFlow = await env.model.flows.getFlowREST({
-          id: currentFlowID!,
-        });
-        if (
-          (versionData &&
-            currentVersionID &&
-            Date.parse(versionData[currentVersionID - 1].updatedTime) <
-              Date.parse(dbFlow.updatedAt)) ||
-          (versionData && versionData.length < dbFlow.versions.length)
-        ) {
-          window.confirm(
-            'This flow cannot be saved, as a concurrency conflict has been detected.Please refresh your screen to view the most up to date data.'
-          );
+      });
+      if (flag) {
+        setUnsavedChange(false);
+        if (!isEdit) {
+          try {
+            const response = await env.model.flows.createFlow({ flow: data });
+            const path = editFlowSetting(response.id, response.versionID);
+            window.open(path, '_self');
+          } catch (err: any) {
+            setOpenAlerts([
+              ...openAlerts,
+              { message: err.message, id: alertId },
+            ]);
+            setAlertId((prevId) => prevId + 1);
+            handleSave();
+          }
         } else {
-          if (isPending && (approveFlag || rejectFlag)) {
-            if (
-              allFieldsReviewed ||
-              pendingFieldsallApplied ||
-              !pendingVersionV1
-            ) {
+          const dbFlow = await env.model.flows.getFlowREST({
+            id: currentFlowID!,
+          });
+          if (
+            (versionData &&
+              currentVersionID &&
+              Date.parse(versionData[currentVersionID - 1].updatedTime) <
+                Date.parse(dbFlow.updatedAt)) ||
+            (versionData && versionData.length < dbFlow.versions.length)
+          ) {
+            window.confirm(
+              'This flow cannot be saved, as a concurrency conflict has been detected. Please refresh your screen to view the most up to date data.'
+            );
+          } else {
+            if (isPending && (approveFlag || rejectFlag)) {
+              if (
+                allFieldsReviewed ||
+                pendingFieldsallApplied ||
+                !pendingVersionV1
+              ) {
+                try {
+                  const response = await env.model.flows.updatePendingFlow({
+                    flow: data,
+                  });
+                  if (response) {
+                    const path = editFlowSetting(
+                      response.id,
+                      response.versionID
+                    );
+                    setAlertFlag(true);
+                    setSharePath(path);
+                  }
+                } catch (err: any) {
+                  setOpenAlerts([
+                    ...openAlerts,
+                    { message: err.message, id: alertId },
+                  ]);
+                  setAlertId((prevId) => prevId + 1);
+                  handleSave();
+                }
+              } else {
+                window.confirm(
+                  'Some of the revised data on this flow still needs to be accepted or rejected before this update can be approved.'
+                );
+              }
+            } else {
               try {
-                const response = await env.model.flows.updatePendingFlow({
+                const response = await env.model.flows.updateFlow({
                   flow: data,
                 });
                 if (response) {
@@ -1236,26 +1278,6 @@ export const FlowForm = (props: Props) => {
                 setAlertId((prevId) => prevId + 1);
                 handleSave();
               }
-            } else {
-              window.confirm(
-                'Some of the revised data on this flow still needs to be accepted or rejected before this update can be approved.'
-              );
-            }
-          } else {
-            try {
-              const response = await env.model.flows.updateFlow({ flow: data });
-              if (response) {
-                const path = editFlowSetting(response.id, response.versionID);
-                setAlertFlag(true);
-                setSharePath(path);
-              }
-            } catch (err: any) {
-              setOpenAlerts([
-                ...openAlerts,
-                { message: err.message, id: alertId },
-              ]);
-              setAlertId((prevId) => prevId + 1);
-              handleSave();
             }
           }
         }
@@ -1287,7 +1309,8 @@ export const FlowForm = (props: Props) => {
     fetchedObject: any,
     objectKeys: string[],
     settingArrayKeys: string[],
-    setFieldValue: any
+    setFieldValue: any,
+    values: any
   ) => {
     const newObjects = { ...objects };
     const newShowingTypes = [...showingTypes];
@@ -1310,9 +1333,9 @@ export const FlowForm = (props: Props) => {
         } else if (settingArrayKeys[i] === 'plans') {
           return {
             displayLabel: (
-              responseValue.planVersion as { id: number; name: string }
+              responseValue.planVersion as { planId: number; name: string }
             ).name,
-            value: responseValue.planVersion.id,
+            value: responseValue.planVersion.planId,
             isAutoFilled: true,
           };
         } else if (settingArrayKeys[i] === 'governingEntities') {
@@ -1332,6 +1355,12 @@ export const FlowForm = (props: Props) => {
             value: responseValue.id,
             isAutoFilled: true,
           };
+        }
+      });
+      newObjects[key].forEach((obj) => {
+        if (obj?.suggested) {
+          updateFlowObjects(key, parsedResponse, setFieldValue, values);
+          obj.suggested = false;
         }
       });
       setFieldValue(key, parsedResponse);
@@ -1402,7 +1431,8 @@ export const FlowForm = (props: Props) => {
         fetchedPlan,
         ['sourceUsageYears', 'sourceEmergencies'],
         ['years', 'emergencies'],
-        setFieldValue
+        setFieldValue,
+        values
       );
       setSourceGoverningEntities(fetchedPlan.governingEntities);
     }
@@ -1411,7 +1441,8 @@ export const FlowForm = (props: Props) => {
         fetchedPlan,
         ['destinationUsageYears', 'destinationEmergencies'],
         ['years', 'emergencies'],
-        setFieldValue
+        setFieldValue,
+        values
       );
       setDestinationGoverningEntities(fetchedPlan.governingEntities);
     }
@@ -1425,7 +1456,8 @@ export const FlowForm = (props: Props) => {
             { locations: countries },
             ['sourceLocations'],
             ['locations'],
-            setFieldValue
+            setFieldValue,
+            values
           );
         }
         if (objectType === 'destinationPlans') {
@@ -1433,7 +1465,8 @@ export const FlowForm = (props: Props) => {
             { locations: countries },
             ['destinationLocations'],
             ['locations'],
-            setFieldValue
+            setFieldValue,
+            values
           );
         }
       }
@@ -1455,7 +1488,8 @@ export const FlowForm = (props: Props) => {
           fetchedEmergency,
           ['destinationLocations'],
           ['locations'],
-          setFieldValue
+          setFieldValue,
+          values
         );
       }
     }
@@ -1466,6 +1500,14 @@ export const FlowForm = (props: Props) => {
     setFieldValue: any,
     values?: any
   ) => {
+    const fetchedProject = await environment.model.projects.getProject(
+      project[0].value
+    );
+    const publishedVersion = fetchedProject.projectVersions.filter(
+      function (version) {
+        return version.id === fetchedProject.currentPublishedVersionId;
+      }
+    )[0];
     if (objectType === 'destinationProjects') {
       const fetchedCategories =
         await environment.model.categories.getCategories({
@@ -1478,16 +1520,26 @@ export const FlowForm = (props: Props) => {
         value: category[0],
         displayLabel: category[0].name,
       });
-    } else {
-      const fetchedProject = await environment.model.projects.getProject(
-        project[0].value
+      setObjectsWithArray(
+        publishedVersion,
+        [
+          'destinationPlans',
+          'destinationLocations',
+          'destinationGoverningEntities',
+          'destinationGlobalClusters',
+          'destinationOrganizations',
+        ],
+        [
+          'plans',
+          'locations',
+          'governingEntities',
+          'globalClusters',
+          'organizations',
+        ],
+        setFieldValue,
+        values
       );
-      const publishedVersion = fetchedProject.projectVersions.filter(
-        function (version) {
-          return version.id === fetchedProject.currentPublishedVersionId;
-        }
-      )[0];
-
+    } else {
       setObjectsWithArray(
         publishedVersion,
         [
@@ -1504,7 +1556,8 @@ export const FlowForm = (props: Props) => {
           'globalClusters',
           'organizations',
         ],
-        setFieldValue
+        setFieldValue,
+        values
       );
     }
   };
@@ -1536,7 +1589,8 @@ export const FlowForm = (props: Props) => {
         objects,
         ['sourceLocations'],
         ['locations'],
-        setFieldValue
+        setFieldValue,
+        values
       );
     }
   };
@@ -1605,7 +1659,8 @@ export const FlowForm = (props: Props) => {
               : 'destinationGoverningEntities',
           ],
           ['governingEntities'],
-          setFieldValue
+          setFieldValue,
+          values
         );
       });
     }
@@ -1802,6 +1857,23 @@ export const FlowForm = (props: Props) => {
       setComparedVersions(compared);
     }
   }, [comparingVersions]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (unsavedChange) {
+        const message =
+          'You have unsaved changes! Are you sure you want to leave?';
+        event.returnValue = message; // Standard for most browsers
+        return message; // For some older browsers
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [unsavedChange]);
   const dictExecutedForEachObject: Record<
     string,
     (
@@ -1891,6 +1963,7 @@ export const FlowForm = (props: Props) => {
     );
   };
   const validateForm = (values: FormValues) => {
+    setUnsavedChange(JSON.stringify(values) !== JSON.stringify(initialValue));
     const result = validationSchema.decode(values);
     if (isRight(result)) {
       setValidationFlag(false);
@@ -2148,7 +2221,7 @@ export const FlowForm = (props: Props) => {
               </Alert>
             ))}
             <div>
-              {inactiveFlag && (
+              {inactiveFlag && isEdit && (
                 <MuiAlert
                   severity="error"
                   style={{ marginBottom: '20px' }}
@@ -2310,7 +2383,7 @@ export const FlowForm = (props: Props) => {
                       }
                       behavior={FORM_SETTINGS.organization.behavior}
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       isMulti
                       entryInfo={inputEntries.sourceOrganizations}
@@ -2358,7 +2431,7 @@ export const FlowForm = (props: Props) => {
                         environment.model.emergencies.getAutocompleteEmergencies
                       }
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       behavior={FORM_SETTINGS.emergency.behavior}
                       isMulti
@@ -2387,7 +2460,7 @@ export const FlowForm = (props: Props) => {
                       isMulti
                       behavior={FORM_SETTINGS.plan.behavior}
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       entryInfo={inputEntries.sourcePlans}
                       rejectInputEntry={rejectInputEntry}
@@ -2413,7 +2486,7 @@ export const FlowForm = (props: Props) => {
                       }
                       behavior={FORM_SETTINGS.project.behavior}
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       isMulti
                       entryInfo={inputEntries.sourceProjects}
@@ -2511,7 +2584,7 @@ export const FlowForm = (props: Props) => {
                       name="destinationPlans"
                       fnPromise={environment.model.plans.getAutocompletePlans}
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       behavior={FORM_SETTINGS.plan.behavior}
                       isMulti
@@ -2537,7 +2610,7 @@ export const FlowForm = (props: Props) => {
                         environment.model.emergencies.getAutocompleteEmergencies
                       }
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       isMulti
                       entryInfo={inputEntries.destinationEmergencies}
@@ -2551,7 +2624,7 @@ export const FlowForm = (props: Props) => {
                       }
                       behavior={FORM_SETTINGS.project.behavior}
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       isMulti
                       entryInfo={inputEntries.destinationProjects}
@@ -2826,7 +2899,7 @@ export const FlowForm = (props: Props) => {
                                     JSON.parse(
                                       item?.value ? item?.value.toString() : ''
                                     )
-                                  ).format('MM/DD/YYYY')}
+                                  ).format('DD/MM/YYYY')}
                                 </TableCell>
                                 <TableCell>
                                   US$
@@ -2974,7 +3047,7 @@ export const FlowForm = (props: Props) => {
                                           ? item?.value.toString()
                                           : ''
                                       ).flowDate
-                                    ).format('MM/DD/YYYY')}
+                                    ).format('DD/MM/YYYY')}
                                   </TableCell>
                                   <TableCell>
                                     US$
@@ -3596,6 +3669,13 @@ export const FlowForm = (props: Props) => {
               </div>
             )}
             <StyledDiv>
+              {!isPending && isEdit && (
+                <C.CheckBox
+                  label="as error correction"
+                  name="isErrorCorrectionValue"
+                  size="small"
+                />
+              )}
               {!readOnly && !isPending && (
                 <>
                   <C.ButtonSubmit
