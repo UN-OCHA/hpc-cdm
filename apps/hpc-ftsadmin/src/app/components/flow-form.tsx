@@ -385,7 +385,7 @@ const initialReportDetail = {
   reportChannel: '',
   reportFileTitle: '',
   reportedOrganization: { value: '', displayLabel: '' },
-  reportedDate: dayjs().format('MM/DD/YYYY'),
+  reportedDate: dayjs().format('DD/MM/YYYY'),
   reporterContactInformation: '',
   sourceSystemRecordId: '',
 };
@@ -521,7 +521,7 @@ export const FlowForm = (props: Props) => {
       data.inactiveReason,
       data.beneficiaryGroup,
       data.pendingStatus,
-      data.earmarking,
+      data.earmarking !== null && data.earmarking.id,
     ].filter((category) => category !== undefined);
     data.categories = data.categories
       .map((value: any) => {
@@ -1197,7 +1197,7 @@ export const FlowForm = (props: Props) => {
       if (!isEdit) {
         const response = await env.model.flows.createFlow({ flow: data });
         const path = editFlowSetting(response.id, response.versionID);
-        //window.open(path, '_self');
+        window.open(path, '_self');
       } else {
         const dbFlow = await env.model.flows.getFlowREST({
           id: currentFlowID!,
@@ -1287,7 +1287,8 @@ export const FlowForm = (props: Props) => {
     fetchedObject: any,
     objectKeys: string[],
     settingArrayKeys: string[],
-    setFieldValue: any
+    setFieldValue: any,
+    values: any
   ) => {
     const newObjects = { ...objects };
     const newShowingTypes = [...showingTypes];
@@ -1310,9 +1311,9 @@ export const FlowForm = (props: Props) => {
         } else if (settingArrayKeys[i] === 'plans') {
           return {
             displayLabel: (
-              responseValue.planVersion as { id: number; name: string }
+              responseValue.planVersion as { planId: number; name: string }
             ).name,
-            value: responseValue.planVersion.id,
+            value: responseValue.planVersion.planId,
             isAutoFilled: true,
           };
         } else if (settingArrayKeys[i] === 'governingEntities') {
@@ -1332,6 +1333,12 @@ export const FlowForm = (props: Props) => {
             value: responseValue.id,
             isAutoFilled: true,
           };
+        }
+      });
+      newObjects[key].forEach((obj) => {
+        if (obj?.suggested) {
+          updateFlowObjects(key, parsedResponse, setFieldValue, values);
+          obj.suggested = false;
         }
       });
       setFieldValue(key, parsedResponse);
@@ -1402,7 +1409,8 @@ export const FlowForm = (props: Props) => {
         fetchedPlan,
         ['sourceUsageYears', 'sourceEmergencies'],
         ['years', 'emergencies'],
-        setFieldValue
+        setFieldValue,
+        values
       );
       setSourceGoverningEntities(fetchedPlan.governingEntities);
     }
@@ -1411,7 +1419,8 @@ export const FlowForm = (props: Props) => {
         fetchedPlan,
         ['destinationUsageYears', 'destinationEmergencies'],
         ['years', 'emergencies'],
-        setFieldValue
+        setFieldValue,
+        values
       );
       setDestinationGoverningEntities(fetchedPlan.governingEntities);
     }
@@ -1425,7 +1434,8 @@ export const FlowForm = (props: Props) => {
             { locations: countries },
             ['sourceLocations'],
             ['locations'],
-            setFieldValue
+            setFieldValue,
+            values
           );
         }
         if (objectType === 'destinationPlans') {
@@ -1433,7 +1443,8 @@ export const FlowForm = (props: Props) => {
             { locations: countries },
             ['destinationLocations'],
             ['locations'],
-            setFieldValue
+            setFieldValue,
+            values
           );
         }
       }
@@ -1455,7 +1466,8 @@ export const FlowForm = (props: Props) => {
           fetchedEmergency,
           ['destinationLocations'],
           ['locations'],
-          setFieldValue
+          setFieldValue,
+          values
         );
       }
     }
@@ -1466,6 +1478,14 @@ export const FlowForm = (props: Props) => {
     setFieldValue: any,
     values?: any
   ) => {
+    const fetchedProject = await environment.model.projects.getProject(
+      project[0].value
+    );
+    const publishedVersion = fetchedProject.projectVersions.filter(
+      function (version) {
+        return version.id === fetchedProject.currentPublishedVersionId;
+      }
+    )[0];
     if (objectType === 'destinationProjects') {
       const fetchedCategories =
         await environment.model.categories.getCategories({
@@ -1478,16 +1498,26 @@ export const FlowForm = (props: Props) => {
         value: category[0],
         displayLabel: category[0].name,
       });
-    } else {
-      const fetchedProject = await environment.model.projects.getProject(
-        project[0].value
+      setObjectsWithArray(
+        publishedVersion,
+        [
+          'destinationPlans',
+          'destinationLocations',
+          'destinationGoverningEntities',
+          'destinationGlobalClusters',
+          'destinationOrganizations',
+        ],
+        [
+          'plans',
+          'locations',
+          'governingEntities',
+          'globalClusters',
+          'organizations',
+        ],
+        setFieldValue,
+        values
       );
-      const publishedVersion = fetchedProject.projectVersions.filter(
-        function (version) {
-          return version.id === fetchedProject.currentPublishedVersionId;
-        }
-      )[0];
-
+    } else {
       setObjectsWithArray(
         publishedVersion,
         [
@@ -1504,7 +1534,8 @@ export const FlowForm = (props: Props) => {
           'globalClusters',
           'organizations',
         ],
-        setFieldValue
+        setFieldValue,
+        values
       );
     }
   };
@@ -1536,7 +1567,8 @@ export const FlowForm = (props: Props) => {
         objects,
         ['sourceLocations'],
         ['locations'],
-        setFieldValue
+        setFieldValue,
+        values
       );
     }
   };
@@ -1605,7 +1637,8 @@ export const FlowForm = (props: Props) => {
               : 'destinationGoverningEntities',
           ],
           ['governingEntities'],
-          setFieldValue
+          setFieldValue,
+          values
         );
       });
     }
@@ -2310,7 +2343,7 @@ export const FlowForm = (props: Props) => {
                       }
                       behavior={FORM_SETTINGS.organization.behavior}
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       isMulti
                       entryInfo={inputEntries.sourceOrganizations}
@@ -2358,7 +2391,7 @@ export const FlowForm = (props: Props) => {
                         environment.model.emergencies.getAutocompleteEmergencies
                       }
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       behavior={FORM_SETTINGS.emergency.behavior}
                       isMulti
@@ -2387,7 +2420,7 @@ export const FlowForm = (props: Props) => {
                       isMulti
                       behavior={FORM_SETTINGS.plan.behavior}
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       entryInfo={inputEntries.sourcePlans}
                       rejectInputEntry={rejectInputEntry}
@@ -2413,7 +2446,7 @@ export const FlowForm = (props: Props) => {
                       }
                       behavior={FORM_SETTINGS.project.behavior}
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       isMulti
                       entryInfo={inputEntries.sourceProjects}
@@ -2511,7 +2544,7 @@ export const FlowForm = (props: Props) => {
                       name="destinationPlans"
                       fnPromise={environment.model.plans.getAutocompletePlans}
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       behavior={FORM_SETTINGS.plan.behavior}
                       isMulti
@@ -2537,7 +2570,7 @@ export const FlowForm = (props: Props) => {
                         environment.model.emergencies.getAutocompleteEmergencies
                       }
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       isMulti
                       entryInfo={inputEntries.destinationEmergencies}
@@ -2551,7 +2584,7 @@ export const FlowForm = (props: Props) => {
                       }
                       behavior={FORM_SETTINGS.project.behavior}
                       onChange={(event, value) => {
-                        updateFlowObjects(event, value, setFieldValue);
+                        updateFlowObjects(event, value, setFieldValue, values);
                       }}
                       isMulti
                       entryInfo={inputEntries.destinationProjects}
@@ -2826,7 +2859,7 @@ export const FlowForm = (props: Props) => {
                                     JSON.parse(
                                       item?.value ? item?.value.toString() : ''
                                     )
-                                  ).format('MM/DD/YYYY')}
+                                  ).format('DD/MM/YYYY')}
                                 </TableCell>
                                 <TableCell>
                                   US$
@@ -2974,7 +3007,7 @@ export const FlowForm = (props: Props) => {
                                           ? item?.value.toString()
                                           : ''
                                       ).flowDate
-                                    ).format('MM/DD/YYYY')}
+                                    ).format('DD/MM/YYYY')}
                                   </TableCell>
                                   <TableCell>
                                     US$

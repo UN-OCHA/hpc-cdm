@@ -889,12 +889,12 @@ export default (props: Props) => {
         checkExternalRef
       );
       const flowDescription = data.description;
-      const firstReported = dayjs(data.firstReportedDate).format('MM/DD/YYYY');
+      const firstReported = dayjs(data.firstReportedDate).format('DD/MM/YYYY');
       const decisionDate = data.decisionDate
-        ? dayjs(data.decisionDate).format('MM/DD/YYYY')
+        ? dayjs(data.decisionDate).format('DD/MM/YYYY')
         : null;
       const budgetYear = data.budgetYear ?? '';
-      const flowDate = dayjs(data.flowDate).format('MM/DD/YYYY');
+      const flowDate = dayjs(data.flowDate).format('DD/MM/YYYY');
       const notes = data.notes ?? '';
       const flowStatus = getFormValueFromCategory(
         data,
@@ -943,7 +943,7 @@ export default (props: Props) => {
           value: detail?.organization?.id ?? 0,
           displayLabel: `${detail?.organization?.name} [${detail?.organization?.abbreviation}]`,
         },
-        reportedDate: dayjs(detail.date).format('MM/DD/YYYY'),
+        reportedDate: dayjs(detail.date).format('DD/MM/YYYY'),
         reporterContactInformation: detail.contactInfo ?? '',
         sourceSystemRecordId: detail.sourceID ?? '',
         reportFiles: (detail?.reportFiles ?? []).reduce(
@@ -1012,7 +1012,7 @@ export default (props: Props) => {
                   value: detail?.organization?.id ?? 0,
                   displayLabel: `${detail?.organization?.name} [${detail?.organization?.abbreviation}]`,
                 },
-                reportedDate: dayjs(detail.date).format('MM/DD/YYYY'),
+                reportedDate: dayjs(detail.date).format('DD/MM/YYYY'),
                 reporterContactInformation: detail.contactInfo ?? '',
                 sourceSystemRecordId: detail.sourceID ?? '',
                 reportFiles: (detail?.reportFiles ?? []).reduce(
