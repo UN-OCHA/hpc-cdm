@@ -1326,34 +1326,40 @@ export const FlowForm = (props: Props) => {
       const parsedResponse = newObjects[key].map((responseValue: any) => {
         if (settingArrayKeys[i] === 'years') {
           return {
-            displayLabel: (responseValue as usageYears.UsageYear).year,
-            value: responseValue.id,
-            isAutoFilled: true,
+            displayLabel:
+              (responseValue as usageYears.UsageYear).year ||
+              responseValue.displayLabel,
+            value: responseValue.id || responseValue.value,
+            isAutoFilled: responseValue.suggested,
           };
         } else if (settingArrayKeys[i] === 'plans') {
           return {
-            displayLabel: (
-              responseValue.planVersion as { planId: number; name: string }
-            ).name,
-            value: responseValue.planVersion.planId,
-            isAutoFilled: true,
+            displayLabel:
+              (responseValue.planVersion as { planId: number; name: string })
+                .name || responseValue.displayLabel,
+            value: responseValue.planVersion.planId || responseValue.value,
+            isAutoFilled: responseValue.suggested,
           };
         } else if (settingArrayKeys[i] === 'governingEntities') {
           return {
-            displayLabel: (
-              responseValue.governingEntityVersion as {
-                id: number;
-                name: string;
-              }
-            ).name,
-            value: responseValue.governingEntityVersion.id,
-            isAutoFilled: true,
+            displayLabel:
+              (
+                responseValue.governingEntityVersion as {
+                  id: number;
+                  name: string;
+                }
+              ).name || responseValue.displayLabel,
+            value:
+              responseValue.governingEntityVersion.id || responseValue.value,
+            isAutoFilled: responseValue.suggested,
           };
         } else {
           return {
-            displayLabel: (responseValue as { id: number; name: string }).name,
-            value: responseValue.id,
-            isAutoFilled: true,
+            displayLabel:
+              (responseValue as { id: number; name: string }).name ||
+              responseValue.displayLabel,
+            value: responseValue.id || responseValue.value,
+            isAutoFilled: responseValue.suggested,
           };
         }
       });
@@ -1382,14 +1388,14 @@ export const FlowForm = (props: Props) => {
       });
       if (existingObjects && existingObjects.length) {
         existingObjects = existingObjects.filter(function (location) {
-          return location.adminLevel === 0;
+          return location.adminLevel === 0 || location.value;
         });
       }
     }
 
     if (existingObjects && existingObjects.length) {
       const existingObjectsIds = existingObjects.map(function (o) {
-        return o.id;
+        return o.id || o.value;
       });
       if (Array.isArray(newObjects)) {
         newObjects.forEach(function (obj) {
@@ -1964,6 +1970,25 @@ export const FlowForm = (props: Props) => {
   };
   const validateForm = (values: FormValues) => {
     setUnsavedChange(JSON.stringify(values) !== JSON.stringify(initialValue));
+    const valuesObject: Record<string, any[]> = {
+      sourceOrganizations: values.sourceOrganizations,
+      sourceLocations: values.sourceLocations,
+      sourceUsageYears: values.sourceUsageYears,
+      sourceProjects: values.sourceProjects,
+      sourcePlans: values.sourcePlans,
+      sourceGoverningEntities: values.sourceGoverningEntities,
+      sourceGlobalClusters: values.sourceGlobalClusters,
+      sourceEmergencies: values.sourceEmergencies,
+      destinationOrganizations: values.destinationOrganizations,
+      destinationLocations: values.destinationLocations,
+      destinationUsageYears: values.destinationUsageYears,
+      destinationProjects: values.destinationProjects,
+      destinationPlans: values.destinationPlans,
+      destinationGoverningEntities: values.destinationGoverningEntities,
+      destinationGlobalClusters: values.destinationGlobalClusters,
+      destinationEmergencies: values.destinationEmergencies,
+    };
+    setObjects(valuesObject);
     const result = validationSchema.decode(values);
     if (isRight(result)) {
       setValidationFlag(false);
