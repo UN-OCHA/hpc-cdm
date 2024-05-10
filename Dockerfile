@@ -6,7 +6,7 @@ ARG APP_TO_BUILD
 RUN npm run remove-unneeded-deps && \
     npm install && \
     # Output path is relative to working directory
-    npm run build ${APP_TO_BUILD} -- --output-path=dist/ --configuration=$ENVIRONMENT
+    npm run build hpc-ftsadmin -- --output-path=dist/ --configuration=$ENVIRONMENT
 
 FROM public.ecr.aws/unocha/nginx:stable-beagle
 
