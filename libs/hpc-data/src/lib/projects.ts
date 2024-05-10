@@ -24,7 +24,6 @@ const PDF = t.type({
 
 export const PROJECT = t.type({
   id: t.number,
-  restricted: t.boolean,
   createdAt: t.string,
   updatedAt: t.string,
   code: t.union([t.string, t.null]),
@@ -43,7 +42,6 @@ export const PROJECT = t.type({
 export const PROJECT_DETAIL = t.intersection([
   t.type({
     id: t.number,
-    restricted: t.boolean,
     createdAt: t.string,
     updatedAt: t.string,
     code: t.union([t.string, t.null]),

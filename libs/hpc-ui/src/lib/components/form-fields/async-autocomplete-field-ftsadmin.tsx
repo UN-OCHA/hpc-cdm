@@ -224,7 +224,6 @@ const AsyncAutocompleteSelect = ({
                 (responseValue as projects.Project).code
               }]`,
               value: responseValue.id,
-              restricted: (responseValue as projects.Project).restricted,
             };
           } else if (
             name === 'sourceGoverningEntities' ||
@@ -703,7 +702,6 @@ const FormikAsyncAutocompleteSelect = ({
                 (responseValue as projects.Project).code
               }]`,
               value: responseValue.id,
-              restricted: (responseValue as projects.Project).restricted,
             };
           } else if (
             name === 'sourceGoverningEntities' ||
