@@ -47,7 +47,7 @@ import { getEnv } from '../context';
 import { editFlowSetting, copyFlow } from '../paths';
 import { flows } from '../paths';
 import Link from '@mui/material/Link';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, unstable_usePrompt } from 'react-router-dom';
 import { id } from 'fp-ts/lib/Refinement';
 
 export type AutoCompleteSelectionType = forms.InputSelectValueType;
@@ -321,6 +321,7 @@ items-center
 const StyledAnchor = tw.a`
 underline
 ml-[15px]
+opacity-100
 `;
 const StyledAnchorDiv = tw.div`
 text-right
@@ -1880,6 +1881,11 @@ export const FlowForm = (props: Props) => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [unsavedChange]);
+
+  unstable_usePrompt({
+    message: 'You have unsaved changes! Are you sure you want to leave?',
+    when: unsavedChange,
+  });
   const dictExecutedForEachObject: Record<
     string,
     (

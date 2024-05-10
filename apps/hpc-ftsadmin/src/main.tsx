@@ -11,10 +11,4 @@ if (!rootElement) {
 }
 const root = ReactDOM.createRoot(rootElement);
 
-root.render(
-  <BrowserRouter>
-    <QueryParamProvider adapter={ReactRouter6Adapter}>
-      <App />
-    </QueryParamProvider>
-  </BrowserRouter>
-);
+root.render(<App />);

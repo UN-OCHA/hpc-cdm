@@ -8,7 +8,15 @@ import {
   ThemeProvider,
 } from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import {
+  Navigate,
+  Route,
+  Routes,
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+  Outlet,
+} from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import env, { Environment } from '../environments/environment';
@@ -26,6 +34,8 @@ import PageOrganization from './pages/organizations/organization';
 import FlowEdit from './pages/add-edit/flow-edit';
 import * as paths from './paths';
 import { RouteParamsValidator } from './components/route-params-validator';
+import { QueryParamProvider } from 'use-query-params';
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
   const warning = env.getDevHeaderWarning(lang);
@@ -65,7 +75,7 @@ const TitlePrimary = styled.div`
   align-items: center;
 `;
 
-export const App = () => {
+const Layout = () => {
   const [lang, setLang] = useState(LANGUAGE_CHOICE.getLanguage());
 
   useEffect(() => {
@@ -91,172 +101,169 @@ export const App = () => {
   );
 
   return (
-    <ThemeProvider language={lang}>
-      <BaseStyling />
-      <C.Loader
-        loader={loadEnv}
-        strings={{
-          ...t.get(lang, (s) => s.components.loader),
-          notFound: t.get(lang, (s) => s.components.notFound),
-        }}
-      >
-        {(context) => {
-          const env = context.env();
-          return (
-            <AppContext.Provider value={{ lang, ...context }}>
-              <PageMeta />
-              <Container>
-                {environmentWarning(env, lang)}
-                <Header
-                  session={env.session}
-                  language={LANGUAGE_CHOICE}
-                  strings={t.get(lang, (s) => s.user)}
-                  userMenu={[
-                    {
-                      label: t.t(lang, (s) => s.user.logout),
-                      onClick: env.session.logOut,
-                    },
-                  ]}
-                />
-                <Main>
-                  {env.session.getUser() ? (
-                    <LoggedInContainer>
-                      <C.MainNavigation
-                        homeLink={paths.home()}
-                        appTitle={appTitle}
-                        tabs={[
-                          {
-                            label: t.t(lang, (s) => s.navigation.flows),
-                            path: paths.flows(),
-                          },
-                          {
-                            label: t.t(lang, (s) => s.navigation.pendingFlows),
-                            path: paths.pendingFlows(),
-                          },
-                          {
-                            label: t.t(lang, (s) => s.navigation.organizations),
-                            path: paths.organizations(),
-                          },
-                          {
-                            label: t.t(lang, (s) => s.navigation.keywords),
-                            path: paths.keywords(),
-                          },
-                        ]}
-                        className={CLASSES.CONTAINER.FLUID}
-                        externalLinks={[
-                          ...(env.externalUrls?.rpmBaseUrl
-                            ? [
-                                {
-                                  label: t.t(lang, (s) => s.navigation.rpm),
-                                  url: env.externalUrls.rpmBaseUrl,
-                                },
-                              ]
-                            : []),
-                          ...(env.externalUrls?.prismBaseUrl
-                            ? [
-                                {
-                                  label: t.t(lang, (s) => s.navigation.prism),
-                                  url: env.externalUrls.prismBaseUrl,
-                                },
-                              ]
-                            : []),
-                          ...(env.externalUrls?.ftsWebsiteBaseUrl
-                            ? [
-                                {
-                                  label: t.t(
-                                    lang,
-                                    (s) => s.navigation.ftsWebsite
-                                  ),
-                                  url: env.externalUrls.ftsWebsiteBaseUrl,
-                                },
-                              ]
-                            : []),
-                          ...(env.externalUrls?.helpUrl
-                            ? [
-                                {
-                                  label: t.t(lang, (s) => s.navigation.help),
-                                  url: env.externalUrls.helpUrl,
-                                },
-                              ]
-                            : []),
-                        ]}
-                        actionButtons={[
-                          {
-                            label: t.t(lang, (s) => s.navigation.newFlow),
-                            path: paths.newFlow(),
-                          },
-                        ]}
-                      />
-                      <Routes>
-                        <Route
-                          path={paths.home()}
-                          element={<Navigate to={paths.flows()} />}
+    <QueryParamProvider adapter={ReactRouter6Adapter}>
+      <ThemeProvider language={lang}>
+        <BaseStyling />
+        <C.Loader
+          loader={loadEnv}
+          strings={{
+            ...t.get(lang, (s) => s.components.loader),
+            notFound: t.get(lang, (s) => s.components.notFound),
+          }}
+        >
+          {(context) => {
+            const env = context.env();
+            return (
+              <AppContext.Provider value={{ lang, ...context }}>
+                <PageMeta />
+                <Container>
+                  {environmentWarning(env, lang)}
+                  <Header
+                    session={env.session}
+                    language={LANGUAGE_CHOICE}
+                    strings={t.get(lang, (s) => s.user)}
+                    userMenu={[
+                      {
+                        label: t.t(lang, (s) => s.user.logout),
+                        onClick: env.session.logOut,
+                      },
+                    ]}
+                  />
+                  <Main>
+                    {env.session.getUser() ? (
+                      <LoggedInContainer>
+                        <C.MainNavigation
+                          homeLink={paths.home()}
+                          appTitle={appTitle}
+                          tabs={[
+                            {
+                              label: t.t(lang, (s) => s.navigation.flows),
+                              path: paths.flows(),
+                            },
+                            {
+                              label: t.t(
+                                lang,
+                                (s) => s.navigation.pendingFlows
+                              ),
+                              path: paths.pendingFlows(),
+                            },
+                            {
+                              label: t.t(
+                                lang,
+                                (s) => s.navigation.organizations
+                              ),
+                              path: paths.organizations(),
+                            },
+                            {
+                              label: t.t(lang, (s) => s.navigation.keywords),
+                              path: paths.keywords(),
+                            },
+                          ]}
+                          className={CLASSES.CONTAINER.FLUID}
+                          externalLinks={[
+                            ...(env.externalUrls?.rpmBaseUrl
+                              ? [
+                                  {
+                                    label: t.t(lang, (s) => s.navigation.rpm),
+                                    url: env.externalUrls.rpmBaseUrl,
+                                  },
+                                ]
+                              : []),
+                            ...(env.externalUrls?.prismBaseUrl
+                              ? [
+                                  {
+                                    label: t.t(lang, (s) => s.navigation.prism),
+                                    url: env.externalUrls.prismBaseUrl,
+                                  },
+                                ]
+                              : []),
+                            ...(env.externalUrls?.ftsWebsiteBaseUrl
+                              ? [
+                                  {
+                                    label: t.t(
+                                      lang,
+                                      (s) => s.navigation.ftsWebsite
+                                    ),
+                                    url: env.externalUrls.ftsWebsiteBaseUrl,
+                                  },
+                                ]
+                              : []),
+                            ...(env.externalUrls?.helpUrl
+                              ? [
+                                  {
+                                    label: t.t(lang, (s) => s.navigation.help),
+                                    url: env.externalUrls.helpUrl,
+                                  },
+                                ]
+                              : []),
+                          ]}
+                          actionButtons={[
+                            {
+                              label: t.t(lang, (s) => s.navigation.newFlow),
+                              path: paths.newFlow(),
+                            },
+                          ]}
                         />
-                        <Route
-                          path={paths.flows()}
-                          element={<PageFlowsList />}
+                        <Outlet />
+                      </LoggedInContainer>
+                    ) : (
+                      <>
+                        <C.MainNavigation
+                          homeLink={paths.home()}
+                          appTitle={appTitle}
                         />
-                        <Route
-                          path={paths.pendingFlows()}
-                          element={<PagePendingFlowsList />}
-                        />
-                        <Route
-                          path={paths.organizations()}
-                          element={<PageOrganizationsList />}
-                        />
-                        <Route
-                          path={paths.organizationRoot()}
-                          element={
-                            <RouteParamsValidator
-                              element={<PageOrganization />}
-                              routeParam="id"
-                            />
-                          }
-                        />
-                        <Route
-                          path={paths.addOrganization()}
-                          element={<PageOrganization />}
-                        />
-                        <Route
-                          path={paths.keywords()}
-                          element={<PageKeywordsList />}
-                        />
-                        <Route
-                          path={paths.newFlow()}
-                          element={
-                            <FlowEdit key="new-flow-route" isEdit={false} />
-                          }
-                        />
-                        <Route
-                          path={paths.copyFlow()}
-                          element={<FlowEdit key="copy-flow-route" isEdit />}
-                        />
-                        <Route
-                          path={paths.editFlow()}
-                          element={<FlowEdit key="edit-flow-route" isEdit />}
-                        />
-                        <Route element={<PageNotFound />} />
-                      </Routes>
-                    </LoggedInContainer>
-                  ) : (
-                    <>
-                      <C.MainNavigation
-                        homeLink={paths.home()}
-                        appTitle={appTitle}
-                      />
-                      <PageNotLoggedIn />
-                    </>
-                  )}
-                </Main>
-              </Container>
-              <dialogs.Dialogs />
-            </AppContext.Provider>
-          );
-        }}
-      </C.Loader>
-      <ToastContainer />
-    </ThemeProvider>
+                        <PageNotLoggedIn />
+                      </>
+                    )}
+                  </Main>
+                </Container>
+                <dialogs.Dialogs />
+              </AppContext.Provider>
+            );
+          }}
+        </C.Loader>
+        <ToastContainer />
+      </ThemeProvider>
+    </QueryParamProvider>
   );
+};
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route element={<Layout />}>
+      <Route path={paths.home()} element={<Navigate to={paths.flows()} />} />
+      <Route path={paths.flows()} element={<PageFlowsList />} />
+      <Route path={paths.pendingFlows()} element={<PagePendingFlowsList />} />
+      <Route path={paths.organizations()} element={<PageOrganizationsList />} />
+      <Route
+        path={paths.organizationRoot()}
+        element={
+          <RouteParamsValidator
+            element={<PageOrganization />}
+            routeParam="id"
+          />
+        }
+      />
+      <Route path={paths.addOrganization()} element={<PageOrganization />} />
+      <Route path={paths.keywords()} element={<PageKeywordsList />} />
+      <Route
+        path={paths.newFlow()}
+        element={<FlowEdit key="new-flow-route" isEdit={false} />}
+      />
+      <Route
+        path={paths.copyFlow()}
+        element={<FlowEdit key="copy-flow-route" isEdit />}
+      />
+      <Route
+        path={paths.editFlow()}
+        element={<FlowEdit key="edit-flow-route" isEdit />}
+      />
+      <Route element={<PageNotFound />} />
+    </Route>
+  )
+);
+
+export const App = () => {
+  return <RouterProvider router={router} />;
 };
 
 export default App;
