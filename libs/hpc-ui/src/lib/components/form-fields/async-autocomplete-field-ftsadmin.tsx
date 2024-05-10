@@ -224,6 +224,7 @@ const AsyncAutocompleteSelect = ({
                 (responseValue as projects.Project).code
               }]`,
               value: responseValue.id,
+              restricted: (responseValue as projects.Project).restricted,
             };
           } else if (
             name === 'sourceGoverningEntities' ||
@@ -319,7 +320,6 @@ const AsyncAutocompleteSelect = ({
             };
           }
         });
-
         setData(parsedResponse);
         if (active) {
           if (isUsageYearsResult(response)) {
@@ -703,6 +703,7 @@ const FormikAsyncAutocompleteSelect = ({
                 (responseValue as projects.Project).code
               }]`,
               value: responseValue.id,
+              restricted: (responseValue as projects.Project).restricted,
             };
           } else if (
             name === 'sourceGoverningEntities' ||
@@ -759,10 +760,19 @@ const FormikAsyncAutocompleteSelect = ({
   }, [loading, debouncedInputValue]);
 
   useEffect(() => {
-    setMultipleValueSelected(
-      Array.isArray(values[name]) && values[name].length > 1
-    );
+    if (values[name]) {
+      setMultipleValueSelected(
+        Array.isArray(values[name]) && values[name].length > 1
+      );
+    }
     if (name === 'sourcePlans' || name === 'destinationPlans') {
+      if (values[name].length === 1) {
+        setEnabledValue(values[name][0].value);
+      } else {
+        setEnabledValue('');
+      }
+    }
+    if (name === 'sourceProjects' || name === 'destinationProjects') {
       if (values[name].length === 1) {
         setEnabledValue(values[name][0].value);
       } else {
