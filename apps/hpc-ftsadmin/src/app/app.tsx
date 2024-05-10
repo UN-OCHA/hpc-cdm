@@ -132,79 +132,94 @@ const Layout = () => {
                   <Main>
                     {env.session.getUser() ? (
                       <LoggedInContainer>
-                        <C.MainNavigation
-                          homeLink={paths.home()}
-                          appTitle={appTitle}
-                          tabs={[
-                            {
-                              label: t.t(lang, (s) => s.navigation.flows),
-                              path: paths.flows(),
-                            },
-                            {
-                              label: t.t(
-                                lang,
-                                (s) => s.navigation.pendingFlows
-                              ),
-                              path: paths.pendingFlows(),
-                            },
-                            {
-                              label: t.t(
-                                lang,
-                                (s) => s.navigation.organizations
-                              ),
-                              path: paths.organizations(),
-                            },
-                            {
-                              label: t.t(lang, (s) => s.navigation.keywords),
-                              path: paths.keywords(),
-                            },
-                          ]}
-                          className={CLASSES.CONTAINER.FLUID}
-                          externalLinks={[
-                            ...(env.externalUrls?.rpmBaseUrl
-                              ? [
-                                  {
-                                    label: t.t(lang, (s) => s.navigation.rpm),
-                                    url: env.externalUrls.rpmBaseUrl,
-                                  },
-                                ]
-                              : []),
-                            ...(env.externalUrls?.prismBaseUrl
-                              ? [
-                                  {
-                                    label: t.t(lang, (s) => s.navigation.prism),
-                                    url: env.externalUrls.prismBaseUrl,
-                                  },
-                                ]
-                              : []),
-                            ...(env.externalUrls?.ftsWebsiteBaseUrl
-                              ? [
-                                  {
-                                    label: t.t(
-                                      lang,
-                                      (s) => s.navigation.ftsWebsite
-                                    ),
-                                    url: env.externalUrls.ftsWebsiteBaseUrl,
-                                  },
-                                ]
-                              : []),
-                            ...(env.externalUrls?.helpUrl
-                              ? [
-                                  {
-                                    label: t.t(lang, (s) => s.navigation.help),
-                                    url: env.externalUrls.helpUrl,
-                                  },
-                                ]
-                              : []),
-                          ]}
-                          actionButtons={[
-                            {
-                              label: t.t(lang, (s) => s.navigation.newFlow),
-                              path: paths.newFlow(),
-                            },
-                          ]}
-                        />
-                        <Outlet />
+                        <div
+                          style={{
+                            position: 'sticky',
+                            top: 0,
+                            backgroundColor: 'white',
+                            zIndex: Z_INDEX.HEADER,
+                          }}
+                        >
+                          <C.MainNavigation
+                            homeLink={paths.home()}
+                            appTitle={appTitle}
+                            tabs={[
+                              {
+                                label: t.t(lang, (s) => s.navigation.flows),
+                                path: paths.flows(),
+                              },
+                              {
+                                label: t.t(
+                                  lang,
+                                  (s) => s.navigation.pendingFlows
+                                ),
+                                path: paths.pendingFlows(),
+                              },
+                              {
+                                label: t.t(
+                                  lang,
+                                  (s) => s.navigation.organizations
+                                ),
+                                path: paths.organizations(),
+                              },
+                              {
+                                label: t.t(lang, (s) => s.navigation.keywords),
+                                path: paths.keywords(),
+                              },
+                            ]}
+                            className={CLASSES.CONTAINER.FLUID}
+                            externalLinks={[
+                              ...(env.externalUrls?.rpmBaseUrl
+                                ? [
+                                    {
+                                      label: t.t(lang, (s) => s.navigation.rpm),
+                                      url: env.externalUrls.rpmBaseUrl,
+                                    },
+                                  ]
+                                : []),
+                              ...(env.externalUrls?.prismBaseUrl
+                                ? [
+                                    {
+                                      label: t.t(
+                                        lang,
+                                        (s) => s.navigation.prism
+                                      ),
+                                      url: env.externalUrls.prismBaseUrl,
+                                    },
+                                  ]
+                                : []),
+                              ...(env.externalUrls?.ftsWebsiteBaseUrl
+                                ? [
+                                    {
+                                      label: t.t(
+                                        lang,
+                                        (s) => s.navigation.ftsWebsite
+                                      ),
+                                      url: env.externalUrls.ftsWebsiteBaseUrl,
+                                    },
+                                  ]
+                                : []),
+                              ...(env.externalUrls?.helpUrl
+                                ? [
+                                    {
+                                      label: t.t(
+                                        lang,
+                                        (s) => s.navigation.help
+                                      ),
+                                      url: env.externalUrls.helpUrl,
+                                    },
+                                  ]
+                                : []),
+                            ]}
+                            actionButtons={[
+                              {
+                                label: t.t(lang, (s) => s.navigation.newFlow),
+                                path: paths.newFlow(),
+                              },
+                            ]}
+                          />
+                          <Outlet />
+                        </div>
                       </LoggedInContainer>
                     ) : (
                       <>
