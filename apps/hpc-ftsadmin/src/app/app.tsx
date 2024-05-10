@@ -218,8 +218,8 @@ const Layout = () => {
                               },
                             ]}
                           />
-                          <Outlet />
                         </div>
+                        <Outlet />
                       </LoggedInContainer>
                     ) : (
                       <>
