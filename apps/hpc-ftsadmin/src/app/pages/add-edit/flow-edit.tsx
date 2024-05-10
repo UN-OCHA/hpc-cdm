@@ -1584,7 +1584,21 @@ export default (props: Props) => {
   }, [inputEntries]);
   const location = useLocation();
   const copyValues = location.state;
-
+  const [isTitleView, setisTitleView] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      if (scrollPosition > 0) {
+        setisTitleView(true);
+      } else {
+        setisTitleView(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -1606,9 +1620,15 @@ export default (props: Props) => {
                 )}
               >
                 <PageMeta title={[t.t(lang, (s) => s.routes.newFlow.title)]} />
-                <C.PageTitle>
+                <C.PageTitle
+                  style={{
+                    overflowY: 'scroll',
+                    position: 'sticky',
+                    top: '100px',
+                  }}
+                >
                   <StyledTitle>
-                    <div>
+                    <div style={{ opacity: isTitleView ? 0 : 1 }}>
                       {flowDetail
                         ? t.t(
                             lang,
@@ -1718,7 +1738,14 @@ export default (props: Props) => {
                         </>
                       )}
                     </div>
-                    <div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        marginRight: '23px',
+                        backgroundColor: 'white',
+                        height: '50px',
+                      }}
+                    >
                       <StyledRestrictedCheckBox>
                         <C.CheckBox
                           name="restricted"
@@ -1750,7 +1777,13 @@ export default (props: Props) => {
                           </span>
                         </YellowTooltip>
                       </StyledRestrictedCheckBox>
-                      <div>
+                      <div
+                        style={{
+                          alignItems: 'center',
+                          display: 'flex',
+                          marginLeft: 25,
+                        }}
+                      >
                         <StyledAnchorDiv>
                           <StyledAnchor
                             href="flows"

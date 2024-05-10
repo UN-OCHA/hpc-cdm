@@ -375,9 +375,12 @@ list-none
 const StyledDiv = tw.div`
 my-6
 me-4
+mr-[23px]
 lg:flex
 justify-end
-gap-x-4 
+gap-x-4
+bg-white
+z-10
 `;
 
 const initialReportDetail = {
@@ -2231,6 +2234,119 @@ export const FlowForm = (props: Props) => {
         }
         return (
           <Form>
+            <StyledDiv style={{ position: 'sticky', top: '70px' }}>
+              {!readOnly && !isPending && (
+                <>
+                  <C.ButtonSubmit
+                    color="primary"
+                    text={
+                      isCancelled || canReactive
+                        ? 'Reactive'
+                        : isEdit
+                        ? 'Save & View All'
+                        : 'Create & View All'
+                    }
+                    name="submitAction"
+                    value="saveall"
+                    onClick={() => {
+                      handleAlert(values);
+                      setApproveFlag(false);
+                      setRejectFlag(false);
+                      setFieldValue('submitAction', 'save');
+                    }}
+                  />
+                  <C.ButtonSubmit
+                    color="primary"
+                    text={
+                      isCancelled || canReactive
+                        ? 'Reactive'
+                        : isEdit
+                        ? 'Save'
+                        : 'Create'
+                    }
+                    name="submitAction"
+                    value="save"
+                    onClick={() => {
+                      handleAlert(values);
+                      setApproveFlag(false);
+                      setRejectFlag(false);
+                      setFieldValue('submitAction', 'save');
+                    }}
+                  />
+                  <C.ButtonSubmit
+                    color="primary"
+                    text={'Set as inactive'}
+                    name="submitAction"
+                    value="inactive"
+                    onClick={async () => {
+                      window.confirm(
+                        'Are you sure you want to set this flow as inactive? Any parent or child flows linked to this flow must be unlinked before the flow can be set as inactive.'
+                      );
+                      handleAlert(values);
+                      setApproveFlag(false);
+                      setRejectFlag(false);
+                      setFieldValue('submitAction', 'inactive');
+                    }}
+                  />
+                </>
+              )}
+              {isPending && (
+                <>
+                  <C.ButtonSubmit
+                    color="primary"
+                    text={'Save & Approve'}
+                    name="submitAction"
+                    value="approve"
+                    onClick={() => {
+                      setApproveFlag(true);
+                      setFieldValue('submitAction', 'approve');
+                    }}
+                  />
+                  <C.ButtonSubmit
+                    color="primary"
+                    text={'Mark As Rejected'}
+                    name="submitAction"
+                    value="rejected"
+                    onClick={() => {
+                      setRejectFlag(true);
+                      setApproveFlag(true);
+                      setFieldValue('submitAction', 'rejected');
+                    }}
+                  />
+                </>
+              )}
+              {currentVersionID ? (
+                <Stack direction="row" spacing={2}>
+                  {isEdit && (
+                    <Button
+                      variant="outlined"
+                      startIcon={<DeleteIcon />}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (
+                          window.confirm(
+                            'Are you sure you want to delete this version of this flow? Any parent or child flows linked to this flow must be unlinked before the flow can be deleted. Only this version will be deleted.'
+                          )
+                        ) {
+                          deleteFlow();
+                        }
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                  <Button
+                    variant="outlined"
+                    startIcon={<ContentCopyIcon />}
+                    onClick={() => handleCopy(values)}
+                  >
+                    COPY
+                  </Button>
+                </Stack>
+              ) : (
+                <></>
+              )}
+            </StyledDiv>
             {openAlerts.map((alert) => (
               <Alert
                 key={alert.id}
@@ -2344,7 +2460,9 @@ export const FlowForm = (props: Props) => {
                       ? 'none'
                       : 'auto',
                     opacity: readOnly ? 0.6 : isShowParentFlow ? 0.6 : 1,
+                    position: 'relative',
                   }}
+                  id="parentDiv"
                 >
                   <C.FormSection title="Funding Source(s)" isLeftSection>
                     {values.parentFlow && values.parentFlow.length ? (
@@ -3710,7 +3828,7 @@ export const FlowForm = (props: Props) => {
               {!readOnly && !isPending && (
                 <>
                   <C.ButtonSubmit
-                    color="secondary"
+                    color="primary"
                     text={
                       isCancelled || canReactive
                         ? 'Reactive'

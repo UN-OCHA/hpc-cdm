@@ -38,13 +38,12 @@ export default styled(DevEnvWarning)`
     width: 100%;
     height: ${HEIGHT};
     position: fixed;
-    z-index: 1000;
+    z-index: 1;
     background: ${(p) => p.theme.colors.pallete.red.dark};
     color: #fff;
     text-align: center;
     justify-content: center;
     border-bottom: 1px solid #fff;
-
     span {
       margin: 0 ${(p) => p.theme.marginPx.md}px;
     }
