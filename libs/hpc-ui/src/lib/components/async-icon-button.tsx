@@ -20,6 +20,7 @@ interface AsyncIconButtonProps {
   };
   iconSx?: React.CSSProperties;
   redirectAfterFetch?: string;
+  reloadAfterSuccess?: boolean;
 }
 
 const ModalPaper = tw.div`
@@ -39,6 +40,7 @@ const AsyncIconButton = ({
   confirmModal,
   iconSx,
   redirectAfterFetch,
+  reloadAfterSuccess,
 }: AsyncIconButtonProps) => {
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
@@ -72,6 +74,9 @@ const AsyncIconButton = ({
         setLoading(false);
         if (redirectAfterFetch) {
           navigate(redirectAfterFetch);
+        }
+        if (reloadAfterSuccess) {
+          window.location.reload();
         }
       } catch (err) {
         console.error(err);
