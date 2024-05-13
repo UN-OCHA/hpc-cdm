@@ -23,7 +23,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
 import CancelIcon from '@mui/icons-material/Cancel';
-import * as paths from '../../paths';
 
 import {
   KeywordHeaderID,
@@ -232,9 +231,9 @@ const EditableRow = ({
         }
         IconComponent={DeleteIcon}
         confirmModal={t.get(lang, (s) => s.components.keywordTable.modal)}
-        redirectAfterFetch={paths.keywords()}
         tooltipText={t.t(lang, (s) => s.components.keywordTable.labels.delete)}
         iconSx={keywordIconSize}
+        reloadAfterSuccess
       />
     </IconContainer>
   );
