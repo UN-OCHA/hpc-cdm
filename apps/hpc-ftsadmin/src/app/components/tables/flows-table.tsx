@@ -691,6 +691,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     data: flows.SearchFlowsResult;
     pending?: boolean;
   }) => {
+    const [loading, setLoading] = useState(false);
     if (pending) {
       const PENDING_FLOWS_INITIAL_VALUES: {
         flows: { id: number; versionID: number }[];
@@ -701,7 +702,14 @@ export default function FlowsTable(props: FlowsTableProps) {
         flows: { id: number; versionID: number }[];
       }) => {
         if (values.flows.length === 0) return;
-        environment.model.flows.bulkRejectPendingFlows(values).finally(load);
+        setLoading(true);
+        environment.model.flows
+          .bulkRejectPendingFlows(values)
+          .then(() => {
+            setLoading(false);
+            load();
+          })
+          .catch(() => setLoading(false));
       };
       return (
         <Formik
@@ -725,6 +733,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                         lang,
                         (s) => s.components.flowsTable.rejectPendingFlows.button
                       )}
+                      displayLoading={loading}
                       onClick={() => submitForm()}
                     />
                   }
