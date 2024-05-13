@@ -7,6 +7,8 @@ import dayjs from 'dayjs';
 import { util } from '@unocha/hpc-core';
 
 const EMPTY_CELL = '--';
+const DATE_FORMAT = 'D/M/YYYY';
+
 export const downloadExcel = (
   data: flows.SearchFlowsBatchesResult,
   lang: LanguageKey,
@@ -65,7 +67,7 @@ export const downloadExcel = (
                 tableRow.push({
                   displayLabel,
                   value: flow.decisionDate
-                    ? dayjs(flow.decisionDate).locale(lang).format('D/M/YYYY')
+                    ? dayjs(flow.decisionDate).locale(lang).format(DATE_FORMAT)
                     : EMPTY_CELL,
                 });
                 break;
@@ -167,7 +169,7 @@ export const downloadExcel = (
                 tableRow.push({
                   displayLabel,
                   value: flow.flowDate
-                    ? dayjs(flow.flowDate).locale(lang).format('D/M/YYYY')
+                    ? dayjs(flow.flowDate).locale(lang).format(DATE_FORMAT)
                     : EMPTY_CELL,
                 });
                 break;
@@ -245,7 +247,7 @@ export const downloadExcel = (
               case 'updatedCreated': {
                 tableRow.push({
                   displayLabel,
-                  value: dayjs(flow.updatedAt).locale(lang).format('D/M/YYYY'),
+                  value: dayjs(flow.updatedAt).locale(lang).format(DATE_FORMAT),
                 });
                 break;
               }
