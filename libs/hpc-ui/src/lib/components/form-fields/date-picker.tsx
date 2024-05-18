@@ -87,7 +87,16 @@ const DatePicker = ({
           onError={(error) => {
             console.error(error);
           }}
-          onChange={handleDateChange}
+
+          onChange={(date) => {
+            if (date) {
+              const parsedDate = date.toDate(); // Convert Day.js object to JavaScript Date object
+              helpers.setValue(parsedDate);
+            } else {
+              helpers.setValue(null);
+            }
+          }}
+
           label={label}
           slots={{
             textField: useMemo(
