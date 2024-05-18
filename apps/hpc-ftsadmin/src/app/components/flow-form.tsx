@@ -49,6 +49,8 @@ import { flows } from '../paths';
 import Link from '@mui/material/Link';
 import { useNavigate, unstable_usePrompt } from 'react-router-dom';
 import { id } from 'fp-ts/lib/Refinement';
+import { stringify } from 'querystring';
+import { mergeOptions } from 'use-query-params/dist/options';
 
 export type AutoCompleteSelectionType = forms.InputSelectValueType;
 
@@ -256,6 +258,7 @@ interface Props {
   flowId?: string;
   versionId?: string;
   isRestricted: boolean;
+  errorCorrection?: boolean;
   inputEntries: InputEntriesType;
   initializeInputEntries: () => void;
   rejectInputEntry: (key: string) => void;
@@ -459,6 +462,7 @@ export const FlowForm = (props: Props) => {
     prevDetails,
     versionData,
     isRestricted,
+    errorCorrection,
     inputEntries,
     flowId,
     versionId,
@@ -627,9 +631,15 @@ export const FlowForm = (props: Props) => {
       id: isEdit && currentFlowID ? currentFlowID : null,
       versionID: isEdit && currentVersionID ? currentVersionID : null,
       amountUSD: values.amountUSD,
-      flowDate: values.flowDate,
-      decisionDate: values.decisionDate,
-      firstReportedDate: values.firstReported,
+      flowDate: dayjs(values.flowDate, 'DD/MM/YYYY').format(
+        'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+      ),
+      decisionDate: dayjs(values.decisionDate, 'DD/MM/YYYY').format(
+        'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+      ),
+      firstReportedDate: dayjs(values.firstReported, 'DD/MM/YYYY').format(
+        'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+      ),
       budgetYear: values.budgetYear,
       origAmount: values.amountOriginal ? values.amountOriginal : null,
       origCurrency: (values.origCurrency as AutoCompleteSelectionType)
@@ -677,7 +687,9 @@ export const FlowForm = (props: Props) => {
         return {
           contactInfo: item.reporterContactInformation,
           source: item.reportSource,
-          date: item.reportedDate,
+          date: dayjs(item.reportedDate, 'DD/MM/YYYY').format(
+            'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+          ),
           versionID: currentVersionID,
           newlyAdded: addReportFlag,
           sourceID: null,
@@ -800,13 +812,13 @@ export const FlowForm = (props: Props) => {
           updatedAt: '',
         },
       ],
-      isErrorCorrection: values.isErrorCorrectionValue
+      isErrorCorrection: errorCorrection
         ? true
         : isSuperseded
         ? true
         : isPending
         ? true
-        : !isSuperseded && isPending
+        : !isSuperseded && !isPending
         ? false
         : null,
       rejected: rejectFlag ? true : !rejectFlag ? false : null,
@@ -847,9 +859,7 @@ export const FlowForm = (props: Props) => {
   const handleSave = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-  const validationAlert = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+
   const [showWarningMessage, setShowWarningMessage] = useState<boolean>(false);
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
@@ -935,7 +945,10 @@ export const FlowForm = (props: Props) => {
   const [remove, setRemove] = useState<boolean>(false);
   const handleRemove = (index: number, values: FormValues) => {
     if (window.confirm('Are you sure you want to remove this file?')) {
-      if (initialValue.reportDetails[index]?.reportFiles) {
+      if (
+        initialValue.reportDetails[index].reportFiles &&
+        initialValue.reportDetails[index].reportFiles[0]?.fileName
+      ) {
         values.reportDetails[index].reportFileTitle = '';
         initialValue.reportDetails[index].reportFiles[0].fileName = '';
         initialValue.reportDetails[index].reportFiles[0].title = '';
@@ -977,6 +990,56 @@ export const FlowForm = (props: Props) => {
       values.destinationOrganizations[indexKey]
     );
   };
+
+  interface Inconsistency {
+    type: string;
+    values: {
+      name?: string;
+      year?: string;
+      refDirection: string;
+      options?: { name: string }[];
+    }[];
+  }
+
+  const processDataInconsistencies = (
+    inconsistencyArray: Inconsistency[]
+  ): string => {
+    let message = '';
+    inconsistencyArray.forEach((inconsistencyWith) => {
+      if (inconsistencyWith && inconsistencyWith.type) {
+        const inconsistencyType = inconsistencyWith.type;
+        message +=
+          inconsistencyType.charAt(0).toUpperCase() +
+          inconsistencyType.slice(1) +
+          ': ';
+
+        if (inconsistencyWith.type === 'no-direct-link') {
+          message += inconsistencyWith.values.join(', ');
+        } else {
+          message +=
+            inconsistencyWith.values
+              .map((value) => {
+                const name = value.name || value.year;
+                let joinedOptions = '';
+                if (value.options) {
+                  joinedOptions = value.options
+                    .map((option) => {
+                      return option.name || JSON.stringify(option);
+                    })
+                    .join(', ');
+                }
+                const options = `is not in the list of acceptable ${value.refDirection} ${inconsistencyType}: [${joinedOptions}]`;
+                return `'${name}' ${options}`;
+              })
+              .join(', ') + '. ';
+        }
+      } else {
+        message += JSON.stringify(inconsistencyArray);
+      }
+    });
+    return message;
+  };
+
   const handleSubmit = async (
     values: FormValues,
     submitAction: string | undefined
@@ -1113,8 +1176,16 @@ export const FlowForm = (props: Props) => {
           code: null,
           group: 'inactiveReason',
           includeTotals: null,
-          createdAt: currentVersionData ? currentVersionData.createdAt : '',
-          updatedAt: currentVersionData ? currentVersionData.updatedAt : '',
+          createdAt: currentVersionData
+            ? dayjs(currentVersionData.createdAt, 'DD/MM/YYYY').format(
+                'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+              )
+            : '',
+          updatedAt: currentVersionData
+            ? dayjs(currentVersionData.updatedAt, 'DD/MM/YYYY').format(
+                'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+              )
+            : '',
         },
       ];
     } else if (submitAction === 'inactive') {
@@ -1203,7 +1274,7 @@ export const FlowForm = (props: Props) => {
           }
         }
       });
-      if (flag) {
+      if (flag && !(isShowParentFlow || isShowChildFlow > 0)) {
         setUnsavedChange(false);
         if (!isEdit) {
           try {
@@ -1275,9 +1346,17 @@ export const FlowForm = (props: Props) => {
                   setSharePath(path);
                 }
               } catch (err: any) {
+                let errmessage = '';
+                if (err.reason) {
+                  const inconsistencyObject = err.reason;
+                  errmessage = processDataInconsistencies(inconsistencyObject);
+                } else {
+                  const lastIndex = err.message.lastIndexOf(':');
+                  errmessage = err.message.substring(lastIndex + 1);
+                }
                 setOpenAlerts([
                   ...openAlerts,
-                  { message: err.message, id: alertId },
+                  { message: errmessage, id: alertId },
                 ]);
                 setAlertId((prevId) => prevId + 1);
                 handleSave();
@@ -1854,6 +1933,7 @@ export const FlowForm = (props: Props) => {
           updateUploadedFile[index] = responseData;
           return updateUploadedFile;
         });
+        console.log(uploadedFileArray, 'uploadedFileArray');
       } else {
         console.error('No file selected for upload.');
       }
@@ -1884,6 +1964,28 @@ export const FlowForm = (props: Props) => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [unsavedChange]);
+
+  useEffect(() => {
+    const valuesObject: Record<string, any[]> = {
+      sourceOrganizations: initialValue.sourceOrganizations,
+      sourceLocations: initialValue.sourceLocations,
+      sourceUsageYears: initialValue.sourceUsageYears,
+      sourceProjects: initialValue.sourceProjects,
+      sourcePlans: initialValue.sourcePlans,
+      sourceGoverningEntities: initialValue.sourceGoverningEntities,
+      sourceGlobalClusters: initialValue.sourceGlobalClusters,
+      sourceEmergencies: initialValue.sourceEmergencies,
+      destinationOrganizations: initialValue.destinationOrganizations,
+      destinationLocations: initialValue.destinationLocations,
+      destinationUsageYears: initialValue.destinationUsageYears,
+      destinationProjects: initialValue.destinationProjects,
+      destinationPlans: initialValue.destinationPlans,
+      destinationGoverningEntities: initialValue.destinationGoverningEntities,
+      destinationGlobalClusters: initialValue.destinationGlobalClusters,
+      destinationEmergencies: initialValue.destinationEmergencies,
+    };
+    setObjects(valuesObject);
+  }, []);
 
   unstable_usePrompt({
     message: 'You have unsaved changes! Are you sure you want to leave?',
@@ -2046,6 +2148,7 @@ export const FlowForm = (props: Props) => {
               } else {
                 error['reportedDate'] = '';
               }
+              console.log(res[index], '-------------->');
               if (
                 (res[index].reportFileTitle === '' ||
                   res[index].reportFileTitle === undefined) &&
@@ -2105,12 +2208,13 @@ export const FlowForm = (props: Props) => {
           }
         }
       });
+      console.log(errors, 'errors');
       if (Object.keys(errors).length === 0) setValidationFlag(false);
+      else handleSave();
       return errors;
     }
   };
-  if (validationFlag) validationAlert();
-  if (alertFlag) handleSave();
+
   const handleParentFlow = (
     values: any,
     parentValueString: string,
@@ -2120,97 +2224,150 @@ export const FlowForm = (props: Props) => {
     const defaultValueParent: flowsResponse.GetFlowResult =
       JSON.parse(parentValueString);
 
-    const indexOrg = defaultValueParent.organizations.findIndex(
-      (org) => org.flowObject?.refDirection === 'destination'
-    );
-    const indexYear = defaultValueParent.usageYears.findIndex(
-      (org) => org.flowObject?.refDirection === 'destination'
-    );
-    const indexLoc = defaultValueParent.locations.findIndex(
-      (org) => org.flowObject?.refDirection === 'destination'
-    );
-    const indexEmr =
-      defaultValueParent.emergencies?.findIndex(
-        (org) => org.flowObject?.refDirection === 'destination'
-      ) ?? -1;
-    const indexGlo =
-      defaultValueParent.globalClusters?.findIndex(
-        (org) => org.flowObject?.refDirection === 'destination'
-      ) ?? -1;
-    const indexPln =
-      defaultValueParent.plans?.findIndex(
-        (org) => org.flowObject?.refDirection === 'destination'
-      ) ?? -1;
-    // const indexEnt = defaultValueParent.governingEntities?.findIndex((org) => org.flowObject?.refDirection === 'destination') ?? -1;
-    const indexPro =
-      defaultValueParent.projects?.findIndex(
-        (org) => org.flowObject?.refDirection === 'destination'
-      ) ?? -1;
+    const indexOrgs = defaultValueParent.organizations
+      .map((org, index) => {
+        return org.flowObject?.refDirection === 'destination'
+          ? index
+          : undefined;
+      })
+      .filter((index) => index !== undefined);
 
-    const _sourceOrganizations =
-      indexOrg > -1
-        ? {
-            displayLabel: `${defaultValueParent.organizations[indexOrg].name} [${defaultValueParent.organizations[indexOrg].abbreviation}]`,
-            value: defaultValueParent.organizations[indexOrg].id,
-          }
-        : null;
-    const _sourceUsageYears =
-      indexYear > -1
-        ? {
-            displayLabel: `${defaultValueParent.usageYears[indexYear].year}`,
-            value: defaultValueParent.usageYears[indexYear].id,
-          }
-        : null;
-    const _sourceLocations =
-      indexLoc > -1
-        ? {
-            displayLabel: `${defaultValueParent.locations[indexLoc].name}`,
-            value: defaultValueParent.locations[indexLoc].id,
-          }
-        : null;
-    const _sourceEmergencies =
-      indexEmr > -1 && defaultValueParent.emergencies
-        ? {
-            displayLabel: `${defaultValueParent.emergencies[indexEmr].name}`,
-            value: defaultValueParent.emergencies[indexEmr].id,
-          }
-        : null;
-    const _sourceGlobalClusters =
-      indexGlo > -1 && defaultValueParent.globalClusters
-        ? {
-            displayLabel: `${defaultValueParent.globalClusters[indexGlo].name}`,
-            value: defaultValueParent.globalClusters[indexGlo].id,
-          }
-        : null;
-    const _sourcePlans =
-      indexPln > -1 && defaultValueParent.plans
-        ? {
-            displayLabel: `${defaultValueParent.plans[indexPln].planVersion.name}`,
-            value: defaultValueParent.plans[indexPln].id,
-          }
-        : null;
-    const _sourceProjects =
-      indexPro > -1 && defaultValueParent.projects
-        ? {
-            displayLabel: `${defaultValueParent.projects[indexPro].projectVersions[indexPro].name}`,
-            value: defaultValueParent.projects[indexPro].id,
-          }
-        : null;
+    const indexYears = defaultValueParent.usageYears
+      .map((org, index) => {
+        return org.flowObject?.refDirection === 'destination'
+          ? index
+          : undefined;
+      })
+      .filter((index) => index !== undefined);
+
+    const indexLocs = defaultValueParent.locations
+      .map((org, index) => {
+        return org.flowObject?.refDirection === 'destination'
+          ? index
+          : undefined;
+      })
+      .filter((index) => index !== undefined);
+
+    const indexEmrs = defaultValueParent.emergencies
+      ?.map((org, index) => {
+        return org.flowObject?.refDirection === 'destination'
+          ? index
+          : undefined;
+      })
+      .filter((index) => index !== undefined);
+
+    const indexGlos = defaultValueParent.globalClusters
+      ?.map((org, index) => {
+        return org.flowObject?.refDirection === 'destination'
+          ? index
+          : undefined;
+      })
+      .filter((index) => index !== undefined);
+
+    const indexPlns = defaultValueParent.plans
+      ?.map((org, index) => {
+        return org.flowObject?.refDirection === 'destination'
+          ? index
+          : undefined;
+      })
+      .filter((index) => index !== undefined);
+
+    // const indexEnt = defaultValueParent.governingEntities?.findIndex((org) => org.flowObject?.refDirection === 'destination') ?? -1;
+
+    const indexPros = defaultValueParent.projects
+      ?.map((org, index) => {
+        return org.flowObject?.refDirection === 'destination'
+          ? index
+          : undefined;
+      })
+      .filter((index) => index !== undefined);
+
+    const _sourceOrganizations = indexOrgs.map((index: number | undefined) => {
+      if (index === 0 || index) {
+        return {
+          displayLabel: `${defaultValueParent.organizations[index].name} [${defaultValueParent.organizations[index].abbreviation}]`,
+          value: defaultValueParent.organizations[index].id,
+        };
+      }
+    });
+    const _sourceUsageYears = indexYears.map((index: number | undefined) => {
+      if (index === 0 || index) {
+        return {
+          displayLabel: `${defaultValueParent.usageYears[index].year}`,
+          value: defaultValueParent.usageYears[index].id,
+        };
+      }
+    });
+    const _sourceLocations = indexLocs.map((index: number | undefined) => {
+      if (index === 0 || index) {
+        return {
+          displayLabel: `${defaultValueParent.locations[index].name}`,
+          value: defaultValueParent.locations[index].id,
+        };
+      }
+    });
+
+    const _sourceEmergencies = indexEmrs?.map((index: number | undefined) => {
+      if (index === 0 || index) {
+        return {
+          displayLabel:
+            defaultValueParent.emergencies &&
+            `${defaultValueParent.emergencies[index].name}`,
+          value:
+            defaultValueParent.emergencies &&
+            defaultValueParent.emergencies[index].id,
+        };
+      }
+    });
+    const _sourceGlobalClusters = indexGlos?.map(
+      (index: number | undefined) => {
+        if (index === 0 || index) {
+          return {
+            displayLabel:
+              defaultValueParent.globalClusters &&
+              `${defaultValueParent.globalClusters[index].name}`,
+            value:
+              defaultValueParent.globalClusters &&
+              defaultValueParent.globalClusters[index].id,
+          };
+        }
+      }
+    );
+    const _sourcePlans = indexPlns?.map((index: number | undefined) => {
+      if (index === 0 || index) {
+        return {
+          displayLabel:
+            defaultValueParent.plans &&
+            `${defaultValueParent.plans[index].planVersion.name}`,
+          value: defaultValueParent.plans && defaultValueParent.plans[index].id,
+        };
+      }
+    });
+    const _sourceProjects = indexPros?.map((index: number | undefined) => {
+      if (index === 0 || index) {
+        return {
+          displayLabel:
+            defaultValueParent.projects &&
+            `${defaultValueParent.projects[index].projectVersions[index].name}`,
+          value:
+            defaultValueParent.projects &&
+            defaultValueParent.projects[index].id,
+        };
+      }
+    });
+
     setValues({
       ...values,
-      sourceOrganizations: _sourceOrganizations ? [_sourceOrganizations] : [],
-      sourceUsageYears: _sourceUsageYears ? [_sourceUsageYears] : [],
-      sourceLocations: _sourceLocations ? [_sourceLocations] : [],
-      sourceEmergencies: _sourceEmergencies ? [_sourceEmergencies] : [],
-      sourceGlobalClusters: _sourceGlobalClusters
-        ? [_sourceGlobalClusters]
-        : [],
-      sourcePlans: _sourcePlans ? [_sourcePlans] : [],
+      sourceOrganizations: _sourceOrganizations,
+      sourceUsageYears: _sourceUsageYears,
+      sourceLocations: _sourceLocations,
+      sourceEmergencies: _sourceEmergencies,
+      sourceGlobalClusters: _sourceGlobalClusters,
+      sourcePlans: _sourcePlans,
       // sourceGoverningEntities: _sourceGoverningEntities ? [_sourceGoverningEntities] : [],
-      sourceProjects: _sourceProjects ? [_sourceProjects] : [],
+      sourceProjects: _sourceProjects,
     });
   };
-
   return (
     <Formik
       initialValues={initialValue}
@@ -2220,6 +2377,7 @@ export const FlowForm = (props: Props) => {
       validate={(values) => validateForm(values)}
       enableReinitialize
       validateOnChange={false}
+      style={{ zIndex: 1 }}
     >
       {({ values, setFieldValue, setValues }) => {
         if (values.parentFlow && values.parentFlow[0]) {
@@ -2378,7 +2536,7 @@ export const FlowForm = (props: Props) => {
                 >
                   <AlertTitle>Set as inactive?</AlertTitle>
                   All linked flows must be unlinked before this flow can be
-                  cancelled. Unlink flows and choose choose flow again.
+                  cancelled. Unlink flows and choose flow again.
                 </MuiAlert>
               )}
             </div>
@@ -2511,7 +2669,7 @@ export const FlowForm = (props: Props) => {
                                 <StyledStrong>{objectType}</StyledStrong>
                                 {objects.map((object, index) => (
                                   <span key={index}>
-                                    {object.year || object.name}
+                                    {object.year || object.name}&nbsp;&nbsp;
                                   </span>
                                 ))}
                               </StyledList>
@@ -2541,7 +2699,7 @@ export const FlowForm = (props: Props) => {
                     <StyledRow>
                       <StyledHalfSection>
                         <C.AsyncAutocompleteSelectFTSAdmin
-                          label="Usage Year(s)"
+                          label="Usage Year(s)*"
                           name="sourceUsageYears"
                           fnPromise={environment.model.usageYears.getUsageYears}
                           isMulti
@@ -2667,7 +2825,7 @@ export const FlowForm = (props: Props) => {
                       </StyledAddChildWarning>
                     )}
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Organization(s)"
+                      label="Organization(s)*"
                       name="destinationOrganizations"
                       fnPromise={
                         environment.model.organizations
@@ -3346,7 +3504,7 @@ export const FlowForm = (props: Props) => {
                                 row
                               />
                               <C.AsyncAutocompleteSelectFTSAdmin
-                                label="Reported By Organization"
+                                label="Reported By Organization*"
                                 name={`reportDetails[${index}].reportedOrganization`}
                                 placeholder="Reported by Organization"
                                 fnPromise={
@@ -3818,13 +3976,6 @@ export const FlowForm = (props: Props) => {
               </div>
             )}
             <StyledDiv>
-              {!isPending && isEdit && (
-                <C.CheckBox
-                  label="as error correction"
-                  name="isErrorCorrectionValue"
-                  size="small"
-                />
-              )}
               {!readOnly && !isPending && (
                 <>
                   <C.ButtonSubmit

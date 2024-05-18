@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { TextField, TextFieldProps, InputAdornment } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 import tw from 'twin.macro';
-import { NumericFormat, NumericFormatProps } from 'react-number-format';
+import {
+  NumericFormat,
+  NumericFormatProps,
+  NumberFormatValues,
+} from 'react-number-format';
 import InputEntry from './input-entry';
 import { forms } from '@unocha/hpc-data';
 
@@ -28,19 +32,25 @@ export const NumericFormatCustom = React.forwardRef<
   CustomProps
 >(function NumericFormatCustom(props, ref) {
   const { onChange, name, itemType, thousandSeparator, ...others } = props;
+
+  const handleValueChange = useCallback(
+    (values: NumberFormatValues) => {
+      onChange({
+        target: {
+          name: props.name,
+          value: values.value,
+        },
+      });
+    },
+    [onChange, props.name]
+  );
+
   return (
     <NumericFormat
       {...others}
       name={name}
       getInputRef={ref}
-      onValueChange={(values) => {
-        onChange({
-          target: {
-            name: props.name,
-            value: values.value,
-          },
-        });
-      }}
+      onValueChange={handleValueChange}
       thousandSeparator={itemType === 'currency' || thousandSeparator}
       valueIsNumericString
     />
@@ -61,6 +71,7 @@ interface TextFieldWrapperProps {
   entryInfo?: forms.InputEntryType | null;
   rejectInputEntry?: (key: string) => void;
 }
+
 const TextFieldWrapper = ({
   name,
   label,
@@ -79,37 +90,64 @@ const TextFieldWrapper = ({
   const [field, meta] = useField(name);
   const { setFieldValue } = useFormikContext<string>();
 
-  const configTextField: TextFieldProps = {
-    ...field,
-    ...otherProps,
-    label: label,
-    id: name,
-    multiline: textarea || multiline,
-    rows: rows,
-    maxRows: 5,
+  const configTextField: TextFieldProps = useMemo(() => {
+    return {
+      ...field,
+      ...otherProps,
+      label: label,
+      id: name,
+      multiline: textarea || multiline,
+      rows: rows,
+      maxRows: 5,
+      required,
+      placeholder: placeholder,
+      size: 'small',
+      type: 'text',
+      InputProps:
+        type === 'number' || type === 'currency'
+          ? {
+              inputComponent: NumericFormatCustom as any,
+              startAdornment:
+                type === 'currency' ? (
+                  <InputAdornment position="start">$</InputAdornment>
+                ) : null,
+              inputProps: {
+                itemType: type,
+                thousandSeparator: thousandSeparator,
+              },
+            }
+          : undefined,
+    };
+  }, [
+    field,
+    otherProps,
+    label,
+    name,
+    textarea,
+    multiline,
+    rows,
     required,
-    placeholder: placeholder,
-    size: 'small',
-    type: 'text',
-    InputProps:
-      type === 'number' || type === 'currency'
-        ? {
-            inputComponent: NumericFormatCustom as any,
-            startAdornment:
-              type === 'currency' ? (
-                <InputAdornment position="start">$</InputAdornment>
-              ) : null,
-            inputProps: {
-              itemType: type,
-              thousandSeparator: thousandSeparator,
-            },
-          }
-        : undefined,
-  };
+    placeholder,
+    type,
+    thousandSeparator,
+  ]);
+
   if (meta && meta.touched && meta.error) {
     configTextField.error = true;
     configTextField.helperText = error ? error(meta.error) : meta.error;
   }
+
+  const handleSetValue = useCallback(() => {
+    if (entryInfo) {
+      setFieldValue(name, entryInfo.value);
+      if (rejectInputEntry) rejectInputEntry(name);
+    }
+  }, [entryInfo, name, setFieldValue, rejectInputEntry]);
+
+  const handleRejectValue = useCallback(() => {
+    if (rejectInputEntry) rejectInputEntry(name);
+  }, [rejectInputEntry, name]);
+
   return (
     <StyledContainer>
       <StyledTextField {...configTextField} />
@@ -117,13 +155,8 @@ const TextFieldWrapper = ({
       {entryInfo && rejectInputEntry && (
         <InputEntry
           info={entryInfo}
-          setValue={() => {
-            setFieldValue(name, entryInfo.value);
-            rejectInputEntry(name);
-          }}
-          rejectValue={() => {
-            rejectInputEntry(name);
-          }}
+          setValue={handleSetValue}
+          rejectValue={handleRejectValue}
         />
       )}
     </StyledContainer>

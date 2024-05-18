@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import IconButton from '@mui/material/IconButton';
 import { Close, Check } from '@mui/icons-material';
 import tw from 'twin.macro';
@@ -15,16 +15,28 @@ const StyledContainer = styled.div(({ color }) => [
     border-radius: 12px;
   `,
 ]);
+
 interface PropsType {
   info: forms.InputEntryType;
   setValue: () => void;
   rejectValue: () => void;
 }
-const InputEntry = ({ info, setValue, rejectValue }: PropsType) => {
-  const color =
-    info.category === forms.InputEntryCategoriesEnum.ACTIVE_FLOW
+
+const InputEntry = React.memo(({ info, setValue, rejectValue }: PropsType) => {
+  const color = useMemo(() => {
+    return info.category === forms.InputEntryCategoriesEnum.ACTIVE_FLOW
       ? THEME.colors.entryBg.active
       : THEME.colors.entryBg.pending;
+  }, [info.category]);
+
+  const handleSetValue = useCallback(() => {
+    setValue();
+  }, [setValue]);
+
+  const handleRejectValue = useCallback(() => {
+    rejectValue();
+  }, [rejectValue]);
+
   return (
     <StyledContainer color={color}>
       <div
@@ -68,7 +80,7 @@ const InputEntry = ({ info, setValue, rejectValue }: PropsType) => {
                   height: 20,
                   width: 20,
                 }}
-                onClick={setValue}
+                onClick={handleSetValue}
               >
                 <Check sx={{ height: 16, width: 16 }} />
               </IconButton>
@@ -90,7 +102,7 @@ const InputEntry = ({ info, setValue, rejectValue }: PropsType) => {
                   height: 20,
                   width: 20,
                 }}
-                onClick={rejectValue}
+                onClick={handleRejectValue}
               >
                 <Close sx={{ height: 16, width: 16 }} />
               </IconButton>
@@ -125,6 +137,6 @@ const InputEntry = ({ info, setValue, rejectValue }: PropsType) => {
       </div>
     </StyledContainer>
   );
-};
+});
 
 export default InputEntry;
