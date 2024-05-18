@@ -3,6 +3,7 @@ const ABORT_ERROR = 'abort_error';
 const CONFLICT_ERROR = 'conflict';
 const DUPLICATE_ERROR = 'duplicate';
 const USER_ERROR = 'user_error';
+const CONSISTENCY_ERROR = 'consistency';
 
 export const USER_ERROR_KEYS = [
   'access.userAlreadyInvited',
@@ -113,3 +114,14 @@ export class DuplicateError extends Error {
 export const isDuplicateError = (error: Error): error is DuplicateError =>
   error instanceof DuplicateError ||
   (error && (error as DuplicateError).code === DUPLICATE_ERROR);
+
+export class ConsistencyError extends Error {
+  public readonly code = CONSISTENCY_ERROR;
+  public readonly reason: any[];
+  public readonly message: string;
+  public constructor(reason: any[], message: string) {
+    super(CONFLICT_ERROR);
+    this.reason = reason;
+    this.message = message;
+  }
+}

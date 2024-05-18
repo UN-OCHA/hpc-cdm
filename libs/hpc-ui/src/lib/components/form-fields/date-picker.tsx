@@ -5,17 +5,25 @@ import { DatePicker as BaseDatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import tw from 'twin.macro';
-import dayjs from '../../i18n/utils/dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 const StyledDatePicker = tw.div`
-flex
-w-full
-items-baseline
+  flex
+  w-full
+  items-baseline
 `;
 
 const StyledLink = tw(Link)`
-ms-8
+  ms-8
 `;
+
+interface DatePickerProps {
+  name: string;
+  label: string;
+  lang?: string;
+  enableButton?: boolean;
+  [key: string]: any; // Additional props
+}
 
 const DatePicker = ({
   name,
@@ -23,23 +31,17 @@ const DatePicker = ({
   lang = 'en',
   enableButton = true,
   ...otherProps
-}: {
-  name: string;
-  label: string;
-  lang?: string;
-  enableButton?: boolean;
-}) => {
+}: DatePickerProps) => {
   const [field, meta, helpers] = useField(name);
   const [cleared, setCleared] = useState(false);
 
-  const onBlur = useCallback(() => helpers.setTouched(true), [helpers]);
-  const errorMsg = useMemo(
-    () =>
-      meta.touched && Boolean(meta.error)
-        ? meta.touched && (meta.error as string)
-        : null,
-    [meta.touched, meta.error]
-  );
+  const onBlur = useCallback(() => {
+    helpers.setTouched(true);
+  }, [helpers]);
+
+  const errorMsg = useMemo(() => {
+    return meta.touched && Boolean(meta.error) ? (meta.error as string) : null;
+  }, [meta.touched, meta.error]);
 
   useEffect(() => {
     if (cleared) {
@@ -47,10 +49,26 @@ const DatePicker = ({
         helpers.setValue(null);
         setCleared(false);
       }, 100);
-
       return () => clearTimeout(timeout);
     }
-  }, [cleared]);
+  }, [cleared, helpers]);
+
+  const handleDateChange = useCallback(
+    (date: Dayjs | null) => {
+      if (date?.isValid()) {
+        helpers.setValue(date);
+      }
+    },
+    [helpers]
+  );
+
+  const handleClear = useCallback(() => {
+    setCleared(true);
+  }, []);
+
+  const handleSetToday = useCallback(() => {
+    helpers.setValue(dayjs());
+  }, [helpers]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={lang}>
@@ -63,40 +81,37 @@ const DatePicker = ({
             enableButton
               ? field.value === null
                 ? null
-                : dayjs(field.value)
+                : dayjs(field.value, 'DD/MM/YYYY')
               : dayjs()
           }
           onError={(error) => {
             console.error(error);
           }}
-          onChange={(date) => {
-            if (date?.isValid()) {
-              helpers.setValue(date);
-            }
-          }}
+          onChange={handleDateChange}
           label={label}
           slots={{
-            textField: (params) => (
-              <TextField
-                {...params}
-                InputLabelProps={{ shrink: true }}
-                onBlur={onBlur}
-                error={!!errorMsg}
-                helperText={errorMsg}
-                size="small"
-              />
+            textField: useMemo(
+              () => (params) => (
+                <TextField
+                  {...params}
+                  InputLabelProps={{ shrink: true }}
+                  onBlur={onBlur}
+                  error={!!errorMsg}
+                  helperText={errorMsg}
+                  size="small"
+                />
+              ),
+              [onBlur, errorMsg]
             ),
           }}
           slotProps={{
-            field: { clearable: true, onClear: () => setCleared(true) },
+            field: { clearable: true, onClear: handleClear },
           }}
         />
         {enableButton && (
           <StyledLink
             variant="body2"
-            onClick={() => {
-              helpers.setValue(dayjs());
-            }}
+            onClick={handleSetToday}
             sx={{ height: '100%', lineHeight: '40px', cursor: 'pointer' }}
           >
             Today

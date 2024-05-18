@@ -100,9 +100,9 @@ const YellowTooltip = styled(({ className, ...props }: TooltipProps) => (
 }));
 
 const initialFormData = {
-  amountUSD: 0,
-  amountOriginal: 0,
-  exchangeRateUsed: 0,
+  amountUSD: '',
+  amountOriginal: '',
+  exchangeRateUsed: '',
   keywords: [],
   flowStatus: '',
   flowType: { value: 133, displayLabel: 'Standard' },
@@ -110,7 +110,7 @@ const initialFormData = {
   firstReported: dayjs(),
   decisionDate: null,
   budgetYear: '',
-  flowDate: '',
+  flowDate: null,
   contributionType: { value: 50, displayLabel: 'Financial' },
   earmarkingType: '',
   method: { value: 156, displayLabel: 'Traditional aid' },
@@ -142,7 +142,7 @@ const initialFormData = {
       reporterReferenceCode: '',
       reportChannel: '',
       reportedOrganization: { value: '', displayLabel: '' },
-      reportedDate: '',
+      reportedDate: null,
       reporterContactInformation: '',
       sourceSystemRecordId: '',
       reportFiles: [
@@ -243,6 +243,7 @@ export default (props: Props) => {
     useState<boolean>(false);
   const [allFieldsReviewed, setAllFieldsReviewed] = useState<boolean>(false);
   const [isRestricted, setIsRestricted] = useState<boolean>(false);
+  const [errorCorrection, setErrorCorrection] = useState<boolean>(false);
   const [parentFlow, setParentFlow] = useState<AutoCompleteSelectionType[]>([]);
   const [childFlow, setChildFlow] = useState<AutoCompleteSelectionType[]>([]);
   const [parentIds, setParentIds] = useState<number[]>([]);
@@ -348,6 +349,13 @@ export default (props: Props) => {
       setIsRestricted(true);
     } else {
       setIsRestricted(false);
+    }
+  };
+  const handleErrorCorrection = (isChecked: boolean) => {
+    if (isChecked) {
+      setErrorCorrection(true);
+    } else {
+      setErrorCorrection(false);
     }
   };
 
@@ -950,12 +958,12 @@ export default (props: Props) => {
           (refileData: ReportFileType[], fileData) => {
             if (fileData.type !== 'url') {
               refileData.push({
-                title: fileData.title,
-                fileName: fileData.fileAssetEntity.originalname,
-                UploadFileUrl: fileData.fileAssetEntity.path,
-                fileAssetID: fileData.fileAssetID,
-                size: fileData.fileAssetEntity.size,
-                type: fileData.fileAssetEntity.mimetype,
+                title: fileData?.title,
+                fileName: fileData.fileAssetEntity?.originalname,
+                UploadFileUrl: fileData.fileAssetEntity?.path,
+                fileAssetID: fileData?.fileAssetID,
+                size: fileData.fileAssetEntity?.size,
+                type: fileData.fileAssetEntity?.mimetype,
               });
             }
             return refileData;
@@ -1019,12 +1027,12 @@ export default (props: Props) => {
                   (refileData: ReportFileType[], fileData) => {
                     if (fileData.type !== 'url') {
                       refileData.push({
-                        title: fileData.title,
-                        fileName: fileData.fileAssetEntity.originalname,
-                        UploadFileUrl: fileData.fileAssetEntity.path,
-                        fileAssetID: fileData.fileAssetID,
-                        size: fileData.fileAssetEntity.size,
-                        type: fileData.fileAssetEntity.mimetype,
+                        title: fileData?.title,
+                        fileName: fileData.fileAssetEntity?.originalname,
+                        UploadFileUrl: fileData.fileAssetEntity?.path,
+                        fileAssetID: fileData?.fileAssetID,
+                        size: fileData.fileAssetEntity?.size,
+                        type: fileData.fileAssetEntity?.mimetype,
                       });
                     }
                     return refileData;
@@ -1625,6 +1633,7 @@ export default (props: Props) => {
                     overflowY: 'scroll',
                     position: 'sticky',
                     top: '100px',
+                    zIndex: 2,
                   }}
                 >
                   <StyledTitle>
@@ -1747,6 +1756,17 @@ export default (props: Props) => {
                       }}
                     >
                       <StyledRestrictedCheckBox>
+                        {!isPending && props.isEdit && (
+                          <C.CheckBox
+                            label="as error correction"
+                            name="isErrorCorrectionValue"
+                            size="small"
+                            onChange={(e) => {
+                              handleErrorCorrection(e.target.checked);
+                            }}
+                            withoutFormik
+                          />
+                        )}
                         <C.CheckBox
                           name="restricted"
                           value={isRestricted}
@@ -1806,6 +1826,7 @@ export default (props: Props) => {
                     prevDetails={previousReportDetails}
                     versionData={versionData}
                     isRestricted={isRestricted}
+                    errorCorrection={errorCorrection}
                     inputEntries={inputEntries}
                     flowId={flowId}
                     versionId={versionId}
