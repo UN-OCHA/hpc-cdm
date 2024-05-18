@@ -258,6 +258,7 @@ interface Props {
   flowId?: string;
   versionId?: string;
   isRestricted: boolean;
+  errorCorrection?: boolean;
   inputEntries: InputEntriesType;
   initializeInputEntries: () => void;
   rejectInputEntry: (key: string) => void;
@@ -461,6 +462,7 @@ export const FlowForm = (props: Props) => {
     prevDetails,
     versionData,
     isRestricted,
+    errorCorrection,
     inputEntries,
     flowId,
     versionId,
@@ -810,13 +812,13 @@ export const FlowForm = (props: Props) => {
           updatedAt: '',
         },
       ],
-      isErrorCorrection: values.isErrorCorrectionValue
+      isErrorCorrection: errorCorrection
         ? true
         : isSuperseded
         ? true
         : isPending
         ? true
-        : !isSuperseded && isPending
+        : !isSuperseded && !isPending
         ? false
         : null,
       rejected: rejectFlag ? true : !rejectFlag ? false : null,
@@ -857,9 +859,7 @@ export const FlowForm = (props: Props) => {
   const handleSave = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-  const validationAlert = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+
   const [showWarningMessage, setShowWarningMessage] = useState<boolean>(false);
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
@@ -945,7 +945,10 @@ export const FlowForm = (props: Props) => {
   const [remove, setRemove] = useState<boolean>(false);
   const handleRemove = (index: number, values: FormValues) => {
     if (window.confirm('Are you sure you want to remove this file?')) {
-      if (initialValue.reportDetails[index]?.reportFiles) {
+      if (
+        initialValue.reportDetails[index].reportFiles &&
+        initialValue.reportDetails[index].reportFiles[0]?.fileName
+      ) {
         values.reportDetails[index].reportFileTitle = '';
         initialValue.reportDetails[index].reportFiles[0].fileName = '';
         initialValue.reportDetails[index].reportFiles[0].title = '';
@@ -1930,6 +1933,7 @@ export const FlowForm = (props: Props) => {
           updateUploadedFile[index] = responseData;
           return updateUploadedFile;
         });
+        console.log(uploadedFileArray, 'uploadedFileArray');
       } else {
         console.error('No file selected for upload.');
       }
@@ -2144,6 +2148,7 @@ export const FlowForm = (props: Props) => {
               } else {
                 error['reportedDate'] = '';
               }
+              console.log(res[index], '-------------->');
               if (
                 (res[index].reportFileTitle === '' ||
                   res[index].reportFileTitle === undefined) &&
@@ -2203,12 +2208,13 @@ export const FlowForm = (props: Props) => {
           }
         }
       });
+      console.log(errors, 'errors');
       if (Object.keys(errors).length === 0) setValidationFlag(false);
+      else handleSave();
       return errors;
     }
   };
-  if (validationFlag) validationAlert();
-  if (alertFlag) handleSave();
+
   const handleParentFlow = (
     values: any,
     parentValueString: string,
@@ -2362,7 +2368,6 @@ export const FlowForm = (props: Props) => {
       sourceProjects: _sourceProjects,
     });
   };
-
   return (
     <Formik
       initialValues={initialValue}
@@ -2372,6 +2377,7 @@ export const FlowForm = (props: Props) => {
       validate={(values) => validateForm(values)}
       enableReinitialize
       validateOnChange={false}
+      style={{ zIndex: 1 }}
     >
       {({ values, setFieldValue, setValues }) => {
         if (values.parentFlow && values.parentFlow[0]) {
@@ -2693,7 +2699,7 @@ export const FlowForm = (props: Props) => {
                     <StyledRow>
                       <StyledHalfSection>
                         <C.AsyncAutocompleteSelectFTSAdmin
-                          label="Usage Year(s)"
+                          label="Usage Year(s)*"
                           name="sourceUsageYears"
                           fnPromise={environment.model.usageYears.getUsageYears}
                           isMulti
@@ -2819,7 +2825,7 @@ export const FlowForm = (props: Props) => {
                       </StyledAddChildWarning>
                     )}
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Organization(s)"
+                      label="Organization(s)*"
                       name="destinationOrganizations"
                       fnPromise={
                         environment.model.organizations
@@ -3498,7 +3504,7 @@ export const FlowForm = (props: Props) => {
                                 row
                               />
                               <C.AsyncAutocompleteSelectFTSAdmin
-                                label="Reported By Organization"
+                                label="Reported By Organization*"
                                 name={`reportDetails[${index}].reportedOrganization`}
                                 placeholder="Reported by Organization"
                                 fnPromise={
@@ -3970,13 +3976,6 @@ export const FlowForm = (props: Props) => {
               </div>
             )}
             <StyledDiv>
-              {!isPending && isEdit && (
-                <C.CheckBox
-                  label="as error correction"
-                  name="isErrorCorrectionValue"
-                  size="small"
-                />
-              )}
               {!readOnly && !isPending && (
                 <>
                   <C.ButtonSubmit
