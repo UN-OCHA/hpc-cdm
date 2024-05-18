@@ -436,15 +436,19 @@ export class LiveModel implements Model {
       //   throw new ModelError('Received unexpected result from server', json);
       // }
     } else {
-      const json = (await res.json()) as {
+      const x = await res.json();
+      const json = x as {
         timestamp: Date;
         otherUser: string;
         code?: string;
         message: errors.UserErrorKey;
         details?: {
-          code: string;
-          detail: string;
-          table: string;
+          code?: string;
+          detail?: string;
+          table?: string;
+          flow?: flows.FlowREST;
+          reason?: any[];
+          success?: boolean;
         };
       };
       if (json?.code === 'ConflictError') {
@@ -464,6 +468,8 @@ export class LiveModel implements Model {
           json.details.detail,
           json.details.table
         );
+      } else if (json?.code === 'BadRequestError' && json.details?.reason) {
+        throw new errors.ConsistencyError(json.details.reason, json.message);
       } else {
         const message =
           json?.code && json?.message

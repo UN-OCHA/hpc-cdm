@@ -70,8 +70,11 @@ const DatePicker = ({
             console.error(error);
           }}
           onChange={(date) => {
-            if (date?.isValid()) {
-              helpers.setValue(date);
+            if (date) {
+              const parsedDate = date.toDate(); // Convert Day.js object to JavaScript Date object
+              helpers.setValue(parsedDate);
+            } else {
+              helpers.setValue(null);
             }
           }}
           label={label}

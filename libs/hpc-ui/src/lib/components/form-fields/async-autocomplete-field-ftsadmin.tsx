@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, memo } from 'react';
 import {
   Autocomplete,
   AutocompleteProps,
@@ -81,6 +81,8 @@ type AsyncAutocompleteSelectProps = {
   withoutFormik?: boolean;
   setFieldValue?: any;
   values?: any;
+  alreadyIsFetch?: boolean;
+  fetchedData?: readonly FormObjectValue[];
 };
 
 const AsyncAutocompleteSelect = ({
@@ -304,18 +306,11 @@ const AsyncAutocompleteSelect = ({
             };
           } else {
             return {
-              displayLabel: (
-                responseValue as {
-                  id: number;
-                  name: string;
-                }
-              ).name,
+              displayLabel: (responseValue as { id: number; name: string })
+                .name,
               value: responseValue.id,
-              restricted: (
-                responseValue as {
-                  restricted?: boolean;
-                }
-              ).restricted,
+              restricted: (responseValue as { restricted?: boolean })
+                .restricted,
             };
           }
         });
@@ -370,6 +365,8 @@ const AsyncAutocompleteSelect = ({
         onChange={onChange}
         entryInfo={entryInfo}
         rejectInputEntry={rejectInputEntry}
+        alreadyIsFetch={isFetch}
+        fetchedData={options}
       />
     );
   }
@@ -553,6 +550,8 @@ const FormikAsyncAutocompleteSelect = ({
   onChange,
   entryInfo,
   rejectInputEntry,
+  alreadyIsFetch,
+  fetchedData,
   ...otherProps
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
@@ -625,6 +624,13 @@ const FormikAsyncAutocompleteSelect = ({
   }, [inputValue]);
 
   useEffect(() => {
+    if (fetchedData && fetchedData.length > 0 && alreadyIsFetch) {
+      setOptions(fetchedData);
+      setIsFetch(true);
+    }
+  }, [fetchedData, alreadyIsFetch]);
+
+  useEffect(() => {
     let active = true;
     if (
       !category &&
@@ -660,7 +666,7 @@ const FormikAsyncAutocompleteSelect = ({
     (async () => {
       try {
         let response: APIAutocompleteResult;
-        if (fnPromise) {
+        if (fnPromise && !alreadyIsFetch) {
           response = await fnPromise({
             query: category ? category : debouncedInputValue,
           });
