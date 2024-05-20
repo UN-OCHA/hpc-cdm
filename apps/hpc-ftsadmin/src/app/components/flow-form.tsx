@@ -1385,6 +1385,7 @@ export const FlowForm = (props: Props) => {
     const errors = validateForm(values);
     if (Object.keys(errors).length !== 0) {
       setValidationFlag(true);
+      handleSave();
     }
   };
 
@@ -2214,7 +2215,6 @@ export const FlowForm = (props: Props) => {
       return errors;
     }
   };
-
   const handleParentFlow = (
     values: any,
     parentValueString: string,
