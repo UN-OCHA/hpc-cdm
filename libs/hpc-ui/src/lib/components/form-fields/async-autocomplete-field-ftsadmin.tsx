@@ -351,7 +351,7 @@ const AsyncAutocompleteSelect = ({
 
   if (!withoutFormik) {
     return (
-      <FormikAsyncAutocompleteSelect
+      <MemoizedFormikAsyncAutocompleteSelect
         name={name}
         label={label}
         placeholder={placeholder}
@@ -535,6 +535,8 @@ const AsyncAutocompleteSelect = ({
     </>
   );
 };
+
+const MemoizedAsyncAutocompleteSelect = memo(AsyncAutocompleteSelect);
 
 const FormikAsyncAutocompleteSelect = ({
   name,
@@ -963,7 +965,11 @@ const FormikAsyncAutocompleteSelect = ({
   );
 };
 
+const MemoizedFormikAsyncAutocompleteSelect = memo(
+  FormikAsyncAutocompleteSelect
+);
+
 AsyncAutocompleteSelect.defaultProps = {
   isAutocompleteAPI: true,
 };
-export default AsyncAutocompleteSelect;
+export default MemoizedAsyncAutocompleteSelect;
