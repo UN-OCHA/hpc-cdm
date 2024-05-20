@@ -2211,7 +2211,6 @@ export const FlowForm = (props: Props) => {
       });
       console.log(errors, 'errors');
       if (Object.keys(errors).length === 0) setValidationFlag(false);
-      else handleSave();
       return errors;
     }
   };
