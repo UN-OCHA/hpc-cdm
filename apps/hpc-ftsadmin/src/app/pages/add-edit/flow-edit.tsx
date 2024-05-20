@@ -107,7 +107,7 @@ const initialFormData = {
   flowStatus: '',
   flowType: { value: 133, displayLabel: 'Standard' },
   flowDescription: '',
-  firstReported: dayjs(),
+  firstReported: dayjs().format('DD/MM/YYYY'),
   decisionDate: null,
   budgetYear: '',
   flowDate: null,
