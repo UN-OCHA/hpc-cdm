@@ -49,8 +49,6 @@ import { flows } from '../paths';
 import Link from '@mui/material/Link';
 import { useNavigate, unstable_usePrompt } from 'react-router-dom';
 import { id } from 'fp-ts/lib/Refinement';
-import { stringify } from 'querystring';
-import { mergeOptions } from 'use-query-params/dist/options';
 
 export type AutoCompleteSelectionType = forms.InputSelectValueType;
 
@@ -1385,6 +1383,7 @@ export const FlowForm = (props: Props) => {
     const errors = validateForm(values);
     if (Object.keys(errors).length !== 0) {
       setValidationFlag(true);
+      handleSave();
     }
   };
 
@@ -2210,11 +2209,9 @@ export const FlowForm = (props: Props) => {
       });
       console.log(errors, 'errors');
       if (Object.keys(errors).length === 0) setValidationFlag(false);
-      else handleSave();
       return errors;
     }
   };
-
   const handleParentFlow = (
     values: any,
     parentValueString: string,
