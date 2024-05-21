@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   Autocomplete,
   AutocompleteProps,
@@ -35,77 +35,76 @@ const MultiTextField = React.memo(
     const [inputValue, setInputValue] = useState('');
     useEffect(() => setInputValue(''), [field.value]);
 
-    const configTextField = (
-      params: AutocompleteRenderInputParams
-    ): TextFieldProps => {
-      return {
-        ...params,
-        label: label,
-        placeholder: placeholder,
-        size: 'small',
-        type: 'text',
-        InputProps:
-          type === 'currency'
-            ? {
-                ...params.InputProps,
-                startAdornment: (
-                  <>
-                    <InputAdornment position="start" sx={tw`ms-2`}>
-                      $
-                    </InputAdornment>
-                    {params.InputProps.startAdornment}
-                  </>
-                ),
-              }
-            : { ...params.InputProps },
-        error: meta && meta.touched && meta.error ? true : false,
-        helperText:
-          meta && meta.touched && meta.error
-            ? errorMessage
+    const configTextField = useCallback(
+      (params: AutocompleteRenderInputParams): TextFieldProps => {
+        return {
+          ...params,
+          label: label,
+          placeholder: placeholder,
+          size: 'small',
+          type: 'text',
+          InputProps:
+            type === 'currency'
+              ? {
+                  ...params.InputProps,
+                  startAdornment: (
+                    <>
+                      <InputAdornment position="start" sx={tw`ms-2`}>
+                        $
+                      </InputAdornment>
+                      {params.InputProps.startAdornment}
+                    </>
+                  ),
+                }
+              : { ...params.InputProps },
+          error: meta && meta.touched && meta.error ? true : false,
+          helperText:
+            meta && meta.touched && meta.error
               ? errorMessage
-              : meta.error
-            : undefined,
-      };
-    };
+                ? errorMessage
+                : meta.error
+              : undefined,
+        };
+      },
+      [label, placeholder, type, errorMessage, meta]
+    );
 
-    const multiTextProps: AutocompleteProps<
-      string[],
-      boolean,
-      undefined,
-      boolean
-    > = {
-      ...field,
-      ...otherProps,
-      multiple: true,
-      freeSolo: true,
-      options: [],
-      renderInput: (params) => <TextField {...configTextField(params)} />,
-      onBlur: (_) => {
-        if (inputValue.trim() !== '') {
-          setFieldValue(field.name, [...field.value, inputValue.trim()]);
-        }
-      },
-      onInputChange: (_, newInputValue) => {
-        const options = newInputValue.split(',');
+    const multiTextProps = useMemo(
+      (): AutocompleteProps<string[], boolean, undefined, boolean> => ({
+        ...field,
+        ...otherProps,
+        multiple: true,
+        freeSolo: true,
+        options: [],
+        renderInput: (params) => <TextField {...configTextField(params)} />,
+        onBlur: (_) => {
+          if (inputValue.trim() !== '') {
+            setFieldValue(field.name, [...field.value, inputValue.trim()]);
+          }
+        },
+        onInputChange: (_, newInputValue) => {
+          const options = newInputValue.split(',');
 
-        if (options.length > 1) {
-          setFieldValue(
-            field.name,
-            field.value
-              .concat(options)
-              .map((x) => x.trim())
-              .filter((x) => x)
-          );
-        } else {
-          setInputValue(newInputValue);
-        }
-      },
-      onChange: (_, newValue) => {
-        setFieldValue(field.name, newValue);
-      },
-      ChipProps: { size: 'small' },
-      inputValue: inputValue,
-    };
+          if (options.length > 1) {
+            setFieldValue(
+              field.name,
+              field.value
+                .concat(options)
+                .map((x) => x.trim())
+                .filter((x) => x)
+            );
+          } else {
+            setInputValue(newInputValue);
+          }
+        },
+        onChange: (_, newValue) => {
+          setFieldValue(field.name, newValue);
+        },
+        ChipProps: { size: 'small' },
+        inputValue: inputValue,
+      }),
+      [field, otherProps, inputValue, configTextField, setFieldValue]
+    );
     if (meta && meta.touched && meta.error) {
       console.error(errorMessage);
     }

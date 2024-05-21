@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, memo } from 'react';
 import { TextField, TextFieldProps, InputAdornment } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 import tw from 'twin.macro';
@@ -72,95 +72,97 @@ interface TextFieldWrapperProps {
   rejectInputEntry?: (key: string) => void;
 }
 
-const TextFieldWrapper = ({
-  name,
-  label,
-  placeholder,
-  type,
-  textarea,
-  error,
-  required,
-  multiline,
-  rows,
-  thousandSeparator,
-  entryInfo,
-  rejectInputEntry,
-  ...otherProps
-}: TextFieldWrapperProps) => {
-  const [field, meta] = useField(name);
-  const { setFieldValue } = useFormikContext<string>();
-
-  const configTextField: TextFieldProps = useMemo(() => {
-    return {
-      ...field,
-      ...otherProps,
-      label: label,
-      id: name,
-      multiline: textarea || multiline,
-      rows: rows,
-      maxRows: 5,
-      required,
-      placeholder: placeholder,
-      size: 'small',
-      type: 'text',
-      InputProps:
-        type === 'number' || type === 'currency'
-          ? {
-              inputComponent: NumericFormatCustom as any,
-              startAdornment:
-                type === 'currency' ? (
-                  <InputAdornment position="start">$</InputAdornment>
-                ) : null,
-              inputProps: {
-                itemType: type,
-                thousandSeparator: thousandSeparator,
-              },
-            }
-          : undefined,
-    };
-  }, [
-    field,
-    otherProps,
-    label,
+const TextFieldWrapper = memo(
+  ({
     name,
-    textarea,
-    multiline,
-    rows,
-    required,
+    label,
     placeholder,
     type,
+    textarea,
+    error,
+    required,
+    multiline,
+    rows,
     thousandSeparator,
-  ]);
+    entryInfo,
+    rejectInputEntry,
+    ...otherProps
+  }: TextFieldWrapperProps) => {
+    const [field, meta] = useField(name);
+    const { setFieldValue } = useFormikContext<string>();
 
-  if (meta && meta.touched && meta.error) {
-    configTextField.error = true;
-    configTextField.helperText = error ? error(meta.error) : meta.error;
-  }
+    const configTextField: TextFieldProps = useMemo(() => {
+      return {
+        ...field,
+        ...otherProps,
+        label: label,
+        id: name,
+        multiline: textarea || multiline,
+        rows: rows,
+        maxRows: 5,
+        required,
+        placeholder: placeholder,
+        size: 'small',
+        type: 'text',
+        InputProps:
+          type === 'number' || type === 'currency'
+            ? {
+                inputComponent: NumericFormatCustom as any,
+                startAdornment:
+                  type === 'currency' ? (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ) : null,
+                inputProps: {
+                  itemType: type,
+                  thousandSeparator: thousandSeparator,
+                },
+              }
+            : undefined,
+      };
+    }, [
+      field,
+      otherProps,
+      label,
+      name,
+      textarea,
+      multiline,
+      rows,
+      required,
+      placeholder,
+      type,
+      thousandSeparator,
+    ]);
 
-  const handleSetValue = useCallback(() => {
-    if (entryInfo) {
-      setFieldValue(name, entryInfo.value);
-      if (rejectInputEntry) rejectInputEntry(name);
+    if (meta && meta.touched && meta.error) {
+      configTextField.error = true;
+      configTextField.helperText = error ? error(meta.error) : meta.error;
     }
-  }, [entryInfo, name, setFieldValue, rejectInputEntry]);
 
-  const handleRejectValue = useCallback(() => {
-    if (rejectInputEntry) rejectInputEntry(name);
-  }, [rejectInputEntry, name]);
+    const handleSetValue = useCallback(() => {
+      if (entryInfo) {
+        setFieldValue(name, entryInfo.value);
+        if (rejectInputEntry) rejectInputEntry(name);
+      }
+    }, [entryInfo, name, setFieldValue, rejectInputEntry]);
 
-  return (
-    <StyledContainer>
-      <StyledTextField {...configTextField} />
-      <br />
-      {entryInfo && rejectInputEntry && (
-        <InputEntry
-          info={entryInfo}
-          setValue={handleSetValue}
-          rejectValue={handleRejectValue}
-        />
-      )}
-    </StyledContainer>
-  );
-};
+    const handleRejectValue = useCallback(() => {
+      if (rejectInputEntry) rejectInputEntry(name);
+    }, [rejectInputEntry, name]);
+
+    return (
+      <StyledContainer>
+        <StyledTextField {...configTextField} />
+        <br />
+        {entryInfo && rejectInputEntry && (
+          <InputEntry
+            info={entryInfo}
+            setValue={handleSetValue}
+            rejectValue={handleRejectValue}
+          />
+        )}
+      </StyledContainer>
+    );
+  }
+);
 
 export default TextFieldWrapper;

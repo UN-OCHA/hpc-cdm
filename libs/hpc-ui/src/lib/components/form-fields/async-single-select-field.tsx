@@ -121,6 +121,36 @@ const AsyncSingleSelect = memo(
       },
       [name, returnObject]
     );
+    const endAdornment = useMemo(
+      () => (
+        <CircularProgressBox>
+          {field.value && (
+            <StyledIconButton
+              onClick={() => setFieldValue(name, '')}
+              size="small"
+            >
+              <CloseIcon fontSize="small" />
+            </StyledIconButton>
+          )}
+          {loading ? (
+            <CircularProgress sx={tw`me-6`} color="inherit" size={20} />
+          ) : null}
+        </CircularProgressBox>
+      ),
+      [field.value, loading, setFieldValue, name]
+    );
+    const inputElement = useMemo(
+      () => (
+        <OutlinedInput
+          onBlur={onBlur}
+          error={!!errorMsg}
+          value={(field.value as FormObjectValue).displayLabel}
+          endAdornment={endAdornment}
+          label={label}
+        />
+      ),
+      [field.value, errorMsg, label, onBlur, loading, setFieldValue, name]
+    );
     const singleSelectConfig: SelectProps<FormObjectValue | string | number> =
       useMemo(
         () => ({
@@ -128,29 +158,7 @@ const AsyncSingleSelect = memo(
           ...otherProps,
           labelId: `${label.toLowerCase().replace(' ', '-').trim()}-label`,
           onChange: handleChange,
-          input: (
-            <OutlinedInput
-              onBlur={onBlur}
-              error={!!errorMsg}
-              value={(field.value as FormObjectValue).displayLabel}
-              endAdornment={
-                <CircularProgressBox>
-                  {field.value && (
-                    <StyledIconButton
-                      onClick={() => setFieldValue(name, '')}
-                      size="small"
-                    >
-                      <CloseIcon fontSize="small" />
-                    </StyledIconButton>
-                  )}
-                  {loading ? (
-                    <CircularProgress sx={tw`me-6`} color="inherit" size={20} />
-                  ) : null}
-                </CircularProgressBox>
-              }
-              label={label}
-            />
-          ),
+          input: inputElement,
           onOpen: () => setOpen(true),
           onClose: () => setOpen(false),
           size: 'small',
@@ -171,6 +179,16 @@ const AsyncSingleSelect = memo(
     if (meta && meta.touched && meta.error) {
       singleSelectConfig.error = true;
     }
+    const handleSetValue = useCallback(() => {
+      if (entryInfo) {
+        setFieldValue(name, entryInfo.value);
+        if (rejectInputEntry) rejectInputEntry(name);
+      }
+    }, [entryInfo, name, setFieldValue, rejectInputEntry]);
+
+    const handleRejectValue = useCallback(() => {
+      if (rejectInputEntry) rejectInputEntry(name);
+    }, [rejectInputEntry, name]);
     return (
       <>
         <FormControl sx={{ width: '100%' }} size="small">
@@ -212,13 +230,8 @@ const AsyncSingleSelect = memo(
         {entryInfo && rejectInputEntry && (
           <InputEntry
             info={entryInfo}
-            setValue={() => {
-              setFieldValue(name, entryInfo.value);
-              rejectInputEntry(name);
-            }}
-            rejectValue={() => {
-              rejectInputEntry(name);
-            }}
+            setValue={handleSetValue}
+            rejectValue={handleRejectValue}
           />
         )}
       </>
