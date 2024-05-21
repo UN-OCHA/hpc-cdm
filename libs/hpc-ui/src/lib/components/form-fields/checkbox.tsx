@@ -5,7 +5,7 @@ import {
   CheckboxProps,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 const FormikCheckBox = ({
   name,
@@ -108,6 +108,7 @@ const CheckBox = ({
       />
     ),
   };
+
   return <FormControlLabel {...configCheckBox} />;
 };
 
