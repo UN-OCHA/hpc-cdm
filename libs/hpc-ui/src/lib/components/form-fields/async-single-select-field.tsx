@@ -108,18 +108,19 @@ const AsyncSingleSelect = memo(
         }
       })();
     }, [loading]);
-    const handleChange = (
-      event: SelectChangeEvent<FormObjectValue | string | number>
-    ) => {
-      const {
-        target: { value },
-      } = event;
-      if (returnObject) {
-        setFieldValue(name, value);
-      } else {
-        setFieldValue(name, value);
-      }
-    };
+    const handleChange = useCallback(
+      (event: SelectChangeEvent<FormObjectValue | string | number>) => {
+        const {
+          target: { value },
+        } = event;
+        if (returnObject) {
+          setFieldValue(name, value);
+        } else {
+          setFieldValue(name, value);
+        }
+      },
+      [name, returnObject]
+    );
     const singleSelectConfig: SelectProps<FormObjectValue | string | number> =
       useMemo(
         () => ({
