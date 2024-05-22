@@ -63,6 +63,12 @@ export interface DeleteFlowParams {
   FlowID: number;
 }
 
+export interface categoryType {
+  value: string | number;
+  displayLabel: string;
+  parentID: number | null;
+}
+
 export interface FileAssetEntityType {
   collection?: string;
   createAt?: string;
@@ -632,9 +638,11 @@ export const FlowForm = (props: Props) => {
       flowDate: dayjs(values.flowDate, 'DD/MM/YYYY').format(
         'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
       ),
-      decisionDate: dayjs(values.decisionDate, 'DD/MM/YYYY').format(
-        'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
-      ),
+      decisionDate: values.decisionDate
+        ? dayjs(values.decisionDate, 'DD/MM/YYYY').format(
+            'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+          )
+        : null,
       firstReportedDate: dayjs(values.firstReported, 'DD/MM/YYYY').format(
         'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
       ),
@@ -1843,9 +1851,10 @@ export const FlowForm = (props: Props) => {
           query: category,
         });
         return response.map(
-          (responseValue): AutoCompleteSelectionType => ({
+          (responseValue): categoryType => ({
             displayLabel: responseValue.name,
             value: responseValue.id.toString(),
+            parentID: responseValue.parentID,
           })
         );
       };
@@ -3088,6 +3097,17 @@ export const FlowForm = (props: Props) => {
                       entryInfo={inputEntries.method}
                       rejectInputEntry={rejectInputEntry}
                     />
+                    {(values.method as categoryType).displayLabel ===
+                      'Cash transfer programming (CTP)' && (
+                      <C.AsyncSingleSelect
+                        label="Cash Transfer Programming(CTP)"
+                        name="cashTransfer"
+                        fnPromise={fetchCategory('method')}
+                        returnObject
+                        entryInfo={inputEntries.method}
+                        rejectInputEntry={rejectInputEntry}
+                      />
+                    )}
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label="Keywords"
                       name="keywords"

@@ -51,6 +51,11 @@ type AsyncSingleSelectProps = {
   entryInfo?: forms.InputEntryType | null;
   rejectInputEntry?: (key: string) => void;
 };
+export interface categoryType {
+  value: string | number;
+  displayLabel: string;
+  parentID: number | null;
+}
 
 const AsyncSingleSelect = memo(
   ({
@@ -101,56 +106,50 @@ const AsyncSingleSelect = memo(
               )
             );
           }
-          setOptions(response);
+
+          // Filter and limit options for the "method" field
+          if (name === 'method') {
+            const filteredOptions = response
+              .filter((value) => (value as categoryType).parentID === null)
+              .slice(0, 2);
+            setOptions(filteredOptions);
+          } else if (name === 'cashTransfer') {
+            const filteredOptions = response
+              .filter((value) => (value as categoryType).parentID !== null)
+              .slice(0, 3);
+            setOptions(filteredOptions);
+          } else {
+            setOptions(response);
+          }
+
           setIsInitialRender(false);
         } catch (error) {
           console.error(error);
         }
       })();
     }, [loading]);
-    const handleChange = useCallback(
-      (event: SelectChangeEvent<FormObjectValue | string | number>) => {
-        const {
-          target: { value },
-        } = event;
-        if (returnObject) {
-          setFieldValue(name, value);
-        } else {
-          setFieldValue(name, value);
-        }
-      },
-      [name, returnObject]
-    );
-    const endAdornment = useMemo(
-      () => (
-        <CircularProgressBox>
-          {field.value && (
-            <StyledIconButton
-              onClick={() => setFieldValue(name, '')}
-              size="small"
-            >
-              <CloseIcon fontSize="small" />
-            </StyledIconButton>
-          )}
-          {loading ? (
-            <CircularProgress sx={tw`me-6`} color="inherit" size={20} />
-          ) : null}
-        </CircularProgressBox>
-      ),
-      [field.value, loading, setFieldValue, name]
-    );
-    const inputElement = useMemo(
-      () => (
-        <OutlinedInput
-          onBlur={onBlur}
-          error={!!errorMsg}
-          value={(field.value as FormObjectValue).displayLabel}
-          endAdornment={endAdornment}
-          label={label}
-        />
-      ),
-      [field.value, errorMsg, label, onBlur, loading, setFieldValue, name]
-    );
+
+    const handleChange = (
+      event: SelectChangeEvent<FormObjectValue | string | number>
+    ) => {
+      const {
+        target: { value },
+      } = event;
+      if (returnObject) {
+        setFieldValue(name, value);
+      } else {
+        setFieldValue(name, value);
+      }
+    };
+
+    const getDisplayLabel = (value: any) => {
+      return typeof value === 'object' &&
+        value !== null &&
+        'displayLabel' in value
+        ? (value as FormObjectValue).displayLabel
+        : '';
+    };
+
     const singleSelectConfig: SelectProps<FormObjectValue | string | number> =
       useMemo(
         () => ({
@@ -158,7 +157,29 @@ const AsyncSingleSelect = memo(
           ...otherProps,
           labelId: `${label.toLowerCase().replace(' ', '-').trim()}-label`,
           onChange: handleChange,
-          input: inputElement,
+          input: (
+            <OutlinedInput
+              onBlur={onBlur}
+              error={!!errorMsg}
+              value={getDisplayLabel(field.value)}
+              endAdornment={
+                <CircularProgressBox>
+                  {field.value && (
+                    <StyledIconButton
+                      onClick={() => setFieldValue(name, '')}
+                      size="small"
+                    >
+                      <CloseIcon fontSize="small" />
+                    </StyledIconButton>
+                  )}
+                  {loading ? (
+                    <CircularProgress sx={tw`me-6`} color="inherit" size={20} />
+                  ) : null}
+                </CircularProgressBox>
+              }
+              label={label}
+            />
+          ),
           onOpen: () => setOpen(true),
           onClose: () => setOpen(false),
           size: 'small',
@@ -176,19 +197,11 @@ const AsyncSingleSelect = memo(
           name,
         ]
       );
+
     if (meta && meta.touched && meta.error) {
       singleSelectConfig.error = true;
     }
-    const handleSetValue = useCallback(() => {
-      if (entryInfo) {
-        setFieldValue(name, entryInfo.value);
-        if (rejectInputEntry) rejectInputEntry(name);
-      }
-    }, [entryInfo, name, setFieldValue, rejectInputEntry]);
 
-    const handleRejectValue = useCallback(() => {
-      if (rejectInputEntry) rejectInputEntry(name);
-    }, [rejectInputEntry, name]);
     return (
       <>
         <FormControl sx={{ width: '100%' }} size="small">
@@ -207,8 +220,7 @@ const AsyncSingleSelect = memo(
                   key={value.value}
                   value={
                     returnObject
-                      ? value.displayLabel ===
-                        (field.value as FormObjectValue).displayLabel
+                      ? getDisplayLabel(value) === getDisplayLabel(field.value)
                         ? field.value
                         : value
                       : hasNameValue
@@ -230,8 +242,13 @@ const AsyncSingleSelect = memo(
         {entryInfo && rejectInputEntry && (
           <InputEntry
             info={entryInfo}
-            setValue={handleSetValue}
-            rejectValue={handleRejectValue}
+            setValue={() => {
+              setFieldValue(name, entryInfo.value);
+              rejectInputEntry(name);
+            }}
+            rejectValue={() => {
+              rejectInputEntry(name);
+            }}
           />
         )}
       </>
