@@ -54,6 +54,7 @@ const NumberField = React.memo(
       }),
       [startAdornment, label]
     );
+    const typeIsCurrency = useMemo(() => type === 'currency', [type]);
     return (
       <NumericFormat
         {...field}
@@ -61,7 +62,7 @@ const NumberField = React.memo(
         name={name}
         label={label}
         onValueChange={handleValueChange}
-        thousandSeparator={type === 'currency'}
+        thousandSeparator={typeIsCurrency}
         valueIsNumericString
         size="small"
         decimalScale={decimalScale}
