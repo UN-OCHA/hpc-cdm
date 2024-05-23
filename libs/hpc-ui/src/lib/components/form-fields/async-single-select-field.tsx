@@ -34,6 +34,7 @@ const CircularProgressBox = tw.div`
 const StyledIconButton = tw(IconButton)`
   me-6
 `;
+const StyledFormControl = tw(FormControl)`w-full`;
 
 const FormikError = ({ name }: { name: string }) => (
   <ErrorMessage name={name}>
@@ -204,7 +205,7 @@ const AsyncSingleSelect = memo(
 
     return (
       <>
-        <FormControl sx={{ width: '100%' }} size="small">
+        <StyledFormControl size="small">
           <InputLabel
             id={`${label.toLowerCase().replace(' ', '-').trim()}-label`}
           >
@@ -238,7 +239,7 @@ const AsyncSingleSelect = memo(
             )}
           </StyledSelect>
           <FormikError name={name} />
-        </FormControl>
+        </StyledFormControl>
         {entryInfo && rejectInputEntry && (
           <InputEntry
             info={entryInfo}
