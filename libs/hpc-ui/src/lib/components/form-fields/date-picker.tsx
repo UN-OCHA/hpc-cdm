@@ -6,6 +6,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import tw from 'twin.macro';
 import dayjs, { Dayjs } from 'dayjs';
+import { DateValidationError } from '@mui/x-date-pickers/models/validation';
+import { TextFieldProps } from '@mui/material/TextField';
 
 const StyledDatePicker = tw.div`
   flex
@@ -35,6 +37,12 @@ const DatePicker = memo(
   }: DatePickerProps) => {
     const [field, meta, helpers] = useField(name);
     const [cleared, setCleared] = useState(false);
+
+    const linkStyles = {
+      height: '100%',
+      lineHeight: '40px',
+      cursor: 'pointer',
+    };
 
     const onBlur = useCallback(() => {
       helpers.setTouched(true);
@@ -73,6 +81,51 @@ const DatePicker = memo(
       helpers.setValue(dayjs());
     }, [helpers]);
 
+    const memoizedValue = useMemo(() => {
+      if (enableButton) {
+        return field.value === null ? null : dayjs(field.value, 'DD/MM/YYYY');
+      } else {
+        return dayjs();
+      }
+    }, [enableButton, field.value]);
+
+    const handleError = useCallback(
+      (error: DateValidationError, value: Dayjs | null) => {
+        if (error) {
+          console.error(`Date validation error: ${error} for value: ${value}`);
+        }
+      },
+      []
+    );
+
+    const renderInput = useCallback(
+      (params: TextFieldProps) => (
+        <TextField
+          {...params}
+          InputLabelProps={{ shrink: true }}
+          onBlur={onBlur}
+          error={!!errorMsg}
+          helperText={errorMsg}
+          size="small"
+        />
+      ),
+      [onBlur, errorMsg]
+    );
+
+    const slots = useMemo(
+      () => ({
+        textField: renderInput,
+      }),
+      [renderInput]
+    );
+
+    const slotProps = useMemo(
+      () => ({
+        field: { clearable: true, onClear: handleClear },
+      }),
+      [handleClear]
+    );
+
     return (
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={lang}>
         <StyledDatePicker>
@@ -80,42 +133,18 @@ const DatePicker = memo(
             {...field}
             {...otherProps}
             format="DD/MM/YYYY"
-            value={
-              enableButton
-                ? field.value === null
-                  ? null
-                  : dayjs(field.value, 'DD/MM/YYYY')
-                : dayjs()
-            }
-            onError={(error) => {
-              console.error(error);
-            }}
+            value={memoizedValue}
+            onError={handleError}
             onChange={handleDateChange}
             label={label}
-            slots={{
-              textField: useMemo(
-                () => (params) => (
-                  <TextField
-                    {...params}
-                    InputLabelProps={{ shrink: true }}
-                    onBlur={onBlur}
-                    error={!!errorMsg}
-                    helperText={errorMsg}
-                    size="small"
-                  />
-                ),
-                [onBlur, errorMsg]
-              ),
-            }}
-            slotProps={{
-              field: { clearable: true, onClear: handleClear },
-            }}
+            slots={slots}
+            slotProps={slotProps}
           />
           {enableButton && (
             <StyledLink
               variant="body2"
               onClick={handleSetToday}
-              sx={{ height: '100%', lineHeight: '40px', cursor: 'pointer' }}
+              sx={linkStyles}
             >
               Today
             </StyledLink>

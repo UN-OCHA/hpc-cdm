@@ -28,6 +28,28 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
+const StyledDiv = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+});
+
+const StyledContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  border: '1px solid grey',
+  width: '80%',
+  backgroundColor: 'hsla(0, 50%, 90%, 0.3)',
+  alignItems: 'center',
+  borderRadius: '5px',
+  marginTop: '6px',
+});
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  marginLeft: '5px',
+  textDecoration: 'underline',
+}));
+
 type FileUploadProps = {
   name?: string;
   label: string;
@@ -81,13 +103,7 @@ const FileUpload = React.memo(
     }, [fileDownName, name]);
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
+      <StyledDiv>
         {!(value && fileName) && (
           <StyledFileUpload
             component="label"
@@ -111,28 +127,13 @@ const FileUpload = React.memo(
           </StyledFileUpload>
         )}
         {value && fileName && (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              border: '1px solid grey',
-              width: '80%',
-              backgroundColor: 'hsla(0, 50%, 90%, 0.3)',
-              alignItems: 'center',
-              borderRadius: '5px',
-              marginTop: '6px',
-            }}
-          >
-            <Button
-              style={{
-                marginLeft: '5px',
-                textDecoration: 'underline',
-              }}
+          <StyledContainer>
+            <StyledButton
               onClick={handleDownload}
               startIcon={<FileDownloadIcon />}
             >
               {fileName}
-            </Button>
+            </StyledButton>
             <IconButton
               aria-label="delete"
               size="small"
@@ -141,9 +142,9 @@ const FileUpload = React.memo(
             >
               <DeleteIcon />
             </IconButton>
-          </div>
+          </StyledContainer>
         )}
-      </div>
+      </StyledDiv>
     );
   }
 );

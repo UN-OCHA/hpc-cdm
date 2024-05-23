@@ -9,6 +9,8 @@ const ADD_ORGANIZATION = `${ORGANIZATIONS}/add`;
 const KEYWORDS = '/keywords';
 const NEW_FLOW = '/flows/add';
 const EDIT_FLOW = '/flows/edit/:flowId/version/:versionId';
+const REWRITE_NEW_FLOW = '/flows/test/add';
+const REWRITE_EDIT_FLOW = '/flows/test/edit/:flowId/version/:versionId';
 
 const replacePlaceholders = (
   path: string,
@@ -49,3 +51,14 @@ export const editFlowSetting = (flowId: number, versionId: number) =>
   });
 
 export const editFlow = () => EDIT_FLOW;
+
+export const rewriteNewFlow = () => replacePlaceholders(REWRITE_NEW_FLOW, {});
+export const rewriteCopyFlow = () => replacePlaceholders(REWRITE_NEW_FLOW, {});
+
+export const rewriteEditFlowSetting = (flowId: number, versionId: number) =>
+  replacePlaceholders(REWRITE_EDIT_FLOW, {
+    flowId,
+    versionId,
+  });
+
+export const rewriteEditFlow = () => REWRITE_EDIT_FLOW;
