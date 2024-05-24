@@ -32,6 +32,7 @@ import PagePendingFlowsList from './pages/flows/pending-flows-list';
 import PageOrganizationsList from './pages/organizations/organization-list';
 import PageOrganization from './pages/organizations/organization';
 import FlowEdit from './pages/add-edit/flow-edit';
+import FlowEditRewrite from './pages/add-edit/flow-edit-rewrite/index';
 import * as paths from './paths';
 import { RouteParamsValidator } from './components/route-params-validator';
 import { QueryParamProvider } from 'use-query-params';
@@ -271,6 +272,18 @@ const router = createBrowserRouter(
       <Route
         path={paths.editFlow()}
         element={<FlowEdit key="edit-flow-route" isEdit />}
+      />
+      <Route
+        path={paths.rewriteNewFlow()}
+        element={<FlowEditRewrite key="new-flow-route" isEdit={false} />}
+      />
+      <Route
+        path={paths.rewriteCopyFlow()}
+        element={<FlowEditRewrite key="copy-flow-route" isEdit />}
+      />
+      <Route
+        path={paths.rewriteEditFlow()}
+        element={<FlowEditRewrite key="edit-flow-route" isEdit />}
       />
       <Route element={<PageNotFound />} />
     </Route>

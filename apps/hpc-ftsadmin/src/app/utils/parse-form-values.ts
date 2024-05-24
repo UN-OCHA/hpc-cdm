@@ -87,6 +87,23 @@ export const getFormValueFromCategory = (
   return formValue[0] ?? '';
 };
 
+export const getFormValueCashTransferCategory = (
+  data: flows.FlowREST,
+  isMulti: boolean
+) => {
+  const formValue = data.categories
+    .filter((category) => category.parentID !== null)
+    .map((category) => ({
+      value: category.id,
+      displayLabel: category.name,
+    }));
+
+  if (isMulti) {
+    return formValue;
+  }
+  return formValue[0] ?? '';
+};
+
 export const getFormValueFromFunding = (
   data: flows.FlowREST,
   src: FundingSrcType,

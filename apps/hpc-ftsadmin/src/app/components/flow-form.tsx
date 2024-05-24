@@ -127,6 +127,7 @@ export interface FormValues {
   contributionType: AutoCompleteSelectionType | '';
   earmarkingType: AutoCompleteSelectionType | '';
   method: AutoCompleteSelectionType | '';
+  cashTransfer: AutoCompleteSelectionType | '';
   beneficiaryGroup: AutoCompleteSelectionType | '';
   inactiveReason: any[] | string;
   childMethod: object;
@@ -787,6 +788,12 @@ export const FlowForm = (props: Props) => {
         id: values.method && values.method.value,
         name: values.method && values.method.displayLabel,
         group: 'method',
+      },
+      childMethod: values.cashTransfer && {
+        id: values.cashTransfer.value,
+        name: values.cashTransfer.displayLabel,
+        group: 'method',
+        parentID: values.method && values.method.value,
       },
       earmarking: values.earmarkingType
         ? {

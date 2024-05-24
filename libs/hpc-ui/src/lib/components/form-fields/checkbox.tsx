@@ -5,7 +5,7 @@ import {
   CheckboxProps,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
-import React, { useCallback, useMemo, memo } from 'react';
+import React, { useMemo, memo } from 'react';
 
 const FormikCheckBox = memo(
   ({
@@ -79,6 +79,22 @@ const CheckBox = memo(
     withoutFormik?: boolean;
     [key: string]: any;
   }) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (onChange) {
+        onChange(event);
+      }
+    };
+    const configCheckBox = useMemo(
+      () => ({
+        ...otherProps,
+        label: label,
+        id: name,
+        control: (
+          <Checkbox onChange={handleChange} size={size} disabled={disabled} />
+        ),
+      }),
+      [label, name, size, disabled, otherProps]
+    );
     if (!withoutFormik) {
       return (
         <FormikCheckBox
@@ -92,19 +108,6 @@ const CheckBox = memo(
         />
       );
     }
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (onChange) {
-        const values = onChange(event);
-      }
-    };
-    const configCheckBox: FormControlLabelProps = {
-      ...otherProps,
-      label: label,
-      id: name,
-      control: (
-        <Checkbox onChange={handleChange} size={size} disabled={disabled} />
-      ),
-    };
 
     return <FormControlLabel {...configCheckBox} />;
   }
