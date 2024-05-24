@@ -35,6 +35,7 @@ import { encodeFilters } from '../../utils/parse-filters';
 import {
   getSearchKeyValues,
   getFormValueFromCategory,
+  getFormValueCashTransferCategory,
   getFormValueFromFunding,
   getNameOfFundingValue,
   FundingSrcType,
@@ -114,6 +115,7 @@ const initialFormData = {
   contributionType: { value: 50, displayLabel: 'Financial' },
   earmarkingType: '',
   method: { value: 156, displayLabel: 'Traditional aid' },
+  cashTransfer: '',
   beneficiaryGroup: '',
   inactiveReason: '',
   notes: '',
@@ -174,6 +176,7 @@ const initialInputEntries = {
   contributionType: null,
   earmarkingType: null,
   method: null,
+  cashTransfer: null,
   beneficiaryGroup: null,
   inactiveReason: null,
   amountOriginal: null,
@@ -924,6 +927,10 @@ export default (props: Props) => {
         'method',
         false
       ) as AutoCompleteSelectionType;
+      const cashTransfer = getFormValueCashTransferCategory(
+        data,
+        false
+      ) as AutoCompleteSelectionType;
       const beneficiaryGroup = getFormValueFromCategory(
         data,
         'beneficiaryGroup',
@@ -1530,6 +1537,7 @@ export default (props: Props) => {
         contributionType,
         earmarkingType,
         method,
+        cashTransfer,
         beneficiaryGroup,
         inactiveReason,
         notes,
