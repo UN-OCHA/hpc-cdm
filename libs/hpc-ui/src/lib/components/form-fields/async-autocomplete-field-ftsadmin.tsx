@@ -782,7 +782,7 @@ const FormikAsyncAutocompleteSelect = ({
       name === 'sourceProjects' ||
       name === 'destinationProjects'
     ) {
-      if (values[name].length === 1) {
+      if (values[name] && values[name].length === 1) {
         setEnabledValue(values[name][0].value);
       } else {
         setEnabledValue('');
