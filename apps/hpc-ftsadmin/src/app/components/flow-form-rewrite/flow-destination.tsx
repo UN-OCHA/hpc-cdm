@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useCallback,
   useRef,
+  useContext,
 } from 'react';
 import { Form, Formik, FieldArray } from 'formik';
 import tw from 'twin.macro';
@@ -49,14 +50,7 @@ import { flows } from '../../paths';
 import Link from '@mui/material/Link';
 import { useNavigate, unstable_usePrompt } from 'react-router-dom';
 import { id } from 'fp-ts/lib/Refinement';
-import FlowSource from './flow-source';
-import FlowDestination from './flow-destination';
-import LinkedFlows from './linked-flows';
-import ReportingDetails from './reporting-details';
-import PreviousReportingDetails from './previous-reporting-details';
-import FlowVersions from './flow-versions';
-import FLowsInfo from './flows';
-import { FlowContextProvider } from './flow-context';
+import { FlowContext } from './flow-context';
 
 export type AutoCompleteSelectionType = forms.InputSelectValueType;
 
@@ -466,12 +460,14 @@ const flowValuesForDisplay = [
 
 let parentValue = '';
 
-export const FlowRewriteForm = (props: Props) => {
+export const FlowDestination = () => {
   const {
-    currentVersionData,
-    environment,
+    flowValue,
+    setFlowValue,
     initialValue,
     isEdit,
+    currentVersionData,
+    environment,
     prevDetails,
     versionData,
     isRestricted,
@@ -494,7 +490,35 @@ export const FlowRewriteForm = (props: Props) => {
     pendingFieldsallApplied,
     allFieldsReviewed,
     pendingVersionV1,
-  } = props;
+  }: any = useContext(FlowContext);
+  // const {
+  //   currentVersionData,
+  //   environment,
+  //   initialValue,
+  //   isEdit,
+  //   prevDetails,
+  //   versionData,
+  //   isRestricted,
+  //   errorCorrection,
+  //   inputEntries,
+  //   flowId,
+  //   versionId,
+  //   initializeInputEntries,
+  //   rejectInputEntry,
+  //   currentVersionID,
+  //   currentFlowID,
+  //   currentVersionActiveStatus,
+  //   isPending,
+  //   isSuperseded,
+  //   isCancelled,
+  //   isCancellation,
+  //   isNewPending,
+  //   isUpdatePending,
+  //   canReactive,
+  //   pendingFieldsallApplied,
+  //   allFieldsReviewed,
+  //   pendingVersionV1,
+  // } = props;
   const { confirm } = dialogs;
   const env = getEnv();
 
@@ -940,7 +964,7 @@ export const FlowRewriteForm = (props: Props) => {
   useEffect(() => {
     const fileAssets: FileAssetEntityType[] = [];
     if (isEdit) {
-      initialValue.reportDetails.forEach((detail) => {
+      initialValue.reportDetails.forEach((detail: any) => {
         if (detail?.fileAsset) {
           fileAssets.push(detail.fileAsset);
           setUploadedFileArray(fileAssets);
@@ -1188,10 +1212,12 @@ export const FlowRewriteForm = (props: Props) => {
       data.inactiveReason = [
         {
           id:
-            inactiveReasons.find((item) => item.displayLabel === 'Rejected')
-              ?.value || null,
-          name: inactiveReasons.find((item) => item.displayLabel === 'Rejected')
-            ?.displayLabel,
+            inactiveReasons.find(
+              (item: any) => item.displayLabel === 'Rejected'
+            )?.value || null,
+          name: inactiveReasons.find(
+            (item: any) => item.displayLabel === 'Rejected'
+          )?.displayLabel,
           description: null,
           parentID: null,
           code: null,
@@ -1214,7 +1240,7 @@ export const FlowRewriteForm = (props: Props) => {
         setInactiveFlag(true);
       } else {
         const categoryValue =
-          inactiveReasons.find((item) => item.displayLabel === 'Cancelled')
+          inactiveReasons.find((item: any) => item.displayLabel === 'Cancelled')
             ?.value ?? null;
         if (categoryValue) {
           data.categories.push(parseInt(categoryValue.toString()));
@@ -1227,10 +1253,11 @@ export const FlowRewriteForm = (props: Props) => {
         data.inactiveReason = [
           {
             id:
-              inactiveReasons.find((item) => item.displayLabel === 'Cancelled')
-                ?.value || null,
+              inactiveReasons.find(
+                (item: any) => item.displayLabel === 'Cancelled'
+              )?.value || null,
             name: inactiveReasons.find(
-              (item) => item.displayLabel === 'Cancelled'
+              (item: any) => item.displayLabel === 'Cancelled'
             )?.displayLabel,
             description: null,
             parentID: null,
@@ -1558,7 +1585,7 @@ export const FlowRewriteForm = (props: Props) => {
       setDestinationGoverningEntities(fetchedPlan.governingEntities);
     }
     if (fetchedPlan.locations) {
-      const countries = fetchedPlan.locations.filter(function (loc) {
+      const countries = fetchedPlan.locations.filter(function (loc: any) {
         return loc.adminLevel === 0;
       });
       if (countries.length === 1) {
@@ -1614,18 +1641,18 @@ export const FlowRewriteForm = (props: Props) => {
     const fetchedProject = await environment.model.projects.getProject(
       project[0].value
     );
-    const publishedVersion = fetchedProject.projectVersions.filter(
-      function (version) {
-        return version.id === fetchedProject.currentPublishedVersionId;
-      }
-    )[0];
+    const publishedVersion = fetchedProject.projectVersions.filter(function (
+      version: any
+    ) {
+      return version.id === fetchedProject.currentPublishedVersionId;
+    })[0];
     if (objectType === 'destinationProjects') {
       const fetchedCategories =
         await environment.model.categories.getCategories({
           query: 'earmarkingType',
         });
       const category = fetchedCategories.filter(
-        (item) => item.name === 'Earmarked'
+        (item: any) => item.name === 'Earmarked'
       );
       setFieldValue('earmarkingType', {
         value: category[0],
@@ -1682,14 +1709,14 @@ export const FlowRewriteForm = (props: Props) => {
       await environment.model.organizations.getOrganizationsById(
         organization[0].value
       );
-    const isGovernment = (fetchedOrg[0].categories ?? []).some(
-      function (category) {
-        return (
-          category.group === 'organizationType' &&
-          [114, 123].includes(category.id)
-        );
-      }
-    );
+    const isGovernment = (fetchedOrg[0].categories ?? []).some(function (
+      category: any
+    ) {
+      return (
+        category.group === 'organizationType' &&
+        [114, 123].includes(category.id)
+      );
+    });
     if (isGovernment && objectType === 'sourceOrganizations') {
       objects.sourceLocations = checkIfExistingAndCopy(
         objects.location,
@@ -1735,12 +1762,12 @@ export const FlowRewriteForm = (props: Props) => {
     const hasGoverningEntitiesWithoutGlobalCluster =
       Array.isArray(targetGoverningEntities) &&
       fetchedGoverningEntities
-        .filter(function (fetchedGe) {
+        .filter(function (fetchedGe: any) {
           return targetGoverningEntities.find(function (selectedGe: any) {
             return fetchedGe.id === selectedGe.value;
           });
         })
-        .some(function (fetchedGe) {
+        .some(function (fetchedGe: any) {
           return (
             Array.isArray(fetchedGe.globalClusterIds) &&
             !fetchedGe.globalClusterIds.length
@@ -1750,18 +1777,18 @@ export const FlowRewriteForm = (props: Props) => {
     if (hasGoverningEntitiesWithoutGlobalCluster) {
       return;
     }
-    const governingEntities = fetchedGoverningEntities.filter(
-      function (governingEntity) {
-        return (
-          governingEntity.globalClusterIds.indexOf(
-            globalCluster[globalCluster.length - 1].value
-          ) > -1
-        );
-      }
-    );
+    const governingEntities = fetchedGoverningEntities.filter(function (
+      governingEntity: any
+    ) {
+      return (
+        governingEntity.globalClusterIds.indexOf(
+          globalCluster[globalCluster.length - 1].value
+        ) > -1
+      );
+    });
 
     if (governingEntities.length) {
-      governingEntities.forEach(function (governingEntity) {
+      governingEntities.forEach(function (governingEntity: any) {
         setObjectsWithArray(
           { governingEntities: governingEntity },
           [
@@ -1789,7 +1816,7 @@ export const FlowRewriteForm = (props: Props) => {
           query: 'keywords',
         });
       const category = fetchedCategories.filter(
-        (item) => item.name === 'Multiyear'
+        (item: any) => item.name === 'Multiyear'
       );
 
       const mergedKeywords = [
@@ -1866,7 +1893,7 @@ export const FlowRewriteForm = (props: Props) => {
           query: category,
         });
         return response.map(
-          (responseValue): categoryType => ({
+          (responseValue: any): categoryType => ({
             displayLabel: responseValue.name,
             value: responseValue.id.toString(),
             parentID: responseValue.parentID,
@@ -2103,7 +2130,6 @@ export const FlowRewriteForm = (props: Props) => {
     );
   };
   const validateForm = (values: FormValues) => {
-    console.log('flowValue>>>', values);
     setUnsavedChange(JSON.stringify(values) !== JSON.stringify(initialValue));
     const valuesObject: Record<string, any[]> = {
       sourceOrganizations: values.sourceOrganizations,
@@ -2391,475 +2417,156 @@ export const FlowRewriteForm = (props: Props) => {
     });
   };
   return (
-    <FlowContextProvider
-      initialValue={initialValue}
-      isEdit={isEdit}
-      currentVersionData={currentVersionData}
-      environment={environment}
-      prevDetails={prevDetails}
-      versionData={versionData}
-      isRestricted={isRestricted}
-      errorCorrection={errorCorrection}
-      inputEntries={inputEntries}
-      flowId={flowId}
-      versionId={versionId}
-      initializeInputEntries={initializeInputEntries}
-      rejectInputEntry={rejectInputEntry}
-      currentVersionID={currentVersionID}
-      currentFlowID={currentFlowID}
-      currentVersionActiveStatus={currentVersionActiveStatus}
-      isPending={isPending}
-      isSuperseded={isSuperseded}
-      isCancelled={isCancelled}
-      isCancellation={isCancellation}
-      isNewPending={isNewPending}
-      isUpdatePending={isUpdatePending}
-      canReactive={canReactive}
-      pendingFieldsallApplied={pendingFieldsallApplied}
-      allFieldsReviewed={allFieldsReviewed}
-      pendingVersionV1={pendingVersionV1}
+    <Formik
+      initialValues={initialValue}
+      onSubmit={(values, { setSubmitting }) =>
+        handleSubmit(values, values.submitAction)
+      }
+      validate={(values) => validateForm(values)}
+      enableReinitialize
+      validateOnChange={false}
+      style={{ zIndex: 1 }}
     >
-      <Formik
-        initialValues={initialValue}
-        onSubmit={(values, { setSubmitting }) =>
-          handleSubmit(values, values.submitAction)
-        }
-        validate={(values) => validateForm(values)}
-        enableReinitialize
-        validateOnChange={false}
-        style={{ zIndex: 1 }}
-      >
-        {({ values, setFieldValue, setValues }) => {
-          if (values.parentFlow && values.parentFlow[0]) {
-            const parentValueString = String(
-              values.parentFlow &&
-                values.parentFlow[0] &&
-                values.parentFlow[0].value
-            );
-            if (parentValue !== parentValueString) {
-              handleParentFlow(values, parentValueString, setValues);
-            }
-          }
-          return (
-            <Form>
-              <StyledDiv style={{ position: 'sticky', top: '70px' }}>
-                {!readOnly && !isPending && (
-                  <>
-                    <C.ButtonSubmit
-                      color="primary"
-                      text={
-                        isCancelled || canReactive
-                          ? 'Reactive'
-                          : isEdit
-                          ? 'Save & View All'
-                          : 'Create & View All'
-                      }
-                      name="submitAction"
-                      value="saveall"
-                      onClick={() => {
-                        handleAlert(values);
-                        setApproveFlag(false);
-                        setRejectFlag(false);
-                        setFieldValue('submitAction', 'save');
-                      }}
-                    />
-                    <C.ButtonSubmit
-                      color="primary"
-                      text={
-                        isCancelled || canReactive
-                          ? 'Reactive'
-                          : isEdit
-                          ? 'Save'
-                          : 'Create'
-                      }
-                      name="submitAction"
-                      value="save"
-                      onClick={() => {
-                        handleAlert(values);
-                        setApproveFlag(false);
-                        setRejectFlag(false);
-                        setFieldValue('submitAction', 'save');
-                      }}
-                    />
-                    <C.ButtonSubmit
-                      color="primary"
-                      text={'Set as inactive'}
-                      name="submitAction"
-                      value="inactive"
-                      onClick={async () => {
-                        window.confirm(
-                          'Are you sure you want to set this flow as inactive? Any parent or child flows linked to this flow must be unlinked before the flow can be set as inactive.'
-                        );
-                        handleAlert(values);
-                        setApproveFlag(false);
-                        setRejectFlag(false);
-                        setFieldValue('submitAction', 'inactive');
-                      }}
-                    />
-                  </>
-                )}
-                {isPending && (
-                  <>
-                    <C.ButtonSubmit
-                      color="primary"
-                      text={'Save & Approve'}
-                      name="submitAction"
-                      value="approve"
-                      onClick={() => {
-                        setApproveFlag(true);
-                        setFieldValue('submitAction', 'approve');
-                      }}
-                    />
-                    <C.ButtonSubmit
-                      color="primary"
-                      text={'Mark As Rejected'}
-                      name="submitAction"
-                      value="rejected"
-                      onClick={() => {
-                        setRejectFlag(true);
-                        setApproveFlag(true);
-                        setFieldValue('submitAction', 'rejected');
-                      }}
-                    />
-                  </>
-                )}
-                {currentVersionID ? (
-                  <Stack direction="row" spacing={2}>
-                    {isEdit && (
-                      <Button
-                        variant="outlined"
-                        startIcon={<DeleteIcon />}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (
-                            window.confirm(
-                              'Are you sure you want to delete this version of this flow? Any parent or child flows linked to this flow must be unlinked before the flow can be deleted. Only this version will be deleted.'
-                            )
-                          ) {
-                            deleteFlow();
-                          }
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    )}
-                    <Button
-                      variant="outlined"
-                      startIcon={<ContentCopyIcon />}
-                      onClick={() => handleCopy(values)}
-                    >
-                      COPY
-                    </Button>
-                  </Stack>
-                ) : (
-                  <></>
-                )}
-              </StyledDiv>
-              {openAlerts.map((alert) => (
-                <Alert
-                  key={alert.id}
-                  severity="error"
-                  action={
-                    <IconButton
-                      aria-label="close"
-                      color="inherit"
-                      size="small"
-                      onClick={() => handleClose(alert.id)}
-                    >
-                      <CloseIcon fontSize="inherit" />
-                    </IconButton>
-                  }
-                  sx={{ mb: 2 }}
-                  onClose={() => handleClose(alert.id)}
-                >
-                  {alert.message}
-                </Alert>
-              ))}
-              <div>
-                {inactiveFlag && isEdit && (
-                  <MuiAlert
-                    severity="error"
-                    style={{ marginBottom: '20px' }}
-                    onClose={() => {
-                      setInactiveFlag(false);
-                    }}
-                  >
-                    <AlertTitle>Set as inactive?</AlertTitle>
-                    All linked flows must be unlinked before this flow can be
-                    cancelled. Unlink flows and choose flow again.
-                  </MuiAlert>
-                )}
-              </div>
-              <div>
-                {validationFlag && (
-                  <MuiAlert
-                    severity="error"
-                    style={{ marginBottom: '20px' }}
-                    onClose={() => {
-                      setValidationFlag(false);
-                    }}
-                  >
-                    <AlertTitle>Validation</AlertTitle>
-                    Please complete all required fields marked with an asterisk
-                    (*) to proceed.
-                  </MuiAlert>
-                )}
-              </div>
-              <div>
-                {parentCurrencyFlag && (
-                  <MuiAlert
-                    severity="error"
-                    style={{ marginBottom: '20px' }}
-                    onClose={() => {
-                      setParentCurrencyFlag(false);
-                    }}
-                  >
-                    This flow's foreign currency must be the same as its parked
-                    parent flow.
-                  </MuiAlert>
-                )}
-              </div>
-              <div>
-                {childCurrencyFlag && (
-                  <MuiAlert
-                    severity="error"
-                    style={{ marginBottom: '20px' }}
-                    onClose={() => {
-                      setChildCurrencyFlag(false);
-                    }}
-                  >
-                    The child flow must have the same currency as this parked
-                    flow. Please update the child flow first before linking it
-                    to this flow.
-                  </MuiAlert>
-                )}
-              </div>
-              <div>
-                {alertFlag && (
-                  <MuiAlert
-                    severity="success"
-                    style={{ marginBottom: '20px' }}
-                    onClose={() => {
-                      setAlertFlag(false);
-                    }}
-                  >
-                    <AlertTitle>Success</AlertTitle>
-                    Flow
-                    <a href={sharePath} style={{ textDecoration: 'underline' }}>
-                      {' '}
-                      {currentFlowID} ,V{sharePath.split('/').pop()}{' '}
-                    </a>
-                    {`"${values.flowDescription}" updated`}
-                  </MuiAlert>
-                )}
-              </div>
-              <StyledLayoutRow
-                style={{
-                  pointerEvents: readOnly ? 'none' : 'auto',
-                  opacity: readOnly ? 0.6 : 1,
-                }}
-              >
-                <StyledHalfSection>
-                  <StyledFullSection
-                    style={{
-                      pointerEvents: readOnly
-                        ? 'none'
-                        : isShowParentFlow
-                        ? 'none'
-                        : 'auto',
-                      opacity: readOnly ? 0.6 : isShowParentFlow ? 0.6 : 1,
-                      position: 'relative',
-                    }}
-                    id="parentDiv"
-                  >
-                    <FlowSource />
-                  </StyledFullSection>
-                </StyledHalfSection>
-                <StyledHalfSection>
-                  <StyledFullSection>
-                    <FlowDestination />
-                  </StyledFullSection>
-                </StyledHalfSection>
-              </StyledLayoutRow>
-              <StyledFullSection
-                style={{
-                  pointerEvents: readOnly ? 'none' : 'auto',
-                  opacity: readOnly ? 0.6 : 1,
-                }}
-              >
-                <FLowsInfo />
-              </StyledFullSection>
-              <StyledFullSection
-                style={{
-                  pointerEvents: readOnly ? 'none' : 'auto',
-                  opacity: readOnly ? 0.6 : 1,
-                }}
-              >
-                <LinkedFlows />
-              </StyledFullSection>
-              <ReportingDetails />
-              <PreviousReportingDetails />
-              <FlowVersions />
-              {isPending && pendingVersionV1 && (
-                <div style={{ float: 'right', marginRight: 25 }}>
-                  <StyledFormButton
-                    onClick={() => {
-                      Object.keys(inputEntries).forEach((key) => {
-                        const specificKey = key as keyof InputEntriesType;
-                        const value = inputEntries[specificKey];
-
-                        if (value === null) {
-                          return;
-                        }
-                        if (isRight(forms.INPUT_ENTRY_TYPE.decode(value))) {
-                          setFieldValue(
-                            key,
-                            (value as forms.InputEntryType).value
-                          );
-                        }
-                        if (Array.isArray(value)) {
-                          setFieldValue(
-                            key,
-                            (value as forms.InputEntryType[]).find(
-                              (inputEntry) =>
-                                inputEntry.category ===
-                                forms.InputEntryCategoriesEnum.ACTIVE_FLOW
-                            )?.value ?? []
-                          );
-                        }
-                      });
-                      initializeInputEntries();
-                    }}
-                    color="greenLight"
-                    text="Accept Remaining Changes"
-                    startIcon={MdCheck}
-                  />
-                  <StyledFormButton
-                    onClick={initializeInputEntries}
-                    color="secondary"
-                    text="Reject Remaining Changes"
-                    startIcon={MdClose}
-                  />
-                </div>
-              )}
-              <StyledDiv>
-                {!readOnly && !isPending && (
-                  <>
-                    <C.ButtonSubmit
-                      color="primary"
-                      text={
-                        isCancelled || canReactive
-                          ? 'Reactive'
-                          : isEdit
-                          ? 'Save & View All'
-                          : 'Create & View All'
-                      }
-                      name="submitAction"
-                      value="saveall"
-                      onClick={() => {
-                        handleAlert(values);
-                        setApproveFlag(false);
-                        setRejectFlag(false);
-                        setFieldValue('submitAction', 'save');
-                      }}
-                    />
-                    <C.ButtonSubmit
-                      color="primary"
-                      text={
-                        isCancelled || canReactive
-                          ? 'Reactive'
-                          : isEdit
-                          ? 'Save'
-                          : 'Create'
-                      }
-                      name="submitAction"
-                      value="save"
-                      onClick={() => {
-                        handleAlert(values);
-                        setApproveFlag(false);
-                        setRejectFlag(false);
-                        setFieldValue('submitAction', 'save');
-                      }}
-                    />
-                    <C.ButtonSubmit
-                      color="primary"
-                      text={'Set as inactive'}
-                      name="submitAction"
-                      value="inactive"
-                      onClick={async () => {
-                        window.confirm(
-                          'Are you sure you want to set this flow as inactive? Any parent or child flows linked to this flow must be unlinked before the flow can be set as inactive.'
-                        );
-                        handleAlert(values);
-                        setApproveFlag(false);
-                        setRejectFlag(false);
-                        setFieldValue('submitAction', 'inactive');
-                      }}
-                    />
-                  </>
-                )}
-                {isPending && (
-                  <>
-                    <C.ButtonSubmit
-                      color="primary"
-                      text={'Save & Approve'}
-                      name="submitAction"
-                      value="approve"
-                      onClick={() => {
-                        setApproveFlag(true);
-                        setFieldValue('submitAction', 'approve');
-                      }}
-                    />
-                    <C.ButtonSubmit
-                      color="primary"
-                      text={'Mark As Rejected'}
-                      name="submitAction"
-                      value="rejected"
-                      onClick={() => {
-                        setRejectFlag(true);
-                        setApproveFlag(true);
-                        setFieldValue('submitAction', 'rejected');
-                      }}
-                    />
-                  </>
-                )}
-                {currentVersionID ? (
-                  <Stack direction="row" spacing={2}>
-                    {isEdit && (
-                      <Button
-                        variant="outlined"
-                        startIcon={<DeleteIcon />}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (
-                            window.confirm(
-                              'Are you sure you want to delete this version of this flow? Any parent or child flows linked to this flow must be unlinked before the flow can be deleted. Only this version will be deleted.'
-                            )
-                          ) {
-                            deleteFlow();
-                          }
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    )}
-                    <Button
-                      variant="outlined"
-                      startIcon={<ContentCopyIcon />}
-                      onClick={() => handleCopy(values)}
-                    >
-                      COPY
-                    </Button>
-                  </Stack>
-                ) : (
-                  <></>
-                )}
-              </StyledDiv>
-            </Form>
+      {({ values, setFieldValue, setValues }) => {
+        if (values.parentFlow && values.parentFlow[0]) {
+          const parentValueString = String(
+            values.parentFlow &&
+              values.parentFlow[0] &&
+              values.parentFlow[0].value
           );
-        }}
-      </Formik>
-    </FlowContextProvider>
+          if (parentValue !== parentValueString) {
+            handleParentFlow(values, parentValueString, setValues);
+          }
+        }
+        return (
+          <Form>
+            <C.FormSection title="Funding Destination(s)" isRightSection>
+              {showWarningMessage && (
+                <StyledAddChildWarning>
+                  <StyledAddChildWarningIconDiv>
+                    <GppMaybeIcon
+                      style={{
+                        fontSize: '40px',
+                        fill: '#D18E00',
+                      }}
+                    />
+                  </StyledAddChildWarningIconDiv>
+                  <StyledAddChildWarningText>
+                    You have added a Child flow for this flow. Updating the
+                    Funding Destination(s) for this flow will update the Funding
+                    Source(s) for the child flows. If you don't want to update
+                    the Child flow's funding sources, unlink it first.
+                  </StyledAddChildWarningText>
+                </StyledAddChildWarning>
+              )}
+              <C.AsyncAutocompleteSelectFTSAdmin
+                label="Organization(s)*"
+                name="destinationOrganizations"
+                fnPromise={
+                  environment.model.organizations.getAutocompleteOrganizations
+                }
+                behavior={FORM_SETTINGS.organization.behavior}
+                isMulti
+                entryInfo={inputEntries.destinationOrganizations}
+                rejectInputEntry={rejectInputEntry}
+              />
+              <StyledRow>
+                <StyledHalfSection>
+                  <C.AsyncAutocompleteSelectFTSAdmin
+                    label="Usage Year(s)*"
+                    name="destinationUsageYears"
+                    fnPromise={environment.model.usageYears.getUsageYears}
+                    isMulti
+                    behavior={FORM_SETTINGS.usageYear.behavior}
+                    onChange={(event, value) => {
+                      updateFlowObjects(event, value, setFieldValue, values);
+                    }}
+                    isAutocompleteAPI={false}
+                    entryInfo={inputEntries.destinationUsageYears}
+                    rejectInputEntry={rejectInputEntry}
+                  />
+                </StyledHalfSection>
+                <StyledHalfSection>
+                  <C.AsyncAutocompleteSelectFTSAdmin
+                    label="Country(ies) (Admin level 0)"
+                    name="destinationLocations"
+                    fnPromise={
+                      environment.model.locations.getAutocompleteLocations
+                    }
+                    behavior={FORM_SETTINGS.location.behavior}
+                    isMulti
+                    entryInfo={inputEntries.destinationLocations}
+                    rejectInputEntry={rejectInputEntry}
+                  />
+                </StyledHalfSection>
+              </StyledRow>
+              <C.AsyncAutocompleteSelectFTSAdmin
+                label="Global Cluster(s)"
+                name="destinationGlobalClusters"
+                fnPromise={environment.model.globalClusters.getGlobalClusters}
+                onChange={(event, value) => {
+                  updateFlowObjects(event, value, setFieldValue, values);
+                }}
+                behavior={FORM_SETTINGS.globalCluster.behavior}
+                isMulti
+                isAutocompleteAPI={false}
+                entryInfo={inputEntries.destinationGlobalClusters}
+                rejectInputEntry={rejectInputEntry}
+              />
+              <C.AsyncAutocompleteSelectFTSAdmin
+                label="Plan"
+                name="destinationPlans"
+                fnPromise={environment.model.plans.getAutocompletePlans}
+                onChange={(event, value) => {
+                  updateFlowObjects(event, value, setFieldValue, values);
+                }}
+                behavior={FORM_SETTINGS.plan.behavior}
+                isMulti
+                entryInfo={inputEntries.destinationPlans}
+                rejectInputEntry={rejectInputEntry}
+              />
+              {showDestinationGoverningEntities && (
+                <C.AsyncAutocompleteSelectFTSAdmin
+                  label="Field Cluster(s)"
+                  name="destinationGoverningEntities"
+                  optionsData={destinationGoverningEntities}
+                  isMulti
+                  behavior={FORM_SETTINGS.governingEntity.behavior}
+                  isAutocompleteAPI={false}
+                  entryInfo={inputEntries.destinationGoverningEntities}
+                  rejectInputEntry={rejectInputEntry}
+                />
+              )}
+              <C.AsyncAutocompleteSelectFTSAdmin
+                label="Emergency(ies)"
+                name="destinationEmergencies"
+                fnPromise={
+                  environment.model.emergencies.getAutocompleteEmergencies
+                }
+                onChange={(event, value) => {
+                  updateFlowObjects(event, value, setFieldValue, values);
+                }}
+                isMulti
+                entryInfo={inputEntries.destinationEmergencies}
+                rejectInputEntry={rejectInputEntry}
+              />
+              <C.AsyncAutocompleteSelectFTSAdmin
+                label="Project"
+                name="destinationProjects"
+                fnPromise={environment.model.projects.getAutocompleteProjects}
+                behavior={FORM_SETTINGS.project.behavior}
+                onChange={(event, value) => {
+                  updateFlowObjects(event, value, setFieldValue, values);
+                }}
+                isMulti
+                entryInfo={inputEntries.destinationProjects}
+                rejectInputEntry={rejectInputEntry}
+              />
+            </C.FormSection>
+          </Form>
+        );
+      }}
+    </Formik>
   );
 };
-export default FlowRewriteForm;
+export default FlowDestination;
