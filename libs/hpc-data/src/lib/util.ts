@@ -70,6 +70,19 @@ export const INTEGER_ARRAY_FROM_STRING = new t.Type<number[], number[]>(
   t.identity
 );
 
+export const STRING_FROM_SINGLE_ELEMENT_ARRAY = new t.Type<string, string>(
+  'STRING_FROM_SINGLE_ELEMENT_ARRAY',
+  t.string.is,
+  (v, c) => {
+    if (Array.isArray(v) && v.length === 1 && typeof v[0] === 'string') {
+      return t.success(v[0]);
+    }
+
+    return t.failure(v, c);
+  },
+  t.identity
+);
+
 /**
  * Accepts either a boolean, or a string of a boolean.
  */
