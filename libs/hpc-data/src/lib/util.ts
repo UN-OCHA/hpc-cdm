@@ -114,6 +114,13 @@ export const BLOB = new t.Type<Blob, Blob>(
   t.identity
 );
 
+export const BUFFER = new t.Type<Buffer, Buffer, any>(
+  'Buffer',
+  (v): v is Buffer => v instanceof Buffer,
+  (v, c) => (v instanceof Buffer ? t.success(v) : t.failure(v, c)),
+  t.identity
+);
+
 /**
  * A file Buffer
  */
