@@ -83,6 +83,7 @@ type AsyncAutocompleteSelectProps = {
   values?: any;
   alreadyIsFetch?: boolean;
   fetchedData?: readonly FormObjectValue[];
+  isDisabled?: boolean;
 };
 
 const AsyncAutocompleteSelect = ({
@@ -102,6 +103,7 @@ const AsyncAutocompleteSelect = ({
   withoutFormik = false,
   values,
   setFieldValue,
+  isDisabled,
   ...otherProps
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
@@ -367,6 +369,7 @@ const AsyncAutocompleteSelect = ({
         rejectInputEntry={rejectInputEntry}
         alreadyIsFetch={isFetch}
         fetchedData={options}
+        isDisabled={isDisabled}
       />
     );
   }
@@ -380,6 +383,7 @@ const AsyncAutocompleteSelect = ({
     // ...field,
     ...otherProps,
     multiple: isMulti,
+    disabled: isDisabled,
     onOpen: () => {
       setOpen(true);
     },
@@ -554,6 +558,7 @@ const FormikAsyncAutocompleteSelect = ({
   rejectInputEntry,
   alreadyIsFetch,
   fetchedData,
+  isDisabled,
   ...otherProps
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
@@ -811,6 +816,7 @@ const FormikAsyncAutocompleteSelect = ({
   > = {
     ...field,
     ...otherProps,
+    disabled: isDisabled,
     multiple: isMulti,
     onOpen: () => {
       setOpen(true);

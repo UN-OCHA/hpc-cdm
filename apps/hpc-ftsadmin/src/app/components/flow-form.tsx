@@ -2623,18 +2623,7 @@ export const FlowForm = (props: Props) => {
               }}
             >
               <StyledHalfSection>
-                <StyledFullSection
-                  style={{
-                    pointerEvents: readOnly
-                      ? 'none'
-                      : isShowParentFlow
-                      ? 'none'
-                      : 'auto',
-                    opacity: readOnly ? 0.6 : isShowParentFlow ? 0.6 : 1,
-                    position: 'relative',
-                  }}
-                  id="parentDiv"
-                >
+                <StyledFullSection id="parentDiv">
                   <C.FormSection title="Funding Source(s)" isLeftSection>
                     {values.parentFlow && values.parentFlow.length ? (
                       <StyledParentInfo
@@ -2708,6 +2697,7 @@ export const FlowForm = (props: Props) => {
                       isMulti
                       entryInfo={inputEntries.sourceOrganizations}
                       rejectInputEntry={rejectInputEntry}
+                      isDisabled={isShowParentFlow}
                     />
                     <StyledRow>
                       <StyledHalfSection>
@@ -2728,6 +2718,7 @@ export const FlowForm = (props: Props) => {
                           isAutocompleteAPI={false}
                           entryInfo={inputEntries.sourceUsageYears}
                           rejectInputEntry={rejectInputEntry}
+                          isDisabled={isShowParentFlow}
                         />
                       </StyledHalfSection>
                       <StyledHalfSection>
@@ -2741,6 +2732,7 @@ export const FlowForm = (props: Props) => {
                           isMulti
                           entryInfo={inputEntries.sourceLocations}
                           rejectInputEntry={rejectInputEntry}
+                          isDisabled={isShowParentFlow}
                         />
                       </StyledHalfSection>
                     </StyledRow>
@@ -2757,6 +2749,7 @@ export const FlowForm = (props: Props) => {
                       isMulti
                       entryInfo={inputEntries.sourceEmergencies}
                       rejectInputEntry={rejectInputEntry}
+                      isDisabled={isShowParentFlow}
                     />
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label="Global Cluster(s)"
@@ -2772,6 +2765,7 @@ export const FlowForm = (props: Props) => {
                       isAutocompleteAPI={false}
                       entryInfo={inputEntries.sourceGlobalClusters}
                       rejectInputEntry={rejectInputEntry}
+                      isDisabled={isShowParentFlow}
                     />
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label="Plan"
@@ -2784,6 +2778,7 @@ export const FlowForm = (props: Props) => {
                       }}
                       entryInfo={inputEntries.sourcePlans}
                       rejectInputEntry={rejectInputEntry}
+                      isDisabled={isShowParentFlow}
                     />
                     {showSourceGoverningEntities && (
                       <C.AsyncAutocompleteSelectFTSAdmin
@@ -2796,6 +2791,7 @@ export const FlowForm = (props: Props) => {
                         isAutocompleteAPI={false}
                         entryInfo={inputEntries.sourceGoverningEntities}
                         rejectInputEntry={rejectInputEntry}
+                        isDisabled={isShowParentFlow}
                       />
                     )}
                     <C.AsyncAutocompleteSelectFTSAdmin
@@ -2811,6 +2807,7 @@ export const FlowForm = (props: Props) => {
                       isMulti
                       entryInfo={inputEntries.sourceProjects}
                       rejectInputEntry={rejectInputEntry}
+                      isDisabled={isShowParentFlow}
                     />
                   </C.FormSection>
                 </StyledFullSection>
