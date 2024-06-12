@@ -111,6 +111,18 @@ export const BOOLEAN_FROM_STRING = new t.Type<boolean, boolean>(
   t.identity
 );
 
+export const TRIMMED_STRING = new t.Type<string, string>(
+  'TRIMMED_STRING',
+  t.string.is,
+  (v, c) => {
+    if (typeof v === 'string') {
+      return t.success(v.trim());
+    }
+    return t.failure(v, c);
+  },
+  t.identity
+);
+
 /**
  * A file BLOB
  */
