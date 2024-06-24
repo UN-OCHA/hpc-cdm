@@ -1832,9 +1832,12 @@ export const FlowForm = (props: Props) => {
       Array.isArray(targetGoverningEntities) &&
       fetchedGoverningEntities
         .filter(function (fetchedGe) {
-          return targetGoverningEntities.find(function (selectedGe) {
-            return fetchedGe.id === selectedGe.value;
-          });
+          return (
+            !!targetGoverningEntities &&
+            targetGoverningEntities.find(function (selectedGe) {
+              return fetchedGe.id === selectedGe.value;
+            })
+          );
         })
         .some(function (fetchedGe) {
           return (
