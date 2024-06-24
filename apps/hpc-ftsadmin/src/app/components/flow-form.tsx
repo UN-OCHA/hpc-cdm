@@ -1,11 +1,5 @@
-import React, {
-  ChangeEvent,
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-} from 'react';
-import { Form, Formik, FieldArray } from 'formik';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
+import { Form, Formik, FieldArray, FormikHelpers } from 'formik';
 import tw from 'twin.macro';
 import dayjs from 'dayjs';
 import { isRight } from 'fp-ts/Either';
@@ -19,7 +13,7 @@ import Stack from '@mui/material/Stack';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import MuiAlert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import _, { set, values } from 'lodash';
+import _ from 'lodash';
 import useSharePath from './Hooks/SharePath';
 import { C, dialogs } from '@unocha/hpc-ui';
 import {
@@ -34,62 +28,128 @@ import {
   IconButton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { Environment } from '../../environments/interface';
 import { MdAdd, MdRemove, MdClose, MdCheck } from 'react-icons/md';
 import {
   usageYears,
   forms,
   governingEntities,
   fileUpload,
+  data,
+  fundingObject,
   flows as flowsResponse,
 } from '@unocha/hpc-data';
-import { getEnv } from '../context';
+import { getEnv, AppContext } from '../context';
 import { editFlowSetting, copyFlow } from '../paths';
 import { flows } from '../paths';
 import Link from '@mui/material/Link';
 import { useNavigate, unstable_usePrompt } from 'react-router-dom';
-import { id } from 'fp-ts/lib/Refinement';
+import { t as st } from '../../i18n';
 
 export type AutoCompleteSelectionType = forms.InputSelectValueType;
 
 const INPUT_SELECT_VALUE_TYPE = forms.INPUT_SELECT_VALUE_TYPE;
 
+const DATE_FORMAT = 'DD/MM/YYYY';
+
+type FlowObjectType =
+  | 'organization'
+  | 'governingEntity'
+  | 'location'
+  | 'project'
+  | 'usageYear'
+  | 'globalCluster'
+  | 'emergency'
+  | 'plan';
+
+interface ErrorResponse {
+  message: string;
+  reason?: Record<string, unknown>;
+}
+
+interface CalculateType {
+  amountOriginal: number | null;
+  amountUSD: number | null;
+  exchangeRateUsed: number;
+}
+
+interface FlowObject {
+  implementingPartner: string | null | undefined;
+  id: number;
+  name: string;
+  behavior?: string;
+  objectDetail?: string | null;
+  cleared?: boolean;
+  restricted?: boolean;
+}
+interface CollapsedFlowObject {
+  refDirection: string;
+  objectType: string;
+  objectID: number | string;
+  behavior: string | null;
+  objectDetail?: string | null;
+}
+
 type UniqueDataType = {
   [key: string]: string[];
 };
 
+interface FORM_FIELD {
+  value?: string | number;
+  displayLabel?: string;
+  id: number | string;
+  name: string;
+  behavior?: string;
+  objectDetail?: string | null;
+  cleared?: boolean;
+  restricted?: boolean | undefined;
+  implementingPartner?: string | null;
+}
+
+interface SourceOrDestination {
+  governingEntity: FORM_FIELD[];
+  location: FORM_FIELD[];
+  organization: FORM_FIELD[];
+  project: FORM_FIELD[];
+  usageYear: FORM_FIELD[];
+  globalCluster: FORM_FIELD[];
+  emergency: FORM_FIELD[];
+  plan: FORM_FIELD[];
+}
+
+type Data = data.dataType & fundingObject.fundingObjectType;
 export interface DeleteFlowParams {
   VersionID: number;
   FlowID: number;
 }
 
 export interface categoryType {
+  id: number;
   value: string | number;
   displayLabel: string;
   parentID: number | null;
 }
 
-export interface FileAssetEntityType {
-  collection?: string;
-  createAt?: string;
-  filename?: string;
-  id?: number;
-  mimetype?: string;
-  originalname?: string;
-  path?: string;
-  size?: number;
-  updatedAt?: string;
-}
-export interface ReportFileType {
-  title?: string;
-  fileName?: string;
-  UploadFileUrl?: string;
-  type?: string;
-  url?: string;
-  fileAssetID?: number;
-  size?: number;
-  fileAssetEntity?: FileAssetEntityType;
-}
+export type FileAssetEntityType = Partial<{
+  collection: string;
+  createAt: string;
+  filename: string;
+  id: number;
+  mimetype: string;
+  originalname: string;
+  path: string;
+  size: number;
+  updatedAt: string;
+}>;
+export type ReportFileType = Partial<{
+  title: string;
+  fileName: string;
+  UploadFileUrl: string;
+  type: string;
+  url: string;
+  fileAssetID: number;
+  size: number;
+  fileAssetEntity: FileAssetEntityType;
+}>;
 export interface ReportDetailType {
   verified: string;
   reportSource: string;
@@ -105,10 +165,6 @@ export interface ReportDetailType {
   reportUrl?: string;
   versionId?: number;
   fileAsset?: FileAssetEntityType;
-}
-
-export interface ParentFlowType {
-  value: any;
 }
 
 export interface FormValues {
@@ -127,7 +183,7 @@ export interface FormValues {
   method: AutoCompleteSelectionType | '';
   cashTransfer: AutoCompleteSelectionType | '';
   beneficiaryGroup: AutoCompleteSelectionType | '';
-  inactiveReason: any[] | string;
+  inactiveReason: string;
   childMethod: object;
   origCurrency: AutoCompleteSelectionType | string;
   amountOriginal: number | null;
@@ -163,6 +219,21 @@ export interface FormValues {
   }[];
 }
 
+export interface EarmarkingType {
+  id: string | number;
+  name: string;
+  group: string;
+}
+
+interface Inconsistency {
+  type: string;
+  values: {
+    name?: string;
+    year?: string;
+    refDirection: string;
+    options?: { name: string }[];
+  }[];
+}
 export interface VersionDataType {
   versionId: number;
   flowId: number;
@@ -172,7 +243,9 @@ export interface VersionDataType {
   updatedBy: string | null;
   active: boolean;
   viewing: boolean;
-  pending?: boolean;
+  isPending?: boolean;
+  isCancelled?: boolean;
+  activeStatus?: boolean;
   [key: string]:
     | string
     | number
@@ -204,7 +277,7 @@ export interface InputEntriesType {
   beneficiaryGroup: forms.InputEntryType | null;
   inactiveReason: forms.InputEntryType | null;
   amountOriginal: forms.InputEntryType | null;
-  exchangeRateUsed: forms.InputEntryType | null;
+  exchangeRateUsed: forms.InputEntryType;
   notes: forms.InputEntryType | null;
   sourceOrganizations: forms.InputEntryType[];
   sourceLocations: forms.InputEntryType[];
@@ -226,6 +299,24 @@ export interface InputEntriesType {
   childFlow: forms.InputEntryType[];
 }
 
+export type ObjectType = Partial<{
+  sourceOrganizations: forms.InputEntryType[];
+  sourceLocations: forms.InputEntryType[];
+  sourceUsageYears: forms.InputEntryType[];
+  sourceProjects: forms.InputEntryType[];
+  sourcePlans: forms.InputEntryType[];
+  sourceGoverningEntities: forms.InputEntryType[];
+  sourceGlobalClusters: forms.InputEntryType[];
+  sourceEmergencies: forms.InputEntryType[];
+  destinationOrganizations: forms.InputEntryType[];
+  destinationLocations: forms.InputEntryType[];
+  destinationUsageYears: forms.InputEntryType[];
+  destinationProjects: forms.InputEntryType[];
+  destinationPlans: forms.InputEntryType[];
+  destinationGoverningEntities: forms.InputEntryType[];
+  destinationGlobalClusters: forms.InputEntryType[];
+  destinationEmergencies: forms.InputEntryType[];
+}>;
 type UploadedItem = fileUpload.FileUploadResult | FileAssetEntityType;
 
 const reportChannelSchema = t.type({
@@ -255,7 +346,6 @@ const validationSchema = t.type({
 
 interface Props {
   currentVersionData: flowsResponse.FlowREST | null;
-  environment: Environment;
   isEdit: boolean;
   initialValue: FormValues;
   prevDetails?: ReportDetailType[];
@@ -279,7 +369,7 @@ interface Props {
   canReactive?: boolean;
   isErrorCorrection?: boolean | null;
   isApprovedFlowVersion?: boolean | null;
-  pendingFieldsallApplied?: boolean;
+  pendingFieldsAllApplied?: boolean;
   allFieldsReviewed?: boolean;
   pendingVersionV1?: boolean;
 }
@@ -328,7 +418,7 @@ items-center
 `;
 const StyledAnchor = tw.a`
 underline
-ml-[15px]
+ml-4
 opacity-100
 `;
 const StyledAnchorDiv = tw.div`
@@ -343,15 +433,15 @@ const StyledFieldset = tw.fieldset`
 w-full
 box-border
 rounded-xl
-mt-[16px]
-mb-[8px]
+mt-4
+mb-2
 border-gray-100
 `;
 const StyledCurrencyRow = tw.div`
 w-1/2
 `;
 const StyledFormButton = tw(C.Button)`
-ml-[25px]
+ml-6
 mb-6
 `;
 const StyledLabel = tw.label`
@@ -383,7 +473,7 @@ list-none
 const StyledDiv = tw.div`
 my-6
 me-4
-mr-[23px]
+mr-6
 lg:flex
 justify-end
 gap-x-4
@@ -391,16 +481,17 @@ bg-white
 z-10
 `;
 
-const initialReportDetail = {
+const initialReportDetail: ReportDetailType = {
   verified: 'verified',
   reportSource: 'primary',
   reporterReferenceCode: '',
   reportChannel: '',
   reportFileTitle: '',
   reportedOrganization: { value: '', displayLabel: '' },
-  reportedDate: dayjs().format('DD/MM/YYYY'),
+  reportedDate: dayjs().format(DATE_FORMAT),
   reporterContactInformation: '',
   sourceSystemRecordId: '',
+  reportFiles: [],
 };
 
 const FORM_SETTINGS = {
@@ -430,7 +521,7 @@ const FORM_SETTINGS = {
   },
 };
 
-const objectTypes = [
+const OBJECT_TYPES = [
   'emergencies',
   'projects',
   'usageYears',
@@ -440,7 +531,7 @@ const objectTypes = [
   'organizations',
 ] as const;
 
-const flowValuesForDisplay = [
+const FLOWVALUESFORDISPLAY_TYPES = [
   'amountUSD',
   'flowDate',
   'decisionDate',
@@ -461,16 +552,12 @@ let parentValue = '';
 export const FlowForm = (props: Props) => {
   const {
     currentVersionData,
-    environment,
     initialValue,
     isEdit,
     prevDetails,
     versionData,
-    isRestricted,
     errorCorrection,
     inputEntries,
-    flowId,
-    versionId,
     initializeInputEntries,
     rejectInputEntry,
     currentVersionID,
@@ -479,26 +566,24 @@ export const FlowForm = (props: Props) => {
     isPending,
     isSuperseded,
     isCancelled,
-    isCancellation,
-    isNewPending,
-    isUpdatePending,
     canReactive,
-    pendingFieldsallApplied,
+    pendingFieldsAllApplied,
     allFieldsReviewed,
     pendingVersionV1,
   } = props;
-  const { confirm } = dialogs;
   const env = getEnv();
+  const { lang } = useContext(AppContext);
+  const collapseFlowObjects = (
+    data: fundingObject.fundingObjectType
+  ): FlowObject[] => {
+    const flowObjects: FlowObject[] = [];
 
-  const collapseFlowObjects = (data: any) => {
-    data.flowObjects = [];
-
-    collapsePerBehavior(data.dest, 'destination');
-    collapsePerBehavior(data.src, 'source');
-
-    function collapsePerBehavior(behaviorArr: any, ref: any) {
-      Object.keys(behaviorArr).forEach((type) => {
-        behaviorArr[type].forEach((obj: any) => {
+    const collapsePerBehavior = (
+      behaviorArr: SourceOrDestination,
+      ref: 'source' | 'destination'
+    ) => {
+      (Object.keys(behaviorArr) as FlowObjectType[]).forEach((type) => {
+        behaviorArr[type].forEach((obj) => {
           if (
             obj !== null &&
             (!Object.prototype.hasOwnProperty.call(obj, 'cleared') ||
@@ -508,24 +593,26 @@ export const FlowForm = (props: Props) => {
               obj.objectDetail = obj.implementingPartner ? 'partner' : null;
             }
 
-            const flowObj = {
+            const flowObj: CollapsedFlowObject = {
               refDirection: ref,
               objectType: type,
               objectID: obj.id,
               behavior: obj.behavior || null,
               objectDetail: obj.objectDetail,
             };
-            data.flowObjects.push(flowObj);
+            flowObjects.push(flowObj as unknown as FlowObject);
           }
         });
       });
-    }
+    };
 
-    return data as any;
+    collapsePerBehavior(data.dest, 'destination');
+    collapsePerBehavior(data.src, 'source');
+
+    return flowObjects;
   };
-
   const collapseCategories = (data: any) => {
-    data.categories = [
+    data.categorySources = [
       data.flowType,
       data.flowStatuses,
       data.contributionTypes,
@@ -554,10 +641,10 @@ export const FlowForm = (props: Props) => {
 
     return data;
   };
-  const [uploadFileFlag, setUploadFileFlag] = useState<boolean>(false);
-  const [uploadFlag, setUploadFlag] = useState<boolean>(false);
+  const [uploadFileFlag, setUploadFileFlag] = useState(false);
+  const [uploadFlag, setUploadFlag] = useState(false);
   const normalizeFlowData = (values: FormValues) => {
-    const fundingObject = {
+    const fundingObject: fundingObject.fundingObjectType = {
       src: {
         governingEntity: values.sourceGoverningEntities.map((item) => ({
           id: item.value,
@@ -632,19 +719,19 @@ export const FlowForm = (props: Props) => {
       },
     };
 
-    let data = {
+    const data: Data = {
       id: isEdit && currentFlowID ? currentFlowID : null,
       versionID: isEdit && currentVersionID ? currentVersionID : null,
       amountUSD: values.amountUSD,
-      flowDate: dayjs(values.flowDate, 'DD/MM/YYYY').format(
+      flowDate: dayjs(values.flowDate, DATE_FORMAT).format(
         'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
       ),
       decisionDate: values.decisionDate
-        ? dayjs(values.decisionDate, 'DD/MM/YYYY').format(
+        ? dayjs(values.decisionDate, DATE_FORMAT).format(
             'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
           )
         : null,
-      firstReportedDate: dayjs(values.firstReported, 'DD/MM/YYYY').format(
+      firstReportedDate: dayjs(values.firstReported, DATE_FORMAT).format(
         'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
       ),
       budgetYear: values.budgetYear,
@@ -659,10 +746,12 @@ export const FlowForm = (props: Props) => {
       description: values.flowDescription,
       versionStartDate: currentVersionData?.versionStartDate,
       versionEndDate: currentVersionData?.versionEndDate,
-      flowObjects: collapseFlowObjects(fundingObject),
+      flowObjects: collapseFlowObjects(
+        fundingObject as fundingObject.fundingObjectType
+      ),
       children:
         values.childFlow &&
-        values.childFlow.map((item: any, index: number) => {
+        values.childFlow.map((item: AutoCompleteSelectionType) => {
           return {
             childID: JSON.parse(item.value as string).id,
             origCurrency: JSON.parse(item.value as string).origCurrency,
@@ -670,7 +759,7 @@ export const FlowForm = (props: Props) => {
         }),
       parents:
         values.parentFlow &&
-        values.parentFlow.map((item: any, index: number) => {
+        values.parentFlow.map((item: AutoCompleteSelectionType) => {
           return {
             Parent: {
               parentID: JSON.parse(item.value as string).id,
@@ -682,7 +771,7 @@ export const FlowForm = (props: Props) => {
             id: JSON.parse(item.value as string).id,
             parents:
               values.parentFlow &&
-              values.parentFlow.map((key: any) => {
+              values.parentFlow.map((key: AutoCompleteSelectionType) => {
                 return {
                   child: JSON.parse(key.value as string).id,
                   parentID: 271736,
@@ -694,7 +783,7 @@ export const FlowForm = (props: Props) => {
         return {
           contactInfo: item.reporterContactInformation,
           source: item.reportSource,
-          date: dayjs(item.reportedDate, 'DD/MM/YYYY').format(
+          date: dayjs(item.reportedDate, DATE_FORMAT).format(
             'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
           ),
           versionID: currentVersionID,
@@ -800,12 +889,12 @@ export const FlowForm = (props: Props) => {
             group: 'earmarkingType',
           }
         : null,
-      categories: [] as (string | number)[],
-      isCancellation: isPending ? true : !isPending ? false : null,
-      cancelled: isPending && isCancellation ? true : null,
-      pendingStatus: isPending ? true : !isPending ? false : [],
-      planEntities: isPending ? true : !isPending ? false : [],
-      planIndicated: isPending ? true : !isPending ? false : [],
+      categories: [] as (categoryType | number)[],
+      isCancellation: isPending ?? null,
+      cancelled: isPending ?? null,
+      pendingStatus: isPending ?? [],
+      planEntities: isPending ?? [],
+      planIndicated: isPending ?? [],
       isApprovedFlowVersion:
         rejectFlag && approveFlag
           ? true
@@ -835,49 +924,47 @@ export const FlowForm = (props: Props) => {
         ? false
         : null,
       rejected: rejectFlag ? true : !rejectFlag ? false : null,
-      versions:
-        versionData &&
-        versionData.map((item: VersionDataType) => {
-          const items = {
-            id: item.flowId,
-            versionID: item.versionId,
-            activeStatus: item.activeStatus,
-            isPending: item.isPending ? item.isPending : false,
-            isCancelled: item.isCancelled ? item.isCancelled : false,
-          };
-          return items;
-        }),
+      versions: versionData
+        ? versionData.map((item: VersionDataType) => {
+            const items = {
+              id: item.flowId,
+              versionID: item.versionId,
+              activeStatus: item.activeStatus,
+              isPending: item.isPending ? item.isPending : false,
+              isCancelled: item.isCancelled ? item.isCancelled : false,
+            };
+            return items;
+          })
+        : [],
       ...fundingObject,
     };
-
-    data = collapseCategories(data);
-    return data;
+    return collapseCategories(data);
   };
 
-  const [unsavedChange, setUnsavedChange] = useState<boolean>(false);
-  const [parentCurrencyFlag, setParentCurrencyFlag] = useState<boolean>(false);
-  const [childCurrencyFlag, setChildCurrencyFlag] = useState<boolean>(false);
-  const [approveFlag, setApproveFlag] = useState<boolean>(false);
-  const [rejectFlag, setRejectFlag] = useState<boolean>(false);
-  const [validationFlag, setValidationFlag] = useState<boolean>(false);
-  const [inactiveFlag, setInactiveFlag] = useState<boolean>(false);
+  const [unsavedChange, setUnsavedChange] = useState(false);
+  const [parentCurrencyFlag, setParentCurrencyFlag] = useState(false);
+  const [childCurrencyFlag, setChildCurrencyFlag] = useState(false);
+  const [approveFlag, setApproveFlag] = useState(false);
+  const [rejectFlag, setRejectFlag] = useState(false);
+  const [validationFlag, setValidationFlag] = useState(false);
+  const [inactiveFlag, setInactiveFlag] = useState(false);
   const [uploadedFileArray, setUploadedFileArray] = useState<UploadedItem[]>([
     {},
   ]);
-  const [addReportFlag, setAddReportFlag] = useState<boolean>(false);
-  const [alertFlag, setAlertFlag] = useState<boolean>(false);
+  const [addReportFlag, setAddReportFlag] = useState(false);
+  const [alertFlag, setAlertFlag] = useState(false);
   const [sharePath, setSharePath] = useSharePath('');
-  const [readOnly, setReadOnly] = useState<boolean>(false);
-  const [linkCheck, setLinkCheck] = useState<boolean>(false);
+  const [readOnly, setReadOnly] = useState(false);
+  const [linkCheck, setLinkCheck] = useState(false);
   const handleSave = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const [showWarningMessage, setShowWarningMessage] = useState<boolean>(false);
+  const [showWarningMessage, setShowWarningMessage] = useState(false);
   const [objects, setObjects] = useState<Record<string, any[]>>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
   const [newMoneyCheckboxDisabled, setNewMoneyCheckboxDisabled] =
-    useState<boolean>(false);
+    useState(false);
 
   const [comparingVersions, setComparingVersions] = useState<VersionDataType[]>(
     []
@@ -886,11 +973,11 @@ export const FlowForm = (props: Props) => {
     []
   );
   const [showSourceGoverningEntities, handleShowSourceGoverningEntities] =
-    useState<boolean>(false);
+    useState(false);
   const [
     showDestinationGoverningEntities,
     handleShowDestinationGoverningEntities,
-  ] = useState<boolean>(false);
+  ] = useState(false);
   const [sourceGoverningEntities, setSourceGoverningEntities] =
     useState<governingEntities.GetGoverningEntityResult>([]);
   const [destinationGoverningEntities, setDestinationGoverningEntities] =
@@ -908,16 +995,19 @@ export const FlowForm = (props: Props) => {
   };
   const buttonText = 'Calculate The Exchange Rate';
 
-  const handleCalculateExchangeRate = (values: any, setFieldValue: any) => {
+  const handleCalculateExchangeRate = (
+    values: FormValues,
+    setFieldValue: FormikHelpers<CalculateType>['setFieldValue']
+  ) => {
     const { amountOriginal, amountUSD } = values;
 
     if (amountOriginal && amountUSD) {
       const exchangeRateUsed = amountOriginal / amountUSD;
       setFieldValue('exchangeRateUsed', exchangeRateUsed.toFixed(4));
-    } else if (amountOriginal && !amountUSD) {
+    } else if (amountOriginal && !amountUSD && values.exchangeRateUsed) {
       const calculatedAmountUSD = amountOriginal / values.exchangeRateUsed;
       setFieldValue('amountUSD', calculatedAmountUSD.toFixed(4));
-    } else if (!amountOriginal && amountUSD) {
+    } else if (!amountOriginal && amountUSD && values.exchangeRateUsed) {
       const calculatedAmountOriginal = amountUSD * values.exchangeRateUsed;
       setFieldValue('amountOriginal', calculatedAmountOriginal.toFixed(4));
     } else {
@@ -955,7 +1045,7 @@ export const FlowForm = (props: Props) => {
       setShowParentFlow(true);
     }
   }, [initialValue.parentFlow]);
-  const [remove, setRemove] = useState<boolean>(false);
+  const [remove, setRemove] = useState(false);
   const handleRemove = (index: number, values: FormValues) => {
     if (window.confirm('Are you sure you want to remove this file?')) {
       if (
@@ -982,7 +1072,7 @@ export const FlowForm = (props: Props) => {
   };
   if (remove === true) setRemove(false);
   const SourceLink = (
-    setFieldValue: any,
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
     values: FormValues,
     indexKey: number,
     index: number
@@ -993,7 +1083,7 @@ export const FlowForm = (props: Props) => {
     );
   };
   const DestinationLink = (
-    setFieldValue: any,
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
     values: FormValues,
     indexKey: number,
     index: number
@@ -1003,16 +1093,6 @@ export const FlowForm = (props: Props) => {
       values.destinationOrganizations[indexKey]
     );
   };
-
-  interface Inconsistency {
-    type: string;
-    values: {
-      name?: string;
-      year?: string;
-      refDirection: string;
-      options?: { name: string }[];
-    }[];
-  }
 
   const processDataInconsistencies = (
     inconsistencyArray: Inconsistency[]
@@ -1071,34 +1151,44 @@ export const FlowForm = (props: Props) => {
       }
     }
     if (isShowParentFlow && isShowChildFlow > 0) {
-      let childAmountSum = 0;
-      let parentAmountSum = 0;
-      values.childFlow &&
-        values.childFlow.map((item, _index) => {
-          childAmountSum += JSON.parse(item.value.toString())
-            ? parseInt(JSON.parse(item.value.toString()).amountUSD)
-            : 0;
-        });
-      values.parentFlow &&
-        values.parentFlow.map((item, _index) => {
-          parentAmountSum += JSON.parse(item.value.toString())
-            ? parseInt(JSON.parse(item.value.toString()).amountUSD)
-            : 0;
-        });
+      const childAmountSum = values.childFlow
+        ? values.childFlow.reduce((sum, item) => {
+            const parsedValue = JSON.parse(item.value.toString());
+            return sum + (parsedValue ? parseInt(parsedValue.amountUSD) : 0);
+          }, 0)
+        : 0;
+
+      const parentAmountSum = values.parentFlow
+        ? values.parentFlow.reduce((sum, item) => {
+            const parsedValue = JSON.parse(item.value.toString());
+            return sum + (parsedValue ? parseInt(parsedValue.amountUSD) : 0);
+          }, 0)
+        : 0;
+
       if (childAmountSum > parentAmountSum) {
         if (
           !window.confirm(
-            `Please note, the Funding Amount on this parent flow ($${parentAmountSum}) is less than the sum of its children's amount ($${childAmountSum}). Do you want to proceed?`
+            `${st.t(
+              lang,
+              (s) => s.alert.parentAmountSum.first
+            )} ($${parentAmountSum}) ${st.t(
+              lang,
+              (s) => s.alert.parentAmountSum.second
+            )} ($${childAmountSum}). ${st.t(
+              lang,
+              (s) => s.alert.parentAmountSum.third
+            )}`
           )
         ) {
           return;
         }
       }
     }
+
     if (isShowParentFlow || isShowChildFlow > 0) {
       let childAmountSum = 0;
       values.childFlow &&
-        values.childFlow.map((item, _index) => {
+        values.childFlow.map((item) => {
           childAmountSum += JSON.parse(item.value.toString())
             ? parseInt(JSON.parse(item.value.toString()).amountUSD)
             : 0;
@@ -1106,7 +1196,15 @@ export const FlowForm = (props: Props) => {
       if (childAmountSum > values.amountUSD) {
         if (
           !window.confirm(
-            `Please note, the Funding Amount on this parent flow ($${values.amountUSD}) is less than the sum of its children's amount ($${childAmountSum}). Do you want to proceed?`
+            `${st.t(lang, (s) => s.alert.valuesAmountSum.first)} ($${
+              values.amountUSD
+            }) ${st.t(
+              lang,
+              (s) => s.alert.valuesAmountSum.second
+            )} ($${childAmountSum}). ${st.t(
+              lang,
+              (s) => s.alert.valuesAmountSum.third
+            )}`
           )
         )
           return;
@@ -1190,12 +1288,12 @@ export const FlowForm = (props: Props) => {
           group: 'inactiveReason',
           includeTotals: null,
           createdAt: currentVersionData
-            ? dayjs(currentVersionData.createdAt, 'DD/MM/YYYY').format(
+            ? dayjs(currentVersionData.createdAt, DATE_FORMAT).format(
                 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
               )
             : '',
           updatedAt: currentVersionData
-            ? dayjs(currentVersionData.updatedAt, 'DD/MM/YYYY').format(
+            ? dayjs(currentVersionData.updatedAt, DATE_FORMAT).format(
                 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
               )
             : '',
@@ -1258,11 +1356,7 @@ export const FlowForm = (props: Props) => {
         }
       }
       if (mismatchFound) {
-        if (
-          !window.confirm(
-            "Your flow's Report Detail organization doesn't match the source or destination organization or that of its parked parent. Are you sure this is right?"
-          )
-        ) {
+        if (!window.confirm(`${st.t(lang, (s) => s.alert.mismatchFound)}`)) {
           return;
         }
       }
@@ -1294,10 +1388,11 @@ export const FlowForm = (props: Props) => {
             const response = await env.model.flows.createFlow({ flow: data });
             const path = editFlowSetting(response.id, response.versionID);
             window.open(path, '_self');
-          } catch (err: any) {
+          } catch (err) {
+            const error = err as ErrorResponse;
             setOpenAlerts([
               ...openAlerts,
-              { message: err.message, id: alertId },
+              { message: error.message, id: alertId },
             ]);
             setAlertId((prevId) => prevId + 1);
             handleSave();
@@ -1313,14 +1408,12 @@ export const FlowForm = (props: Props) => {
                 Date.parse(dbFlow.updatedAt)) ||
             (versionData && versionData.length < dbFlow.versions.length)
           ) {
-            window.confirm(
-              'This flow cannot be saved, as a concurrency conflict has been detected. Please refresh your screen to view the most up to date data.'
-            );
+            window.confirm(`${st.t(lang, (s) => s.alert.concurrencyConflict)}`);
           } else {
             if (isPending && (approveFlag || rejectFlag)) {
               if (
                 allFieldsReviewed ||
-                pendingFieldsallApplied ||
+                pendingFieldsAllApplied ||
                 !pendingVersionV1
               ) {
                 try {
@@ -1335,18 +1428,17 @@ export const FlowForm = (props: Props) => {
                     setAlertFlag(true);
                     setSharePath(path);
                   }
-                } catch (err: any) {
+                } catch (err) {
+                  const error = err as ErrorResponse;
                   setOpenAlerts([
                     ...openAlerts,
-                    { message: err.message, id: alertId },
+                    { message: error.message, id: alertId },
                   ]);
                   setAlertId((prevId) => prevId + 1);
                   handleSave();
                 }
               } else {
-                window.confirm(
-                  'Some of the revised data on this flow still needs to be accepted or rejected before this update can be approved.'
-                );
+                window.confirm(`${st.t(lang, (s) => s.alert.revisedData)}`);
               }
             } else {
               try {
@@ -1359,17 +1451,17 @@ export const FlowForm = (props: Props) => {
                   setSharePath(path);
                 }
               } catch (err: any) {
-                let errmessage = '';
+                let errMessage = '';
                 if (err.reason) {
                   const inconsistencyObject = err.reason;
-                  errmessage = processDataInconsistencies(inconsistencyObject);
+                  errMessage = processDataInconsistencies(inconsistencyObject);
                 } else {
                   const lastIndex = err.message.lastIndexOf(':');
-                  errmessage = err.message.substring(lastIndex + 1);
+                  errMessage = err.message.substring(lastIndex + 1);
                 }
                 setOpenAlerts([
                   ...openAlerts,
-                  { message: errmessage, id: alertId },
+                  { message: errMessage, id: alertId },
                 ]);
                 setAlertId((prevId) => prevId + 1);
                 handleSave();
@@ -1406,8 +1498,8 @@ export const FlowForm = (props: Props) => {
     fetchedObject: any,
     objectKeys: string[],
     settingArrayKeys: string[],
-    setFieldValue: any,
-    values: any
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
+    values: FormValues
   ) => {
     const newObjects = { ...objects };
     const newShowingTypes = [...showingTypes];
@@ -1524,11 +1616,12 @@ export const FlowForm = (props: Props) => {
   };
   const fetchPlanDetails = async (
     objectType: string,
-    plan: any,
-    setFieldValue: any,
-    values?: any
+    plan: AutoCompleteSelectionType[],
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
+    values: FormValues
   ) => {
-    const fetchedPlan = await environment.model.plans.getPlan(plan[0].value);
+    const planQuery = Number(plan[0].value);
+    const fetchedPlan = await env.model.plans.getPlan(planQuery);
     if (objectType === 'sourcePlans') {
       setObjectsWithArray(
         fetchedPlan,
@@ -1578,14 +1671,18 @@ export const FlowForm = (props: Props) => {
 
   const fetchEmergencyDetails = async (
     objectType: string,
-    emergency: any,
-    setFieldValue: any,
-    values?: any
+    emergency: AutoCompleteSelectionType[],
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
+    values: FormValues
   ) => {
     if (objectType === 'destinationEmergencies') {
-      const fetchedEmergency = await environment.model.emergencies.getEmergency(
-        emergency[0].value
-      );
+      const EmergencyId = Number(emergency[0].value);
+      if (isNaN(EmergencyId)) {
+        throw new Error(`Invalid emergency value: ${emergency[0].value}`);
+      }
+      const fetchedEmergency = await env.model.emergencies.getEmergency({
+        id: EmergencyId,
+      });
       if (fetchedEmergency.locations.length <= 1) {
         setObjectsWithArray(
           fetchedEmergency,
@@ -1600,10 +1697,10 @@ export const FlowForm = (props: Props) => {
   const fetchProjectDetails = async (
     objectType: string,
     project: any,
-    setFieldValue: any,
-    values?: any
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
+    values: FormValues
   ) => {
-    const fetchedProject = await environment.model.projects.getProject(
+    const fetchedProject = await env.model.projects.getProject(
       project[0].value
     );
     const publishedVersion = fetchedProject.projectVersions.filter(
@@ -1612,10 +1709,9 @@ export const FlowForm = (props: Props) => {
       }
     )[0];
     if (objectType === 'destinationProjects') {
-      const fetchedCategories =
-        await environment.model.categories.getCategories({
-          query: 'earmarkingType',
-        });
+      const fetchedCategories = await env.model.categories.getCategories({
+        query: 'earmarkingType',
+      });
       const category = fetchedCategories.filter(
         (item) => item.name === 'Earmarked'
       );
@@ -1666,14 +1762,17 @@ export const FlowForm = (props: Props) => {
   };
   const fetchOrganizationDetails = async (
     objectType: string,
-    organization: any,
-    setFieldValue: any,
-    values?: any
+    organization: AutoCompleteSelectionType[],
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
+    values: FormValues
   ) => {
+    const organizationId = Number(organization[0].value);
+
+    if (isNaN(organizationId)) {
+      throw new Error(`Invalid organization value: ${organization[0].value}`);
+    }
     const fetchedOrg =
-      await environment.model.organizations.getOrganizationsById(
-        organization[0].value
-      );
+      await env.model.organizations.getOrganizationsById(organizationId);
     const isGovernment = (fetchedOrg[0].categories ?? []).some(
       function (category) {
         return (
@@ -1699,9 +1798,9 @@ export const FlowForm = (props: Props) => {
   };
   const fetchAssociatedGoverningEntity = async (
     objectType: string,
-    globalCluster: any,
-    setFieldValue: any,
-    values?: any
+    globalCluster: AutoCompleteSelectionType[] | null,
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
+    values: FormValues
   ) => {
     if (
       (values.sourcePlans.length === 0 &&
@@ -1712,7 +1811,7 @@ export const FlowForm = (props: Props) => {
       return;
     }
     let plan = null;
-    let targetGoverningEntities: any = null;
+    let targetGoverningEntities: AutoCompleteSelectionType[] | null = null;
     if (objectType === 'sourceGlobalClusters') {
       plan = values.sourcePlans[0];
       targetGoverningEntities = values.sourceGoverningEntities;
@@ -1720,15 +1819,20 @@ export const FlowForm = (props: Props) => {
       plan = values.destinationPlans[0];
       targetGoverningEntities = values.destinationGoverningEntities;
     }
+    const planId = Number(plan.value);
+
+    if (isNaN(planId)) {
+      throw new Error(`Invalid plan value: ${plan.value}`);
+    }
     const fetchedGoverningEntities =
-      await environment.model.governingEntities.getAllPlanGoverningEntities(
-        plan.value
-      );
+      await env.model.governingEntities.getAllPlanGoverningEntities({
+        id: planId,
+      });
     const hasGoverningEntitiesWithoutGlobalCluster =
       Array.isArray(targetGoverningEntities) &&
       fetchedGoverningEntities
         .filter(function (fetchedGe) {
-          return targetGoverningEntities.find(function (selectedGe: any) {
+          return targetGoverningEntities.find(function (selectedGe) {
             return fetchedGe.id === selectedGe.value;
           });
         })
@@ -1742,44 +1846,44 @@ export const FlowForm = (props: Props) => {
     if (hasGoverningEntitiesWithoutGlobalCluster) {
       return;
     }
-    const governingEntities = fetchedGoverningEntities.filter(
-      function (governingEntity) {
-        return (
-          governingEntity.globalClusterIds.indexOf(
-            globalCluster[globalCluster.length - 1].value
-          ) > -1
-        );
-      }
-    );
+    if (globalCluster && globalCluster.length > 0) {
+      const governingEntities = fetchedGoverningEntities.filter(
+        function (governingEntity) {
+          return (
+            governingEntity.globalClusterIds.indexOf(
+              globalCluster[globalCluster.length - 1].value.toString()
+            ) > -1
+          );
+        }
+      );
 
-    if (governingEntities.length) {
-      governingEntities.forEach(function (governingEntity) {
-        setObjectsWithArray(
-          { governingEntities: governingEntity },
-          [
-            objectType === 'sourceGlobalClusters'
-              ? 'sourceGoverningEntities'
-              : 'destinationGoverningEntities',
-          ],
-          ['governingEntities'],
-          setFieldValue,
-          values
-        );
-      });
+      if (governingEntities.length) {
+        governingEntities.forEach(function (governingEntity) {
+          setObjectsWithArray(
+            { governingEntities: governingEntity },
+            [
+              objectType === 'sourceGlobalClusters'
+                ? 'sourceGoverningEntities'
+                : 'destinationGoverningEntities',
+            ],
+            ['governingEntities'],
+            setFieldValue,
+            values
+          );
+        });
+      }
     }
   };
 
   const fetchKeywords = async (
-    objectType: string,
     usageYears: any,
-    setFieldValue: any,
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
     values?: any
   ) => {
     if (usageYears.length === 2) {
-      const fetchedCategories =
-        await environment.model.categories.getCategories({
-          query: 'keywords',
-        });
+      const fetchedCategories = await env.model.categories.getCategories({
+        query: 'keywords',
+      });
       const category = fetchedCategories.filter(
         (item) => item.name === 'Multiyear'
       );
@@ -1793,14 +1897,16 @@ export const FlowForm = (props: Props) => {
           },
         ].filter(
           (item2) =>
-            !values.keywords.some((item1: any) => item1.value === item2.value)
+            !values.keywords.some(
+              (item1: AutoCompleteSelectionType) => item1.value === item2.value
+            )
         ),
       ];
 
       setFieldValue('keywords', mergedKeywords);
     } else if (usageYears.length === 1) {
       const filteredKeywords = values.keywords.filter(
-        (item: any) => item.displayLabel !== 'Multiyear'
+        (item: AutoCompleteSelectionType) => item.displayLabel !== 'Multiyear'
       );
       setFieldValue('keywords', filteredKeywords);
     }
@@ -1829,7 +1935,7 @@ export const FlowForm = (props: Props) => {
     if (fileAssetID) {
       try {
         const responseData =
-          await environment?.model.fileUpload.fileDownloadModel(fileAssetID);
+          await env?.model.fileUpload.fileDownloadModel(fileAssetID);
         if (responseData) {
           const data = new Blob([responseData]);
           const url = URL.createObjectURL(data);
@@ -1854,11 +1960,12 @@ export const FlowForm = (props: Props) => {
   const fetchCategory = useCallback(
     (category: string) => {
       return async () => {
-        const response = await environment.model.categories.getCategories({
+        const response = await env.model.categories.getCategories({
           query: category,
         });
         return response.map(
           (responseValue): categoryType => ({
+            id: responseValue.id,
             displayLabel: responseValue.name,
             value: responseValue.id.toString(),
             parentID: responseValue.parentID,
@@ -1866,7 +1973,7 @@ export const FlowForm = (props: Props) => {
         );
       };
     },
-    [environment]
+    [env]
   );
   const extractUniqueFromArray = (array1: string[], array2: string[]) => {
     return array1.filter((item: string) => !array2.includes(item));
@@ -1877,7 +1984,7 @@ export const FlowForm = (props: Props) => {
     const version2 = versions[1];
     const newVersion1 = {
       ...version1,
-      uniqueSources: objectTypes.reduce<Record<string, string[]>>(
+      uniqueSources: OBJECT_TYPES.reduce<Record<string, string[]>>(
         (acc, type) => {
           acc[type] = extractUniqueFromArray(
             version1.source[type],
@@ -1887,7 +1994,7 @@ export const FlowForm = (props: Props) => {
         },
         {}
       ),
-      uniqueDestinations: objectTypes.reduce<Record<string, string[]>>(
+      uniqueDestinations: OBJECT_TYPES.reduce<Record<string, string[]>>(
         (acc, type) => {
           acc[type] = extractUniqueFromArray(
             version1.destination[type],
@@ -1905,7 +2012,7 @@ export const FlowForm = (props: Props) => {
 
     const newVersion2 = {
       ...version2,
-      uniqueSources: objectTypes.reduce<Record<string, string[]>>(
+      uniqueSources: OBJECT_TYPES.reduce<Record<string, string[]>>(
         (acc, type) => {
           acc[type] = extractUniqueFromArray(
             version2.source[type],
@@ -1915,7 +2022,7 @@ export const FlowForm = (props: Props) => {
         },
         {}
       ),
-      uniqueDestinations: objectTypes.reduce<Record<string, string[]>>(
+      uniqueDestinations: OBJECT_TYPES.reduce<Record<string, string[]>>(
         (acc, type) => {
           acc[type] = extractUniqueFromArray(
             version2.destination[type],
@@ -1942,7 +2049,7 @@ export const FlowForm = (props: Props) => {
         .files?.[0];
       if (setFile instanceof File) {
         const responseData =
-          await environment.model.fileUpload.fileUploadModel(setFile);
+          await env.model.fileUpload.fileUploadModel(setFile);
         setUploadedFileArray((prevUploadedFile) => {
           const updateUploadedFile = [...prevUploadedFile];
           updateUploadedFile[index] = responseData;
@@ -1981,7 +2088,7 @@ export const FlowForm = (props: Props) => {
   }, [unsavedChange]);
 
   useEffect(() => {
-    const valuesObject: Record<string, any[]> = {
+    const valuesObject: Record<string, AutoCompleteSelectionType[]> = {
       sourceOrganizations: initialValue.sourceOrganizations,
       sourceLocations: initialValue.sourceLocations,
       sourceUsageYears: initialValue.sourceUsageYears,
@@ -2011,8 +2118,8 @@ export const FlowForm = (props: Props) => {
     (
       objectType: string,
       flowObject: any,
-      setFieldValue: any,
-      values: any
+      setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
+      values: FormValues
     ) => Promise<any>
   > = {
     sourcePlans: fetchPlanDetails,
@@ -2034,26 +2141,24 @@ export const FlowForm = (props: Props) => {
 
   const deleteFlow = async () => {
     if (linkCheck || isShowParentFlow || isShowChildFlow > 0) {
-      window.confirm(
-        'All linked flows must be unlinked before this flow can be deleted. Unlink flows and choose Delete flow again.'
-      );
+      window.confirm(`${st.t(lang, (s) => s.alert.deleteFlow)}`);
       return;
     }
-
     try {
       const response = await env.model.flows.deleteFlow(params);
       const path = flows();
       window.open(path, '_self');
-    } catch (err: any) {
-      setOpenAlerts([...openAlerts, { message: err.message, id: alertId }]);
+    } catch (err) {
+      const error = err as ErrorResponse;
+      setOpenAlerts([...openAlerts, { message: error.message, id: alertId }]);
       setAlertId((prevId) => prevId + 1);
     }
   };
   const updateFlowObjects = async (
     objectType: string,
     flowObject: any,
-    setFieldValue: any,
-    values?: any
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
+    values: FormValues
   ) => {
     if (flowObject.length > 0 && dictExecutedForEachObject[objectType]) {
       flowObject.sort(
@@ -2079,24 +2184,41 @@ export const FlowForm = (props: Props) => {
     }
   };
   const handleParentLinkedFlow = (
-    values: any,
-    setFieldValue: any,
+    values: FormValues,
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
     index: number
   ) => {
-    setFieldValue(
-      'parentFlow',
-      values['parentFlow'].filter((_item: any, ind: number) => ind !== index)
-    );
+    if (Array.isArray(values['parentFlow'])) {
+      setFieldValue(
+        'parentFlow',
+        values['parentFlow'].filter(
+          (_item: AutoCompleteSelectionType, ind: number) => ind !== index
+        )
+      );
+    } else {
+      setFieldValue('parentFlow', []);
+    }
   };
-  const handleChildFlow = (values: any, setFieldValue: any, index: number) => {
-    setFieldValue(
-      'childFlow',
-      values['childFlow'].filter((_item: any, ind: number) => ind !== index)
-    );
+
+  const handleChildFlow = (
+    values: FormValues,
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
+    index: number
+  ) => {
+    if (Array.isArray(values.childFlow)) {
+      setFieldValue(
+        'childFlow',
+        values.childFlow.filter(
+          (_item: AutoCompleteSelectionType, ind: number) => ind !== index
+        )
+      );
+    } else {
+      setFieldValue('childFlow', []);
+    }
   };
   const validateForm = (values: FormValues) => {
     setUnsavedChange(JSON.stringify(values) !== JSON.stringify(initialValue));
-    const valuesObject: Record<string, any[]> = {
+    const valuesObject: Record<string, AutoCompleteSelectionType[]> = {
       sourceOrganizations: values.sourceOrganizations,
       sourceLocations: values.sourceLocations,
       sourceUsageYears: values.sourceUsageYears,
@@ -2163,7 +2285,6 @@ export const FlowForm = (props: Props) => {
               } else {
                 error['reportedDate'] = '';
               }
-              console.log(res[index], '-------------->');
               if (
                 (res[index].reportFileTitle === '' ||
                   res[index].reportFileTitle === undefined) &&
@@ -2223,7 +2344,6 @@ export const FlowForm = (props: Props) => {
           }
         }
       });
-      console.log(errors, 'errors');
       if (Object.keys(errors).length === 0) setValidationFlag(false);
       return errors;
     }
@@ -2231,7 +2351,7 @@ export const FlowForm = (props: Props) => {
   const handleParentFlow = (
     values: any,
     parentValueString: string,
-    setValues: any
+    setValues: (values: FormValues) => void
   ) => {
     parentValue = parentValueString;
     const defaultValueParent: flowsResponse.GetFlowResult =
@@ -2284,8 +2404,6 @@ export const FlowForm = (props: Props) => {
           : undefined;
       })
       .filter((index) => index !== undefined);
-
-    // const indexEnt = defaultValueParent.governingEntities?.findIndex((org) => org.flowObject?.refDirection === 'destination') ?? -1;
 
     const indexPros = defaultValueParent.projects
       ?.map((org, index) => {
@@ -2377,16 +2495,16 @@ export const FlowForm = (props: Props) => {
       sourceEmergencies: _sourceEmergencies,
       sourceGlobalClusters: _sourceGlobalClusters,
       sourcePlans: _sourcePlans,
-      // sourceGoverningEntities: _sourceGoverningEntities ? [_sourceGoverningEntities] : [],
       sourceProjects: _sourceProjects,
     });
   };
+
+  if (alertFlag) handleSave();
+
   return (
     <Formik
       initialValues={initialValue}
-      onSubmit={(values, { setSubmitting }) =>
-        handleSubmit(values, values.submitAction)
-      }
+      onSubmit={(values) => handleSubmit(values, values.submitAction)}
       validate={(values) => validateForm(values)}
       enableReinitialize
       validateOnChange={false}
@@ -2412,13 +2530,22 @@ export const FlowForm = (props: Props) => {
                     color="primary"
                     text={
                       isCancelled || canReactive
-                        ? 'Reactive'
+                        ? `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.viewAll.reactive
+                          )}`
                         : isEdit
-                        ? 'Save & View All'
-                        : 'Create & View All'
+                        ? `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.viewAll.saveViewAll
+                          )}`
+                        : `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.viewAll.createViewAll
+                          )}`
                     }
                     name="submitAction"
-                    value="saveall"
+                    value="saveAll"
                     onClick={() => {
                       handleAlert(values);
                       setApproveFlag(false);
@@ -2430,10 +2557,19 @@ export const FlowForm = (props: Props) => {
                     color="primary"
                     text={
                       isCancelled || canReactive
-                        ? 'Reactive'
+                        ? `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.save.reactive
+                          )}`
                         : isEdit
-                        ? 'Save'
-                        : 'Create'
+                        ? `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.save.save
+                          )}`
+                        : `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.save.create
+                          )}`
                     }
                     name="submitAction"
                     value="save"
@@ -2446,12 +2582,15 @@ export const FlowForm = (props: Props) => {
                   />
                   <C.ButtonSubmit
                     color="primary"
-                    text={'Set as inactive'}
+                    text={st.t(
+                      lang,
+                      (s) => s.flowForm.buttonSubmit.setInactive
+                    )}
                     name="submitAction"
                     value="inactive"
                     onClick={async () => {
                       window.confirm(
-                        'Are you sure you want to set this flow as inactive? Any parent or child flows linked to this flow must be unlinked before the flow can be set as inactive.'
+                        `${st.t(lang, (s) => s.alert.inactiveSubmit)}`
                       );
                       handleAlert(values);
                       setApproveFlag(false);
@@ -2465,7 +2604,7 @@ export const FlowForm = (props: Props) => {
                 <>
                   <C.ButtonSubmit
                     color="primary"
-                    text={'Save & Approve'}
+                    text={st.t(lang, (s) => s.flowForm.buttonSubmit.approve)}
                     name="submitAction"
                     value="approve"
                     onClick={() => {
@@ -2475,7 +2614,7 @@ export const FlowForm = (props: Props) => {
                   />
                   <C.ButtonSubmit
                     color="primary"
-                    text={'Mark As Rejected'}
+                    text={st.t(lang, (s) => s.flowForm.buttonSubmit.mark)}
                     name="submitAction"
                     value="rejected"
                     onClick={() => {
@@ -2486,7 +2625,7 @@ export const FlowForm = (props: Props) => {
                   />
                 </>
               )}
-              {currentVersionID ? (
+              {currentVersionID && (
                 <Stack direction="row" spacing={2}>
                   {isEdit && (
                     <Button
@@ -2496,14 +2635,14 @@ export const FlowForm = (props: Props) => {
                         e.preventDefault();
                         if (
                           window.confirm(
-                            'Are you sure you want to delete this version of this flow? Any parent or child flows linked to this flow must be unlinked before the flow can be deleted. Only this version will be deleted.'
+                            `${st.t(lang, (s) => s.alert.deleteSubmit)}`
                           )
                         ) {
                           deleteFlow();
                         }
                       }}
                     >
-                      Delete
+                      {st.t(lang, (s) => s.flowForm.buttonSubmit.delete)}
                     </Button>
                   )}
                   <Button
@@ -2511,11 +2650,9 @@ export const FlowForm = (props: Props) => {
                     startIcon={<ContentCopyIcon />}
                     onClick={() => handleCopy(values)}
                   >
-                    COPY
+                    {st.t(lang, (s) => s.flowForm.buttonSubmit.copy)}
                   </Button>
                 </Stack>
-              ) : (
-                <></>
               )}
             </StyledDiv>
             {openAlerts.map((alert) => (
@@ -2547,9 +2684,10 @@ export const FlowForm = (props: Props) => {
                     setInactiveFlag(false);
                   }}
                 >
-                  <AlertTitle>Set as inactive?</AlertTitle>
-                  All linked flows must be unlinked before this flow can be
-                  cancelled. Unlink flows and choose flow again.
+                  <AlertTitle>
+                    {st.t(lang, (s) => s.alert.inactive.title)}
+                  </AlertTitle>
+                  {st.t(lang, (s) => s.alert.inactive.content)}
                 </MuiAlert>
               )}
             </div>
@@ -2562,9 +2700,10 @@ export const FlowForm = (props: Props) => {
                     setValidationFlag(false);
                   }}
                 >
-                  <AlertTitle>Validation</AlertTitle>
-                  Please complete all required fields marked with an asterisk
-                  (*) to proceed.
+                  <AlertTitle>
+                    {st.t(lang, (s) => s.alert.validation.title)}
+                  </AlertTitle>
+                  {st.t(lang, (s) => s.alert.validation.content)}
                 </MuiAlert>
               )}
             </div>
@@ -2577,8 +2716,7 @@ export const FlowForm = (props: Props) => {
                     setParentCurrencyFlag(false);
                   }}
                 >
-                  This flow's foreign currency must be the same as its parked
-                  parent flow.
+                  {st.t(lang, (s) => s.alert.parentCurrency)}
                 </MuiAlert>
               )}
             </div>
@@ -2591,9 +2729,7 @@ export const FlowForm = (props: Props) => {
                     setChildCurrencyFlag(false);
                   }}
                 >
-                  The child flow must have the same currency as this parked
-                  flow. Please update the child flow first before linking it to
-                  this flow.
+                  {st.t(lang, (s) => s.alert.childCurrency)}
                 </MuiAlert>
               )}
             </div>
@@ -2635,16 +2771,17 @@ export const FlowForm = (props: Props) => {
                   }}
                   id="parentDiv"
                 >
-                  <C.FormSection title="Funding Source(s)" isLeftSection>
+                  <C.FormSection
+                    title={st.t(lang, (s) => s.flowForm.fundingSource)}
+                    isLeftSection
+                  >
                     {values.parentFlow && values.parentFlow.length ? (
                       <StyledParentInfo
                         style={{
                           pointerEvents: 'auto',
                         }}
                       >
-                        Source associated with Parent Destination. To edit these
-                        fields, remove the Parent flow or make changes directly
-                        to the Parent flow at&nbsp;(
+                        {st.t(lang, (s) => s.alert.sourceAssociated)}(
                         {values.parentFlow.map((item) => (
                           <StyledAnchor
                             href={`flows/edit/${
@@ -2670,11 +2807,9 @@ export const FlowForm = (props: Props) => {
                     ) : (
                       ''
                     )}
-
                     {initialValue.isParkedParent && initialValue.sources ? (
                       <StyledParentInfo>
-                        The parent to this flow is "parked", here are its
-                        sources:
+                        {st.t(lang, (s) => s.alert.parentParked)}
                         <ul>
                           {Object.entries(initialValue.sources).map(
                             ([objectType, objects]) => (
@@ -2695,11 +2830,10 @@ export const FlowForm = (props: Props) => {
                     )}
 
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Organization(s)*"
+                      label={st.t(lang, (s) => s.flowForm.Organization)}
                       name="sourceOrganizations"
                       fnPromise={
-                        environment.model.organizations
-                          .getAutocompleteOrganizations
+                        env.model.organizations.getAutocompleteOrganizations
                       }
                       behavior={FORM_SETTINGS.organization.behavior}
                       onChange={(event, value) => {
@@ -2712,9 +2846,9 @@ export const FlowForm = (props: Props) => {
                     <StyledRow>
                       <StyledHalfSection>
                         <C.AsyncAutocompleteSelectFTSAdmin
-                          label="Usage Year(s)*"
+                          label={st.t(lang, (s) => s.flowForm.usageYear)}
                           name="sourceUsageYears"
-                          fnPromise={environment.model.usageYears.getUsageYears}
+                          fnPromise={env.model.usageYears.getUsageYears}
                           isMulti
                           behavior={FORM_SETTINGS.usageYear.behavior}
                           onChange={(event, value) => {
@@ -2732,10 +2866,10 @@ export const FlowForm = (props: Props) => {
                       </StyledHalfSection>
                       <StyledHalfSection>
                         <C.AsyncAutocompleteSelectFTSAdmin
-                          label="Country(ies) (Admin level 0)"
+                          label={st.t(lang, (s) => s.flowForm.location)}
                           name="sourceLocations"
                           fnPromise={
-                            environment.model.locations.getAutocompleteLocations
+                            env.model.locations.getAutocompleteLocations
                           }
                           behavior={FORM_SETTINGS.location.behavior}
                           isMulti
@@ -2745,10 +2879,10 @@ export const FlowForm = (props: Props) => {
                       </StyledHalfSection>
                     </StyledRow>
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Emergency(ies)"
+                      label={st.t(lang, (s) => s.flowForm.emergency)}
                       name="sourceEmergencies"
                       fnPromise={
-                        environment.model.emergencies.getAutocompleteEmergencies
+                        env.model.emergencies.getAutocompleteEmergencies
                       }
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
@@ -2759,11 +2893,9 @@ export const FlowForm = (props: Props) => {
                       rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Global Cluster(s)"
+                      label={st.t(lang, (s) => s.flowForm.globalCluster)}
                       name="sourceGlobalClusters"
-                      fnPromise={
-                        environment.model.globalClusters.getGlobalClusters
-                      }
+                      fnPromise={env.model.globalClusters.getGlobalClusters}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
                       }}
@@ -2774,9 +2906,9 @@ export const FlowForm = (props: Props) => {
                       rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Plan"
+                      label={st.t(lang, (s) => s.flowForm.plan)}
                       name="sourcePlans"
-                      fnPromise={environment.model.plans.getAutocompletePlans}
+                      fnPromise={env.model.plans.getAutocompletePlans}
                       isMulti
                       behavior={FORM_SETTINGS.plan.behavior}
                       onChange={(event, value) => {
@@ -2787,7 +2919,7 @@ export const FlowForm = (props: Props) => {
                     />
                     {showSourceGoverningEntities && (
                       <C.AsyncAutocompleteSelectFTSAdmin
-                        label="Field Cluster(s)"
+                        label={st.t(lang, (s) => s.flowForm.fieldCluster)}
                         name="sourceGoverningEntities"
                         optionsData={sourceGoverningEntities}
                         // fnPromise={environment.model.governingEntities.getAllPlanGoverningEntities}
@@ -2799,11 +2931,9 @@ export const FlowForm = (props: Props) => {
                       />
                     )}
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Project"
+                      label={st.t(lang, (s) => s.flowForm.project)}
                       name="sourceProjects"
-                      fnPromise={
-                        environment.model.projects.getAutocompleteProjects
-                      }
+                      fnPromise={env.model.projects.getAutocompleteProjects}
                       behavior={FORM_SETTINGS.project.behavior}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
@@ -2817,7 +2947,10 @@ export const FlowForm = (props: Props) => {
               </StyledHalfSection>
               <StyledHalfSection>
                 <StyledFullSection>
-                  <C.FormSection title="Funding Destination(s)" isRightSection>
+                  <C.FormSection
+                    title={st.t(lang, (s) => s.flowForm.fundingDestination)}
+                    isRightSection
+                  >
                     {showWarningMessage && (
                       <StyledAddChildWarning>
                         <StyledAddChildWarningIconDiv>
@@ -2829,20 +2962,15 @@ export const FlowForm = (props: Props) => {
                           />
                         </StyledAddChildWarningIconDiv>
                         <StyledAddChildWarningText>
-                          You have added a Child flow for this flow. Updating
-                          the Funding Destination(s) for this flow will update
-                          the Funding Source(s) for the child flows. If you
-                          don't want to update the Child flow's funding sources,
-                          unlink it first.
+                          {st.t(lang, (s) => s.alert.addChildWarning)}
                         </StyledAddChildWarningText>
                       </StyledAddChildWarning>
                     )}
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Organization(s)*"
+                      label={st.t(lang, (s) => s.flowForm.Organization)}
                       name="destinationOrganizations"
                       fnPromise={
-                        environment.model.organizations
-                          .getAutocompleteOrganizations
+                        env.model.organizations.getAutocompleteOrganizations
                       }
                       behavior={FORM_SETTINGS.organization.behavior}
                       isMulti
@@ -2852,9 +2980,9 @@ export const FlowForm = (props: Props) => {
                     <StyledRow>
                       <StyledHalfSection>
                         <C.AsyncAutocompleteSelectFTSAdmin
-                          label="Usage Year(s)*"
+                          label={st.t(lang, (s) => s.flowForm.usageYear)}
                           name="destinationUsageYears"
-                          fnPromise={environment.model.usageYears.getUsageYears}
+                          fnPromise={env.model.usageYears.getUsageYears}
                           isMulti
                           behavior={FORM_SETTINGS.usageYear.behavior}
                           onChange={(event, value) => {
@@ -2872,10 +3000,10 @@ export const FlowForm = (props: Props) => {
                       </StyledHalfSection>
                       <StyledHalfSection>
                         <C.AsyncAutocompleteSelectFTSAdmin
-                          label="Country(ies) (Admin level 0)"
+                          label={st.t(lang, (s) => s.flowForm.location)}
                           name="destinationLocations"
                           fnPromise={
-                            environment.model.locations.getAutocompleteLocations
+                            env.model.locations.getAutocompleteLocations
                           }
                           behavior={FORM_SETTINGS.location.behavior}
                           isMulti
@@ -2885,11 +3013,9 @@ export const FlowForm = (props: Props) => {
                       </StyledHalfSection>
                     </StyledRow>
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Global Cluster(s)"
+                      label={st.t(lang, (s) => s.flowForm.globalCluster)}
                       name="destinationGlobalClusters"
-                      fnPromise={
-                        environment.model.globalClusters.getGlobalClusters
-                      }
+                      fnPromise={env.model.globalClusters.getGlobalClusters}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
                       }}
@@ -2900,9 +3026,9 @@ export const FlowForm = (props: Props) => {
                       rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Plan"
+                      label={st.t(lang, (s) => s.flowForm.plan)}
                       name="destinationPlans"
-                      fnPromise={environment.model.plans.getAutocompletePlans}
+                      fnPromise={env.model.plans.getAutocompletePlans}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
                       }}
@@ -2913,7 +3039,7 @@ export const FlowForm = (props: Props) => {
                     />
                     {showDestinationGoverningEntities && (
                       <C.AsyncAutocompleteSelectFTSAdmin
-                        label="Field Cluster(s)"
+                        label={st.t(lang, (s) => s.flowForm.fieldCluster)}
                         name="destinationGoverningEntities"
                         optionsData={destinationGoverningEntities}
                         isMulti
@@ -2924,10 +3050,10 @@ export const FlowForm = (props: Props) => {
                       />
                     )}
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Emergency(ies)"
+                      label={st.t(lang, (s) => s.flowForm.emergency)}
                       name="destinationEmergencies"
                       fnPromise={
-                        environment.model.emergencies.getAutocompleteEmergencies
+                        env.model.emergencies.getAutocompleteEmergencies
                       }
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
@@ -2937,11 +3063,9 @@ export const FlowForm = (props: Props) => {
                       rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Project"
+                      label={st.t(lang, (s) => s.flowForm.project)}
                       name="destinationProjects"
-                      fnPromise={
-                        environment.model.projects.getAutocompleteProjects
-                      }
+                      fnPromise={env.model.projects.getAutocompleteProjects}
                       behavior={FORM_SETTINGS.project.behavior}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
@@ -2960,11 +3084,11 @@ export const FlowForm = (props: Props) => {
                 opacity: readOnly ? 0.6 : 1,
               }}
             >
-              <C.FormSection title="Flow">
+              <C.FormSection title={st.t(lang, (s) => s.flowForm.flow)}>
                 <StyledRow>
                   <StyledHalfSection>
                     <C.CheckBox
-                      label="Is this flow new money?"
+                      label={st.t(lang, (s) => s.flowForm.newMoneyCheck)}
                       name="includeChildrenOfParkedFlows"
                       size="small"
                       disabled={
@@ -2977,7 +3101,7 @@ export const FlowForm = (props: Props) => {
                     />
                     <StyledFormRow>
                       <C.TextFieldWrapper
-                        label="Funding Amount in USD*"
+                        label={st.t(lang, (s) => s.flowForm.amountUSD)}
                         name="amountUSD"
                         type="currency"
                         thousandSeparator
@@ -2988,7 +3112,7 @@ export const FlowForm = (props: Props) => {
                     <C.Section title="Original Currency" type="secondary" noGap>
                       <StyledRow>
                         <C.TextFieldWrapper
-                          label="Funding Amount (original currency)"
+                          label={st.t(lang, (s) => s.flowForm.amountOriginal)}
                           name="amountOriginal"
                           type="number"
                           thousandSeparator
@@ -2997,11 +3121,9 @@ export const FlowForm = (props: Props) => {
                         />
                         <StyledCurrencyRow>
                           <C.AsyncAutocompleteSelectFTSAdmin
-                            label="Currency"
+                            label={st.t(lang, (s) => s.flowForm.origCurrency)}
                             name="origCurrency"
-                            fnPromise={
-                              environment.model.currencies.getCurrencies
-                            }
+                            fnPromise={env.model.currencies.getCurrencies}
                             entryInfo={
                               inputEntries.origCurrency
                                 ? [inputEntries.origCurrency]
@@ -3013,7 +3135,7 @@ export const FlowForm = (props: Props) => {
                         </StyledCurrencyRow>
                       </StyledRow>
                       <C.TextFieldWrapper
-                        label="Exchange Rate Used"
+                        label={st.t(lang, (s) => s.flowForm.exchangeRate)}
                         name="exchangeRateUsed"
                         type="number"
                         thousandSeparator
@@ -3037,7 +3159,7 @@ export const FlowForm = (props: Props) => {
                       ></C.Button>
                     </C.Section>
                     <C.TextFieldWrapper
-                      label="Funding Flow Description*"
+                      label={st.t(lang, (s) => s.flowForm.flowDescription)}
                       placeholder="1-2 sentences for flow name"
                       name="flowDescription"
                       multiline
@@ -3049,14 +3171,14 @@ export const FlowForm = (props: Props) => {
                     <StyledFormRow>
                       <C.DatePicker
                         name="firstReported"
-                        label="First Reported*"
+                        label={st.t(lang, (s) => s.flowForm.firstReported)}
                       />
                       <C.DatePicker
                         name="decisionDate"
-                        label="Decision Dateⓢ"
+                        label={st.t(lang, (s) => s.flowForm.decisionDate)}
                       />
                       <C.TextFieldWrapper
-                        label="Donor Budget Year"
+                        label={st.t(lang, (s) => s.flowForm.budgetYear)}
                         name="budgetYear"
                         type="text"
                       />
@@ -3064,7 +3186,7 @@ export const FlowForm = (props: Props) => {
                   </StyledHalfSection>
                   <StyledHalfSection>
                     <C.AsyncSingleSelect
-                      label="Flow Type*"
+                      label={st.t(lang, (s) => s.flowForm.flowType)}
                       name="flowType"
                       fnPromise={fetchCategory('flowType')}
                       returnObject
@@ -3072,7 +3194,7 @@ export const FlowForm = (props: Props) => {
                       rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncSingleSelect
-                      label="Flow Status*"
+                      label={st.t(lang, (s) => s.flowForm.flowStatus)}
                       name="flowStatus"
                       fnPromise={fetchCategory('flowStatus')}
                       returnObject
@@ -3081,7 +3203,7 @@ export const FlowForm = (props: Props) => {
                     />
                     <C.DatePicker name="flowDate" label="Flow Date*" />
                     <C.AsyncSingleSelect
-                      label="Contribution Type"
+                      label={st.t(lang, (s) => s.flowForm.contributionType)}
                       name="contributionType"
                       fnPromise={fetchCategory('contributionType')}
                       returnObject
@@ -3089,7 +3211,7 @@ export const FlowForm = (props: Props) => {
                       rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncSingleSelect
-                      label="GB Earmarking"
+                      label={st.t(lang, (s) => s.flowForm.earmarkingType)}
                       name="earmarkingType"
                       fnPromise={fetchCategory('earmarkingType')}
                       returnObject
@@ -3097,7 +3219,7 @@ export const FlowForm = (props: Props) => {
                       rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncSingleSelect
-                      label="Aid Modality*"
+                      label={st.t(lang, (s) => s.flowForm.method)}
                       name="method"
                       fnPromise={fetchCategory('method')}
                       returnObject
@@ -3107,7 +3229,7 @@ export const FlowForm = (props: Props) => {
                     {(values.method as categoryType).displayLabel ===
                       'Cash transfer programming (CTP)' && (
                       <C.AsyncSingleSelect
-                        label="Cash Transfer Programming(CTP)"
+                        label={st.t(lang, (s) => s.flowForm.cashTransfer)}
                         name="cashTransfer"
                         fnPromise={fetchCategory('method')}
                         returnObject
@@ -3116,9 +3238,9 @@ export const FlowForm = (props: Props) => {
                       />
                     )}
                     <C.AsyncAutocompleteSelectFTSAdmin
-                      label="Keywords"
+                      label={st.t(lang, (s) => s.flowForm.keywords)}
                       name="keywords"
-                      fnPromise={environment.model.categories.getCategories}
+                      fnPromise={env.model.categories.getCategories}
                       category="keywords"
                       isMulti
                       isAutocompleteAPI={false}
@@ -3128,7 +3250,7 @@ export const FlowForm = (props: Props) => {
                       rejectInputEntry={rejectInputEntry}
                     />
                     <C.AsyncSingleSelect
-                      label="Beneficiary Group"
+                      label={st.t(lang, (s) => s.flowForm.beneficiaryGroup)}
                       name="beneficiaryGroup"
                       fnPromise={fetchCategory('beneficiaryGroup')}
                       returnObject
@@ -3138,7 +3260,7 @@ export const FlowForm = (props: Props) => {
                   </StyledHalfSection>
                 </StyledRow>
                 <C.TextFieldWrapper
-                  label="Notes"
+                  label={st.t(lang, (s) => s.flowForm.notes)}
                   name="notes"
                   multiline
                   rows={4}
@@ -3154,8 +3276,10 @@ export const FlowForm = (props: Props) => {
                 opacity: readOnly ? 0.6 : 1,
               }}
             >
-              <C.FormSection title="Linked Flows">
-                <StyledLabel>Parent Flow</StyledLabel>
+              <C.FormSection title={st.t(lang, (s) => s.flowForm.linkedFlow)}>
+                <StyledLabel>
+                  {st.t(lang, (s) => s.flowForm.parentFlow)}
+                </StyledLabel>
                 {isShowParentFlow && (
                   <StyledRow>
                     <TableContainer component={Paper}>
@@ -3230,7 +3354,7 @@ export const FlowForm = (props: Props) => {
                                     JSON.parse(
                                       item?.value ? item?.value.toString() : ''
                                     )
-                                  ).format('DD/MM/YYYY')}
+                                  ).format(DATE_FORMAT)}
                                 </TableCell>
                                 <TableCell>
                                   US$
@@ -3272,7 +3396,7 @@ export const FlowForm = (props: Props) => {
                                       );
                                     }}
                                     color="secondary"
-                                    text="unlink"
+                                    text={st.t(lang, (s) => s.flowForm.unlink)}
                                     startIcon={MdRemove}
                                   />
                                 </TableCell>
@@ -3283,7 +3407,9 @@ export const FlowForm = (props: Props) => {
                     </TableContainer>
                   </StyledRow>
                 )}
-                <StyledLabel>Child Flow</StyledLabel>
+                <StyledLabel>
+                  {st.t(lang, (s) => s.flowForm.childFlow)}
+                </StyledLabel>
                 <StyledRow>
                   <TableContainer component={Paper}>
                     <Table>
@@ -3378,7 +3504,7 @@ export const FlowForm = (props: Props) => {
                                           ? item?.value.toString()
                                           : ''
                                       ).flowDate
-                                    ).format('DD/MM/YYYY')}
+                                    ).format(DATE_FORMAT)}
                                   </TableCell>
                                   <TableCell>
                                     US$
@@ -3416,7 +3542,10 @@ export const FlowForm = (props: Props) => {
                                         setShowWarningMessage(false);
                                       }}
                                       color="secondary"
-                                      text="unlink"
+                                      text={st.t(
+                                        lang,
+                                        (s) => s.flowForm.unlink
+                                      )}
                                       startIcon={MdRemove}
                                     />
                                   </TableCell>
@@ -3434,23 +3563,30 @@ export const FlowForm = (props: Props) => {
                         onClick={() => {
                           dialogs.openDialog({
                             type: 'custom',
-                            title: 'Add Flow Link',
+                            title: `${st.t(
+                              lang,
+                              (s) => s.flowForm.addFlowLink
+                            )}`,
                             width: '700',
-                            buttonCancel: 'Cancel',
-                            buttonConfirm: 'Add Flow Link',
+                            buttonCancel: `${st.t(
+                              lang,
+                              (s) => s.flowForm.cancel
+                            )}`,
+                            buttonConfirm: `${st.t(
+                              lang,
+                              (s) => s.flowForm.addFlowLink
+                            )}`,
                             content: (
                               <C.AsyncAutocompleteSelectFTSAdmin
-                                label="Flow"
+                                label={st.t(lang, (s) => s.flowForm.addFlow)}
                                 name="parentFlow"
-                                fnPromise={
-                                  environment.model.flows.getAutocompleteFlows
-                                }
+                                fnPromise={env.model.flows.getAutocompleteFlows}
                                 withoutFormik
                                 values={values}
                                 setFieldValue={setFieldValue}
                               />
                             ),
-                            callback: (_value: any) => {
+                            callback: (_value: FormValues) => {
                               setShowParentFlow(true);
                               setFieldValue(
                                 'includeChildrenOfParkedFlows',
@@ -3464,7 +3600,7 @@ export const FlowForm = (props: Props) => {
                           });
                         }}
                         color="primary"
-                        text="Add Parent Flow"
+                        text={st.t(lang, (s) => s.flowForm.addParentFlow)}
                         startIcon={MdAdd}
                       />
                     )}
@@ -3472,17 +3608,21 @@ export const FlowForm = (props: Props) => {
                       onClick={() => {
                         dialogs.openDialog({
                           type: 'custom',
-                          title: 'Add Flow Link',
+                          title: `${st.t(lang, (s) => s.flowForm.addFlowLink)}`,
                           width: '700',
-                          buttonCancel: 'Cancel',
-                          buttonConfirm: 'Add Flow Link',
+                          buttonCancel: `${st.t(
+                            lang,
+                            (s) => s.flowForm.cancel
+                          )}`,
+                          buttonConfirm: `${st.t(
+                            lang,
+                            (s) => s.flowForm.addFlowLink
+                          )}`,
                           content: (
                             <C.AsyncAutocompleteSelectFTSAdmin
-                              label="Flow"
+                              label={st.t(lang, (s) => s.flowForm.addFlow)}
                               name="childFlow"
-                              fnPromise={
-                                environment.model.flows.getAutocompleteFlows
-                              }
+                              fnPromise={env.model.flows.getAutocompleteFlows}
                               withoutFormik
                               values={values}
                               setFieldValue={setFieldValue}
@@ -3496,7 +3636,7 @@ export const FlowForm = (props: Props) => {
                         });
                       }}
                       color="primary"
-                      text="Add Child Flow"
+                      text={st.t(lang, (s) => s.flowForm.addChildFlow)}
                       startIcon={MdAdd}
                     />
                   </StyledRow>
@@ -3515,24 +3655,44 @@ export const FlowForm = (props: Props) => {
                           opacity: readOnly ? 0.6 : 1,
                         }}
                       >
-                        <C.FormSection title="Reporting Details*">
+                        <C.FormSection
+                          title={st.t(lang, (s) => s.flowForm.reportDetails)}
+                        >
                           <StyledRow>
                             <StyledHalfSection>
                               <C.RadioGroup
                                 name={`reportDetails[${index}].reportSource`}
                                 options={[
-                                  { value: 'primary', label: 'Primary' },
-                                  { value: 'secondary', label: 'Secondary' },
+                                  {
+                                    value: 'primary',
+                                    label: `${st.t(
+                                      lang,
+                                      (s) => s.flowForm.primaryRadio
+                                    )}`,
+                                  },
+                                  {
+                                    value: 'secondary',
+                                    label: `${st.t(
+                                      lang,
+                                      (s) => s.flowForm.secondaryRadio
+                                    )}`,
+                                  },
                                 ]}
-                                label="Report Source*"
+                                label={st.t(
+                                  lang,
+                                  (s) => s.flowForm.reportSource
+                                )}
                                 row
                               />
                               <C.AsyncAutocompleteSelectFTSAdmin
-                                label="Reported By Organization*"
+                                label={st.t(
+                                  lang,
+                                  (s) => s.flowForm.reportedOrganization
+                                )}
                                 name={`reportDetails[${index}].reportedOrganization`}
                                 placeholder="Reported by Organization"
                                 fnPromise={
-                                  environment.model.organizations
+                                  env.model.organizations
                                     .getAutocompleteOrganizations
                                 }
                               />
@@ -3597,22 +3757,31 @@ export const FlowForm = (props: Props) => {
                                   </StyledRepOrgLink>
                                 )}
                               <C.AsyncSingleSelect
-                                label="Reported Channel*"
+                                label={st.t(
+                                  lang,
+                                  (s) => s.flowForm.reportChannel
+                                )}
                                 name={`reportDetails[${index}].reportChannel`}
                                 fnPromise={fetchCategory('reportChannel')}
                                 returnObject
                               />
                               <C.TextFieldWrapper
-                                label="Source System Record Id"
+                                label={st.t(
+                                  lang,
+                                  (s) => s.flowForm.sourceSystemRecordId
+                                )}
                                 name={`reportDetails[${index}].sourceSystemRecordId`}
                                 type="text"
                               />
                               <StyledFieldset>
                                 <div style={{ fontWeight: 'bold' }}>
-                                  Report file:
+                                  {st.t(lang, (s) => s.flowForm.reportFile)}
                                 </div>
                                 <C.TextFieldWrapper
-                                  label="Title"
+                                  label={st.t(
+                                    lang,
+                                    (s) => s.flowForm.reportFileTitle
+                                  )}
                                   name={`reportDetails[${index}].reportFileTitle`}
                                   type="text"
                                 />
@@ -3653,15 +3822,18 @@ export const FlowForm = (props: Props) => {
                                     marginTop: '10px',
                                   }}
                                 >
-                                  Report url:
+                                  {st.t(lang, (s) => s.flowForm.reportUrl)}
                                 </div>
                                 <C.TextFieldWrapper
-                                  label="Title"
+                                  label={st.t(
+                                    lang,
+                                    (s) => s.flowForm.reportUrlTitle
+                                  )}
                                   name={`reportDetails[${index}].reportUrlTitle`}
                                   type="text"
                                 />
                                 <C.TextFieldWrapper
-                                  label="URL"
+                                  label={st.t(lang, (s) => s.flowForm.url)}
                                   name={`reportDetails[${index}].reportUrl`}
                                   type="text"
                                 />
@@ -3671,14 +3843,20 @@ export const FlowForm = (props: Props) => {
                                   onClick={() => {
                                     if (
                                       window.confirm(
-                                        'Click OK if you are sure you want to remove this reporting detail.'
+                                        `${st.t(
+                                          lang,
+                                          (s) => s.alert.removeReportDetails
+                                        )}`
                                       )
                                     ) {
                                       remove(index);
                                     }
                                   }}
                                   color="secondary"
-                                  text="Remove Reporting Detail"
+                                  text={st.t(
+                                    lang,
+                                    (s) => s.flowForm.removeReportDetails
+                                  )}
                                   startIcon={MdRemove}
                                 />
                               )}
@@ -3688,27 +3866,45 @@ export const FlowForm = (props: Props) => {
                                 <C.RadioGroup
                                   name={`reportDetails[${index}].verified`}
                                   options={[
-                                    { value: 'verified', label: 'Verified' },
+                                    {
+                                      value: 'verified',
+                                      label: `${st.t(
+                                        lang,
+                                        (s) => s.flowForm.verifiedRadio
+                                      )}`,
+                                    },
                                     {
                                       value: 'unverified',
-                                      label: 'Unverified',
+                                      label: `${st.t(
+                                        lang,
+                                        (s) => s.flowForm.unverifiedRadio
+                                      )}`,
                                     },
                                   ]}
-                                  label="Verified*"
+                                  label={st.t(lang, (s) => s.flowForm.verified)}
                                   row
                                 />
                               </StyledRadioDiv>
                               <C.DatePicker
                                 name={`reportDetails[${index}].reportedDate`}
-                                label="Date Reported*"
+                                label={st.t(
+                                  lang,
+                                  (s) => s.flowForm.reportedDate
+                                )}
                               />
                               <C.TextFieldWrapper
-                                label="Reporter Reference Code"
+                                label={st.t(
+                                  lang,
+                                  (s) => s.flowForm.reporterReferenceCode
+                                )}
                                 name={`reportDetails[${index}].reporterReferenceCode`}
                                 type="text"
                               />
                               <C.TextFieldWrapper
-                                label="Reporter Contact Information"
+                                label={st.t(
+                                  lang,
+                                  (s) => s.flowForm.reporterContactInformation
+                                )}
                                 name={`reportDetails[${index}].reporterContactInformation`}
                                 multiline
                                 rows={4}
@@ -3727,7 +3923,7 @@ export const FlowForm = (props: Props) => {
                         setUploadedFileArray([...uploadedFileArray, {}]);
                       }}
                       color="primary"
-                      text="Add Reporting Detail"
+                      text={st.t(lang, (s) => s.flowForm.addReportDetail)}
                       startIcon={MdAdd}
                     />
                   )}
@@ -3736,7 +3932,9 @@ export const FlowForm = (props: Props) => {
             </FieldArray>
             {isEdit && prevDetails && prevDetails.length > 0 && (
               <StyledFullSection>
-                <C.FormSection title="Previous Reporting Details">
+                <C.FormSection
+                  title={st.t(lang, (s) => s.flowForm.previousReportDetails)}
+                >
                   <TableContainer component={Paper}>
                     <Table>
                       <TableHead>
@@ -3798,7 +3996,9 @@ export const FlowForm = (props: Props) => {
             )}
             {isEdit && versionData && versionData.length > 0 && (
               <StyledFullSection>
-                <C.FormSection title="Flow Versions">
+                <C.FormSection
+                  title={st.t(lang, (s) => s.flowForm.flowVersions)}
+                >
                   {versionData.map((version, index) => (
                     <div key={index}>
                       <C.CheckBox
@@ -3863,7 +4063,7 @@ export const FlowForm = (props: Props) => {
                               <TableCell>Sources</TableCell>
                               {comparedVersions.map((version) => (
                                 <TableCell key={version.versionId}>
-                                  {objectTypes.map(
+                                  {OBJECT_TYPES.map(
                                     (type) =>
                                       version.uniqueSources[type] &&
                                       version.uniqueSources[type].length >
@@ -3883,7 +4083,7 @@ export const FlowForm = (props: Props) => {
                               <TableCell>Destinations</TableCell>
                               {comparedVersions.map((version) => (
                                 <TableCell key={version.versionId}>
-                                  {objectTypes.map(
+                                  {OBJECT_TYPES.map(
                                     (type) =>
                                       version.uniqueDestinations[type] &&
                                       version.uniqueDestinations[type].length >
@@ -3919,7 +4119,7 @@ export const FlowForm = (props: Props) => {
                                 </TableCell>
                               </TableRow>
                             ) : null}
-                            {flowValuesForDisplay.map(
+                            {FLOWVALUESFORDISPLAY_TYPES.map(
                               (value) =>
                                 comparedVersions[0] &&
                                 comparedVersions[1] &&
@@ -3988,13 +4188,13 @@ export const FlowForm = (props: Props) => {
                     initializeInputEntries();
                   }}
                   color="greenLight"
-                  text="Accept Remaining Changes"
+                  text={st.t(lang, (s) => s.flowForm.acceptRemainingChanges)}
                   startIcon={MdCheck}
                 />
                 <StyledFormButton
                   onClick={initializeInputEntries}
                   color="secondary"
-                  text="Reject Remaining Changes"
+                  text={st.t(lang, (s) => s.flowForm.rejectRemainingChanges)}
                   startIcon={MdClose}
                 />
               </div>
@@ -4006,13 +4206,22 @@ export const FlowForm = (props: Props) => {
                     color="primary"
                     text={
                       isCancelled || canReactive
-                        ? 'Reactive'
+                        ? `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.viewAll.reactive
+                          )}`
                         : isEdit
-                        ? 'Save & View All'
-                        : 'Create & View All'
+                        ? `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.viewAll.saveViewAll
+                          )}`
+                        : `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.viewAll.createViewAll
+                          )}`
                     }
                     name="submitAction"
-                    value="saveall"
+                    value="saveAll"
                     onClick={() => {
                       handleAlert(values);
                       setApproveFlag(false);
@@ -4024,10 +4233,19 @@ export const FlowForm = (props: Props) => {
                     color="primary"
                     text={
                       isCancelled || canReactive
-                        ? 'Reactive'
+                        ? `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.save.reactive
+                          )}`
                         : isEdit
-                        ? 'Save'
-                        : 'Create'
+                        ? `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.save.save
+                          )}`
+                        : `${st.t(
+                            lang,
+                            (s) => s.flowForm.buttonSubmit.save.create
+                          )}`
                     }
                     name="submitAction"
                     value="save"
@@ -4040,12 +4258,15 @@ export const FlowForm = (props: Props) => {
                   />
                   <C.ButtonSubmit
                     color="primary"
-                    text={'Set as inactive'}
+                    text={st.t(
+                      lang,
+                      (s) => s.flowForm.buttonSubmit.setInactive
+                    )}
                     name="submitAction"
                     value="inactive"
                     onClick={async () => {
                       window.confirm(
-                        'Are you sure you want to set this flow as inactive? Any parent or child flows linked to this flow must be unlinked before the flow can be set as inactive.'
+                        `${st.t(lang, (s) => s.alert.setInactive)}`
                       );
                       handleAlert(values);
                       setApproveFlag(false);
@@ -4059,7 +4280,7 @@ export const FlowForm = (props: Props) => {
                 <>
                   <C.ButtonSubmit
                     color="primary"
-                    text={'Save & Approve'}
+                    text={st.t(lang, (s) => s.flowForm.buttonSubmit.approve)}
                     name="submitAction"
                     value="approve"
                     onClick={() => {
@@ -4069,7 +4290,7 @@ export const FlowForm = (props: Props) => {
                   />
                   <C.ButtonSubmit
                     color="primary"
-                    text={'Mark As Rejected'}
+                    text={st.t(lang, (s) => s.flowForm.buttonSubmit.mark)}
                     name="submitAction"
                     value="rejected"
                     onClick={() => {
@@ -4090,14 +4311,14 @@ export const FlowForm = (props: Props) => {
                         e.preventDefault();
                         if (
                           window.confirm(
-                            'Are you sure you want to delete this version of this flow? Any parent or child flows linked to this flow must be unlinked before the flow can be deleted. Only this version will be deleted.'
+                            `${st.t(lang, (s) => s.alert.deleteVersionFlow)}`
                           )
                         ) {
                           deleteFlow();
                         }
                       }}
                     >
-                      Delete
+                      {st.t(lang, (s) => s.flowForm.buttonSubmit.delete)}
                     </Button>
                   )}
                   <Button
@@ -4105,7 +4326,7 @@ export const FlowForm = (props: Props) => {
                     startIcon={<ContentCopyIcon />}
                     onClick={() => handleCopy(values)}
                   >
-                    COPY
+                    {st.t(lang, (s) => s.flowForm.buttonSubmit.copy)}
                   </Button>
                 </Stack>
               ) : (

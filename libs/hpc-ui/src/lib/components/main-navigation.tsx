@@ -125,7 +125,7 @@ const Nav = styled.nav`
     }
 
     .${CLS.ACTION_BUTTONS} {
-      margin-left: 15px;
+      margin-start: 15px;
     }
 
     > .${CLS.TABS} {

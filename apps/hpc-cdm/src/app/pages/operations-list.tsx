@@ -38,10 +38,10 @@ export default (props: Props) => {
                 </C.PageTitle>
                 <C.List>
                   {data.data
-                    .sort((o1, o2) =>
+                    .sort((o1: { name: string }, o2: { name: string }) =>
                       o1.name.toLowerCase().localeCompare(o2.name.toLowerCase())
                     )
-                    .map((o) => (
+                    .map((o: { id: number; name: string }) => (
                       <C.ListItem
                         key={o.id}
                         text={o.name}

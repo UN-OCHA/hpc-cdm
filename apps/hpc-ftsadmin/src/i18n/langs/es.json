@@ -351,5 +351,120 @@
     "editFlow": {
       "title": "Editar flujo"
     }
+  },
+  "alert": {
+    "inactive": {
+      "title": "¿Establecer como inactivo?",
+      "content": "Todos los flujos vinculados deben desvincularse antes de que este flujo pueda cancelarse. Desvincule los flujos y elija el flujo nuevamente."
+    },
+    "validation": {
+      "title": "Validación",
+      "content": "Complete todos los campos obligatorios marcados con un asterisco (*) para continuar."
+    },
+    "parentCurrency": "La moneda extranjera de este flujo debe ser la misma que la del flujo principal estacionado.",
+    "childCurrency": "El flujo secundario debe tener la misma moneda que este flujo estacionado. Actualice primero el flujo secundario antes de vincularlo a este flujo.",
+    "sourceAssociated": "Fuente asociada con el destino principal. Para editar estos campos, elimine el flujo principal o realice cambios directamente en el flujo principal en&nbsp;",
+    "parentParked": "El padre de este flujo está 'estacionado', aquí están sus fuentes:",
+    "addChildWarning": "Agregó un flujo secundario para este flujo. Al actualizar los destinos de financiamiento para este flujo, se actualizarán las fuentes de financiamiento para los flujos secundarios. Si no desea actualizar los fondos del flujo secundario fuentes, desenlázalo primero.",
+    "removeReportDetails": "Haga clic en Aceptar si está seguro de que desea eliminar este detalle del informe.",
+    "setInactive": "¿Está seguro de que desea configurar este flujo como inactivo? Cualquier flujo principal o secundario vinculado a este flujo debe desvincularse antes de que el flujo pueda configurarse como inactivo.",
+    "deleteVersionFlow": "¿Está seguro de que desea eliminar esta versión de este flujo? Cualquier flujo principal o secundario vinculado a este flujo debe desvincularse antes de que se pueda eliminar el flujo. Solo se eliminará esta versión.",
+    "parentAmountSum": {
+      "first": "Tenga en cuenta el monto de financiación en este flujo principal",
+      "second": "es menor que la suma del monto de sus hijos",
+      "third": "¿Quieres continuar?"
+    },
+    "valuesAmountSum": {
+      "first": "Tenga en cuenta el monto de financiación en este flujo principal",
+      "second": "es menor que la suma del importe de sus hijos",
+      "third": "¿Quieres continuar?"
+    },
+    "mismatchFound": "La organización de detalles del informe de su flujo no coincide con la organización de origen o de destino o con la de su padre estacionado. ¿Está seguro de que es correcto?",
+    "concurrencyConflict": "Este flujo no se puede guardar porque se ha detectado un conflicto de simultaneidad. Actualice su pantalla para ver los datos más actualizados.",
+    "revisedData": "Algunos de los datos revisados ​​en este flujo aún deben aceptarse o rechazarse antes de que se pueda aprobar esta actualización.",
+    "deleteFlow": "Todos los flujos vinculados deben desvincularse antes de que se pueda eliminar este flujo. Desvincule los flujos y elija Eliminar flujo nuevamente.",
+    "inactiveSubmit": "¿Está seguro de que desea configurar este flujo como inactivo? Cualquier flujo principal o secundario vinculado a este flujo debe desvincularse antes de que el flujo pueda configurarse como inactivo.",
+    "deleteSubmit": "¿Está seguro de que desea eliminar esta versión de este flujo? Cualquier flujo principal o secundario vinculado a este flujo debe desvincularse antes de que se pueda eliminar el flujo. Solo se eliminará esta versión."
+  },
+  "flowForm": {
+    "buttonSubmit": {
+      "viewAll": {
+        "reactive": "Reactivo",
+        "saveViewAll": "Guardar y Ver Todo",
+        "createViewAll": "Crear y ver todo"
+      },
+      "save": {
+        "reactive": "Reactivo",
+        "save": "Guardar",
+        "create": "Crear"
+      },
+      "setInactive": "Establecer como inactivo",
+      "approve": "Guardar y aprobar",
+      "mark": "Marcar como rechazado",
+      "delete": "Eliminar",
+      "copy": "COPIAR"
+    },
+    "fundingSource": "Fuente(s) de financiamiento",
+    "fundingDestination": "Destino(s) de financiación",
+    "Organization": "Organización(es)*",
+    "usageYear": "Año(s) de uso*",
+    "location": "País(es) (Nivel de administrador 0)",
+    "emergency": "Emergencia(s)",
+    "globalCluster": "Clúster(es) Global(es)",
+    "plan": "Planificar",
+    "fieldCluster": "Clúster(es) de campos",
+    "project": "Proyecto",
+    "flow": "Flujo",
+    "newMoneyCheck": "¿Este flujo es dinero nuevo?",
+    "amountUSD": "Monto de financiación en USD*",
+    "amountOriginal": "Monto de financiación (moneda original)",
+    "origCurrency": "Moneda",
+    "exchangeRate": "Tipo de cambio utilizado",
+    "flowDescription": "Descripción del flujo de financiación*",
+    "firstReported": "Primer informe*",
+    "decisionDate": "Fecha de decisiónⓢ",
+    "budgetYear": "Año presupuestario de los donantes",
+    "flowType": "Tipo de flujo*",
+    "flowStatus": "Estado del flujo*",
+    "contributionType": "Tipo de contribución",
+    "earmarkingType": "Asignación de GB",
+    "method": "Modalidad de ayuda*",
+    "cashTransfer": "Programación de transferencias de efectivo (CTP)",
+    "keywords": "Palabras clave",
+    "beneficiaryGroup": "Grupo de beneficiarios",
+    "notes": "Notas",
+    "linkedFlow": "Flujos vinculados",
+    "parentFlow": "Flujo principal",
+    "childFlow": "Flujo hijo",
+    "unlink": "desvincular",
+    "addFlowLink": "Agregar enlace de flujo",
+    "addFlow": "Flujo",
+    "cancel": "Cancelar",
+    "addParentFlow": "Agregar flujo principal",
+    "addChildFlow": "Agregar flujo secundario",
+    "primaryRadio": "Primaria",
+    "secondaryRadio": "Secundaria",
+    "reportDetails": "Detalles del informe*",
+    "reportSource": "Fuente del informe*",
+    "reportedOrganization": "Reportado por organización*",
+    "reportChannel": "Canal reportado*",
+    "sourceSystemRecordId": "Id. de registro del sistema fuente",
+    "reportFile": "Archivo de informe:",
+    "reportFileTitle": "Título",
+    "reportUrl": "URL del informe:",
+    "reportUrlTitle": "Título",
+    "url": "URL",
+    "removeReportDetails": "Eliminar detalles de informes",
+    "verified": "Verificada*",
+    "verifiedRadio": "Verificada",
+    "unverifiedRadio": "Inconfirmado",
+    "reportedDate": "Fecha del informe*",
+    "reporterReferenceCode": "Código de referencia del reportero",
+    "reporterContactInformation": "Información de contacto del reportero",
+    "addReportDetail": "Agregar detalles de informes",
+    "previousReportDetails": "Detalles del informe anterior",
+    "flowVersions": "Versiones de flujo",
+    "acceptRemainingChanges": "Aceptar los cambios restantes",
+    "rejectRemainingChanges": "Rechazar cambios restantes"
   }
 }

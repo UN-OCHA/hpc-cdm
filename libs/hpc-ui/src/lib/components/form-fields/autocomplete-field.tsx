@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, memo } from 'react';
+import { useMemo, memo } from 'react';
 import { Autocomplete, AutocompleteProps } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 import tw from 'twin.macro';

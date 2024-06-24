@@ -34,7 +34,7 @@ interface FlowContextType {
   isNewPending: any;
   isUpdatePending: any;
   canReactive: any;
-  pendingFieldsallApplied: any;
+  pendingFieldsAllApplied: any;
   allFieldsReviewed: any;
   pendingVersionV1: any;
 }
@@ -133,7 +133,7 @@ const FlowContextProvider: React.FC<{
   isNewPending: any;
   isUpdatePending: any;
   canReactive: any;
-  pendingFieldsallApplied: any;
+  pendingFieldsAllApplied: any;
   allFieldsReviewed: any;
   pendingVersionV1: any;
 }> = ({
@@ -161,7 +161,7 @@ const FlowContextProvider: React.FC<{
   isNewPending,
   isUpdatePending,
   canReactive,
-  pendingFieldsallApplied,
+  pendingFieldsAllApplied,
   allFieldsReviewed,
   pendingVersionV1,
 }) => {
@@ -199,7 +199,7 @@ const FlowContextProvider: React.FC<{
         isNewPending,
         isUpdatePending,
         canReactive,
-        pendingFieldsallApplied,
+        pendingFieldsAllApplied,
         allFieldsReviewed,
         pendingVersionV1,
       }}

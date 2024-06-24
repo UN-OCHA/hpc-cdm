@@ -10,6 +10,10 @@ import { EMERGENCY } from './emergencies';
 import { PROJECT_DETAIL } from './projects';
 import { PLAN_DETAIL } from './plans';
 import { FLOW_OBJECT } from './flowObject';
+import { FLOW_OBJECT_TYPE } from './flowObject';
+import { INPUT_SELECT_VALUE_TYPE } from './forms';
+import { DATA_TYPE } from './data';
+import { FUNDING_OBJECT } from './FundingObject';
 
 const FLOW_REF_DIRECTION = t.keyof({
   source: null,
@@ -22,9 +26,10 @@ const FLOW_LIST = t.keyof({
   search: null,
 });
 
-const FORM_FIELD = t.type({
+export const FORM_FIELD = t.type({
   id: t.union([t.string, t.number]),
   name: t.string,
+  group: t.string,
 });
 
 export type FlowList = t.TypeOf<typeof FLOW_LIST>;
@@ -174,12 +179,7 @@ export const FLOW_EXTERNAL_DATA = t.type({
 });
 
 export type FlowExternalData = t.TypeOf<typeof FLOW_EXTERNAL_DATA>;
-const VERSION_TYPE = t.type({
-  id: t.number,
-  versionID: t.number,
-  activeStatus: t.boolean,
-  isPending: t.boolean,
-});
+
 const FLOW_SEARCH_RESULT_REST = t.intersection([
   t.type({
     id: t.number,
@@ -555,73 +555,10 @@ export type GetFlowsAutocompleteParams = t.TypeOf<
   typeof GET_FLOWS_AUTOCOMPLETE_PARAMS
 >;
 
-export const FUNDING_DETAIL = t.type({
-  governingEntity: t.array(FORM_FIELD),
-  location: t.array(FORM_FIELD),
-  organization: t.array(FORM_FIELD),
-  project: t.array(FORM_FIELD),
-  usageYear: t.array(FORM_FIELD),
-  globalCluster: t.array(FORM_FIELD),
-  emergency: t.array(FORM_FIELD),
-  plan: t.array(FORM_FIELD),
-});
-
-export const INACTIVEREASON = t.type({
-  id: t.union([t.number, t.null, t.string]),
-  name: t.union([t.undefined, t.null, t.string]),
-  description: t.null,
-  parentID: t.null,
-  code: t.null,
-  group: t.string,
-  includeTotals: t.null,
-  createdAt: t.string,
-  updatedAt: t.string,
-});
-
-export const GET_VALIDATE_FLOWS_PARAMS = t.type({
-  id: t.union([t.number, t.null]),
-  amountUSD: t.number,
-  flowDate: t.string,
-  decisionDate: t.union([t.string, t.null]),
-  firstReportedDate: t.string,
-  budgetYear: t.string,
-  categories: t.array(t.union([t.string, t.number])),
-  origAmount: t.union([t.number, t.null]),
-  origCurrency: t.union([t.string, t.null]),
-  exchangeRate: t.union([t.number, t.null]),
-  activeStatus: t.boolean,
-  restricted: t.boolean,
-  newMoney: t.boolean,
-  description: t.string,
-  versionStartDate: t.union([t.string, t.undefined, t.null]),
-  versionEndDate: t.union([t.string, t.undefined, t.null]),
-  flowObjects: t.array(FLOW_OBJECT),
-  children: t.any,
-  parents: t.any,
-  reportDetails: t.any,
-  flowType: FORM_FIELD,
-  keywords: t.array(FORM_FIELD),
-  flowStatuses: FORM_FIELD,
-  contributionTypes: FORM_FIELD,
-  method: FORM_FIELD,
-  earmarking: t.union([FORM_FIELD, t.null]),
-  isCancellation: t.union([t.boolean, t.null, t.undefined]),
-  cancelled: t.union([t.boolean, t.undefined, t.null]),
-  pendingStatus: t.union([t.boolean, t.undefined, t.array(t.string)]),
-  planEntities: t.union([t.boolean, t.undefined, t.array(t.string)]),
-  planIndicated: t.union([t.boolean, t.undefined, t.array(t.string)]),
-  isApprovedFlowVersion: t.union([t.boolean, t.undefined, t.null]),
-  isErrorCorrection: t.union([t.boolean, t.undefined, t.null]),
-  inactiveReason: t.union([
-    t.string,
-    t.undefined,
-    t.array(t.union([INACTIVEREASON, t.undefined])),
-  ]),
-  rejected: t.union([t.boolean, t.null]),
-  src: FUNDING_DETAIL,
-  dest: FUNDING_DETAIL,
-});
-
+export const GET_VALIDATE_FLOWS_PARAMS = t.intersection([
+  DATA_TYPE,
+  FUNDING_OBJECT,
+]);
 export type GetValidateFlowParams = t.TypeOf<typeof GET_VALIDATE_FLOWS_PARAMS>;
 export const CREATE_FLOW = t.type({
   flow: GET_VALIDATE_FLOWS_PARAMS,

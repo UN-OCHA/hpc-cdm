@@ -33,7 +33,10 @@ const MultiTextField = React.memo(
     const { setFieldValue } = useFormikContext<string[]>();
     const [field, meta] = useField<string[]>(name);
     const [inputValue, setInputValue] = useState('');
-    useEffect(() => setInputValue(''), [field.value]);
+    const setFieldValueWrapper = (name: string, values: string[]) => {
+      setFieldValue(name, values);
+      setInputValue('');
+    };
 
     const configTextField = useCallback(
       (params: AutocompleteRenderInputParams): TextFieldProps => {

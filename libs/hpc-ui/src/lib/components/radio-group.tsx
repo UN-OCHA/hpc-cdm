@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   RadioGroup as BaseRadioGroup,
   RadioGroupProps,
@@ -30,7 +29,7 @@ const RadioGroup = ({
   label: string;
   row?: boolean;
 }) => {
-  const [field, meta] = useField(name);
+  const [field] = useField(name);
 
   const radioGroupConfig: RadioGroupProps = {
     ...field,

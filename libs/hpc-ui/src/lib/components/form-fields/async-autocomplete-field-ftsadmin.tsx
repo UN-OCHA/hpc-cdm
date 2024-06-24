@@ -13,7 +13,7 @@ import {
 import ShareIcon from '@mui/icons-material/Share';
 import JoinInnerIcon from '@mui/icons-material/JoinInner';
 import { styled } from '@mui/material/styles';
-import { useField, useFormikContext, FormikValues, FormikErrors } from 'formik';
+import { useField, useFormikContext, FormikValues } from 'formik';
 import InputEntry from './input-entry';
 import {
   categories,
@@ -73,14 +73,14 @@ type AsyncAutocompleteSelectProps = {
   category?: categories.CategoryGroup;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
-  requiered?: boolean;
+  required?: boolean;
   behavior?: string;
   onChange?: (name: string, value: any) => void;
   entryInfo?: forms.InputEntryType[];
   rejectInputEntry?: (key: string) => void;
   withoutFormik?: boolean;
   setFieldValue?: any;
-  values?: any;
+  values?: Record<string, any>;
   alreadyIsFetch?: boolean;
   fetchedData?: readonly FormObjectValue[];
 };
@@ -94,7 +94,7 @@ const AsyncAutocompleteSelect = ({
   isMulti,
   category,
   isAutocompleteAPI,
-  requiered,
+  required,
   behavior,
   onChange,
   entryInfo,
@@ -110,7 +110,7 @@ const AsyncAutocompleteSelect = ({
   const [options, setOptions] = useState<readonly FormObjectValue[]>([]);
   const [data, setData] = useState<Array<FormObjectValue>>([]);
   const [isFetch, setIsFetch] = useState(false);
-  const [isUsageYear, setisUsageYear] = useState(false);
+  const [isUsageYear, setIsUsageYear] = useState(false);
   const [enabledValue, setEnabledValue] = useState('');
 
   const loading =
@@ -317,7 +317,7 @@ const AsyncAutocompleteSelect = ({
         setData(parsedResponse);
         if (active) {
           if (isUsageYearsResult(response)) {
-            setisUsageYear(true);
+            setIsUsageYear(true);
 
             const preOptions = parsedResponse.filter((item) => {
               const year = parseInt(item.displayLabel, 10);
@@ -360,7 +360,7 @@ const AsyncAutocompleteSelect = ({
         isMulti={isMulti}
         category={category}
         isAutocompleteAPI={isAutocompleteAPI}
-        requiered={requiered}
+        required={required}
         behavior={behavior}
         onChange={onChange}
         entryInfo={entryInfo}
@@ -400,13 +400,15 @@ const AsyncAutocompleteSelect = ({
       if (onChange) {
         onChange(name, newValue);
       }
-      if (name === 'childFlow') {
-        const newList = [...values[name], ...[newValue]];
-        setFieldValue(name, newList);
-      } else if (name === 'parentFlow') {
-        setFieldValue(name, [newValue]);
-      } else {
-        setFieldValue(name, newValue);
+      if (values) {
+        if (name === 'childFlow') {
+          const newList = [...values[name], ...[newValue]];
+          setFieldValue(name, newList);
+        } else if (name === 'parentFlow') {
+          setFieldValue(name, [newValue]);
+        } else {
+          setFieldValue(name, newValue);
+        }
       }
     },
     onInputChange: (event, newInputValue) => {
@@ -475,7 +477,7 @@ const AsyncAutocompleteSelect = ({
         size="small"
         label={label}
         placeholder={placeholder}
-        required={requiered}
+        required={required}
         InputProps={{
           ...params.InputProps,
           endAdornment: (
@@ -547,7 +549,7 @@ const FormikAsyncAutocompleteSelect = ({
   isMulti,
   category,
   isAutocompleteAPI,
-  requiered,
+  required,
   behavior,
   onChange,
   entryInfo,
@@ -567,7 +569,7 @@ const FormikAsyncAutocompleteSelect = ({
   const [options, setOptions] = useState<readonly FormObjectValue[]>([]);
   const [data, setData] = useState<Array<FormObjectValue>>([]);
   const [isFetch, setIsFetch] = useState(false);
-  const [isUsageYear, setisUsageYear] = useState(false);
+  const [isUsageYear, setIsUsageYear] = useState(false);
   const [enabledValue, setEnabledValue] = useState('');
   const loading =
     open &&
@@ -741,7 +743,7 @@ const FormikAsyncAutocompleteSelect = ({
         setData(parsedResponse);
         if (active) {
           if (isUsageYearsResult(response)) {
-            setisUsageYear(true);
+            setIsUsageYear(true);
 
             const preOptions = parsedResponse.filter((item) => {
               const year = parseInt(item.displayLabel, 10);
@@ -902,7 +904,7 @@ const FormikAsyncAutocompleteSelect = ({
         size="small"
         label={label}
         placeholder={placeholder}
-        required={requiered}
+        required={required}
         error={!!errorMsg}
         helperText={errorMsg}
         InputProps={{

@@ -38,7 +38,7 @@ export default styled(DevEnvWarning)`
     width: 100%;
     height: ${HEIGHT};
     position: fixed;
-    z-index: 1;
+    z-index: 1000;
     background: ${(p) => p.theme.colors.pallete.red.dark};
     color: #fff;
     text-align: center;

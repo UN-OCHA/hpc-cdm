@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { isRight } from 'fp-ts/lib/Either';
 import * as ts from 'io-ts';
-import _, { values } from 'lodash';
+import _ from 'lodash';
 import {
   C,
   CLASSES,
@@ -14,7 +14,7 @@ import {
   useDataLoader,
   THEME,
 } from '@unocha/hpc-ui';
-import { categories, flows, forms, usageYears } from '@unocha/hpc-data';
+import { flows, forms, usageYears } from '@unocha/hpc-data';
 import { t } from '../../../i18n';
 import PageMeta from '../../components/page-meta';
 import { AppContext, getEnv } from '../../context';
@@ -38,8 +38,8 @@ import {
   getFormValueCashTransferCategory,
   getFormValueFromFunding,
   getNameOfFundingValue,
-  FundingSrcType,
-  FundingObjectType,
+  FUNDING_SRC_TYPE,
+  FUNDING_OBJECT_TYPE,
   compareSelectValues,
   IndividualFormValueType,
   isArrayFieldOfInputEntries,
@@ -242,7 +242,7 @@ export default (props: Props) => {
   const [isNewPending, setIsNewPending] = useState<boolean>(false);
   const [isUpdatePending, setIsUpdatePending] = useState<boolean>(false);
   const [canReactive, setCanReactive] = useState<boolean>(false);
-  const [pendingFieldsallApplied, setPendingFieldsallApplied] =
+  const [pendingFieldsAllApplied, setPendingFieldsAllApplied] =
     useState<boolean>(false);
   const [allFieldsReviewed, setAllFieldsReviewed] = useState<boolean>(false);
   const [isRestricted, setIsRestricted] = useState<boolean>(false);
@@ -251,8 +251,6 @@ export default (props: Props) => {
   const [childFlow, setChildFlow] = useState<AutoCompleteSelectionType[]>([]);
   const [parentIds, setParentIds] = useState<number[]>([]);
   const [childIds, setChildIds] = useState<number[]>([]);
-  // const [isParkedParent, setIsParkedParent] = useState<boolean>(false);
-  // const [sources, setSources] = useState<Record<string, any[]>>({});
 
   function displayUserName(participant: Participant | null): string {
     if (participant?.name) {
@@ -375,7 +373,7 @@ export default (props: Props) => {
         );
       }
     });
-    setPendingFieldsallApplied(true);
+    setPendingFieldsAllApplied(true);
     setInputEntries(tmpEntries);
   };
 
@@ -526,9 +524,6 @@ export default (props: Props) => {
         } else {
           isParkedParent = false;
         }
-
-        // setIsParkedParent(isParkedParent);
-        // setSources(sources);
 
         const parentFlowData = parentResults.map((value) => {
           const refDirectionIndexSrc =
@@ -729,8 +724,8 @@ export default (props: Props) => {
           currentVersionData
         : currentVersionData;
       const checkExternalRef = (
-        src: FundingSrcType,
-        objType: FundingObjectType,
+        src: FUNDING_SRC_TYPE,
+        objType: FUNDING_OBJECT_TYPE,
         id: number | string,
         refType: string
       ) => {
@@ -1828,7 +1823,6 @@ export default (props: Props) => {
                 {isSetupInitialValue && (
                   <FlowForm
                     currentVersionData={flowDetail}
-                    environment={env}
                     isEdit={props.isEdit}
                     initialValue={copyValues?.isCopy ? copyValues : flowData}
                     prevDetails={previousReportDetails}
@@ -1850,7 +1844,7 @@ export default (props: Props) => {
                     isNewPending={isNewPending}
                     isUpdatePending={isUpdatePending}
                     canReactive={canReactive}
-                    pendingFieldsallApplied={pendingFieldsallApplied}
+                    pendingFieldsAllApplied={pendingFieldsAllApplied}
                     allFieldsReviewed={allFieldsReviewed}
                     pendingVersionV1={pendingVersionV1}
                   />
