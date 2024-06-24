@@ -66,7 +66,7 @@ const AsyncAutocompleteSelect = memo(
     fnPromise,
     isMulti,
     error,
-    isAutocompleteAPI,
+    isAutocompleteAPI = true,
     required,
     allowChildrenRender,
     removeOptions,
@@ -222,7 +222,4 @@ const AsyncAutocompleteSelect = memo(
   }
 );
 
-// AsyncAutocompleteSelect.defaultProps = {
-//   isAutocompleteAPI: true,
-// };
 export default AsyncAutocompleteSelect;

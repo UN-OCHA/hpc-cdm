@@ -1,11 +1,6 @@
-import {
-  Checkbox,
-  FormControlLabel,
-  FormControlLabelProps,
-  CheckboxProps,
-} from '@mui/material';
-import { useField, useFormikContext } from 'formik';
-import React, { useMemo, memo } from 'react';
+import { Checkbox, FormControlLabel } from '@mui/material';
+import { Field, useField, useFormikContext } from 'formik';
+import React, { useMemo, memo, useEffect } from 'react';
 
 const FormikCheckBox = memo(
   ({
@@ -35,6 +30,10 @@ const FormikCheckBox = memo(
         setFieldValue(name, !field.value);
       }
     };
+
+    useEffect(() => {
+      setFieldValue(name, true);
+    }, []);
 
     const configCheckBox = useMemo(() => {
       return {

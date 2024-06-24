@@ -18,11 +18,9 @@ export const GoverningEntityVersion = t.type({
 
 export const GOVERNING_ENTITY_DETAIL = t.type({
   id: t.number,
-  // composedReference: t.string,
   createdAt: t.string,
   currentVersion: t.boolean,
   deletedAt: t.union([t.string, t.null]),
-  // editableByUser: t.boolean,
   entityPrototypeId: t.number,
   entityType: t.string,
   governingEntityVersion: GoverningEntityVersion,

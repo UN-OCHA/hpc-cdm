@@ -27,7 +27,7 @@ interface Props<T> {
       back: string;
     };
   };
-  customLoadingElement?: ReactElement<any, any>;
+  customLoadingElement?: React.ReactNode;
 }
 
 const StyledDiv = styled.div`

@@ -354,5 +354,120 @@
     "editFlow": {
       "title": "編輯流程"
     }
+  },
+  "alert": {
+    "inactive": {
+      "title": "设置为非活动状态？",
+      "content": "必须先取消所有链接的流程，然后才能取消此流程。取消链接流程并重新选择流程。"
+    },
+    "validation": {
+      "title": "验证",
+      "content": "请填写标有星号 (*) 的所有必填字段以继续。"
+    },
+    "parentCurrency": "此流的外币必须与其停放的父流相同。",
+    "childCurrency": "子流程必须具有与此停放流程相同的货币。请先更新子流程，然后再将其链接到此流程。",
+    "sourceAssociated": "源与父目标相关联。要编辑这些字段，请删除父流或直接对父流进行更改;",
+    "parentParked": "此流的父级是‘停放’，以下是其来源：",
+    "addChildWarning": "您已为此流程添加了子流程。更新此流程的资金目的地将更新子流程的资金来源。如果您不想更新子流程的资金来源，请先取消链接。",
+    "removeReportDetails": "如果您确定要删除此报告详细信息，请单击确定。",
+    "setInactive": "您确定要将此流程设置为非活动状态吗？必须先取消链接到此流程的任何父流程或子流程的链接，然后才能将流程设置为非活动状态。",
+    "deleteVersionFlow": "您确定要删除此流程的此版本吗？在删除流程之前，必须取消链接到此流程的任何父流程或子流程的链接。只有此版本会被删除。",
+    "parentAmountSum": {
+      "first": "请注意，此父流程的资金金额",
+      "second": "小于其子流程的资金金额总和",
+      "third": "您要继续吗？"
+    },
+    "valuesAmountSum": {
+      "first": "请注意，此父流程的资金金额",
+      "second": "小于其子流程的资金金额总和",
+      "third": "您要继续吗？"
+    },
+    "mismatchFound": "您的流程的报告详细信息组织与源或目标组织或其停放父级的组织不匹配。您确定这是正确的吗？",
+    "concurrencyConflict": "无法保存此流程，因为检测到并发冲突。请刷新屏幕以查看最新的数据。",
+    "revisedData": "在批准此更新之前，此流程上的部分修订数据仍需被接受或拒绝。",
+    "deleteFlow": "必须先取消链接所有链接的流，然后才能删除此流。取消链接流并再次选择删除流。",
+    "inactiveSubmit": "您确定要将此流程设置为非活动状态吗？必须先取消链接到此流程的任何父流程或子流程的链接，然后才能将流程设置为非活动状态。",
+    "deleteSubmit": "您确定要删除此流程的此版本吗？必须先取消链接到此流程的任何父流程或子流程的链接，然后才能删除此流程。只有此版本会被删除。"
+  },
+  "flowForm": {
+    "buttonSubmit": {
+      "viewAll": {
+        "reactive": "反应式",
+        "saveViewAll": "保存并查看全部",
+        "createViewAll": "创建并查看全部"
+      },
+      "save": {
+        "reactive": "反应式",
+        "save": "保存",
+        "create": "创建"
+      },
+      "setInactive": "设置为非活动状态",
+      "approve": "保存并批准",
+      "mark": "标记为已拒绝",
+      "delete": "删除",
+      "copy": "复制"
+    },
+    "fundingSource": "资金来源",
+    "fundingDestination": "资金目的地",
+    "Organization": "组织",
+    "usageYear": "使用年限*",
+    "location": "国家（行政级别 0)",
+    "emergency": "紧急情况",
+    "globalCluster": "全局集群",
+    "plan": "计划",
+    "fieldCluster": "字段集群",
+    "project": "项目",
+    "flow": "流动",
+    "newMoneyCheck": "这笔资金流是新资金吗？",
+    "amountUSD": "融资金额（美元）",
+    "amountOriginal": "资金金额（原币）",
+    "origCurrency": "货币",
+    "exchangeRate": "使用的汇率",
+    "flowDescription": "资金流描述*",
+    "firstReported": "首次报告*",
+    "decisionDate": "决定日期ⓢ",
+    "budgetYear": "捐助者预算年份",
+    "flowType": "流程类型*",
+    "flowStatus": "流状态*",
+    "contributionType": "贡献类型",
+    "earmarkingType": "GB 专项拨款",
+    "method": "援助方式*",
+    "cashTransfer": "现金转账编程(CTP)",
+    "keywords": "关键词",
+    "beneficiaryGroup": "受益人群体",
+    "notes": "注释",
+    "linkedFlow": "链接流",
+    "parentFlow": "父流",
+    "childFlow": "子流程",
+    "unlink": "取消链接",
+    "addFlowLink": "添加流链接",
+    "addFlow": "流",
+    "cancel": "取消",
+    "addParentFlow": "添加父流",
+    "addChildFlow": "添加子流",
+    "primaryRadio": "基本的",
+    "secondaryRadio": "次要",
+    "reportDetails": "报告详情*",
+    "reportSource": "报告来源*",
+    "reportedOrganization": "报告者组织*",
+    "reportChannel": "举报频道*",
+    "sourceSystemRecordId": "源系统记录 ID",
+    "reportFile": "报告文件:",
+    "reportFileTitle": "标题",
+    "reportUrl": "报告网址:",
+    "reportUrlTitle": "标题",
+    "url": "网址",
+    "removeReportDetails": "删除报告详细信息",
+    "verified": "已验证*",
+    "verifiedRadio": "已验证",
+    "unverifiedRadio": "未经验证",
+    "reportedDate": "报告日期*",
+    "reporterReferenceCode": "记者参考代码",
+    "reporterContactInformation": "记者联系信息",
+    "addReportDetail": "添加报告详情",
+    "previousReportDetails": "上一报告详情",
+    "flowVersions": "流程版本",
+    "acceptRemainingChanges": "接受剩余更改",
+    "rejectRemainingChanges": "拒绝剩余更改"
   }
 }

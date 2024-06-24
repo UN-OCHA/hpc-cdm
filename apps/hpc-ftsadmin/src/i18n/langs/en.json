@@ -352,5 +352,120 @@
     "editFlow": {
       "title": "Edit Flow"
     }
+  },
+  "alert": {
+    "inactive": {
+      "title": "Set as inactive?",
+      "content": "All linked flows must be unlinked before this flow can be cancelled. Unlink flows and choose flow again."
+    },
+    "validation": {
+      "title": "Validation",
+      "content": "Please complete all required fields marked with an asterisk (*) to proceed."
+    },
+    "parentCurrency": "This flow's foreign currency must be the same as its parked parent flow.",
+    "childCurrency": "The child flow must have the same currency as this parked flow. Please update the child flow first before linking it to this flow.",
+    "sourceAssociated": "Source associated with Parent Destination. To edit these fields, remove the Parent flow or make changes directly to the Parent flow at&nbsp;",
+    "parentParked": "The parent to this flow is 'parked', here are its sources:",
+    "addChildWarning": "You have added a Child flow for this flow. Updating the Funding Destination(s) for this flow will update the Funding Source(s) for the child flows. If you don't want to update the Child flow's funding sources, unlink it first.",
+    "removeReportDetails": "Click OK if you are sure you want to remove this reporting detail.",
+    "setInactive": "Are you sure you want to set this flow as inactive? Any parent or child flows linked to this flow must be unlinked before the flow can be set as inactive.",
+    "deleteVersionFlow": "Are you sure you want to delete this version of this flow? Any parent or child flows linked to this flow must be unlinked before the flow can be deleted. Only this version will be deleted.",
+    "parentAmountSum": {
+      "first": "Please note, the Funding Amount on this parent flow",
+      "second": "is less than the sum of its children's amount",
+      "third": "Do you want to proceed?"
+    },
+    "valuesAmountSum": {
+      "first": "Please note, the Funding Amount on this parent flow",
+      "second": "is less than the sum of its children's amount",
+      "third": "Do you want to proceed?"
+    },
+    "mismatchFound": "Your flow's Report Detail organization doesn't match the source or destination organization or that of its parked parent. Are you sure this is right?",
+    "concurrencyConflict": "This flow cannot be saved, as a concurrency conflict has been detected. Please refresh your screen to view the most up to date data.",
+    "revisedData": "Some of the revised data on this flow still needs to be accepted or rejected before this update can be approved.",
+    "deleteFlow": "All linked flows must be unlinked before this flow can be deleted. Unlink flows and choose Delete flow again.",
+    "inactiveSubmit": "Are you sure you want to set this flow as inactive? Any parent or child flows linked to this flow must be unlinked before the flow can be set as inactive.",
+    "deleteSubmit": "Are you sure you want to delete this version of this flow? Any parent or child flows linked to this flow must be unlinked before the flow can be deleted. Only this version will be deleted."
+  },
+  "flowForm": {
+    "buttonSubmit": {
+      "viewAll": {
+        "reactive": "Reactive",
+        "saveViewAll": "Save & View All",
+        "createViewAll": "Create & View All"
+      },
+      "save": {
+        "reactive": "Reactive",
+        "save": "Save",
+        "create": "Create"
+      },
+      "setInactive": "Set as inactive",
+      "approve": "Save & Approve",
+      "mark": "Mark As Rejected",
+      "delete": "Delete",
+      "copy": "COPY"
+    },
+    "fundingSource": "Funding Source(s)",
+    "fundingDestination": "Funding Destination(s)",
+    "Organization": "Organization(s)*",
+    "usageYear": "Usage Year(s)*",
+    "location": "Country(ies) (Admin level 0)",
+    "emergency": "Emergency(ies)",
+    "globalCluster": "Global Cluster(s)",
+    "plan": "Plan",
+    "fieldCluster": "Field Cluster(s)",
+    "project": "Project",
+    "flow": "Flow",
+    "newMoneyCheck": "Is this flow new money?",
+    "amountUSD": "Funding Amount in USD*",
+    "amountOriginal": "Funding Amount (original currency)",
+    "origCurrency": "Currency",
+    "exchangeRate": "Exchange Rate Used",
+    "flowDescription": "Funding Flow Description*",
+    "firstReported": "First Reported*",
+    "decisionDate": "Decision Dateⓢ",
+    "budgetYear": "Donor Budget Year",
+    "flowType": "Flow Type*",
+    "flowStatus": "Flow Status*",
+    "contributionType": "Contribution Type",
+    "earmarkingType": "GB Earmarking",
+    "method": "Aid Modality*",
+    "cashTransfer": "Cash Transfer Programming(CTP)",
+    "keywords": "Keywords",
+    "beneficiaryGroup": "Beneficiary Group",
+    "notes": "Notes",
+    "linkedFlow": "Linked Flows",
+    "parentFlow": "Parent Flow",
+    "childFlow": "Child Flow",
+    "unlink": "unlink",
+    "addFlowLink": "Add Flow Link",
+    "addFlow": "Flow",
+    "cancel": "Cancel",
+    "addParentFlow": "Add Parent Flow",
+    "addChildFlow": "Add Child Flow",
+    "primaryRadio": "Primary",
+    "secondaryRadio": "Secondary",
+    "reportDetails": "Reporting Details*",
+    "reportSource": "Report Source*",
+    "reportedOrganization": "Reported By Organization*",
+    "reportChannel": "Reported Channel*",
+    "sourceSystemRecordId": "Source System Record Id",
+    "reportFile": "Report file:",
+    "reportFileTitle": "Title",
+    "reportUrl": "Report url:",
+    "reportUrlTitle": "Title",
+    "url": "URL",
+    "removeReportDetails": "Remove Reporting Detail",
+    "verified": "Verified*",
+    "verifiedRadio": "Verified",
+    "unverifiedRadio": "Unverified",
+    "reportedDate": "Date Reported*",
+    "reporterReferenceCode": "Reporter Reference Code",
+    "reporterContactInformation": "Reporter Contact Information",
+    "addReportDetail": "Add Reporting Detail",
+    "previousReportDetails": "Previous Reporting Details",
+    "flowVersions": "Flow Versions",
+    "acceptRemainingChanges": "Accept Remaining Changes",
+    "rejectRemainingChanges": "Reject Remaining Changes"
   }
 }
