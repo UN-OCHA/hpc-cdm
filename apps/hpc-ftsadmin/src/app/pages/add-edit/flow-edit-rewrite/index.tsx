@@ -38,8 +38,8 @@ import {
   getFormValueCashTransferCategory,
   getFormValueFromFunding,
   getNameOfFundingValue,
-  FundingSrcType,
-  FundingObjectType,
+  FUNDING_SRC_TYPE,
+  FUNDING_OBJECT_TYPE,
   compareSelectValues,
   IndividualFormValueType,
   isArrayFieldOfInputEntries,
@@ -298,54 +298,54 @@ export default (props: Props) => {
     }
   });
 
-  const handleSimilarFlowLink = useCallback(
-    (event: React.MouseEvent<HTMLAnchorElement>) => {
-      event.preventDefault();
-      const paramsObject: Record<string, string> = {
-        orderBy: 'flow.updatedAt',
-        orderDir: 'DESC',
-        page: '0',
-        rowsPerPage: '50',
-      };
+  // const handleSimilarFlowLink = useCallback(
+  //   (event: React.MouseEvent<HTMLAnchorElement>) => {
+  //     event.preventDefault();
+  //     const paramsObject: Record<string, string> = {
+  //       orderBy: 'flow.updatedAt',
+  //       orderDir: 'DESC',
+  //       page: '0',
+  //       rowsPerPage: '50',
+  //     };
 
-      const flowsFilterInitialValues: FlowsFilterValues = {};
-      if (flowData.sourceLocations.length > 0) {
-        flowsFilterInitialValues.sourceLocations = getSearchKeyValues(
-          flowData,
-          'sourceLocations'
-        );
-      }
+  //     const flowsFilterInitialValues: FlowsFilterValues = {};
+  //     if (flowData.sourceLocations.length > 0) {
+  //       flowsFilterInitialValues.sourceLocations = getSearchKeyValues(
+  //         flowData,
+  //         'sourceLocations'
+  //       );
+  //     }
 
-      if (flowData.sourceOrganizations.length > 0) {
-        flowsFilterInitialValues.sourceOrganizations = getSearchKeyValues(
-          flowData,
-          'sourceOrganizations'
-        );
-      }
+  //     if (flowData.sourceOrganizations.length > 0) {
+  //       flowsFilterInitialValues.sourceOrganizations = getSearchKeyValues(
+  //         flowData,
+  //         'sourceOrganizations'
+  //       );
+  //     }
 
-      if (flowData.destinationOrganizations.length > 0) {
-        flowsFilterInitialValues.destinationOrganizations = getSearchKeyValues(
-          flowData,
-          'destinationOrganizations'
-        );
-      }
+  //     if (flowData.destinationOrganizations.length > 0) {
+  //       flowsFilterInitialValues.destinationOrganizations = getSearchKeyValues(
+  //         flowData,
+  //         'destinationOrganizations'
+  //       );
+  //     }
 
-      if (flowData.destinationPlans.length > 0) {
-        flowsFilterInitialValues.destinationPlans = getSearchKeyValues(
-          flowData,
-          'destinationPlans'
-        );
-      }
-      paramsObject['filters'] = JSON.stringify(
-        encodeFilters(flowsFilterInitialValues, FLOWS_FILTER_INITIAL_VALUES)
-      );
+  //     if (flowData.destinationPlans.length > 0) {
+  //       flowsFilterInitialValues.destinationPlans = getSearchKeyValues(
+  //         flowData,
+  //         'destinationPlans'
+  //       );
+  //     }
+  //     paramsObject['filters'] = JSON.stringify(
+  //       encodeFilters(flowsFilterInitialValues, FLOWS_FILTER_INITIAL_VALUES)
+  //     );
 
-      const params = new URLSearchParams(paramsObject);
-      const newUrl = `/flows/?${params.toString()}`;
-      window.open(newUrl, '_blank');
-    },
-    [flowData]
-  );
+  //     const params = new URLSearchParams(paramsObject);
+  //     const newUrl = `/flows/?${params.toString()}`;
+  //     window.open(newUrl, '_blank');
+  //   },
+  //   [flowData]
+  // );
 
   const handleRestricted = (isChecked: boolean) => {
     if (isChecked) {
@@ -729,8 +729,8 @@ export default (props: Props) => {
           currentVersionData
         : currentVersionData;
       const checkExternalRef = (
-        src: FundingSrcType,
-        objType: FundingObjectType,
+        src: FUNDING_SRC_TYPE,
+        objType: FUNDING_OBJECT_TYPE,
         id: number | string,
         refType: string
       ) => {
@@ -1816,7 +1816,7 @@ export default (props: Props) => {
                           <StyledAnchor
                             href="flows"
                             target="_blank"
-                            onClick={handleSimilarFlowLink}
+                            // onClick={handleSimilarFlowLink}
                           >
                             Find Similar Flows
                           </StyledAnchor>
@@ -1850,7 +1850,7 @@ export default (props: Props) => {
                     isNewPending={isNewPending}
                     isUpdatePending={isUpdatePending}
                     canReactive={canReactive}
-                    pendingFieldsallApplied={pendingFieldsallApplied}
+                    // pendingFieldsallApplied={pendingFieldsallApplied}
                     allFieldsReviewed={allFieldsReviewed}
                     pendingVersionV1={pendingVersionV1}
                   />

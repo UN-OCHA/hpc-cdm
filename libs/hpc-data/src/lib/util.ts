@@ -8,7 +8,10 @@ export type FormObjectValue = {
   hasChildren?: boolean;
 };
 
-export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(
+export const resultWithPermissions: any = <
+  D,
+  P extends { [id: string]: boolean },
+>(
   data: t.Type<D>,
   permissions: t.Type<P>
 ) => t.type({ data, permissions });

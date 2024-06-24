@@ -447,7 +447,7 @@ export class LiveModel implements Model {
           detail?: string;
           table?: string;
           flow?: flows.FlowREST;
-          reason?: any[];
+          reason?: string[];
           success?: boolean;
         };
       };

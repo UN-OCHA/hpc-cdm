@@ -9,11 +9,12 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 
 const StyledFileUpload = tw(Button)`
-  mt-[16px]
-  mb-[8px]
-  p-[3px 14px]
-  text-[1.5rem] 
-  font-[500]
+  mt-4
+  mb-2
+  py-1
+  px-3.5
+  text-lg 
+  font-semibold
 `;
 
 const VisuallyHiddenInput = styled('input')({

@@ -1,5 +1,4 @@
 import {
-  forms,
   flows,
   locations,
   plans,
@@ -9,11 +8,9 @@ import {
   usageYears,
   globalClusters,
 } from '@unocha/hpc-data';
-import FlowForm, {
+import {
   FormValues,
   AutoCompleteSelectionType,
-  ReportDetailType,
-  VersionDataType,
   InputEntriesType,
 } from '../components/flow-form';
 
@@ -27,8 +24,8 @@ type FundingResponseType = (
   | globalClusters.GlobalCluster
 )[];
 
-export type FundingSrcType = 'source' | 'destination';
-export type FundingObjectType =
+export type FUNDING_SRC_TYPE = 'source' | 'destination';
+export type FUNDING_OBJECT_TYPE =
   | 'organization'
   | 'location'
   | 'usageYear'
@@ -38,7 +35,7 @@ export type FundingObjectType =
   | 'governingEntity'
   | 'plan';
 
-enum FundingDataKey {
+enum FUNDING_DATA_KEY_TYPE {
   organization = 'organizations',
   location = 'locations',
   usageYear = 'usageYears',
@@ -106,16 +103,16 @@ export const getFormValueCashTransferCategory = (
 
 export const getFormValueFromFunding = (
   data: flows.FlowREST,
-  src: FundingSrcType,
-  objType: FundingObjectType,
+  src: FUNDING_SRC_TYPE,
+  objType: FUNDING_OBJECT_TYPE,
   checkExternalRef: (
-    src: FundingSrcType,
-    objType: FundingObjectType,
+    src: FUNDING_SRC_TYPE,
+    objType: FUNDING_OBJECT_TYPE,
     id: number | string,
     refType: string
   ) => boolean
 ) => {
-  const key = FundingDataKey[objType] as keyof flows.FlowREST;
+  const key = FUNDING_DATA_KEY_TYPE[objType] as keyof flows.FlowREST;
 
   return ((data[key] ?? []) as FundingResponseType)
     .filter((option) => option?.flowObject?.refDirection === src)
@@ -154,10 +151,10 @@ export const getFormValueFromFunding = (
 
 export const getNameOfFundingValue = (
   data: flows.FlowREST,
-  src: FundingSrcType,
-  objType: FundingObjectType
+  src: FUNDING_SRC_TYPE,
+  objType: FUNDING_OBJECT_TYPE
 ) => {
-  const key = FundingDataKey[objType] as keyof flows.FlowREST;
+  const key = FUNDING_DATA_KEY_TYPE[objType] as keyof flows.FlowREST;
 
   return ((data[key] ?? []) as FundingResponseType)
     .filter((option) => option?.flowObject?.refDirection === src)

@@ -281,7 +281,7 @@ interface Props {
   canReactive?: boolean;
   isErrorCorrection?: boolean | null;
   isApprovedFlowVersion?: boolean | null;
-  pendingFieldsallApplied?: boolean;
+  pendingFieldsAllApplied?: boolean;
   allFieldsReviewed?: boolean;
   pendingVersionV1?: boolean;
 }
@@ -487,7 +487,7 @@ export const FlowDestination = () => {
     isNewPending,
     isUpdatePending,
     canReactive,
-    pendingFieldsallApplied,
+    pendingFieldsAllApplied,
     allFieldsReviewed,
     pendingVersionV1,
   }: any = useContext(FlowContext);
@@ -515,7 +515,7 @@ export const FlowDestination = () => {
   //   isNewPending,
   //   isUpdatePending,
   //   canReactive,
-  //   pendingFieldsallApplied,
+  //   pendingFieldsAllApplied,
   //   allFieldsReviewed,
   //   pendingVersionV1,
   // } = props;
@@ -1355,7 +1355,7 @@ export const FlowDestination = () => {
             if (isPending && (approveFlag || rejectFlag)) {
               if (
                 allFieldsReviewed ||
-                pendingFieldsallApplied ||
+                pendingFieldsAllApplied ||
                 !pendingVersionV1
               ) {
                 try {

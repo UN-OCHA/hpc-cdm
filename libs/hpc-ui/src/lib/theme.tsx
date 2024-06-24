@@ -12,6 +12,7 @@ const COLOR_PALETTE = {
   red: {
     dark: '#990000',
     light: '#ffb3b3',
+    dark1: '#ffecb3',
   },
   orange: {
     dark2: '#b44d0e',
@@ -21,6 +22,7 @@ const COLOR_PALETTE = {
   },
   yellow: {
     normal: '#FFC000',
+    dark: '#ffd9cc',
   },
   blue: {
     dark2: '#025995',
@@ -60,8 +62,8 @@ export const THEME = {
       bgHover: COLOR_PALETTE.gray.light4,
     },
     entryBg: {
-      active: '#ffd9cc',
-      pending: '#ffecb3',
+      active: COLOR_PALETTE.red.dark1,
+      pending: COLOR_PALETTE.yellow.dark,
     },
   },
   marginPx: {

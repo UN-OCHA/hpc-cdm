@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { util } from '@unocha/hpc-core';
 
 const EMPTY_CELL = '--';
-const DATE_FORMAT = 'D/M/YYYY';
+const DATE_FORMAT = 'DD/MM/YYYY';
 
 export const downloadExcel = (
   data: flows.SearchFlowsBatchesResult,

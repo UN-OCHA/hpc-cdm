@@ -16,7 +16,10 @@ import * as reportingWindows from './lib/reporting-windows';
 import * as usageYears from './lib/usageYears';
 import * as currencies from './lib/currencies';
 import * as governingEntities from './lib/governing-entity';
+import * as flowObject from './lib/flowObject';
 import * as util from './lib/util';
+import * as data from './lib/data';
+import * as fundingObject from './lib/FundingObject';
 import { FormObjectValue } from './lib/util';
 
 export interface Model {
@@ -58,5 +61,8 @@ export {
   governingEntities,
   util,
   systems,
+  flowObject,
+  data,
+  fundingObject,
   FormObjectValue,
 };

@@ -351,5 +351,120 @@
     "editFlow": {
       "title": "Modifier le flux"
     }
+  },
+  "alert": {
+    "inactive": {
+      "title": "Définir comme inactif ?",
+      "content": "Tous les flux liés doivent être dissociés avant que ce flux puisse être annulé. Dissociez les flux et choisissez à nouveau le flux."
+    },
+    "validation": {
+      "title": "Validation",
+      "content": "Veuillez remplir tous les champs obligatoires marqués d'un astérisque (*) pour continuer."
+    },
+    "parentCurrency": "This flow's foreign currency must be the same as its parked parent flow.",
+    "childCurrency": "Le flux enfant doit avoir la même devise que ce flux parqué. Veuillez d'abord mettre à jour le flux enfant avant de le lier à ce flux.",
+    "sourceAssociated": "Source associée à la destination parent. Pour modifier ces champs, supprimez le flux parent ou apportez des modifications directement au flux parent sur&nbsp;",
+    "parentParked": "Le parent de ce flux est 'parqué', voici ses sources:",
+    "addChildWarning": "Vous avez ajouté un flux enfant pour ce flux. La mise à jour de la ou des destinations de financement pour ce flux mettra à jour la ou les sources de financement des flux enfants. Si vous ne souhaitez pas mettre à jour le financement du flux enfant sources, dissociez-le d'abord.",
+    "removeReportDetails": "Cliquez sur OK si vous êtes sûr de vouloir supprimer ce détail de rapport.",
+    "setInactive": "Êtes-vous sûr de vouloir définir ce flux comme inactif ? Tout flux parent ou enfant lié à ce flux doit être dissocié avant que le flux puisse être défini comme inactif.",
+    "deleteVersionFlow": "Êtes-vous sûr de vouloir supprimer cette version de ce flux ? Tout flux parent ou enfant lié à ce flux doit être dissocié avant que le flux puisse être supprimé. Seule cette version sera supprimée.",
+    "parentAmountSum": {
+      "first": "Veuillez noter le montant de financement de ce flux parent",
+      "second": "est inférieur à la somme de son montant pour enfants",
+      "third": "Voulez-vous continuer?"
+    },
+    "valuesAmountSum": {
+      "first": "Veuillez noter le montant de financement de ce flux parent",
+      "second": "est inférieur à la somme de son montant pour enfants",
+      "third": "Voulez-vous continuer?"
+    },
+    "mismatchFound": "L'organisation des détails du rapport de votre flux ne correspond pas à l'organisation source ou de destination, ni à celle de son parent parqué. Êtes-vous sûr que c'est exact?",
+    "concurrencyConflict": "Ce flux ne peut pas être enregistré car un conflit de concurrence a été détecté. Veuillez actualiser votre écran pour afficher les données les plus récentes.",
+    "revisedData": "Certaines des données révisées sur ce flux doivent encore être acceptées ou rejetées avant que cette mise à jour puisse être approuvée.",
+    "deleteFlow": "Tous les flux liés doivent être dissociés avant que ce flux puisse être supprimé. Dissociez les flux et choisissez à nouveau Supprimer le flux.",
+    "inactiveSubmit": "Êtes-vous sûr de vouloir définir ce flux comme inactif ? Tout flux parent ou enfant lié à ce flux doit être dissocié avant que le flux puisse être défini comme inactif.",
+    "deleteSubmit": "Êtes-vous sûr de vouloir supprimer cette version de ce flux ? Tout flux parent ou enfant lié à ce flux doit être dissocié avant que le flux puisse être supprimé. Seule cette version sera supprimée."
+  },
+  "flowForm": {
+    "buttonSubmit": {
+      "viewAll": {
+        "reactive": "Réactif",
+        "saveViewAll": "Enregistrer et tout afficher",
+        "createViewAll": "Créer et tout afficher"
+      },
+      "save": {
+        "reactive": "Réactif",
+        "save": "Enregistrer",
+        "create": "Créer"
+      },
+      "setInactive": "Définir comme inactif",
+      "approve": "Enregistrer et approuver",
+      "mark": "Marquer comme rejeté",
+      "delete": "Supprimer",
+      "copy": "COPIER"
+    },
+    "fundingSource": "Source(s) de financement",
+    "fundingDestination": "Destination(s) de financement",
+    "Organization": "Organisation(s)*",
+    "usageYear": "Année(s) d'utilisation*",
+    "location": "Pays (niveau administrateur 0)",
+    "emergency": "Urgence(s)",
+    "globalCluster": "Cluster(s) global(s)",
+    "plan": "Planifier",
+    "fieldCluster": "Cluster(s) de champs",
+    "project": "Projet",
+    "flow": "Flux",
+    "newMoneyCheck": "Est-ce que ce flux est de l'argent neuf ?",
+    "amountUSD": "Montant du financement en USD*",
+    "amountOriginal": "Montant du financement (devise d'origine)",
+    "origCurrency": "Devise",
+    "exchangeRate": "Taux de change utilisé",
+    "flowDescription": "Description du flux de financement*",
+    "firstReported": "Premier signalé*",
+    "decisionDate": "Date de décisionⓢ",
+    "budgetYear": "Année budgétaire du donateur",
+    "flowType": "Type de flux*",
+    "flowStatus": "État du flux*",
+    "contributionType": "Type de contribution",
+    "earmarkingType": "Earmarking GB",
+    "method": "Modalité d'aide*",
+    "cashTransfer": "Programmation de transfert d'argent (CTP)",
+    "keywords": "Mots clés",
+    "beneficiaryGroup": "Groupe de bénéficiaires",
+    "notes": "Notes",
+    "linkedFlow": "Flux liés",
+    "parentFlow": "Flux parent",
+    "childFlow": "Flux enfant",
+    "unlink": "dissocier",
+    "addFlowLink": "Ajouter un lien de flux",
+    "addFlow": "Flux",
+    "cancel": "Annuler",
+    "addParentFlow": "Ajouter un flux parent",
+    "addChildFlow": "Ajouter un flux enfant",
+    "primaryRadio": "Primaire",
+    "secondaryRadio": "Secondaire",
+    "reportDetails": "Détails du rapport*",
+    "reportSource": "Source du rapport*",
+    "reportedOrganization": "Signalé par l'organisation*",
+    "reportChannel": "Canal signalé*",
+    "sourceSystemRecordId": "Identifiant de l'enregistrement du système source",
+    "reportFile": "Fichier de rapport:",
+    "reportFileTitle": "Titre",
+    "reportUrl": "URL du rapport:",
+    "reportUrlTitle": "Titre",
+    "url": "URL",
+    "removeReportDetails": "Supprimer les détails du rapport",
+    "verified": "Vérifié*",
+    "verifiedRadio": "Vérifié",
+    "unverifiedRadio": "Non vérifié",
+    "reportedDate": "Date de rapport*",
+    "reporterReferenceCode": "Code de référence du journaliste",
+    "reporterContactInformation": "Coordonnées du journaliste",
+    "addReportDetail": "Ajouter des détails de rapport",
+    "previousReportDetails": "Détails du rapport précédent",
+    "flowVersions": "Versions de flux",
+    "acceptRemainingChanges": "Accepter les modifications restantes",
+    "rejectRemainingChanges": "Rejeter les modifications restantes"
   }
 }

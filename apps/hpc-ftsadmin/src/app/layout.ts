@@ -1,3 +1,3 @@
 export const Z_INDEX = {
-  HEADER: 100,
+  HEADER: 10000,
 };

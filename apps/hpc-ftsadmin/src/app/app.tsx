@@ -138,7 +138,7 @@ const Layout = () => {
                             position: 'sticky',
                             top: 0,
                             backgroundColor: 'white',
-                            zIndex: Z_INDEX.HEADER,
+                            zIndex: 1000,
                           }}
                         >
                           <C.MainNavigation

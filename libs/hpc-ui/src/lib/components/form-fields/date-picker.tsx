@@ -8,6 +8,7 @@ import tw from 'twin.macro';
 import dayjs, { Dayjs } from 'dayjs';
 import { DateValidationError } from '@mui/x-date-pickers/models/validation';
 import { TextFieldProps } from '@mui/material/TextField';
+import { BaseDatePickerProps } from '@mui/x-date-pickers/DatePicker/shared';
 
 const StyledDatePicker = tw.div`
   flex
@@ -19,13 +20,12 @@ const StyledLink = tw(Link)`
   ms-8
 `;
 
-interface DatePickerProps {
+type DatePickerProps = {
   name: string;
   label: string;
   lang?: string;
   enableButton?: boolean;
-  [key: string]: any; // Additional props
-}
+} & BaseDatePickerProps<Dayjs>;
 
 const DatePicker = memo(
   ({

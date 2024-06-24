@@ -1,54 +1,37 @@
-import React, {
-  ChangeEvent,
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-} from 'react';
-import { Form, Formik, FieldArray } from 'formik';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Form, Formik } from 'formik';
 import tw from 'twin.macro';
 import dayjs from 'dayjs';
 import { isRight } from 'fp-ts/Either';
 import { FormikErrors } from 'formik';
 import * as t from 'io-ts';
 import { util as codecs } from '@unocha/hpc-data';
-import GppMaybeIcon from '@mui/icons-material/GppMaybe';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Stack from '@mui/material/Stack';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import MuiAlert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import _, { set, values } from 'lodash';
+import _ from 'lodash';
 import useSharePath from '../Hooks/SharePath';
 import { C, dialogs } from '@unocha/hpc-ui';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Alert,
-  IconButton,
-} from '@mui/material';
+import { Alert, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Environment } from '../../../environments/interface';
-import { MdAdd, MdRemove, MdClose, MdCheck } from 'react-icons/md';
+import { MdClose, MdCheck } from 'react-icons/md';
 import {
   usageYears,
   forms,
   governingEntities,
   fileUpload,
+  data,
+  fundingObject,
   flows as flowsResponse,
 } from '@unocha/hpc-data';
 import { getEnv } from '../../context';
 import { editFlowSetting, copyFlow } from '../../paths';
 import { flows } from '../../paths';
-import Link from '@mui/material/Link';
 import { useNavigate, unstable_usePrompt } from 'react-router-dom';
-import { id } from 'fp-ts/lib/Refinement';
 import FlowSource from './flow-source';
 import FlowDestination from './flow-destination';
 import LinkedFlows from './linked-flows';
@@ -58,6 +41,16 @@ import FlowVersions from './flow-versions';
 import FLowsInfo from './flows';
 import { FlowContextProvider } from './flow-context';
 
+type FlowObjectType =
+  | 'organization'
+  | 'governingEntity'
+  | 'location'
+  | 'project'
+  | 'usageYear'
+  | 'globalCluster'
+  | 'emergency'
+  | 'plan';
+
 export type AutoCompleteSelectionType = forms.InputSelectValueType;
 
 const INPUT_SELECT_VALUE_TYPE = forms.INPUT_SELECT_VALUE_TYPE;
@@ -65,10 +58,51 @@ const INPUT_SELECT_VALUE_TYPE = forms.INPUT_SELECT_VALUE_TYPE;
 type UniqueDataType = {
   [key: string]: string[];
 };
-
+type Data = data.dataType & fundingObject.fundingObjectType;
 export interface DeleteFlowParams {
   VersionID: number;
   FlowID: number;
+}
+
+interface CollapsedFlowObject {
+  refDirection: string;
+  objectType: string;
+  objectID: number | string;
+  behavior: string | null;
+  objectDetail?: string | null;
+}
+
+interface FlowObject {
+  implementingPartner: string | null | undefined;
+  id: number;
+  name: string;
+  behavior?: string;
+  objectDetail?: string | null;
+  cleared?: boolean;
+  restricted?: boolean;
+}
+
+interface FORM_FIELD {
+  value?: string | number;
+  displayLabel?: string;
+  id: number | string;
+  name: string;
+  behavior?: string;
+  objectDetail?: string | null;
+  cleared?: boolean;
+  restricted?: boolean | undefined;
+  implementingPartner?: string | null;
+}
+
+interface SourceOrDestination {
+  governingEntity: FORM_FIELD[];
+  location: FORM_FIELD[];
+  organization: FORM_FIELD[];
+  project: FORM_FIELD[];
+  usageYear: FORM_FIELD[];
+  globalCluster: FORM_FIELD[];
+  emergency: FORM_FIELD[];
+  plan: FORM_FIELD[];
 }
 
 export interface categoryType {
@@ -287,7 +321,7 @@ interface Props {
   canReactive?: boolean;
   isErrorCorrection?: boolean | null;
   isApprovedFlowVersion?: boolean | null;
-  pendingFieldsallApplied?: boolean;
+  pendingFieldsAllApplied?: boolean;
   allFieldsReviewed?: boolean;
   pendingVersionV1?: boolean;
 }
@@ -491,22 +525,23 @@ export const FlowRewriteForm = (props: Props) => {
     isNewPending,
     isUpdatePending,
     canReactive,
-    pendingFieldsallApplied,
+    pendingFieldsAllApplied,
     allFieldsReviewed,
     pendingVersionV1,
   } = props;
   const { confirm } = dialogs;
   const env = getEnv();
+  const collapseFlowObjects = (
+    data: fundingObject.fundingObjectType
+  ): FlowObject[] => {
+    const flowObjects: FlowObject[] = [];
 
-  const collapseFlowObjects = (data: any) => {
-    data.flowObjects = [];
-
-    collapsePerBehavior(data.dest, 'destination');
-    collapsePerBehavior(data.src, 'source');
-
-    function collapsePerBehavior(behaviorArr: any, ref: any) {
-      Object.keys(behaviorArr).forEach((type) => {
-        behaviorArr[type].forEach((obj: any) => {
+    const collapsePerBehavior = (
+      behaviorArr: SourceOrDestination,
+      ref: 'source' | 'destination'
+    ) => {
+      (Object.keys(behaviorArr) as FlowObjectType[]).forEach((type) => {
+        behaviorArr[type].forEach((obj) => {
           if (
             obj !== null &&
             (!Object.prototype.hasOwnProperty.call(obj, 'cleared') ||
@@ -516,24 +551,26 @@ export const FlowRewriteForm = (props: Props) => {
               obj.objectDetail = obj.implementingPartner ? 'partner' : null;
             }
 
-            const flowObj = {
+            const flowObj: CollapsedFlowObject = {
               refDirection: ref,
               objectType: type,
               objectID: obj.id,
               behavior: obj.behavior || null,
               objectDetail: obj.objectDetail,
             };
-            data.flowObjects.push(flowObj);
+            flowObjects.push(flowObj as unknown as FlowObject);
           }
         });
       });
-    }
+    };
 
-    return data as any;
+    collapsePerBehavior(data.dest, 'destination');
+    collapsePerBehavior(data.src, 'source');
+
+    return flowObjects;
   };
-
-  const collapseCategories = (data: any) => {
-    data.categories = [
+  const collapseCategories = (data: Data) => {
+    const categorySources = [
       data.flowType,
       data.flowStatuses,
       data.contributionTypes,
@@ -542,30 +579,39 @@ export const FlowRewriteForm = (props: Props) => {
       data.keywords,
       data.inactiveReason,
       data.beneficiaryGroup,
-      data.pendingStatus,
-      data.earmarking !== null && data.earmarking.id,
-    ].filter((category) => category);
-    data.categories = data.categories
-      .map((value: any) => {
-        if (value && value.id) {
-          return value.id;
-        } else if (value[0]) {
-          return value[0].id;
+      data.pendingStatus ? { id: data.pendingStatus } : null,
+      data.earmarking?.id ? { id: data.earmarking.id } : null,
+    ];
+
+    data.categories = categorySources
+      .flatMap((category) => {
+        if (Array.isArray(category)) {
+          return category.map((item) =>
+            typeof item === 'object' && 'id' in item ? item.id : null
+          );
+        } else if (
+          category &&
+          typeof category === 'object' &&
+          'id' in category
+        ) {
+          return [category.id];
+        } else if (
+          typeof category === 'string' ||
+          typeof category === 'number'
+        ) {
+          return [category];
+        } else {
+          return [];
         }
       })
-      .filter(function (value: any) {
-        return value;
-      })
-      .map((value: any) => {
-        return parseInt(value);
-      });
+      .filter((id): id is string | number => id !== undefined && id !== null);
 
     return data;
   };
   const [uploadFileFlag, setUploadFileFlag] = useState<boolean>(false);
   const [uploadFlag, setUploadFlag] = useState<boolean>(false);
   const normalizeFlowData = (values: FormValues) => {
-    const fundingObject = {
+    const fundingObject: fundingObject.fundingObjectType = {
       src: {
         governingEntity: values.sourceGoverningEntities.map((item) => ({
           id: item.value,
@@ -640,7 +686,7 @@ export const FlowRewriteForm = (props: Props) => {
       },
     };
 
-    let data = {
+    const data: Data = {
       id: isEdit && currentFlowID ? currentFlowID : null,
       versionID: isEdit && currentVersionID ? currentVersionID : null,
       amountUSD: values.amountUSD,
@@ -667,7 +713,9 @@ export const FlowRewriteForm = (props: Props) => {
       description: values.flowDescription,
       versionStartDate: currentVersionData?.versionStartDate,
       versionEndDate: currentVersionData?.versionEndDate,
-      flowObjects: collapseFlowObjects(fundingObject),
+      flowObjects: collapseFlowObjects(
+        fundingObject as fundingObject.fundingObjectType
+      ),
       children:
         values.childFlow &&
         values.childFlow.map((item: any, index: number) => {
@@ -843,23 +891,23 @@ export const FlowRewriteForm = (props: Props) => {
         ? false
         : null,
       rejected: rejectFlag ? true : !rejectFlag ? false : null,
-      versions:
-        versionData &&
-        versionData.map((item: VersionDataType) => {
-          const items = {
-            id: item.flowId,
-            versionID: item.versionId,
-            activeStatus: item.activeStatus,
-            isPending: item.isPending ? item.isPending : false,
-            isCancelled: item.isCancelled ? item.isCancelled : false,
-          };
-          return items;
-        }),
+      versions: versionData?.map((item: VersionDataType) => ({
+        id: item.flowId,
+        versionID: item.versionId,
+        activeStatus:
+          item.activeStatus === null ? undefined : item.activeStatus,
+        isPending: item.isPending ?? false,
+        isCancelled: item.isCancelled ?? false,
+      })) as {
+        id: number;
+        versionID: number;
+        activeStatus: boolean | undefined;
+        isPending: boolean;
+        isCancelled: boolean;
+      }[],
       ...fundingObject,
     };
-
-    data = collapseCategories(data);
-    return data;
+    return collapseCategories(data);
   };
 
   const [unsavedChange, setUnsavedChange] = useState<boolean>(false);
@@ -914,24 +962,7 @@ export const FlowRewriteForm = (props: Props) => {
   const handleClose = (id: number) => {
     setOpenAlerts(openAlerts.filter((alert) => alert.id !== id));
   };
-  const buttonText = 'Calculate The Exchange Rate';
 
-  const handleCalculateExchangeRate = (values: any, setFieldValue: any) => {
-    const { amountOriginal, amountUSD } = values;
-
-    if (amountOriginal && amountUSD) {
-      const exchangeRateUsed = amountOriginal / amountUSD;
-      setFieldValue('exchangeRateUsed', exchangeRateUsed.toFixed(4));
-    } else if (amountOriginal && !amountUSD) {
-      const calculatedAmountUSD = amountOriginal / values.exchangeRateUsed;
-      setFieldValue('amountUSD', calculatedAmountUSD.toFixed(4));
-    } else if (!amountOriginal && amountUSD) {
-      const calculatedAmountOriginal = amountUSD * values.exchangeRateUsed;
-      setFieldValue('amountOriginal', calculatedAmountOriginal.toFixed(4));
-    } else {
-      console.warn('Both original amount and USD amount are missing.');
-    }
-  };
   useEffect(() => {
     if (initialValue?.childFlow) {
       setShowChildFlow(initialValue?.childFlow.length);
@@ -964,54 +995,13 @@ export const FlowRewriteForm = (props: Props) => {
     }
   }, [initialValue.parentFlow]);
   const [remove, setRemove] = useState<boolean>(false);
-  const handleRemove = (index: number, values: FormValues) => {
-    if (window.confirm('Are you sure you want to remove this file?')) {
-      if (
-        initialValue.reportDetails[index].reportFiles &&
-        initialValue.reportDetails[index].reportFiles[0]?.fileName
-      ) {
-        values.reportDetails[index].reportFileTitle = '';
-        initialValue.reportDetails[index].reportFiles[0].fileName = '';
-        initialValue.reportDetails[index].reportFiles[0].title = '';
-        initialValue.reportDetails[index].reportFiles[0].fileAssetID =
-          undefined;
-        initialValue.reportDetails[index].reportFiles[0].UploadFileUrl = '';
-        const updatedArray = removeByIndexFromArray(uploadedFileArray, index);
-        setUploadedFileArray(updatedArray);
-      } else return;
-      setUploadFlag(false);
-      setRemove(true);
-    } else return;
-  };
+
   const removeByIndexFromArray = (array: UploadedItem[], index: number) => {
     const newArray = [...array];
     newArray[index] = {};
     return newArray;
   };
   if (remove === true) setRemove(false);
-  const SourceLink = (
-    setFieldValue: any,
-    values: FormValues,
-    indexKey: number,
-    index: number
-  ) => {
-    setFieldValue(
-      `reportDetails[${index}].reportedOrganization`,
-      values.sourceOrganizations[indexKey]
-    );
-  };
-  const DestinationLink = (
-    setFieldValue: any,
-    values: FormValues,
-    indexKey: number,
-    index: number
-  ) => {
-    setFieldValue(
-      `reportDetails[${index}].reportedOrganization`,
-      values.destinationOrganizations[indexKey]
-    );
-  };
-
   interface Inconsistency {
     type: string;
     values: {
@@ -1328,7 +1318,7 @@ export const FlowRewriteForm = (props: Props) => {
             if (isPending && (approveFlag || rejectFlag)) {
               if (
                 allFieldsReviewed ||
-                pendingFieldsallApplied ||
+                pendingFieldsAllApplied ||
                 !pendingVersionV1
               ) {
                 try {
@@ -2415,7 +2405,7 @@ export const FlowRewriteForm = (props: Props) => {
       isNewPending={isNewPending}
       isUpdatePending={isUpdatePending}
       canReactive={canReactive}
-      pendingFieldsallApplied={pendingFieldsallApplied}
+      pendingFieldsAllApplied={pendingFieldsAllApplied}
       allFieldsReviewed={allFieldsReviewed}
       pendingVersionV1={pendingVersionV1}
     >
