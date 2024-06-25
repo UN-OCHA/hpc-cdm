@@ -9,10 +9,25 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+        with:
+          # We need to fetch all branches and commits so that Nx affected has a base to compare against.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Install NPM Packages
+        run: npm ci
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        # Production deployments are triggered by push events and not when a pull request
+        # is open, so we cannot use branch names when determining affected apps
+        if: ${{ github.ref_name == 'env/prod' }}
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: 'env/prod'
+          error-on-no-successful-workflow: true
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -31,7 +46,32 @@ jobs:
         env:
           AWS_REGION: us-east-1
 
+      - name: Lint affected apps
+        run: npm run lint
+
+      - name: Build affected apps
+        run: npx nx affected:build
+
+      - name: Get affected apps
+        id: affectedApps
+        run: |
+          if [[ -z "${{ env.NX_BASE }}" ]]; then
+            BASE_REF=${GITHUB_BASE_REF}
+          else
+            BASE_REF=${{ env.NX_BASE }}
+          fi
+
+          if [[ -z "${{ env.NX_HEAD }}" ]]; then
+            HEAD_REF=${GITHUB_HEAD_REF}
+          else
+            HEAD_REF=${{ env.NX_HEAD }}
+          fi
+
+          echo "AFFECTED_APPS=$(npx nx show projects --affected --type app --exclude=*-e2e --base=$BASE_REF --head=$HEAD_REF | xargs | tr ' ' ',')" >> "$GITHUB_OUTPUT"
+
       - uses: UN-OCHA/hpc-actions@develop
+        with:
+          apps-to-build: ${{ steps.affectedApps.outputs.AFFECTED_APPS }}
         env:
           CONFIG_FILE: .github/workflow.config.json
           GITHUB_TOKEN: ${{ secrets.HPC_BOT_TOKEN }}
