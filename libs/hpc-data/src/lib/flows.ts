@@ -590,8 +590,8 @@ export interface Model {
     params: GetFlowsAutocompleteParams
   ): Promise<FlowRESTResult>;
   validateFlow(
-    params: GetValidateFlowParams,
-    options: CreateFlowOptions
+    params: GetValidateFlowParams
+    // options: CreateFlowOptions
   ): Promise<ValidationResult[]>;
   createFlow(params: CreateFlowParams): Promise<FlowREST>;
   updatePendingFlow(params: CreateFlowParams): Promise<FlowREST>;

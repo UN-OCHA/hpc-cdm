@@ -1338,10 +1338,7 @@ export const FlowForm = (props: Props) => {
       }
     }
     if (!inactiveFlag) {
-      const response = await env.model.flows.validateFlow(data, {
-        adding: !isEdit,
-        originalFlow: {},
-      });
+      const response = await env.model.flows.validateFlow(data);
       let flag = true;
       let mismatchFound = false;
       for (let i = 0; i < values.reportDetails.length; i++) {

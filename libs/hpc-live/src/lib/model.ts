@@ -712,16 +712,13 @@ export class LiveModel implements Model {
           },
           resultType: flows.BULK_REJECT_PENDING_FLOWS_RESULT,
         }),
-      validateFlow: (params, options) =>
+      validateFlow: (params) =>
         this.call({
           pathname: `/v2/flow/validate`,
           method: 'POST',
           body: {
             type: 'json',
-            data: {
-              params,
-              options,
-            },
+            data: { params },
           },
           resultType: flows.VALIDATE_FLOW_RESULT,
         }),
