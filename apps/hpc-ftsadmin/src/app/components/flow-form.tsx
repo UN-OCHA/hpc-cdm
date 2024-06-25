@@ -1005,11 +1005,15 @@ export const FlowForm = (props: Props) => {
       const exchangeRateUsed = amountOriginal / amountUSD;
       setFieldValue('exchangeRateUsed', exchangeRateUsed.toFixed(4));
     } else if (amountOriginal && !amountUSD && values.exchangeRateUsed) {
-      const calculatedAmountUSD = amountOriginal / values.exchangeRateUsed;
-      setFieldValue('amountUSD', calculatedAmountUSD.toFixed(4));
+      const calculatedAmountUSD = Math.trunc(
+        amountOriginal / values.exchangeRateUsed
+      );
+      setFieldValue('amountUSD', calculatedAmountUSD);
     } else if (!amountOriginal && amountUSD && values.exchangeRateUsed) {
-      const calculatedAmountOriginal = amountUSD * values.exchangeRateUsed;
-      setFieldValue('amountOriginal', calculatedAmountOriginal.toFixed(4));
+      const calculatedAmountOriginal = Math.trunc(
+        amountUSD * values.exchangeRateUsed
+      );
+      setFieldValue('amountOriginal', calculatedAmountOriginal);
     } else {
       console.warn('Both original amount and USD amount are missing.');
     }
