@@ -1797,6 +1797,51 @@ export const FlowForm = (props: Props) => {
       );
     }
   };
+
+  const fetchAssociatedGlobalCluster = async (
+    objectType: string,
+    governingEntity: AutoCompleteSelectionType[] | null,
+    setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
+    values: FormValues
+  ) => {
+    if (
+      (values.sourcePlans.length === 0 &&
+        objectType === 'sourceGoverningEntities') ||
+      (values.destinationPlans.length === 0 &&
+        objectType === 'destinationGoverningEntities')
+    ) {
+      return;
+    }
+    const governingEntityId = Number(
+      governingEntity && governingEntity[0]?.value
+    );
+
+    if (isNaN(governingEntityId)) {
+      throw new Error(`Invalid governing entity value: ${governingEntityId}`);
+    }
+    try {
+      const fetchedGlobalCluster =
+        await env.model.governingEntities.getGoverningEntities({
+          id: governingEntityId,
+        });
+      if (fetchedGlobalCluster) {
+        setObjectsWithArray(
+          fetchedGlobalCluster,
+          [
+            objectType === 'sourceGoverningEntities'
+              ? 'sourceGlobalClusters'
+              : 'destinationGlobalClusters',
+          ],
+          ['globalClusters'],
+          setFieldValue,
+          values
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching governing entity:', error);
+    }
+  };
+
   const fetchAssociatedGoverningEntity = async (
     objectType: string,
     globalCluster: AutoCompleteSelectionType[] | null,
@@ -1855,26 +1900,24 @@ export const FlowForm = (props: Props) => {
         function (governingEntity) {
           return (
             governingEntity.globalClusterIds.indexOf(
-              globalCluster[globalCluster.length - 1].value.toString()
+              globalCluster[globalCluster.length - 1].value
             ) > -1
           );
         }
       );
 
       if (governingEntities.length) {
-        governingEntities.forEach(function (governingEntity) {
-          setObjectsWithArray(
-            { governingEntities: governingEntity },
-            [
-              objectType === 'sourceGlobalClusters'
-                ? 'sourceGoverningEntities'
-                : 'destinationGoverningEntities',
-            ],
-            ['governingEntities'],
-            setFieldValue,
-            values
-          );
-        });
+        setObjectsWithArray(
+          { governingEntities },
+          [
+            objectType === 'sourceGlobalClusters'
+              ? 'sourceGoverningEntities'
+              : 'destinationGoverningEntities',
+          ],
+          ['governingEntities'],
+          setFieldValue,
+          values
+        );
       }
     }
   };
@@ -2059,7 +2102,6 @@ export const FlowForm = (props: Props) => {
           updateUploadedFile[index] = responseData;
           return updateUploadedFile;
         });
-        console.log(uploadedFileArray, 'uploadedFileArray');
       } else {
         console.error('No file selected for upload.');
       }
@@ -2134,6 +2176,8 @@ export const FlowForm = (props: Props) => {
     sourceOrganizations: fetchOrganizationDetails,
     sourceGlobalClusters: fetchAssociatedGoverningEntity,
     destinationGlobalClusters: fetchAssociatedGoverningEntity,
+    sourceGoverningEntities: fetchAssociatedGlobalCluster,
+    destinationGoverningEntities: fetchAssociatedGlobalCluster,
     sourceUsageYears: fetchKeywords,
     destinationUsageYears: fetchKeywords,
   };
@@ -2934,6 +2978,14 @@ export const FlowForm = (props: Props) => {
                         optionsData={sourceGoverningEntities}
                         // fnPromise={environment.model.governingEntities.getAllPlanGoverningEntities}
                         isMulti
+                        onChange={(event, value) => {
+                          updateFlowObjects(
+                            event,
+                            value,
+                            setFieldValue,
+                            values
+                          );
+                        }}
                         behavior={FORM_SETTINGS.governingEntity.behavior}
                         isAutocompleteAPI={false}
                         entryInfo={inputEntries.sourceGoverningEntities}
@@ -3054,6 +3106,14 @@ export const FlowForm = (props: Props) => {
                         label={st.t(lang, (s) => s.flowForm.fieldCluster)}
                         name="destinationGoverningEntities"
                         optionsData={destinationGoverningEntities}
+                        onChange={(event, value) => {
+                          updateFlowObjects(
+                            event,
+                            value,
+                            setFieldValue,
+                            values
+                          );
+                        }}
                         isMulti
                         behavior={FORM_SETTINGS.governingEntity.behavior}
                         isAutocompleteAPI={false}

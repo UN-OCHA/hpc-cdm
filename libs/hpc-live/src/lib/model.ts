@@ -800,8 +800,14 @@ export class LiveModel implements Model {
           pathname: `/v1/governingEntity`,
           queryParams: {
             excludeAttachments: 'true',
-            planId: id.toString(),
+            planId: id.id.toString(),
           },
+          resultType: governingEntities.GET_GOVERNING_ENTITIES_RESULT,
+        }),
+      getGoverningEntities: (id) =>
+        this.call({
+          method: 'GET',
+          pathname: `/v1/governingEntity/${id.id.toString()}`,
           resultType: governingEntities.GET_GOVERNING_ENTITIES_RESULT,
         }),
     };

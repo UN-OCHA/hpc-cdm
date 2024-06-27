@@ -24,7 +24,7 @@ export const GOVERNING_ENTITY_DETAIL = t.type({
   entityPrototypeId: t.number,
   entityType: t.string,
   governingEntityVersion: GoverningEntityVersion,
-  globalClusterIds: t.array(t.string),
+  globalClusterIds: t.array(t.union([t.string, t.number])),
   latestTaggedVersion: t.boolean,
   latestVersion: t.boolean,
   planId: t.number,
@@ -47,6 +47,9 @@ export type GetGoverningEntityResult = t.TypeOf<
 
 export interface Model {
   getAllPlanGoverningEntities(
+    params: GetGoverningEntityParams
+  ): Promise<GetGoverningEntityResult>;
+  getGoverningEntities(
     params: GetGoverningEntityParams
   ): Promise<GetGoverningEntityResult>;
 }

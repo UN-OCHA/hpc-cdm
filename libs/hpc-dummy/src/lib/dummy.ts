@@ -1046,6 +1046,12 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
+        getGoverningEntities: dummyEndpoint(
+          'governingEntities.getGoverningEntities',
+          async (params: governingEntities.GetGoverningEntityParams) => {
+            throw new errors.NotFoundError();
+          }
+        ),
       },
       locations: {
         getAutocompleteLocations: dummyEndpoint(
