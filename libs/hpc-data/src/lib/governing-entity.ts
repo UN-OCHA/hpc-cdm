@@ -41,8 +41,17 @@ export type GetGoverningEntityParams = t.TypeOf<
   typeof GET_GOVERNING_ENTITY_PARAMS
 >;
 export const GET_GOVERNING_ENTITIES_RESULT = t.array(GOVERNING_ENTITY_DETAIL);
+
+export const GET_GOVERNING_ENTITIES_RESULT_OBJECT = t.type({
+  governingEntities: GET_GOVERNING_ENTITIES_RESULT,
+});
+
 export type GetGoverningEntityResult = t.TypeOf<
   typeof GET_GOVERNING_ENTITIES_RESULT
+>;
+
+export type GetGoverningEntityResultObject = t.TypeOf<
+  typeof GET_GOVERNING_ENTITIES_RESULT_OBJECT
 >;
 
 export interface Model {

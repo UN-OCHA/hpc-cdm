@@ -45,6 +45,7 @@ import {
   isArrayFieldOfInputEntries,
   enumInputEntryVsSrcObjType,
 } from '../../utils/parse-form-values';
+import { flows as flowsResponse } from '@unocha/hpc-data';
 
 dayjs.extend(advancedFormat);
 
@@ -455,7 +456,11 @@ export default (props: Props) => {
         );
 
         let isParkedParent = false;
-        const sources: Record<string, any[]> = {};
+        // const sources: Record<string, any[]> = {};
+        const sources: flowsResponse.FormValuesSources = {
+          organizations: [],
+          usageYears: [],
+        };
 
         if (parentResults && parentResults[0] && parentResults[0].categories) {
           const parent = parentResults[0];

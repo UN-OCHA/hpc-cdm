@@ -57,6 +57,14 @@ export const GET_PLANS_AUTOCOMPLETE_PARAMS = t.type({
 
 export const GET_PLAN_PARAMS = t.number;
 
+export const LOCATIONS_ARRAY = t.array(LOCATION);
+
+export const LOCATIONS_ARRAY_OBJECT = t.type({
+  locations: LOCATIONS_ARRAY,
+});
+
+export type LocationArrayType = t.TypeOf<typeof LOCATIONS_ARRAY_OBJECT>;
+
 export type GetPlanParams = t.TypeOf<typeof GET_PLAN_PARAMS>;
 
 export type GetPlanResult = t.TypeOf<typeof PLAN_DETAIL>;

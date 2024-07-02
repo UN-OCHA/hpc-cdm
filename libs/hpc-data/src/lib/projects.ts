@@ -66,6 +66,8 @@ export const GET_PROJECT_PARAMS = t.type({
   id: t.number,
 });
 
+export type ProjectVersionsType = t.TypeOf<typeof PROJECT>;
+
 export type GetProjectParams = t.TypeOf<typeof GET_PROJECT_PARAMS>;
 
 export type Project = t.TypeOf<typeof PROJECT>;

@@ -47,6 +47,9 @@ const ORGANIZATION_BUILDER = t.intersection([
   }),
 ]);
 
+// const ORGANIZATION_BUILDER_ARRAY = t.array(ORGANIZATION_BUILDER);
+// export type OrganizationBuilderArrayType = t.TypeOf<typeof ORGANIZATION_BUILDER_ARRAY>;
+
 export const ORGANIZATION = t.intersection([
   ORGANIZATION_BUILDER,
   t.partial({
@@ -110,7 +113,7 @@ export type GetOrganizationsByIdParams = t.TypeOf<
 >;
 
 export const GET_ORGANIZATIONS_RESULT = t.array(ORGANIZATION);
-
+export type GetOrganizationsElement = t.TypeOf<typeof ORGANIZATION>;
 export type GetOrganizationsResult = t.TypeOf<typeof GET_ORGANIZATIONS_RESULT>;
 
 export const SEARCH_ORGANIZATION_PARAMS = t.type({

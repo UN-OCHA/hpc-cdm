@@ -36,6 +36,11 @@ import {
   fileUpload,
   data,
   fundingObject,
+  plans as plansType,
+  emergencies as emergenciesType,
+  projects as projectsType,
+  governingEntities as governingEntitiesType,
+  organizations as organizationsType,
   flows as flowsResponse,
 } from '@unocha/hpc-data';
 import { getEnv, AppContext } from '../context';
@@ -46,6 +51,19 @@ import { useNavigate, unstable_usePrompt } from 'react-router-dom';
 import { t as st } from '../../i18n';
 
 export type AutoCompleteSelectionType = forms.InputSelectValueType;
+type ObjectWithArrayOfAutoCompleteSelections = Record<
+  string,
+  AutoCompleteSelectionType[]
+>;
+type FetchedObjectType =
+  | plansType.GetPlanResult
+  | plansType.LocationArrayType
+  | emergenciesType.GetEmergencyResult
+  | projectsType.ProjectVersionsType
+  | governingEntitiesType.GetGoverningEntityResult
+  | governingEntitiesType.GetGoverningEntityResultObject
+  | ObjectWithArrayOfAutoCompleteSelections
+  | organizationsType.GetOrganizationsElement;
 
 const INPUT_SELECT_VALUE_TYPE = forms.INPUT_SELECT_VALUE_TYPE;
 
@@ -60,6 +78,17 @@ type FlowObjectType =
   | 'globalCluster'
   | 'emergency'
   | 'plan';
+
+type SettingArrayKeysType =
+  | 'years'
+  | 'emergencies'
+  | 'plans'
+  | 'locations'
+  | 'organizations'
+  | 'globalClusters'
+  | 'governingEntities';
+
+type SettingArrayKeysArrayType = SettingArrayKeysType[];
 
 interface ErrorResponse {
   message: string;
@@ -211,7 +240,7 @@ export interface FormValues {
   isParkedParent?: boolean;
   includeChildrenOfParkedFlows: boolean;
   isErrorCorrectionValue: boolean;
-  sources?: Record<string, any[]>;
+  sources?: flowsResponse.FormValuesSources;
   submitAction?: string | undefined;
   versions?: {
     id: number | null;
@@ -571,6 +600,7 @@ export const FlowForm = (props: Props) => {
     allFieldsReviewed,
     pendingVersionV1,
   } = props;
+  console.log('>>>>----', initialValue.sources, currentVersionData);
   const env = getEnv();
   const { lang } = useContext(AppContext);
   const collapseFlowObjects = (
@@ -611,7 +641,7 @@ export const FlowForm = (props: Props) => {
 
     return flowObjects;
   };
-  const collapseCategories = (data: any) => {
+  const collapseCategories = (data: Data) => {
     data.categorySources = [
       data.flowType,
       data.flowStatuses,
@@ -625,19 +655,20 @@ export const FlowForm = (props: Props) => {
       data.earmarking !== null && data.earmarking.id,
     ].filter((category) => category);
     data.categories = data.categories
-      .map((value: any) => {
-        if (value && value.id) {
-          return value.id;
-        } else if (value[0]) {
-          return value[0].id;
+      .flatMap((value) => {
+        if (value && typeof value === 'object' && 'id' in value) {
+          return [value.id];
+        } else if (
+          Array.isArray(value) &&
+          value.length > 0 &&
+          'id' in value[0]
+        ) {
+          return value.map((item) => item.id);
+        } else {
+          return [];
         }
       })
-      .filter(function (value: any) {
-        return value;
-      })
-      .map((value: any) => {
-        return parseInt(value);
-      });
+      .map((value) => parseInt(value));
 
     return data;
   };
@@ -961,7 +992,8 @@ export const FlowForm = (props: Props) => {
   };
 
   const [showWarningMessage, setShowWarningMessage] = useState(false);
-  const [objects, setObjects] = useState<Record<string, any[]>>({});
+  const [objects, setObjects] =
+    useState<ObjectWithArrayOfAutoCompleteSelections>({});
   const [showingTypes, setShowingTypes] = useState<string[]>([]);
   const [newMoneyCheckboxDisabled, setNewMoneyCheckboxDisabled] =
     useState(false);
@@ -1496,7 +1528,7 @@ export const FlowForm = (props: Props) => {
   };
 
   const setObjectsWithArray = (
-    fetchedObject: any,
+    fetchedObject: FetchedObjectType,
     objectKeys: string[],
     settingArrayKeys: string[],
     setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
@@ -1505,7 +1537,10 @@ export const FlowForm = (props: Props) => {
     const newObjects = { ...objects };
     const newShowingTypes = [...showingTypes];
     objectKeys.forEach((key, i) => {
-      if (fetchedObject[settingArrayKeys[i]]) {
+      if (
+        typeof fetchedObject === 'object' &&
+        fetchedObject[settingArrayKeys[i] as keyof FetchedObjectType]
+      ) {
         newObjects[key] = checkIfExistingAndCopy(
           newObjects[key],
           fetchedObject,
@@ -1513,46 +1548,63 @@ export const FlowForm = (props: Props) => {
         );
       }
 
-      const parsedResponse = newObjects[key].map((responseValue: any) => {
-        if (settingArrayKeys[i] === 'years') {
-          return {
-            displayLabel:
-              (responseValue as usageYears.UsageYear).year ||
-              responseValue.displayLabel,
-            value: responseValue.id || responseValue.value,
-            isAutoFilled: responseValue.suggested,
-          };
-        } else if (settingArrayKeys[i] === 'plans') {
-          return {
-            displayLabel:
-              (responseValue.planVersion as { planId: number; name: string })
-                .name || responseValue.displayLabel,
-            value: responseValue.planVersion.planId || responseValue.value,
-            isAutoFilled: responseValue.suggested,
-          };
-        } else if (settingArrayKeys[i] === 'governingEntities') {
-          return {
-            displayLabel:
-              (
-                responseValue.governingEntityVersion as {
-                  id: number;
-                  name: string;
-                }
-              ).name || responseValue.displayLabel,
-            value:
-              responseValue.governingEntityVersion.id || responseValue.value,
-            isAutoFilled: responseValue.suggested,
-          };
-        } else {
-          return {
-            displayLabel:
-              (responseValue as { id: number; name: string }).name ||
-              responseValue.displayLabel,
-            value: responseValue.id || responseValue.value,
-            isAutoFilled: responseValue.suggested,
-          };
+      const parsedResponse = newObjects[key].map(
+        (responseValue: AutoCompleteSelectionType) => {
+          if (settingArrayKeys[i] === 'years') {
+            return {
+              displayLabel:
+                (responseValue as AutoCompleteSelectionType & { year: string })
+                  .year || responseValue.displayLabel,
+              value: responseValue.id || responseValue.value,
+              isAutoFilled: responseValue.suggested,
+            };
+          } else if (settingArrayKeys[i] === 'plans') {
+            return {
+              displayLabel:
+                (
+                  responseValue as AutoCompleteSelectionType & {
+                    planVersion: { planId: number; name: string };
+                  }
+                ).planVersion.name || responseValue.displayLabel,
+              value:
+                (
+                  responseValue as AutoCompleteSelectionType & {
+                    planVersion: { planId: number; name: string };
+                  }
+                ).planVersion.planId || responseValue.value,
+              isAutoFilled: responseValue.suggested,
+            };
+          } else if (settingArrayKeys[i] === 'governingEntities') {
+            return {
+              displayLabel:
+                (
+                  responseValue as AutoCompleteSelectionType & {
+                    governingEntityVersion: { id: number; name: string };
+                  }
+                ).governingEntityVersion.name || responseValue.displayLabel,
+              value:
+                (
+                  responseValue as AutoCompleteSelectionType & {
+                    governingEntityVersion: { id: number; name: string };
+                  }
+                ).governingEntityVersion.id || responseValue.value,
+              isAutoFilled: responseValue.suggested,
+            };
+          } else {
+            return {
+              displayLabel:
+                (
+                  responseValue as AutoCompleteSelectionType & {
+                    id: number;
+                    name: string;
+                  }
+                ).name || responseValue.displayLabel,
+              value: responseValue.id || responseValue.value,
+              isAutoFilled: responseValue.suggested,
+            };
+          }
         }
-      });
+      );
       newObjects[key].forEach((obj) => {
         if (obj?.suggested) {
           updateFlowObjects(key, parsedResponse, setFieldValue, values);
@@ -1567,12 +1619,13 @@ export const FlowForm = (props: Props) => {
   };
 
   const checkIfExistingAndCopy = (
-    existingObjects: any[],
+    existingObjects: AutoCompleteSelectionType[],
+    // object: FetchedObjectType,
     object: any,
     key: string
-  ): any[] => {
-    let newObjects = object[key];
-    if (key === 'locations') {
+  ): AutoCompleteSelectionType[] => {
+    let newObjects = object[key as keyof FetchedObjectType];
+    if (key === 'locations' && Array.isArray(newObjects)) {
       newObjects = newObjects.filter(function (location: any) {
         return location.adminLevel === 0;
       });
@@ -1697,13 +1750,15 @@ export const FlowForm = (props: Props) => {
   };
   const fetchProjectDetails = async (
     objectType: string,
-    project: any,
+    project: AutoCompleteSelectionType[],
     setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
     values: FormValues
   ) => {
-    const fetchedProject = await env.model.projects.getProject(
-      project[0].value
-    );
+    const projectId =
+      typeof project[0].value === 'number'
+        ? { id: project[0].value }
+        : { id: parseInt(project[0].value, 10) };
+    const fetchedProject = await env.model.projects.getProject(projectId);
     const publishedVersion = fetchedProject.projectVersions.filter(
       function (version) {
         return version.id === fetchedProject.currentPublishedVersionId;
@@ -1923,9 +1978,10 @@ export const FlowForm = (props: Props) => {
   };
 
   const fetchKeywords = async (
-    usageYears: any,
+    objectType: string,
+    usageYears: AutoCompleteSelectionType[],
     setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
-    values?: any
+    values?: FormValues
   ) => {
     if (usageYears.length === 2) {
       const fetchedCategories = await env.model.categories.getCategories({
@@ -1936,7 +1992,7 @@ export const FlowForm = (props: Props) => {
       );
 
       const mergedKeywords = [
-        ...values.keywords,
+        ...(values?.keywords || []),
         ...[
           {
             value: category[0].id,
@@ -1944,7 +2000,7 @@ export const FlowForm = (props: Props) => {
           },
         ].filter(
           (item2) =>
-            !values.keywords.some(
+            !(values?.keywords || []).some(
               (item1: AutoCompleteSelectionType) => item1.value === item2.value
             )
         ),
@@ -1952,7 +2008,7 @@ export const FlowForm = (props: Props) => {
 
       setFieldValue('keywords', mergedKeywords);
     } else if (usageYears.length === 1) {
-      const filteredKeywords = values.keywords.filter(
+      const filteredKeywords = (values?.keywords || []).filter(
         (item: AutoCompleteSelectionType) => item.displayLabel !== 'Multiyear'
       );
       setFieldValue('keywords', filteredKeywords);
@@ -2134,7 +2190,7 @@ export const FlowForm = (props: Props) => {
   }, [unsavedChange]);
 
   useEffect(() => {
-    const valuesObject: Record<string, AutoCompleteSelectionType[]> = {
+    const valuesObject: ObjectWithArrayOfAutoCompleteSelections = {
       sourceOrganizations: initialValue.sourceOrganizations,
       sourceLocations: initialValue.sourceLocations,
       sourceUsageYears: initialValue.sourceUsageYears,
@@ -2163,10 +2219,10 @@ export const FlowForm = (props: Props) => {
     string,
     (
       objectType: string,
-      flowObject: any,
+      flowObject: AutoCompleteSelectionType[],
       setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
       values: FormValues
-    ) => Promise<any>
+    ) => Promise<void>
   > = {
     sourcePlans: fetchPlanDetails,
     destinationPlans: fetchPlanDetails,
@@ -2204,15 +2260,15 @@ export const FlowForm = (props: Props) => {
   };
   const updateFlowObjects = async (
     objectType: string,
-    flowObject: any,
+    flowObject: AutoCompleteSelectionType[],
     setFieldValue: FormikHelpers<FormValues>['setFieldValue'],
     values: FormValues
   ) => {
     if (flowObject.length > 0 && dictExecutedForEachObject[objectType]) {
       flowObject.sort(
         (
-          a: { displayLabel: string; value: number },
-          b: { displayLabel: string; value: number }
+          a: { displayLabel: string; value: string | number },
+          b: { displayLabel: string; value: string | number }
         ) => {
           return a.displayLabel.localeCompare(b.displayLabel);
         }
@@ -2266,7 +2322,7 @@ export const FlowForm = (props: Props) => {
   };
   const validateForm = (values: FormValues) => {
     setUnsavedChange(JSON.stringify(values) !== JSON.stringify(initialValue));
-    const valuesObject: Record<string, AutoCompleteSelectionType[]> = {
+    const valuesObject: ObjectWithArrayOfAutoCompleteSelections = {
       sourceOrganizations: values.sourceOrganizations,
       sourceLocations: values.sourceLocations,
       sourceUsageYears: values.sourceUsageYears,
@@ -2397,7 +2453,7 @@ export const FlowForm = (props: Props) => {
     }
   };
   const handleParentFlow = (
-    values: any,
+    values: FormValues,
     parentValueString: string,
     setValues: (values: FormValues) => void
   ) => {
@@ -2535,15 +2591,59 @@ export const FlowForm = (props: Props) => {
       }
     });
 
+    const filteredSourceOrganizations = _sourceOrganizations.filter(
+      (org): org is { displayLabel: string; value: number } => org !== undefined
+    );
+    const filteredSourceUsageYears = _sourceUsageYears.filter(
+      (org): org is { displayLabel: string; value: number } => org !== undefined
+    );
+    const filteredSourceLocations = _sourceLocations.filter(
+      (org): org is { displayLabel: string; value: number } => org !== undefined
+    );
+    const filteredSourceEmergencies = _sourceEmergencies
+      ? _sourceEmergencies.filter(
+          (org): org is { displayLabel: string; value: number } =>
+            org !== undefined &&
+            org.displayLabel !== undefined &&
+            org.value !== undefined
+        )
+      : [];
+    const filteredSourceGlobalClusters = _sourceGlobalClusters
+      ? _sourceGlobalClusters.filter(
+          (org): org is { displayLabel: string; value: number } =>
+            org !== undefined &&
+            org.displayLabel !== undefined &&
+            org.value !== undefined
+        )
+      : [];
+
+    const filteredSourcePlans = _sourcePlans
+      ? _sourcePlans.filter(
+          (org): org is { displayLabel: string; value: number } =>
+            org !== undefined &&
+            org.displayLabel !== undefined &&
+            org.value !== undefined
+        )
+      : [];
+
+    const filteredSourceProjects = _sourceProjects
+      ? _sourceProjects.filter(
+          (org): org is { displayLabel: string; value: number } =>
+            org !== undefined &&
+            org.displayLabel !== undefined &&
+            org.value !== undefined
+        )
+      : [];
+
     setValues({
       ...values,
-      sourceOrganizations: _sourceOrganizations,
-      sourceUsageYears: _sourceUsageYears,
-      sourceLocations: _sourceLocations,
-      sourceEmergencies: _sourceEmergencies,
-      sourceGlobalClusters: _sourceGlobalClusters,
-      sourcePlans: _sourcePlans,
-      sourceProjects: _sourceProjects,
+      sourceOrganizations: filteredSourceOrganizations,
+      sourceUsageYears: filteredSourceUsageYears,
+      sourceLocations: filteredSourceLocations,
+      sourceEmergencies: filteredSourceEmergencies,
+      sourceGlobalClusters: filteredSourceGlobalClusters,
+      sourcePlans: filteredSourcePlans,
+      sourceProjects: filteredSourceProjects,
     });
   };
 
@@ -2865,7 +2965,12 @@ export const FlowForm = (props: Props) => {
                                 <StyledStrong>{objectType}</StyledStrong>
                                 {objects.map((object, index) => (
                                   <span key={index}>
-                                    {object.year || object.name}&nbsp;&nbsp;
+                                    {objectType === 'organizations' &&
+                                      (object as flowsResponse.Organizations)
+                                        .name}
+                                    {objectType === 'usageYears' &&
+                                      (object as flowsResponse.UsageYears).year}
+                                    &nbsp;&nbsp;
                                   </span>
                                 ))}
                               </StyledList>

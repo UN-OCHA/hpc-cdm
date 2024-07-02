@@ -166,6 +166,18 @@ export const DATA_TYPE = t.intersection([
     children: t.array(CHILDREN_TYPE),
     beneficiaryGroup: INPUT_SELECT_VALUE_TYPE,
     pendingStatus: t.union([t.boolean, t.array(t.string)]),
+    categorySources: t.array(
+      t.union([
+        FORM_FIELD,
+        t.union([t.string, CHILD_METHOD_TYPE]),
+        t.array(FORM_FIELD),
+        t.array(INACTIVE_REASON_TYPE),
+        INPUT_SELECT_VALUE_TYPE,
+        t.union([t.boolean, t.array(t.string)]),
+        t.union([t.string, t.number]),
+        t.undefined,
+      ])
+    ),
   }),
 ]);
 

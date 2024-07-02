@@ -97,6 +97,9 @@ const InputSelectValueTypeCodec = t.intersection([
     isTransferred: t.boolean,
     isInferred: t.boolean,
     restricted: t.boolean,
+    suggested: t.boolean,
+    adminLevel: t.number,
+    id: t.number,
   }),
 ]);
 

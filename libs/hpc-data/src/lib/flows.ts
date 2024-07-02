@@ -299,6 +299,17 @@ export const FLOW_REST = t.intersection([
   }),
 ]);
 
+const FORM_VALUES_SOURCES = t.type({
+  organizations: t.array(ORGANIZATION),
+  usageYears: t.array(USAGE_YEAR),
+});
+
+export type FormValuesSources = t.TypeOf<typeof FORM_VALUES_SOURCES> & {
+  [key: string]: any[];
+};
+export type Organizations = t.TypeOf<typeof ORGANIZATION>;
+export type UsageYears = t.TypeOf<typeof USAGE_YEAR>;
+
 export type FlowREST = t.TypeOf<typeof FLOW_REST>;
 export const FLOW_REST_RESULT = t.array(FLOW_REST);
 export type FlowRESTResult = t.TypeOf<typeof FLOW_REST_RESULT>;
