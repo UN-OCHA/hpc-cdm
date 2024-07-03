@@ -967,7 +967,7 @@ export class LiveModel implements Model {
           pathname: `/v1/object/autocomplete/project/${params.query}`,
           resultType: projects.GET_PROJECTS_AUTOCOMPLETE_RESULT,
         }),
-      getProject: (id) =>
+      getProject: ({ id }) =>
         this.call({
           pathname: `/v2/project/${id}`,
           resultType: projects.PROJECT_DETAIL,
