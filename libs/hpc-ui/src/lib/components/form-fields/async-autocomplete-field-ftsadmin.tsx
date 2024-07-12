@@ -68,8 +68,8 @@ type AsyncAutocompleteSelectProps = {
   name: string;
   label: string;
   placeholder?: string;
-  fnPromise?: ({ query }: { query: string }) => Promise<APIAutocompleteResult>;
-  optionsData?: APIAutocompleteResult;
+  fnPromise?: ({ query }: { query: string }) => Promise<Array<FormObjectValue>>;
+  optionsData?: Array<FormObjectValue>;
   category?: categories.CategoryGroup;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
@@ -84,6 +84,23 @@ type AsyncAutocompleteSelectProps = {
   alreadyIsFetch?: boolean;
   fetchedData?: readonly FormObjectValue[];
   isDisabled?: boolean;
+  removeOptions?: Array<FormObjectValue>;
+};
+
+const removeFormObjectValueFromFirstArray = (
+  firstArray: Array<FormObjectValue>,
+  secondArray: Array<FormObjectValue> | undefined
+) => {
+  if (secondArray) {
+    return firstArray.filter(
+      (firstArrayObject) =>
+        !secondArray.some(
+          (secondArrayObject) =>
+            firstArrayObject.value === secondArrayObject.value
+        )
+    );
+  }
+  return firstArray;
 };
 
 const AsyncAutocompleteSelect = ({
@@ -104,6 +121,7 @@ const AsyncAutocompleteSelect = ({
   values,
   setFieldValue,
   isDisabled,
+  removeOptions,
   ...otherProps
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
@@ -120,37 +138,6 @@ const AsyncAutocompleteSelect = ({
     !isFetch &&
     (!isAutocompleteAPI || inputValue.length >= 3 || category !== undefined);
   const actualYear = new Date().getFullYear();
-
-  function isUsageYearsResult(
-    result: APIAutocompleteResult
-  ): result is usageYears.GetUsageYearsResult {
-    return usageYears.GET_USAGE_YEARS_RESULT.is(result);
-  }
-  function isOrganizationsResult(
-    result: APIAutocompleteResult
-  ): result is organizations.GetOrganizationsResult {
-    return organizations.GET_ORGANIZATIONS_RESULT.is(result);
-  }
-  function isGlobalClustersResult(
-    result: APIAutocompleteResult
-  ): result is globalClusters.GetGlobalClustersResult {
-    return globalClusters.GET_GLOBAL_CLUSTERS_RESULT.is(result);
-  }
-  function isCurrenciesResult(
-    result: APIAutocompleteResult
-  ): result is currencies.GetCurrenciesResult {
-    return currencies.GET_CURRENCIES_RESULT.is(result);
-  }
-  function isProjectsResult(
-    result: APIAutocompleteResult
-  ): result is projects.GetProjectsAutocompleteResult {
-    return projects.GET_PROJECTS_AUTOCOMPLETE_RESULT.is(result);
-  }
-  function isPlansResult(
-    result: APIAutocompleteResult
-  ): result is plans.GetPlansAutocompleteResult {
-    return plans.GET_PLANS_AUTOCOMPLETE_RESULT.is(result);
-  }
 
   useEffect(() => {
     let active = true;
@@ -185,7 +172,7 @@ const AsyncAutocompleteSelect = ({
     // }
     (async () => {
       try {
-        let response: APIAutocompleteResult;
+        let response: FormObjectValue[];
         if (fnPromise) {
           response = await fnPromise({
             query: category ? category : inputValue,
@@ -193,144 +180,10 @@ const AsyncAutocompleteSelect = ({
         } else {
           response = optionsData || [];
         }
-        const parsedResponse = response.map((responseValue) => {
-          if (isUsageYearsResult(response)) {
-            return {
-              displayLabel: (responseValue as usageYears.UsageYear).year,
-              value: responseValue.id,
-            };
-          } else if (isOrganizationsResult(response)) {
-            const org = responseValue as organizations.Organization;
-            return {
-              displayLabel: `${org.name} [${org.abbreviation}]`,
-              value: responseValue.id,
-            };
-          } else if (isGlobalClustersResult(response)) {
-            return {
-              displayLabel: (responseValue as globalClusters.GlobalCluster)
-                .name,
-              value: responseValue.id,
-            };
-          } else if (isPlansResult(response)) {
-            return {
-              displayLabel: (responseValue as plans.Plan).name,
-              value: responseValue.id,
-              restricted: (responseValue as plans.Plan).restricted,
-            };
-          } else if (isCurrenciesResult(response)) {
-            return {
-              displayLabel: (responseValue as currencies.Currency).code,
-              value: responseValue.id,
-            };
-          } else if (isProjectsResult(response)) {
-            return {
-              displayLabel: `${(responseValue as projects.Project).name} [${
-                (responseValue as projects.Project).code
-              }]`,
-              value: responseValue.id,
-            };
-          } else if (
-            name === 'sourceGoverningEntities' ||
-            name === 'destinationGoverningEntities'
-          ) {
-            return {
-              displayLabel: (responseValue as governingEntities.GoverningEntity)
-                .governingEntityVersion.name,
-              value: responseValue.id,
-            };
-          } else if (name === 'parentFlow' || name === 'childFlow') {
-            const value = responseValue as flows.FlowREST;
-            const refDirectionIndexSrc =
-              value && value.organizations
-                ? value.organizations.findIndex(
-                    (org) => org.flowObject?.refDirection === 'source'
-                  )
-                : -1;
-            const refDirectionIndexDes =
-              value && value.organizations
-                ? value.organizations.findIndex(
-                    (org) => org.flowObject?.refDirection === 'destination'
-                  )
-                : -1;
-            const refDirectionLocIndexDes =
-              value && value.locations
-                ? value.locations.findIndex(
-                    (org) => org.flowObject?.refDirection === 'destination'
-                  )
-                : -1;
-            return {
-              displayLabel: `Flow ${value.id}: ${value.description} Source: ${
-                value.organizations &&
-                value.organizations[refDirectionIndexSrc] &&
-                refDirectionIndexSrc > -1
-                  ? value.organizations[refDirectionIndexSrc].name
-                  : ''
-              } | Destination: ${
-                value.organizations &&
-                value.organizations[refDirectionIndexDes] &&
-                refDirectionIndexDes > -1
-                  ? value.organizations[refDirectionIndexDes].name
-                  : ''
-              }`,
-              value: JSON.stringify({
-                src_org_name:
-                  value.organizations &&
-                  value.organizations[refDirectionIndexSrc] &&
-                  refDirectionIndexSrc > -1
-                    ? value.organizations[refDirectionIndexSrc].name
-                    : '',
-                src_org_abbreviation:
-                  value.organizations &&
-                  value.organizations[refDirectionIndexSrc] &&
-                  refDirectionIndexSrc > -1
-                    ? value.organizations[refDirectionIndexSrc].abbreviation
-                    : '',
-                dest_org_name:
-                  value.organizations &&
-                  value.organizations[refDirectionIndexDes] &&
-                  refDirectionIndexDes > -1
-                    ? value.organizations[refDirectionIndexDes].name
-                    : '',
-                dest_org_abbreviation:
-                  value.organizations &&
-                  value.organizations[refDirectionIndexDes] &&
-                  refDirectionIndexDes > -1
-                    ? value.organizations[refDirectionIndexDes].abbreviation
-                    : '',
-                dest_loc_name:
-                  value.locations &&
-                  value.locations[refDirectionLocIndexDes] &&
-                  refDirectionLocIndexDes > -1
-                    ? value.locations[refDirectionLocIndexDes].name
-                    : '',
-                ...value,
-              }),
-            };
-          } else {
-            return {
-              displayLabel: (responseValue as { id: number; name: string })
-                .name,
-              value: responseValue.id,
-              restricted: (responseValue as { restricted?: boolean })
-                .restricted,
-            };
-          }
-        });
-        setData(parsedResponse);
-        if (active) {
-          if (isUsageYearsResult(response)) {
-            setIsUsageYear(true);
+        setData(removeFormObjectValueFromFirstArray(response, removeOptions));
 
-            const preOptions = parsedResponse.filter((item) => {
-              const year = parseInt(item.displayLabel, 10);
-              if (year >= actualYear - 5 && year <= actualYear + 5) {
-                return item;
-              }
-            });
-            setOptions(preOptions);
-          } else {
-            setOptions(parsedResponse);
-          }
+        if (active) {
+          setOptions(response);
         }
         setIsFetch(true);
       } catch (error) {
@@ -561,6 +414,7 @@ const FormikAsyncAutocompleteSelect = ({
   alreadyIsFetch,
   fetchedData,
   isDisabled,
+  removeOptions,
   ...otherProps
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
@@ -582,36 +436,6 @@ const FormikAsyncAutocompleteSelect = ({
     (!isAutocompleteAPI || inputValue.length >= 3 || category !== undefined);
   const actualYear = new Date().getFullYear();
 
-  function isUsageYearsResult(
-    result: APIAutocompleteResult
-  ): result is usageYears.GetUsageYearsResult {
-    return usageYears.GET_USAGE_YEARS_RESULT.is(result);
-  }
-  function isOrganizationsResult(
-    result: APIAutocompleteResult
-  ): result is organizations.GetOrganizationsResult {
-    return organizations.GET_ORGANIZATIONS_RESULT.is(result);
-  }
-  function isGlobalClustersResult(
-    result: APIAutocompleteResult
-  ): result is globalClusters.GetGlobalClustersResult {
-    return globalClusters.GET_GLOBAL_CLUSTERS_RESULT.is(result);
-  }
-  function isCurrenciesResult(
-    result: APIAutocompleteResult
-  ): result is currencies.GetCurrenciesResult {
-    return currencies.GET_CURRENCIES_RESULT.is(result);
-  }
-  function isProjectsResult(
-    result: APIAutocompleteResult
-  ): result is projects.GetProjectsAutocompleteResult {
-    return projects.GET_PROJECTS_AUTOCOMPLETE_RESULT.is(result);
-  }
-  function isPlansResult(
-    result: APIAutocompleteResult
-  ): result is plans.GetPlansAutocompleteResult {
-    return plans.GET_PLANS_AUTOCOMPLETE_RESULT.is(result);
-  }
   const onBlur = useCallback(() => helpers.setTouched(true), [helpers]);
   const errorMsg = useMemo(
     () =>
@@ -674,7 +498,7 @@ const FormikAsyncAutocompleteSelect = ({
     }
     (async () => {
       try {
-        let response: APIAutocompleteResult;
+        let response: FormObjectValue[];
         if (fnPromise && !alreadyIsFetch) {
           response = await fnPromise({
             query: category ? category : debouncedInputValue,
@@ -682,84 +506,9 @@ const FormikAsyncAutocompleteSelect = ({
         } else {
           response = optionsData || [];
         }
-        const parsedResponse = response.map((responseValue) => {
-          if (isUsageYearsResult(response)) {
-            return {
-              displayLabel: (responseValue as usageYears.UsageYear).year,
-              value: responseValue.id,
-            };
-          } else if (isOrganizationsResult(response)) {
-            const org = responseValue as organizations.Organization;
-            return {
-              displayLabel: `${org.name} [${org.abbreviation}]`,
-              value: responseValue.id,
-            };
-          } else if (isGlobalClustersResult(response)) {
-            return {
-              displayLabel: (responseValue as globalClusters.GlobalCluster)
-                .name,
-              value: responseValue.id,
-            };
-          } else if (isPlansResult(response)) {
-            return {
-              displayLabel: (responseValue as plans.Plan).name,
-              value: responseValue.id,
-              restricted: (responseValue as plans.Plan).restricted,
-            };
-          } else if (isCurrenciesResult(response)) {
-            return {
-              displayLabel: (responseValue as currencies.Currency).code,
-              value: responseValue.id,
-            };
-          } else if (isProjectsResult(response)) {
-            return {
-              displayLabel: `${(responseValue as projects.Project).name} [${
-                (responseValue as projects.Project).code
-              }]`,
-              value: responseValue.id,
-            };
-          } else if (
-            name === 'sourceGoverningEntities' ||
-            name === 'destinationGoverningEntities'
-          ) {
-            return {
-              displayLabel: (responseValue as governingEntities.GoverningEntity)
-                .governingEntityVersion.name,
-              value: responseValue.id,
-            };
-          } else {
-            return {
-              displayLabel: (
-                responseValue as {
-                  id: number;
-                  name: string;
-                }
-              ).name,
-              value: responseValue.id,
-              restricted: (
-                responseValue as {
-                  restricted?: boolean;
-                }
-              ).restricted,
-            };
-          }
-        });
-
-        setData(parsedResponse);
+        setData(removeFormObjectValueFromFirstArray(response, removeOptions));
         if (active) {
-          if (isUsageYearsResult(response)) {
-            setIsUsageYear(true);
-
-            const preOptions = parsedResponse.filter((item) => {
-              const year = parseInt(item.displayLabel, 10);
-              if (year >= actualYear - 5 && year <= actualYear + 5) {
-                return item;
-              }
-            });
-            setOptions(preOptions);
-          } else {
-            setOptions(parsedResponse);
-          }
+          setOptions(response);
         }
         setIsFetch(true);
       } catch (error) {

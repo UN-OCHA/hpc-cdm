@@ -456,7 +456,6 @@ export default (props: Props) => {
         );
 
         let isParkedParent = false;
-        // const sources: Record<string, any[]> = {};
         const sources: flowsResponse.FormValuesSources = {
           organizations: [],
           usageYears: [],

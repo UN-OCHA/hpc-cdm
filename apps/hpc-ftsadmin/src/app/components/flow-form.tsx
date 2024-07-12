@@ -5,7 +5,19 @@ import dayjs from 'dayjs';
 import { isRight } from 'fp-ts/Either';
 import { FormikErrors } from 'formik';
 import * as t from 'io-ts';
-import { util as codecs } from '@unocha/hpc-data';
+import {
+  fnCategories,
+  fnEmergencies,
+  fnGlobalClusters,
+  fnLocations,
+  fnOrganizations,
+  fnPlans,
+  fnProjects,
+  fnUsageYears,
+  fnReportDetails,
+  fnGetCurrencies,
+  fnGetAutocompleteFlows,
+} from '../utils/fn-promises-ftsadmin';
 import GppMaybeIcon from '@mui/icons-material/GppMaybe';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -42,6 +54,7 @@ import {
   governingEntities as governingEntitiesType,
   organizations as organizationsType,
   flows as flowsResponse,
+  util as codecs,
 } from '@unocha/hpc-data';
 import { getEnv, AppContext } from '../context';
 import { editFlowSetting, copyFlow } from '../paths';
@@ -600,9 +613,9 @@ export const FlowForm = (props: Props) => {
     allFieldsReviewed,
     pendingVersionV1,
   } = props;
-  console.log('>>>>----', initialValue.sources, currentVersionData);
   const env = getEnv();
   const { lang } = useContext(AppContext);
+  const environment = env;
   const collapseFlowObjects = (
     data: fundingObject.fundingObjectType
   ): FlowObject[] => {
@@ -1010,10 +1023,11 @@ export const FlowForm = (props: Props) => {
     showDestinationGoverningEntities,
     handleShowDestinationGoverningEntities,
   ] = useState(false);
-  const [sourceGoverningEntities, setSourceGoverningEntities] =
-    useState<governingEntities.GetGoverningEntityResult>([]);
+  const [sourceGoverningEntities, setSourceGoverningEntities] = useState<
+    AutoCompleteSelectionType[]
+  >([]);
   const [destinationGoverningEntities, setDestinationGoverningEntities] =
-    useState<governingEntities.GetGoverningEntityResult>([]);
+    useState<AutoCompleteSelectionType[]>([]);
   const [isShowParentFlow, setShowParentFlow] = useState(
     initialValue.parentFlow && initialValue.parentFlow.length ? true : false
   );
@@ -1676,6 +1690,13 @@ export const FlowForm = (props: Props) => {
   ) => {
     const planQuery = Number(plan[0].value);
     const fetchedPlan = await env.model.plans.getPlan(planQuery);
+    const fetchedPlanGoverningEntities = fetchedPlan.governingEntities;
+    const planGoverningEntities = fetchedPlanGoverningEntities.map(
+      (responseValue) => ({
+        displayLabel: responseValue.governingEntityVersion.name,
+        value: responseValue.id,
+      })
+    );
     if (objectType === 'sourcePlans') {
       setObjectsWithArray(
         fetchedPlan,
@@ -1684,7 +1705,7 @@ export const FlowForm = (props: Props) => {
         setFieldValue,
         values
       );
-      setSourceGoverningEntities(fetchedPlan.governingEntities);
+      setSourceGoverningEntities(planGoverningEntities);
     }
     if (objectType === 'destinationPlans') {
       setObjectsWithArray(
@@ -1694,7 +1715,7 @@ export const FlowForm = (props: Props) => {
         setFieldValue,
         values
       );
-      setDestinationGoverningEntities(fetchedPlan.governingEntities);
+      setDestinationGoverningEntities(planGoverningEntities);
     }
     if (fetchedPlan.locations) {
       const countries = fetchedPlan.locations.filter(function (loc) {
@@ -1703,7 +1724,7 @@ export const FlowForm = (props: Props) => {
       if (countries.length === 1) {
         if (objectType === 'sourcePlans') {
           setObjectsWithArray(
-            { locations: countries },
+            fetchedPlan,
             ['sourceLocations'],
             ['locations'],
             setFieldValue,
@@ -1712,7 +1733,7 @@ export const FlowForm = (props: Props) => {
         }
         if (objectType === 'destinationPlans') {
           setObjectsWithArray(
-            { locations: countries },
+            fetchedPlan,
             ['destinationLocations'],
             ['locations'],
             setFieldValue,
@@ -2655,7 +2676,7 @@ export const FlowForm = (props: Props) => {
       onSubmit={(values) => handleSubmit(values, values.submitAction)}
       validate={(values) => validateForm(values)}
       enableReinitialize
-      validateOnChange={false}
+      validateOnChange
       style={{ zIndex: 1 }}
     >
       {({ values, setFieldValue, setValues }) => {
@@ -2985,9 +3006,7 @@ export const FlowForm = (props: Props) => {
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label={st.t(lang, (s) => s.flowForm.Organization)}
                       name="sourceOrganizations"
-                      fnPromise={
-                        env.model.organizations.getAutocompleteOrganizations
-                      }
+                      fnPromise={(query) => fnOrganizations(query, environment)}
                       behavior={FORM_SETTINGS.organization.behavior}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
@@ -3002,7 +3021,7 @@ export const FlowForm = (props: Props) => {
                         <C.AsyncAutocompleteSelectFTSAdmin
                           label={st.t(lang, (s) => s.flowForm.usageYear)}
                           name="sourceUsageYears"
-                          fnPromise={env.model.usageYears.getUsageYears}
+                          fnPromise={() => fnUsageYears(environment)}
                           isMulti
                           behavior={FORM_SETTINGS.usageYear.behavior}
                           onChange={(event, value) => {
@@ -3023,9 +3042,7 @@ export const FlowForm = (props: Props) => {
                         <C.AsyncAutocompleteSelectFTSAdmin
                           label={st.t(lang, (s) => s.flowForm.location)}
                           name="sourceLocations"
-                          fnPromise={
-                            env.model.locations.getAutocompleteLocations
-                          }
+                          fnPromise={(query) => fnLocations(query, environment)}
                           behavior={FORM_SETTINGS.location.behavior}
                           isMulti
                           entryInfo={inputEntries.sourceLocations}
@@ -3037,9 +3054,7 @@ export const FlowForm = (props: Props) => {
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label={st.t(lang, (s) => s.flowForm.emergency)}
                       name="sourceEmergencies"
-                      fnPromise={
-                        env.model.emergencies.getAutocompleteEmergencies
-                      }
+                      fnPromise={(query) => fnEmergencies(query, environment)}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
                       }}
@@ -3052,7 +3067,7 @@ export const FlowForm = (props: Props) => {
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label={st.t(lang, (s) => s.flowForm.globalCluster)}
                       name="sourceGlobalClusters"
-                      fnPromise={env.model.globalClusters.getGlobalClusters}
+                      fnPromise={() => fnGlobalClusters(environment)}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
                       }}
@@ -3066,7 +3081,7 @@ export const FlowForm = (props: Props) => {
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label={st.t(lang, (s) => s.flowForm.plan)}
                       name="sourcePlans"
-                      fnPromise={env.model.plans.getAutocompletePlans}
+                      fnPromise={(query) => fnPlans(query, environment)}
                       isMulti
                       behavior={FORM_SETTINGS.plan.behavior}
                       onChange={(event, value) => {
@@ -3101,7 +3116,7 @@ export const FlowForm = (props: Props) => {
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label={st.t(lang, (s) => s.flowForm.project)}
                       name="sourceProjects"
-                      fnPromise={env.model.projects.getAutocompleteProjects}
+                      fnPromise={(query) => fnProjects(query, environment)}
                       behavior={FORM_SETTINGS.project.behavior}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
@@ -3138,9 +3153,7 @@ export const FlowForm = (props: Props) => {
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label={st.t(lang, (s) => s.flowForm.Organization)}
                       name="destinationOrganizations"
-                      fnPromise={
-                        env.model.organizations.getAutocompleteOrganizations
-                      }
+                      fnPromise={(query) => fnOrganizations(query, environment)}
                       behavior={FORM_SETTINGS.organization.behavior}
                       isMulti
                       entryInfo={inputEntries.destinationOrganizations}
@@ -3151,7 +3164,7 @@ export const FlowForm = (props: Props) => {
                         <C.AsyncAutocompleteSelectFTSAdmin
                           label={st.t(lang, (s) => s.flowForm.usageYear)}
                           name="destinationUsageYears"
-                          fnPromise={env.model.usageYears.getUsageYears}
+                          fnPromise={() => fnUsageYears(environment)}
                           isMulti
                           behavior={FORM_SETTINGS.usageYear.behavior}
                           onChange={(event, value) => {
@@ -3171,9 +3184,7 @@ export const FlowForm = (props: Props) => {
                         <C.AsyncAutocompleteSelectFTSAdmin
                           label={st.t(lang, (s) => s.flowForm.location)}
                           name="destinationLocations"
-                          fnPromise={
-                            env.model.locations.getAutocompleteLocations
-                          }
+                          fnPromise={(query) => fnLocations(query, environment)}
                           behavior={FORM_SETTINGS.location.behavior}
                           isMulti
                           entryInfo={inputEntries.destinationLocations}
@@ -3184,7 +3195,7 @@ export const FlowForm = (props: Props) => {
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label={st.t(lang, (s) => s.flowForm.globalCluster)}
                       name="destinationGlobalClusters"
-                      fnPromise={env.model.globalClusters.getGlobalClusters}
+                      fnPromise={() => fnGlobalClusters(environment)}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
                       }}
@@ -3197,7 +3208,7 @@ export const FlowForm = (props: Props) => {
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label={st.t(lang, (s) => s.flowForm.plan)}
                       name="destinationPlans"
-                      fnPromise={env.model.plans.getAutocompletePlans}
+                      fnPromise={(query) => fnPlans(query, environment)}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
                       }}
@@ -3229,9 +3240,7 @@ export const FlowForm = (props: Props) => {
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label={st.t(lang, (s) => s.flowForm.emergency)}
                       name="destinationEmergencies"
-                      fnPromise={
-                        env.model.emergencies.getAutocompleteEmergencies
-                      }
+                      fnPromise={(query) => fnEmergencies(query, environment)}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
                       }}
@@ -3242,7 +3251,7 @@ export const FlowForm = (props: Props) => {
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label={st.t(lang, (s) => s.flowForm.project)}
                       name="destinationProjects"
-                      fnPromise={env.model.projects.getAutocompleteProjects}
+                      fnPromise={(query) => fnProjects(query, environment)}
                       behavior={FORM_SETTINGS.project.behavior}
                       onChange={(event, value) => {
                         updateFlowObjects(event, value, setFieldValue, values);
@@ -3300,7 +3309,9 @@ export const FlowForm = (props: Props) => {
                           <C.AsyncAutocompleteSelectFTSAdmin
                             label={st.t(lang, (s) => s.flowForm.origCurrency)}
                             name="origCurrency"
-                            fnPromise={env.model.currencies.getCurrencies}
+                            fnPromise={(query) =>
+                              fnGetCurrencies(query, environment)
+                            }
                             entryInfo={
                               inputEntries.origCurrency
                                 ? [inputEntries.origCurrency]
@@ -3417,7 +3428,20 @@ export const FlowForm = (props: Props) => {
                     <C.AsyncAutocompleteSelectFTSAdmin
                       label={st.t(lang, (s) => s.flowForm.keywords)}
                       name="keywords"
-                      fnPromise={env.model.categories.getCategories}
+                      fnPromise={async () => {
+                        const response =
+                          await environment.model.categories.getCategories({
+                            query: 'flowType',
+                          });
+                        return response.map((responseValue) => {
+                          return {
+                            displayLabel: responseValue.name,
+                            value: responseValue.name
+                              .toLocaleLowerCase()
+                              .replace(' ', '_'),
+                          };
+                        });
+                      }}
                       category="keywords"
                       isMulti
                       isAutocompleteAPI={false}
@@ -3757,7 +3781,9 @@ export const FlowForm = (props: Props) => {
                               <C.AsyncAutocompleteSelectFTSAdmin
                                 label={st.t(lang, (s) => s.flowForm.addFlow)}
                                 name="parentFlow"
-                                fnPromise={env.model.flows.getAutocompleteFlows}
+                                fnPromise={(query) =>
+                                  fnGetAutocompleteFlows(query, environment)
+                                }
                                 withoutFormik
                                 values={values}
                                 setFieldValue={setFieldValue}
@@ -3799,7 +3825,9 @@ export const FlowForm = (props: Props) => {
                             <C.AsyncAutocompleteSelectFTSAdmin
                               label={st.t(lang, (s) => s.flowForm.addFlow)}
                               name="childFlow"
-                              fnPromise={env.model.flows.getAutocompleteFlows}
+                              fnPromise={(query) =>
+                                fnGetAutocompleteFlows(query, environment)
+                              }
                               withoutFormik
                               values={values}
                               setFieldValue={setFieldValue}
@@ -3868,9 +3896,12 @@ export const FlowForm = (props: Props) => {
                                 )}
                                 name={`reportDetails[${index}].reportedOrganization`}
                                 placeholder="Reported by Organization"
-                                fnPromise={
-                                  env.model.organizations
-                                    .getAutocompleteOrganizations
+                                // fnPromise={
+                                //   env.model.organizations
+                                //     .getAutocompleteOrganizations
+                                // }
+                                fnPromise={(query) =>
+                                  fnReportDetails(query, environment)
                                 }
                               />
                               {values.sourceOrganizations.length > 0 &&
