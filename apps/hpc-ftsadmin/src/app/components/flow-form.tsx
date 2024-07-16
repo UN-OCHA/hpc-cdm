@@ -592,6 +592,7 @@ const FLOWVALUESFORDISPLAY_TYPES = [
 let parentValue = '';
 
 export const FlowForm = (props: Props) => {
+  console.log('Test-------->>>');
   const {
     currentVersionData,
     initialValue,
