@@ -592,7 +592,7 @@ const FormikAsyncAutocompleteSelect = ({
       setFieldValue(name, newValue);
       setMultipleValueSelected(Array.isArray(newValue) && newValue.length > 1);
     },
-    onInputChange: (event, newInputValue) => {
+    onInputChange: (_, newInputValue) => {
       setInputValue(newInputValue);
     },
     loading: loading,
