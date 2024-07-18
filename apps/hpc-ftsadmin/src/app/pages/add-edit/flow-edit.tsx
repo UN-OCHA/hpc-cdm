@@ -593,7 +593,7 @@ export default (props: Props) => {
           isParkedParent,
           sources,
           parentFlow: parentFlowData,
-          includeChildrenOfParkedFlows: false,
+          includeChildrenOfParkedFlows: props.isEdit ? false : true,
         });
       };
 
