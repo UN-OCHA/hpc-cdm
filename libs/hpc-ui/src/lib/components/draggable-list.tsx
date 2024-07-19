@@ -28,29 +28,42 @@ export type DraggableListItemProps = {
 };
 
 const PaperContainer = tw(Paper)`
-pt-8
-relative
+  pt-8
+  relative
 `;
 const StyledDiv = tw.div`
-mt-12
-pb-4
-px-8
-flex
-flex-col
+  mt-12
+  pb-4
+  px-8
+  flex
+  flex-col
 `;
 const DraggableListItemContainer = tw.div`
- p-2 my-1 flex justify-between items-center bg-white
- shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]
+  p-2
+  my-1
+  flex
+  justify-between
+  items-center
+  bg-white
+  shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]
 `;
 const TextContainer = tw.span`
-inline-block`;
+  inline-block
+`;
 
 const DragIconContainer = tw.div`
-flex items-center gap-x-4
+  flex
+  items-center
+  gap-x-4
 `;
 
 const SaveButtonWrapper = tw.div`
-py-4 px-8 text-end sticky bg-white bottom-0 shadow-md shadow-black
+  py-4
+  px-8
+  text-end sticky
+  bg-white bottom-0
+  shadow-md
+  shadow-black
 `;
 const DraggableListItem = ({
   item,

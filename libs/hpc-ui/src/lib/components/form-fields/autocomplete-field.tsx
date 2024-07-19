@@ -5,8 +5,9 @@ import { StyledTextField } from './text-field';
 import { FormObjectValue } from '@unocha/hpc-data';
 
 const StyledAutocomplete = tw(Autocomplete)`
-      min-w-[10rem]
-      w-full`;
+  min-w-[10rem]
+  w-full
+`;
 
 const AutocompleteSelect = ({
   name,

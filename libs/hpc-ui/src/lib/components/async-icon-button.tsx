@@ -23,12 +23,20 @@ interface AsyncIconButtonProps {
 }
 
 const ModalPaper = tw.div`
-p-8 my-1 items-center bg-white max-w-3xl rounded-md
-shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]
+  p-8
+  my-1
+  items-center
+  bg-white
+  max-w-3xl
+  rounded-md
+  shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]
 `;
 
 const ButtonDiv = tw.div`
-flex gap-x-4 my-4 justify-end
+  flex
+  gap-x-4
+  my-4
+  justify-end
 `;
 
 const AsyncIconButton = ({

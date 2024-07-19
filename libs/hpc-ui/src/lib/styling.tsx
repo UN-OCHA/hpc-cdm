@@ -66,7 +66,4 @@ a {
     text-decoration: underline;
   }
 }
-
-
-
 `;

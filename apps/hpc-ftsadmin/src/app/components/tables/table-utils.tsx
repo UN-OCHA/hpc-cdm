@@ -20,38 +20,38 @@ export type Query = {
 };
 
 export const StyledLoader = tw(C.Loader)`
-mx-auto
+  mx-auto
 `;
 export const ChipDiv = tw.div`
-relative
-w-full
+  relative
+  w-full
 `;
 export const TopRowContainer = tw.div`
-flex
-justify-end
+  flex
+  justify-end
 `;
 export const TableHeaderButton = tw(IconButton)`
-h-min
-self-center
-mx-2
+  h-min
+  self-center
+  mx-2
 `;
 export const TableRowClick = tw(TableRow)`
-transition-all
-hover:shadow-md
-bg-blend-hue
-hover:bg-opacity-20
-hover:cursor-pointer
+  transition-all
+  hover:shadow-md
+  bg-blend-hue
+  hover:bg-opacity-20
+  hover:cursor-pointer
 `;
 export const RejectPendingFlowsButton = tw(C.ButtonSubmit)`
-mt-8
+  mt-8
 `;
 
 const ChipFilterValues = tw.div`
-bg-unocha-secondary-light
-inline-flex
-mx-1
-px-2
-rounded-full
+  bg-unocha-secondary-light
+  inline-flex
+  mx-1
+  px-2
+  rounded-full
 `;
 export const RenderChipsRow = ({
   tableFilters,

@@ -59,21 +59,21 @@ export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   comments: '',
 };
 const StyledDiv = tw.div`
-my-6
-me-4
-lg:flex
-justify-end
-gap-x-4 
+  my-6
+  me-4
+  lg:flex
+  justify-end
+  gap-x-4
 `;
 const AlignButton = tw.div`
-self-center
+  self-center
 `;
 
 const InfoText = tw.p`
-mb-0
-mt-6
-italic
-text-unocha-textLight
+  mb-0
+  mt-6
+  italic
+  text-unocha-textLight
 `;
 const formToUpdate = (
   values: AddEditOrganizationValues,

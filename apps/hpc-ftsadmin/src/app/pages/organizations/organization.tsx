@@ -14,22 +14,22 @@ interface Props {
 }
 type OrganizationRouteParams = { id: string };
 const Container = tw.div`
-flex
+  flex
 `;
 const LandingContainer = tw.div`
-w-full
-p-8
+  w-full
+  p-8
 `;
 const PaddingContainer = tw.div`
-xl:px-96
-md:px-64
-px-36
+  xl:px-96
+  md:px-64
+  px-36
 `;
 const InfoText = tw.p`
-mb-0
-mt-0
-italic
-text-unocha-textLight
+  mb-0
+  mt-0
+  italic
+  text-unocha-textLight
 `;
 
 type OrganizationCategories = 'type' | 'subType' | 'level';
