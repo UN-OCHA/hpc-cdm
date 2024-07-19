@@ -3,7 +3,8 @@ import Grow, { GrowProps } from '@mui/material/Grow';
 import tw from 'twin.macro';
 
 const AlertWrapper = tw.div`
-mb-4`;
+  mb-4
+`;
 
 type ErrorAlertProps<T> = {
   setError: React.Dispatch<React.SetStateAction<T | undefined>>;

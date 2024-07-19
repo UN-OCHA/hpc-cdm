@@ -30,10 +30,10 @@ interface Props {
 }
 
 const Container = tw.div`
-flex
+  flex
 `;
 const LandingContainer = tw.div`
-w-full
+  w-full
 `;
 export default (props: Props) => {
   const rowsPerPageOptions = [10, 25, 50, 100];

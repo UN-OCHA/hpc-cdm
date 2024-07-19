@@ -11,9 +11,9 @@ import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
 
 const MultiText = tw(Autocomplete)`
-    min-w-[10rem]
-    w-full
-    `;
+  min-w-[10rem]
+  w-full
+`;
 
 const MultiTextField = ({
   name,

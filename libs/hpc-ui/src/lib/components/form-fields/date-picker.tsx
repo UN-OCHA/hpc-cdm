@@ -8,13 +8,13 @@ import dayjs from '../../i18n/utils/dayjs';
 import { useEffect, useState } from 'react';
 
 const StyledDatePicker = tw.div`
-flex
-w-full
-items-baseline
+  flex
+  w-full
+  items-baseline
 `;
 
 const StyledLink = tw(Link)`
-ms-8
+  ms-8
 `;
 
 const DatePicker = ({

@@ -28,10 +28,10 @@ interface Props {
   className?: string;
 }
 const Container = tw.div`
-flex
+  flex
 `;
 const LandingContainer = tw.div`
-w-full
+  w-full
 `;
 
 export default (props: Props) => {

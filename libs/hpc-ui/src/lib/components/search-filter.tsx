@@ -65,21 +65,21 @@ const Dragger = tw.div`
 const HideDrawerButton = styled.button`
   ${({ autoFocus }) => (!autoFocus ? tw`-ms-[15px] ` : tw`me-4`)}
   ${tw`
-  sticky
-  top-1/2
-  cursor-pointer
-  [&>svg]:self-center
-  h-16
-  transition-all
-  border-solid
-  border-s-0
-  border-y
-  border-e
-  border-unocha-primary-dark2
-  rounded-e-md
-  bg-unocha-primary
-  p-0
-`}
+    sticky
+    top-1/2
+    cursor-pointer
+    [&>svg]:self-center
+    h-16
+    transition-all
+    border-solid
+    border-s-0
+    border-y
+    border-e
+    border-unocha-primary-dark2
+    rounded-e-md
+    bg-unocha-primary
+    p-0
+  `}
 `;
 
 export const SearchFilter = ({ className, title, children }: Props) => {

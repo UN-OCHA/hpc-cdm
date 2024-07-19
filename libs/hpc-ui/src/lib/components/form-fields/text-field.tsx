@@ -3,8 +3,8 @@ import { useField } from 'formik';
 import tw from 'twin.macro';
 
 export const StyledTextField = tw(TextField)`
-min-w-[10rem]
-w-full
+  min-w-[10rem]
+  w-full
 `;
 
 interface TextFieldWrapperProps {
