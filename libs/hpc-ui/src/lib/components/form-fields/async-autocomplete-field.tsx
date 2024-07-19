@@ -10,8 +10,9 @@ import { FormObjectValue } from '@unocha/hpc-data';
 import { StyledTextField } from './text-field';
 
 const StyledAutocomplete = tw(Autocomplete)`
-    min-w-[10rem]
-    w-full`;
+  min-w-[10rem]
+  w-full
+`;
 
 type AsyncAutocompleteSelectProps = {
   name: string;
@@ -101,7 +102,6 @@ const AsyncAutocompleteSelect = ({
     ...field,
     ...otherProps,
     multiple: isMulti,
-    placeholder: placeholder,
     onOpen: () => {
       setOpen(true);
     },
@@ -135,6 +135,7 @@ const AsyncAutocompleteSelect = ({
         {...params}
         size="small"
         label={`${label}${required ? '*' : ''}`}
+        placeholder={placeholder}
         InputProps={{
           ...params.InputProps,
           endAdornment: (

@@ -42,11 +42,11 @@ export const PENDING_FLOWS_FILTER_INITIAL_VALUES: PendingFlowsFilterValues = {
   includeChildrenOfParkedFlows: false,
 };
 const StyledDiv = tw.div`
-my-6
-me-4
-lg:flex
-justify-end
-gap-x-4 
+  my-6
+  me-4
+  lg:flex
+  justify-end
+  gap-x-4
 `;
 export const FilterPendingFlowsTable = (props: Props) => {
   const { setQuery, query, handleAbortController } = props;

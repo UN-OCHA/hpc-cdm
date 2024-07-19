@@ -104,20 +104,20 @@ function typeQuery(value: string): keyof categories.Keyword {
 }
 
 const IconContainer = tw.div`
-flex
-items-center
-gap-x-2
+  flex
+  items-center
+  gap-x-2
 `;
 
 const StyledForm = tw(Form)`
-flex
-gap-x-4
-items-center
+  flex
+  gap-x-4
+  items-center
 `;
 
 const FieldsWrapper = tw.div`
-flex
-gap-x-8
+  flex
+  gap-x-8
 `;
 const KeywordTableContext = createContext<{
   setError?: React.Dispatch<

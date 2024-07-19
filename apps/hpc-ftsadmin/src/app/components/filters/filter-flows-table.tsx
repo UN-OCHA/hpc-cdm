@@ -89,11 +89,11 @@ const FORM_VALIDATION = io.partial({
 });
 
 const StyledDiv = tw.div`
-my-6
-me-4
-lg:flex
-justify-end
-gap-x-4 
+  my-6
+  me-4
+  lg:flex
+  justify-end
+  gap-x-4
 `;
 export const FilterFlowsTable = (props: Props) => {
   const { setQuery, query, handleAbortController } = props;
@@ -185,7 +185,7 @@ export const FilterFlowsTable = (props: Props) => {
                 onClose={handleInfoAlertClose}
                 sx={{
                   display: infoAlertDisplay ? 'flex' : 'none',
-                  ...tw` mt-4`,
+                  ...tw`mt-4`,
                 }}
               >
                 {t.t(lang, (s) => s.components.flowsFilter.info.filterInfo)}

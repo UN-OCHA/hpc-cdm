@@ -39,11 +39,11 @@ export const ORGANIZATIONS_FILTER_INITIAL_VALUES: OrganizationFilterValues = {
   status: '',
 };
 const StyledDiv = tw.div`
-my-6
-me-4
-lg:flex
-justify-end
-gap-x-4 
+  my-6
+  me-4
+  lg:flex
+  justify-end
+  gap-x-4
 `;
 export const FilterOrganizationsTable = (props: Props) => {
   const { environment, setQuery, query, lang } = props;
