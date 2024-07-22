@@ -11,23 +11,26 @@ export interface SectionProps {
 
 const SectionTitle = styled.summary(
   ({ type }: { type: 'primary' | 'secondary' }) => [
-    tw`font-bold
-  m-0
-  transition-all
-  ease-out
-  duration-500
-  list-none
-  cursor-pointer
-  [&::-webkit-details-marker]:hidden
-  `,
-    type === 'primary'
-      ? tw`flex
-      justify-between 
-      uppercase
+    tw`
       font-bold
-      text-2xl
-      text-unocha-pallete-blue-dark2`
-      : tw`text-right [&>svg]:ms-2 text-unocha-pallete-blue text-xl `,
+      m-0
+      transition-all
+      ease-out
+      duration-500
+      list-none
+      cursor-pointer
+      [&::-webkit-details-marker]:hidden
+    `,
+    type === 'primary'
+      ? tw`
+        flex
+        justify-between 
+        uppercase
+        font-bold
+        text-2xl
+        text-unocha-pallete-blue-dark2
+      `
+      : tw`text-right [&>svg]:ms-2 text-unocha-pallete-blue text-xl`,
   ]
 );
 const SectionContainer = styled.details(
