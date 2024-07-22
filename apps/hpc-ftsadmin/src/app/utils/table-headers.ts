@@ -6,8 +6,10 @@ import { FilterKeys } from './parse-filters';
 /** Declare which tables there can be */
 export type TableType = 'flows' | 'organizations' | 'keywords';
 
-/** The nomenclature to define these IDs is to write it like: name of the DB table, and after the dot, the propperty.
- *  if it's not a DB field, just write down the name
+/**
+ * The nomenclature to define these IDs is to write it like:
+ * name of the DB table, and after the dot, the property.
+ * If it's not a DB field, just write down the name.
  */
 
 export type FlowHeaderID =
@@ -64,7 +66,7 @@ type HeaderType = {
   label: FilterKeys;
   active: boolean;
 };
-/** We create these POSSIBLE consts because in the future we want to add more fields than the default ones displayed */
+/** We create these POSSIBLE conss because in the future we want to add more fields than the default ones displayed */
 
 export const POSSIBLE_FLOW_HEADER_VALUES: Record<
   number,
