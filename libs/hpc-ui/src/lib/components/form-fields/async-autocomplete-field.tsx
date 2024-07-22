@@ -83,7 +83,7 @@ const AsyncAutocompleteSelect = ({
     return () => {
       active = false;
     };
-  }, [loading, inputValue]);
+  }, [loading, inputValue, isAutocompleteAPI, data, fnPromise]);
 
   useEffect(() => {
     if (!open && isAutocompleteAPI) {
@@ -91,7 +91,7 @@ const AsyncAutocompleteSelect = ({
       setData([]);
       setIsFetch(false);
     }
-  }, [open]);
+  }, [open, isAutocompleteAPI]);
 
   const configAutocomplete: AutocompleteProps<
     FormObjectValue,
@@ -119,7 +119,7 @@ const AsyncAutocompleteSelect = ({
       // For multiple selections, newValue will be an array of selected values
       setFieldValue(name, newValue);
     },
-    onInputChange: (event, newInputValue) => {
+    onInputChange: (_, newInputValue) => {
       setInputValue(newInputValue);
     },
     loading: loading,
