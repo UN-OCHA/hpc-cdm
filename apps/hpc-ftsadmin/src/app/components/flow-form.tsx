@@ -2342,7 +2342,19 @@ export const FlowForm = (props: Props) => {
     }
   };
   const validateForm = (values: FormValues) => {
-    setUnsavedChange(JSON.stringify(values) !== JSON.stringify(initialValue));
+    const extractValues = (obj: FormValues) => {
+      return {
+        flowTypeValue: obj.flowType && obj.flowType.displayLabel,
+        contributionTypeValue:
+          obj.contributionType && obj.contributionType.displayLabel,
+        methodValue: obj.method && obj.method.displayLabel,
+      };
+    };
+    const compareValues = (objValue: FormValues, othValue: FormValues) => {
+      return _.isEqual(extractValues(objValue), extractValues(othValue));
+    };
+    const areEqual = _.isEqualWith(values, initialValue, compareValues);
+    setUnsavedChange(!areEqual);
     const valuesObject: ObjectWithArrayOfAutoCompleteSelections = {
       sourceOrganizations: values.sourceOrganizations,
       sourceLocations: values.sourceLocations,
