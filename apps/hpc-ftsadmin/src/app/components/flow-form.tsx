@@ -667,21 +667,32 @@ export const FlowForm = (props: Props) => {
       data.pendingStatus,
       data.earmarking !== null && data.earmarking.id,
     ].filter((category) => category);
-    data.categories = data.categories
+    data.categories = data.categorySources
       .flatMap((value) => {
-        if (value && typeof value === 'object' && 'id' in value) {
+        if (
+          value &&
+          typeof value === 'object' &&
+          !Array.isArray(value) &&
+          'id' in value
+        ) {
           return [value.id];
         } else if (
           Array.isArray(value) &&
           value.length > 0 &&
+          typeof value[0] === 'object' &&
           'id' in value[0]
         ) {
-          return value.map((item) => item.id);
-        } else {
-          return [];
+          return value.map((item) => {
+            if (item && typeof item === 'object' && 'id' in item) {
+              return item.id;
+            }
+            return [];
+          });
+        } else if (typeof value === 'string') {
+          return value;
         }
       })
-      .map((value) => parseInt(value));
+      .map((value) => parseInt(value as string));
 
     return data;
   };
@@ -933,6 +944,11 @@ export const FlowForm = (props: Props) => {
             group: 'earmarkingType',
           }
         : null,
+      beneficiaryGroup: {
+        id: values.beneficiaryGroup && values.beneficiaryGroup.value,
+        name: values.beneficiaryGroup && values.beneficiaryGroup.displayLabel,
+        group: 'beneficiaryGroup',
+      },
       categories: [] as (categoryType | number)[],
       isCancellation: isPending ?? null,
       cancelled: isPending ?? null,
@@ -2342,17 +2358,20 @@ export const FlowForm = (props: Props) => {
     }
   };
   const validateForm = (values: FormValues) => {
-    const extractValues = (obj: FormValues) => {
-      return {
-        flowTypeValue: obj.flowType && obj.flowType.displayLabel,
-        contributionTypeValue:
-          obj.contributionType && obj.contributionType.displayLabel,
-        methodValue: obj.method && obj.method.displayLabel,
-      };
-    };
-    const compareValues = (objValue: FormValues, othValue: FormValues) => {
-      return _.isEqual(extractValues(objValue), extractValues(othValue));
-    };
+    type PropertyName = string | number | symbol | undefined;
+    function compareValues(
+      objValue: AutoCompleteSelectionType,
+      othValue: AutoCompleteSelectionType,
+      key: PropertyName
+    ) {
+      if (
+        key === 'flowType' ||
+        key === 'contributionType' ||
+        key === 'method'
+      ) {
+        return _.isEqual(objValue.value, othValue.value);
+      }
+    }
     const areEqual = _.isEqualWith(values, initialValue, compareValues);
     setUnsavedChange(!areEqual);
     const valuesObject: ObjectWithArrayOfAutoCompleteSelections = {
@@ -3448,9 +3467,7 @@ export const FlowForm = (props: Props) => {
                         return response.map((responseValue) => {
                           return {
                             displayLabel: responseValue.name,
-                            value: responseValue.name
-                              .toLocaleLowerCase()
-                              .replace(' ', '_'),
+                            value: responseValue.id,
                           };
                         });
                       }}

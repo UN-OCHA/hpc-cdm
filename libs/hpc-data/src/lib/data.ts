@@ -160,11 +160,11 @@ export const DATA_TYPE = t.intersection([
     inactiveReason: t.array(INACTIVE_REASON_TYPE),
     rejected: t.union([t.boolean, t.null]),
     versions: t.array(VERSIONS_TYPE),
+    beneficiaryGroup: FORM_FIELD,
   }),
   t.partial({
     parents: t.array(PARENTS_TYPE),
     children: t.array(CHILDREN_TYPE),
-    beneficiaryGroup: INPUT_SELECT_VALUE_TYPE,
     pendingStatus: t.union([t.boolean, t.array(t.string)]),
     categorySources: t.array(
       t.union([
