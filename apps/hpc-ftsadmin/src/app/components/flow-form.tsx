@@ -692,7 +692,8 @@ export const FlowForm = (props: Props) => {
           return value;
         }
       })
-      .map((value) => parseInt(value as string));
+      .map((value) => parseInt(value as string))
+      .filter((value) => typeof value === 'number' && !isNaN(value));
 
     return data;
   };
@@ -2369,7 +2370,7 @@ export const FlowForm = (props: Props) => {
         key === 'contributionType' ||
         key === 'method'
       ) {
-        return _.isEqual(objValue.value, othValue.value);
+        return _.isEqual(String(objValue.value), String(othValue.value));
       }
     }
     const areEqual = _.isEqualWith(values, initialValue, compareValues);
