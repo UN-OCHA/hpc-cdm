@@ -3463,7 +3463,7 @@ export const FlowForm = (props: Props) => {
                       fnPromise={async () => {
                         const response =
                           await environment.model.categories.getCategories({
-                            query: 'flowType',
+                            query: 'keywords',
                           });
                         return response.map((responseValue) => {
                           return {
