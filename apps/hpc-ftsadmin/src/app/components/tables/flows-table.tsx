@@ -21,7 +21,7 @@ import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
 import { MdInfoOutline } from 'react-icons/md';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { LanguageKey, t } from '../../../i18n';
-import { AppContext, getEnv } from '../../context';
+import { getContext } from '../../context';
 import tw from 'twin.macro';
 import React, { useState } from 'react';
 import {
@@ -74,18 +74,19 @@ export interface FlowsTableProps {
 }
 
 export default function FlowsTable(props: FlowsTableProps) {
-  const env = getEnv();
+  const { env, lang } = getContext();
+  const environment = env();
+
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
   const filters = decodeFilters(props.query.filters, props.initialValues);
-  console.log(props.query.filters);
   const tableFilters = parseFormFilters(filters, props.initialValues);
   const parsedFilters = parseFlowFilters(tableFilters, props.pending);
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
   const navigate = useNavigate();
   const [state, load] = useDataLoader([query], () =>
-    env.model.flows.searchFlows({
+    environment.model.flows.searchFlows({
       limit: query.rowsPerPage,
       sortField: query.orderBy,
       sortOrder: query.orderDir,
@@ -96,6 +97,10 @@ export default function FlowsTable(props: FlowsTableProps) {
     })
   );
 
+  const nonSafeTypedTableHeaders = decodeTableHeaders(query.tableHeaders, lang);
+  const tableHeaders = isTableHeadersPropsFlow(nonSafeTypedTableHeaders)
+    ? nonSafeTypedTableHeaders
+    : [];
   const handleChipDelete = <T extends FilterKey>(fieldName: T) => {
     if (isKey(filters, fieldName)) {
       filters[fieldName] = undefined;
@@ -616,13 +621,6 @@ export default function FlowsTable(props: FlowsTableProps) {
     lang: LanguageKey;
     data: flows.SearchFlowsResult;
   }) => {
-    const nonSafeTypedTableHeaders = decodeTableHeaders(
-      query.tableHeaders,
-      lang
-    );
-    const tableHeaders = isTableHeadersPropsFlow(nonSafeTypedTableHeaders)
-      ? nonSafeTypedTableHeaders
-      : [];
     return (
       <Table size="small">
         <TableHead>
@@ -703,7 +701,7 @@ export default function FlowsTable(props: FlowsTableProps) {
         flows: { id: number; versionID: number }[];
       }) => {
         if (values.flows.length === 0) return;
-        env.model.flows.bulkRejectPendingFlows(values).finally(load);
+        environment.model.flows.bulkRejectPendingFlows(values).finally(load);
       };
       return (
         <Formik
@@ -765,164 +763,123 @@ export default function FlowsTable(props: FlowsTableProps) {
   };
 
   return (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <StyledLoader
-          loader={state}
-          strings={{
-            ...t.get(lang, (s) => s.components.loader),
-            notFound: {
-              ...t.get(lang, (s) => s.components.notFound),
-              ...t.get(lang, (s) => s.components.flowsTable.notFound),
-            },
-          }}
-        >
-          {(data) => {
-            if (data.searchFlows.total === 0) {
-              return <NoResultTable />;
-            }
-            return (
-              <>
-                <ChipDiv>
-                  <RenderChipsRow
-                    lang={lang}
-                    chipSpacing={chipSpacing}
-                    handleChipDelete={handleChipDelete}
-                    tableFilters={tableFilters}
-                    tableType={
-                      props.pending ? 'pendingFlowsFilter' : 'flowsFilter'
-                    }
-                  />
-                  <TopRowContainer>
-                    <C.AsyncIconButton
-                      fnPromise={() =>
-                        new Promise<void>((resolve) => {
-                          env.model.flows
-                            .getFlowsDownloadXLSX({
-                              limit: query.rowsPerPage,
-                              ...parsedFilters,
-                            })
-                            .then((response) => {
-                              resolve(
-                                downloadExcel<flows.Flow>(
-                                  response.searchFlowsBatches.flows,
-                                  'export'
-                                )
-                              );
-                            });
+    <StyledLoader
+      loader={state}
+      strings={{
+        ...t.get(lang, (s) => s.components.loader),
+        notFound: {
+          ...t.get(lang, (s) => s.components.notFound),
+          ...t.get(lang, (s) => s.components.flowsTable.notFound),
+        },
+      }}
+    >
+      {(data) => {
+        if (data.searchFlows.total === 0) {
+          return <NoResultTable />;
+        }
+        return (
+          <>
+            <ChipDiv>
+              <RenderChipsRow
+                lang={lang}
+                chipSpacing={chipSpacing}
+                handleChipDelete={handleChipDelete}
+                tableFilters={tableFilters}
+                tableType={props.pending ? 'pendingFlowsFilter' : 'flowsFilter'}
+              />
+              <TopRowContainer>
+                <C.AsyncIconButton
+                  fnPromise={() =>
+                    new Promise<void>((resolve) => {
+                      environment.model.flows
+                        .getFlowsDownloadXLSX({
+                          limit: query.rowsPerPage,
+                          ...parsedFilters,
                         })
-                      }
-                      IconComponent={DownloadIcon}
-                      disabledText={
-                        !isAnyFilterActive(data.searchFlows.total)
-                          ? t.t(
+                        .then((response) => {
+                          resolve(
+                            downloadExcel(
+                              response,
                               lang,
-                              (s) => s.components.flowsTable.downloadDisabled
+                              tableHeaders,
+                              'export'
                             )
-                          : undefined
-                      }
-                    />
-
-                    <TableHeaderButton
-                      size="small"
-                      onClick={() => setOpenSettings(!openSettings)}
-                    >
-                      <SettingsIcon />
-                    </TableHeaderButton>
-                    <Modal
-                      open={openSettings}
-                      onClose={() => setOpenSettings(!openSettings)}
-                      sx={tw`flex items-center justify-center`}
-                    >
-                      <Box sx={tw`max-h-[70vh] overflow-y-auto rounded-xl`}>
-                        <C.DraggableList
-                          title={t.t(
-                            lang,
-                            (s) => s.components.flowsTable.tableSettings.title
-                          )}
-                          buttonText={t.t(
-                            lang,
-                            (s) => s.components.flowsTable.tableSettings.save
-                          )}
-                          queryValues={decodeTableHeaders(
-                            query.tableHeaders,
-                            lang,
-                            'flows',
-                            query,
-                            setQuery
-                          )}
-                          onClick={(element) => {
-                            if (isCompatibleTableHeaderType(element)) {
-                              setQuery({
-                                ...query,
-                                tableHeaders: encodeTableHeaders(
-                                  element,
-                                  'flows',
-                                  query,
-                                  setQuery
-                                ),
-                              });
-                            }
-                          }}
-                          elevation={6}
-                          sx={{
-                            width: '400px',
-                            height: 'fit-content',
-                          }}
-                          children={
-                            <InfoAlert
-                              text={t.t(
-                                lang,
-                                (s) =>
-                                  s.components.flowsTable.tableSettings.info
-                              )}
-                              localStorageKey="tableSettings"
-                              sxProps={tw`mx-8 mt-4`}
-                            />
-                          }
-                        />
-                      </Box>
-                    </Modal>
-                    <TablePagination
-                      sx={{ display: 'block' }}
-                      rowsPerPageOptions={rowsPerPageOptions}
-                      component="div"
-                      count={data.searchFlows.total}
-                      rowsPerPage={query.rowsPerPage}
-                      page={query.page}
-                      onPageChange={(_, newPage) =>
-                        handleChangePage(
-                          newPage,
-                          data.searchFlows.prevPageCursor,
-                          data.searchFlows.nextPageCursor
+                          );
+                        });
+                    })
+                  }
+                  IconComponent={DownloadIcon}
+                  disabledText={
+                    !isAnyFilterActive(data.searchFlows.total)
+                      ? t.t(
+                          lang,
+                          (s) => s.components.flowsTable.downloadDisabled
                         )
-                      }
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                  </TopRowContainer>
-                </ChipDiv>
+                      : undefined
+                  }
+                />
 
-                <Box sx={{ overflowX: 'auto', transform: 'rotateX(180deg)' }}>
-                  <TableContainer
-                    sx={{
-                      width: '100%',
-                      transform: 'rotateX(180deg)',
-                      display: 'table',
-                      tableLayout: 'fixed',
-                      lineHeight: '1.35',
-                      fontSize: '1.32rem',
-                    }}
-                  >
-                    <FormWrapper
-                      lang={lang}
-                      data={data}
-                      pending={props.pending}
+                <TableHeaderButton
+                  size="small"
+                  onClick={() => setOpenSettings(!openSettings)}
+                >
+                  <SettingsIcon />
+                </TableHeaderButton>
+                <Modal
+                  open={openSettings}
+                  onClose={() => setOpenSettings(!openSettings)}
+                  sx={tw`flex items-center justify-center`}
+                >
+                  <Box sx={tw`max-h-[70vh] overflow-y-auto rounded-xl`}>
+                    <C.DraggableList
+                      title={t.t(
+                        lang,
+                        (s) => s.components.flowsTable.tableSettings.title
+                      )}
+                      buttonText={t.t(
+                        lang,
+                        (s) => s.components.flowsTable.tableSettings.save
+                      )}
+                      queryValues={decodeTableHeaders(
+                        query.tableHeaders,
+                        lang,
+                        'flows',
+                        query,
+                        setQuery
+                      )}
+                      onClick={(element) => {
+                        if (isCompatibleTableHeaderType(element)) {
+                          setQuery({
+                            ...query,
+                            tableHeaders: encodeTableHeaders(
+                              element,
+                              'flows',
+                              query,
+                              setQuery
+                            ),
+                          });
+                        }
+                      }}
+                      elevation={6}
+                      sx={{
+                        width: '400px',
+                        height: 'fit-content',
+                      }}
+                      children={
+                        <InfoAlert
+                          text={t.t(
+                            lang,
+                            (s) => s.components.flowsTable.tableSettings.info
+                          )}
+                          localStorageKey="tableSettings"
+                          sxProps={tw`mx-8 mt-4`}
+                        />
+                      }
                     />
-                  </TableContainer>
-                </Box>
+                  </Box>
+                </Modal>
                 <TablePagination
                   sx={{ display: 'block' }}
-                  data-test="flows-table-pagination"
                   rowsPerPageOptions={rowsPerPageOptions}
                   component="div"
                   count={data.searchFlows.total}
@@ -937,11 +894,43 @@ export default function FlowsTable(props: FlowsTableProps) {
                   }
                   onRowsPerPageChange={handleChangeRowsPerPage}
                 />
-              </>
-            );
-          }}
-        </StyledLoader>
-      )}
-    </AppContext.Consumer>
+              </TopRowContainer>
+            </ChipDiv>
+
+            <Box sx={{ overflowX: 'auto', transform: 'rotateX(180deg)' }}>
+              <TableContainer
+                sx={{
+                  width: '100%',
+                  transform: 'rotateX(180deg)',
+                  display: 'table',
+                  tableLayout: 'fixed',
+                  lineHeight: '1.35',
+                  fontSize: '1.32rem',
+                }}
+              >
+                <FormWrapper lang={lang} data={data} pending={props.pending} />
+              </TableContainer>
+            </Box>
+            <TablePagination
+              sx={{ display: 'block' }}
+              data-test="flows-table-pagination"
+              rowsPerPageOptions={rowsPerPageOptions}
+              component="div"
+              count={data.searchFlows.total}
+              rowsPerPage={query.rowsPerPage}
+              page={query.page}
+              onPageChange={(_, newPage) =>
+                handleChangePage(
+                  newPage,
+                  data.searchFlows.prevPageCursor,
+                  data.searchFlows.nextPageCursor
+                )
+              }
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </>
+        );
+      }}
+    </StyledLoader>
   );
 }
