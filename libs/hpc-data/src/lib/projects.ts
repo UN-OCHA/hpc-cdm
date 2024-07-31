@@ -21,7 +21,7 @@ const PDF = t.type({
   ]),
 });
 
-const PROJECT = t.type({
+export const PROJECT = t.type({
   id: t.number,
   createdAt: t.string,
   updatedAt: t.string,

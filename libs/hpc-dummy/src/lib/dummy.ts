@@ -1127,7 +1127,7 @@ export class Dummy {
         ),
         searchOrganizations: dummyEndpoint(
           'organizations.searchOrganizations',
-          async (): Promise<organizations.SearchOrnganizationResult> => {
+          async (): Promise<organizations.SearchOrganizationResult> => {
             return {
               count: '1',
               organizations: [
