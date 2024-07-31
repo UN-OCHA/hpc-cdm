@@ -117,13 +117,16 @@ export const GET_FLOW_RESULT = FLOW_REST;
 
 export type GetFlowResult = t.TypeOf<typeof GET_FLOW_RESULT>;
 
+// GRAPHQL CODE FROM HERE
+
+const DIRECTION = t.union([t.literal('source'), t.literal('destination')]);
+
 const FlowLocation = t.type({
   id: t.number,
   name: t.string,
-  direction: t.string,
+  direction: DIRECTION,
 });
 
-// GRAPHQL CODE FROM HERE
 const FlowOrganization = t.type({
   id: t.number,
   direction: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
@@ -134,7 +137,7 @@ const FlowOrganization = t.type({
 export type FlowOrganization = t.TypeOf<typeof FlowOrganization>;
 const FlowUsageYear = t.type({
   year: t.string,
-  direction: t.string,
+  direction: DIRECTION,
 });
 
 const FlowExternalReference = t.type({
@@ -188,7 +191,7 @@ const FlowCategory = t.type({
 const FlowPlan = t.type({
   id: t.number,
   name: t.string,
-  direction: t.string,
+  direction: DIRECTION,
 });
 
 const FLOW = t.type({
@@ -244,7 +247,14 @@ const FLOW_FILTERS = t.partial({
     restricted: t.boolean,
   }),
   flowObjectFilters: t.array(
-    t.type({ objectID: t.number, direction: t.string, objectType: t.string })
+    t.union([
+      t.type({
+        objectID: t.number,
+        direction: DIRECTION,
+        objectType: t.string,
+      }),
+      t.partial({ inclusive: t.boolean }),
+    ])
   ),
   commitment: t.boolean,
   carryover: t.boolean,
