@@ -7,12 +7,18 @@
     "e2e": {
       "executor": "@nx/cypress:cypress",
       "options": {
-        "cypressConfig": "apps/hpc-ftsadmin-e2e/cypress.json",
+        "cypressConfig": "apps/hpc-ftsadmin-e2e/cypress.config.ts",
         "devServerTarget": "hpc-ftsadmin:serve"
       },
       "configurations": {
         "production": {
           "devServerTarget": "hpc-ftsadmin:serve:production"
+        },
+        "dev-live": {
+          "devServerTarget": "hpc-ftsadmin:serve:dev-live"
+        },
+        "dummy": {
+          "devServerTarget": "hpc-ftsadmin:serve"
         }
       }
     },
