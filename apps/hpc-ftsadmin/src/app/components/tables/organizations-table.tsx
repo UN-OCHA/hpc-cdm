@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Modal,
   Table,
@@ -45,15 +44,13 @@ import {
   TableHeaderButton,
   TableRowClick,
   TopRowContainer,
-  handleTableSettingsInfoClose,
 } from './table-utils';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../paths';
-import { util } from '@unocha/hpc-core';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
 import tw from 'twin.macro';
 import NoResultTable from './no-result';
-import { MergeModal } from '../merge-modal';
+import MergeModal from '../merge-modal';
+import InfoAlert from '../info-alert';
 
 const ButtonWrapper = tw.div`
   self-center
@@ -69,19 +66,20 @@ export interface OrganizationTableProps {
 
 export default function OrganizationTable(props: OrganizationTableProps) {
   const env = getEnv();
+
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
+
   const filters = decodeFilters(props.query.filters, props.initialValues);
-  const [tableInfoDisplay, setTableInfoDisplay] = useState(
-    util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
-  );
   const parsedFilters = parseFormFilters<
     keyof Strings['components']['organizationsFilter']['filters'],
     OrganizationFilterValues
   >(filters, props.initialValues);
+
   const [query, setQuery] = [props.query, props.setQuery];
   const [openSettings, setOpenSettings] = useState(false);
   const navigate = useNavigate();
+
   const state = dataLoader([query], () =>
     env.model.organizations.searchOrganizations({
       search: {
@@ -468,25 +466,15 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                             height: 'fit-content',
                           }}
                           children={
-                            <Alert
-                              severity="info"
-                              onClose={() =>
-                                handleTableSettingsInfoClose(
-                                  setTableInfoDisplay
-                                )
-                              }
-                              sx={{
-                                display: tableInfoDisplay ? 'flex' : 'none',
-                                ...tw`mx-8 mt-4`,
-                              }}
-                            >
-                              {t.t(
+                            <InfoAlert
+                              text={t.t(
                                 lang,
                                 (s) =>
-                                  s.components.organizationTable.tableSettings
-                                    .info
+                                  s.components.flowsTable.tableSettings.info
                               )}
-                            </Alert>
+                              localStorageKey="tableSettings"
+                              sxProps={tw`mx-8 mt-4`}
+                            />
                           }
                         />
                       </Box>

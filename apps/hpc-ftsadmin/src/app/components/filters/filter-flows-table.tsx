@@ -1,14 +1,11 @@
 import { Form, Formik, FormikState } from 'formik';
 import * as io from 'io-ts';
 import tw from 'twin.macro';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 
 import { C } from '@unocha/hpc-ui';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import { t } from '../../../i18n';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
-import { util } from '@unocha/hpc-core';
-import { Alert } from '@mui/material';
 import { Query } from '../tables/table-utils';
 import { AppContext } from '../../context';
 import { util as codecs, FormObjectValue } from '@unocha/hpc-data';
@@ -23,6 +20,7 @@ import {
   fnProjects,
   fnUsageYears,
 } from '../../utils/fn-promises';
+import InfoAlert from '../info-alert';
 
 interface Props {
   query: Query;
@@ -100,19 +98,11 @@ export const FilterFlowsTable = (props: Props) => {
 
   const { lang, env } = useContext(AppContext);
   const environment = env();
-  const [infoAlertDisplay, setInfoAlertDisplay] = useState(
-    util.getLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', true)
-  );
 
   const queryFilters = decodeFilters(
     query.filters,
     FLOWS_FILTER_INITIAL_VALUES
   );
-  const handleInfoAlertClose = () => {
-    util.setLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', false);
-    setInfoAlertDisplay(false);
-  };
-
   const handleSubmit = (values: FlowsFilterValues) => {
     const encodedFilters = encodeFilters(values, FLOWS_FILTER_INITIAL_VALUES);
 
@@ -180,16 +170,14 @@ export const FilterFlowsTable = (props: Props) => {
                 (s) => s.components.flowsFilter.headers.flowDetails
               )}
             >
-              <Alert
-                severity="info"
-                onClose={handleInfoAlertClose}
-                sx={{
-                  display: infoAlertDisplay ? 'flex' : 'none',
-                  ...tw`mt-4`,
-                }}
-              >
-                {t.t(lang, (s) => s.components.flowsFilter.info.filterInfo)}
-              </Alert>
+              <InfoAlert
+                text={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.info.filterInfo
+                )}
+                localStorageKey="filterCommaSeparate"
+                sxProps={tw`mt-4`}
+              />
               <C.MultiTextField
                 label={t.t(
                   lang,
