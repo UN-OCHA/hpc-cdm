@@ -43,15 +43,7 @@ export const CATEGORY = t.type({
 export type Category = t.TypeOf<typeof CATEGORY>;
 
 export const KEYWORD = t.type({
-  id: t.number,
-  name: t.string,
-  description: t.union([t.string, t.null]),
-  parentID: t.union([t.number, t.null]),
-  code: t.union([t.string, t.null]),
-  group: t.string,
-  includeTotals: t.union([t.boolean, t.null]),
-  createdAt: t.string,
-  updatedAt: t.string,
+  ...CATEGORY.props,
   refCount: t.string,
 });
 

@@ -33,7 +33,7 @@ const FLOW_OBJECT = t.intersection([
 
 export type FlowObject = t.TypeOf<typeof FLOW_OBJECT>;
 
-const FLOW_CATEGORY = t.intersection([
+const FLOW_CATEGORY_REST = t.intersection([
   t.type({
     name: t.string,
     group: t.string,
@@ -56,7 +56,7 @@ const FLOW_CATEGORY = t.intersection([
     }),
   }),
 ]);
-export type FlowCategory = t.TypeOf<typeof FLOW_CATEGORY>;
+export type FlowCategory = t.TypeOf<typeof FLOW_CATEGORY_REST>;
 
 const CREATED_BY_OR_LAST_UPDATED_BY = t.type({
   name: t.string,
@@ -117,30 +117,30 @@ export const GET_FLOW_RESULT = FLOW_REST;
 
 export type GetFlowResult = t.TypeOf<typeof GET_FLOW_RESULT>;
 
-// GRAPHQL CODE FROM HERE
+// * GRAPHQL CODE FROM HERE *
 
 const DIRECTION = t.union([t.literal('source'), t.literal('destination')]);
 
-const FlowLocation = t.type({
+const FLOW_LOCATION = t.type({
   id: t.number,
   name: t.string,
   direction: DIRECTION,
 });
 
-const FlowOrganization = t.type({
+const FLOW_ORGANIZATION = t.type({
   id: t.number,
   direction: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
   name: t.string,
   abbreviation: t.string,
 });
 
-export type FlowOrganization = t.TypeOf<typeof FlowOrganization>;
-const FlowUsageYear = t.type({
+export type FlowOrganization = t.TypeOf<typeof FLOW_ORGANIZATION>;
+const FLOW_USAGE_YEAR = t.type({
   year: t.string,
   direction: DIRECTION,
 });
 
-const FlowExternalReference = t.type({
+const FLOW_EXTERNAL_REFERENCE = t.type({
   systemID: t.string,
   flowID: t.number,
   externalRecordID: t.string,
@@ -148,26 +148,32 @@ const FlowExternalReference = t.type({
   updatedAt: t.string,
 });
 
-const FlowReportDetail = t.type({
-  id: t.number,
-  versionID: t.number,
-  source: t.string,
-  date: t.union([t.string, t.null]),
-  verified: t.boolean,
-  channel: t.union([t.string, t.null]),
-  updatedAt: t.string,
-  contactInfo: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  sourceID: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  refCode: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  organizationID: t.union([t.number, t.null, t.undefined]), // accepts number or null/undefined
-});
+const FLOW_REPORT_DETAIL = t.intersection([
+  t.type({
+    id: t.number,
+    versionID: t.number,
+    source: t.string,
+    verified: t.boolean,
+    updatedAt: t.string,
+    createdAt: t.string,
+  }),
+  t.partial({
+    flowID: t.number,
+    date: t.union([t.string, t.null]),
+    channel: t.union([t.string, t.null]),
+    contactInfo: t.union([t.string, t.null]),
+    sourceID: t.union([t.string, t.null]),
+    refCode: t.union([t.string, t.null]),
+    organizationID: t.number,
+  }),
+]);
 
-const FlowParkedParentSource = t.type({
+const FLOW_PARKED_PARENT_SOURCE = t.type({
   organization: t.array(t.number),
   orgName: t.array(t.string),
 });
 
-const FlowCategoryRef = t.type({
+const FLOW_CATEGORY_REF = t.type({
   objectID: t.number,
   versionID: t.number,
   objectType: t.string,
@@ -175,49 +181,61 @@ const FlowCategoryRef = t.type({
   updatedAt: t.string,
 });
 
-const FlowCategory = t.type({
-  id: t.number,
-  name: t.string,
-  group: t.string,
-  createdAt: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  updatedAt: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  description: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  parentID: t.union([t.number, t.null, t.undefined]), // accepts number or null/undefined
-  code: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  includeTotals: t.union([t.boolean, t.null, t.undefined]), // accepts boolean or null/undefined
-  categoryRef: FlowCategoryRef,
-});
+const FLOW_CATEGORY = t.intersection([
+  t.type({
+    id: t.number,
+    name: t.string,
+    group: t.string,
+    categoryRef: FLOW_CATEGORY_REF,
+  }),
+  t.partial({
+    createdAt: t.string,
+    updatedAt: t.string,
+    description: t.string,
+    parentID: t.union([t.number, t.null]),
+    code: t.union([t.string, t.null]),
+    includeTotals: t.union([t.boolean, t.null]),
+  }),
+]);
 
-const FlowPlan = t.type({
+const FLOW_PLAN = t.type({
   id: t.number,
   name: t.string,
   direction: DIRECTION,
 });
 
-const FLOW = t.type({
-  id: t.number,
-  versionID: t.number,
-  amountUSD: t.string,
-  updatedAt: t.string,
-  activeStatus: t.boolean,
-  restricted: t.boolean,
-  locations: t.union([t.array(FlowLocation), t.null, t.undefined]),
-  categories: t.union([t.array(FlowCategory), t.null, t.undefined]),
-  organizations: t.union([t.array(FlowOrganization), t.null, t.undefined]),
-  plans: t.union([t.array(FlowPlan), t.null, t.undefined]),
-  usageYears: t.union([t.array(FlowUsageYear), t.null, t.undefined]),
-  childIDs: t.union([t.array(t.number), t.null, t.undefined]),
-  parentIDs: t.union([t.array(t.number), t.null, t.undefined]), // accepts an array of numbers or null/undefined
-  origAmount: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  origCurrency: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  externalReferences: t.array(FlowExternalReference),
-  reportDetails: t.array(FlowReportDetail),
-  parkedParentSource: t.union([FlowParkedParentSource, t.null]),
-  newMoney: t.union([t.boolean, t.null]),
-  decisionDate: t.union([t.string, t.null]),
-  flowDate: t.union([t.string, t.null]),
-  exchangeRate: t.union([t.string, t.null]),
-});
+export const FLOW = t.intersection([
+  t.type({
+    id: t.number,
+    versionID: t.number,
+    amountUSD: t.string,
+    updatedAt: t.string,
+    activeStatus: t.boolean,
+    restricted: t.boolean,
+    externalReferences: t.array(FLOW_EXTERNAL_REFERENCE),
+    reportDetails: t.array(FLOW_REPORT_DETAIL),
+    newMoney: t.union([t.boolean, t.null]),
+    decisionDate: t.union([t.string, t.null]),
+    flowDate: t.union([t.string, t.null]),
+    exchangeRate: t.union([t.string, t.null]),
+    parkedParentSource: t.union([FLOW_PARKED_PARENT_SOURCE, t.null]),
+  }),
+  t.partial({
+    description: t.string,
+    budgetYear: t.string,
+    locations: t.union([t.array(FLOW_LOCATION), t.null]),
+    categories: t.union([t.array(FLOW_CATEGORY), t.null]),
+    organizations: t.union([t.array(FLOW_ORGANIZATION), t.null]),
+    destinationOrganizations: t.union([t.array(FLOW_ORGANIZATION), t.null]),
+    sourceOrganizations: t.union([t.array(FLOW_ORGANIZATION), t.null]),
+    plans: t.union([t.array(FLOW_PLAN), t.null]),
+    usageYears: t.union([t.array(FLOW_USAGE_YEAR), t.null]),
+    childIDs: t.union([t.array(t.number), t.null]),
+    parentIDs: t.union([t.array(t.number), t.null]),
+    origAmount: t.union([t.string, t.null]),
+    origCurrency: t.union([t.string, t.null]),
+  }),
+]);
 
 const FLOW_RESULT = t.array(FLOW);
 export type Flow = t.TypeOf<typeof FLOW>;
