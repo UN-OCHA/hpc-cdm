@@ -141,7 +141,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     data,
   }: {
     lang: LanguageKey;
-    data: organizations.SearchOrnganizationResult;
+    data: organizations.SearchOrganizationResult;
   }) => {
     const nonSafeTypedTableHeaders = decodeTableHeaders(
       query.tableHeaders,
@@ -290,7 +290,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     data,
   }: {
     lang: LanguageKey;
-    data: organizations.SearchOrnganizationResult;
+    data: organizations.SearchOrganizationResult;
   }) => {
     const nonSafeTypedTableHeaders = decodeTableHeaders(
       query.tableHeaders,

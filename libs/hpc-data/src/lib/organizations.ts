@@ -88,10 +88,10 @@ const SEARCH_ORGANIZATION = t.type({
   create: t.array(UPDATED_CREATED_BY),
   update: t.array(UPDATED_CREATED_BY),
 });
-export type SearchOrganiation = t.TypeOf<typeof SEARCH_ORGANIZATION>;
+export type SearchOrganization = t.TypeOf<typeof SEARCH_ORGANIZATION>;
 
 export const SEARCH_ORGANIZATIONS = t.array(SEARCH_ORGANIZATION);
-export type SearchOrganiations = t.TypeOf<typeof SEARCH_ORGANIZATIONS>;
+export type SearchOrganizations = t.TypeOf<typeof SEARCH_ORGANIZATIONS>;
 
 export const GET_ORGANIZATIONS_AUTOCOMPLETE_PARAMS = t.type({
   query: t.string,
@@ -136,7 +136,7 @@ export const SEARCH_ORGANIZATION_RESULT = t.type({
   organizations: SEARCH_ORGANIZATIONS,
 });
 
-export type SearchOrnganizationResult = t.TypeOf<
+export type SearchOrganizationResult = t.TypeOf<
   typeof SEARCH_ORGANIZATION_RESULT
 >;
 
@@ -161,7 +161,7 @@ export const CREATE_ORGANIZATION_PARAMS = t.type({
       url: t.string,
       notes: t.string,
       comments: t.string,
-      verfied: t.boolean,
+      verified: t.boolean,
       parentID: t.number,
     }),
   ]),
@@ -252,7 +252,7 @@ export interface Model {
   ): Promise<GetOrganizationsResult>;
   searchOrganizations(
     params: SearchOrganizationParams
-  ): Promise<SearchOrnganizationResult>;
+  ): Promise<SearchOrganizationResult>;
   getOrganization(
     params: GetOrganizationParams
   ): Promise<GetOrganizationResult>;
