@@ -95,7 +95,7 @@ const ConfirmationText = ({
 
   return <p>{text}</p>;
 };
-export const MergeModal = (props: MergeModalProps) => {
+const MergeModal = (props: MergeModalProps) => {
   const { type } = props;
   const navigate = useNavigate();
 
@@ -359,4 +359,4 @@ export const MergeModal = (props: MergeModalProps) => {
   );
 };
 
-export default MergeModalProps;
+export default MergeModal;
