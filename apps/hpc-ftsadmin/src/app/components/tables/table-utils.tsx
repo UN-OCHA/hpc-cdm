@@ -11,8 +11,6 @@ import EllipsisText from '../../utils/ellipsis-text';
 import { Chip, IconButton, TableRow, Tooltip } from '@mui/material';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import { C } from '@unocha/hpc-ui';
-import { util } from '@unocha/hpc-core';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
 import type {
   FlowHeaderID,
   KeywordHeaderID,
@@ -210,13 +208,4 @@ export const RenderChipsRow = ({
     );
   }
   return chipList;
-};
-
-/**
- * Handle function to control the information text in the Draggable List components of tables */
-export const handleTableSettingsInfoClose = (
-  setTableInfoDisplay: React.Dispatch<React.SetStateAction<boolean | undefined>>
-) => {
-  util.setLocalStorageItem<LocalStorageSchema>('tableSettings', false);
-  setTableInfoDisplay(false);
 };
