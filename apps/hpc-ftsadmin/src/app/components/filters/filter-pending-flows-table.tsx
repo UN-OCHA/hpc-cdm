@@ -23,9 +23,9 @@ export interface PendingFlowsFilterValues {
   dataProvider?: FormObjectValue | null;
   reporterRefCode?: string;
   sourceOrganizations?: Array<FormObjectValue>;
-  sourceCountries?: Array<FormObjectValue>;
+  sourceLocations?: Array<FormObjectValue>;
   destinationOrganizations?: Array<FormObjectValue>;
-  destinationCountries?: Array<FormObjectValue>;
+  destinationLocations?: Array<FormObjectValue>;
   destinationUsageYears?: Array<FormObjectValue>;
   includeChildrenOfParkedFlows?: boolean;
 }
@@ -35,9 +35,9 @@ export const PENDING_FLOWS_FILTER_INITIAL_VALUES: PendingFlowsFilterValues = {
   dataProvider: null,
   reporterRefCode: '',
   sourceOrganizations: [],
-  sourceCountries: [],
+  sourceLocations: [],
   destinationOrganizations: [],
-  destinationCountries: [],
+  destinationLocations: [],
   destinationUsageYears: [],
   includeChildrenOfParkedFlows: false,
 };
@@ -176,7 +176,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                   lang,
                   (s) => s.components.pendingFlowsFilter.filters.sourceLocations
                 )}
-                name="sourceCountries"
+                name="sourceLocations"
                 fnPromise={(query) => fnLocations(query, environment)}
                 isMulti
               />
@@ -205,7 +205,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                   (s) =>
                     s.components.pendingFlowsFilter.filters.destinationLocations
                 )}
-                name="destinationCountries"
+                name="destinationLocations"
                 fnPromise={(query) => fnLocations(query, environment)}
                 isMulti
               />
