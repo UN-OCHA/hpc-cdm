@@ -78,37 +78,71 @@ const AsyncAutocompleteSelect = ({
   const [options, setOptions] = useState<Array<FormObjectValue>>([]);
   const [data, setData] = useState<Array<FormObjectValue>>([]);
   const [isFetch, setIsFetch] = useState(false);
+  const [debouncedInputValue, setDebouncedInputValue] = useState('');
   const loading =
     open && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
+  const actualYear = new Date().getFullYear();
+
+  useEffect(() => {
+    const delay = 300;
+    const debounceTimer = setTimeout(() => {
+      setDebouncedInputValue(inputValue);
+    }, delay);
+
+    return () => {
+      clearTimeout(debounceTimer);
+    };
+  }, [inputValue]);
+
+  useEffect(() => {
+    if (!open && isAutocompleteAPI) {
+      setOptions([]);
+      setData([]);
+      setIsFetch(false);
+    }
+  }, [open]);
 
   useEffect(() => {
     let active = true;
-    if (isAutocompleteAPI && (inputValue === '' || inputValue.length < 3)) {
+    if (
+      isAutocompleteAPI &&
+      (debouncedInputValue === '' || debouncedInputValue.length < 3)
+    ) {
       setOptions([]);
       setData([]);
       setIsFetch(false);
       return undefined;
     }
-    if (data.length > 0 && (inputValue.length >= 3 || !isAutocompleteAPI)) {
-      const filterOptions = (value?: string) =>
-        value ? value.toUpperCase().includes(inputValue.toUpperCase()) : false;
+    if (
+      (data.length > 0 &&
+        (debouncedInputValue.length >= 3 || !isAutocompleteAPI) &&
+        debouncedInputValue.length > 0) ||
+      (debouncedInputValue.length === 0 &&
+        options.at(0)?.displayLabel !== (actualYear - 5).toString() &&
+        options.at(-1)?.displayLabel !== (actualYear + 5).toString())
+    ) {
       setOptions(
-        data.filter(
-          (x) =>
-            filterOptions(x.displayLabel) ||
-            (allowChildrenRender && filterOptions(x.parent?.displayLabel))
+        data.filter((x) =>
+          x.displayLabel
+            .toUpperCase()
+            .includes(debouncedInputValue.toUpperCase())
         )
       );
     }
 
-    if (!loading) {
+    if (!loading && !(typeof field.value === 'string')) {
       return undefined;
     }
     (async () => {
       try {
-        const response = await fnPromise({
-          query: inputValue,
-        });
+        let response: FormObjectValue[];
+        if (fnPromise) {
+          response = await fnPromise({
+            query: debouncedInputValue,
+          });
+        } else {
+          response = field.value;
+        }
         setData(removeFormObjectValueFromFirstArray(response, removeOptions));
         if (active) {
           setOptions(response);
