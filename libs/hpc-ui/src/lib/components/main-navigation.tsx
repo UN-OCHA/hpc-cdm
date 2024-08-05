@@ -29,6 +29,7 @@ interface Props {
         path: string;
         label: string;
         selected?: boolean;
+        dataTest?: string;
       }
     | null
     | undefined
@@ -167,7 +168,11 @@ export default (props: Props) => {
               loc.pathname.startsWith(tab.path + '/')
             : tab.selected;
         return (
-          <li key={i} className={selected ? CLS.SELECTED : ''}>
+          <li
+            key={i}
+            className={selected ? CLS.SELECTED : ''}
+            data-test={tab.dataTest}
+          >
             <Link to={tab.path}>
               <span>{tab.label}</span>
             </Link>

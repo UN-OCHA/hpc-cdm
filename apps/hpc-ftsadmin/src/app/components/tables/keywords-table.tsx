@@ -301,7 +301,10 @@ export default function KeywordTable(props: KeywordTableProps) {
             )
           )
           .map((row) => (
-            <TableRow key={`${row.id}`}>
+            <TableRow
+              key={`${row.id}`}
+              data-test={`keywords-table-row-${row.id}`}
+            >
               {tableHeaders.map((column) => {
                 if (!column.active) {
                   return null;
@@ -314,7 +317,7 @@ export default function KeywordTable(props: KeywordTableProps) {
                         size="small"
                         component="th"
                         scope="row"
-                        data-test="keyword-table-id"
+                        data-test="keywords-table-id"
                       >
                         {row.id}
                       </TableCell>
@@ -326,7 +329,7 @@ export default function KeywordTable(props: KeywordTableProps) {
                         component="th"
                         size="small"
                         scope="row"
-                        data-test="keyword-table-name"
+                        data-test="keywords-table-name"
                       >
                         <EditableRow
                           lang={lang}
@@ -341,7 +344,7 @@ export default function KeywordTable(props: KeywordTableProps) {
                       <TableCell
                         key={`${row.id}_keyword.relatedFlows`}
                         size="small"
-                        data-test="_keyword-table-relatedFlows"
+                        data-test="keywords-table-relatedFlows"
                       >
                         {row.refCount}
                       </TableCell>
@@ -351,7 +354,7 @@ export default function KeywordTable(props: KeywordTableProps) {
                       <TableCell
                         key={`${row.id}_keyword.public`}
                         size="small"
-                        data-test="_keyword-table-public"
+                        data-test="keywords-table-public"
                       >
                         {row.description === 'public' ? <CheckIcon /> : '--'}
                       </TableCell>
@@ -393,7 +396,7 @@ export default function KeywordTable(props: KeywordTableProps) {
                 <TableCell
                   size="small"
                   key={`${header.identifierID}_${header.label}`}
-                  data-test={`header-${header.label}`}
+                  data-test={`keywords-table-header-${header.label}`}
                   {...(header.sortable &&
                     query.orderBy === header.identifierID && {
                       'aria-sort':

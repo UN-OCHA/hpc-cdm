@@ -1,0 +1,14 @@
+{
+  "test1": {
+    "add-flow-source-organization-field": "Germany, Government of",
+    "add-flow-source-usage-year-field": "2022",
+    "add-flow-destination-project-field": "apts627",
+    "add-flow-amount-USD-field": "8994018977",
+    "add-flow-original-currency-funding-amount-field": "200000000000000",
+    "add-flow-exchange-rate-field": "22237",
+    "add-flow-description-field": "GV, WASH EDU",
+    "add-flow-flow-status-field": "Commitment",
+    "add-flow-earmarking-field": "Unearmarked",
+    "add-flow-report-channel-field": "Other"
+  }
+}

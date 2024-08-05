@@ -127,18 +127,22 @@ export const App = () => {
                           {
                             label: t.t(lang, (s) => s.navigation.flows),
                             path: paths.flows(),
+                            dataTest: 'flows-nav-button',
                           },
                           {
                             label: t.t(lang, (s) => s.navigation.pendingFlows),
                             path: paths.pendingFlows(),
+                            dataTest: 'pending-flows-nav-button',
                           },
                           {
                             label: t.t(lang, (s) => s.navigation.organizations),
                             path: paths.organizations(),
+                            dataTest: 'organizations-nav-button',
                           },
                           {
                             label: t.t(lang, (s) => s.navigation.keywords),
                             path: paths.keywords(),
+                            dataTest: 'keywords-nav-button',
                           },
                         ]}
                         className={CLASSES.CONTAINER.FLUID}
