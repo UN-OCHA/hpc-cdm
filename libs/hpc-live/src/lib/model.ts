@@ -1,6 +1,13 @@
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
+import {
+  ApolloClient,
+  DocumentNode,
+  gql,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from '@apollo/client';
 import { util } from '@unocha/hpc-core';
 import {
   Model,
@@ -227,6 +234,7 @@ export class LiveModel implements Model {
   private readonly URL: URLInterface;
   private readonly fetch: FetchInterface;
   private readonly sha256Hash: (data: ArrayBuffer) => Promise<string>;
+  private readonly apolloClient: ApolloClient<NormalizedCacheObject>;
 
   private readonly searchFlowFields = `flows {
     id
@@ -333,6 +341,10 @@ export class LiveModel implements Model {
     this.URL = config.interfaces?.URL || URL;
     this.fetch = config.interfaces?.fetch || fetch.bind(window);
     this.sha256Hash = config.interfaces?.sha256Hash || util.hashFileInBrowser;
+    this.apolloClient = new ApolloClient({
+      uri: `${this.config.baseUrl}/v4/graphql`,
+      cache: new InMemoryCache({}),
+    });
   }
 
   private baseFetchInit = ({
@@ -451,6 +463,49 @@ export class LiveModel implements Model {
     }
   };
 
+  private callGraphQL = async <T>({
+    query,
+    resultType,
+  }: {
+    query: DocumentNode;
+    resultType: t.Type<T>;
+  }) => {
+    const res = await this.apolloClient.query<T>({ query });
+
+    if (!res.error && !res.errors) {
+      const data = res.data;
+      const decode = resultType.decode(data);
+      if (isRight(decode)) {
+        return decode.right;
+      }
+
+      const report = PathReporter.report(decode);
+      console.error('Received unexpected result from server', report, data);
+      throw new ModelError('Received unexpected result from server', data);
+    }
+
+    const json = res.error?.networkError as null | {
+      timestamp: Date;
+      otherUser: string;
+      code?: string;
+      message: errors.UserErrorKey;
+      details?: {
+        code: string;
+        detail: string;
+        table: string;
+      };
+    };
+    if (
+      json?.code === 'BadRequestError' &&
+      errors.USER_ERROR_KEYS.includes(json?.message)
+    ) {
+      throw new errors.UserError(json.message);
+    }
+
+    const message =
+      json?.code && json?.message ? `${json.code}: ${json.message}` : '';
+    throw new ModelError(message, json);
+  };
   get access(): access.Model {
     const accessPathnameForTarget = (target: access.AccessTarget) =>
       `/v2/access/${
@@ -590,73 +645,56 @@ export class LiveModel implements Model {
           pathname: `/v2/flow/${params.id}`,
           resultType: flows.GET_FLOW_RESULT,
         }),
-      getFlow: (params) =>
-        this.call({
-          pathname: `/v4/graphql`,
-          method: 'POST',
-          body: {
-            type: 'raw',
-            data: ` query Flow{
-              flow(id: ${params}) {
-                  createdAt
-                  updatedAt
-                  deletedAt
-                  id
-                  versionID
-                  amountUSD
-                  flowDate
-                  decisionDate
-                  firstReportedDate
-                  budgetYear
-                  origAmount
-                  origCurrency
-                  exchangeRate
-                  activeStatus
-                  newMoney
-                  restricted
-                  description
-                  notes
-                  versionStartDate
-                  versionEndDate
-                  createdBy
-                  lastUpdatedBy
-              }
-          }`,
-            contentType: 'application/json; charset=utf-8',
-          },
-          resultType: flows.GET_FLOW_RESULT,
-        }),
+      getFlow: (params) => {
+        const query = gql`query Flow{
+          flow(id: ${params}) {
+              createdAt
+              updatedAt
+              deletedAt
+              id
+              versionID
+              amountUSD
+              flowDate
+              decisionDate
+              firstReportedDate
+              budgetYear
+              origAmount
+              origCurrency
+              exchangeRate
+              activeStatus
+              newMoney
+              restricted
+              description
+              notes
+              versionStartDate
+              versionEndDate
+              createdBy
+              lastUpdatedBy
+          }
+      }`;
+        return this.callGraphQL({ query, resultType: flows.GET_FLOW_RESULT });
+      },
+
       /**
        * TODO: Dynamically fetch only necessary fields, Ex: if we don't display 'NewMoney' we shouldn't ask for it
        */
       searchFlows: (params) => {
-        const query = `query {
-          searchFlows${searchFlowsParams(params)} {
-            total
-            
-            prevPageCursor
-        
-            hasNextPage
-        
-            nextPageCursor
-        
-            hasPreviousPage
-        
-            pageSize
-
-            ${this.searchFlowFields}
+        const query = gql`
+          query {
+            searchFlows${searchFlowsParams(params)} {
+              total
+              prevPageCursor
+              hasNextPage
+              nextPageCursor
+              hasPreviousPage
+              pageSize
+              ${this.searchFlowFields}
+            }
           }
-        }`;
-        return this.call({
-          pathname: `/v4/graphql`,
-          method: 'POST',
-          body: {
-            type: 'json',
-            data: {
-              query: query,
-            },
-          },
-          signal: params.signal,
+        `;
+
+        return this.callGraphQL({
+          query,
           resultType: flows.SEARCH_FLOWS_RESULT,
         });
       },
@@ -671,21 +709,13 @@ export class LiveModel implements Model {
           resultType: flows.BULK_REJECT_PENDING_FLOWS_RESULT,
         }),
       getFlowsDownloadXLSX: (params) => {
-        const query = `query {
+        const query = gql`query {
           searchFlowsBatches${searchFlowsParams(params)} {
             ${this.searchFlowFields}
           }
         }`;
-        return this.call({
-          pathname: `/v4/graphql`,
-          method: 'POST',
-          body: {
-            type: 'json',
-            data: {
-              query: query,
-            },
-          },
-          signal: params.signal,
+        return this.callGraphQL({
+          query,
           resultType: flows.SEARCH_FLOWS_BATCHES_RESULT,
         });
       },
