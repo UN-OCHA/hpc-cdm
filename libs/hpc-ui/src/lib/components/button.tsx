@@ -58,6 +58,7 @@ interface Props {
   active?: boolean;
   condensed?: boolean;
   autoFocus?: boolean;
+  dataTest?: string;
 }
 
 const BaseButton = (props: Props) => {
@@ -73,6 +74,7 @@ const BaseButton = (props: Props) => {
     active,
     condensed,
     autoFocus,
+    dataTest,
   } = props;
 
   const [focused, setFocused] = useState(false);
@@ -108,6 +110,7 @@ const BaseButton = (props: Props) => {
       className={className}
       onClick={behaviour.onClick}
       ref={ref as React.RefObject<HTMLButtonElement>}
+      data-test={dataTest}
     >
       {contents}
     </button>
@@ -117,6 +120,7 @@ const BaseButton = (props: Props) => {
       onClick={behaviour.onClick}
       type={behaviour.type}
       ref={ref as React.RefObject<HTMLButtonElement>}
+      data-test={dataTest}
     >
       {contents}
     </button>
@@ -125,6 +129,7 @@ const BaseButton = (props: Props) => {
       className={className}
       to={behaviour.to}
       ref={ref as React.RefObject<HTMLAnchorElement>}
+      data-test={dataTest}
     >
       {contents}
     </Link>

@@ -164,6 +164,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                 backgroundColor: tw`bg-unocha-primary bg-opacity-10`,
               },
             }}
+            data-test={`organizations-table-row-${row.id}`}
           >
             {tableHeaders.map((column) => {
               if (!column.active) {
@@ -177,7 +178,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                       size="small"
                       component="th"
                       scope="row"
-                      data-test="organization-table-id"
+                      data-test="organizations-table-id"
                     >
                       {row.id}
                     </TableCell>
@@ -189,7 +190,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                       component="th"
                       size="small"
                       scope="row"
-                      data-test="organization-table-name"
+                      data-test="organizations-table-name"
                     >
                       {row.name}
                     </TableCell>
@@ -199,7 +200,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                     <TableCell
                       key={`${row.id}_organization.abbreviation`}
                       size="small"
-                      data-test="organization-table-abbreviation"
+                      data-test="organizations-table-abbreviation"
                     >
                       {row.abbreviation}
                     </TableCell>
@@ -209,7 +210,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                     <TableCell
                       key={`${row.id}_organization.type`}
                       size="small"
-                      data-test="organization-table-type"
+                      data-test="organizations-table-type"
                     >
                       {(() => {
                         const res = row.categories.filter(
@@ -226,7 +227,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                     <TableCell
                       key={`${row.id}_organization.subType`}
                       size="small"
-                      data-test="organization-table-subType"
+                      data-test="organizations-table-subType"
                     >
                       {(() => {
                         const res = row.categories.filter(
@@ -243,7 +244,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                     <TableCell
                       key={`${row.id}_organization.location`}
                       size="small"
-                      data-test="organization-table-location"
+                      data-test="organizations-table-location"
                     >
                       {row.locations.length > 0
                         ? row.locations.map(
@@ -260,7 +261,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                     <TableCell
                       key={`${row.id}_organization.createdBy`}
                       size="small"
-                      data-test="organization-table-created-by"
+                      data-test="organizations-table-created-by"
                     >
                       {parseUpdatedCreatedBy(row.create, lang)}
                       {}
@@ -271,7 +272,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                     <TableCell
                       key={`${row.id}_organization.updatedBy`}
                       size="small"
-                      data-test="organization-table-updated-by"
+                      data-test="organizations-table-updated-by"
                     >
                       {parseUpdatedCreatedBy(row.update, lang)}
                     </TableCell>
@@ -314,7 +315,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                 <TableCell
                   size="small"
                   key={`${header.identifierID}_${header.label}`}
-                  data-test={`header-${header.label}`}
+                  data-test={`organization-table-header-${header.label}`}
                   {...(header.sortable &&
                     query.orderBy === header.identifierID && {
                       'aria-sort':
@@ -508,7 +509,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                 </Box>
                 <TablePagination
                   sx={{ display: 'block' }}
-                  data-test="flows-table-pagination"
+                  data-test="organization-table-pagination"
                   rowsPerPageOptions={rowsPerPageOptions}
                   component="div"
                   count={parseInt(data.count)}
