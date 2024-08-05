@@ -7,5 +7,10 @@
     "allowJs": true,
     "composite": true
   },
-  "include": ["**/*.ts", "**/*.js", "../../libs/hpc-dummy/src/index.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.js",
+    "../../libs/hpc-dummy/src/index.ts",
+    "./src/fixtures/*.json"
+  ]
 }
