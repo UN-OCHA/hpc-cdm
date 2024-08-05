@@ -275,14 +275,12 @@ export const FilterFlowsTable = (props: Props) => {
                   )}
                   name="reporterRefCode"
                 />
-                <C.NumberField
+                <C.TextFieldWrapper
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.sourceSystemID
                   )}
                   name="sourceSystemID"
-                  allowNegative
-                  type="number"
                 />
                 <C.NumberField
                   label={t.t(
