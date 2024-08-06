@@ -33,7 +33,7 @@ const CheckBox = ({
   const configCheckBox: FormControlLabelProps = {
     ...field,
     ...otherProps,
-    label: label,
+    label,
     id: name,
     control: (
       <Checkbox

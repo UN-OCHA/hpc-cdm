@@ -108,9 +108,9 @@ const AsyncAutocompleteSelect = ({
     onClose: () => {
       setOpen(false);
     },
-    open: open,
+    open,
     isOptionEqualToValue: (option, value) => option.value === value.value,
-    options: options,
+    options,
     getOptionLabel: (op) => (typeof op === 'string' ? op : op.displayLabel),
     filterSelectedOptions: true,
     filterOptions: (x) => x,
@@ -122,7 +122,7 @@ const AsyncAutocompleteSelect = ({
     onInputChange: (_, newInputValue) => {
       setInputValue(newInputValue);
     },
-    loading: loading,
+    loading,
     renderOption: (props, option) => {
       return (
         <li {...props} key={option.value}>
