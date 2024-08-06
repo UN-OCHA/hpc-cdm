@@ -28,12 +28,12 @@ const TextFieldWrapper = ({
   const configTextField: TextFieldProps = {
     ...field,
     ...otherProps,
-    label: label,
+    label,
     id: name,
     multiline: textarea,
     maxRows: 5,
     required,
-    placeholder: placeholder,
+    placeholder,
     size: 'small',
     type: 'text',
   };

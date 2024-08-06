@@ -24,7 +24,7 @@ const Switch = ({
   const configCheckBox: FormControlLabelProps = {
     ...field,
     ...otherProps,
-    label: label,
+    label,
     id: name,
     control: <SwitchMUI checked={field.value} size={size} color={color} />,
   };
