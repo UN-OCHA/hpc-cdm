@@ -39,8 +39,8 @@ const MultiTextField = ({
   ): TextFieldProps => {
     return {
       ...params,
-      label: label,
-      placeholder: placeholder,
+      label,
+      placeholder,
       size: 'small',
       type: 'text',
       InputProps:

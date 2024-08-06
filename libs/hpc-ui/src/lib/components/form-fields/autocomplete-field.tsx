@@ -38,7 +38,7 @@ const AutocompleteSelect = ({
     ...otherProps,
     multiple: isMulti,
     readOnly,
-    options: options,
+    options,
     isOptionEqualToValue: (option, value) => option.value === value.value,
     getOptionLabel: (op) => (typeof op === 'string' ? op : op.displayLabel),
     ChipProps: { size: 'small' },
