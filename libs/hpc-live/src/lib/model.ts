@@ -587,7 +587,7 @@ export class LiveModel implements Model {
           },
           resultType: categories.GET_CATEGORIES_RESULT,
         }),
-      getKeywords: () =>
+      getKeywords: (signal) =>
         this.call({
           pathname: '/v2/category',
           queryParams: {
@@ -595,6 +595,7 @@ export class LiveModel implements Model {
             scopes: 'relatedCount',
           },
           resultType: categories.GET_KEYWORDS_RESULT,
+          signal,
         }),
       deleteKeyword: (params) =>
         this.call({
@@ -754,6 +755,7 @@ export class LiveModel implements Model {
             type: 'json',
             data: params,
           },
+          signal: params.search.signal,
           resultType: organizations.SEARCH_ORGANIZATION_RESULT,
         }),
       getOrganization: (params) =>
