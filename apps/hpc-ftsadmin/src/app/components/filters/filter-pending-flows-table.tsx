@@ -16,7 +16,6 @@ import {
 interface Props {
   query: Query;
   setQuery: (newQuery: Query) => void;
-  handleAbortController: () => void;
 }
 export interface PendingFlowsFilterValues {
   status?: FormObjectValue | null;
@@ -49,22 +48,15 @@ const StyledDiv = tw.div`
   gap-x-4
 `;
 export const FilterPendingFlowsTable = (props: Props) => {
-  const { setQuery, query, handleAbortController } = props;
+  const { setQuery, query } = props;
   const { lang, env } = useContext(AppContext);
   const environment = env();
 
   const handleSubmit = (values: PendingFlowsFilterValues) => {
-    const encodedFilters = encodeFilters(
-      values,
-      PENDING_FLOWS_FILTER_INITIAL_VALUES
-    );
-    if (query.filters !== encodedFilters) {
-      handleAbortController();
-    }
     setQuery({
       ...query,
       page: 0,
-      filters: encodedFilters,
+      filters: encodeFilters(values, PENDING_FLOWS_FILTER_INITIAL_VALUES),
     });
   };
   const handleResetForm = (
@@ -72,18 +64,11 @@ export const FilterPendingFlowsTable = (props: Props) => {
       nextState?: Partial<FormikState<PendingFlowsFilterValues>>
     ) => void
   ) => {
-    const encodedFilters = encodeFilters(
-      {},
-      PENDING_FLOWS_FILTER_INITIAL_VALUES
-    );
     formikResetForm();
-    if (query.filters !== encodedFilters) {
-      handleAbortController();
-    }
     setQuery({
       ...query,
       page: 0,
-      filters: encodedFilters,
+      filters: encodeFilters({}, PENDING_FLOWS_FILTER_INITIAL_VALUES),
     });
   };
   return (

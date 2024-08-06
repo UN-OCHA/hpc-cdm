@@ -294,13 +294,6 @@ const FLOW_FILTERS = t.partial({
 });
 
 export type FlowFilters = t.TypeOf<typeof FLOW_FILTERS>;
-const AbortSignalType = new t.Type<AbortSignal, AbortSignal, unknown>(
-  'AbortSignal',
-  (input: unknown): input is AbortSignal => input instanceof AbortSignal,
-  (input, context) =>
-    input instanceof AbortSignal ? t.success(input) : t.failure(input, context),
-  t.identity
-);
 
 export const NESTED_FLOW_FILTERS = t.partial({
   reporterRefCode: t.string,
@@ -316,7 +309,6 @@ export const SEARCH_FLOWS_PARAMS = t.partial({
   sortOrder: t.string,
   sortField: t.string,
   ...FLOW_FILTERS.props,
-  signal: AbortSignalType,
 });
 export type SearchFlowsParams = t.TypeOf<typeof SEARCH_FLOWS_PARAMS>;
 

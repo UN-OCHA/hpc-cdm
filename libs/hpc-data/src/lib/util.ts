@@ -381,3 +381,13 @@ export const VALID_DAYJS_DATE = new t.Type<Dayjs, Dayjs>(
   },
   t.identity
 );
+
+export const ABORT_SIGNAL = new t.Type<AbortSignal, AbortSignal, unknown>(
+  'AbortSignal',
+  (input: unknown): input is AbortSignal => input instanceof AbortSignal,
+  (input, context) =>
+    input instanceof AbortSignal ? t.success(input) : t.failure(input, context),
+  t.identity
+);
+
+export type AbortSignalType = t.TypeOf<typeof ABORT_SIGNAL>;

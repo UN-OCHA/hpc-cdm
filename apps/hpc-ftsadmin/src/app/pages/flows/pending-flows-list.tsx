@@ -22,7 +22,6 @@ import {
 import FlowsTable, {
   FlowsTableProps,
 } from '../../components/tables/flows-table';
-import { useCallback, useEffect, useState } from 'react';
 
 interface Props {
   className?: string;
@@ -35,10 +34,6 @@ const LandingContainer = tw.div`
 `;
 
 export default (props: Props) => {
-  const [abortController, setAbortController] = useState<AbortController>(
-    new AbortController()
-  );
-
   const [query, setQuery] = useQueryParams({
     page: withDefault(NumberParam, 0),
     rowsPerPage: withDefault(
@@ -72,27 +67,6 @@ export default (props: Props) => {
     nextPageCursor: withDefault(NumberParam, 0),
   });
 
-  const handleAbortController = useCallback(() => {
-    // Abort the ongoing requests
-    abortController.abort();
-
-    // Create a new AbortController for the next requests
-    const newAbortController = new AbortController();
-    setAbortController(newAbortController);
-
-    // Perform actions with the updated filter values
-
-    // Pass the new AbortSignal to FlowsTableGraphQL
-    // This can be part of your state or directly passed as a prop
-  }, [abortController]);
-
-  useEffect(() => {
-    return () => {
-      handleAbortController();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const pendingFlowsTableProps: FlowsTableProps = {
     headers: DEFAULT_FLOW_TABLE_HEADERS,
     initialValues: PENDING_FLOWS_FILTER_INITIAL_VALUES,
@@ -100,7 +74,6 @@ export default (props: Props) => {
     query: query,
     setQuery: setQuery,
     pending: true,
-    abortSignal: abortController.signal,
   };
 
   return (
@@ -111,11 +84,7 @@ export default (props: Props) => {
         >
           <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
           <Container>
-            <FilterPendingFlowsTable
-              setQuery={setQuery}
-              query={query}
-              handleAbortController={handleAbortController}
-            />
+            <FilterPendingFlowsTable setQuery={setQuery} query={query} />
             <LandingContainer>
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.pendingFlows.title)}
