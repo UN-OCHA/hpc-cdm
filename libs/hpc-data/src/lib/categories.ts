@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import type { AbortSignalType } from './util';
 
 export type CategoryGroup =
   | 'flowType'
@@ -82,7 +83,7 @@ export type MergeKeywordResult = t.TypeOf<typeof MERGE_KEYWORD_RESULT>;
 
 export interface Model {
   getCategories(params: GetCategoriesParams): Promise<GetCategoriesResult>;
-  getKeywords(): Promise<GetKeywordsResult>;
+  getKeywords(abortSignal?: AbortSignalType): Promise<GetKeywordsResult>;
   deleteKeyword(params: DeleteKeywordParams): Promise<DeleteKeywordResult>;
   updateKeyword(params: Keyword): Promise<Category>;
   mergeKeywords(params: MergeKeywordParams): Promise<MergeKeywordResult>;
