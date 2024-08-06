@@ -13,7 +13,6 @@ import FlowsTable, {
 import FilterFlowsTable, {
   FLOWS_FILTER_INITIAL_VALUES,
 } from '../../components/filters/filter-flows-table';
-import { useCallback, useEffect, useRef } from 'react';
 import useQueryParams from '../../utils/useQueryParams';
 import { FLOW_PARAMS_CODEC } from '../../utils/codecs';
 
@@ -31,18 +30,6 @@ const LandingContainer = tw.div`
 `;
 export default (props: Props) => {
   const rowsPerPageOptions = [10, 25, 50, 100];
-  const abortControllerRef = useRef<AbortController>(new AbortController());
-
-  const handleAbortController = useCallback(() => {
-    abortControllerRef.current.abort();
-    abortControllerRef.current = new AbortController();
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      abortControllerRef.current.abort();
-    };
-  }, []);
 
   const [query, setQuery] = useQueryParams({
     codec: FLOW_PARAMS_CODEC,
@@ -62,7 +49,6 @@ export default (props: Props) => {
     initialValues: FLOWS_FILTER_INITIAL_VALUES,
     query,
     setQuery,
-    abortSignal: abortControllerRef.current.signal,
   };
 
   return (
@@ -73,11 +59,7 @@ export default (props: Props) => {
         >
           <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
           <Container>
-            <FilterFlowsTable
-              setQuery={setQuery}
-              query={query}
-              handleAbortController={handleAbortController}
-            />
+            <FilterFlowsTable setQuery={setQuery} query={query} />
             <LandingContainer>
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.flows.title)}

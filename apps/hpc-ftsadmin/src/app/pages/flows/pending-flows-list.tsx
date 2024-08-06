@@ -13,7 +13,6 @@ import {
 import FlowsTable, {
   FlowsTableProps,
 } from '../../components/tables/flows-table';
-import { useCallback, useEffect, useRef } from 'react';
 import useQueryParams from '../../utils/useQueryParams';
 import { FLOW_PARAMS_CODEC } from '../../utils/codecs';
 
@@ -28,8 +27,6 @@ const LandingContainer = tw.div`
 `;
 
 export default (props: Props) => {
-  const abortControllerRef = useRef<AbortController>(new AbortController());
-
   const [query, setQuery] = useQueryParams({
     codec: FLOW_PARAMS_CODEC,
     initialValues: {
@@ -42,17 +39,6 @@ export default (props: Props) => {
     },
   });
 
-  const handleAbortController = useCallback(() => {
-    abortControllerRef.current.abort();
-    abortControllerRef.current = new AbortController();
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      abortControllerRef.current.abort();
-    };
-  }, []);
-
   const pendingFlowsTableProps: FlowsTableProps = {
     headers: DEFAULT_FLOW_TABLE_HEADERS,
     initialValues: PENDING_FLOWS_FILTER_INITIAL_VALUES,
@@ -60,7 +46,6 @@ export default (props: Props) => {
     query,
     setQuery,
     pending: true,
-    abortSignal: abortControllerRef.current.signal,
   };
 
   return (
@@ -71,11 +56,7 @@ export default (props: Props) => {
         >
           <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
           <Container>
-            <FilterPendingFlowsTable
-              setQuery={setQuery}
-              query={query}
-              handleAbortController={handleAbortController}
-            />
+            <FilterPendingFlowsTable setQuery={setQuery} query={query} />
             <LandingContainer>
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.pendingFlows.title)}

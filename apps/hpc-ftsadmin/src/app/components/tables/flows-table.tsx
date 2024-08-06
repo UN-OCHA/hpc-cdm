@@ -70,7 +70,6 @@ export interface FlowsTableProps {
   rowsPerPageOption: number[];
   query: FlowQuery;
   setQuery: SetQuery<FlowQuery>;
-  abortSignal?: AbortSignal;
   pending?: boolean;
 }
 
@@ -95,7 +94,6 @@ export default function FlowsTable(props: FlowsTableProps) {
       sortField: query.orderBy,
       sortOrder: query.orderDir,
       ...parsedFilters,
-      signal: props.abortSignal,
     })
   );
 

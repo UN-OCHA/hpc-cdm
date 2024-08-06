@@ -12,6 +12,7 @@ import KeywordTable, {
 } from '../../components/tables/keywords-table';
 import useQueryParams from '../../utils/useQueryParams';
 import { KEYWORD_PARAMS_CODEC } from '../../utils/codecs';
+import { useCallback, useEffect, useState } from 'react';
 
 interface Props {
   className?: string;
@@ -33,10 +34,35 @@ export default (props: Props) => {
     },
   });
 
+  const [abortController, setAbortController] = useState<AbortController>(
+    new AbortController()
+  );
+  const handleAbortController = useCallback(() => {
+    // Abort the ongoing requests
+    abortController.abort();
+
+    // Create a new AbortController for the next requests
+    const newAbortController = new AbortController();
+    setAbortController(newAbortController);
+
+    // Perform actions with the updated filter values
+
+    // Pass the new AbortSignal to FlowsTableGraphQL
+    // This can be part of your state or directly passed as a prop
+  }, [abortController]);
+
+  useEffect(() => {
+    return () => {
+      handleAbortController();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const keywordTableProps: KeywordTableProps = {
     headers: DEFAULT_KEYWORD_TABLE_HEADERS,
     query,
     setQuery,
+    abortSignal: abortController.signal,
   };
 
   return (

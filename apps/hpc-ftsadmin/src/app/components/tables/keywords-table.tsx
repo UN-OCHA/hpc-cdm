@@ -53,6 +53,7 @@ export interface KeywordTableProps {
   headers: TableHeadersProps<KeywordHeaderID>[];
   query: KeywordQuery;
   setQuery: SetQuery<KeywordQuery>;
+  abortSignal: AbortSignal;
 }
 
 /**
@@ -246,7 +247,7 @@ export default function KeywordTable(props: KeywordTableProps) {
   const [openSettings, setOpenSettings] = useState(false);
   const [entityEdited, setEntityEdited] = useState(false);
   const state = dataLoader([entityEdited], () =>
-    env.model.categories.getKeywords()
+    env.model.categories.getKeywords(props.abortSignal)
   );
   const [errorUpdate, setErrorUpdate] = useState<{
     code: keyof Strings['components']['keywordTable']['errors'];
