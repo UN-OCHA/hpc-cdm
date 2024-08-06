@@ -52,6 +52,7 @@ export interface KeywordTableProps {
   headers: Array<TableHeadersProps<KeywordHeaderID>>;
   query: KeywordQuery;
   setQuery: SetQuery<KeywordQuery>;
+  abortSignal: AbortSignal;
 }
 
 /**
@@ -179,11 +180,9 @@ const EditableRow = ({
                   if (setErrorUpdate) {
                     setErrorUpdate({ code: error.code, value: error.value });
                   }
-                } else {
-                  if (setErrorUpdate) {
+                } else if (setErrorUpdate) {
                     setErrorUpdate({ code: 'unknown', value: 'unknown' });
                   }
-                }
               });
             setEdit(false);
           }}
@@ -242,7 +241,7 @@ const KeywordTable = (props: KeywordTableProps) => {
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
   const [isEntityEdited, setIsEntityEdited] = useState(false);
   const state = dataLoader([isEntityEdited], () =>
-    env.model.categories.getKeywords()
+    env.model.categories.getKeywords(props.abortSignal)
   );
   const [errorUpdate, setErrorUpdate] = useState<{
     code: keyof Strings['components']['keywordTable']['errors'];

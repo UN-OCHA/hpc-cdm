@@ -25,7 +25,6 @@ import type { FlowQuery, SetQuery } from '../tables/table-utils';
 interface Props {
   query: FlowQuery;
   setQuery: SetQuery<FlowQuery>;
-  handleAbortController: () => void;
 }
 export interface FlowsFilterValues {
   flowID?: string[];
@@ -94,7 +93,7 @@ const StyledDiv = tw.div`
   gap-x-4
 `;
 export const FilterFlowsTable = (props: Props) => {
-  const { setQuery, query, handleAbortController } = props;
+  const { setQuery, query } = props;
 
   const { lang, env } = useContext(AppContext);
   const environment = env();
@@ -104,15 +103,10 @@ export const FilterFlowsTable = (props: Props) => {
     FLOWS_FILTER_INITIAL_VALUES
   );
   const handleSubmit = (values: FlowsFilterValues) => {
-    const encodedFilters = encodeFilters(values, FLOWS_FILTER_INITIAL_VALUES);
-
-    if (query.filters !== encodedFilters) {
-      handleAbortController();
-    }
     setQuery({
       ...query,
       page: 0,
-      filters: encodedFilters,
+      filters: encodeFilters(values, FLOWS_FILTER_INITIAL_VALUES),
     });
   };
   const handleResetForm = (
@@ -120,12 +114,8 @@ export const FilterFlowsTable = (props: Props) => {
       nextState?: Partial<FormikState<FlowsFilterValues>>
     ) => void
   ) => {
-    const encodedFilters = encodeFilters({}, FLOWS_FILTER_INITIAL_VALUES);
     formikResetForm();
 
-    if (query.filters !== encodedFilters) {
-      handleAbortController();
-    }
     //  We need to delay this action in a synchronous way to avoid
     //  calling 2 setState() actions in an uncontrolled way that could
     //  mess with internal React's component update cycle
@@ -133,7 +123,7 @@ export const FilterFlowsTable = (props: Props) => {
       setQuery({
         ...query,
         page: 0,
-        filters: encodedFilters,
+        filters: encodeFilters({}, FLOWS_FILTER_INITIAL_VALUES),
       });
     });
   };
