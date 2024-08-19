@@ -172,18 +172,15 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
     >
       {({ initialValues }) => (
         <Form>
-          <C.ErrorAlert
-            setError={
-              setError as React.Dispatch<
-                React.SetStateAction<string | undefined>
-              >
-            }
-            error={parseError(
+          <C.MessageAlert
+            setMessage={setError}
+            message={parseError(
               error,
               'organizationUpdateCreate',
               lang,
               errorValue
             )}
+            severity="error"
           />
           <C.TextFieldWrapper
             label={t.t(

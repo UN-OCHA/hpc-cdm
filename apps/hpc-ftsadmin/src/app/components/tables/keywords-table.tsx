@@ -120,7 +120,7 @@ const FieldsWrapper = tw.div`
   gap-x-8
 `;
 const KeywordTableContext = createContext<{
-  setError?: React.Dispatch<
+  setErrorUpdate?: React.Dispatch<
     React.SetStateAction<
       | {
           code: keyof Strings['components']['keywordTable']['errors'];
@@ -129,6 +129,7 @@ const KeywordTableContext = createContext<{
       | undefined
     >
   >;
+  setSuccessUpdate?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }>({});
 
 type EditableRowProps = {
@@ -144,7 +145,7 @@ const EditableRow = ({
   entityEdited,
 }: EditableRowProps) => {
   const keywordIconSize = tw`h-8 w-8`;
-  const { setError } = useContext(KeywordTableContext);
+  const { setErrorUpdate, setSuccessUpdate } = useContext(KeywordTableContext);
   const env = getEnv();
   const [isEdit, setEdit] = useState(false);
 
@@ -176,16 +177,19 @@ const EditableRow = ({
             env.model.categories
               .updateKeyword(modfiedKeyword)
               .then(() => {
+                if (setSuccessUpdate) {
+                  setSuccessUpdate('Success!');
+                }
                 setEntityEdited(!entityEdited);
               })
               .catch((err) => {
                 if (errors.isDuplicateError(err)) {
-                  if (setError) {
-                    setError({ code: err.code, value: err.value });
+                  if (setErrorUpdate) {
+                    setErrorUpdate({ code: err.code, value: err.value });
                   }
                 } else {
-                  if (setError) {
-                    setError({ code: 'unknown', value: 'unknown' });
+                  if (setErrorUpdate) {
+                    setErrorUpdate({ code: 'unknown', value: 'unknown' });
                   }
                 }
               });
@@ -248,10 +252,11 @@ export default function KeywordTable(props: KeywordTableProps) {
   const state = dataLoader([entityEdited], () =>
     env.model.categories.getKeywords()
   );
-  const [error, setError] = useState<{
+  const [errorUpdate, setErrorUpdate] = useState<{
     code: keyof Strings['components']['keywordTable']['errors'];
     value: string;
   }>();
+  const [successUpdate, setSuccessUpdate] = useState<string>();
 
   const handleSort = (newSort: KeywordHeaderID) => {
     const changeDir = newSort === query.orderBy;
@@ -443,121 +448,132 @@ export default function KeywordTable(props: KeywordTableProps) {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <StyledLoader
-          loader={state}
-          strings={{
-            ...t.get(lang, (s) => s.components.loader),
-            notFound: {
-              ...t.get(lang, (s) => s.components.notFound),
-              ...t.get(lang, (s) => s.components.organizationTable.notFound),
-            },
-          }}
-        >
-          {(data) => (
-            <KeywordTableContext.Provider value={{ setError: setError }}>
-              <C.ErrorAlert
-                setError={setError}
-                error={parseError(
-                  error?.code,
-                  'keywordTable',
-                  lang,
-                  error?.value
-                )}
-              />
-              <ChipDiv>
-                <TopRowContainer>
-                  <MergeModal type="keyword" />
-                  <TableHeaderButton
-                    size="small"
-                    onClick={() => setOpenSettings(!openSettings)}
-                  >
-                    <SettingsIcon />
-                  </TableHeaderButton>
-                  <Modal
-                    open={openSettings}
-                    onClose={() => setOpenSettings(!openSettings)}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Box
+        <>
+          <C.MessageAlert
+            setMessage={setSuccessUpdate}
+            message={successUpdate}
+            severity="success"
+          />
+          <StyledLoader
+            loader={state}
+            strings={{
+              ...t.get(lang, (s) => s.components.loader),
+              notFound: {
+                ...t.get(lang, (s) => s.components.notFound),
+                ...t.get(lang, (s) => s.components.organizationTable.notFound),
+              },
+            }}
+          >
+            {(data) => (
+              <KeywordTableContext.Provider
+                value={{ setErrorUpdate, setSuccessUpdate }}
+              >
+                <C.MessageAlert
+                  setMessage={setErrorUpdate}
+                  message={parseError(
+                    errorUpdate?.code,
+                    'keywordTable',
+                    lang,
+                    errorUpdate?.value
+                  )}
+                  severity="error"
+                />
+                <ChipDiv>
+                  <TopRowContainer>
+                    <MergeModal type="keyword" />
+                    <TableHeaderButton
+                      size="small"
+                      onClick={() => setOpenSettings(!openSettings)}
+                    >
+                      <SettingsIcon />
+                    </TableHeaderButton>
+                    <Modal
+                      open={openSettings}
+                      onClose={() => setOpenSettings(!openSettings)}
                       sx={{
-                        maxHeight: '70vh',
-                        overflowY: 'auto',
-                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}
                     >
-                      <C.DraggableList
-                        title={t.t(
-                          lang,
-                          (s) =>
-                            s.components.organizationTable.tableSettings.title
-                        )}
-                        buttonText={t.t(
-                          lang,
-                          (s) =>
-                            s.components.organizationTable.tableSettings.save
-                        )}
-                        queryValues={decodeTableHeaders(
-                          query.tableHeaders,
-                          lang,
-                          'keywords',
-                          query as Query,
-                          setQuery
-                        )}
-                        onClick={(element) => {
-                          if (isCompatibleTableHeaderType(element)) {
-                            setQuery({
-                              ...query,
-                              tableHeaders: encodeTableHeaders(
-                                element,
-                                'keywords',
-                                query as Query,
-                                setQuery
-                              ),
-                            });
-                            setOpenSettings(false);
-                          }
-                        }}
-                        elevation={6}
+                      <Box
                         sx={{
-                          width: '400px',
-                          height: 'fit-content',
+                          maxHeight: '70vh',
+                          overflowY: 'auto',
+                          borderRadius: '10px',
                         }}
-                        children={
-                          <InfoAlert
-                            text={t.t(
-                              lang,
-                              (s) => s.components.flowsTable.tableSettings.info
-                            )}
-                            localStorageKey="tableSettings"
-                            sxProps={tw`mx-8 mt-4`}
-                          />
-                        }
-                      />
-                    </Box>
-                  </Modal>
-                </TopRowContainer>
-              </ChipDiv>
-              <Box sx={{ overflowX: 'auto', transform: 'rotateX(180deg)' }}>
-                <TableContainer
-                  sx={{
-                    width: '100%',
-                    display: 'table',
-                    transform: 'rotateX(180deg)',
-                    tableLayout: 'fixed',
-                    lineHeight: '1.35',
-                    fontSize: '1.32rem',
-                  }}
-                >
-                  <TableComponent lang={lang} data={data} />
-                </TableContainer>
-              </Box>
-            </KeywordTableContext.Provider>
-          )}
-        </StyledLoader>
+                      >
+                        <C.DraggableList
+                          title={t.t(
+                            lang,
+                            (s) =>
+                              s.components.organizationTable.tableSettings.title
+                          )}
+                          buttonText={t.t(
+                            lang,
+                            (s) =>
+                              s.components.organizationTable.tableSettings.save
+                          )}
+                          queryValues={decodeTableHeaders(
+                            query.tableHeaders,
+                            lang,
+                            'keywords',
+                            query as Query,
+                            setQuery
+                          )}
+                          onClick={(element) => {
+                            if (isCompatibleTableHeaderType(element)) {
+                              setQuery({
+                                ...query,
+                                tableHeaders: encodeTableHeaders(
+                                  element,
+                                  'keywords',
+                                  query as Query,
+                                  setQuery
+                                ),
+                              });
+                              setOpenSettings(false);
+                            }
+                          }}
+                          elevation={6}
+                          sx={{
+                            width: '400px',
+                            height: 'fit-content',
+                          }}
+                          children={
+                            <InfoAlert
+                              text={t.t(
+                                lang,
+                                (s) =>
+                                  s.components.flowsTable.tableSettings.info
+                              )}
+                              localStorageKey="tableSettings"
+                              sxProps={tw`mx-8 mt-4`}
+                            />
+                          }
+                        />
+                      </Box>
+                    </Modal>
+                  </TopRowContainer>
+                </ChipDiv>
+                <Box sx={{ overflowX: 'auto', transform: 'rotateX(180deg)' }}>
+                  <TableContainer
+                    sx={{
+                      width: '100%',
+                      display: 'table',
+                      transform: 'rotateX(180deg)',
+                      tableLayout: 'fixed',
+                      lineHeight: '1.35',
+                      fontSize: '1.32rem',
+                    }}
+                  >
+                    <TableComponent lang={lang} data={data} />
+                  </TableContainer>
+                </Box>
+              </KeywordTableContext.Provider>
+            )}
+          </StyledLoader>
+        </>
       )}
     </AppContext.Consumer>
   );
