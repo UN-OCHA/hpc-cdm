@@ -314,9 +314,9 @@ const MergeModal = (props: MergeModalProps) => {
                 </Box>
 
                 <Box sx={!isFirstStep ? tw`w-full` : tw`hidden`}>
-                  <C.ErrorAlert
-                    setError={setError}
-                    error={
+                  <C.MessageAlert
+                    setMessage={setError}
+                    message={
                       error
                         ? parseEntityString(
                             t.t(
@@ -328,6 +328,7 @@ const MergeModal = (props: MergeModalProps) => {
                           )
                         : undefined
                     }
+                    severity="error"
                   />
                   <ConfirmationText lang={lang} {...confirmValues} />
                   <Box sx={tw`flex justify-end gap-x-4`}>

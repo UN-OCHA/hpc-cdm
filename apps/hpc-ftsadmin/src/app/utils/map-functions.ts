@@ -25,7 +25,7 @@ export const parseUpdatedCreatedBy = (
 };
 
 export const parseError = (
-  error: 'unknown' | 'duplicate' | undefined,
+  error: 'unknown' | 'duplicate' | 'conflict' | undefined,
   component: 'organizationUpdateCreate' | 'keywordTable',
   lang: LanguageKey,
   errorValue?: string
@@ -33,10 +33,15 @@ export const parseError = (
   if (!error) {
     return undefined;
   }
-  const translatedError = t.t(
-    lang,
-    (s) => s.components[component].errors[error]
-  );
+  const translatedError = t.t(lang, (s) => {
+    if (component === 'keywordTable' && error !== 'conflict') {
+      return s.components[component].errors[error];
+    } else if (component === 'organizationUpdateCreate') {
+      return s.components[component].errors[error];
+    }
+    return s.components[component].errors.unknown;
+  });
+  
   if (error === 'duplicate' && errorValue) {
     return translatedError.replace(
       `${

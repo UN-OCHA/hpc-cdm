@@ -88,7 +88,11 @@
       "totalAmount": "Montant Total：",
       "rejectPendingFlows": {
         "message": "Voulez-vous rejeter les flux en attente sélectionnés ?",
-        "button": "Oui"
+        "button": "Oui",
+        "state": {
+          "error": "Erreur inattendue lors du rejet des flux en attente sélectionnés",
+          "success": "Tous les flux en attente sélectionnés ont été rejetés avec succès"
+        }
       },
       "downloadDisabled": "Le téléchargement n'est autorisé que lorsqu'au moins un filtre est appliqué et qu'il y a plus d'un flux dans le tableau",
       "totalAmountDisabled": "Le montant total est uniquement autorisé lorsqu'au moins un filtre est appliqué",
