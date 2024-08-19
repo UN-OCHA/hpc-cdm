@@ -19,7 +19,7 @@ import DevEnvWarning from './lib/components/development-environment-warning';
 import Divider from './lib/components/divider';
 import DraggableList from './lib/components/draggable-list';
 import ErrorMessage from './lib/components/error-message';
-import ErrorAlert from './lib/components/error-message-alert';
+import MessageAlert from './lib/components/message-alert';
 import Header from './lib/components/header';
 import List from './lib/components/list';
 import ListItem from './lib/components/list-item';
@@ -59,7 +59,7 @@ const COMPONENTS = {
   Divider,
   DraggableList,
   ErrorMessage,
-  ErrorAlert,
+  MessageAlert,
   Header,
   List,
   ListItem,

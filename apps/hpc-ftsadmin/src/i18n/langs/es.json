@@ -88,7 +88,11 @@
       "totalAmount": "Monto Total：",
       "rejectPendingFlows": {
         "message": "¿Desea rechazar los flujos pendientes seleccionados?",
-        "button": "Sí"
+        "button": "Sí",
+        "state": {
+          "error": "Error inesperado al rechazar los flujos pendientes seleccionados",
+          "success": "Todos los flujos pendientes seleccionados han sido rechazados con éxito"
+        }
       },
       "downloadDisabled": "La descarga solo está permitida cuando se ha aplicado al menos un filtro y hay más de un flujo en la tabla",
       "totalAmountDisabled": "El monto total solo está permitido cuando se aplica al menos un filtro",
