@@ -88,7 +88,11 @@
       "sortBy": "排序方式",
       "rejectPendingFlows": {
         "message": "您是否要拒绝所选的待处理流？",
-        "button": "是"
+        "button": "是",
+        "state": {
+          "error": "批量拒绝所选待处理流时发生意外错误",
+          "success": "所有选定的待处理流均已成功拒绝"
+        }
       },
       "downloadDisabled": "只有在应用了至少一个过滤器并且表格中有多个流时才允许下载",
       "totalAmountDisabled": "只有在至少应用了一个过滤器时才允许总金额",

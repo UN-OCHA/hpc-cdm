@@ -88,7 +88,11 @@
       "sortBy": "Sort by",
       "rejectPendingFlows": {
         "message": "Do you want to reject the selected pending flows?",
-        "button": "Yes"
+        "button": "Yes",
+        "state": {
+          "error": "Unexpected error while bulk rejecting the selected pending flows",
+          "success": "All selected pending flows have been successfully rejected"
+        }
       },
       "downloadDisabled": "Download only allowed when there is at least one filter applied, and there is more than one flow on the table",
       "totalAmountDisabled": "Total Amount only allowed when there are is least one filter applied",
