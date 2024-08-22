@@ -95,14 +95,6 @@ const AsyncAutocompleteSelect = ({
   }, [inputValue]);
 
   useEffect(() => {
-    if (!open && isAutocompleteAPI) {
-      setOptions([]);
-      setData([]);
-      setIsFetch(false);
-    }
-  }, [open]);
-
-  useEffect(() => {
     let active = true;
     if (
       isAutocompleteAPI &&
