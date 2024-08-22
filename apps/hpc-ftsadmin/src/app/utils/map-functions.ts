@@ -41,7 +41,7 @@ export const parseError = (
     }
     return s.components[component].errors.unknown;
   });
-  
+
   if (error === 'duplicate' && errorValue) {
     return translatedError.replace(
       `${
