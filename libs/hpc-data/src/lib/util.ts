@@ -70,6 +70,29 @@ export const INTEGER_ARRAY_FROM_STRING = new t.Type<number[], number[]>(
   t.identity
 );
 
+/**
+ * Accepts either an string array, or a string of comma separated strings.
+ */
+export const STRING_ARRAY_FROM_STRING = new t.Type<string[], string[]>(
+  'STRING_ARRAY_FROM_STRING',
+  t.array(t.string).is,
+  (v, c) => {
+    if (Array.isArray(v)) {
+      return v.every((val) => typeof val === 'string')
+        ? t.success(v)
+        : t.failure(v, c);
+    } else if (typeof v === 'string') {
+      const strings = v.split(',').filter((s) => s.trim() !== '');
+      return strings.every((s) => typeof s === 'string')
+        ? t.success(strings)
+        : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
 export const STRING_FROM_SINGLE_ELEMENT_ARRAY = new t.Type<string, string>(
   'STRING_FROM_SINGLE_ELEMENT_ARRAY',
   t.string.is,
