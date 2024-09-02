@@ -42,7 +42,7 @@ export default (props: Props) => {
       {
         ...NumberParam,
         decode: (string) => {
-          // prevent user requesting more than max number of rows
+          // Prevent user requesting more than max number of rows
           const number = decodeNumber(string);
           return number && Math.min(number, Math.max(...rowsPerPageOptions));
         },

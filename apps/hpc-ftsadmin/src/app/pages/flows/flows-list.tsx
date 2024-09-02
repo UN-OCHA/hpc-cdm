@@ -68,7 +68,7 @@ export default (props: Props) => {
       {
         ...NumberParam,
         decode: (string) => {
-          // prevent user requesting more than max number of rows
+          // Prevent user requesting more than max number of rows
           const number = decodeNumber(string);
           return number && Math.min(number, Math.max(...rowsPerPageOptions));
         },
@@ -90,7 +90,7 @@ export default (props: Props) => {
     ),
     orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
     filters: withDefault(JsonParam, JSON.stringify({})),
-    tableHeaders: withDefault(StringParam, encodeTableHeaders([])), //  Default value of table headers
+    tableHeaders: withDefault(StringParam, encodeTableHeaders([])), // Default value of table headers
     prevPageCursor: withDefault(NumberParam, undefined),
     nextPageCursor: withDefault(NumberParam, undefined),
   });

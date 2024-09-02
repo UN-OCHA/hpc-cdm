@@ -1,7 +1,7 @@
 import { categories, FormObjectValue } from '@unocha/hpc-data';
 import { Environment } from '../../environments/interface';
 
-/** Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop */
+// Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop
 
 export const fnOrganizations = async (
   query: { query: string },

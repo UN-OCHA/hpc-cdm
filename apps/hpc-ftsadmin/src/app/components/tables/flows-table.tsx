@@ -643,7 +643,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                         query.orderBy === header.identifierID
                           ? (query.orderDir.toLowerCase() as Lowercase<
                               typeof query.orderDir
-                            >) //  Safe type assertion
+                            >) // Safe type assertion
                           : 'desc'
                       }
                       onClick={() => handleSort(header.identifierID)}
