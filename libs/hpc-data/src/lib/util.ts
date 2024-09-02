@@ -69,7 +69,8 @@ export const NUMBER_FROM_STRING = new t.Type<number, number>(
 );
 
 /**
- * Accepts either a positive number, or a string of a positive number, serializes to a number type.
+ * Accepts either a positive number, or a string of a positive number,
+ * serializes to a number type.
  */
 export const POSITIVE_NUMBER_FROM_STRING = new t.Type<number, number>(
   'POSITIVE_NUMBER_FROM_STRING',

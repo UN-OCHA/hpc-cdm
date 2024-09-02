@@ -126,7 +126,7 @@ const FlowLocation = t.type({
 // GRAPHQL CODE FROM HERE
 const FlowOrganization = t.type({
   id: t.number,
-  direction: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
+  direction: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
   name: t.string,
   abbreviation: t.string,
 });

@@ -61,7 +61,9 @@ export interface KeywordTableProps {
   setQuery: (newQuery: KeywordQuery) => void;
 }
 
-/** Function for frontend data sorting */
+/**
+ * Data sorting utility method
+ */
 function by<T>(
   property: keyof T,
   order: 'ASC' | 'DESC' = 'ASC',

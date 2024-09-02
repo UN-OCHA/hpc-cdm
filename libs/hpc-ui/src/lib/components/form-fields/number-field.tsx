@@ -35,7 +35,7 @@ const NumberField = ({
       thousandSeparator={type === 'currency'}
       valueIsNumericString
       size="small"
-      decimalScale={type === 'number' ? 0 : undefined} //  0 means no decimals
+      decimalScale={type === 'number' ? 0 : undefined} // 0 means no decimals
       allowNegative={allowNegative}
       customInput={StyledTextField}
       InputProps={{

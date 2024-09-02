@@ -1,7 +1,8 @@
 import { flows } from '@unocha/hpc-data';
 
-/** JSON.stringify() but we remove '"' from property keys.
- *  Ex: "{\"key1\":12}" becomes: "{key1:12}"
+/**
+ * Same as `JSON.stringify()`, but we remove '"' from property keys.
+ *  Example: `"{\"key1\":12}"` becomes: `"{key1:12}"`
  */
 const stringify = (value: unknown): string =>
   JSON.stringify(value).replace(/"([^"]+)":/g, '$1:');
