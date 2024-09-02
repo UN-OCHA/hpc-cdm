@@ -26,9 +26,10 @@ const validateForm = <T extends object, K extends io.Any>(
       for (const context of value.context) {
         if (isKey(values, context.key)) {
           const key = context.key;
-          //  Did not find a better solution, but I think it is fine to let it like that for the moment
+          // Did not find a better solution, but I think it is
+          // fine to let it like that for the moment
           if (isStringUndefined(errors[key])) {
-            (errors[key] as string | undefined) = '{validationError}'; //  Placeholder to change for i18n text
+            (errors[key] as string | undefined) = '{validationError}'; // Placeholder to change for i18n text
           }
         }
       }

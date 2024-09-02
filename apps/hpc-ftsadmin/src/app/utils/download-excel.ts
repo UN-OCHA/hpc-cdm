@@ -1,4 +1,4 @@
-//  TODO: Check if this should be done on backend side, Currently not working properly
+// TODO: Check if this should be done on backend side, Currently not working properly
 import * as XLSX from 'xlsx';
 export const downloadExcel = <T>(
   data: T[],

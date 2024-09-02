@@ -484,7 +484,7 @@ export class Dummy {
         ),
       },
 
-      /** TODO: Did not try to implement it propper data since I don't use it */
+      /** TODO: Did not try to implement it proper data since I don't use it */
       categories: {
         getCategories: dummyEndpoint(
           'categories.getCategories',

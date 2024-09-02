@@ -66,7 +66,11 @@ type HeaderType = {
   label: FilterKeys;
   active: boolean;
 };
-/** We create these POSSIBLE conss because in the future we want to add more fields than the default ones displayed */
+
+/*
+ * We create these `POSSIBLE_*` consts because in the future
+ * we want to add more fields than the default ones displayed
+ */
 
 export const POSSIBLE_FLOW_HEADER_VALUES: Record<
   number,
@@ -239,7 +243,7 @@ export const POSSIBLE_KEYWORD_VALUES: Record<
   },
 };
 
-/** When adding more new field to POSSIBLE consts that are not default, modify as needed */
+// When adding more new field to POSSIBLE consts that are not default, modify as needed
 
 export const DEFAULT_FLOW_TABLE_HEADERS: TableHeadersProps<FlowHeaderID>[] = [];
 for (const [index, header] of Object.entries(POSSIBLE_FLOW_HEADER_VALUES)) {
@@ -303,7 +307,8 @@ const defaultEncodeTableHeaders = (table: TableType) => {
 };
 
 /**
- * Encodes the query param to obtain a string suitable for the URL, use it alongside decodeTableHeaders()
+ * Encodes the query param to obtain a string suitable for the URL,
+ * use it alongside `decodeTableHeaders()`
  */
 export const encodeTableHeaders = (
   headers: Array<HeaderType>,

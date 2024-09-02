@@ -11,10 +11,13 @@ import { Dayjs } from 'dayjs';
 import { FlowsFilterValues } from '../components/filters/filter-flows-table';
 import { valueToInteger } from './map-functions';
 
-/**
- * The whole idea of this filtering system is to parse every Filter Form to a common type, in this case Filter<T>
- * that works with any Table component and that can be encoded in the URL. Having this common type let us parse it back to the Filter Form of T
- * or to the API parsed parameters, in this way we can share URLs and have all necessary info.
+/*
+ * The whole idea of this filtering system is to parse
+ * every Filter Form to a common type, in this case `Filter<T>`
+ * that works with any `Table` component and that can be encoded
+ * in the URL. Having this common type let us parse it back
+ * to the Filter Form of T or to the API parsed parameters,
+ * in this way we can share URLs and have all necessary info.
  */
 
 export type Filters =
@@ -237,7 +240,8 @@ export const parseFormFilters = <
         JSON.stringify(parsedFormValue[key]?.value) !==
         JSON.stringify(fieldValue)
       ) {
-        //  Type missmatch is due to the typing is only accepting string values for keys, instead of string | number | symbol
+        // Type missmatch is due to the typing is only accepting
+        // string values for keys, instead of `string | number | symbol`
         parsedFormValue[key as unknown as T] = {
           displayValue: displayValue,
           value: fieldValue,

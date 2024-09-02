@@ -26,19 +26,20 @@ interface Props {
   initialValues?: AddEditOrganizationValues;
 }
 /**
- *  The key names for the form correspond to the ones we pass to the API endpoint v1/organization/create
+ * The key names for the form correspond to the ones
+ * we pass to the API endpoint v1/organization/create
  */
 export interface AddEditOrganizationValues {
   name: string;
   abbreviation: string;
   nativeName?: string;
-  locations?: Array<FormObjectValue>; //    number[] we need array of IDs
+  locations?: Array<FormObjectValue>; // number[] we need array of IDs
   url?: string;
   active?: boolean;
   verified?: boolean;
   notes?: string; // "notes" makes reference what in the UI it's called "Comments" (Not my decision)
   organizationTypes: Array<FormObjectValue>;
-  organizationLevel?: FormObjectValue; //    number[] we need array of IDs
+  organizationLevel?: FormObjectValue; // number[] we need array of IDs
   parent?: FormObjectValue;
   collectiveInd?: boolean;
   comments?: string; // "comments" makes reference what in the UI it's called "Organization Description" (Not my decision)
@@ -47,13 +48,13 @@ export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   name: '',
   abbreviation: '',
   nativeName: '',
-  locations: [], //    number[] we need array of IDs
+  locations: [], // number[] we need array of IDs
   url: '',
   active: true,
   verified: true,
   notes: '', // "notes" makes reference what in the UI it's called "Comments" (Not my decision)
   organizationTypes: [],
-  organizationLevel: { displayLabel: '', value: '' }, //    number[] we need array of IDs
+  organizationLevel: { displayLabel: '', value: '' }, // number[] we need array of IDs
   parent: { displayLabel: '', value: '' },
   collectiveInd: false,
   comments: '',

@@ -139,7 +139,8 @@ export const RenderChipsRow = ({
   return chipList;
 };
 
-/** Handle function to control the information text in the Draggable List components of tables */
+/**
+ * Handle function to control the information text in the Draggable List components of tables */
 export const handleTableSettingsInfoClose = (
   setTableInfoDisplay: React.Dispatch<React.SetStateAction<boolean | undefined>>
 ) => {
