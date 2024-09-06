@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { isRight } from 'fp-ts/lib/Either';
 
 export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(
   data: t.Type<D>,
@@ -232,3 +233,44 @@ export const DATE_FROM_STRING = new t.Type(
   },
   t.identity
 );
+
+export const ITEM_ARRAY_FROM_STRING = <C extends t.Mixed>(
+  codecName: string,
+  itemCodec: C
+) => {
+  type ItemType = t.TypeOf<typeof itemCodec>;
+  return new t.Type<ItemType[], ItemType[]>(
+    codecName,
+    (input: unknown): input is ItemType[] => {
+      if (Array.isArray(input)) {
+        return input.every(itemCodec.is);
+      }
+      if (typeof input === 'string') {
+        return input
+          .split(',')
+          .map((s) => s.trim())
+          .every(itemCodec.is);
+      }
+      return false;
+    },
+    (input, context) => {
+      if (Array.isArray(input)) {
+        const inputs = input.map(itemCodec.decode);
+        return inputs.every(isRight)
+          ? t.success(inputs.map(({ right }) => right))
+          : t.failure(input, context);
+      }
+      if (typeof input === 'string') {
+        const items = input
+          .split(',')
+          .map((s) => s.trim())
+          .map(itemCodec.decode);
+        return items.every(isRight)
+          ? t.success(items.map(({ right }) => right))
+          : t.failure(input, context);
+      }
+      return t.failure(input, context);
+    },
+    t.identity
+  );
+};
