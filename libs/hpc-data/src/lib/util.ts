@@ -1,5 +1,6 @@
-import * as t from 'io-ts';
 import { Dayjs, isDayjs } from 'dayjs';
+import { isRight } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
 
 export type FormObjectValue = { displayLabel: string; value: string | number };
 
@@ -383,3 +384,44 @@ export const VALID_DAYJS_DATE = new t.Type<Dayjs, Dayjs>(
   },
   t.identity
 );
+
+export const ITEM_ARRAY_FROM_STRING = <C extends t.Mixed>(
+  codecName: string,
+  itemCodec: C
+) => {
+  type ItemType = t.TypeOf<typeof itemCodec>;
+  return new t.Type<ItemType[], ItemType[]>(
+    codecName,
+    (input: unknown): input is ItemType[] => {
+      if (Array.isArray(input)) {
+        return input.every(itemCodec.is);
+      }
+      if (typeof input === 'string') {
+        return input
+          .split(',')
+          .map((s) => s.trim())
+          .every(itemCodec.is);
+      }
+      return false;
+    },
+    (input, context) => {
+      if (Array.isArray(input)) {
+        const inputs = input.map(itemCodec.decode);
+        return inputs.every(isRight)
+          ? t.success(inputs.map(({ right }) => right))
+          : t.failure(input, context);
+      }
+      if (typeof input === 'string') {
+        const items = input
+          .split(',')
+          .map((s) => s.trim())
+          .map(itemCodec.decode);
+        return items.every(isRight)
+          ? t.success(items.map(({ right }) => right))
+          : t.failure(input, context);
+      }
+      return t.failure(input, context);
+    },
+    t.identity
+  );
+};
