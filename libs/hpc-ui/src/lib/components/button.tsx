@@ -120,7 +120,7 @@ const StyledBaseButton = styled(BaseButton)`
   border: 1px solid ${(p) => p.theme.colors.pallete.gray.light};
   color: ${(p) => p.theme.colors.pallete.gray.light};
   align-items: center;
-  border-radius: 2px;
+  border-radius: 4px;
   text-transform: uppercase;
   font-weight: bold;
   font-size: 1.2rem;
