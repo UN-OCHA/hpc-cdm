@@ -13,8 +13,11 @@ const CLS = {
 
 const COLOR_CLS = {
   primary: 'color-primary',
+  primary_light: 'color-primary_light',
   secondary: 'color-secondary',
+  secondary_light: 'color-secondary_light',
   neutral: 'color-neutral',
+  neutral_light: 'color-neutral_light',
 } as const;
 
 export type ButtonColor = keyof typeof COLOR_CLS;
@@ -148,6 +151,18 @@ const StyledBaseButton = styled(BaseButton)`
     }
   }
 
+  &.${COLOR_CLS.primary_light} {
+    border: 1px solid #fff;
+    color: #fff;
+
+    &:hover,
+    &:focus,
+    &.${CLS.ACTIVE} {
+      background-color: #fff;
+      color: ${(p) => p.theme.colors.primary.normal};
+    }
+  }
+
   &.${COLOR_CLS.secondary} {
     border: 1px solid ${(p) => p.theme.colors.secondary.normal};
     color: ${(p) => p.theme.colors.secondary.normal};
@@ -156,6 +171,30 @@ const StyledBaseButton = styled(BaseButton)`
     &:focus,
     &.${CLS.ACTIVE} {
       background-color: ${(p) => p.theme.colors.secondary.normal};
+      color: #fff;
+    }
+  }
+
+  &.${COLOR_CLS.secondary_light} {
+    border: 1px solid ${(p) => p.theme.colors.secondary.normal};
+    color: ${(p) => p.theme.colors.secondary.light};
+
+    &:hover,
+    &:focus,
+    &.${CLS.ACTIVE} {
+      background-color: ${(p) => p.theme.colors.secondary.normal};
+      color: #fff;
+    }
+  }
+
+  &.${COLOR_CLS.neutral_light} {
+    border: 1px solid ${(p) => p.theme.colors.pallete.gray.light2};
+    color: ${(p) => p.theme.colors.pallete.gray.light2};
+
+    &:hover,
+    &:focus,
+    &.${CLS.ACTIVE} {
+      background-color: ${(p) => p.theme.colors.pallete.gray.light2};
       color: #fff;
     }
   }
