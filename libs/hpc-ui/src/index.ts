@@ -10,7 +10,9 @@ import AcceptableUseNotification from './lib/components/acceptable-use-notificat
 import * as actionableButton from './lib/components/actionable-button';
 import ActionableDropdown from './lib/components/actionable-dropdown';
 import AutocompleteSelect from './lib/components/form-fields/autocomplete-field';
-import AsyncAutocompleteSelect from './lib/components/form-fields/async-autocomplete-field';
+import AsyncAutocompleteSelect, {
+  type AsyncAutocompleteSelectProps,
+} from './lib/components/form-fields/async-autocomplete-field';
 import AsyncIconButton from './lib/components/async-icon-button';
 import { Button, ButtonLink, ButtonSubmit } from './lib/components/button';
 import CheckBox from './lib/components/form-fields/checkbox';
@@ -86,6 +88,7 @@ const ICONS = {
 
 export type ActionableButtonState = actionableButton.ActionableButtonState;
 export type SidebarNavigationItem = sidebarNavigation.SidebarNavigationItem;
+export type AsyncAutocompleteProps = AsyncAutocompleteSelectProps;
 
 export {
   BaseStyling,

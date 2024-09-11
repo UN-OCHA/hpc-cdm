@@ -48,6 +48,15 @@
       "error": "Erreur:",
       "retry": "Réessayer"
     },
+    "reviewPendingValues": {
+      "unmatched": "Non correspondants",
+      "label": "Valeurs entrantes :",
+      "button": {
+        "accept": "Accepter",
+        "reject": "Rejeter",
+        "confirm": "Confirmer le cas traité"
+      }
+    },
     "unsupportedBrowser": {
       "title": "Navigateur non compatible! ",
       "info": "Malheureusement, votre présent navigateur n’est pas compatible. Veuillez utiliser Firefox ou Chrome. Pour ce faire, simplement copiez le lien (URL) dessus, ouvrez Firefox, ou Chrome, et collez le lien sur la barre d’adresse du nouveau navigateur."

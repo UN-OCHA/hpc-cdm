@@ -48,6 +48,15 @@
       "error": "Error:",
       "retry": "Reintentar"
     },
+    "reviewPendingValues": {
+      "unmatched": "No coinciden",
+      "label": "Valores entrantes:",
+      "button": {
+        "accept": "Aceptar",
+        "reject": "Rechazar",
+        "confirm": "Confirmar caso manejado"
+      }
+    },
     "unsupportedBrowser": {
       "title": "Navegador no compatible",
       "info": "Lamentablemente, tu navegador actual no es compatible. Cambia a Firefox o Google Chrome. Para hacerlo, simplemente copia la dirección del formulario (URL) de arriba, luego abre Firefox o Chrome y pega la dirección en el navegador."
