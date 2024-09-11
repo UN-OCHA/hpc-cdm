@@ -7,7 +7,9 @@ import DevEnvWarning from './lib/components/development-environment-warning';
 import Divider from './lib/components/divider';
 import DraggableList from './lib/components/draggable-list';
 import ErrorMessage from './lib/components/error-message';
-import AsyncAutocompleteSelect from './lib/components/form-fields/async-autocomplete-field';
+import AsyncAutocompleteSelect, {
+  type AsyncAutocompleteSelectProps,
+} from './lib/components/form-fields/async-autocomplete-field';
 import AutocompleteSelect from './lib/components/form-fields/autocomplete-field';
 import CheckBox from './lib/components/form-fields/checkbox';
 import DatePicker from './lib/components/form-fields/date-picker';
@@ -77,6 +79,7 @@ const ICONS = {
 
 export type ActionableButtonState = actionableButton.ActionableButtonState;
 export type SidebarNavigationItem = sidebarNavigation.SidebarNavigationItem;
+export type AsyncAutocompleteProps = AsyncAutocompleteSelectProps;
 
 export { COMPONENTS as C, ICONS };
 

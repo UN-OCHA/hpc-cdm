@@ -48,6 +48,15 @@
       "error": "Error:",
       "retry": "Retry"
     },
+    "reviewPendingValues": {
+      "unmatched": "Unmatched",
+      "label": "Incoming values:",
+      "button": {
+        "accept": "Accept",
+        "reject": "Reject",
+        "confirm": "Confirm handled case"
+      }
+    },
     "unsupportedBrowser": {
       "title": "Unsupported Browser!",
       "info": "Unfortunately, your current browser is not supported. Please switch to either Firefox or Google Chrome. To do this, simply copy the form address (URL) above, then open Firefox or Chrome, and paste the address into the browser."

@@ -1,6 +1,7 @@
 import {
   Autocomplete,
   type AutocompleteProps,
+  Chip,
   CircularProgress,
 } from '@mui/material';
 import { type util } from '@unocha/hpc-data';
@@ -28,7 +29,7 @@ const StyledAutocomplete = tw(Autocomplete)`
   w-full
 `;
 
-type AsyncAutocompleteSelectProps = {
+export type AsyncAutocompleteSelectProps = {
   name: string;
   label: string;
   placeholder?: string;
@@ -41,8 +42,11 @@ type AsyncAutocompleteSelectProps = {
   removeOptions?: util.FormObjectValue[];
 };
 
-/** Removes FormObjectValue objects from first array if in the second array there is any FormObjectValue whose 'value' property
- *  equals any inside the firstArray, if no second array provided, returns first array */
+/**
+ *  Removes FormObjectValue objects from first array if in the second array
+ *  there is any FormObjectValue whose 'value' property equals any inside the firstArray,
+ *  if no second array provided, returns first array
+ */
 const removeFormObjectValueFromFirstArray = (
   firstArray: util.FormObjectValue[],
   secondArray: util.FormObjectValue[] | undefined
@@ -123,7 +127,7 @@ const AsyncAutocompleteSelect = ({
     }
 
     if (!isLoading && !(typeof field.value === 'string')) {
-      return undefined;
+      return;
     }
     (async () => {
       try {
@@ -158,7 +162,7 @@ const AsyncAutocompleteSelect = ({
     }
   }, [isOpen, isAutocompleteAPI]);
 
-  const configAutocomplete: AutocompleteProps<
+  const configAutocomplete:  AutocompleteProps<
     util.FormObjectValue,
     boolean,
     boolean,
@@ -194,17 +198,24 @@ const AsyncAutocompleteSelect = ({
             {option.displayLabel}
           </ChildrenOption>
         );
-      } else {
-        return (
-          <li {...props} key={option.value}>
-            {option.displayLabel}
-          </li>
-        );
       }
+      return (
+        <li {...props} key={option.value}>
+          {option.displayLabel}
+        </li>
+      );
     },
+    renderTags: (value, getTagProps) =>
+      value.map((option, index) => (
+        <Chip
+          label={option.displayLabel}
+          {...getTagProps({ index })}
+          sx={option.chipColor ? { bgcolor: option.chipColor } : {}}
+        />
+      )),
     getOptionDisabled: (option) =>
       isMulti === true &&
-      field.value.find((a) => a.parent?.value === option.value) !== undefined,
+      field.value.some((a) => a.parent?.value === option.value),
     renderInput: (params) => (
       <StyledTextField
         {...params}

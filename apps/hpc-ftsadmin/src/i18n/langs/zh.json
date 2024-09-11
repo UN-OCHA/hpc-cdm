@@ -48,6 +48,15 @@
       "error": "错误：",
       "retry": "重试"
     },
+    "reviewPendingValues": {
+      "unmatched": "不匹配",
+      "label": "传入值：",
+      "button": {
+        "accept": "接受",
+        "reject": "拒绝",
+        "confirm": "确认处理的案件"
+      }
+    },
     "unsupportedBrowser": {
       "title": "不受支持的浏览器！",
       "info": "很抱歉，您当前的浏览器不受支持。请切换到 Firefox 或 Google Chrome。要执行此操作，只需复制上面的表单地址（URL），然后打开 Firefox 或 Chrome，并将地址粘贴到浏览器中。"
