@@ -106,6 +106,9 @@ export const MUI_THEME: ThemeOptions = {
     secondary: {
       main: THEME.colors.secondary.normal,
     },
+    warning: {
+      main: THEME.colors.pallete.yellow.normal,
+    },
   },
   ...THEME,
 };

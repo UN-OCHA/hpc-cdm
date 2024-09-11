@@ -1,6 +1,7 @@
 import {
   Autocomplete,
   AutocompleteProps,
+  Chip,
   CircularProgress,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
@@ -28,21 +29,24 @@ const StyledAutocomplete = tw(Autocomplete)`
   w-full
 `;
 
-type AsyncAutocompleteSelectProps = {
+export type AsyncAutocompleteSelectProps = {
   name: string;
   label: string;
   placeholder?: string;
-  fnPromise: ({ query }: { query: string }) => Promise<Array<FormObjectValue>>;
+  fnPromise: ({ query }: { query: string }) => Promise<FormObjectValue[]>;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
   error?: (metaError: string) => string | undefined;
   required?: boolean;
   allowChildrenRender?: boolean;
-  removeOptions?: Array<FormObjectValue>;
+  removeOptions?: FormObjectValue[];
 };
 
-/** Removes FormObjectValue objects from first array if in the second array there is any FormObjectValue whose 'value' property
- *  equals any inside the firstArray, if no second array provided, returns first array */
+/**
+ *  Removes FormObjectValue objects from first array if in the second array
+ *  there is any FormObjectValue whose 'value' property equals any inside the firstArray,
+ *  if no second array provided, returns first array
+ */
 const removeFormObjectValueFromFirstArray = (
   firstArray: Array<FormObjectValue>,
   secondArray: Array<FormObjectValue> | undefined
@@ -202,6 +206,14 @@ const AsyncAutocompleteSelect = ({
         );
       }
     },
+    renderTags: (value, getTagProps) =>
+      value.map((option, index) => (
+        <Chip
+          label={option.displayLabel}
+          {...getTagProps({ index })}
+          sx={option.chipColor ? { bgcolor: option.chipColor } : {}}
+        />
+      )),
     getOptionDisabled: (option) =>
       isMulti === true &&
       field.value.find((a) => a.parent?.value === option.value) !== undefined,
