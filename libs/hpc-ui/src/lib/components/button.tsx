@@ -130,6 +130,7 @@ const StyledBaseButton = styled(BaseButton)`
   &:hover,
   &:focus,
   &.${CLS.ACTIVE} {
+    transition: ease-out 0.1s;
     text-decoration: none;
     background-color: ${(p) => p.theme.colors.pallete.gray.light};
     color: #fff;
