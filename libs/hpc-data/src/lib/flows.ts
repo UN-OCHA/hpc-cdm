@@ -1,6 +1,7 @@
 import * as t from 'io-ts';
 
 import { POSITIVE_INTEGER_FROM_STRING } from './util';
+import { ORGANIZATION } from './organizations';
 
 const FLOW_REF_DIRECTION = t.keyof({
   source: null,
@@ -115,6 +116,161 @@ export type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
 export const GET_FLOW_RESULT = FLOW_REST;
 
 export type GetFlowResult = t.TypeOf<typeof GET_FLOW_RESULT>;
+
+const FLOW_FORM_FIELD = t.type({
+  group: t.string,
+  id: t.number,
+  name: t.string,
+});
+
+const CHILD_METHOD_TYPE = t.type({
+  ...FLOW_FORM_FIELD.props,
+  parentID: t.number,
+});
+
+const INACTIVE_REASON_TYPE = t.intersection([
+  t.type({
+    group: t.string,
+    createdAt: t.string,
+    updatedAt: t.string,
+  }),
+  t.partial({
+    id: t.number,
+    name: t.string,
+  }),
+]);
+
+const CHILDREN_TYPE = t.type({
+  childID: t.union([t.number, t.string]),
+  origCurrency: t.union([t.string, t.null]),
+});
+
+const PARENT = t.type({
+  child: t.union([t.string, t.number]),
+  parentID: t.union([t.number, t.string]),
+});
+
+const PARENT_TYPE = t.intersection([
+  t.type({
+    id: t.number,
+    Parent: t.type({
+      parentID: t.union([t.number, t.string]),
+      origCurrency: t.union([t.string, t.null]),
+    }),
+    origCurrency: t.union([t.string, t.null]),
+  }),
+  t.partial({
+    childID: t.number,
+    parents: t.array(PARENT),
+    parentID: t.number,
+  }),
+]);
+
+const FILE_ASSET_TYPE = t.type({
+  collection: t.string,
+  createAt: t.string,
+  filename: t.string,
+  id: t.number,
+  mimetype: t.string,
+  originalname: t.string,
+  path: t.string,
+  size: t.number,
+  updatedAt: t.string,
+});
+
+const REPORT_FILE_TYPE = t.partial({
+  title: t.string,
+  fileName: t.string,
+  UploadFileUrl: t.string,
+  type: t.string,
+  url: t.string,
+  fileAssetID: t.number,
+  size: t.number,
+  fileAssetEntity: t.partial({ ...FILE_ASSET_TYPE.props }),
+});
+
+const CREATE_FLOW_REPORT_DETAIL = t.intersection([
+  t.type({
+    contactInfo: t.string,
+    source: t.string,
+    date: t.string,
+    newlyAdded: t.boolean,
+    sourceID: t.null,
+    refCode: t.string,
+    verified: t.boolean,
+    organizationID: t.union([t.string, t.number]),
+    categories: t.array(t.union([t.string, t.number])),
+    organization: ORGANIZATION,
+    reportFiles: t.array(REPORT_FILE_TYPE),
+  }),
+  t.partial({
+    versionID: t.number,
+  }),
+]);
+
+/**
+ * TODO: This type was created by an old developer of the team, and we should
+ * verify that they are all correctly typed.
+ */
+const CREATE_FLOW = t.intersection([
+  t.type({
+    activeStatus: t.boolean,
+    amountUSD: t.number,
+    categories: t.array(t.number),
+    children: t.array(CHILDREN_TYPE),
+    contributionTypes: FLOW_FORM_FIELD,
+    decisionDate: t.union([t.string, t.null]),
+    description: t.string,
+    firstReportedDate: t.string,
+    flowDate: t.string,
+    flowObjects: t.array(FLOW_OBJECT),
+    flowStatuses: FLOW_FORM_FIELD,
+    flowType: FLOW_FORM_FIELD,
+    isCancellation: t.union([t.boolean, t.null]),
+    keywords: t.array(FLOW_FORM_FIELD),
+    method: FLOW_FORM_FIELD,
+    newCategories: t.array(t.number),
+    newMoney: t.boolean,
+    origCurrency: t.union([t.string, t.null]),
+    parents: t.array(PARENT_TYPE),
+    reportDetails: t.array(CREATE_FLOW_REPORT_DETAIL),
+    restricted: t.boolean,
+  }),
+  t.partial({
+    pendingStatus: t.union([t.boolean, t.array(t.string)]),
+    categorySources: t.array(t.unknown), // TODO: TO properly define type, here it was defined messy
+    cancelled: t.union([t.boolean, t.null]), // TODO: Not always present
+    childMethod: t.union([t.string, CHILD_METHOD_TYPE]), // TODO: Not sure, came from matyas
+    earmarking: t.union([FLOW_FORM_FIELD, t.null]),
+    planEntities: t.union([t.boolean, t.array(t.string)]), // TODO: Not always present
+    planIndicated: t.union([t.boolean, t.array(t.string)]), // TODO: Not always present
+    isApprovedFlowVersion: t.union([t.boolean, t.null]), // TODO: Not always present
+    isErrorCorrection: t.union([t.boolean, t.null]), // TODO: Not always present
+    inactiveReason: t.array(INACTIVE_REASON_TYPE), // TODO: Not always present
+    rejected: t.union([t.boolean, t.null]), // TODO: Not always present
+    versions: t.array(
+      t.type({
+        id: t.number,
+        versionID: t.number,
+        activeStatus: t.union([t.boolean, t.undefined]),
+        isPending: t.boolean,
+        isCancelled: t.boolean,
+      })
+    ), // TODO: Not always present
+    beneficiaryGroup: FLOW_FORM_FIELD, // TODO: Not always present
+    budgetYear: t.string,
+    origAmount: t.union([t.number, t.null]),
+    exchangeRate: t.union([t.number, t.null]),
+    versionStartDate: t.union([t.string, t.null]),
+    versionEndDate: t.union([t.string, t.null]),
+  }),
+]);
+
+const CREATE_FLOW_PARAMS = t.type({
+  flow: CREATE_FLOW,
+});
+
+export type CreateFlowParams = t.TypeOf<typeof CREATE_FLOW_PARAMS>;
 
 // * GRAPHQL CODE FROM HERE *
 
@@ -361,4 +517,5 @@ export interface Model {
   getFlowsDownloadXLSX(
     params: SearchFlowsParams
   ): Promise<SearchFlowsBatchesResult>;
+  createFlow(params: CreateFlowParams): Promise<GetFlowResult>;
 }

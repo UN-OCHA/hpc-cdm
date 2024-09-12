@@ -7,6 +7,7 @@ import {
   styled,
   ThemeProvider,
 } from '@unocha/hpc-ui';
+import { MdAdd } from 'react-icons/md';
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -16,6 +17,7 @@ import { LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
 import PageMeta from './components/page-meta';
 import { AppContext, contextFromEnv } from './context';
 import { Z_INDEX } from './layout';
+import PageFlow from './pages/flows/flow';
 import PageFlowsList from './pages/flows/flows-list';
 import PageKeywordsList from './pages/keywords/keyword-list';
 import PageNotFound from './pages/not-found';
@@ -140,6 +142,12 @@ export const App = () => {
                             label: t.t(lang, (s) => s.navigation.keywords),
                             path: paths.keywords(),
                           },
+                          {
+                            label: t.t(lang, (s) => s.navigation.addFlow),
+                            path: paths.addFlow(),
+                            icon: MdAdd,
+                            selected: false,
+                          },
                         ]}
                         className={CLASSES.CONTAINER.FLUID}
                         externalLinks={[
@@ -185,6 +193,7 @@ export const App = () => {
                           path={paths.home()}
                           element={<Navigate to={paths.flows()} />}
                         />
+                        <Route path={paths.addFlow()} element={<PageFlow />} />
                         <Route
                           path={paths.flows()}
                           element={<PageFlowsList />}

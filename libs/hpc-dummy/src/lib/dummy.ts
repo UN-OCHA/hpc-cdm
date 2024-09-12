@@ -636,6 +636,54 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
+        createFlow: dummyEndpoint(
+          'flow.createFlow',
+          async (params: flows.CreateFlowParams) => {
+            const id = Date.now();
+            const {
+              activeStatus,
+              amountUSD,
+              decisionDate,
+              exchangeRate,
+              flowDate,
+              newMoney,
+              restricted,
+            } = params.flow;
+
+            // TODO: Properly mock data
+            const flow = {
+              id,
+              versionID: 1,
+              activeStatus,
+              amountUSD: amountUSD.toString(),
+              decisionDate,
+              exchangeRate: exchangeRate ? exchangeRate.toString() : null,
+              updatedAt: new Date().toISOString(),
+              flowDate,
+              newMoney,
+              restricted,
+              externalReferences: [],
+              parkedParentSource: { organization: [], orgName: [] },
+              reportDetails: [],
+            } as const;
+
+            this.data.flows.push(flow as unknown as flows.Flow);
+
+            const participant = { name: 'Me' };
+            const res: flows.GetFlowResult = {
+              ...flow,
+              firstReportedDate: '',
+              meta: { language: 'en' },
+              versionStartDate: '',
+              createdAt: '',
+              createdBy: participant,
+              description: '',
+              lastUpdatedBy: participant,
+              notes: '',
+            };
+            return res;
+          }
+        ),
       },
       globalClusters: {
         getGlobalClusters: dummyEndpoint(

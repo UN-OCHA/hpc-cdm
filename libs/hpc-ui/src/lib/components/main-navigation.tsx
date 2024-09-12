@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 
 import {
+  Icon,
   List as MUIList,
   ListItem as MUIListItem,
   ListItemButton as MUIListItemButton,
@@ -8,6 +9,7 @@ import {
 import { CLASSES, combineClasses } from '../classes';
 import HpcLogo from '../assets/logos/hpc';
 import { styled } from '../theme';
+import { IconType } from 'react-icons/lib';
 
 const CLS = {
   HEADER: 'header',
@@ -29,6 +31,7 @@ interface Props {
         path: string;
         label: string;
         selected?: boolean;
+        icon?: IconType;
       }
     | null
     | undefined
@@ -166,9 +169,11 @@ export default (props: Props) => {
             ? loc.pathname === tab.path ||
               loc.pathname.startsWith(tab.path + '/')
             : tab.selected;
+        const Icon = tab.icon;
         return (
           <li key={i} className={selected ? CLS.SELECTED : ''}>
             <Link to={tab.path}>
+              {Icon && <Icon size={16} />}
               <span>{tab.label}</span>
             </Link>
           </li>
