@@ -7,6 +7,7 @@ import {
   styled,
   ThemeProvider,
 } from '@unocha/hpc-ui';
+import { MdAdd } from 'react-icons/md';
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
@@ -131,6 +132,12 @@ export const App = () => {
                           {
                             label: t.t(lang, (s) => s.navigation.keywords),
                             path: paths.keywords(),
+                          },
+                          {
+                            label: t.t(lang, (s) => s.navigation.addFlow),
+                            path: paths.addFlow(),
+                            icon: MdAdd,
+                            selected: false,
                           },
                         ]}
                         className={CLASSES.CONTAINER.FLUID}

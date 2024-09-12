@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router/dom';
 
 import App from './app/app';
 
+import PageFlow from './app/pages/flows/flow';
 import PageFlowsList from './app/pages/flows/flows-list';
 import PagePendingFlowsList from './app/pages/flows/pending-flows-list';
 import PageKeywordsList from './app/pages/keywords/keyword-list';
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
     children: [
       { path: paths.home(), element: <Navigate to={paths.flows()} /> },
       { path: paths.flows(), element: <PageFlowsList /> },
+      { path: paths.addFlow(), element: <PageFlow /> },
       { path: paths.pendingFlows(), element: <PagePendingFlowsList /> },
       { path: paths.organizations(), element: <PageOrganizationsList /> },
       {

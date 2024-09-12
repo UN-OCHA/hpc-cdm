@@ -5,6 +5,7 @@ import {
   ListItem as MUIListItem,
   ListItemButton as MUIListItemButton,
 } from '@mui/material';
+import { type IconType } from 'react-icons/lib';
 import HpcLogo from '../assets/logos/hpc';
 import { CLASSES, combineClasses } from '../classes';
 import { styled } from '../theme';
@@ -29,6 +30,7 @@ interface Props {
         path: string;
         label: string;
         selected?: boolean;
+        icon?: IconType;
       }
     | null
     | undefined
@@ -165,9 +167,11 @@ export default (props: Props) => {
           tab.selected ??
           (loc.pathname === tab.path ||
             loc.pathname.startsWith(`${tab.path}/`));
+        const Icon = tab.icon;
         return (
           <li key={i} className={isSelected ? CLS.SELECTED : ''}>
             <Link to={tab.path}>
+              {Icon && <Icon size={16} />}
               <span>{tab.label}</span>
             </Link>
           </li>

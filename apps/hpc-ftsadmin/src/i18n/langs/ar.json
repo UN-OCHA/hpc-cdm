@@ -336,6 +336,7 @@
     }
   },
   "navigation": {
+    "addFlow": "إضافة تدفق",
     "flows": "التدفقات",
     "keywords": "الكلمات الرئيسية",
     "pendingFlows": "التدفقات المعلقة",

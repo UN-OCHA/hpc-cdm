@@ -335,6 +335,7 @@
     }
   },
   "navigation": {
+    "addFlow": "Agregar Flujo",
     "flows": "Flujos",
     "keywords": "Palabras Clave",
     "pendingFlows": "Flujos Pendientes",
