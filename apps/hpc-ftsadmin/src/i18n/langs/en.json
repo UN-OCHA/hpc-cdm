@@ -336,6 +336,7 @@
     }
   },
   "navigation": {
+    "addFlow": "Add Flow",
     "flows": "Flows",
     "keywords": "Keywords",
     "pendingFlows": "Pending Flows",

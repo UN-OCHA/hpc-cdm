@@ -335,6 +335,7 @@
     }
   },
   "navigation": {
+    "addFlow": "Ajouter un Flux",
     "flows": "Flux",
     "keywords": "Mots-clés",
     "pendingFlows": "Flux en attente",

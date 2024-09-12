@@ -338,6 +338,7 @@
     }
   },
   "navigation": {
+    "addFlow": "添加流",
     "flows": "资金流",
     "keywords": "关键词",
     "pendingFlows": "待处理的资金流",
