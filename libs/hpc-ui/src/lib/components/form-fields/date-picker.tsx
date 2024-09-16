@@ -8,7 +8,6 @@ import dayjs from '../../i18n/utils/dayjs';
 import { useEffect, useState } from 'react';
 
 const StyledDatePicker = tw.div`
-  flex
   w-full
   items-baseline
 `;
@@ -78,11 +77,11 @@ const DatePicker = ({
         {enableButton && (
           <StyledLink
             component="button"
+            type="button"
             variant="body2"
             onClick={() => {
               helpers.setValue(dayjs());
             }}
-            sx={{ height: '100%', lineHeight: '40px' }}
           >
             Today
           </StyledLink>

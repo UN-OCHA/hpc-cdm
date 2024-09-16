@@ -107,6 +107,7 @@ const BaseButton = (props: Props) => {
     <button
       className={className}
       onClick={behaviour.onClick}
+      type={behaviour.type}
       ref={ref as React.RefObject<HTMLButtonElement>}
     >
       {contents}
