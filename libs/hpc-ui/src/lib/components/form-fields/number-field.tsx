@@ -3,7 +3,7 @@ import { NumericFormat } from 'react-number-format';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useField, useFormikContext } from 'formik';
 
-interface NumberFieldProps {
+export interface NumberFieldProps {
   type: 'number' | 'currency';
   name: string;
   label: string;

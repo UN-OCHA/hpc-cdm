@@ -1,17 +1,12 @@
-import { C, type AsyncAutocompleteSelectProps } from '@unocha/hpc-ui';
+import { type AutocompleteSelectProps, C } from '@unocha/hpc-ui';
 import ReviewPendingValues, {
   type ReviewPendingValuesProps,
 } from './review-pending-values';
 
-type AsyncAutocompleteSelectReviewProps = Omit<
-  AsyncAutocompleteSelectProps,
-  'name'
-> &
+type AutocompleteSelectReviewProps = Omit<AutocompleteSelectProps, 'name'> &
   ReviewPendingValuesProps;
 
-const AsyncAutocompleteSelectReview = (
-  props: AsyncAutocompleteSelectReviewProps
-) => {
+const AutocompleteSelectReview = (props: AutocompleteSelectReviewProps) => {
   const { fieldName, pendingValues, onClick, ...asyncAutocompleteSelectProps } =
     props;
 
@@ -23,7 +18,7 @@ const AsyncAutocompleteSelectReview = (
   return (
     <div>
       <ReviewPendingValues {...reviewPendingValuesProps} />
-      <C.AsyncAutocompleteSelect
+      <C.AutocompleteSelect
         {...asyncAutocompleteSelectProps}
         name={fieldName}
       />
@@ -31,4 +26,4 @@ const AsyncAutocompleteSelectReview = (
   );
 };
 
-export default AsyncAutocompleteSelectReview;
+export default AutocompleteSelectReview;

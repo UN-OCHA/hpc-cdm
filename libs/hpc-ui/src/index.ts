@@ -9,9 +9,11 @@ import { Translations } from './lib/i18n';
 import AcceptableUseNotification from './lib/components/acceptable-use-notification';
 import * as actionableButton from './lib/components/actionable-button';
 import ActionableDropdown from './lib/components/actionable-dropdown';
-import AutocompleteSelect from './lib/components/form-fields/autocomplete-field';
+import AutocompleteSelect, {
+  type AutocompleteSelectProps as AutocompleteSelectExportProps,
+} from './lib/components/form-fields/autocomplete-field';
 import AsyncAutocompleteSelect, {
-  type AsyncAutocompleteSelectProps,
+  type AsyncAutocompleteSelectProps as AsyncAutocompleteSelectExportProps,
 } from './lib/components/form-fields/async-autocomplete-field';
 import AsyncIconButton from './lib/components/async-icon-button';
 import { Button, ButtonLink, ButtonSubmit } from './lib/components/button';
@@ -29,7 +31,9 @@ import Loader from './lib/components/loader';
 import MainNavigation from './lib/components/main-navigation';
 import MultiTextField from './lib/components/form-fields/multi-text-field';
 import NotFound from './lib/components/not-found';
-import NumberField from './lib/components/form-fields/number-field';
+import NumberField, {
+  type NumberFieldProps as NumberFieldExportProps,
+} from './lib/components/form-fields/number-field';
 import PageTitle from './lib/components/page-title';
 import * as sidebarNavigation from './lib/components/sidebar-navigation';
 import SearchFilter from './lib/components/search-filter';
@@ -37,7 +41,9 @@ import SecondaryNavigation from './lib/components/secondary-navigation';
 import Section from './lib/components/section';
 import Switch from './lib/components/form-fields/switch';
 import TertiaryNavigation from './lib/components/tertiary-navigation';
-import TextFieldWrapper from './lib/components/form-fields/text-field';
+import TextFieldWrapper, {
+  type TextFieldWrapperProps as TextFieldWrapperExportProps,
+} from './lib/components/form-fields/text-field';
 import Toolbar from './lib/components/toolbar';
 import * as dialogs from './lib/components/dialogs';
 
@@ -88,7 +94,10 @@ const ICONS = {
 
 export type ActionableButtonState = actionableButton.ActionableButtonState;
 export type SidebarNavigationItem = sidebarNavigation.SidebarNavigationItem;
-export type AsyncAutocompleteProps = AsyncAutocompleteSelectProps;
+export type AsyncAutocompleteSelectProps = AsyncAutocompleteSelectExportProps;
+export type TextFieldWrapperProps = TextFieldWrapperExportProps;
+export type AutocompleteSelectProps = AutocompleteSelectExportProps;
+export type NumberFieldProps = NumberFieldExportProps;
 
 export {
   BaseStyling,
