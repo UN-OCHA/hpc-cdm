@@ -7,11 +7,16 @@ export const StyledTextField = tw(TextField)`
   w-full
 `;
 
-interface TextFieldWrapperProps {
+export interface TextFieldWrapperProps {
   name: string;
   label: string;
   placeholder?: string;
   textarea?: boolean;
+  /**
+   * If textarea is set to `true` you can specify
+   *  the number of rows to initially display.
+   */
+  minRows?: number;
   error?: (metaError: string) => string | undefined;
   required?: boolean;
 }
@@ -20,6 +25,7 @@ const TextFieldWrapper = ({
   label,
   placeholder,
   textarea,
+  minRows,
   error,
   required,
 }: TextFieldWrapperProps) => {
@@ -29,6 +35,7 @@ const TextFieldWrapper = ({
     label,
     id: name,
     multiline: textarea,
+    minRows,
     maxRows: 5,
     required,
     placeholder,

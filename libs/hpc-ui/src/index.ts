@@ -8,15 +8,21 @@ import Divider from './lib/components/divider';
 import DraggableList from './lib/components/draggable-list';
 import ErrorMessage from './lib/components/error-message';
 import AsyncAutocompleteSelect, {
-  type AsyncAutocompleteSelectProps,
+  type AsyncAutocompleteSelectProps as AsyncAutocompleteSelectExportProps,
 } from './lib/components/form-fields/async-autocomplete-field';
-import AutocompleteSelect from './lib/components/form-fields/autocomplete-field';
+import AutocompleteSelect, {
+  type AutocompleteSelectProps as AutocompleteSelectExportProps,
+} from './lib/components/form-fields/autocomplete-field';
 import CheckBox from './lib/components/form-fields/checkbox';
 import DatePicker from './lib/components/form-fields/date-picker';
 import MultiTextField from './lib/components/form-fields/multi-text-field';
-import NumberField from './lib/components/form-fields/number-field';
+import NumberField, {
+  type NumberFieldProps as NumberFieldExportProps,
+} from './lib/components/form-fields/number-field';
 import Switch from './lib/components/form-fields/switch';
-import TextFieldWrapper from './lib/components/form-fields/text-field';
+import TextFieldWrapper, {
+  type TextFieldWrapperProps as TextFieldWrapperExportProps,
+} from './lib/components/form-fields/text-field';
 import Header from './lib/components/header';
 import List from './lib/components/list';
 import ListItem from './lib/components/list-item';
@@ -79,7 +85,10 @@ const ICONS = {
 
 export type ActionableButtonState = actionableButton.ActionableButtonState;
 export type SidebarNavigationItem = sidebarNavigation.SidebarNavigationItem;
-export type AsyncAutocompleteProps = AsyncAutocompleteSelectProps;
+export type AsyncAutocompleteSelectProps = AsyncAutocompleteSelectExportProps;
+export type TextFieldWrapperProps = TextFieldWrapperExportProps;
+export type AutocompleteSelectProps = AutocompleteSelectExportProps;
+export type NumberFieldProps = NumberFieldExportProps;
 
 export { COMPONENTS as C, ICONS };
 
