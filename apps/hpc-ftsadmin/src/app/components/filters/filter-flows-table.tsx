@@ -13,6 +13,8 @@ import validateForm from '../../utils/form-validation';
 import {
   fnCategories,
   fnEmergencies,
+  fnFlowStatusSnakeCase,
+  fnFlowTypeSnakeCase,
   fnGlobalClusters,
   fnLocations,
   fnOrganizations,
@@ -218,20 +220,7 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.flowStatus
                   )}
                   name="flowStatus"
-                  fnPromise={async () => {
-                    const response =
-                      await environment.model.categories.getCategories({
-                        query: 'flowStatus',
-                      });
-                    return response.map((responseValue): FormObjectValue => {
-                      return {
-                        displayLabel: responseValue.name,
-                        value: responseValue.name
-                          .toLowerCase()
-                          .replace(' ', '_'),
-                      };
-                    });
-                  }}
+                  fnPromise={() => fnFlowStatusSnakeCase(environment)}
                   isAutocompleteAPI={false}
                 />
                 <C.AsyncAutocompleteSelect
@@ -240,20 +229,7 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.flowType
                   )}
                   name="flowType"
-                  fnPromise={async () => {
-                    const response =
-                      await environment.model.categories.getCategories({
-                        query: 'flowType',
-                      });
-                    return response.map((responseValue) => {
-                      return {
-                        displayLabel: responseValue.name,
-                        value: responseValue.name
-                          .toLocaleLowerCase()
-                          .replace(' ', '_'),
-                      };
-                    });
-                  }}
+                  fnPromise={() => fnFlowTypeSnakeCase(environment)}
                   isAutocompleteAPI={false}
                 />
                 <C.AutocompleteSelect
