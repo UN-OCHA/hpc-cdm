@@ -8,12 +8,10 @@ import dayjs from '../../i18n/utils/dayjs';
 import { useEffect, useState } from 'react';
 
 const StyledDatePicker = tw.div`
-  w-full
-  items-baseline
-`;
-
-const StyledLink = tw(Link)`
-  ms-8
+  w-full  
+  flex
+  flex-col
+  items-start
 `;
 
 const DatePicker = ({
@@ -73,9 +71,10 @@ const DatePicker = ({
           slotProps={{
             field: { clearable: true, onClear: () => setCleared(true) },
           }}
+          sx={tw`w-full`}
         />
         {enableButton && (
-          <StyledLink
+          <Link
             component="button"
             type="button"
             variant="body2"
@@ -84,7 +83,7 @@ const DatePicker = ({
             }}
           >
             Today
-          </StyledLink>
+          </Link>
         )}
       </StyledDatePicker>
     </LocalizationProvider>
