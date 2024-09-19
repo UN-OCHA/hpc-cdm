@@ -1,6 +1,29 @@
 import { type categories, type util } from '@unocha/hpc-data';
 import { type Environment } from '../../environments/interface';
 
+const defaultOptions = (
+  response: Array<{
+    name: string;
+    id: number;
+  }>
+): util.FormObjectValue[] => {
+  return response.map((responseValue) => ({
+    displayLabel: responseValue.name,
+    value: responseValue.id,
+  }));
+};
+
+const nameToSnakeCase = (
+  response: Array<{
+    name: string;
+  }>
+): util.FormObjectValue[] => {
+  return response.map((responseValue) => ({
+    displayLabel: responseValue.name,
+    value: responseValue.name.toLocaleLowerCase().replace(' ', '_'),
+  }));
+};
+
 // Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop
 
 export const fnOrganizations = async (
@@ -25,32 +48,20 @@ export const fnUsageYears = async (
   }));
 };
 
-const defaultOptions = (
-  response: Array<{
-    name: string;
-    id: number;
-  }>
-): util.FormObjectValue[] => {
-  return response.map((responseValue) => ({
-    displayLabel: responseValue.name,
-    value: responseValue.id,
-  }));
-};
-
 export const fnLocations = async (
   query: { query: string },
   env: Environment
-): Promise<Array<FormObjectValue>> => {
+): Promise<util.FormObjectValue[]> => {
   const response = await env.model.locations.getAutocompleteLocations(query);
-  const res: Array<FormObjectValue> = [];
+  const res: util.FormObjectValue[] = [];
 
   for (const responseValue of response) {
     const hasChildren =
       responseValue.children && responseValue.children.length > 0;
-    const parentLocation: FormObjectValue = {
+    const parentLocation: util.FormObjectValue = {
       displayLabel: responseValue.name,
       value: responseValue.id,
-      hasChildren: hasChildren,
+      hasChildren,
     };
     res.push(parentLocation);
     if (hasChildren) {
@@ -99,6 +110,42 @@ export const fnCategories = async (
 ) => {
   const response = await env.model.categories.getCategories({
     query,
+  });
+  return defaultOptions(response);
+};
+
+export const fnFlowTypeSnakeCase = async (
+  env: Environment
+): Promise<util.FormObjectValue[]> => {
+  const response = await env.model.categories.getCategories({
+    query: 'flowType',
+  });
+  return nameToSnakeCase(response);
+};
+
+export const fnFlowStatusSnakeCase = async (
+  env: Environment
+): Promise<util.FormObjectValue[]> => {
+  const response = await env.model.categories.getCategories({
+    query: 'flowStatus',
+  });
+  return nameToSnakeCase(response);
+};
+
+export const fnFlowTypeId = async (
+  env: Environment
+): Promise<util.FormObjectValue[]> => {
+  const response = await env.model.categories.getCategories({
+    query: 'flowType',
+  });
+  return defaultOptions(response);
+};
+
+export const fnFlowStatusId = async (
+  env: Environment
+): Promise<util.FormObjectValue[]> => {
+  const response = await env.model.categories.getCategories({
+    query: 'flowStatus',
   });
   return defaultOptions(response);
 };
