@@ -21,7 +21,6 @@ const MultiTextField = ({
   placeholder,
   type,
   errorMessage,
-  ...otherProps
 }: {
   name: string;
   label: string;
@@ -74,7 +73,6 @@ const MultiTextField = ({
     boolean
   > = {
     ...field,
-    ...otherProps,
     multiple: true,
     freeSolo: true,
     options: [],

@@ -22,12 +22,10 @@ const TextFieldWrapper = ({
   textarea,
   error,
   required,
-  ...otherProps
 }: TextFieldWrapperProps) => {
   const [field, meta] = useField(name);
   const configTextField: TextFieldProps = {
     ...field,
-    ...otherProps,
     label,
     id: name,
     multiline: textarea,

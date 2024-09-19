@@ -33,7 +33,6 @@ const AsyncAutocompleteSelect = ({
   error,
   isAutocompleteAPI,
   required,
-  ...otherProps
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -100,7 +99,6 @@ const AsyncAutocompleteSelect = ({
     boolean
   > = {
     ...field,
-    ...otherProps,
     multiple: isMulti,
     onOpen: () => {
       setOpen(true);
