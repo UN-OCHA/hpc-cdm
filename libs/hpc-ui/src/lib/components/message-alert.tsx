@@ -12,7 +12,7 @@ type MessageAlertProps<T> = {
   message?: string;
 };
 const MessageAlert = <T,>({
-  setMessage: setError,
+  setMessage,
   message,
   severity,
 }: MessageAlertProps<T>) => {
@@ -24,7 +24,7 @@ const MessageAlert = <T,>({
     if (reason === 'clickaway') {
       return;
     }
-    setError(undefined);
+    setMessage(undefined);
   };
 
   return (
