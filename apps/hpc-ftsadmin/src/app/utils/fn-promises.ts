@@ -1,6 +1,29 @@
 import { categories, FormObjectValue } from '@unocha/hpc-data';
 import { Environment } from '../../environments/interface';
 
+const defaultOptions = (
+  response: Array<{
+    name: string;
+    id: number;
+  }>
+): FormObjectValue[] => {
+  return response.map((responseValue) => ({
+    displayLabel: responseValue.name,
+    value: responseValue.id,
+  }));
+};
+
+const nameToSnakeCase = (
+  response: Array<{
+    name: string;
+  }>
+): FormObjectValue[] => {
+  return response.map((responseValue) => ({
+    displayLabel: responseValue.name,
+    value: responseValue.name.toLocaleLowerCase().replace(' ', '_'),
+  }));
+};
+
 // Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop
 
 export const fnOrganizations = async (
@@ -21,18 +44,6 @@ export const fnUsageYears = async (
   const response = await env.model.usageYears.getUsageYears();
   return response.map((responseValue) => ({
     displayLabel: responseValue.year,
-    value: responseValue.id,
-  }));
-};
-
-const defaultOptions = (
-  response: Array<{
-    name: string;
-    id: number;
-  }>
-): Array<FormObjectValue> => {
-  return response.map((responseValue) => ({
-    displayLabel: responseValue.name,
     value: responseValue.id,
   }));
 };
@@ -99,6 +110,42 @@ export const fnCategories = async (
 ) => {
   const response = await env.model.categories.getCategories({
     query,
+  });
+  return defaultOptions(response);
+};
+
+export const fnFlowTypeSnakeCase = async (
+  env: Environment
+): Promise<FormObjectValue[]> => {
+  const response = await env.model.categories.getCategories({
+    query: 'flowType',
+  });
+  return nameToSnakeCase(response);
+};
+
+export const fnFlowStatusSnakeCase = async (
+  env: Environment
+): Promise<FormObjectValue[]> => {
+  const response = await env.model.categories.getCategories({
+    query: 'flowStatus',
+  });
+  return nameToSnakeCase(response);
+};
+
+export const fnFlowTypeId = async (
+  env: Environment
+): Promise<FormObjectValue[]> => {
+  const response = await env.model.categories.getCategories({
+    query: 'flowType',
+  });
+  return defaultOptions(response);
+};
+
+export const fnFlowStatusId = async (
+  env: Environment
+): Promise<FormObjectValue[]> => {
+  const response = await env.model.categories.getCategories({
+    query: 'flowStatus',
   });
   return defaultOptions(response);
 };
