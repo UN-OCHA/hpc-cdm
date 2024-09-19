@@ -22,7 +22,6 @@ const DatePicker = ({
   label,
   lang = 'en',
   enableButton = true,
-  ...otherProps
 }: {
   name: string;
   label: string;
@@ -46,7 +45,6 @@ const DatePicker = ({
       <StyledDatePicker>
         <BaseDatePicker
           {...field}
-          {...otherProps}
           format="YYYY/MM/DD"
           value={
             enableButton

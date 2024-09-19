@@ -18,7 +18,6 @@ const NumberField = ({
   placeholder,
   allowNegative,
   required,
-  ...otherProps
 }: NumberFieldProps) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<number>();
@@ -26,7 +25,6 @@ const NumberField = ({
   return (
     <NumericFormat
       {...field}
-      {...otherProps}
       name={name}
       label={label}
       onValueChange={(values) => {

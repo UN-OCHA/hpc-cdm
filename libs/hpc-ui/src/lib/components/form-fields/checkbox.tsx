@@ -12,7 +12,6 @@ const CheckBox = ({
   size,
   value,
   onChange,
-  ...otherProps
 }: {
   name: string;
   label?: string;
@@ -32,7 +31,6 @@ const CheckBox = ({
   };
   const configCheckBox: FormControlLabelProps = {
     ...field,
-    ...otherProps,
     label,
     id: name,
     control: (

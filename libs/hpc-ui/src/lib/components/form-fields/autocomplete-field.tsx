@@ -16,7 +16,6 @@ const AutocompleteSelect = ({
   placeholder,
   readOnly,
   isMulti,
-  ...otherProps
 }: {
   name: string;
   label: string;
@@ -35,7 +34,6 @@ const AutocompleteSelect = ({
     boolean
   > = {
     ...field,
-    ...otherProps,
     multiple: isMulti,
     readOnly,
     options,
