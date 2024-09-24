@@ -130,7 +130,7 @@ export const parseFlowForm = (
   values: FlowFormTypeValidated
 ): flows.CreateFlowParams => {
   const {
-    aidModality,
+    method,
     amountOriginalCurrency,
     amountUSD,
     beneficiaryGroup,
@@ -138,7 +138,7 @@ export const parseFlowForm = (
     currency,
     decisionDate,
     donorBudgetYear,
-    earmarking,
+    earmarkingType,
     exchangeRate: dirtyExchangeRate,
     firstReported,
     flowDescription: description,
@@ -157,10 +157,10 @@ export const parseFlowForm = (
   const exchangeRate = dirtyExchangeRate || undefined;
 
   const categories = categoryIds([
-    aidModality,
+    method,
     beneficiaryGroup,
     contributionType,
-    earmarking,
+    earmarkingType,
     flowStatus,
     flowType,
     ...keywords,
@@ -207,8 +207,9 @@ const isCategoryGroupKeyFlowForm = (
   return [
     'flowStatus',
     'flowType',
-    'earmarking',
-    'aidModality',
+    'earmarkingType',
+    'contributionType',
+    'method',
     'beneficiaryGroup',
     'keyword',
   ].includes(group);
