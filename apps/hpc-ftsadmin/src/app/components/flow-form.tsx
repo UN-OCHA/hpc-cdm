@@ -88,8 +88,8 @@ export type FlowFormType = {
   flowStatus: FormObjectValue | null;
   flowDate: Date | null;
   contributionType: FormObjectValue | null;
-  earmarking: FormObjectValue | null;
-  aidModality: FormObjectValue | null;
+  earmarkingType: FormObjectValue | null;
+  method: FormObjectValue | null;
   keywords: FormObjectValue[];
   beneficiaryGroup: FormObjectValue | null;
   notes: string;
@@ -145,8 +145,8 @@ export const INITIAL_FORM_VALUES: FlowFormType = {
   flowStatus: null,
   flowDate: null,
   contributionType: null,
-  earmarking: null,
-  aidModality: null,
+  earmarkingType: null,
+  method: null,
   keywords: [],
   beneficiaryGroup: null,
   notes: '',
@@ -406,19 +406,21 @@ export const FlowForm = (props: FlowFormProps) => {
                         <AsyncAutocompleteSelectReview
                           fieldName="contributionType"
                           label="Contribution Type"
-                          fnPromise={() => fnFlowStatusSnakeCase(env)}
+                          fnPromise={() =>
+                            fnCategories('contributionType', env)
+                          }
                           isAutocompleteAPI={false}
                         />
                         <AsyncAutocompleteSelectReview
-                          fieldName="earmarking"
+                          fieldName="earmarkingType"
                           label="GB Earmarking"
-                          fnPromise={() => fnFlowStatusSnakeCase(env)}
+                          fnPromise={() => fnCategories('earmarkingType', env)}
                           isAutocompleteAPI={false}
                         />
                         <AsyncAutocompleteSelectReview
-                          fieldName="aidModality"
+                          fieldName="method"
                           label="Aid Modality"
-                          fnPromise={() => fnFlowStatusSnakeCase(env)}
+                          fnPromise={() => fnCategories('method', env)}
                           isAutocompleteAPI={false}
                           required
                         />
@@ -432,7 +434,9 @@ export const FlowForm = (props: FlowFormProps) => {
                         <AsyncAutocompleteSelectReview
                           fieldName="beneficiaryGroup"
                           label="Beneficiary group"
-                          fnPromise={() => fnCategories('keywords', env)}
+                          fnPromise={() =>
+                            fnCategories('beneficiaryGroup', env)
+                          }
                           isAutocompleteAPI={false}
                         />
                       </div>
