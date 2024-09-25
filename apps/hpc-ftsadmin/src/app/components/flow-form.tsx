@@ -1,6 +1,6 @@
 import { AppContext, getEnv } from '../context';
 import * as io from 'io-ts';
-import { type FormObjectValue, util as codecs, flows } from '@unocha/hpc-data';
+import { type FormObjectValue, util as codecs } from '@unocha/hpc-data';
 import { Form, Formik } from 'formik';
 import { parseFlowForm } from '../utils/parse-flow-form';
 import { Box, Grow, Paper, Snackbar, SxProps, Theme } from '@mui/material';
@@ -10,7 +10,6 @@ import {
   fnCategories,
   fnEmergencies,
   fnFlowStatusId,
-  fnFlowStatusSnakeCase,
   fnFlowTypeId,
   fnGlobalClusters,
   fnLocations,
@@ -210,22 +209,6 @@ export const FlowForm = (props: FlowFormProps) => {
         console.error(err);
         setError('error message');
       });
-  };
-
-  const childFlowSumAmountUSD = (
-    amountUSD: string,
-    childFlows: FlowLinkProps[]
-  ) => {
-    if (!amountUSD) {
-      return;
-    }
-
-    const summedAmountUSD =
-      valueToInteger(amountUSD) -
-      childFlows.reduce((acc, cur) => acc + valueToInteger(cur.amountUSD), 0);
-    return (
-      'US$' + integerToCurrency(valueToInteger(amountUSD) - summedAmountUSD)
-    );
   };
 
   return (
