@@ -1,5 +1,6 @@
 import * as access from './lib/access';
 import * as categories from './lib/categories';
+import * as currencies from './lib/currencies';
 import * as emergencies from './lib/emergencies';
 import * as systems from './lib/systems';
 import * as errors from './lib/errors';
@@ -19,6 +20,7 @@ import { FormObjectValue } from './lib/util';
 export interface Model {
   access: access.Model;
   categories: categories.Model;
+  currencies: currencies.Model;
   projects: projects.Model;
   plans: plans.Model;
   globalClusters: globalClusters.Model;
@@ -35,6 +37,7 @@ export interface Model {
 export {
   access,
   categories,
+  currencies,
   projects,
   plans,
   globalClusters,

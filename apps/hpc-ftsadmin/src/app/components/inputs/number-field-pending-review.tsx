@@ -2,8 +2,12 @@ import { C, type NumberFieldProps } from '@unocha/hpc-ui';
 import ReviewPendingValues, {
   type ReviewPendingValuesProps,
 } from './review-pending-values';
+import { Box, SxProps, Theme } from '@mui/material';
 
-type NumberFieldReviewProps = Omit<NumberFieldProps, 'name'> &
+type NumberFieldReviewProps = { sx?: SxProps<Theme> } & Omit<
+  NumberFieldProps,
+  'name'
+> &
   ReviewPendingValuesProps;
 
 const NumberFieldReview = (props: NumberFieldReviewProps) => {
@@ -15,10 +19,10 @@ const NumberFieldReview = (props: NumberFieldReviewProps) => {
     onClick,
   };
   return (
-    <div>
+    <Box sx={props.sx}>
       <ReviewPendingValues {...reviewPendingValuesProps} />
       <C.NumberField {...numberFieldProps} name={fieldName} />
-    </div>
+    </Box>
   );
 };
 

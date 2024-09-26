@@ -4,7 +4,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useField, useFormikContext } from 'formik';
 
 export interface NumberFieldProps {
-  type: 'number' | 'currency';
+  type: 'number' | 'currency' | 'float' | 'unknownCurrency';
   name: string;
   label: string;
   placeholder?: string;
@@ -30,10 +30,11 @@ const NumberField = ({
       onValueChange={(values) => {
         setFieldValue(field.name, values.value);
       }}
-      thousandSeparator={type === 'currency'}
+      thousandSeparator={type === 'currency' || type === 'unknownCurrency'}
       valueIsNumericString
+      placeholder={placeholder}
       size="small"
-      decimalScale={type === 'number' ? 0 : undefined} // 0 means no decimals
+      decimalScale={type === 'number' ? 0 : 4} // 0 means no decimals
       allowNegative={allowNegative}
       customInput={StyledTextField}
       InputProps={{
