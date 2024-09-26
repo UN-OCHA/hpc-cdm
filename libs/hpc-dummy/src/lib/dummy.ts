@@ -15,6 +15,7 @@ import {
   globalClusters,
   usageYears,
   flows,
+  currencies,
 } from '@unocha/hpc-data';
 import isEqual from 'lodash/isEqual';
 
@@ -534,6 +535,14 @@ export class Dummy {
              */
 
             return undefined;
+          }
+        ),
+      },
+      currencies: {
+        getCurrencies: dummyEndpoint(
+          'currencies.getCurrencies',
+          async (): Promise<currencies.GetCurrenciesResult> => {
+            return this.data.currencies;
           }
         ),
       },

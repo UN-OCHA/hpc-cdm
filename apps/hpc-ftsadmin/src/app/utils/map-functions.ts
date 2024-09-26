@@ -4,10 +4,16 @@ import dayjs from 'dayjs';
 import { FlowLinkProps } from '../components/flow-link';
 
 export const valueToInteger = (value: string | number) => {
-  return typeof value === 'number' ? value : parseInt(value);
+  return typeof value === 'number' ? Math.round(value) : parseInt(value);
 };
 
-export const currencyToInteger = (value: string) => {
+export const currencyToInteger = (value: string | number) => {
+  if (!value) {
+    return 0;
+  }
+  if (typeof value === 'number') {
+    return Math.round(value);
+  }
   return parseInt(value.replace(/,/g, ''));
 };
 
