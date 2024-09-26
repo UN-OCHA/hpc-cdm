@@ -1,13 +1,14 @@
 import { AppContext, getEnv } from '../context';
 import * as io from 'io-ts';
 import { type FormObjectValue, util as codecs } from '@unocha/hpc-data';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikHelpers } from 'formik';
 import { parseFlowForm } from '../utils/parse-flow-form';
 import { Box, Grow, Paper, Snackbar, SxProps, Theme } from '@mui/material';
 import tw from 'twin.macro';
 import AsyncAutocompleteSelectReview from './inputs/async-autocomplete-pending-review';
 import {
   fnCategories,
+  fnCurrencies,
   fnEmergencies,
   fnFlowStatusId,
   fnFlowTypeId,
@@ -189,6 +190,53 @@ const FormGroup = ({
   );
 };
 
+const FlowAmountButton = ({
+  amountUSD,
+  amountOriginalCurrency,
+  exchangeRate,
+  setFieldValue,
+}: {
+  amountUSD: FlowFormType['amountUSD'];
+  amountOriginalCurrency: FlowFormType['amountOriginalCurrency'];
+  exchangeRate: FlowFormType['exchangeRate'];
+  setFieldValue: FormikHelpers<FlowFormType>['setFieldValue'];
+}) => {
+  console.log(amountUSD);
+  const amountUSDInt = currencyToInteger(amountUSD);
+  const amountOriginalCurrencyInt = currencyToInteger(amountOriginalCurrency);
+  const exchangeRateFloat = parseFloat(exchangeRate);
+
+  if (amountUSDInt && amountOriginalCurrencyInt && !exchangeRateFloat) {
+    const buttonProps = {
+      onClick: () =>
+        setFieldValue('exchangeRate', amountOriginalCurrencyInt / amountUSDInt),
+      text: 'Calculate the exchange rate',
+    };
+    return <C.Button color="primary" {...buttonProps} className="text-end" />;
+  } else if (amountUSDInt && !amountOriginalCurrencyInt && exchangeRateFloat) {
+    const buttonProps = {
+      onClick: () =>
+        setFieldValue(
+          'amountOriginalCurrency',
+          valueToInteger(amountUSDInt * exchangeRateFloat)
+        ),
+      text: 'Calculate the original amount',
+    };
+    return <C.Button color="primary" {...buttonProps} className="text-end" />;
+  } else if (!amountUSDInt && amountOriginalCurrencyInt && exchangeRateFloat) {
+    const buttonProps = {
+      onClick: () =>
+        setFieldValue(
+          'amountUSD',
+          valueToInteger(amountOriginalCurrencyInt / exchangeRateFloat)
+        ),
+      text: 'Calculate the USD amount',
+    };
+    return <C.Button color="primary" {...buttonProps} className="text-end" />;
+  }
+  return;
+};
+
 export const FlowForm = (props: FlowFormProps) => {
   const env = getEnv();
   const navigate = useNavigate();
@@ -219,7 +267,7 @@ export const FlowForm = (props: FlowFormProps) => {
           onSubmit={(values) => handleSubmit(values as FlowFormTypeValidated)}
           validate={(values) => validateForm(values, FORM_VALIDATION_SCHEMA)}
         >
-          {({ values, isValid }) => (
+          {({ values, isValid, setFieldValue }) => (
             <Form>
               <C.CheckBox
                 name="restricted"
@@ -324,27 +372,29 @@ export const FlowForm = (props: FlowFormProps) => {
                             <NumberFieldReview
                               fieldName="amountOriginalCurrency"
                               label="Funding amount (Original currency)"
-                              type="number"
+                              type="unknownCurrency"
+                              sx={tw`basis-4/6`}
                             />
-                            {/* TODO: Implement this field */}
-                            <AutocompleteSelectReview
+                            <AsyncAutocompleteSelectReview
                               fieldName="currency"
-                              label=""
-                              options={[]}
+                              label="Currency"
+                              fnPromise={() => fnCurrencies(env)}
+                              isAutocompleteAPI={false}
+                              sx={tw`basis-2/6`}
                             />
                           </Box>
                           <NumberFieldReview
                             fieldName="exchangeRate"
                             label="Exchange Rate Used"
-                            type="number"
+                            type="float"
                           />
-                          <C.Button
-                            color="primary"
-                            onClick={() => {
-                              console.log('Implement this button');
-                            }}
-                            text="Calculate the exchange rate"
-                            className="text-end"
+                          <FlowAmountButton
+                            setFieldValue={setFieldValue}
+                            amountUSD={values.amountUSD}
+                            amountOriginalCurrency={
+                              values.amountOriginalCurrency
+                            }
+                            exchangeRate={values.exchangeRate}
                           />
                         </Box>
                         <TextFieldReview

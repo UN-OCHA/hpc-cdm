@@ -5,6 +5,7 @@ import {
   forms,
   flows,
   categories,
+  currencies,
   emergencies,
   globalClusters,
   locations,
@@ -141,6 +142,7 @@ const FORM = t.type(
 
 const FLOW = flows.FLOW;
 const CATEGORY = categories.CATEGORY;
+const CURRENCY = currencies.CURRENCY;
 const KEYWORD = categories.KEYWORD;
 const EMERGENCY = emergencies.EMERGENCY;
 const GLOBAL_CLUSTER = globalClusters.GLOBAL_CLUSTER;
@@ -155,6 +157,7 @@ export const DUMMY_DATA = t.type(
     access: ACCESS,
     users: t.array(USER),
     categories: t.array(CATEGORY),
+    currencies: t.array(CURRENCY),
     currentUser: t.union([t.null, t.number]),
     emergencies: t.array(EMERGENCY),
     flows: t.array(FLOW),

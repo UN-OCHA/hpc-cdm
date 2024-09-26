@@ -346,6 +346,7 @@ export const parseToFlowForm = (
     amountUSD,
     description: flowDescription,
     origAmount,
+    origCurrency,
     decisionDate,
     firstReportedDate,
     exchangeRate,
@@ -379,6 +380,9 @@ export const parseToFlowForm = (
     flowDescription,
     amountOriginalCurrency:
       origAmount ?? INITIAL_FORM_VALUES['amountOriginalCurrency'],
+    currency: origCurrency
+      ? { value: origCurrency, displayLabel: origCurrency }
+      : INITIAL_FORM_VALUES['currency'],
     childFlows: children ? children.map(flowToFlowLinkProps) : [],
     decisionDate: decisionDate
       ? new Date(decisionDate)

@@ -808,6 +808,74 @@ export const INITIAL_DATA: DummyData = {
       includeTotals: null,
     },
   ],
+  currencies: [
+    {
+      id: 13,
+      code: 'AUD',
+      createdAt: '2017-01-14T00:52:05.181Z',
+      updatedAt: '2017-01-14T00:52:05.181Z',
+    },
+    {
+      id: 54,
+      code: 'EGP',
+      createdAt: '2017-01-14T00:52:05.299Z',
+      updatedAt: '2017-01-14T00:52:05.299Z',
+    },
+    {
+      id: 55,
+      code: 'ERN',
+      createdAt: '2017-01-14T00:52:05.299Z',
+      updatedAt: '2017-01-14T00:52:05.299Z',
+    },
+    {
+      id: 56,
+      code: 'ESP',
+      createdAt: '2017-01-14T00:52:05.299Z',
+      updatedAt: '2017-01-14T00:52:05.299Z',
+    },
+    {
+      id: 57,
+      code: 'ETB',
+      createdAt: '2017-01-14T00:52:05.299Z',
+      updatedAt: '2017-01-14T00:52:05.299Z',
+    },
+    {
+      id: 58,
+      code: 'EUR',
+      createdAt: '2017-01-14T00:52:05.299Z',
+      updatedAt: '2017-01-14T00:52:05.299Z',
+    },
+    {
+      id: 59,
+      code: 'FIM',
+      createdAt: '2017-01-14T00:52:05.310Z',
+      updatedAt: '2017-01-14T00:52:05.310Z',
+    },
+    {
+      id: 60,
+      code: 'FJD',
+      createdAt: '2017-01-14T00:52:05.310Z',
+      updatedAt: '2017-01-14T00:52:05.310Z',
+    },
+    {
+      id: 61,
+      code: 'FRF',
+      createdAt: '2017-01-14T00:52:05.311Z',
+      updatedAt: '2017-01-14T00:52:05.311Z',
+    },
+    {
+      id: 62,
+      code: 'GBP',
+      createdAt: '2017-01-14T00:52:05.311Z',
+      updatedAt: '2017-01-14T00:52:05.311Z',
+    },
+    {
+      id: 179,
+      code: 'USD',
+      createdAt: '2017-01-14T00:52:05.630Z',
+      updatedAt: '2017-01-14T00:52:05.630Z',
+    },
+  ],
   emergencies: [
     {
       id: 513,

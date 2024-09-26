@@ -4,6 +4,7 @@ import {
   type Model,
   type access,
   type categories,
+  type currencies,
   type emergencies,
   errors,
   type flows,
@@ -531,6 +532,14 @@ export class Dummy {
              */
 
             return undefined;
+          }
+        ),
+      },
+      currencies: {
+        getCurrencies: dummyEndpoint(
+          'currencies.getCurrencies',
+          async (): Promise<currencies.GetCurrenciesResult> => {
+            return this.data.currencies;
           }
         ),
       },

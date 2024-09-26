@@ -1,5 +1,6 @@
 import * as access from './lib/access';
 import * as categories from './lib/categories';
+import * as currencies from './lib/currencies';
 import * as emergencies from './lib/emergencies';
 import * as systems from './lib/systems';
 
@@ -17,6 +18,7 @@ import * as usageYears from './lib/usageYears';
 export interface Model {
   access: access.Model;
   categories: categories.Model;
+  currencies: currencies.Model;
   projects: projects.Model;
   plans: plans.Model;
   globalClusters: globalClusters.Model;
@@ -33,6 +35,7 @@ export interface Model {
 export {
   access,
   categories,
+  currencies,
   emergencies,
   flows,
   globalClusters,

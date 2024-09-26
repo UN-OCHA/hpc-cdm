@@ -2,8 +2,9 @@ import { C, type AsyncAutocompleteSelectProps } from '@unocha/hpc-ui';
 import ReviewPendingValues, {
   type ReviewPendingValuesProps,
 } from './review-pending-values';
+import { Box, SxProps, Theme } from '@mui/material';
 
-type AsyncAutocompleteSelectReviewProps = Omit<
+type AsyncAutocompleteSelectReviewProps = { sx?: SxProps<Theme> } & Omit<
   AsyncAutocompleteSelectProps,
   'name'
 > &
@@ -21,13 +22,13 @@ const AsyncAutocompleteSelectReview = (
     onClick,
   };
   return (
-    <div>
+    <Box sx={props.sx}>
       <ReviewPendingValues {...reviewPendingValuesProps} />
       <C.AsyncAutocompleteSelect
         {...asyncAutocompleteSelectProps}
         name={fieldName}
       />
-    </div>
+    </Box>
   );
 };
 

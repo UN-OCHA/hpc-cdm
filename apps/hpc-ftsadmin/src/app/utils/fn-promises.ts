@@ -30,6 +30,17 @@ const nameToSnakeCase = (
   }));
 };
 
+const currenciesOptions = (
+  response: Array<{
+    code: string;
+  }>
+): FormObjectValue[] => {
+  return response.map((responseValue) => ({
+    displayLabel: responseValue.code,
+    value: responseValue.code,
+  }));
+};
+
 export const organizationsOptions = (
   response: Array<{
     name: string;
@@ -146,6 +157,11 @@ export const fnCategories = async (
     query,
   });
   return defaultOptions(response);
+};
+
+export const fnCurrencies = async (env: Environment) => {
+  const response = await env.model.currencies.getCurrencies();
+  return currenciesOptions(response);
 };
 
 export const fnFlows = async (

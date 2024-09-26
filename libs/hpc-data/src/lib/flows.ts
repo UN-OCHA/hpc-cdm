@@ -69,11 +69,11 @@ const CREATED_BY_OR_LAST_UPDATED_BY = t.type({
 
 const FLOW_AUTOCOMPLETE_PROJECT = t.type({
   id: t.number,
-  code: t.string,
+  code: t.union([t.string, t.null]),
   currentPublishedVersionId: t.number,
   creatorParticipantId: t.union([t.number, t.null]),
   latestVersionId: t.number,
-  implementationStatus: t.string,
+  implementationStatus: t.union([t.string, t.null]),
   flowObject: t.type({
     refDirection: DIRECTION,
   }),

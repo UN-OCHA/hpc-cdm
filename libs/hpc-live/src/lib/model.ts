@@ -24,6 +24,7 @@ import {
   reportingWindows,
   systems,
   usageYears,
+  currencies,
 } from '@unocha/hpc-data';
 import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
@@ -617,6 +618,15 @@ export class LiveModel implements Model {
           pathname: `v2/category/merge/${params.receivingKeywordID}/${params.mergingKeywordID}`,
           method: 'GET',
           resultType: categories.MERGE_KEYWORD_RESULT,
+        }),
+    };
+  }
+  get currencies(): currencies.Model {
+    return {
+      getCurrencies: () =>
+        this.call({
+          pathname: `/v1/currency`,
+          resultType: currencies.GET_CURRENCIES_RESULT,
         }),
     };
   }
