@@ -1,7 +1,12 @@
-import { FormObjectValue, flows, organizations } from '@unocha/hpc-data';
+import {
+  FormObjectValue,
+  fileAssetEntities,
+  flows,
+  organizations,
+} from '@unocha/hpc-data';
 import { LanguageKey, t } from '../../i18n';
 import dayjs from 'dayjs';
-import { FlowLinkProps } from '../components/flow-link';
+import { FlowLinkProps } from '../components/flow-form/flow-link';
 
 export const valueToInteger = (value: string | number) => {
   return typeof value === 'number' ? Math.round(value) : parseInt(value);
@@ -48,7 +53,7 @@ export const flowToFlowLinkProps = (
       (loc) => loc.flowObject.refDirection === 'destination'
     )[0]?.name,
     amountUSD: flow.amountUSD,
-    flowDate: new Date(flow.flowDate),
+    flowDate: dayjs(flow.flowDate),
     projectName: flow.projects.filter(
       (proj) => proj.flowObject.refDirection === 'destination'
     )[0]?.projectVersions[0]?.name,
@@ -72,6 +77,21 @@ export const flowLinkToFormObjectValue = (
   };
 };
 
+export const fileAssetEntityToFileUploadResult = (
+  fileAssetEntity?: flows.GetFlowResult['reportDetails'][number]['reportFiles'][number]['fileAssetEntity']
+): fileAssetEntities.FileUploadResult | null => {
+  if (!fileAssetEntity) {
+    return null;
+  }
+  const self = `/files/fts/${fileAssetEntity.id}`;
+  return {
+    ...fileAssetEntity,
+    name: fileAssetEntity.filename,
+    self,
+    file: '/public' + self,
+  };
+};
+
 export const parseError = (
   error: 'unknown' | 'duplicate' | 'conflict' | undefined,
   component: 'organizationUpdateCreate' | 'keywordTable',
@@ -89,7 +109,7 @@ export const parseError = (
     }
     return s.components[component].errors.unknown;
   });
-  
+
   if (error === 'duplicate' && errorValue) {
     return translatedError.replace(
       `${

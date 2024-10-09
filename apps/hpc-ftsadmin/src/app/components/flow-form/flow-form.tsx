@@ -1,8 +1,8 @@
-import { AppContext, getEnv } from '../context';
+import { AppContext, getEnv } from '../../context';
 import * as io from 'io-ts';
 import { type FormObjectValue, util as codecs } from '@unocha/hpc-data';
 import { Form, Formik, FormikHelpers } from 'formik';
-import { parseFlowForm } from '../utils/parse-flow-form';
+import { parseFlowForm } from '../../utils/parse-flow-form';
 import { Box, Grow, Paper, Snackbar, SxProps, Theme } from '@mui/material';
 import tw from 'twin.macro';
 import AsyncAutocompleteSelectReview from './inputs/async-autocomplete-pending-review';
@@ -18,15 +18,15 @@ import {
   fnPlans,
   fnProjects,
   fnUsageYears,
-} from '../utils/fn-promises';
+} from '../../utils/fn-promises';
 import AutocompleteSelectReview from './inputs/autocomplete-pending-review';
 import { C } from '@unocha/hpc-ui';
 import NumberFieldReview from './inputs/number-field-pending-review';
 import TextFieldReview from './inputs/text-field-pending-review';
-import { MdAdd } from 'react-icons/md';
-import validateForm from '../utils/form-validation';
+import { MdAdd, MdClose } from 'react-icons/md';
+import validateForm from '../../utils/form-validation';
 import { useNavigate } from 'react-router-dom';
-import * as paths from '../paths';
+import * as paths from '../../paths';
 import FlowLink, { FlowLinkProps } from './flow-link';
 import FlowSearch from './flow-search';
 import FlowLinkWarning from './flow-link-warning';
@@ -34,26 +34,17 @@ import {
   currencyToInteger,
   integerToCurrency,
   valueToInteger,
-} from '../utils/map-functions';
+} from '../../utils/map-functions';
+import ReportingDetail, {
+  REPORTING_DETAIL_INITIAL_VALUES,
+  ReportingDetailProps,
+} from '../reporting-detail';
+import { Dayjs } from 'dayjs';
 
 type FlowFormProps = {
   setError: React.Dispatch<React.SetStateAction<string | undefined>>;
   initialValues?: FlowFormType;
-};
-
-type ReportingDetail = {
-  report: FormObjectValue | null;
-  reportedByOrganization: FormObjectValue | null;
-  reportChannel: FormObjectValue | null;
-  sourceSystemRecordId: string;
-  verified: FormObjectValue | null;
-  dateReported: Date | null;
-  reporterReferenceCode: string;
-  reporterContactInfo: string;
-  reportFileTitle: string;
-  file: unknown; // TODO: Add Blob type
-  reportURLTitle: string;
-  url: string;
+  id?: number;
 };
 
 export type FlowFormType = {
@@ -81,12 +72,12 @@ export type FlowFormType = {
   currency: FormObjectValue | null;
   exchangeRate: string;
   flowDescription: string;
-  firstReported: Date | null;
-  decisionDate: Date | null;
+  firstReported: Dayjs | null;
+  decisionDate: Dayjs | null;
   donorBudgetYear: string;
   flowType: FormObjectValue | null;
   flowStatus: FormObjectValue | null;
-  flowDate: Date | null;
+  flowDate: Dayjs | null;
   contributionType: FormObjectValue | null;
   earmarkingType: FormObjectValue | null;
   method: FormObjectValue | null;
@@ -97,7 +88,7 @@ export type FlowFormType = {
   parentFlow: FlowLinkProps | null;
   childFlows: FlowLinkProps[];
 
-  reportingDetails: ReportingDetail[];
+  reportingDetails: ReportingDetailProps[];
 
   restricted: boolean;
   isErrorCorrection: boolean;
@@ -154,7 +145,7 @@ export const INITIAL_FORM_VALUES: FlowFormType = {
   parentFlow: null,
   childFlows: [],
 
-  reportingDetails: [],
+  reportingDetails: [REPORTING_DETAIL_INITIAL_VALUES],
 
   restricted: false,
   isErrorCorrection: false,
@@ -173,18 +164,25 @@ const FORM_VALIDATION_SCHEMA = io.type({
   fundingDestinationUsageYears: codecs.NON_EMPTY_ARRAY,
 });
 
-const FormGroup = ({
+export const FormGroup = ({
   title,
   children,
   styles,
+  closeButtonAction,
 }: {
   title: string;
   children?: React.ReactNode;
   styles?: SxProps<Theme>;
+  closeButtonAction?: () => void;
 }) => {
   return (
     <Paper elevation={3} sx={styles}>
-      <h2>{title}</h2>
+      <Box sx={tw`flex items-center justify-between`}>
+        <h2>{title}</h2>
+        {closeButtonAction && (
+          <MdClose onClick={closeButtonAction} style={{ cursor: 'pointer' }} />
+        )}
+      </Box>
       {children}
     </Paper>
   );
@@ -201,7 +199,6 @@ const FlowAmountButton = ({
   exchangeRate: FlowFormType['exchangeRate'];
   setFieldValue: FormikHelpers<FlowFormType>['setFieldValue'];
 }) => {
-  console.log(amountUSD);
   const amountUSDInt = currencyToInteger(amountUSD);
   const amountOriginalCurrencyInt = currencyToInteger(amountOriginalCurrency);
   const exchangeRateFloat = parseFloat(exchangeRate);
@@ -245,9 +242,8 @@ export const FlowForm = (props: FlowFormProps) => {
 
   const handleSubmit = (values: FlowFormTypeValidated) => {
     //  TODO: Add form validation at this point
-    console.log(values);
     env.model.flows
-      .createFlow(parseFlowForm(values))
+      .createFlow(parseFlowForm(values, props.id))
       .then((res) => {
         navigate(paths.flow(res.id), {
           state: { successMessage: 'success message' },
@@ -257,6 +253,23 @@ export const FlowForm = (props: FlowFormProps) => {
         console.error(err);
         setError('error message');
       });
+  };
+  const handleChangeFirstReported = (
+    newValue: Dayjs | null,
+    setFieldValue: FormikHelpers<FlowFormType>['setFieldValue'],
+    values: FlowFormType
+  ) => {
+    // Create a deep copy of the reportingDetails array
+    const newReportingDetails = values.reportingDetails.map((reportingDetail) =>
+      // Only update if dateReported is null/undefined
+      !reportingDetail.dateReported
+        ? { ...reportingDetail, dateReported: newValue }
+        : reportingDetail
+    );
+
+    // Update both reportingDetails and firstReported fields in Formik's state
+    setFieldValue('reportingDetails', newReportingDetails);
+    setFieldValue('firstReported', newValue);
   };
 
   return (
@@ -350,7 +363,7 @@ export const FlowForm = (props: FlowFormProps) => {
                   />
                 </FormGroup>
 
-                <Box sx={tw`basis-8/12 flex flex-col gap-y-4`}>
+                <Box sx={tw`basis-8/12 max-w-[66.666%] flex flex-col gap-y-4`}>
                   <FormGroup title="Flow" styles={tw`p-6`}>
                     <Box sx={tw`grid grid-cols-2 gap-y-8 gap-x-24`}>
                       <div>
@@ -409,6 +422,13 @@ export const FlowForm = (props: FlowFormProps) => {
                           <C.DatePicker
                             label="First Reported (DD/MM/YY)"
                             name="firstReported"
+                            onChange={(value) =>
+                              handleChangeFirstReported(
+                                value,
+                                setFieldValue,
+                                values
+                              )
+                            }
                           />
                           <C.DatePicker
                             label="Decision Date (DD/MM/YY)"
@@ -538,14 +558,26 @@ export const FlowForm = (props: FlowFormProps) => {
                       />
                     </Box>
                   </FormGroup>
-                  <FormGroup title="Reporting Details" styles={tw`p-6`}>
-                    {/* TODO: Create Radio Button component */}
-                    <AsyncAutocompleteSelectReview
-                      fieldName="reportingDetails"
-                      fnPromise={(query) => fnOrganizations(query, env)}
-                      label="Reported by Organization"
-                    />
-                  </FormGroup>
+                  {values.reportingDetails.length > 0 ? (
+                    values.reportingDetails.map((reportingDetail, index) => (
+                      <ReportingDetail
+                        reportingDetailValue={reportingDetail}
+                        index={index}
+                      />
+                    ))
+                  ) : (
+                    <ReportingDetail index={0} />
+                  )}
+                  <C.Button
+                    text="Add Reporting Detail"
+                    onClick={() =>
+                      setFieldValue('reportingDetails', [
+                        ...values.reportingDetails,
+                        REPORTING_DETAIL_INITIAL_VALUES,
+                      ])
+                    }
+                    color="primary"
+                  />
                 </Box>
 
                 <FormGroup

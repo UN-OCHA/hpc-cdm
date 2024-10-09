@@ -19,6 +19,16 @@ export interface TextFieldWrapperProps {
   minRows?: number;
   error?: (metaError: string) => string | undefined;
   required?: boolean;
+  /**
+   *  If `onChange()` is passed, it will replace Formik's
+   *  `onChange()` prop
+   */
+  onChange?: (...args: any[]) => unknown;
+  /** This prop is used only if we are not using
+   *  `Formik`, if you are using `Formik`, you don't need
+   *  to pass this prop.
+   */
+  initialValue?: string;
 }
 const TextFieldWrapper = ({
   name,
@@ -28,6 +38,8 @@ const TextFieldWrapper = ({
   minRows,
   error,
   required,
+  onChange,
+  initialValue,
 }: TextFieldWrapperProps) => {
   const [field, meta] = useField(name);
   const configTextField: TextFieldProps = {
@@ -46,7 +58,19 @@ const TextFieldWrapper = ({
     configTextField.error = true;
     configTextField.helperText = error ? error(meta.error) : meta.error;
   }
-  return <StyledTextField {...configTextField} />;
+  return (
+    <StyledTextField
+      {...configTextField}
+      {...(onChange
+        ? {
+            onChange: (e) => {
+              onChange(e.target.value);
+            },
+          }
+        : {})}
+      {...(initialValue !== undefined ? { value: initialValue } : {})}
+    />
+  );
 };
 
 export default TextFieldWrapper;
