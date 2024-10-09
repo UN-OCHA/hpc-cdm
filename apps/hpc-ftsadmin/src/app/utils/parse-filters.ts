@@ -179,7 +179,7 @@ export function isKey<T extends object>(x: T, k: PropertyKey): k is keyof T {
   return k in x;
 }
 
-function isFlowObjectTypes(value: string): value is FlowObjectTypes {
+export function isFlowObjectTypes(value: string): value is FlowObjectTypes {
   return [
     'location',
     'emergency',
@@ -215,7 +215,7 @@ export const extractDirectionObject = (
   }
 };
 
-type FlowObjectTypes =
+export type FlowObjectTypes =
   | 'location'
   | 'organization'
   | 'usageYear'

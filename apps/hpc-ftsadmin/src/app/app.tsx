@@ -199,6 +199,15 @@ export const App = () => {
                           element={<PageFlowsList />}
                         />
                         <Route
+                          path={paths.flowRoot()}
+                          element={
+                            <RouteParamsValidator
+                              element={<PageFlow />}
+                              routeParam="id"
+                            />
+                          }
+                        />
+                        <Route
                           path={paths.pendingFlows()}
                           element={<PagePendingFlowsList />}
                         />

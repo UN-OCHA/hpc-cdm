@@ -15,6 +15,7 @@ export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(
 ) => t.type({ data, permissions });
 
 const INTEGER_REGEX = /^[0-9]+$/;
+const CURRENCY_INTEGER_REGEX = /^[0-9]+(,[0-9]+)*$/;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
@@ -46,6 +47,30 @@ export const POSITIVE_INTEGER_FROM_STRING = new t.Type<number, number>(
       return Number.isInteger(v) && v >= 0 ? t.success(v) : t.failure(v, c);
     } else if (typeof v === 'string') {
       return INTEGER_REGEX.test(v) ? t.success(parseInt(v)) : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
+ * Accepts either an integer, or a string of an integer, serializes to a number.
+ */
+export const CURRENCY_INTEGER_GREATER_THAN_0_FROM_STRING = new t.Type<
+  number,
+  number
+>(
+  'CURRENCY_INTEGER_GREATER_THAN_0_FROM_STRING',
+  t.number.is,
+  (v, c) => {
+    if (typeof v === 'number') {
+      return Number.isInteger(v) && v > 0 ? t.success(v) : t.failure(v, c);
+    } else if (typeof v === 'string') {
+      // `v.replace(/,/g, '')` is used because string currency is written as: "2,231,233"
+      return CURRENCY_INTEGER_REGEX.test(v) && parseInt(v.replace(/,/g, '')) > 0
+        ? t.success(parseInt(v))
+        : t.failure(v, c);
     } else {
       return t.failure(v, c);
     }

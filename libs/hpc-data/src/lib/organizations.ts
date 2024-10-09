@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { LOCATION_BUILDER } from './locations';
+import { LOCATION_WITHOUT_CHILDREN } from './locations';
 
 const ORGANIZATION_CATEGORY = t.type({
   id: t.number,
@@ -41,7 +41,7 @@ const ORGANIZATION_BUILDER = t.intersection([
   }),
   t.partial({
     categories: t.array(ORGANIZATION_CATEGORY),
-    locations: t.array(t.type(LOCATION_BUILDER)),
+    locations: t.array(LOCATION_WITHOUT_CHILDREN),
   }),
 ]);
 

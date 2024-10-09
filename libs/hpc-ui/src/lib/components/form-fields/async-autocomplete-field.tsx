@@ -40,6 +40,13 @@ export type AsyncAutocompleteSelectProps = {
   required?: boolean;
   allowChildrenRender?: boolean;
   removeOptions?: FormObjectValue[];
+  onChange?: (
+    newValue:
+      | NonNullable<string | FormObjectValue>
+      | (string | FormObjectValue)[]
+      | null
+  ) => void;
+  disabled?: boolean;
 };
 
 /**
@@ -74,6 +81,8 @@ const AsyncAutocompleteSelect = ({
   required,
   allowChildrenRender,
   removeOptions,
+  onChange,
+  disabled,
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -170,6 +179,7 @@ const AsyncAutocompleteSelect = ({
   > = {
     ...field,
     multiple: isMulti,
+    disabled,
     onOpen: () => {
       setOpen(true);
     },
@@ -185,8 +195,12 @@ const AsyncAutocompleteSelect = ({
     filterOptions: (x) => x,
     ChipProps: { size: 'small' },
     onChange: (_, newValue) => {
-      // For multiple selections, newValue will be an array of selected values
-      setFieldValue(name, newValue);
+      if (onChange) {
+        onChange(newValue);
+      } else {
+        // For multiple selections, newValue will be an array of selected values
+        setFieldValue(name, newValue);
+      }
     },
     onInputChange: (_, newInputValue) => {
       setInputValue(newInputValue);

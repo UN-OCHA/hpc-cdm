@@ -556,6 +556,19 @@ export class Dummy {
         getFlow: dummyEndpoint('flows.getFlow', async () => {
           throw new errors.NotFoundError();
         }),
+        getAutocompleteFlows: dummyEndpoint(
+          'flows.getAutocompleteFlows',
+          async (params: flows.GetFlowsAutocompleteParams) => {
+            return this.data.flows.filter((flow) => {
+              return (
+                flow.description
+                  ?.toLowerCase()
+                  .includes(params.query.toLowerCase()) ||
+                flow.id.toString().includes(params.query)
+              );
+            }) as any; //  TODO: Remove any
+          }
+        ),
         searchFlows: dummyEndpoint(
           'flows.searchFlows',
           async (params: flows.SearchFlowsParams) => {
@@ -673,13 +686,25 @@ export class Dummy {
             const res: flows.GetFlowResult = {
               ...flow,
               firstReportedDate: '',
-              meta: { language: 'en' },
               versionStartDate: '',
               createdAt: '',
               createdBy: participant,
               description: '',
               lastUpdatedBy: participant,
               notes: '',
+              categories: [],
+              plans: [],
+              planEntities: [],
+              organizations: [],
+              locations: [],
+              globalClusters: [],
+              usageYears: [],
+              projects: [],
+              emergencies: [],
+              governingEntities: [],
+              clusters: [],
+              children: [],
+              parents: [],
             };
             return res;
           }
@@ -1026,6 +1051,16 @@ export class Dummy {
             return this.data.plans.filter((plan) =>
               plan.name.toUpperCase().includes(query.toUpperCase())
             );
+          }
+        ),
+        getPlan: dummyEndpoint(
+          'plans.getPlan',
+          async ({ id }: { id: number }): Promise<plans.Plan> => {
+            const plan = this.data.plans.find((plan) => plan.id === id);
+            if (!plan) {
+              throw new errors.NotFoundError();
+            }
+            return plan;
           }
         ),
       },
