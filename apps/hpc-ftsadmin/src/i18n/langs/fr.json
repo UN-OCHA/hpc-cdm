@@ -34,6 +34,11 @@
       "info": "Nous n'avons pas pu trouver la page que vous cherchiez",
       "back": "Retour"
     },
+    "invalidRouteParam": {
+      "title": "Itinéraire invalide",
+      "info": "ID non entier détecté dans l'URL",
+      "back": "Retourner"
+    },
     "loader": {
       "loading": "Chargement...",
       "error": "Erreur:",
@@ -42,22 +47,265 @@
     "unsupportedBrowser": {
       "title": "Navigateur non compatible! ",
       "info": "Malheureusement, votre présent navigateur n’est pas compatible. Veuillez utiliser Firefox ou Chrome. Pour ce faire, simplement copiez le lien (URL) dessus, ouvrez Firefox, ou Chrome, et collez le lien sur la barre d’adresse du nouveau navigateur."
+    },
+    "flowsTable": {
+      "headers": {
+        "id": "ID",
+        "status": "Statut",
+        "updatedCreated": "Mise à jour/Création",
+        "dataProvider": "Fournisseur de données",
+        "amountUSD": "Montant USD",
+        "sourceOrganization": "Organisation source",
+        "destinationOrganization": "Organisation de destination",
+        "destinationPlan": "Plan de destination",
+        "destinationCountry": "Pays de destination",
+        "destinationYear": "Année de destination",
+        "details": "Détails",
+        "exchangeRate": "Taux de change",
+        "flowDate": "Date de flux",
+        "newMoney": "Nouvelle devise",
+        "decisionDate": "Date de décision",
+        "sourceID": "ID du système source",
+        "reporterRefCode": "Code de référence du déclarant"
+      },
+      "update": "Mise à jour de",
+      "new": "Nouveau",
+      "restricted": "restreint",
+      "inactive": "inactif",
+      "child": "enfant",
+      "parent": "parent",
+      "notFound": {
+        "title": "Flux introuvables",
+        "info": "Nous n’avons pas pu charger les flux"
+      },
+      "reportTooltip": "signalé par {organization} le {date} via {channel}",
+      "parkedSource": "Source stationnée",
+      "sortBy": "Trier par",
+      "totalAmount": "Montant Total：",
+      "rejectPendingFlows": "Rejeter les flux en attente",
+      "downloadDisabled": "Le téléchargement est uniquement autorisé lorsqu'au moins un filtre est appliqué",
+      "totalAmountDisabled": "Le montant total est uniquement autorisé lorsqu'au moins un filtre est appliqué",
+      "tableSettings": {
+        "title": "Paramètres du tableau",
+        "save": "Enregistrer",
+        "info": "Quitter sans cliquer 'Enregistrer' ne mettra pas à jour le tableau"
+      }
+    },
+    "flowsFilter": {
+      "title": "Filtres",
+      "button": {
+        "primary": "Rechercher",
+        "secondary": "Effacer les champs"
+      },
+      "headers": {
+        "flowDetails": "Détails du flux",
+        "sourceDetails": "Détails de la source",
+        "destinationDetails": "Détails de la destination"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "Inclure les enfants des flux de stationnement correspondants",
+        "restricted": "Restreint",
+        "flowID": "ID du flux",
+        "amountUSD": "Montant en USD",
+        "keywords": "Mots-clés",
+        "flowStatus": "État du flux",
+        "flowType": "Type de flux",
+        "flowActiveStatus": "État actif du flux",
+        "reporterRefCode": "Code de référence du déclarant",
+        "sourceSystemID": "ID du système source",
+        "legacyID": "ID du flux hérité",
+        "sourceOrganizations": "Organisation(s) source",
+        "sourceLocations": "Pays(s) source(s)",
+        "sourceUsageYears": "Année(s) d'utilisation source",
+        "sourceProjects": "Projet(s) source(s)",
+        "sourcePlans": "Plan(s) source(s)",
+        "sourceGlobalClusters": "Regroupement(s) mondial(aux) source(s)",
+        "sourceEmergencies": "Urgence(s) source(s)",
+        "destinationOrganizations": "Organisation(s) de destination",
+        "destinationLocations": "Pays(s) de destination",
+        "destinationUsageYears": "Année(s) d'utilisation de la destination",
+        "destinationProjects": "Projet(s) de destination",
+        "destinationPlans": "Plan(s) de destination",
+        "destinationGlobalClusters": "Regroupement(s) mondial(aux) de destination",
+        "destinationEmergencies": "Urgence(s) de destination"
+      },
+      "errors": {
+        "flowID": "Fournissez uniquement des entiers positifs en tant que valeurs"
+      },
+      "info": {
+        "filterInfo": "Utiliser des valeurs séparées par des virgules créera plusieurs valeurs. La copie et le collage fonctionnent également avec cette fonctionnalité."
+      },
+      "showMore": "Afficher plus",
+      "tooltips": {
+        "filters": "Filtres"
+      }
+    },
+    "keywordTable": {
+      "headers": {
+        "id": "ID",
+        "name": "Nom",
+        "relatedFlows": "Flux associés",
+        "public": "Public"
+      },
+      "modal": {
+        "text": "Êtes-vous sûr de vouloir supprimer ce Mot-Clé ?",
+        "principalButton": "Supprimer",
+        "secondaryButton": "Annuler"
+      },
+      "errors": {
+        "unknown": "Erreur inattendue lors de la création/mise à jour du mot-clé.",
+        "duplicate": "Un mot-clé avec le nom {keywordName} existe déjà. Veuillez choisir un nom différent."
+      },
+      "labels": {
+        "newName": "Nouveau Nom",
+        "save": "Enregistrer",
+        "public": "Public",
+        "cancel": "Annuler",
+        "delete": "Supprimer"
+      }
+    },
+    "pendingFlowsFilter": {
+      "title": "Filtres",
+      "button": {
+        "primary": "Rechercher",
+        "secondary": "Effacer les champs"
+      },
+      "headers": {
+        "flowDetails": "Détails du flux",
+        "sourceDetails": "Détails de la source",
+        "destinationDetails": "Détails de la destination"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "Inclure les enfants des flux de stationnement correspondants",
+        "status": "Statut",
+        "dataProvider": "Fournisseur de données",
+        "flowType": "Type de flux",
+        "reporterRefCode": "Code de référence du déclarant",
+        "sourceOrganizations": "Organisation(s) source",
+        "sourceLocations": "Pays(s) source(s)",
+        "destinationOrganizations": "Organisation(s) de destination",
+        "destinationLocations": "Pays(s) de destination",
+        "destinationUsageYears": "Année(s) d'utilisation de la destination",
+        "details": "Détails"
+      },
+      "showMore": "Afficher plus",
+      "tooltips": {
+        "filters": "Filtres"
+      }
+    },
+    "organizationsFilter": {
+      "title": "Filtres",
+      "button": {
+        "primary": "Rechercher",
+        "secondary": "Effacer les champs"
+      },
+      "headers": {
+        "organizationDetails": "Détails de l'organisation"
+      },
+      "filters": {
+        "organization": "Nom de l'organisation",
+        "status": "Actif",
+        "date": "Ajouté/Modifié depuis",
+        "locations": "Pays(s)",
+        "organizationType": "Type d'organisation",
+        "parentOrganization": "Organisation mère"
+      },
+      "showMore": "Afficher plus",
+      "tooltips": {
+        "filters": "Filtres"
+      }
+    },
+    "organizationTable": {
+      "headers": {
+        "id": "ID",
+        "name": "Organisation",
+        "abbreviation": "Abbréviation",
+        "type": "Type",
+        "subType": "Sous-type",
+        "location": "Emplacement",
+        "createdBy": "Créé par",
+        "updatedBy": "Mis à jour par"
+      },
+      "update": "Mettre à jour",
+      "new": "Nouveau",
+      "restricted": "Restreint",
+      "inactive": "Inactif",
+      "notFound": {
+        "title": "Organisations non trouvées",
+        "info": "Nous n'avons pas pu charger les organisations"
+      },
+      "sortBy": "Trier par",
+      "tableSettings": {
+        "title": "Paramètres du tableau",
+        "save": "Enregistrer",
+        "info": "Quitter sans cliquer sur le bouton 'Enregistrer' ne mettra pas à jour le tableau"
+      }
+    },
+    "organizationUpdateCreate": {
+      "title": {
+        "create": "Ajouter une organisation"
+      },
+      "fields": {
+        "name": "Nom de l'organisation",
+        "abbreviation": "Abréviation de l'organisation",
+        "nativeName": "Nom dans une autre langue",
+        "locations": "Pays",
+        "url": "URL du site web",
+        "active": "Actif",
+        "verified": "Vérifié",
+        "notes": "Commentaires",
+        "organizationTypes": "Type d'organisation",
+        "organizationLevel": "Niveau d'organisation",
+        "parent": "Organisation parente",
+        "collectiveInd": "Organisation collective",
+        "comments": "Description de l'organisation"
+      },
+      "errors": {
+        "duplicate": "Une organisation avec le nom {organizationName} existe déjà. Veuillez choisir un nom différent.",
+        "unknown": "Erreur inattendue lors de la création/mise à jour de l'organisation"
+      },
+      "formErrors": {
+        "name": "Nom de l'Organisation est un champ obligatoire",
+        "abbreviation": "Abréviation de l'Organisation est un champ obligatoire",
+        "organizationType": "Type d'Organisation est un champ obligatoire"
+      },
+      "modal": {
+        "text": "Êtes-vous sûr de vouloir supprimer ce flux ? Toutes les informations seront supprimées.",
+        "principalButton": "Supprimer",
+        "secondaryButton": "Annuler"
+      },
+      "text": {
+        "collectiveOrganization": "Le paramètre d'organisation collective indique que l'organisation est un \"remplaçant\" pour une ou plusieurs organisations du même type d'organisation (par exemple, \"Organisations de la Croix-Rouge\"), et est utilisé lorsque les organisations spécifiques ne sont pas connues ou doivent être masquées à des fins de sécurité",
+        "organizationType": "Il s'agit d'un champ en lecture seule qui se remplit en fonction du 'Type d'organisation'",
+        "create": "Fournissez des informations pour ajouter une nouvelle organisation. Cette organisation sera accessible dans toutes les applications des outils HPC. Les champs marqués d'une '*' sont obligatoires.",
+        "edit": "Modifiez l'organisation sélectionnée, ou cliquez sur le bouton Supprimer pour SUPPRIMER DÉFINITIVEMENT l'organisation. Cette organisation sera accessible dans toutes les applications des outils HPC. Les champs marqués d'une '*' sont obligatoires"
+      },
+      "create": "Créer",
+      "update": "Mettre à jour"
     }
   },
   "navigation": {
     "flows": "Flux",
+    "keywords": "Mots-clés",
     "pendingFlows": "Flux en attente",
+    "organizations": "Organisations",
     "rpm": "Module de planification des interventions",
     "prism": "Système de projets en ligne",
     "ftsWebsite": "Site web FTS",
     "help": "Aide"
   },
   "routes": {
-    "operations": {
-      "notFound": {
-        "title": "Opération introuvable",
-        "info": "Nous n'avons pas pu trouver l'opération que vous recherchiez"
-      }
+    "flows": {
+      "title": "Rechercher des flux de financement"
+    },
+    "keywords": {
+      "title": "Gérer les Mots-Clés"
+    },
+    "pendingFlows": {
+      "title": "Recherche de flux en attente"
+    },
+    "organizations": {
+      "title": "Organizations"
     }
   }
 }

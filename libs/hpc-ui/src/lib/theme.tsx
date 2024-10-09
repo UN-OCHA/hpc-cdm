@@ -5,7 +5,7 @@ import styled, {
   ThemedStyledInterface,
 } from 'styled-components';
 import { ThemeProvider as MUIThemeProvider } from '@mui/material';
-import { enUS, frFR } from '@mui/material/locale';
+import { arSA, enUS, esES, frFR, zhCN } from '@mui/material/locale';
 import { createTheme, ThemeOptions } from '@mui/material/styles';
 
 const COLOR_PALETTE = {
@@ -81,8 +81,9 @@ export const THEME = {
     fast: '0.2s ease-out',
   },
 } as const;
-
+/** TODO: Unify TailwindCSS and MUI Theme into one file */
 export const MUI_THEME: ThemeOptions = {
+  direction: 'ltr',
   components: {
     MuiTextField: {
       defaultProps: {
@@ -108,7 +109,10 @@ export const MUI_THEME: ThemeOptions = {
   },
   ...THEME,
 };
-
+const MUI_THEME_RTL: ThemeOptions = {
+  ...MUI_THEME,
+  direction: 'rtl',
+};
 export type Theme = typeof THEME;
 
 const themedStyled: ThemedStyledInterface<Theme> = styled;
@@ -117,8 +121,11 @@ const themedCSS: ThemedCssFunction<Theme> = css;
 export { themedStyled as styled, themedCSS as css };
 
 const localeMapper = {
+  ar: arSA,
   en: enUS,
   fr: frFR,
+  es: esES,
+  zh: zhCN,
 };
 
 export const ThemeProvider = (props: {
@@ -127,7 +134,10 @@ export const ThemeProvider = (props: {
 }) => {
   const { language } = props;
   const muiTheme = useMemo(() => {
-    return createTheme(MUI_THEME, language ? localeMapper[language] : enUS);
+    return createTheme(
+      language && language === 'ar' ? MUI_THEME_RTL : MUI_THEME,
+      language ? localeMapper[language] : enUS
+    );
   }, [language]);
 
   return <MUIThemeProvider theme={muiTheme}>{props.children}</MUIThemeProvider>;

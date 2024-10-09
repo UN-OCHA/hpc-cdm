@@ -20,6 +20,7 @@ export const CLASSES = {
     CONTAINER: CLASS_PREFIX + 'flex-container',
     GROW: CLASS_PREFIX + 'flex-grow',
   },
+  VISUALLY_HIDDEN: 'visually-hidden',
 } as const;
 
 /**

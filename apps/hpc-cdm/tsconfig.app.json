@@ -15,7 +15,13 @@
     "**/*.test.tsx",
     "jest.config.ts"
   ],
-  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.ts",
+    "**/*.tsx",
+    "../../tailwind.config.js"
+  ],
   "files": [
     "src/app/components/enketo-form/enketo-core.d.ts",
     "../../node_modules/@nx/react/typings/cssmodule.d.ts",

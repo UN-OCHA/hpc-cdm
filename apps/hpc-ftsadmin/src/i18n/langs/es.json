@@ -1,0 +1,311 @@
+{
+  "title": "FTS Admin",
+  "user": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión"
+  },
+  "errors": {
+    "unableToLoadFTSAdmin": "No se pudo cargar el FTS Admin"
+  },
+  "common": {
+    "devEnvironmentWarnings": {
+      "dummy": "Esta es una instancia de demostración del FTS Admin. La información que ingrese aquí solo se almacenará en su navegador y no se enviará a nuestro servidor",
+      "dev": "Esta es una instancia de prueba del FTS Admin. La información que ingrese aquí se eliminará periódicamente."
+    }
+  },
+  "components": {
+    "appTitle": {
+      "primary": "Módulo de Datos de FTS"
+    },
+    "acceptableUseNotification": {
+      "login": "Haga clic aquí para iniciar sesión",
+      "title": "Aviso de Uso Aceptable",
+      "p1": "El acceso no autorizado a este Sistema de Computadoras de las Naciones Unidas está prohibido según el ST/SGB/2004/15 (\"Uso de recursos de tecnología de la información y comunicación y datos\" del 29 de noviembre de 2004).",
+      "p2": "Los usuarios autorizados deben asegurarse de que su uso de los recursos de Tecnología de la Información y Comunicación (TIC) y los datos de TIC sea consistente con sus obligaciones como miembros del personal o cualquier otra obligación que pueda aplicarse a ellos.",
+      "p3": "Todo uso de los recursos de TIC y datos de TIC está sujeto a monitoreo e investigación según lo establecido en ST/SGB/2004/15.",
+      "p4": "El uso de este sistema por parte de cualquier usuario, autorizado o no autorizado, constituye el consentimiento a las regulaciones y reglas aplicables de las Naciones Unidas."
+    },
+    "dialogs": {
+      "okay": "Confirmar",
+      "cancel": "Cancelar"
+    },
+    "notFound": {
+      "title": "Página no encontrada",
+      "info": "No pudimos encontrar la página que estabas buscando",
+      "back": "Volver"
+    },
+    "invalidRouteParam": {
+      "title": "Ruta invalidad",
+      "info": "Numero no entero ID detectado en la URL",
+      "back": "Volver"
+    },
+    "loader": {
+      "loading": "Cargando...",
+      "error": "Error:",
+      "retry": "Reintentar"
+    },
+    "unsupportedBrowser": {
+      "title": "Navegador no compatible",
+      "info": "Lamentablemente, tu navegador actual no es compatible. Cambia a Firefox o Google Chrome. Para hacerlo, simplemente copia la dirección del formulario (URL) de arriba, luego abre Firefox o Chrome y pega la dirección en el navegador."
+    },
+    "flowsTable": {
+      "headers": {
+        "id": "ID",
+        "status": "Estado",
+        "updatedCreated": "Actualizado/ Creado",
+        "dataProvider": "Proveedor de datos",
+        "amountUSD": "Cantidad USD",
+        "sourceOrganization": "Organización de origen",
+        "destinationOrganization": "Organización de destino",
+        "destinationPlan": "Plan de destino",
+        "destinationCountry": "País de destino",
+        "destinationYear": "Año de destino",
+        "details": "Detalles",
+        "exchangeRate": "Tipo de cambio",
+        "flowDate": "Fecha del flujo",
+        "newMoney": "Nueva moneda",
+        "decisionDate": "Fecha de decisión",
+        "sourceID": "Identificador sistema de origen",
+        "reporterRefCode": "Código de referencia del informador"
+      },
+      "update": "Actualizar",
+      "new": "Nuevo",
+      "restricted": "Restringido",
+      "inactive": "Inactivo",
+      "child": "Hijo",
+      "parent": "Padre",
+      "notFound": {
+        "title": "Flujos no encontrados",
+        "info": "No pudimos cargar los flujos"
+      },
+      "reportTooltip": "informado por {organization} el {date} a través de {channel}",
+      "parkedSource": "Origen estacionado",
+      "sortBy": "Ordenar por",
+      "totalAmount": "Monto Total：",
+      "rejectPendingFlows": "Rechazar flujos pendientes",
+      "downloadDisabled": "La descarga solo está permitida cuando se aplica al menos un filtro",
+      "totalAmountDisabled": "El monto total solo está permitido cuando se aplica al menos un filtro",
+      "tableSettings": {
+        "title": "Configuración de la tabla",
+        "save": "Guardar",
+        "info": "Salir sin pulsar 'Guardar' no actualizará la tabla"
+      }
+    },
+    "flowsFilter": {
+      "title": "Filtros",
+      "button": {
+        "primary": "Buscar",
+        "secondary": "Limpiar Campos"
+      },
+      "headers": {
+        "flowDetails": "Detalles del Flujo",
+        "sourceDetails": "Detalles de la Fuente",
+        "destinationDetails": "Detalles del Destino"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "Incluir hijos de flujos estacionados coincidentes",
+        "restricted": "Restringido",
+        "flowID": "ID del Flujo",
+        "amountUSD": "Monto en USD",
+        "keywords": "Palabras Clave",
+        "flowStatus": "Estado del Flujo",
+        "flowType": "Tipo de Flujo",
+        "flowActiveStatus": "Estado Activo del Flujo",
+        "reporterRefCode": "Código de Referencia del Informante",
+        "sourceSystemID": "ID del Sistema Fuente",
+        "legacyID": "ID Legacy del Flujo",
+        "sourceOrganizations": "Organización(es) Fuente",
+        "sourceLocations": "País(es) Fuente",
+        "sourceUsageYears": "Año(s) de Uso Fuente",
+        "sourceProjects": "Proyecto(s) Fuente",
+        "sourcePlans": "Plan(es) Fuente",
+        "sourceGlobalClusters": "Clusters Globales Fuente",
+        "sourceEmergencies": "Emergencia(s) Fuente",
+        "destinationOrganizations": "Organización(es) Destino",
+        "destinationLocations": "País(es) Destino",
+        "destinationUsageYears": "Año(s) de Uso Destino",
+        "destinationProjects": "Proyecto(s) Destino",
+        "destinationPlans": "Plan(es) Destino",
+        "destinationGlobalClusters": "Clusters Globales Destino",
+        "destinationEmergencies": "Emergencia(s) Destino"
+      },
+      "errors": {
+        "flowID": "Proporcione solo enteros positivos como valores"
+      },
+      "info": {
+        "filterInfo": "Usar valores separados por ',' creará múltiples valores. Copiar y pegar también funciona con esta funcionalidad."
+      },
+      "showMore": "Mostrar Más",
+      "tooltips": {
+        "filters": "Filtros"
+      }
+    },
+    "keywordTable": {
+      "headers": {
+        "id": "ID",
+        "name": "Nombre",
+        "relatedFlows": "Flujos relacionados",
+        "public": "Público"
+      },
+      "modal": {
+        "text": "¿Estás seguro de que quieres eliminar esta Palabra Clave?",
+        "principalButton": "Eliminar",
+        "secondaryButton": "Cancelar"
+      },
+      "errors": {
+        "unknown": "Error inesperado al crear/actualizar la palabra clave.",
+        "duplicate": "Ya existe una palabra clave con el nombre {keywordName}. Por favor, elige un nombre diferente."
+      },
+      "labels": {
+        "newName": "Nuevo Nombre",
+        "save": "Guardar",
+        "public": "Público",
+        "cancel": "Cancelar",
+        "delete": "Eliminar"
+      }
+    },
+    "pendingFlowsFilter": {
+      "title": "Filtros",
+      "button": {
+        "primary": "Buscar",
+        "secondary": "Limpiar Campos"
+      },
+      "headers": {
+        "flowDetails": "Detalles del Flujo",
+        "sourceDetails": "Detalles de la Fuente",
+        "destinationDetails": "Detalles del Destino"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "Incluir hijos de flujos estacionados coincidentes",
+        "status": "Estado",
+        "dataProvider": "Proveedor de Datos",
+        "flowType": "Tipo de Flujo",
+        "reporterRefCode": "Código de Referencia del Informante",
+        "sourceOrganizations": "Organización(es) Fuente",
+        "sourceLocations": "País(es) Fuente",
+        "destinationOrganizations": "Organización(es) Destino",
+        "destinationLocations": "País(es) Destino",
+        "destinationUsageYears": "Año(s) de Uso Destino",
+        "details": "Detalles"
+      },
+      "showMore": "Mostrar Más",
+      "tooltips": {
+        "filters": "Filtros"
+      }
+    },
+    "organizationsFilter": {
+      "title": "Filtros",
+      "button": {
+        "primary": "Buscar",
+        "secondary": "Limpiar Campos"
+      },
+      "headers": {
+        "organizationDetails": "Detalles de la Organización"
+      },
+      "filters": {
+        "organization": "Nombre de la Organización",
+        "status": "Activo",
+        "date": "Añadido/Modificado Desde",
+        "locations": "País(es)",
+        "organizationType": "Tipo de Organización",
+        "parentOrganization": "Organización Padre"
+      },
+      "showMore": "Mostrar Más",
+      "tooltips": {
+        "filters": "Filtros"
+      }
+    },
+    "organizationTable": {
+      "headers": {
+        "id": "ID",
+        "name": "Organización",
+        "abbreviation": "Abreviatura",
+        "type": "Tipo",
+        "subType": "Subtipo",
+        "location": "Ubicación",
+        "createdBy": "Creado por",
+        "updatedBy": "Actualizado por"
+      },
+      "update": "Actualizar",
+      "new": "Nuevo",
+      "restricted": "restringido",
+      "inactive": "inactivo",
+      "notFound": {
+        "title": "Organizaciones no encontradas",
+        "info": "No pudimos cargar las organizaciones"
+      },
+      "sortBy": "Ordenar por",
+      "tableSettings": {
+        "title": "Configuración de la tabla",
+        "save": "Guardar",
+        "info": "Salir sin hacer clic en el botón 'Guardar' no actualizará la tabla"
+      }
+    },
+    "organizationUpdateCreate": {
+      "title": {
+        "create": "Agregar Organización"
+      },
+      "fields": {
+        "name": "Nombre de la organización",
+        "abbreviation": "Abreviatura de la organización",
+        "nativeName": "Nombre en otro idioma",
+        "locations": "País(es)",
+        "url": "URL del sitio web",
+        "active": "Activo",
+        "verified": "Verificado",
+        "notes": "Comentarios",
+        "organizationTypes": "Tipo de organización",
+        "organizationLevel": "Nivel de organización",
+        "parent": "Organización principal",
+        "collectiveInd": "Organización colectiva",
+        "comments": "Descripción de la organización"
+      },
+      "errors": {
+        "duplicate": "Ya existe una organización con el nombre {organizationName}. Por favor, elige un nombre diferente.",
+        "unknown": "Error inesperado al crear/actualizar la organización"
+      },
+      "formErrors": {
+        "name": "Nombre de la Organización es un campo obligatorio",
+        "abbreviation": "Abreviatura de la Organización es un campo obligatorio",
+        "organizationType": "Tipo de Organización es un campo obligatorio"
+      },
+      "modal": {
+        "text": "¿Estás seguro de que quieres eliminar este flujo? Toda la información sera eliminada.",
+        "principalButton": "Eliminar",
+        "secondaryButton": "Cancelar"
+      },
+      "text": {
+        "collectiveOrganization": "La configuración de Organización Colectiva indica que la organización es un 'sustituto' de una o más organizaciones del mismo tipo de organización (por ejemplo, 'Organizaciones de la Cruz Roja'), y se utiliza cuando las organizaciones específicas no son conocidas o deben ocultarse por motivos de seguridad.",
+        "organizationType": "Este es un campo de solo lectura que se completa en función del 'Tipo de organización'",
+        "create": "Proporcione información para agregar una nueva organización. Esta organización será accesible en todas las aplicaciones de herramientas HPC. Los campos marcados con '*' son obligatorios.",
+        "edit": "Edite la organización seleccionada o haga clic en el botón Eliminar para ELIMINAR DEFINITIVAMENTE la organización. Esta organización será accesible en todas las aplicaciones de herramientas HPC. Los campos marcados con '*' son obligatorios"
+      },
+      "create": "Crear",
+      "update": "Actualizar"
+    }
+  },
+  "navigation": {
+    "flows": "Flujos",
+    "keywords": "Palabras Clave",
+    "pendingFlows": "Flujos Pendientes",
+    "organizations": "Organizaciones",
+    "rpm": "Módulo de Planificación de Respuesta",
+    "prism": "Sistema de Proyectos en Línea",
+    "ftsWebsite": "Sitio web de FTS",
+    "help": "Ayuda"
+  },
+  "routes": {
+    "flows": {
+      "title": "Buscar flujos de financiamiento"
+    },
+    "keywords": {
+      "title": "Gestionar Palabras Clave"
+    },
+    "pendingFlows": {
+      "title": "Buscar flujos pendientes"
+    },
+    "organizations": {
+      "title": "Organizaciones"
+    }
+  }
+}
