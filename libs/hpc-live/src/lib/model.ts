@@ -675,6 +675,11 @@ export class LiveModel implements Model {
         return this.callGraphQL({ query, resultType: flows.GET_FLOW_RESULT });
       },
 
+      getAutocompleteFlows: (params) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/id/flow/${params.query}`,
+          resultType: flows.GET_FLOWS_AUTOCOMPLETE_RESULT,
+        }),
       /**
        * TODO: Dynamically fetch only necessary fields, Ex: if we don't display 'NewMoney' we shouldn't ask for it
        */
@@ -836,6 +841,11 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v1/object/autocomplete/plan/${params.query}`,
           resultType: plans.GET_PLANS_AUTOCOMPLETE_RESULT,
+        }),
+      getPlan: (params) =>
+        this.call({
+          pathname: `v2/plan/${params.id}`,
+          resultType: plans.PLAN,
         }),
     };
   }

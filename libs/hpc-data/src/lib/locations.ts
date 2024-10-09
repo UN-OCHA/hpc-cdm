@@ -1,6 +1,24 @@
 import * as t from 'io-ts';
 
-export const LOCATION_BUILDER = {
+export type Location = {
+  id: number;
+  externalId: string | null;
+  name: string;
+  adminLevel: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  createdAt: string;
+  updatedAt: string;
+  parentId: number | null;
+  iso3: string | null;
+  pcode: string | null;
+  status: string;
+  validOn: string | null;
+  itosSync: boolean;
+  children?: Location[];
+};
+
+export const LOCATION_WITHOUT_CHILDREN = t.type({
   id: t.number,
   externalId: t.union([t.string, t.null]),
   name: t.string,
@@ -15,14 +33,16 @@ export const LOCATION_BUILDER = {
   status: t.string,
   validOn: t.union([t.string, t.null]),
   itosSync: t.boolean,
-};
-
-export const LOCATION = t.type({
-  ...LOCATION_BUILDER,
-  children: t.array(t.type(LOCATION_BUILDER)),
 });
 
-export type Location = t.TypeOf<typeof LOCATION>;
+export const LOCATION: t.Type<Location> = t.recursion('LOCATION', () =>
+  t.intersection([
+    LOCATION_WITHOUT_CHILDREN,
+    t.partial({
+      children: t.array(LOCATION), // Recursively define children
+    }),
+  ])
+);
 
 export const GET_LOCATIONS_AUTOCOMPLETE_PARAMS = t.type({
   query: t.string,

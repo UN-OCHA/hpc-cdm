@@ -41,4 +41,5 @@ export interface Model {
   getAutocompletePlans(
     params: GetPlansAutocompleteParams
   ): Promise<GetPlansAutocompleteResult>;
+  getPlan(params: { id: number }): Promise<Plan>;
 }

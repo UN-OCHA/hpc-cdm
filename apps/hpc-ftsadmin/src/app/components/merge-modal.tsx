@@ -36,7 +36,7 @@ const ModalContainer = tw.div`
   bg-white
   shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]
   w-[60vw]
-  rounded-sm
+  rounded-[4px]
 `;
 
 const StyledForm = tw(Form)`

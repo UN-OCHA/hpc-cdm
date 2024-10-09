@@ -1,7 +1,13 @@
-import { type categories, type util } from '@unocha/hpc-data';
+import {
+  type categories,
+  type flows,
+  type locations,
+  type util,
+} from '@unocha/hpc-data';
 import { type Environment } from '../../environments/interface';
+import { flowToFormObjectValue } from './map-functions';
 
-const defaultOptions = (
+export const defaultOptions = (
   response: Array<{
     name: string;
     id: number;
@@ -24,35 +30,26 @@ const nameToSnakeCase = (
   }));
 };
 
-// Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop
-
-export const fnOrganizations = async (
-  query: { query: string },
-  env: Environment
-): Promise<util.FormObjectValue[]> => {
-  const response =
-    await env.model.organizations.getAutocompleteOrganizations(query);
+export const organizationsOptions = (
+  response: Array<{
+    name: string;
+    abbreviation: string;
+    id: number;
+  }>
+): util.FormObjectValue[] => {
   return response.map((responseValue) => ({
     displayLabel: `${responseValue.name} [${responseValue.abbreviation}]`,
     value: responseValue.id,
   }));
 };
 
-export const fnUsageYears = async (
-  env: Environment
-): Promise<util.FormObjectValue[]> => {
-  const response = await env.model.usageYears.getUsageYears();
-  return response.map((responseValue) => ({
-    displayLabel: responseValue.year,
-    value: responseValue.id,
-  }));
-};
-
-export const fnLocations = async (
-  query: { query: string },
-  env: Environment
-): Promise<util.FormObjectValue[]> => {
-  const response = await env.model.locations.getAutocompleteLocations(query);
+export const locationsOptions = (
+  response: Array<{
+    name: string;
+    id: number;
+    children?: locations.Location[];
+  }>
+): util.FormObjectValue[] => {
   const res: util.FormObjectValue[] = [];
 
   for (const responseValue of response) {
@@ -64,7 +61,7 @@ export const fnLocations = async (
       hasChildren,
     };
     res.push(parentLocation);
-    if (hasChildren) {
+    if (responseValue.children && responseValue.children.length > 0) {
       for (const responseLevelValue of responseValue.children) {
         res.push({
           displayLabel: responseLevelValue.name,
@@ -75,6 +72,43 @@ export const fnLocations = async (
     }
   }
   return res;
+};
+
+export const usageYearsOptions = (
+  response: Array<{
+    year: string;
+    id: number;
+  }>
+): util.FormObjectValue[] => {
+  return response.map((responseValue) => ({
+    displayLabel: responseValue.year,
+    value: responseValue.id,
+  }));
+};
+// Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop
+
+export const fnOrganizations = async (
+  query: { query: string },
+  env: Environment
+): Promise<util.FormObjectValue[]> => {
+  const response =
+    await env.model.organizations.getAutocompleteOrganizations(query);
+  return organizationsOptions(response);
+};
+
+export const fnUsageYears = async (
+  env: Environment
+): Promise<util.FormObjectValue[]> => {
+  const response = await env.model.usageYears.getUsageYears();
+  return usageYearsOptions(response);
+};
+
+export const fnLocations = async (
+  query: { query: string },
+  env: Environment
+): Promise<util.FormObjectValue[]> => {
+  const response = await env.model.locations.getAutocompleteLocations(query);
+  return locationsOptions(response);
 };
 
 export const fnProjects = async (
@@ -112,6 +146,20 @@ export const fnCategories = async (
     query,
   });
   return defaultOptions(response);
+};
+
+export const fnFlows = async (
+  query: { query: string },
+  env: Environment,
+  saveFlows?: React.Dispatch<
+    React.SetStateAction<flows.GetFlowsAutocompleteResult | undefined>
+  >
+) => {
+  const response = await env.model.flows.getAutocompleteFlows(query);
+  if (saveFlows) {
+    saveFlows(response);
+  }
+  return response.map(flowToFormObjectValue);
 };
 
 export const fnFlowTypeSnakeCase = async (

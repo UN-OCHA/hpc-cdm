@@ -33,6 +33,7 @@ const AutocompleteSelect = ({
     boolean
   > = {
     ...field,
+    disabled,
     readOnly,
     options,
     isOptionEqualToValue: (option, value) => option.value === value.value,

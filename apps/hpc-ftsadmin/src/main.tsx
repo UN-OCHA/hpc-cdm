@@ -29,6 +29,12 @@ const router = createBrowserRouter([
       { path: paths.home(), element: <Navigate to={paths.flows()} /> },
       { path: paths.flows(), element: <PageFlowsList /> },
       { path: paths.addFlow(), element: <PageFlow /> },
+      {
+        path: paths.flowRoot(),
+        element: (
+          <RouteParamsValidator element={<PageFlow />} routeParam="id" />
+        ),
+      },
       { path: paths.pendingFlows(), element: <PagePendingFlowsList /> },
       { path: paths.organizations(), element: <PageOrganizationsList /> },
       {

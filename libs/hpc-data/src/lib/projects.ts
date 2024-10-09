@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 
-const PDF = t.type({
+export const PDF = t.type({
   withComments: t.union([
     t.type({
       file: t.type({
