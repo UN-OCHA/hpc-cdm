@@ -19,7 +19,7 @@ import {
   fnLocations,
   fnOrganizations,
 } from '../utils/fn-promises';
-import { valueToInteger } from '../utils/map-functions';
+import { parseError, valueToInteger } from '../utils/map-functions';
 interface Props {
   id?: number;
   load?: () => void;
@@ -156,29 +156,10 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
         });
     }
   };
-  const parseError = (
-    error:
-      | keyof Strings['components']['organizationUpdateCreate']['errors']
-      | undefined
-  ): string | undefined => {
-    if (!error) {
-      return undefined;
-    }
-    const traducedError = t.t(
-      lang,
-      (s) => s.components.organizationUpdateCreate.errors[error]
-    );
-    if (error === 'duplicate') {
-      return traducedError.replace('{organizationName}', errorValue);
-    }
-    return traducedError;
-  };
   return (
     <Formik
       enableReinitialize
-      initialValues={
-        initialValues ? initialValues : ADD_EDIT_ORGANIZATION_INITIAL_VALUES
-      }
+      initialValues={initialValues ?? ADD_EDIT_ORGANIZATION_INITIAL_VALUES}
       onSubmit={handleSubmit}
       validate={(values) => validateForm(values, FORM_VALIDATION)}
     >
@@ -190,7 +171,12 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
                 React.SetStateAction<string | undefined>
               >
             }
-            error={parseError(error)}
+            error={parseError(
+              error,
+              'organizationUpdateCreate',
+              lang,
+              errorValue
+            )}
           />
           <C.TextFieldWrapper
             label={t.t(

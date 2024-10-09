@@ -49,6 +49,7 @@ import { Form, Formik } from 'formik';
 import { util } from '@unocha/hpc-core';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { Strings } from '../../../i18n/iface';
+import { parseError } from '../../utils/map-functions';
 
 export type KeywordQuery = {
   orderBy: string;
@@ -443,33 +444,6 @@ export default function KeywordTable(props: KeywordTableProps) {
     );
   };
 
-  const parseError = (
-    error:
-      | {
-          code: keyof Strings['components']['organizationUpdateCreate']['errors'];
-          value: string;
-        }
-      | undefined,
-    lang: LanguageKey
-  ): string | undefined => {
-    if (!error) {
-      return undefined;
-    }
-    const errorCode = error.code;
-
-    if (!errorCode) {
-      return undefined;
-    }
-    const traducedError = t.t(
-      lang,
-      (s) => s.components.keywordTable.errors[errorCode]
-    );
-    if (error.code === 'duplicate') {
-      return traducedError.replace('{keywordName}', error.value);
-    }
-    return traducedError;
-  };
-
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -487,7 +461,12 @@ export default function KeywordTable(props: KeywordTableProps) {
             <KeywordTableContext.Provider value={{ setError: setError }}>
               <C.ErrorAlert
                 setError={setError}
-                error={parseError(error, lang)}
+                error={parseError(
+                  error?.code,
+                  'keywordTable',
+                  lang,
+                  error?.value
+                )}
               />
               <ChipDiv>
                 <TopRowContainer>
