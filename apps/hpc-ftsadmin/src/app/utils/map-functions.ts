@@ -1,5 +1,5 @@
 import { organizations } from '@unocha/hpc-data';
-import { LanguageKey } from '../../i18n';
+import { LanguageKey, t } from '../../i18n';
 import dayjs from 'dayjs';
 
 export const valueToInteger = (value: string | number) => {
@@ -18,4 +18,29 @@ export const parseUpdatedCreatedBy = (
   });
 
   return `${participantName} (${dayjs(date).locale(lang).format('D/M/YYYY')})`;
+};
+
+export const parseError = (
+  error: 'unknown' | 'duplicate' | undefined,
+  component: 'organizationUpdateCreate' | 'keywordTable',
+  lang: LanguageKey,
+  errorValue?: string
+) => {
+  if (!error) {
+    return undefined;
+  }
+  const translatedError = t.t(
+    lang,
+    (s) => s.components[component].errors[error]
+  );
+  if (error === 'duplicate' && errorValue) {
+    return translatedError.replace(
+      `${
+        component === 'keywordTable' ? '{keywordName}' : '{organizationName}'
+      }`,
+      errorValue
+    );
+  }
+
+  return translatedError;
 };
