@@ -47,6 +47,11 @@ export type AsyncAutocompleteSelectProps = {
       | null
   ) => void;
   disabled?: boolean;
+  /** This prop is used only if we are not using
+   *  `Formik`, if you are using `Formik`, you don't need
+   *  to pass this prop.
+   */
+  initialValue?: FormObjectValue | FormObjectValue[] | null;
 };
 
 /**
@@ -83,6 +88,7 @@ const AsyncAutocompleteSelect = ({
   removeOptions,
   onChange,
   disabled,
+  initialValue,
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -187,7 +193,7 @@ const AsyncAutocompleteSelect = ({
       setOpen(false);
     },
     open,
-    isOptionEqualToValue: (option, value) => option.value === value.value,
+    isOptionEqualToValue: (option, value) => option.value === value?.value,
     options,
     getOptionLabel: (op) =>
       typeof op === 'string' ? op : op.displayLabel ?? '',
@@ -264,7 +270,12 @@ const AsyncAutocompleteSelect = ({
     ),
   };
 
-  return <StyledAutocomplete {...configAutocomplete} />;
+  return (
+    <StyledAutocomplete
+      {...configAutocomplete}
+      {...(initialValue !== undefined ? { value: initialValue } : {})}
+    />
+  );
 };
 
 AsyncAutocompleteSelect.defaultProps = {

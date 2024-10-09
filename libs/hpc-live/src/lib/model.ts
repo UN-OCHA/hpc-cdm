@@ -21,6 +21,7 @@ import {
   globalClusters,
   usageYears,
   currencies,
+  fileAssetEntities,
 } from '@unocha/hpc-data';
 import { searchFlowsParams } from './utils';
 interface URLInterface {
@@ -39,7 +40,7 @@ interface RequestInit {
   headers: {
     [id: string]: string;
   };
-  body?: string | ArrayBuffer;
+  body?: string | ArrayBuffer | FormData;
   signal?: AbortSignal;
 }
 
@@ -48,6 +49,7 @@ interface Response {
   readonly statusText: string;
   json(): Promise<unknown>;
   arrayBuffer(): Promise<ArrayBuffer>;
+  blob(): Promise<Blob>;
 }
 
 interface FetchInterface {
@@ -372,6 +374,7 @@ export class LiveModel implements Model {
     resultType,
     body,
     signal,
+    isDownload,
   }: {
     method?: HttpMethod;
     pathname: string;
@@ -388,8 +391,13 @@ export class LiveModel implements Model {
           type: 'raw';
           data: string | ArrayBuffer;
           contentType: string;
+        }
+      | {
+          type: 'form-data';
+          data: FormData;
         };
     signal?: AbortSignal;
+    isDownload?: boolean;
   }) => {
     const { url, init } = this.baseFetchInit({ pathname, method, queryParams });
     init.signal = signal;
@@ -397,6 +405,8 @@ export class LiveModel implements Model {
       if (body.type === 'json') {
         init.body = JSON.stringify(body.data);
         init.headers['Content-Type'] = 'application/json';
+      } else if (body.type === 'form-data') {
+        init.body = body.data;
       } else {
         init.body = body.data;
         init.headers['Content-Type'] = body.contentType;
@@ -404,14 +414,33 @@ export class LiveModel implements Model {
     }
     const res = await this.fetch(url.href, init);
     if (res.ok) {
-      const json: Res<T> = (await res.json()) as Res<T>;
-      const decode = resultType.decode(json.data);
+      if (res.statusText === 'No Content') {
+        return null as T;
+      }
+      let decode;
+      let jsonError = {};
+      if (isDownload) {
+        const blob = await res.blob();
+        decode = resultType.decode(blob);
+      } else {
+        const json: Res<T> = (await res.json()) as Res<T>;
+        decode = resultType.decode(json.data ?? json);
+        jsonError = json;
+      }
+
       if (isRight(decode)) {
         return decode.right;
       } else {
         const report = PathReporter.report(decode);
-        console.error('Received unexpected result from server', report, json);
-        throw new ModelError('Received unexpected result from server', json);
+        console.error(
+          'Received unexpected result from server',
+          report,
+          jsonError
+        );
+        throw new ModelError(
+          'Received unexpected result from server',
+          jsonError
+        );
       }
     } else {
       const json = (await res.json()) as {
@@ -590,6 +619,34 @@ export class LiveModel implements Model {
         this.call({
           pathname: '/v1/external/systems',
           resultType: systems.GET_SYSTEMS_RESULT,
+        }),
+    };
+  }
+  get fileAssetEntities(): fileAssetEntities.Model {
+    return {
+      fileUpload: (file) =>
+        this.call({
+          pathname: '/v1/files/fts',
+          method: 'POST',
+          body: {
+            type: 'form-data',
+            data: file,
+          },
+          resultType: fileAssetEntities.FILE_ASSET_UPLOAD,
+        }),
+
+      fileDelete: (id, collection) =>
+        this.call({
+          pathname: `/v1/files/${collection}/${id}`,
+          method: 'DELETE',
+          resultType: fileAssetEntities.DELETE_FILE_RESULT,
+        }),
+      fileDownload: (id, collection) =>
+        this.call({
+          pathname: `/v1/files/download/${collection}/${id}`,
+          method: 'GET',
+          resultType: fileAssetEntities.BLOB_TYPE,
+          isDownload: true,
         }),
     };
   }

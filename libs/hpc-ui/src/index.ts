@@ -18,7 +18,9 @@ import AsyncAutocompleteSelect, {
 import AsyncIconButton from './lib/components/async-icon-button';
 import { Button, ButtonLink, ButtonSubmit } from './lib/components/button';
 import CheckBox from './lib/components/form-fields/checkbox';
-import DatePicker from './lib/components/form-fields/date-picker';
+import DatePicker, {
+  type DatePickerProps as DatePickerExportProps,
+} from './lib/components/form-fields/date-picker';
 import DevEnvWarning from './lib/components/development-environment-warning';
 import Divider from './lib/components/divider';
 import DraggableList from './lib/components/draggable-list';
@@ -35,6 +37,9 @@ import NumberField, {
   type NumberFieldProps as NumberFieldExportProps,
 } from './lib/components/form-fields/number-field';
 import PageTitle from './lib/components/page-title';
+import RadioButtonField, {
+  type RadioButtonFieldProps as RadioButtonFieldExportProps,
+} from './lib/components/form-fields/radio-button-field';
 import * as sidebarNavigation from './lib/components/sidebar-navigation';
 import SearchFilter from './lib/components/search-filter';
 import SecondaryNavigation from './lib/components/secondary-navigation';
@@ -45,6 +50,7 @@ import TextFieldWrapper, {
   type TextFieldWrapperProps as TextFieldWrapperExportProps,
 } from './lib/components/form-fields/text-field';
 import Toolbar from './lib/components/toolbar';
+import UploadFile from './lib/components/form-fields/upload-file-field';
 import * as dialogs from './lib/components/dialogs';
 
 import Caret from './lib/assets/icons/caret';
@@ -77,6 +83,7 @@ const COMPONENTS = {
   NotFound,
   NumberField,
   PageTitle,
+  RadioButtonField,
   SidebarNavigation: sidebarNavigation.default,
   SearchFilter,
   Section,
@@ -85,6 +92,7 @@ const COMPONENTS = {
   TertiaryNavigation,
   TextFieldWrapper,
   Toolbar,
+  UploadFile,
 };
 
 const ICONS = {
@@ -98,6 +106,8 @@ export type AsyncAutocompleteSelectProps = AsyncAutocompleteSelectExportProps;
 export type TextFieldWrapperProps = TextFieldWrapperExportProps;
 export type AutocompleteSelectProps = AutocompleteSelectExportProps;
 export type NumberFieldProps = NumberFieldExportProps;
+export type RadioButtonFieldProps = RadioButtonFieldExportProps;
+export type DatePickerProps = DatePickerExportProps;
 
 export {
   BaseStyling,

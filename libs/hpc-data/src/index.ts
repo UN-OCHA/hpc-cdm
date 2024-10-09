@@ -4,6 +4,8 @@ import * as currencies from './lib/currencies';
 import * as emergencies from './lib/emergencies';
 import * as systems from './lib/systems';
 import * as errors from './lib/errors';
+import * as fileAssetEntities from './lib/file-asset-entities';
+import * as reportFiles from './lib/report-files';
 import * as flows from './lib/flows';
 import * as forms from './lib/forms';
 import * as globalClusters from './lib/global-clusters';
@@ -26,6 +28,7 @@ export interface Model {
   globalClusters: globalClusters.Model;
   systems: systems.Model;
   emergencies: emergencies.Model;
+  fileAssetEntities: fileAssetEntities.Model;
   flows: flows.Model;
   locations: locations.Model;
   organizations: organizations.Model;
@@ -43,11 +46,13 @@ export {
   globalClusters,
   emergencies,
   errors,
+  fileAssetEntities,
   flows,
   forms,
   locations,
   organizations,
   operations,
+  reportFiles,
   reportingWindows,
   usageYears,
   util,

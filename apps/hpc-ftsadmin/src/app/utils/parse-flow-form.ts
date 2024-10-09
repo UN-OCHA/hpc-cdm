@@ -1,11 +1,12 @@
-import { FormObjectValue, flows } from '@unocha/hpc-data';
+import { FormObjectValue, flows, reportFiles } from '@unocha/hpc-data';
 import {
   INITIAL_FORM_VALUES,
   type FlowFormType,
   type FlowFormTypeValidated,
-} from '../components/flow-form';
+} from '../components/flow-form/flow-form';
 import {
   currencyToInteger,
+  fileAssetEntityToFileUploadResult,
   flowToFlowLinkProps,
   valueToInteger,
 } from './map-functions';
@@ -16,6 +17,8 @@ import {
   organizationsOptions,
   usageYearsOptions,
 } from './fn-promises';
+import { ReportingDetailProps } from '../components/reporting-detail';
+import dayjs from 'dayjs';
 
 type FlowFormFlowObjectKey =
   | 'fundingSourceOrganizations'
@@ -125,9 +128,66 @@ const extractDirectionObject = (
   return [];
 };
 
+const createReportFiles = (
+  reportDetail: ReportingDetailProps
+): reportFiles.CreateFile[] => {
+  const reportFiles: reportFiles.CreateFile[] = [];
+
+  if (reportDetail.file && reportDetail.reportFileTitle) {
+    reportFiles.push({
+      fileAssetID: reportDetail.file.id,
+      title: reportDetail.reportFileTitle,
+      type: 'file',
+      url: null,
+    });
+  }
+  if (reportDetail.reportURLTitle && reportDetail.url) {
+    reportFiles.push({
+      url: reportDetail.url,
+      title: reportDetail.reportURLTitle,
+      type: 'url',
+      fileAssetID: null,
+    });
+  }
+  return reportFiles;
+};
+
+const reportingDetailPropsToReportDetails = (
+  reportDetailProps: ReportingDetailProps[],
+  id?: number
+): flows.CreateFlowParams['flow']['reportDetails'] => {
+  return reportDetailProps.map(
+    (reportDetail) =>
+      ({
+        contactInfo: reportDetail.reporterContactInfo,
+        source: reportDetail.reportSource,
+        date: reportDetail.dateReported
+          ? reportDetail.dateReported.toISOString()
+          : null,
+        sourceID: reportDetail.sourceSystemRecordId
+          ? valueToInteger(reportDetail.sourceSystemRecordId)
+          : null,
+        refCode: reportDetail.sourceSystemRecordId
+          ? reportDetail.reporterReferenceCode
+          : null,
+        verified: reportDetail.verified === 'true',
+        organizationID: reportDetail.reportedByOrganization
+          ? valueToInteger(reportDetail.reportedByOrganization.value)
+          : null,
+        categories: [
+          ...(reportDetail.reportChannel?.value
+            ? [valueToInteger(reportDetail.reportChannel.value)]
+            : []),
+        ],
+        newlyAdded: !!id,
+        reportFiles: createReportFiles(reportDetail),
+      }) satisfies flows.CreateFlowParams['flow']['reportDetails'][number]
+  );
+};
 //  TODO: Implement this function
 export const parseFlowForm = (
-  values: FlowFormTypeValidated
+  values: FlowFormTypeValidated,
+  id?: number
 ): flows.CreateFlowParams => {
   const {
     method,
@@ -150,6 +210,7 @@ export const parseFlowForm = (
     isInactive,
     keywords,
     notes: dirtyNotes,
+    reportingDetails,
     restricted,
   } = values;
 
@@ -195,7 +256,7 @@ export const parseFlowForm = (
     origAmount: currencyToInteger(amountOriginalCurrency),
     origCurrency: currency?.value.toString() ?? null,
     parents: values.parentFlow ? [{ parentID: values.parentFlow.id }] : [],
-    reportDetails: [], // TODO
+    reportDetails: reportingDetailPropsToReportDetails(reportingDetails, id),
     restricted,
   };
   return { flow };
@@ -337,6 +398,33 @@ const flowObjectToFormObjectValue = (
   return res;
 };
 
+const reportDetailsToReportingDetailProps = (
+  reportDetails: flows.GetFlowResult['reportDetails']
+): ReportingDetailProps[] => {
+  return reportDetails.map((reportDetail) => ({
+    reportSource: reportDetail.source,
+    reportedByOrganization: {
+      displayLabel: reportDetail.organization.name,
+      value: reportDetail.organization.id,
+    },
+    reportChannel: {
+      displayLabel: reportDetail.categories[0].name,
+      value: reportDetail.categories[0].id,
+    },
+    sourceSystemRecordId: reportDetail.id.toString(),
+    verified: reportDetail.verified.toString(),
+    dateReported: reportDetail.date ? dayjs(reportDetail.date) : null,
+    reporterReferenceCode: reportDetail.refCode ?? '',
+    reporterContactInfo: reportDetail.contactInfo ?? '',
+    reportFileTitle: reportDetail.reportFiles[0]?.title ?? '',
+    file: fileAssetEntityToFileUploadResult(
+      reportDetail.reportFiles[0]?.fileAssetEntity
+    ),
+    reportURLTitle: reportDetail.reportFiles[1]?.title ?? '',
+    url: reportDetail.reportFiles[1]?.url ?? '',
+  }));
+};
+
 export const parseToFlowForm = (
   flow: flows.GetFlowResult,
   parents?: flows.GetFlowResult[],
@@ -353,6 +441,7 @@ export const parseToFlowForm = (
     flowDate,
     newMoney: isNewMoney,
     notes,
+    reportDetails,
     restricted,
   } = flow;
   const flowForm: FlowFormType = {
@@ -385,16 +474,17 @@ export const parseToFlowForm = (
       : INITIAL_FORM_VALUES['currency'],
     childFlows: children ? children.map(flowToFlowLinkProps) : [],
     decisionDate: decisionDate
-      ? new Date(decisionDate)
+      ? dayjs(decisionDate)
       : INITIAL_FORM_VALUES['decisionDate'],
     firstReported: firstReportedDate
-      ? new Date(firstReportedDate)
+      ? dayjs(firstReportedDate)
       : INITIAL_FORM_VALUES['firstReported'],
     exchangeRate: exchangeRate ?? INITIAL_FORM_VALUES['exchangeRate'],
-    flowDate: new Date(flowDate),
+    flowDate: dayjs(flowDate),
     isNewMoney,
     notes: notes ?? INITIAL_FORM_VALUES['notes'],
     parentFlow: parents?.[0] ? flowToFlowLinkProps(parents[0]) : null,
+    reportingDetails: reportDetailsToReportingDetailProps(reportDetails),
     restricted,
   };
   // TODO

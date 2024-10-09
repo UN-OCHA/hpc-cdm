@@ -1,11 +1,28 @@
-import { useField } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { TextField, Link } from '@mui/material';
-import { DatePicker as BaseDatePicker } from '@mui/x-date-pickers/DatePicker';
+import {
+  DatePicker as BaseDatePicker,
+  DatePickerProps as DatePickerPropsMUI,
+} from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import tw from 'twin.macro';
 import dayjs from '../../i18n/utils/dayjs';
 import { useEffect, useState } from 'react';
+import { Dayjs } from 'dayjs';
+
+export type DatePickerProps = {
+  name: string;
+  label: string;
+  lang?: string;
+  enableButton?: boolean;
+  /** This prop is used only if we are not using
+   *  `Formik`, if you are using `Formik`, you don't need
+   *  to pass this prop.
+   */
+  initialValue?: Dayjs | null;
+  onChange?: (value: Dayjs | null) => unknown;
+};
 
 const StyledDatePicker = tw.div`
   w-full  
@@ -19,67 +36,62 @@ const DatePicker = ({
   label,
   lang = 'en',
   enableButton = true,
-}: {
-  name: string;
-  label: string;
-  lang?: string;
-  enableButton?: boolean;
-}) => {
+  initialValue,
+  onChange,
+}: DatePickerProps) => {
   const [field, , helpers] = useField(name);
-  const [cleared, setCleared] = useState(false);
+  const { setFieldValue } = useFormikContext();
 
-  useEffect(() => {
-    if (cleared) {
-      const timeout = setTimeout(() => {
-        setCleared(false);
-      }, 1000);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [cleared]);
+  const datePickerProps: DatePickerPropsMUI<Dayjs> = {
+    ...field,
+    ...(initialValue !== undefined ? { value: initialValue } : {}),
+    format: 'DD/MM/YYYY',
+    onError: (error) => {
+      console.error(error);
+    },
+    ...(onChange
+      ? { onChange: (date) => onChange(date) }
+      : {
+          onChange: (date) => {
+            if (date === null) {
+              setFieldValue(name, null);
+            } else {
+              setFieldValue(name, dayjs(date));
+            }
+          },
+        }),
+    label,
+    slots: {
+      textField: (params) => (
+        <TextField
+          {...params}
+          InputLabelProps={{ shrink: true }}
+          size="small"
+        />
+      ),
+    },
+    slotProps: {
+      field: {
+        clearable: true,
+      },
+    },
+    sx: tw`w-full`,
+  };
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={lang}>
       <StyledDatePicker>
-        <BaseDatePicker
-          {...field}
-          format="DD/MM/YYYY"
-          value={
-            enableButton
-              ? field.value === null
-                ? null
-                : dayjs(field.value)
-              : dayjs()
-          }
-          onError={(error) => {
-            console.error(error);
-          }}
-          onChange={(date) => {
-            if (date?.isValid()) {
-              helpers.setValue(date);
-            }
-          }}
-          label={label}
-          slots={{
-            textField: (params) => (
-              <TextField
-                {...params}
-                InputLabelProps={{ shrink: true }}
-                size="small"
-              />
-            ),
-          }}
-          slotProps={{
-            field: { clearable: true, onClear: () => setCleared(true) },
-          }}
-          sx={tw`w-full`}
-        />
+        <BaseDatePicker {...datePickerProps} />
         {enableButton && (
           <Link
             component="button"
             type="button"
             variant="body2"
             onClick={() => {
-              helpers.setValue(dayjs());
+              if (onChange) {
+                onChange(dayjs());
+              } else {
+                helpers.setValue(dayjs());
+              }
             }}
           >
             Today

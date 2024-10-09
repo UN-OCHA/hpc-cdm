@@ -1,9 +1,9 @@
 import { Box } from '@mui/material';
-import * as paths from '../paths';
+import * as paths from '../../paths';
 import { Link } from 'react-router-dom';
 import tw from 'twin.macro';
-import dayjs from 'dayjs';
-import { integerToCurrency, valueToInteger } from '../utils/map-functions';
+import { Dayjs } from 'dayjs';
+import { integerToCurrency, valueToInteger } from '../../utils/map-functions';
 import { C } from '@unocha/hpc-ui';
 import { FlowFormType } from './flow-form';
 import { useFormikContext } from 'formik';
@@ -15,7 +15,7 @@ export type FlowLinkProps = {
   destinationOrganization: string;
   destinationLocation: string;
   amountUSD: string;
-  flowDate: Date;
+  flowDate: Dayjs;
   projectName: string;
 };
 
@@ -62,9 +62,9 @@ const FlowLink = ({
           destinationOrganization ? destinationOrganization + SEPARATOR : ''
         }${projectName ? projectName + SEPARATOR : ''}${
           destinationLocation ? destinationLocation + SEPARATOR : ''
-        }${new Date(flowDate).getFullYear()}`}
+        }${flowDate.format('YYYY')}`}
       </span>
-      <span>{dayjs(flowDate).format('DD/MM/YYYY')}</span>
+      <span>{flowDate.format('DD/MM/YYYY')}</span>
       <span>US${integerToCurrency(valueToInteger(amountUSD))}</span>
       <C.Button
         color="secondary"

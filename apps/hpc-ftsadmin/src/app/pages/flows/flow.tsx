@@ -1,5 +1,5 @@
 import { C, useDataLoader } from '@unocha/hpc-ui';
-import { FlowForm } from '../../components/flow-form';
+import { FlowForm } from '../../components/flow-form/flow-form';
 import { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { AppContext, getEnv } from '../../context';
