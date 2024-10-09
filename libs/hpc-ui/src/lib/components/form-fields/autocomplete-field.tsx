@@ -38,6 +38,7 @@ const AutocompleteSelect = ({
   > = {
     ...field,
     multiple: isMulti,
+    disabled,
     readOnly,
     options,
     isOptionEqualToValue: (option, value) => option.value === value.value,
@@ -54,7 +55,6 @@ const AutocompleteSelect = ({
         {...params}
         size="small"
         label={label}
-        disabled={disabled}
         placeholder={placeholder}
         InputProps={{
           ...params.InputProps,

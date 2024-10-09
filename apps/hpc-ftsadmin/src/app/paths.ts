@@ -1,12 +1,12 @@
 const HOME = '/';
 const ROOT = '/*';
 const FLOWS = '/flows';
+const FLOW = `${FLOWS}/:id`;
 const ADD_FLOW = `${FLOWS}/add`;
 const PENDING_FLOWS = '/pending-flows';
 const ORGANIZATIONS = '/organizations';
 const ORGANIZATION = `${ORGANIZATIONS}/:id`;
 const ADD_ORGANIZATION = `${ORGANIZATIONS}/add`;
-const FLOW = `${FLOWS}/:id`;
 const KEYWORDS = '/keywords';
 
 const replacePlaceholders = (
@@ -37,5 +37,7 @@ export const organizationRoot = () => ORGANIZATION + ROOT;
 export const addOrganization = () => replacePlaceholders(ADD_ORGANIZATION, {});
 
 export const flow = (id: number) => replacePlaceholders(FLOW, { id });
+
+export const flowRoot = () => FLOW + ROOT;
 
 export const keywords = () => replacePlaceholders(KEYWORDS, {});

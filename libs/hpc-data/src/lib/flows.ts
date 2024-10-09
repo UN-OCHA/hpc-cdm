@@ -1,12 +1,16 @@
 import * as t from 'io-ts';
 
-import { POSITIVE_INTEGER_FROM_STRING } from './util';
+import {
+  DATE_FROM_STRING,
+  NUMBER_FROM_STRING,
+  POSITIVE_INTEGER_FROM_STRING,
+} from './util';
 import { ORGANIZATION } from './organizations';
+import { CATEGORY } from './categories';
+import { PDF } from './projects';
+import { LOCATION_WITHOUT_CHILDREN } from './locations';
 
-const FLOW_REF_DIRECTION = t.keyof({
-  source: null,
-  destination: null,
-});
+const DIRECTION = t.union([t.literal('source'), t.literal('destination')]);
 
 const FLOW_LIST = t.keyof({
   pending: null,
@@ -19,7 +23,7 @@ export type FlowList = t.TypeOf<typeof FLOW_LIST>;
 const FLOW_OBJECT = t.intersection([
   t.type({
     objectID: t.number,
-    refDirection: FLOW_REF_DIRECTION,
+    refDirection: DIRECTION,
     objectType: t.string,
   }),
   t.partial({
@@ -63,36 +67,112 @@ const CREATED_BY_OR_LAST_UPDATED_BY = t.type({
   name: t.string,
 });
 
-/** Delete when finishing off REST flow endpoint (Maybe Matyas needs it) */
-const FLOW_REST = t.intersection([
+const FLOW_AUTOCOMPLETE_PROJECT = t.type({
+  id: t.number,
+  code: t.string,
+  currentPublishedVersionId: t.number,
+  creatorParticipantId: t.union([t.number, t.null]),
+  latestVersionId: t.number,
+  implementationStatus: t.string,
+  flowObject: t.type({
+    refDirection: DIRECTION,
+  }),
+  pdf: t.union([PDF, t.null]),
+  projectVersions: t.array(
+    t.type({
+      name: t.string,
+    })
+  ),
+  sourceProjectId: t.union([t.number, t.null]),
+  visible: t.boolean,
+});
+
+const FLOW_AUTOCOMPLETE_FLOW_OBJECT = t.type({
+  refDirection: DIRECTION,
+});
+
+const FLOW_AUTOCOMPLETE_DEFAULT_OBJECT = t.type({
+  id: t.number,
+  name: t.string,
+  flowObject: FLOW_AUTOCOMPLETE_FLOW_OBJECT,
+});
+
+const FLOW_AUTOCOMPLETE_LOCATION = t.type({
+  ...LOCATION_WITHOUT_CHILDREN.props,
+  flowObject: FLOW_AUTOCOMPLETE_FLOW_OBJECT,
+});
+
+const FLOW_AUTOCOMPLETE_ORGANIZATION = t.type({
+  ...FLOW_AUTOCOMPLETE_DEFAULT_OBJECT.props,
+  abbreviation: t.string,
+});
+
+const FLOW_AUTOCOMPLETE_USAGE_YEAR = t.type({
+  id: t.number,
+  year: t.string,
+  flowObject: FLOW_AUTOCOMPLETE_FLOW_OBJECT,
+});
+
+const FLOW_AUTOCOMPLETE_PLAN = t.type({
+  id: t.number,
+  flowObject: FLOW_AUTOCOMPLETE_FLOW_OBJECT,
+  planVersion: t.type({
+    name: t.string,
+  }),
+});
+
+const FLOW_AUTOCOMPLETE_GOVERNING_ENTITY = t.type({
+  id: t.number,
+  flowObject: FLOW_AUTOCOMPLETE_FLOW_OBJECT,
+  governingEntityVersion: t.type({
+    name: t.string,
+  }),
+});
+
+const PARENT_CHILDREN_FLOW = t.type({
+  childID: t.number,
+  createdAt: DATE_FROM_STRING,
+  depth: t.number,
+  parentID: t.number,
+  updatedAt: DATE_FROM_STRING,
+});
+
+const FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES = t.intersection([
   t.type({
     id: t.number,
     versionID: t.number,
     amountUSD: t.string,
     flowDate: t.string,
     decisionDate: t.union([t.string, t.null]),
-    firstReportedDate: t.string,
+    firstReportedDate: t.union([t.string, t.null]), //  firstReportedDate is nullable in some old flows
     activeStatus: t.boolean,
     restricted: t.boolean,
     newMoney: t.boolean,
     description: t.string,
-    notes: t.string,
-    versionStartDate: t.string,
+    plans: t.array(FLOW_AUTOCOMPLETE_PLAN),
+    organizations: t.array(FLOW_AUTOCOMPLETE_ORGANIZATION),
+    locations: t.array(FLOW_AUTOCOMPLETE_LOCATION),
+    globalClusters: t.array(FLOW_AUTOCOMPLETE_DEFAULT_OBJECT),
+    usageYears: t.array(FLOW_AUTOCOMPLETE_USAGE_YEAR),
+    projects: t.array(FLOW_AUTOCOMPLETE_PROJECT),
+    emergencies: t.array(FLOW_AUTOCOMPLETE_DEFAULT_OBJECT),
+    governingEntities: t.array(FLOW_AUTOCOMPLETE_GOVERNING_ENTITY),
+    clusters: t.array(FLOW_AUTOCOMPLETE_GOVERNING_ENTITY),
+    planEntities: t.array(t.unknown),
+    versionStartDate: t.union([t.string, t.null]), //  versionStartDate is nullable in some old flows,
     createdAt: t.string,
     updatedAt: t.string,
-    meta: t.type({
-      language: t.string,
-    }),
-    createdBy: t.union([CREATED_BY_OR_LAST_UPDATED_BY, t.null]),
-    lastUpdatedBy: t.union([CREATED_BY_OR_LAST_UPDATED_BY, t.null]),
   }),
   t.partial({
+    notes: t.union([t.string, t.null]),
     budgetYear: t.union([t.string, t.null]),
     origAmount: t.union([t.string, t.null]),
     origCurrency: t.union([t.string, t.null]),
     exchangeRate: t.union([t.string, t.null]),
     versionEndDate: t.union([t.string, t.null]),
     deletedAt: t.union([t.string, t.null]),
+    lastUpdatedBy: t.union([CREATED_BY_OR_LAST_UPDATED_BY, t.null]),
+    createdBy: t.union([CREATED_BY_OR_LAST_UPDATED_BY, t.null]),
     legacy: t.union([
       t.type({
         createdAt: t.string,
@@ -103,6 +183,16 @@ const FLOW_REST = t.intersection([
       }),
       t.null,
     ]),
+  }),
+]);
+
+/** Delete when finishing off REST flow endpoint (Maybe Matyas needs it) */
+const FLOW_REST = t.intersection([
+  FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES,
+  t.type({
+    children: t.array(PARENT_CHILDREN_FLOW),
+    parents: t.array(PARENT_CHILDREN_FLOW),
+    categories: t.array(CATEGORY),
   }),
 ]);
 
@@ -129,21 +219,9 @@ const CHILD_METHOD_TYPE = t.type({
   parentID: t.number,
 });
 
-const INACTIVE_REASON_TYPE = t.intersection([
-  t.type({
-    group: t.string,
-    createdAt: t.string,
-    updatedAt: t.string,
-  }),
-  t.partial({
-    id: t.number,
-    name: t.string,
-  }),
-]);
-
 const CHILDREN_TYPE = t.type({
   childID: t.union([t.number, t.string]),
-  origCurrency: t.union([t.string, t.null]),
+  // origCurrency: t.union([t.string, t.null]),
 });
 
 const PARENT = t.type({
@@ -153,17 +231,17 @@ const PARENT = t.type({
 
 const PARENT_TYPE = t.intersection([
   t.type({
-    id: t.number,
+    parentID: t.number,
+  }),
+  t.partial({
     Parent: t.type({
       parentID: t.union([t.number, t.string]),
       origCurrency: t.union([t.string, t.null]),
     }),
     origCurrency: t.union([t.string, t.null]),
-  }),
-  t.partial({
     childID: t.number,
     parents: t.array(PARENT),
-    parentID: t.number,
+    id: t.number,
   }),
 ]);
 
@@ -216,20 +294,15 @@ const CREATE_FLOW_REPORT_DETAIL = t.intersection([
 const CREATE_FLOW = t.intersection([
   t.type({
     activeStatus: t.boolean,
-    amountUSD: t.number,
+    amountUSD: NUMBER_FROM_STRING,
     categories: t.array(t.number),
     children: t.array(CHILDREN_TYPE),
-    contributionTypes: FLOW_FORM_FIELD,
     decisionDate: t.union([t.string, t.null]),
     description: t.string,
     firstReportedDate: t.string,
     flowDate: t.string,
     flowObjects: t.array(FLOW_OBJECT),
-    flowStatuses: FLOW_FORM_FIELD,
-    flowType: FLOW_FORM_FIELD,
     isCancellation: t.union([t.boolean, t.null]),
-    keywords: t.array(FLOW_FORM_FIELD),
-    method: FLOW_FORM_FIELD,
     newCategories: t.array(t.number),
     newMoney: t.boolean,
     origCurrency: t.union([t.string, t.null]),
@@ -238,16 +311,16 @@ const CREATE_FLOW = t.intersection([
     restricted: t.boolean,
   }),
   t.partial({
+    notes: t.string,
     pendingStatus: t.union([t.boolean, t.array(t.string)]),
     categorySources: t.array(t.unknown), // TODO: TO properly define type, here it was defined messy
     cancelled: t.union([t.boolean, t.null]), // TODO: Not always present
     childMethod: t.union([t.string, CHILD_METHOD_TYPE]), // TODO: Not sure, came from matyas
-    earmarking: t.union([FLOW_FORM_FIELD, t.null]),
     planEntities: t.union([t.boolean, t.array(t.string)]), // TODO: Not always present
     planIndicated: t.union([t.boolean, t.array(t.string)]), // TODO: Not always present
     isApprovedFlowVersion: t.union([t.boolean, t.null]), // TODO: Not always present
     isErrorCorrection: t.union([t.boolean, t.null]), // TODO: Not always present
-    inactiveReason: t.array(INACTIVE_REASON_TYPE), // TODO: Not always present
+    inactiveReason: t.array(FLOW_FORM_FIELD), // TODO: Not always present
     rejected: t.union([t.boolean, t.null]), // TODO: Not always present
     versions: t.array(
       t.type({
@@ -258,10 +331,9 @@ const CREATE_FLOW = t.intersection([
         isCancelled: t.boolean,
       })
     ), // TODO: Not always present
-    beneficiaryGroup: FLOW_FORM_FIELD, // TODO: Not always present
-    budgetYear: t.string,
-    origAmount: t.union([t.number, t.null]),
-    exchangeRate: t.union([t.number, t.null]),
+    budgetYear: t.number,
+    origAmount: t.union([NUMBER_FROM_STRING, t.null]),
+    exchangeRate: t.union([t.string, t.null]),
     versionStartDate: t.union([t.string, t.null]),
     versionEndDate: t.union([t.string, t.null]),
   }),
@@ -274,8 +346,6 @@ const CREATE_FLOW_PARAMS = t.type({
 export type CreateFlowParams = t.TypeOf<typeof CREATE_FLOW_PARAMS>;
 
 // * GRAPHQL CODE FROM HERE *
-
-const DIRECTION = t.union([t.literal('source'), t.literal('destination')]);
 
 const FLOW_LOCATION = t.type({
   id: t.number,
@@ -508,6 +578,20 @@ export type SearchFlowsBatchesResult = t.TypeOf<
   typeof SEARCH_FLOWS_BATCHES_RESULT
 >;
 
+export const GET_FLOWS_AUTOCOMPLETE_PARAMS = t.type({
+  query: t.string,
+});
+export type GetFlowsAutocompleteParams = t.TypeOf<
+  typeof GET_FLOWS_AUTOCOMPLETE_PARAMS
+>;
+
+export const GET_FLOWS_AUTOCOMPLETE_RESULT = t.array(
+  FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES
+);
+
+export type GetFlowsAutocompleteResult = t.TypeOf<
+  typeof GET_FLOWS_AUTOCOMPLETE_RESULT
+>;
 export interface Model {
   getFlowREST(params: GetFlowParams): Promise<GetFlowResult>;
   getFlow(params: GetFlowParams): Promise<GetFlowResult>;
@@ -519,4 +603,7 @@ export interface Model {
     params: SearchFlowsParams
   ): Promise<SearchFlowsBatchesResult>;
   createFlow(params: CreateFlowParams): Promise<GetFlowResult>;
+  getAutocompleteFlows(
+    params: GetFlowsAutocompleteParams
+  ): Promise<GetFlowsAutocompleteResult>;
 }

@@ -7,9 +7,10 @@ import WarningIcon from '@mui/icons-material/Warning';
 import { t } from '../../../i18n';
 import { getContext } from '../../context';
 import { useFormikContext } from 'formik';
+import type { FlowFormType } from '../flow-form';
 
 export type ReviewPendingValuesProps = {
-  fieldName: string;
+  fieldName: keyof FlowFormType;
   pendingValues?: string | FormObjectValue | FormObjectValue[] | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClick?: (...args: any[]) => unknown;
