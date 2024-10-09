@@ -9,6 +9,8 @@ import { ORGANIZATION } from './organizations';
 import { CATEGORY } from './categories';
 import { PDF } from './projects';
 import { LOCATION_WITHOUT_CHILDREN } from './locations';
+import { REPORT_DETAIL, SOURCE } from './report-details';
+import { CREATE_FILE, REPORT_FILE_WITH_ENTITY } from './report-files';
 
 const DIRECTION = t.union([t.literal('source'), t.literal('destination')]);
 
@@ -137,6 +139,15 @@ const PARENT_CHILDREN_FLOW = t.type({
   updatedAt: DATE_FROM_STRING,
 });
 
+const FLOW_REST_REPORT_DETAIL = t.intersection([
+  REPORT_DETAIL,
+  t.type({
+    categories: t.array(CATEGORY),
+    organization: ORGANIZATION,
+    reportFiles: t.array(REPORT_FILE_WITH_ENTITY),
+  }),
+]);
+
 const FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES = t.intersection([
   t.type({
     id: t.number,
@@ -193,6 +204,7 @@ const FLOW_REST = t.intersection([
     children: t.array(PARENT_CHILDREN_FLOW),
     parents: t.array(PARENT_CHILDREN_FLOW),
     categories: t.array(CATEGORY),
+    reportDetails: t.array(FLOW_REST_REPORT_DETAIL),
   }),
 ]);
 
@@ -245,47 +257,18 @@ const PARENT_TYPE = t.intersection([
   }),
 ]);
 
-const FILE_ASSET_TYPE = t.type({
-  collection: t.string,
-  createAt: t.string,
-  filename: t.string,
-  id: t.number,
-  mimetype: t.string,
-  originalname: t.string,
-  path: t.string,
-  size: t.number,
-  updatedAt: t.string,
+const CREATE_FLOW_REPORT_DETAIL = t.type({
+  contactInfo: t.union([t.string, t.null]),
+  source: SOURCE,
+  date: t.union([t.string, t.null]),
+  sourceID: t.union([t.number, t.null]),
+  refCode: t.union([t.string, t.null]),
+  verified: t.boolean,
+  organizationID: t.union([t.number, t.null]),
+  categories: t.array(t.number),
+  newlyAdded: t.boolean,
+  reportFiles: t.array(CREATE_FILE),
 });
-
-const REPORT_FILE_TYPE = t.partial({
-  title: t.string,
-  fileName: t.string,
-  UploadFileUrl: t.string,
-  type: t.string,
-  url: t.string,
-  fileAssetID: t.number,
-  size: t.number,
-  fileAssetEntity: t.partial({ ...FILE_ASSET_TYPE.props }),
-});
-
-const CREATE_FLOW_REPORT_DETAIL = t.intersection([
-  t.type({
-    contactInfo: t.string,
-    source: t.string,
-    date: t.string,
-    newlyAdded: t.boolean,
-    sourceID: t.null,
-    refCode: t.string,
-    verified: t.boolean,
-    organizationID: t.union([t.string, t.number]),
-    categories: t.array(t.union([t.string, t.number])),
-    organization: ORGANIZATION,
-    reportFiles: t.array(REPORT_FILE_TYPE),
-  }),
-  t.partial({
-    versionID: t.number,
-  }),
-]);
 
 /**
  * TODO: This type was created by an old developer of the team, and we should

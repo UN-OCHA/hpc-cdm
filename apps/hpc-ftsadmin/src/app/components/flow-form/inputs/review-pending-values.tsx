@@ -4,13 +4,15 @@ import { C, THEME } from '@unocha/hpc-ui';
 import { useState } from 'react';
 import tw from 'twin.macro';
 import WarningIcon from '@mui/icons-material/Warning';
-import { t } from '../../../i18n';
-import { getContext } from '../../context';
+import { t } from '../../../../i18n';
+import { getContext } from '../../../context';
 import { useFormikContext } from 'formik';
 import type { FlowFormType } from '../flow-form';
 
 export type ReviewPendingValuesProps = {
-  fieldName: keyof FlowFormType;
+  fieldName:
+    | keyof FlowFormType
+    | keyof FlowFormType['reportingDetails'][number];
   pendingValues?: string | FormObjectValue | FormObjectValue[] | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClick?: (...args: any[]) => unknown;

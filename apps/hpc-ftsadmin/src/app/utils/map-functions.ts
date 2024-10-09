@@ -1,7 +1,12 @@
-import { type flows, type organizations, type util } from '@unocha/hpc-data';
+import {
+  type fileAssetEntities,
+  type flows,
+  type organizations,
+  type util,
+} from '@unocha/hpc-data';
 import dayjs from 'dayjs';
 import { type LanguageKey, t } from '../../i18n';
-import { type FlowLinkProps } from '../components/flow-link';
+import { type FlowLinkProps } from '../components/flow-form/flow-link';
 
 export const valueToInteger = (value: string | number) => {
   return typeof value === 'number' ? Math.round(value) : parseInt(value);
@@ -48,7 +53,7 @@ export const flowToFlowLinkProps = (
       (loc) => loc.flowObject.refDirection === 'destination'
     )[0]?.name,
     amountUSD: flow.amountUSD,
-    flowDate: new Date(flow.flowDate),
+    flowDate: dayjs(flow.flowDate),
     projectName: flow.projects.filter(
       (proj) => proj.flowObject.refDirection === 'destination'
     )[0]?.projectVersions[0]?.name,
@@ -69,6 +74,21 @@ export const flowLinkToFormObjectValue = (
   return {
     displayLabel: `${flowLink.id}: ${flowLink.description}`,
     value: JSON.stringify(flowLink),
+  };
+};
+
+export const fileAssetEntityToFileUploadResult = (
+  fileAssetEntity?: flows.GetFlowResult['reportDetails'][number]['reportFiles'][number]['fileAssetEntity']
+): fileAssetEntities.FileUploadResult | null => {
+  if (!fileAssetEntity) {
+    return null;
+  }
+  const self = `/files/fts/${fileAssetEntity.id}`;
+  return {
+    ...fileAssetEntity,
+    name: fileAssetEntity.filename,
+    self,
+    file: `/public${self}`,
   };
 };
 

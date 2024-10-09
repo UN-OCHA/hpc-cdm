@@ -235,7 +235,7 @@ export const ButtonLink = (props: ButtonLinkProps) => (
   />
 );
 
-type ButtonProps = Omit<Props, 'behaviour'> & { onClick: () => void };
+export type ButtonProps = Omit<Props, 'behaviour'> & { onClick: () => void };
 
 export const Button = (props: ButtonProps) => (
   <StyledBaseButton

@@ -14,15 +14,21 @@ import AutocompleteSelect, {
   type AutocompleteSelectProps as AutocompleteSelectExportProps,
 } from './lib/components/form-fields/autocomplete-field';
 import CheckBox from './lib/components/form-fields/checkbox';
-import DatePicker from './lib/components/form-fields/date-picker';
+import DatePicker, {
+  type DatePickerProps as DatePickerExportProps,
+} from './lib/components/form-fields/date-picker';
 import MultiTextField from './lib/components/form-fields/multi-text-field';
 import NumberField, {
   type NumberFieldProps as NumberFieldExportProps,
 } from './lib/components/form-fields/number-field';
+import RadioButtonField, {
+  type RadioButtonFieldProps as RadioButtonFieldExportProps,
+} from './lib/components/form-fields/radio-button-field';
 import Switch from './lib/components/form-fields/switch';
 import TextFieldWrapper, {
   type TextFieldWrapperProps as TextFieldWrapperExportProps,
 } from './lib/components/form-fields/text-field';
+import UploadFile from './lib/components/form-fields/upload-file-field';
 import Header from './lib/components/header';
 import List from './lib/components/list';
 import ListItem from './lib/components/list-item';
@@ -68,6 +74,7 @@ const COMPONENTS = {
   NotFound,
   NumberField,
   PageTitle,
+  RadioButtonField,
   SidebarNavigation: sidebarNavigation.default,
   SearchFilter,
   Section,
@@ -76,6 +83,7 @@ const COMPONENTS = {
   TertiaryNavigation,
   TextFieldWrapper,
   Toolbar,
+  UploadFile,
 };
 
 const ICONS = {
@@ -89,6 +97,8 @@ export type AsyncAutocompleteSelectProps = AsyncAutocompleteSelectExportProps;
 export type TextFieldWrapperProps = TextFieldWrapperExportProps;
 export type AutocompleteSelectProps = AutocompleteSelectExportProps;
 export type NumberFieldProps = NumberFieldExportProps;
+export type RadioButtonFieldProps = RadioButtonFieldExportProps;
+export type DatePickerProps = DatePickerExportProps;
 
 export { COMPONENTS as C, ICONS };
 

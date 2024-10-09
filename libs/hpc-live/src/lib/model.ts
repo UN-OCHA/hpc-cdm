@@ -25,6 +25,7 @@ import {
   systems,
   usageYears,
   currencies,
+  fileAssetEntities,
 } from '@unocha/hpc-data';
 import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
@@ -46,7 +47,7 @@ interface RequestInit {
   headers: {
     [id: string]: string;
   };
-  body?: string | ArrayBuffer;
+  body?: string | ArrayBuffer | FormData;
   signal?: AbortSignal;
 }
 
@@ -55,6 +56,7 @@ interface Response {
   readonly statusText: string;
   json(): Promise<unknown>;
   arrayBuffer(): Promise<ArrayBuffer>;
+  blob(): Promise<Blob>;
 }
 
 interface FetchInterface {
@@ -339,9 +341,9 @@ export class LiveModel implements Model {
 
   public constructor(config: Config) {
     this.config = config;
-    this.URL = config.interfaces?.URL || URL;
-    this.fetch = config.interfaces?.fetch || fetch.bind(window);
-    this.sha256Hash = config.interfaces?.sha256Hash || util.hashFileInBrowser;
+    this.URL = config.interfaces?.URL ?? URL;
+    this.fetch = config.interfaces?.fetch ?? fetch.bind(globalThis);
+    this.sha256Hash = config.interfaces?.sha256Hash ?? util.hashFileInBrowser;
     this.apolloClient = new ApolloClient({
       uri: `${this.config.baseUrl}/v4/graphql`,
       cache: new InMemoryCache({}),
@@ -384,6 +386,7 @@ export class LiveModel implements Model {
     resultType,
     body,
     signal,
+    isDownload,
   }: {
     method?: HttpMethod;
     pathname: string;
@@ -400,8 +403,13 @@ export class LiveModel implements Model {
           type: 'raw';
           data: string | ArrayBuffer;
           contentType: string;
+        }
+      | {
+          type: 'form-data';
+          data: FormData;
         };
     signal?: AbortSignal;
+    isDownload?: boolean;
   }) => {
     const { url, init } = this.baseFetchInit({ pathname, method, queryParams });
     init.signal = signal;
@@ -409,6 +417,8 @@ export class LiveModel implements Model {
       if (body.type === 'json') {
         init.body = JSON.stringify(body.data);
         init.headers['Content-Type'] = 'application/json';
+      } else if (body.type === 'form-data') {
+        init.body = body.data;
       } else {
         init.body = body.data;
         init.headers['Content-Type'] = body.contentType;
@@ -416,14 +426,26 @@ export class LiveModel implements Model {
     }
     const res = await this.fetch(url.href, init);
     if (res.ok) {
-      const json: Res<T> = (await res.json()) as Res<T>;
-      const decode = resultType.decode(json.data);
+      if (res.statusText === 'No Content') {
+        return null as T;
+      }
+      let decode;
+      let jsonError = {};
+      if (isDownload) {
+        const blob = await res.blob();
+        decode = resultType.decode(blob);
+      } else {
+        const json: Res<T> = (await res.json()) as Res<T>;
+        decode = resultType.decode(json.data ?? json);
+        jsonError = json;
+      }
+
       if (isRight(decode)) {
         return decode.right;
       }
       const report = PathReporter.report(decode);
-      console.error('Received unexpected result from server', report, json);
-      throw new ModelError('Received unexpected result from server', json);
+      console.error('Received unexpected result from server', report, jsonError);
+      throw new ModelError('Received unexpected result from server', jsonError);
     } else {
       const json = (await res.json()) as {
         timestamp: Date;
@@ -648,6 +670,34 @@ export class LiveModel implements Model {
         }),
     };
   }
+  get fileAssetEntities(): fileAssetEntities.Model {
+    return {
+      fileUpload: (file) =>
+        this.call({
+          pathname: '/v1/files/fts',
+          method: 'POST',
+          body: {
+            type: 'form-data',
+            data: file,
+          },
+          resultType: fileAssetEntities.FILE_ASSET_UPLOAD,
+        }),
+
+      fileDelete: (id, collection) =>
+        this.call({
+          pathname: `/v1/files/${collection}/${id}`,
+          method: 'DELETE',
+          resultType: fileAssetEntities.DELETE_FILE_RESULT,
+        }),
+      fileDownload: (id, collection) =>
+        this.call({
+          pathname: `/v1/files/download/${collection}/${id}`,
+          method: 'GET',
+          resultType: fileAssetEntities.BLOB_TYPE,
+          isDownload: true,
+        }),
+    };
+  }
   get flows(): flows.Model {
     return {
       getFlowREST: (params) =>
@@ -656,32 +706,34 @@ export class LiveModel implements Model {
           resultType: flows.GET_FLOW_RESULT,
         }),
       getFlow: (params) => {
-        const query = gql`query Flow{
-          flow(id: ${params}) {
-              createdAt
-              updatedAt
-              deletedAt
-              id
-              versionID
-              amountUSD
-              flowDate
-              decisionDate
-              firstReportedDate
-              budgetYear
-              origAmount
-              origCurrency
-              exchangeRate
-              activeStatus
-              newMoney
-              restricted
-              description
-              notes
-              versionStartDate
-              versionEndDate
-              createdBy
-              lastUpdatedBy
-          }
-      }`;
+        const query = gql`
+          query Flow{
+                    flow(id: ${params}) {
+                        createdAt
+                        updatedAt
+                        deletedAt
+                        id
+                        versionID
+                        amountUSD
+                        flowDate
+                        decisionDate
+                        firstReportedDate
+                        budgetYear
+                        origAmount
+                        origCurrency
+                        exchangeRate
+                        activeStatus
+                        newMoney
+                        restricted
+                        description
+                        notes
+                        versionStartDate
+                        versionEndDate
+                        createdBy
+                        lastUpdatedBy
+                    }
+                }
+        `;
         return this.callGraphQL({ query, resultType: flows.GET_FLOW_RESULT });
       },
 
@@ -722,11 +774,13 @@ export class LiveModel implements Model {
           resultType: flows.BULK_REJECT_PENDING_FLOWS_RESULT,
         }),
       getFlowsDownloadXLSX: (params) => {
-        const query = gql`query {
-          searchFlowsBatches${searchFlowsParams(params)} {
-            ${this.searchFlowFields}
-          }
-        }`;
+        const query = gql`
+          query {
+                    searchFlowsBatches${searchFlowsParams(params)} {
+                      ${this.searchFlowFields}
+                    }
+                  }
+        `;
         return this.callGraphQL({
           query,
           resultType: flows.SEARCH_FLOWS_BATCHES_RESULT,

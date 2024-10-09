@@ -8,19 +8,20 @@ import {
   locationsOptions,
   organizationsOptions,
   usageYearsOptions,
-} from '../utils/fn-promises';
-import { getContext, getEnv } from '../context';
-import { t } from '../../i18n';
+} from '../../utils/fn-promises';
+import { getContext, getEnv } from '../../context';
+import { t } from '../../../i18n';
 import { useFormikContext } from 'formik';
 import { FormObjectValue, flows } from '@unocha/hpc-data';
-import { isFormObjectValue } from '../utils/parse-flow-form';
+import { isFormObjectValue } from '../../utils/parse-flow-form';
 import { IconType } from 'react-icons/lib';
 import { FlowLinkProps } from './flow-link';
 import { FlowFormType } from './flow-form';
 import {
   flowLinkToFormObjectValue,
   flowToFormObjectValue,
-} from '../utils/map-functions';
+} from '../../utils/map-functions';
+import dayjs from 'dayjs';
 
 type FlowSearchProps = {
   name: 'parentFlow' | 'childFlows';
@@ -67,7 +68,13 @@ const FlowSearch = (props: FlowSearchProps) => {
 
   const handleSubmit = () => {
     if (flow) {
-      const flowLink = JSON.parse(flow.value.toString()) as FlowLinkProps;
+      const rawFlowLink = JSON.parse(flow.value.toString());
+
+      const flowLink = {
+        ...rawFlowLink,
+        flowDate: dayjs(rawFlowLink.flowDate),
+      } as FlowLinkProps;
+
       const existingValues = values[name];
       if (!existingValues || !Array.isArray(existingValues)) {
         setFieldValue(name, flowLink);

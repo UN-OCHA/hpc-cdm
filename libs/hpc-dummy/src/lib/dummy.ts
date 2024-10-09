@@ -7,6 +7,7 @@ import {
   type currencies,
   type emergencies,
   errors,
+  type fileAssetEntities,
   type flows,
   type globalClusters,
   type locations,
@@ -555,6 +556,37 @@ export class Dummy {
           }
         ),
       },
+      fileAssetEntities: {
+        fileUpload: dummyEndpoint(
+          'fileAssetEntities.fileUpload',
+          async (
+            _file: FormData
+          ): Promise<fileAssetEntities.FileUploadResult> => {
+            //  TODO: Properly add mocked data
+            return {
+              collection: 'fts',
+              createdAt: new Date().toISOString(),
+              name: 'test.pdf',
+              id: Date.now(),
+              mimetype: 'application/pdf',
+              originalname: 'test.pdf',
+              file: 'test.pdf',
+              size: 12_302,
+              updatedAt: new Date().toISOString(),
+              self: 'https://test.com',
+            };
+          }
+        ),
+        fileDelete: dummyEndpoint('fileAssetEntities.fileDelete', async () => {
+          throw new errors.NotFoundError();
+        }),
+        fileDownload: dummyEndpoint(
+          'fileAssetEntities.fileDownload',
+          async () => {
+            throw new errors.NotFoundError();
+          }
+        ),
+      },
       flows: {
         getFlowREST: dummyEndpoint('flows.getFlowREST', async () => {
           throw new errors.NotFoundError();
@@ -711,6 +743,7 @@ export class Dummy {
               clusters: [],
               children: [],
               parents: [],
+              reportDetails: [],
             };
             return res;
           }
