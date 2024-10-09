@@ -34,6 +34,10 @@
       "info": "Nous n'avons pas pu trouver la page que vous cherchiez",
       "back": "Retour"
     },
+    "noResultTable": {
+      "title": "Aucun résultat trouvé",
+      "description": "Vos filtres ne correspondent à aucun résultat. Veuillez modifier votre sélection de filtres."
+    },
     "invalidRouteParam": {
       "title": "Itinéraire invalide",
       "info": "ID non entier détecté dans l'URL",
@@ -52,7 +56,7 @@
       "headers": {
         "id": "ID",
         "status": "Statut",
-        "updatedCreated": "Mise à jour/Création",
+        "updatedCreated": "Création/ Mise à jour",
         "dataProvider": "Fournisseur de données",
         "amountUSD": "Montant USD",
         "sourceOrganization": "Organisation source",
@@ -82,8 +86,15 @@
       "parkedSource": "Source stationnée",
       "sortBy": "Trier par",
       "totalAmount": "Montant Total：",
-      "rejectPendingFlows": "Rejeter les flux en attente",
-      "downloadDisabled": "Le téléchargement est uniquement autorisé lorsqu'au moins un filtre est appliqué",
+      "rejectPendingFlows": {
+        "message": "Voulez-vous rejeter les flux en attente sélectionnés ?",
+        "button": "Oui",
+        "state": {
+          "error": "Erreur inattendue lors du rejet des flux en attente sélectionnés",
+          "success": "Tous les flux en attente sélectionnés ont été rejetés avec succès"
+        }
+      },
+      "downloadDisabled": "Le téléchargement n'est autorisé que lorsqu'au moins un filtre est appliqué et qu'il y a plus d'un flux dans le tableau",
       "totalAmountDisabled": "Le montant total est uniquement autorisé lorsqu'au moins un filtre est appliqué",
       "tableSettings": {
         "title": "Paramètres du tableau",
@@ -158,10 +169,38 @@
       },
       "labels": {
         "newName": "Nouveau Nom",
+        "edit": "Modifier",
         "save": "Enregistrer",
         "public": "Public",
         "cancel": "Annuler",
         "delete": "Supprimer"
+      }
+    },
+    "mergeModal": {
+      "description": "Fusionner {entity}",
+      "mergingEntity": "Fusion de {entity}",
+      "receivingEntity": "Entité de réception {entity}",
+      "confirmationMessage": "Êtes-vous sûr de vouloir fusionner {mergingEntities} dans {receivingEntity} ?",
+      "formError": {
+        "mergingEntity": "Ce champ est obligatoire, veuillez ajouter au moins une valeur",
+        "receivingEntity": "Ce champ est obligatoire"
+      },
+      "error": {
+        "conflict": "Il y a eu un conflit lors de la fusion de {entities}",
+        "unknown": "Il y a eu une erreur inconnue lors de la fusion de {entities}"
+      },
+      "organization": {
+        "singular": "Organisation",
+        "plural": "Organisations"
+      },
+      "keyword": {
+        "singular": "Mot-clé",
+        "plural": "Mots-clés"
+      },
+      "button": {
+        "yes": "Oui",
+        "cancel": "Annuler",
+        "next": "Suivant"
       }
     },
     "pendingFlowsFilter": {
@@ -234,6 +273,7 @@
         "title": "Organisations non trouvées",
         "info": "Nous n'avons pas pu charger les organisations"
       },
+      "addOrganization": "Ajouter Organisation",
       "sortBy": "Trier par",
       "tableSettings": {
         "title": "Paramètres du tableau",
@@ -262,6 +302,7 @@
       },
       "errors": {
         "duplicate": "Une organisation avec le nom {organizationName} existe déjà. Veuillez choisir un nom différent.",
+        "conflict": "Une organisation avec le nom fourni existe déjà. Veuillez choisir un nom différent.",
         "unknown": "Erreur inattendue lors de la création/mise à jour de l'organisation"
       },
       "formErrors": {

@@ -34,6 +34,10 @@
       "info": "我们找不到您要查找的页面",
       "back": "返回"
     },
+    "noResultTable": {
+      "title": "未找到结果",
+      "description": "您的筛选条件没有匹配任何结果。请修改您的筛选条件选择。"
+    },
     "invalidRouteParam": {
       "title": "无效路由",
       "info": "在URL中检测到非整数ID",
@@ -52,7 +56,7 @@
       "headers": {
         "id": "ID",
         "status": "状态",
-        "updatedCreated": "更新/创建",
+        "updatedCreated": "创建/更新",
         "dataProvider": "数据提供者",
         "amountUSD": "金额（美元）",
         "sourceOrganization": "源组织",
@@ -82,8 +86,15 @@
       "parkedSource": "停车源",
       "totalAmount": "总金额：",
       "sortBy": "排序方式",
-      "rejectPendingFlows": "拒绝待处理的资金流",
-      "downloadDisabled": "只有在至少应用了一个过滤器时才允许下载",
+      "rejectPendingFlows": {
+        "message": "您是否要拒绝所选的待处理流？",
+        "button": "是",
+        "state": {
+          "error": "批量拒绝所选待处理流时发生意外错误",
+          "success": "所有选定的待处理流均已成功拒绝"
+        }
+      },
+      "downloadDisabled": "只有在应用了至少一个过滤器并且表格中有多个流时才允许下载",
       "totalAmountDisabled": "只有在至少应用了一个过滤器时才允许总金额",
       "tableSettings": {
         "title": "表格设置",
@@ -161,10 +172,38 @@
       },
       "labels": {
         "newName": "新名称",
+        "edit": "编辑",
         "save": "保存",
         "public": "公开",
         "cancel": "取消",
         "delete": "删除"
+      }
+    },
+    "mergeModal": {
+      "description": "合并{entity}",
+      "mergingEntity": "正在合并{entity}",
+      "receivingEntity": "接收{entity}",
+      "confirmationMessage": "您确定要将 {mergingEntities} 合并到 {receivingEntity} 吗？",
+      "formError": {
+        "mergingEntity": "此字段为必填项，请至少添加一个值",
+        "receivingEntity": "此字段为必填项"
+      },
+      "error": {
+        "conflict": "在合并{entities}时发生冲突",
+        "unknown": "在合并{entities}时发生未知错误"
+      },
+      "organization": {
+        "singular": "组织",
+        "plural": "组织"
+      },
+      "keyword": {
+        "singular": "关键词",
+        "plural": "关键词"
+      },
+      "button": {
+        "yes": "是",
+        "cancel": "取消",
+        "next": "下一步"
       }
     },
     "pendingFlowsFilter": {
@@ -237,6 +276,7 @@
         "title": "找不到组织",
         "info": "我们无法加载组织"
       },
+      "addOrganization": "+ 组织",
       "sortBy": "排序方式",
       "tableSettings": {
         "title": "表格设置",
@@ -265,6 +305,7 @@
       },
       "errors": {
         "duplicate": "已经存在名为 {organizationName} 的组织。请选择一个不同的名称。",
+        "conflict": "已经存在使用提供的名称的组织。请选择一个不同的名称。",
         "unknown": "创建/更新组织时发生意外错误"
       },
       "formErrors": {

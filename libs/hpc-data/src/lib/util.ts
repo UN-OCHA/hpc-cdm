@@ -1,7 +1,12 @@
 import * as t from 'io-ts';
 import { Dayjs, isDayjs } from 'dayjs';
 
-export type FormObjectValue = { displayLabel: string; value: string | number };
+export type FormObjectValue = {
+  displayLabel: string;
+  value: string | number;
+  parent?: FormObjectValue;
+  hasChildren?: boolean;
+};
 
 export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(
   data: t.Type<D>,
@@ -133,6 +138,22 @@ export const NON_EMPTY_ARRAY = new t.Type<Array<unknown>, Array<unknown>>(
       return v.length > 0 ? t.success(v) : t.failure(v, c);
     } else {
       return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
+ * Accepts any value except null.
+ */
+export const NON_NULL_VALUE = new t.Type<unknown, unknown>(
+  'NON_NULL_VALUE',
+  t.unknown.is,
+  (v, c) => {
+    if (v === null) {
+      return t.failure(v, c);
+    } else {
+      return t.success(v);
     }
   },
   t.identity

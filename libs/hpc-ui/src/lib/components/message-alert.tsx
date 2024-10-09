@@ -6,11 +6,16 @@ const AlertWrapper = tw.div`
   mb-4
 `;
 
-type ErrorAlertProps<T> = {
-  setError: React.Dispatch<React.SetStateAction<T | undefined>>;
-  error?: string;
+type MessageAlertProps<T> = {
+  setMessage: React.Dispatch<React.SetStateAction<T | undefined>>;
+  severity: 'info' | 'error' | 'success' | 'warning';
+  message?: string;
 };
-const ErrorAlert = <T,>({ setError, error }: ErrorAlertProps<T>) => {
+const MessageAlert = <T,>({
+  setMessage: setError,
+  message,
+  severity,
+}: MessageAlertProps<T>) => {
   function GrowTransition(props: GrowProps) {
     return <Grow {...props} />;
   }
@@ -25,18 +30,18 @@ const ErrorAlert = <T,>({ setError, error }: ErrorAlertProps<T>) => {
   return (
     <Snackbar
       key={new Date().getTime()}
-      open={!!error}
+      open={!!message}
       autoHideDuration={5000}
       onClose={handleClose}
       TransitionComponent={GrowTransition}
     >
       <AlertWrapper>
-        <Alert severity="error" onClose={handleClose}>
-          {error}
+        <Alert severity={severity} onClose={handleClose}>
+          {message}
         </Alert>
       </AlertWrapper>
     </Snackbar>
   );
 };
 
-export default ErrorAlert;
+export default MessageAlert;

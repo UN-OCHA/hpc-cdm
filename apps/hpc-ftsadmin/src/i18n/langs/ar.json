@@ -34,6 +34,10 @@
       "info": "لم نتمكن من العثور على الصفحة التي كنت تبحث عنها",
       "back": "العودة"
     },
+    "noResultTable": {
+      "title": "لم يتم العثور على نتائج",
+      "description": "لا تتطابق تصفياتك مع أي نتائج. يرجى تعديل اختيارك للفلاتر."
+    },
     "invalidRouteParam": {
       "title": "مسار غير صالح",
       "info": "تم اكتشاف رقم تعريف غير صحيح في عنوان URL",
@@ -52,7 +56,7 @@
       "headers": {
         "id": "المعرف",
         "status": "الحالة",
-        "updatedCreated": "تم التحديث/تم الإنشاء",
+        "updatedCreated": "تم الإنشاء/تم التحديث",
         "dataProvider": "مزود البيانات",
         "amountUSD": "المبلغ بالدولار الأمريكي",
         "sourceOrganization": "المؤسسة المصدرة",
@@ -82,8 +86,15 @@
       "parkedSource": "المصدر المتوقف",
       "sortBy": "الترتيب حسب",
       "totalAmount": "المبلغ الإجمالي: ",
-      "rejectPendingFlows": "رفض الأنسجة المعلقة",
-      "downloadDisabled": "التنزيل مسموح به فقط عند وجود على الأقل تطبيق فلتر واحد",
+      "rejectPendingFlows": {
+        "message": "هل ترغب في رفض تدفقات الانتظار المحددة؟",
+        "button": "نعم",
+        "state": {
+          "error": "حدث خطأ غير متوقع أثناء الرفض الجماعي للتدفقات المعلقة المحددة",
+          "success": "تم رفض جميع التدفقات المعلقة المحددة بنجاح"
+        }
+      },
+      "downloadDisabled": "التنزيل مسموح به فقط عند وجود تطبيق للتصفية وهناك أكثر من تدفق في الجدول",
       "totalAmountDisabled": "المبلغ الإجمالي مسموح به فقط عند وجود على الأقل تطبيق فلتر واحد",
       "tableSettings": {
         "title": "إعدادات الجدول",
@@ -159,10 +170,38 @@
       },
       "labels": {
         "newName": "الاسم الجديد",
+        "edit": "تحرير",
         "save": "حفظ",
         "public": "عام",
         "cancel": "إلغاء",
         "delete": "حذف"
+      }
+    },
+    "mergeModal": {
+      "description": "دمج {entity}",
+      "mergingEntity": "دمج {entity}",
+      "receivingEntity": "استلام {entity} ",
+      "confirmationMessage": "هل أنت متأكد أنك تريد دمج {mergingEntities} في {receivingEntity}؟",
+      "formError": {
+        "mergingEntity": "هذا الحقل مطلوب، يرجى إضافة قيمة واحدة على الأقل",
+        "receivingEntity": "هذا الحقل مطلوب"
+      },
+      "error": {
+        "conflict": "حدث تضارب أثناء دمج {entities} ",
+        "unknown": "حدث خطأ غير معروف أثناء دمج {entities} "
+      },
+      "organization": {
+        "singular": "منظمة",
+        "plural": "منظمات"
+      },
+      "keyword": {
+        "singular": "كلمة مفتاحية",
+        "plural": "كلمات مفتاحية"
+      },
+      "button": {
+        "yes": "نعم",
+        "cancel": "إلغاء",
+        "next": "التالي"
       }
     },
     "pendingFlowsFilter": {
@@ -235,6 +274,7 @@
         "title": "لم يتم العثور على منظمات",
         "info": "لم نتمكن من تحميل المنظمات"
       },
+      "addOrganization": "+ المنظمة",
       "sortBy": "ترتيب حسب",
       "tableSettings": {
         "title": "إعدادات الجدول",
@@ -263,6 +303,7 @@
       },
       "errors": {
         "duplicate": "توجد مؤسسة بالفعل باسم {organizationName}. يرجى اختيار اسم مختلف.",
+        "conflict": "يوجد مؤسسة بالفعل بالاسم المقدم. يرجى اختيار اسم مختلف.",
         "unknown": "خطأ غير متوقع أثناء إنشاء/تحديث المؤسسة"
       },
       "formErrors": {

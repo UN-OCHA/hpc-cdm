@@ -9,6 +9,20 @@ import tw from 'twin.macro';
 import { FormObjectValue } from '@unocha/hpc-data';
 import { StyledTextField } from './text-field';
 
+const FlexDiv = tw.div`ms-8 border-l border-l-slate-400 border-solid border-y-0 border-r-0`;
+const StyledLI = tw.li`w-full max-h-min`;
+const ChildrenOption = ({
+  children,
+  ...otherProps
+}: {
+  children: React.ReactNode;
+}) => {
+  return (
+    <FlexDiv>
+      <StyledLI {...otherProps}>{children}</StyledLI>
+    </FlexDiv>
+  );
+};
 const StyledAutocomplete = tw(Autocomplete)`
   min-w-[10rem]
   w-full
@@ -23,7 +37,28 @@ type AsyncAutocompleteSelectProps = {
   isAutocompleteAPI?: boolean;
   error?: (metaError: string) => string | undefined;
   required?: boolean;
+  allowChildrenRender?: boolean;
+  removeOptions?: Array<FormObjectValue>;
 };
+
+/** Removes FormObjectValue objects from first array if in the second array there is any FormObjectValue whose 'value' property
+ *  equals any inside the firstArray, if no second array provided, returns first array */
+const removeFormObjectValueFromFirstArray = (
+  firstArray: Array<FormObjectValue>,
+  secondArray: Array<FormObjectValue> | undefined
+) => {
+  if (secondArray) {
+    return firstArray.filter(
+      (firstArrayObject) =>
+        !secondArray.some(
+          (secondArrayObject) =>
+            firstArrayObject.value === secondArrayObject.value
+        )
+    );
+  }
+  return firstArray;
+};
+
 const AsyncAutocompleteSelect = ({
   name,
   label,
@@ -33,6 +68,8 @@ const AsyncAutocompleteSelect = ({
   error,
   isAutocompleteAPI,
   required,
+  allowChildrenRender,
+  removeOptions,
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -41,35 +78,64 @@ const AsyncAutocompleteSelect = ({
   const [options, setOptions] = useState<Array<FormObjectValue>>([]);
   const [data, setData] = useState<Array<FormObjectValue>>([]);
   const [isFetch, setIsFetch] = useState(false);
+  const [debouncedInputValue, setDebouncedInputValue] = useState('');
   const loading =
     open && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
+  const actualYear = new Date().getFullYear();
+
+  useEffect(() => {
+    const delay = 300;
+    const debounceTimer = setTimeout(() => {
+      setDebouncedInputValue(inputValue);
+    }, delay);
+
+    return () => {
+      clearTimeout(debounceTimer);
+    };
+  }, [inputValue]);
 
   useEffect(() => {
     let active = true;
-    if (isAutocompleteAPI && (inputValue === '' || inputValue.length < 3)) {
+    if (
+      isAutocompleteAPI &&
+      (debouncedInputValue === '' || debouncedInputValue.length < 3)
+    ) {
       setOptions([]);
       setData([]);
       setIsFetch(false);
       return undefined;
     }
-    if (data.length > 0 && (inputValue.length >= 3 || !isAutocompleteAPI)) {
+    if (
+      (data.length > 0 &&
+        (debouncedInputValue.length >= 3 || !isAutocompleteAPI) &&
+        debouncedInputValue.length > 0) ||
+      (debouncedInputValue.length === 0 &&
+        options.at(0)?.displayLabel !== (actualYear - 5).toString() &&
+        options.at(-1)?.displayLabel !== (actualYear + 5).toString())
+    ) {
       setOptions(
         data.filter((x) =>
-          x.displayLabel.toUpperCase().includes(inputValue.toUpperCase())
+          x.displayLabel
+            .toUpperCase()
+            .includes(debouncedInputValue.toUpperCase())
         )
       );
     }
 
-    if (!loading) {
+    if (!loading && !(typeof field.value === 'string')) {
       return undefined;
     }
     (async () => {
       try {
-        const response = await fnPromise({
-          query: inputValue,
-        });
-        setData(response);
-        console.log(response);
+        let response: FormObjectValue[];
+        if (fnPromise) {
+          response = await fnPromise({
+            query: debouncedInputValue,
+          });
+        } else {
+          response = field.value;
+        }
+        setData(removeFormObjectValueFromFirstArray(response, removeOptions));
         if (active) {
           setOptions(response);
         }
@@ -122,18 +188,34 @@ const AsyncAutocompleteSelect = ({
     },
     loading,
     renderOption: (props, option) => {
-      return (
-        <li {...props} key={option.value}>
-          {option.displayLabel}
-        </li>
-      );
+      if (allowChildrenRender && option.parent) {
+        return (
+          <ChildrenOption {...props} key={option.value}>
+            {option.displayLabel}
+          </ChildrenOption>
+        );
+      } else {
+        return (
+          <li {...props} key={option.value}>
+            {option.displayLabel}
+          </li>
+        );
+      }
     },
+    getOptionDisabled: (option) =>
+      isMulti === true &&
+      field.value.find((a) => a.parent?.value === option.value) !== undefined,
     renderInput: (params) => (
       <StyledTextField
         {...params}
         size="small"
         label={`${label}${required ? '*' : ''}`}
         placeholder={placeholder}
+        inputProps={{
+          ...params.inputProps,
+          /** Needed to support native <input /> required on 'multiple' autocomplete select */
+          required: isMulti && required ? field.value.length === 0 : undefined,
+        }}
         InputProps={{
           ...params.InputProps,
           endAdornment: (
