@@ -22,6 +22,7 @@ import OrganizationTable, {
 import FilterOrganizationsTable, {
   ORGANIZATIONS_FILTER_INITIAL_VALUES,
 } from '../../components/filters/filter-organization-table';
+import { useCallback, useEffect, useState } from 'react';
 
 interface Props {
   className?: string;
@@ -35,6 +36,29 @@ const LandingContainer = tw.div`
 `;
 export default (props: Props) => {
   const rowsPerPageOptions = [10, 25, 50, 100];
+  const [abortController, setAbortController] = useState<AbortController>(
+    new AbortController()
+  );
+  const handleAbortController = useCallback(() => {
+    // Abort the ongoing requests
+    abortController.abort();
+
+    // Create a new AbortController for the next requests
+    const newAbortController = new AbortController();
+    setAbortController(newAbortController);
+
+    // Perform actions with the updated filter values
+
+    // Pass the new AbortSignal to FlowsTableGraphQL
+    // This can be part of your state or directly passed as a prop
+  }, [abortController]);
+
+  useEffect(() => {
+    return () => {
+      handleAbortController();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [query, setQuery] = useQueryParams({
     page: withDefault(NumberParam, 0),
@@ -78,6 +102,7 @@ export default (props: Props) => {
     initialValues: ORGANIZATIONS_FILTER_INITIAL_VALUES,
     query: query,
     setQuery: setQuery,
+    abortSignal: abortController.signal,
   };
 
   const env = getEnv();
@@ -94,6 +119,7 @@ export default (props: Props) => {
               setQuery={setQuery}
               query={query}
               lang={lang}
+              handleAbortController={handleAbortController}
             />
             <LandingContainer>
               <C.PageTitle>

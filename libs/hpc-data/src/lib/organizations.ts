@@ -1,5 +1,6 @@
 import * as t from 'io-ts';
 import { LOCATION_BUILDER } from './locations';
+import { ABORT_SIGNAL } from './util';
 
 const ORGANIZATION_CATEGORY = t.type({
   id: t.number,
@@ -125,6 +126,7 @@ export const SEARCH_ORGANIZATION_PARAMS = t.type({
     orderDir: t.union([t.string, t.null]),
     limit: t.number,
     offset: t.number,
+    signal: ABORT_SIGNAL,
   }),
 });
 export type SearchOrganizationParams = t.TypeOf<

@@ -28,7 +28,7 @@ export const searchFlowsParams = (params: flows.SearchFlowsParams): string => {
         break;
       }
       default: {
-        if (key !== 'signal' && params[key]) {
+        if (params[key]) {
           queryParams += `${key}: ${stringify(params[key])} `;
         }
         break;
