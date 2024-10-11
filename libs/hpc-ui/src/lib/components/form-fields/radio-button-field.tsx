@@ -14,6 +14,7 @@ export type RadioButtonFieldProps = {
   options: FormObjectValue[];
   value: string;
   onChange?: (value: string) => void;
+  disabled?: boolean;
 };
 
 const RadioButtonField = ({
@@ -22,6 +23,7 @@ const RadioButtonField = ({
   options,
   value,
   onChange,
+  disabled,
 }: RadioButtonFieldProps) => {
   const { setFieldValue } = useFormikContext();
 
@@ -45,6 +47,7 @@ const RadioButtonField = ({
             value={option.value}
             control={<Radio />}
             label={option.displayLabel}
+            disabled={disabled}
           />
         ))}
       </RadioGroup>

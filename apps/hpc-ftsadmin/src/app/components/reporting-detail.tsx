@@ -51,9 +51,10 @@ const ReportingOrganizationSuggestion = tw.span`
 
 const ReportingDetail = ({
   index,
+  disabled,
 }: {
   index: number;
-  reportingDetailValue?: ReportingDetailProps;
+  disabled?: boolean;
 }) => {
   const env = getEnv();
 
@@ -181,6 +182,7 @@ const ReportingDetail = ({
                 value as ReportingDetailProps['reportSource']
               )
             }
+            disabled={disabled}
           />
           <AsyncAutocompleteSelectReview
             fieldName="reportedByOrganization"
@@ -189,27 +191,31 @@ const ReportingDetail = ({
             required
             initialValue={reportedByOrganization}
             onChange={(value) => handleChange('reportedByOrganization', value)}
+            disabled={disabled}
           />
           <div>
-            {values.fundingSourceOrganizations.length +
-              values.fundingDestinationOrganizations.length >
-              0 && <span> Organizations already on this flow: </span>}
-            {values.fundingSourceOrganizations.map((org) => (
-              <ReportingOrganizationSuggestion
-                onClick={() => handleChange('reportedByOrganization', org)}
-                key={org.value}
-              >
-                {` ${org.displayLabel} `}
-              </ReportingOrganizationSuggestion>
-            ))}
-            {values.fundingDestinationOrganizations.map((org) => (
-              <ReportingOrganizationSuggestion
-                onClick={() => handleChange('reportedByOrganization', org)}
-                key={org.value}
-              >
-                {` ${org.displayLabel} `}
-              </ReportingOrganizationSuggestion>
-            ))}
+            {!disabled &&
+              values.fundingSourceOrganizations.length +
+                values.fundingDestinationOrganizations.length >
+                0 && <span> Organizations already on this flow: </span>}
+            {!disabled &&
+              values.fundingSourceOrganizations.map((org) => (
+                <ReportingOrganizationSuggestion
+                  onClick={() => handleChange('reportedByOrganization', org)}
+                  key={org.value}
+                >
+                  {` ${org.displayLabel} `}
+                </ReportingOrganizationSuggestion>
+              ))}
+            {!disabled &&
+              values.fundingDestinationOrganizations.map((org) => (
+                <ReportingOrganizationSuggestion
+                  onClick={() => handleChange('reportedByOrganization', org)}
+                  key={org.value}
+                >
+                  {` ${org.displayLabel} `}
+                </ReportingOrganizationSuggestion>
+              ))}
           </div>
           <AsyncAutocompleteSelectReview
             fieldName="reportChannel"
@@ -218,12 +224,14 @@ const ReportingDetail = ({
             isAutocompleteAPI={false}
             initialValue={reportChannel}
             onChange={(value) => handleChange('reportChannel', value)}
+            disabled={disabled}
           />
           <TextFieldReview
             fieldName="sourceSystemRecordId"
             label="Source System Record ID"
             initialValue={sourceSystemRecordId}
             onChange={(value) => handleChange('sourceSystemRecordId', value)}
+            disabled={disabled}
           />
         </div>
         <div>
@@ -236,18 +244,21 @@ const ReportingDetail = ({
             ]}
             value={verified}
             onChange={(value) => handleChange('verified', value)}
+            disabled={disabled}
           />
           <DatePickerReview
             fieldName="dateReported"
             label="Date Reported"
             initialValue={dateReported}
             onChange={(value) => handleChange('dateReported', value)}
+            disabled={disabled}
           />
           <TextFieldReview
             fieldName="reporterReferenceCode"
             label="Reporter Reference Code"
             initialValue={reporterReferenceCode}
             onChange={(value) => handleChange('reporterReferenceCode', value)}
+            disabled={disabled}
           />
           <TextFieldReview
             fieldName="reporterContactInfo"
@@ -256,6 +267,7 @@ const ReportingDetail = ({
             minRows={2}
             initialValue={reporterContactInfo}
             onChange={(value) => handleChange('reporterContactInfo', value)}
+            disabled={disabled}
           />
         </div>
       </Box>
@@ -272,7 +284,9 @@ const ReportingDetail = ({
             onChange={(value) => {
               handleChange('reportFileTitle', value);
             }}
+            disabled={disabled}
           />
+
           <C.UploadFile
             name="file"
             buttonConfig={{
@@ -291,6 +305,7 @@ const ReportingDetail = ({
                   }
                 : undefined
             }
+            disabled={disabled}
           />
         </Box>
         <Box sx={tw`basis-1/2 max-w-[50%]`}>
@@ -301,6 +316,7 @@ const ReportingDetail = ({
             placeholder="Title"
             initialValue={reportURLTitle}
             onChange={(value) => handleChange('reportURLTitle', value)}
+            disabled={disabled}
           />
           <TextFieldReview
             fieldName="url"
@@ -308,6 +324,7 @@ const ReportingDetail = ({
             placeholder="URL"
             initialValue={url}
             onChange={(value) => handleChange('url', value)}
+            disabled={disabled}
           />
         </Box>
       </Box>

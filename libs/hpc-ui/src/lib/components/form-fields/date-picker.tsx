@@ -8,7 +8,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import tw from 'twin.macro';
 import dayjs from '../../i18n/utils/dayjs';
-import { useEffect, useState } from 'react';
 import { Dayjs } from 'dayjs';
 
 export type DatePickerProps = {
@@ -22,6 +21,7 @@ export type DatePickerProps = {
    */
   initialValue?: Dayjs | null;
   onChange?: (value: Dayjs | null) => unknown;
+  disabled?: boolean;
 };
 
 const StyledDatePicker = tw.div`
@@ -38,6 +38,7 @@ const DatePicker = ({
   enableButton = true,
   initialValue,
   onChange,
+  disabled,
 }: DatePickerProps) => {
   const [field, , helpers] = useField(name);
   const { setFieldValue } = useFormikContext();
@@ -46,6 +47,7 @@ const DatePicker = ({
     ...field,
     ...(initialValue !== undefined ? { value: initialValue } : {}),
     format: 'DD/MM/YYYY',
+    disabled,
     onError: (error) => {
       console.error(error);
     },
@@ -65,6 +67,7 @@ const DatePicker = ({
       textField: (params) => (
         <TextField
           {...params}
+          disabled={disabled}
           InputLabelProps={{ shrink: true }}
           size="small"
         />
@@ -81,7 +84,7 @@ const DatePicker = ({
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={lang}>
       <StyledDatePicker>
         <BaseDatePicker {...datePickerProps} />
-        {enableButton && (
+        {enableButton && !disabled && (
           <Link
             component="button"
             type="button"

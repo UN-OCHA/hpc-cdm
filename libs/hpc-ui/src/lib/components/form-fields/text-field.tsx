@@ -29,6 +29,7 @@ export interface TextFieldWrapperProps {
    *  to pass this prop.
    */
   initialValue?: string;
+  disabled?: boolean;
 }
 const TextFieldWrapper = ({
   name,
@@ -40,12 +41,14 @@ const TextFieldWrapper = ({
   required,
   onChange,
   initialValue,
+  disabled,
 }: TextFieldWrapperProps) => {
   const [field, meta] = useField(name);
   const configTextField: TextFieldProps = {
     ...field,
     label,
     id: name,
+    disabled,
     multiline: textarea,
     minRows,
     maxRows: 5,
