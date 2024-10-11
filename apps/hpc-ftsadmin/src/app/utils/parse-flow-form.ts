@@ -431,6 +431,7 @@ export const parseToFlowForm = (
   children?: flows.GetFlowResult[]
 ): FlowFormType => {
   const {
+    activeStatus,
     amountUSD,
     description: flowDescription,
     origAmount,
@@ -481,6 +482,7 @@ export const parseToFlowForm = (
       : INITIAL_FORM_VALUES['firstReported'],
     exchangeRate: exchangeRate ?? INITIAL_FORM_VALUES['exchangeRate'],
     flowDate: dayjs(flowDate),
+    isInactive: !activeStatus,
     isNewMoney,
     notes: notes ?? INITIAL_FORM_VALUES['notes'],
     parentFlow: parents?.[0] ? flowToFlowLinkProps(parents[0]) : null,

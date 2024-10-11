@@ -16,6 +16,10 @@ const PaddingContainer = tw.div`
   px-6
 `;
 
+const InactiveReason = tw.span`
+  text-unocha-warning-dark
+`;
+
 export default () => {
   const historyState: { successMessage?: string } | undefined =
     useLocation().state;
@@ -64,6 +68,12 @@ export default () => {
               {({ flow, parents, children }) => (
                 <PaddingContainer>
                   <C.PageTitle>{`Flow ${flow.id}v${flow.versionID}`}</C.PageTitle>
+                  {!flow.activeStatus && (
+                    <InactiveReason>{`This flow is not active because it has been marked as ${
+                      flow.categories.find((c) => c.group === 'inactiveReason')
+                        ?.name ?? 'Inactive by unknown reasons'
+                    }`}</InactiveReason>
+                  )}
                   <FlowForm
                     setError={setError}
                     initialValues={parseToFlowForm(flow, parents, children)}

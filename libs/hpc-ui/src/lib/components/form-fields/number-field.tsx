@@ -7,13 +7,19 @@ export interface NumberFieldProps {
   type: 'number' | 'currency' | 'float' | 'unknownCurrency';
   name: string;
   label: string;
+  placeholder?: string;
+  required?: boolean;
   allowNegative?: boolean;
+  disabled?: boolean;
 }
 const NumberField = ({
   type,
   name,
   label,
+  placeholder,
   allowNegative,
+  required,
+  disabled,
 }: NumberFieldProps) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<number>();
@@ -29,6 +35,8 @@ const NumberField = ({
       thousandSeparator={type === 'currency' || type === 'unknownCurrency'}
       valueIsNumericString
       placeholder={placeholder}
+      disabled={disabled}
+      required={required}
       size="small"
       decimalScale={type === 'number' ? 0 : 4} // 0 means no decimals
       allowNegative={allowNegative}

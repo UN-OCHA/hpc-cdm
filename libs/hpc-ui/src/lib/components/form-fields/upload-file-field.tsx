@@ -17,6 +17,7 @@ type UploadFileProps = {
   onDelete: () => Promise<unknown>;
   onDownload: () => Promise<unknown>;
   file?: FormObjectValue;
+  disabled?: boolean;
 };
 
 /**
@@ -47,6 +48,7 @@ const UploadFile = ({
   onDelete,
   onDownload,
   file,
+  disabled,
 }: UploadFileProps) => {
   const inputFile = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
@@ -54,13 +56,15 @@ const UploadFile = ({
   return (
     <Box>
       {!file ? (
-        <Button
-          {...buttonConfig}
-          onClick={() => {
-            inputFile.current?.click();
-          }}
-          displayLoading={loading}
-        ></Button>
+        disabled && (
+          <Button
+            {...buttonConfig}
+            onClick={() => {
+              inputFile.current?.click();
+            }}
+            displayLoading={loading}
+          />
+        )
       ) : (
         <Box
           sx={tw`flex gap-x-10 justify-around p-4 my-4 border border-solid border-unocha-panel-border rounded-[4px] items-center`}
@@ -69,20 +73,25 @@ const UploadFile = ({
             <FilePresentIcon color={'primary'} />
             <OverflowSpan>{file.displayLabel}</OverflowSpan>
           </Box>
-          <div>
-            <AsyncIconButton fnPromise={onDelete} IconComponent={DeleteIcon} />
-            <AsyncIconButton
-              fnPromise={onDownload}
-              IconComponent={FileDownloadIcon}
-            />
+          {!disabled && (
+            <div>
+              <AsyncIconButton
+                fnPromise={onDelete}
+                IconComponent={DeleteIcon}
+              />
+              <AsyncIconButton
+                fnPromise={onDownload}
+                IconComponent={FileDownloadIcon}
+              />
 
-            <AsyncIconButton
-              fnPromise={async () => {
-                onDelete().then(() => inputFile.current?.click());
-              }}
-              IconComponent={ChangeCircleIcon}
-            />
-          </div>
+              <AsyncIconButton
+                fnPromise={async () => {
+                  onDelete().then(() => inputFile.current?.click());
+                }}
+                IconComponent={ChangeCircleIcon}
+              />
+            </div>
+          )}
         </Box>
       )}
       <VisuallyHiddenInput

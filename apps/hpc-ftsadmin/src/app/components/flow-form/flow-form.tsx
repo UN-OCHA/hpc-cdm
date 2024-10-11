@@ -290,6 +290,7 @@ export const FlowForm = (props: FlowFormProps) => {
     setFieldValue('firstReported', newValue);
   };
 
+  console.log(initialValues);
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -300,11 +301,13 @@ export const FlowForm = (props: FlowFormProps) => {
         >
           {({ values, isValid, setFieldValue }) => (
             <Form>
-              <C.CheckBox
-                name="restricted"
-                label="Restricted to internal use"
-              />
-              {initialValues && (
+              {!initialValues?.isInactive && (
+                <C.CheckBox
+                  name="restricted"
+                  label="Restricted to internal use"
+                />
+              )}
+              {initialValues && !initialValues.isInactive && (
                 <>
                   <C.CheckBox
                     name="isErrorCorrection"
@@ -325,7 +328,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceOrganizations"
                     label="Organization(s)"
                     fnPromise={(query) => fnOrganizations(query, env)}
-                    disabled={!!values.parentFlow}
+                    disabled={initialValues?.isInactive || !!values.parentFlow}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -333,7 +336,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     label="Usage Year(s)"
                     fnPromise={() => fnUsageYears(env)}
                     isAutocompleteAPI={false}
-                    disabled={!!values.parentFlow}
+                    disabled={initialValues?.isInactive || !!values.parentFlow}
                     isMulti
                     required
                   />
@@ -341,14 +344,14 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceLocations"
                     label="Location(s)"
                     fnPromise={(query) => fnLocations(query, env)}
-                    disabled={!!values.parentFlow}
+                    disabled={initialValues?.isInactive || !!values.parentFlow}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingSourceEmergencies"
                     label="Emergency(ies)"
                     fnPromise={(query) => fnEmergencies(query, env)}
-                    disabled={!!values.parentFlow}
+                    disabled={initialValues?.isInactive || !!values.parentFlow}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -356,14 +359,14 @@ export const FlowForm = (props: FlowFormProps) => {
                     label="Global Cluster(s)"
                     fnPromise={() => fnGlobalClusters(env)}
                     isAutocompleteAPI={false}
-                    disabled={!!values.parentFlow}
+                    disabled={initialValues?.isInactive || !!values.parentFlow}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingSourcePlan"
                     label="Plan"
                     fnPromise={(query) => fnPlans(query, env)}
-                    disabled={!!values.parentFlow}
+                    disabled={initialValues?.isInactive || !!values.parentFlow}
                   />
                   {/* TODO: Properly implement Field Clusters */}
                   <AutocompleteSelectReview
@@ -377,7 +380,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceProject"
                     label="Project"
                     fnPromise={(query) => fnProjects(query, env)}
-                    disabled={!!values.parentFlow}
+                    disabled={initialValues?.isInactive || !!values.parentFlow}
                   />
                 </FormGroup>
 
@@ -389,11 +392,13 @@ export const FlowForm = (props: FlowFormProps) => {
                         <C.CheckBox
                           name="isNewMoney"
                           label="Is this flow new money ?"
+                          disabled={initialValues?.isInactive}
                         />
                         <NumberFieldReview
                           fieldName="amountUSD"
                           label="Funding Amount in USD"
                           type="currency"
+                          disabled={initialValues?.isInactive}
                           required
                         />
                         <Box
@@ -405,6 +410,7 @@ export const FlowForm = (props: FlowFormProps) => {
                               label="Funding amount (Original currency)"
                               type="unknownCurrency"
                               sx={tw`basis-4/6`}
+                              disabled={initialValues?.isInactive}
                             />
                             <AsyncAutocompleteSelectReview
                               fieldName="currency"
@@ -412,12 +418,14 @@ export const FlowForm = (props: FlowFormProps) => {
                               fnPromise={() => fnCurrencies(env)}
                               isAutocompleteAPI={false}
                               sx={tw`basis-2/6`}
+                              disabled={initialValues?.isInactive}
                             />
                           </Box>
                           <NumberFieldReview
                             fieldName="exchangeRate"
                             label="Exchange Rate Used"
                             type="float"
+                            disabled={initialValues?.isInactive}
                           />
                           <FlowAmountButton
                             setFieldValue={setFieldValue}
@@ -435,6 +443,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           required
                           textarea
                           minRows={2}
+                          disabled={initialValues?.isInactive}
                         />
                         <Box sx={tw`flex gap-4`}>
                           <C.DatePicker
@@ -447,10 +456,12 @@ export const FlowForm = (props: FlowFormProps) => {
                                 values
                               )
                             }
+                            disabled={initialValues?.isInactive}
                           />
                           <C.DatePicker
                             label="Decision Date (DD/MM/YY)"
                             name="decisionDate"
+                            disabled={initialValues?.isInactive}
                           />
                         </Box>
                         <NumberFieldReview
@@ -458,6 +469,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           fieldName="donorBudgetYear"
                           type="number"
                           placeholder="YYYY"
+                          disabled={initialValues?.isInactive}
                         />
                       </div>
                       <div>
@@ -466,14 +478,20 @@ export const FlowForm = (props: FlowFormProps) => {
                           label="Flow Type"
                           fnPromise={() => fnFlowTypeId(env)}
                           isAutocompleteAPI={false}
+                          disabled={initialValues?.isInactive}
                         />
                         <AsyncAutocompleteSelectReview
                           fieldName="flowStatus"
                           label="Flow Status"
                           fnPromise={() => fnFlowStatusId(env)}
                           isAutocompleteAPI={false}
+                          disabled={initialValues?.isInactive}
                         />
-                        <C.DatePicker label="Flow Date" name="flowDate" />
+                        <C.DatePicker
+                          label="Flow Date"
+                          name="flowDate"
+                          disabled={initialValues?.isInactive}
+                        />
                         <AsyncAutocompleteSelectReview
                           fieldName="contributionType"
                           label="Contribution Type"
@@ -481,18 +499,21 @@ export const FlowForm = (props: FlowFormProps) => {
                             fnCategories('contributionType', env)
                           }
                           isAutocompleteAPI={false}
+                          disabled={initialValues?.isInactive}
                         />
                         <AsyncAutocompleteSelectReview
                           fieldName="earmarkingType"
                           label="GB Earmarking"
                           fnPromise={() => fnCategories('earmarkingType', env)}
                           isAutocompleteAPI={false}
+                          disabled={initialValues?.isInactive}
                         />
                         <AsyncAutocompleteSelectReview
                           fieldName="method"
                           label="Aid Modality"
                           fnPromise={() => fnCategories('method', env)}
                           isAutocompleteAPI={false}
+                          disabled={initialValues?.isInactive}
                           required
                         />
                         <AsyncAutocompleteSelectReview
@@ -500,6 +521,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           label="Keyword(s)"
                           fnPromise={() => fnCategories('keywords', env)}
                           isAutocompleteAPI={false}
+                          disabled={initialValues?.isInactive}
                           isMulti
                         />
                         <AsyncAutocompleteSelectReview
@@ -509,6 +531,7 @@ export const FlowForm = (props: FlowFormProps) => {
                             fnCategories('beneficiaryGroup', env)
                           }
                           isAutocompleteAPI={false}
+                          disabled={initialValues?.isInactive}
                         />
                       </div>
                     </Box>
@@ -517,6 +540,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       label="Notes"
                       textarea
                       minRows={3}
+                      disabled={initialValues?.isInactive}
                     />
                   </FormGroup>
                   <FormGroup title="Linked Flows" styles={tw`p-6`}>
@@ -560,42 +584,48 @@ export const FlowForm = (props: FlowFormProps) => {
                         </Box>
                       </Box>
                     )}
-
-                    <Box sx={tw`flex gap-x-4`}>
-                      {!values.parentFlow && (
+                    {!initialValues?.isInactive && (
+                      <Box sx={tw`flex gap-x-4`}>
+                        {!values.parentFlow && (
+                          <FlowSearch
+                            name="parentFlow"
+                            text="Add Parent Flow"
+                            startIcon={MdAdd}
+                          />
+                        )}
                         <FlowSearch
-                          name="parentFlow"
-                          text="Add Parent Flow"
+                          name="childFlows"
+                          text="Add Child Flow"
                           startIcon={MdAdd}
                         />
-                      )}
-                      <FlowSearch
-                        name="childFlows"
-                        text="Add Child Flow"
-                        startIcon={MdAdd}
-                      />
-                    </Box>
+                      </Box>
+                    )}
                   </FormGroup>
                   {values.reportingDetails.length > 0 ? (
-                    values.reportingDetails.map((reportingDetail, index) => (
+                    values.reportingDetails.map((_, index) => (
                       <ReportingDetail
-                        reportingDetailValue={reportingDetail}
                         index={index}
+                        disabled={initialValues?.isInactive}
                       />
                     ))
                   ) : (
-                    <ReportingDetail index={0} />
+                    <ReportingDetail
+                      index={0}
+                      disabled={initialValues?.isInactive}
+                    />
                   )}
-                  <C.Button
-                    text="Add Reporting Detail"
-                    onClick={() =>
-                      setFieldValue('reportingDetails', [
-                        ...values.reportingDetails,
-                        REPORTING_DETAIL_INITIAL_VALUES,
-                      ])
-                    }
-                    color="primary"
-                  />
+                  {!initialValues?.isInactive && (
+                    <C.Button
+                      text="Add Reporting Detail"
+                      onClick={() =>
+                        setFieldValue('reportingDetails', [
+                          ...values.reportingDetails,
+                          REPORTING_DETAIL_INITIAL_VALUES,
+                        ])
+                      }
+                      color="primary"
+                    />
+                  )}
                 </Box>
 
                 <FormGroup
@@ -609,6 +639,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationOrganizations"
                     label="Organization(s)"
                     fnPromise={(query) => fnOrganizations(query, env)}
+                    disabled={initialValues?.isInactive}
                     isMulti
                     required
                   />
@@ -617,6 +648,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     label="Usage Year(s)"
                     fnPromise={() => fnUsageYears(env)}
                     isAutocompleteAPI={false}
+                    disabled={initialValues?.isInactive}
                     isMulti
                     required
                   />
@@ -624,12 +656,14 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationLocations"
                     label="Location(s)"
                     fnPromise={(query) => fnLocations(query, env)}
+                    disabled={initialValues?.isInactive}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationEmergencies"
                     label="Emergency(ies)"
                     fnPromise={(query) => fnEmergencies(query, env)}
+                    disabled={initialValues?.isInactive}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -637,24 +671,30 @@ export const FlowForm = (props: FlowFormProps) => {
                     label="Global Cluster(s)"
                     fnPromise={() => fnGlobalClusters(env)}
                     isAutocompleteAPI={false}
+                    disabled={initialValues?.isInactive}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationPlan"
                     label="Plan"
                     fnPromise={(query) => fnPlans(query, env)}
+                    disabled={initialValues?.isInactive}
                   />
                   {/* TODO: Properly implement Field Clusters */}
                   <AutocompleteSelectReview
                     fieldName="fundingDestinationFieldClusters"
                     label="Field Cluster(s)"
                     options={[]}
-                    disabled={values.fundingDestinationPlan === null}
+                    disabled={
+                      initialValues?.isInactive ||
+                      values.fundingDestinationPlan === null
+                    }
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationProject"
                     label="Project"
                     fnPromise={(query) => fnProjects(query, env)}
+                    disabled={initialValues?.isInactive}
                   />
                 </FormGroup>
               </Box>
