@@ -9,6 +9,7 @@ import { type Dayjs } from 'dayjs';
 import { useField, useFormikContext } from 'formik';
 import tw from 'twin.macro';
 import dayjs from '../../i18n/utils/dayjs';
+import { THEME } from '../../theme';
 
 export type DatePickerProps = {
   name: string;
@@ -89,6 +90,7 @@ const DatePicker = ({
             component="button"
             type="button"
             variant="body2"
+            color={THEME.colors.textLink}
             onClick={() => {
               if (onChange) {
                 onChange(dayjs());
