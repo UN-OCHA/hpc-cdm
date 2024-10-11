@@ -1,6 +1,6 @@
 import { AppContext, getEnv } from '../../context';
 import * as io from 'io-ts';
-import { type FormObjectValue, util as codecs } from '@unocha/hpc-data';
+import { type FormObjectValue, util as codecs, flows } from '@unocha/hpc-data';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { parseFlowForm } from '../../utils/parse-flow-form';
 import { Box, Grow, Paper, Snackbar, SxProps, Theme } from '@mui/material';
@@ -43,8 +43,9 @@ import { Dayjs } from 'dayjs';
 
 type FlowFormProps = {
   setError: React.Dispatch<React.SetStateAction<string | undefined>>;
+  load: () => void;
   initialValues?: FlowFormType;
-  id?: number;
+  flow?: flows.GetFlowResult;
 };
 
 export type FlowFormType = {
@@ -242,17 +243,34 @@ export const FlowForm = (props: FlowFormProps) => {
 
   const handleSubmit = (values: FlowFormTypeValidated) => {
     //  TODO: Add form validation at this point
-    env.model.flows
-      .createFlow(parseFlowForm(values, props.id))
-      .then((res) => {
-        navigate(paths.flow(res.id), {
-          state: { successMessage: 'success message' },
+    if (props.flow?.id) {
+      env.model.flows
+        .updateFlow({
+          flow: {
+            ...parseFlowForm(values, props.flow?.id).flow,
+            id: props.flow.id,
+            versionID: props.flow.versionID,
+          },
+        })
+        .then(() => {
+          props.load();
+        })
+        .catch((err) => {
+          setError(err.json.message);
         });
-      })
-      .catch((err) => {
-        console.error(err);
-        setError('error message');
-      });
+    } else {
+      env.model.flows
+        .createFlow(parseFlowForm(values, props.flow?.id))
+        .then((res) => {
+          navigate(paths.flow(res.id), {
+            state: { successMessage: 'success message' },
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+          setError(err.json.message);
+        });
+    }
   };
   const handleChangeFirstReported = (
     newValue: Dayjs | null,
