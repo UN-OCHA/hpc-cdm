@@ -9,6 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import tw from 'twin.macro';
 import dayjs from '../../i18n/utils/dayjs';
 import { Dayjs } from 'dayjs';
+import { THEME } from '../../theme';
 
 export type DatePickerProps = {
   name: string;
@@ -89,6 +90,7 @@ const DatePicker = ({
             component="button"
             type="button"
             variant="body2"
+            color={THEME.colors.textLink}
             onClick={() => {
               if (onChange) {
                 onChange(dayjs());
