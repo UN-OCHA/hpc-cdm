@@ -328,6 +328,18 @@ const CREATE_FLOW_PARAMS = t.type({
 
 export type CreateFlowParams = t.TypeOf<typeof CREATE_FLOW_PARAMS>;
 
+const UPDATE_FLOW_PARAMS = t.type({
+  flow: t.intersection([
+    CREATE_FLOW,
+    t.type({
+      id: t.number,
+      versionID: t.number,
+    }),
+  ]),
+});
+
+export type UpdateFlowParams = t.TypeOf<typeof UPDATE_FLOW_PARAMS>;
+
 // * GRAPHQL CODE FROM HERE *
 
 const FLOW_LOCATION = t.type({
@@ -586,6 +598,7 @@ export interface Model {
     params: SearchFlowsParams
   ): Promise<SearchFlowsBatchesResult>;
   createFlow(params: CreateFlowParams): Promise<GetFlowResult>;
+  updateFlow(params: UpdateFlowParams): Promise<GetFlowResult>;
   getAutocompleteFlows(
     params: GetFlowsAutocompleteParams
   ): Promise<GetFlowsAutocompleteResult>;

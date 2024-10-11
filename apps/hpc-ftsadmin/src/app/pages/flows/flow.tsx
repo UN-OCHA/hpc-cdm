@@ -67,7 +67,8 @@ export default () => {
                   <FlowForm
                     setError={setError}
                     initialValues={parseToFlowForm(flow, parents, children)}
-                    // load={load}
+                    flow={flow}
+                    load={load}
                   />
                 </PaddingContainer>
               )}
@@ -76,7 +77,7 @@ export default () => {
             <PaddingContainer>
               <C.PageTitle>Add Flow</C.PageTitle>
 
-              <FlowForm setError={setError} />
+              <FlowForm setError={setError} load={load} />
             </PaddingContainer>
           )}
 
