@@ -105,6 +105,11 @@ export type FlowFormTypeValidated = Omit<
   flowStatus: NonNullable<FlowFormType['flowStatus']>;
 };
 
+const UNTreasuryLinkComponent = tw.a`
+  text-lg
+  float-end
+`;
+
 export const INITIAL_FORM_VALUES: FlowFormType = {
   fundingSourceOrganizations: [],
   fundingSourceUsageYears: [],
@@ -427,6 +432,13 @@ export const FlowForm = (props: FlowFormProps) => {
                             type="float"
                             disabled={initialValues?.isInactive}
                           />
+                          <UNTreasuryLinkComponent
+                            href="https://treasury.un.org/operationalrates/OperationalRates.php"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            UN Treasury Operational Rates
+                          </UNTreasuryLinkComponent>
                           <FlowAmountButton
                             setFieldValue={setFieldValue}
                             amountUSD={values.amountUSD}
