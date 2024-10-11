@@ -751,6 +751,65 @@ export class Dummy {
             return res;
           }
         ),
+        updateFlow: dummyEndpoint(
+          'flows.updateFlow',
+          async (
+            params: flows.UpdateFlowParams
+          ): Promise<flows.GetFlowResult> => {
+            const {
+              id,
+              versionID,
+              activeStatus,
+              amountUSD,
+              decisionDate,
+              exchangeRate,
+              flowDate,
+              newMoney,
+              restricted,
+            } = params.flow;
+            const flow = {
+              id,
+              versionID,
+              activeStatus,
+              amountUSD: amountUSD.toString(),
+              decisionDate,
+              exchangeRate: exchangeRate ? exchangeRate.toString() : null,
+              updatedAt: new Date().toISOString(),
+              flowDate,
+              newMoney,
+              restricted,
+              externalReferences: [],
+              parkedParentSource: { organization: [], orgName: [] },
+              reportDetails: [],
+            } as const;
+            const participant = { name: 'Me' };
+            const res: flows.GetFlowResult = {
+              ...flow,
+              firstReportedDate: '',
+              versionStartDate: '',
+              createdAt: '',
+              createdBy: participant,
+              description: '',
+              lastUpdatedBy: participant,
+              notes: '',
+              categories: [],
+              plans: [],
+              planEntities: [],
+              organizations: [],
+              locations: [],
+              globalClusters: [],
+              usageYears: [],
+              projects: [],
+              emergencies: [],
+              governingEntities: [],
+              clusters: [],
+              children: [],
+              parents: [],
+              reportDetails: [],
+            };
+            return res;
+          }
+        ),
       },
       globalClusters: {
         getGlobalClusters: dummyEndpoint(

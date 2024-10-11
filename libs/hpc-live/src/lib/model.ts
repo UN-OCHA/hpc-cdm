@@ -761,8 +761,8 @@ export class LiveModel implements Model {
           resultType: flows.SEARCH_FLOWS_BATCHES_RESULT,
         });
       },
-      createFlow: (params) => {
-        return this.call({
+      createFlow: (params) =>
+        this.call({
           pathname: '/v1/flow/create',
           method: 'POST',
           body: {
@@ -770,8 +770,18 @@ export class LiveModel implements Model {
             data: params,
           },
           resultType: flows.GET_FLOW_RESULT,
-        });
-      },
+        }),
+
+      updateFlow: (params) =>
+        this.call({
+          pathname: `/v1/flow/update/${params.flow.id}`,
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.GET_FLOW_RESULT,
+        }),
     };
   }
   get globalClusters(): globalClusters.Model {
