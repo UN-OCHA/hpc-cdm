@@ -408,8 +408,8 @@ const reportDetailsToReportingDetailProps = (
       value: reportDetail.organization.id,
     },
     reportChannel: {
-      displayLabel: reportDetail.categories[0].name,
-      value: reportDetail.categories[0].id,
+      displayLabel: reportDetail.categories[0]?.name,
+      value: reportDetail.categories[0]?.id,
     },
     sourceSystemRecordId: reportDetail.id.toString(),
     verified: reportDetail.verified.toString(),

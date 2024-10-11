@@ -73,7 +73,7 @@ const ReportingDetail = ({
     reportedByOrganization,
     reporterContactInfo,
     reporterReferenceCode,
-  } = values.reportingDetails[index];
+  } = values.reportingDetails[index] ?? REPORTING_DETAIL_INITIAL_VALUES;
 
   const REPORT_SOURCES = [
     {
