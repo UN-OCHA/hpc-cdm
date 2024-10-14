@@ -216,6 +216,13 @@ export const GET_FLOW_PARAMS = t.type({
 
 export type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
 
+const GET_FLOW_VERSION_PARAMS = t.type({
+  id: POSITIVE_INTEGER_FROM_STRING,
+  versionID: POSITIVE_INTEGER_FROM_STRING,
+});
+
+export type GetFlowVersionParams = t.TypeOf<typeof GET_FLOW_VERSION_PARAMS>;
+
 export const GET_FLOW_RESULT = FLOW_REST;
 
 export type GetFlowResult = t.TypeOf<typeof GET_FLOW_RESULT>;
@@ -589,6 +596,7 @@ export type GetFlowsAutocompleteResult = t.TypeOf<
 >;
 export interface Model {
   getFlowREST(params: GetFlowParams): Promise<GetFlowResult>;
+  getFlowVersionREST(params: GetFlowVersionParams): Promise<GetFlowResult>;
   getFlow(params: GetFlowParams): Promise<GetFlowResult>;
   searchFlows(params: SearchFlowsParams): Promise<SearchFlowsResult>;
   bulkRejectPendingFlows(

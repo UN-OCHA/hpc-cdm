@@ -594,6 +594,12 @@ export class Dummy {
         getFlowREST: dummyEndpoint('flows.getFlowREST', async () => {
           throw new errors.NotFoundError();
         }),
+        getFlowVersionREST: dummyEndpoint(
+          'flows.getFlowVersionREST',
+          async () => {
+            throw new errors.NotFoundError();
+          }
+        ),
         getFlow: dummyEndpoint('flows.getFlow', async () => {
           throw new errors.NotFoundError();
         }),

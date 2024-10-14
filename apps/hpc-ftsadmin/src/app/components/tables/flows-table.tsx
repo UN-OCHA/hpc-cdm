@@ -234,7 +234,7 @@ export default function FlowsTable(props: FlowsTableProps) {
       <>
         {data.searchFlows.flows.map((row) => (
           <TableRowClick
-            onClick={() => navigate(paths.flow(row.id))}
+            onClick={() => navigate(paths.flow(row.id, row.versionID))}
             key={`${row.id}v${row.versionID}`}
             sx={{
               backgroundColor: selectedRows.map((x) => x.id).includes(row.id)

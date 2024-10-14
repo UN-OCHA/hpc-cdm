@@ -1,7 +1,7 @@
 const HOME = '/';
 const ROOT = '/*';
 const FLOWS = '/flows';
-const FLOW = `${FLOWS}/:id`;
+const FLOW = `${FLOWS}/:id/:version`;
 const ADD_FLOW = `${FLOWS}/add`;
 const PENDING_FLOWS = '/pending-flows';
 const ORGANIZATIONS = '/organizations';
@@ -36,7 +36,8 @@ export const organizationRoot = () => ORGANIZATION + ROOT;
 
 export const addOrganization = () => replacePlaceholders(ADD_ORGANIZATION, {});
 
-export const flow = (id: number) => replacePlaceholders(FLOW, { id });
+export const flow = (id: number, version: number) =>
+  replacePlaceholders(FLOW, { id, version });
 
 export const flowRoot = () => FLOW + ROOT;
 

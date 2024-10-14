@@ -11,6 +11,7 @@ import { MdRemove } from 'react-icons/md';
 
 export type FlowLinkProps = {
   id: number;
+  versionID: number;
   description: string;
   destinationOrganization: string;
   destinationLocation: string;
@@ -29,6 +30,7 @@ const FlowLink = ({
   const { setFieldValue, values } = useFormikContext<FlowFormType>();
   const {
     id,
+    versionID,
     description,
     destinationOrganization,
     destinationLocation,
@@ -53,7 +55,7 @@ const FlowLink = ({
     <Box
       sx={tw`flex gap-x-8 bg-unocha-panel-bg rounded-[4px] border border-solid border-unocha-panel-border p-4 items-center justify-between`}
     >
-      <Link to={paths.flow(id)} target="_blank">
+      <Link to={paths.flow(id, versionID)} target="_blank">
         #{id}
       </Link>
       <span>{description}</span>
