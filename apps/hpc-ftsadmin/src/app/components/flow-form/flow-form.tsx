@@ -25,7 +25,7 @@ import NumberFieldReview from './inputs/number-field-pending-review';
 import TextFieldReview from './inputs/text-field-pending-review';
 import { MdAdd, MdClose } from 'react-icons/md';
 import validateForm from '../../utils/form-validation';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as paths from '../../paths';
 import FlowLink, { FlowLinkProps } from './flow-link';
 import FlowSearch from './flow-search';
@@ -39,7 +39,7 @@ import ReportingDetail, {
   REPORTING_DETAIL_INITIAL_VALUES,
   ReportingDetailProps,
 } from '../reporting-detail';
-import { Dayjs } from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
 
 type FlowFormProps = {
   setError: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -108,6 +108,29 @@ export type FlowFormTypeValidated = Omit<
 const UNTreasuryLinkComponent = tw.a`
   text-lg
   float-end
+`;
+const FormGroupPaper = tw(Paper)`
+  p-6
+`;
+const CurrentSpan = tw.span`
+  px-2
+  py-1
+  mx-2
+  bg-unocha-primary-light
+  border-unocha-primary
+  border
+  border-solid
+  rounded-[4px]
+`;
+const LatestSpan = tw.span`
+  px-2
+  py-1
+  mx-2
+  bg-unocha-success-light
+  border-unocha-success
+  border
+  border-solid
+  rounded-[4px]
 `;
 
 export const INITIAL_FORM_VALUES: FlowFormType = {
@@ -182,7 +205,7 @@ export const FormGroup = ({
   closeButtonAction?: () => void;
 }) => {
   return (
-    <Paper elevation={3} sx={styles}>
+    <FormGroupPaper elevation={3} sx={styles}>
       <Box sx={tw`flex items-center justify-between`}>
         <h2>{title}</h2>
         {closeButtonAction && (
@@ -190,7 +213,7 @@ export const FormGroup = ({
         )}
       </Box>
       {children}
-    </Paper>
+    </FormGroupPaper>
   );
 };
 
@@ -324,7 +347,7 @@ export const FlowForm = (props: FlowFormProps) => {
               <Box sx={tw`flex mt-6 mx-6 gap-x-10`}>
                 <FormGroup
                   title="Source Flow"
-                  styles={tw`p-6 basis-2/12 sticky top-20 h-fit max-w-[16.666%]`}
+                  styles={tw`basis-2/12 sticky top-20 h-fit max-w-[16.666%]`}
                 >
                   {values.parentFlow && (
                     <FlowLinkWarning text="This flow is linked to a parent flow, so Source flow is not editable" />
@@ -390,7 +413,7 @@ export const FlowForm = (props: FlowFormProps) => {
                 </FormGroup>
 
                 <Box sx={tw`basis-8/12 max-w-[66.666%] flex flex-col gap-y-4`}>
-                  <FormGroup title="Flow" styles={tw`p-6`}>
+                  <FormGroup title="Flow">
                     <Box sx={tw`grid grid-cols-2 gap-y-8 gap-x-24`}>
                       <div>
                         {/* TODO: Verify this field works as expected */}
@@ -555,7 +578,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       disabled={initialValues?.isInactive}
                     />
                   </FormGroup>
-                  <FormGroup title="Linked Flows" styles={tw`p-6`}>
+                  <FormGroup title="Linked Flows">
                     {values.parentFlow && (
                       <Box sx={tw`my-4`}>
                         <h3>Parent Flow</h3>
@@ -638,11 +661,50 @@ export const FlowForm = (props: FlowFormProps) => {
                       color="primary"
                     />
                   )}
+
+                  {(props.flow?.versions?.length ?? 0) > 0 && (
+                    <FormGroup title="Flow Versions">
+                      <Box sx={tw`flex flex-col px-4 gap-y-6`}>
+                        {props.flow?.versions
+                          ?.sort(
+                            (flowVersion, previous) =>
+                              previous.versionID - flowVersion.versionID
+                          )
+                          .map((flowVersion) => (
+                            <span
+                              key={`flowVersion${flowVersion.id}v${flowVersion.versionID}`}
+                            >
+                              <Link
+                                to={paths.flow(
+                                  flowVersion.id,
+                                  flowVersion.versionID
+                                )}
+                                target="_blank"
+                                rel="nofollow noopener noreferrer"
+                              >
+                                #{flowVersion.id}v{flowVersion.versionID}
+                              </Link>{' '}
+                              {flowVersion.versionID ===
+                                props.flow?.versionID && (
+                                <CurrentSpan>Viewing</CurrentSpan>
+                              )}
+                              {flowVersion.activeStatus && (
+                                <LatestSpan>Latest</LatestSpan>
+                              )}
+                              Created at{' '}
+                              {dayjs(flowVersion.createdAt).format('D/M/YYYY')},
+                              and latest updated at{' '}
+                              {dayjs(flowVersion.updatedAt).format('D/M/YYYY')}
+                            </span>
+                          ))}
+                      </Box>
+                    </FormGroup>
+                  )}
                 </Box>
 
                 <FormGroup
                   title="Destination Flow"
-                  styles={tw`p-6 basis-2/12 sticky top-20 h-fit max-w-[16.666%]`}
+                  styles={tw`basis-2/12 sticky top-20 h-fit max-w-[16.666%]`}
                 >
                   {values.childFlows.length > 0 && (
                     <FlowLinkWarning text="This flow is linked to another flow" />
