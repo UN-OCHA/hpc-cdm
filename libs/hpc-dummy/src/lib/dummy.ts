@@ -750,6 +750,7 @@ export class Dummy {
               children: [],
               parents: [],
               reportDetails: [],
+              versions: [],
             };
             return res;
           }
@@ -809,6 +810,7 @@ export class Dummy {
               children: [],
               parents: [],
               reportDetails: [],
+              versions: [],
             };
             return res;
           }

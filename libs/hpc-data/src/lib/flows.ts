@@ -197,6 +197,15 @@ const FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES = t.intersection([
   }),
 ]);
 
+const FLOW_REST_VERSION = t.type({
+  id: t.number,
+  versionID: t.number,
+  activeStatus: t.boolean,
+  createdAt: t.string,
+  updatedAt: t.string,
+  deletedAt: t.union([t.string, t.null]),
+});
+
 /** Delete when finishing off REST flow endpoint (Maybe Matyas needs it) */
 const FLOW_REST = t.intersection([
   FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES,
@@ -205,6 +214,9 @@ const FLOW_REST = t.intersection([
     parents: t.array(PARENT_CHILDREN_FLOW),
     categories: t.array(CATEGORY),
     reportDetails: t.array(FLOW_REST_REPORT_DETAIL),
+  }),
+  t.partial({
+    versions: t.array(FLOW_REST_VERSION),
   }),
 ]);
 
