@@ -203,7 +203,7 @@ export const App = () => {
                           element={
                             <RouteParamsValidator
                               element={<PageFlow />}
-                              routeParam="id"
+                              routeParams={['id', 'version']}
                             />
                           }
                         />
@@ -220,7 +220,7 @@ export const App = () => {
                           element={
                             <RouteParamsValidator
                               element={<PageOrganization />}
-                              routeParam="id"
+                              routeParams={['id']}
                             />
                           }
                         />

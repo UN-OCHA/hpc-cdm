@@ -657,6 +657,11 @@ export class LiveModel implements Model {
           pathname: `/v2/flow/${params.id}`,
           resultType: flows.GET_FLOW_RESULT,
         }),
+      getFlowVersionREST: (params) =>
+        this.call({
+          pathname: `/v1/flow/${params.id}/version/${params.versionID}`,
+          resultType: flows.GET_FLOW_RESULT,
+        }),
       getFlow: (params) =>
         this.call({
           pathname: `/v4/graphql`,
