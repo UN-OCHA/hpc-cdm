@@ -9,6 +9,7 @@ import { parseToFlowForm } from '../../utils/parse-flow-form';
 
 type FlowRouteParams = {
   id: string;
+  version?: string;
 };
 
 const PaddingContainer = tw.div`
@@ -25,12 +26,15 @@ export default () => {
     useLocation().state;
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState(historyState?.successMessage);
-  const { id: idString } = useParams<FlowRouteParams>();
+  const { id: idString, version } = useParams<FlowRouteParams>();
 
   const id = parseInt(idString ?? '', 10);
+  const versionID = parseInt(version ?? '', 10);
   const env = getEnv();
   const [state, load] = useDataLoader([id], async () => {
-    const flow = await env.model.flows.getFlowREST({ id });
+    const flow = version
+      ? await env.model.flows.getFlowVersionREST({ id, versionID })
+      : await env.model.flows.getFlowREST({ id });
 
     const parents = await Promise.all(
       flow.parents.map((parent) =>

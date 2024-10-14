@@ -2,7 +2,7 @@ const HOME = '/';
 const ROOT = '/*';
 const SPLAT = '*';
 const FLOWS = '/flows';
-const FLOW = `${FLOWS}/:id`;
+const FLOW = `${FLOWS}/:id/:version`;
 const ADD_FLOW = `${FLOWS}/add`;
 const PENDING_FLOWS = '/pending-flows';
 const ORGANIZATIONS = '/organizations';
@@ -41,6 +41,17 @@ export const flows = () => replacePlaceholders(FLOWS, {});
 export const addFlow = () => replacePlaceholders(ADD_FLOW, {});
 
 /**
+ * `/flows/:id/:version`
+ */
+export const flow = (id: number, version: number) =>
+  replacePlaceholders(FLOW, { id, version });
+
+/**
+ * `/flows/:id/:version/*`
+ */
+export const flowRoot = () => FLOW + ROOT;
+
+/**
  * `/pending-flows`
  */
 export const pendingFlows = () => replacePlaceholders(PENDING_FLOWS, {});
@@ -65,16 +76,6 @@ export const organizationRoot = () => ORGANIZATION + ROOT;
  * `/organizations/add`
  */
 export const addOrganization = () => replacePlaceholders(ADD_ORGANIZATION, {});
-
-/**
- * `/flows/:id`
- */
-export const flow = (id: number) => replacePlaceholders(FLOW, { id });
-
-/**
- * `/flows/:id/*`
- */
-export const flowRoot = () => FLOW + ROOT;
 
 /**
  * `/keywords`

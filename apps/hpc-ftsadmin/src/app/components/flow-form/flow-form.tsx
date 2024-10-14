@@ -267,7 +267,7 @@ export const FlowForm = (props: FlowFormProps) => {
       env.model.flows
         .createFlow(parseFlowForm(values, props.flow?.id))
         .then((res) => {
-          navigate(paths.flow(res.id), {
+          navigate(paths.flow(res.id, res.versionID), {
             state: { successMessage: 'success message' },
           });
         })

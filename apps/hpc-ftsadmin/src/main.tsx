@@ -32,7 +32,10 @@ const router = createBrowserRouter([
       {
         path: paths.flowRoot(),
         element: (
-          <RouteParamsValidator element={<PageFlow />} routeParam="id" />
+          <RouteParamsValidator
+            element={<PageFlow />}
+            routeParams={['id', 'version']}
+          />
         ),
       },
       { path: paths.pendingFlows(), element: <PagePendingFlowsList /> },
@@ -42,7 +45,7 @@ const router = createBrowserRouter([
         element: (
           <RouteParamsValidator
             element={<PageOrganization />}
-            routeParam="id"
+            routeParams={['id']}
           />
         ),
       },

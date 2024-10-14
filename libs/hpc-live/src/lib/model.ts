@@ -736,7 +736,11 @@ export class LiveModel implements Model {
         `;
         return this.callGraphQL({ query, resultType: flows.GET_FLOW_RESULT });
       },
-
+      getFlowVersionREST: (params) =>
+        this.call({
+          pathname: `/v1/flow/${params.id}/version/${params.versionID}`,
+          resultType: flows.GET_FLOW_RESULT,
+        }),
       getAutocompleteFlows: (params) =>
         this.call({
           pathname: `/v1/object/autocomplete/id/flow/${params.query}`,
