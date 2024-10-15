@@ -59,7 +59,8 @@ export const locationsOptions = (
     name: string;
     id: number;
     children?: locations.Location[];
-  }>
+  }>,
+  chipColor?: string
 ): FormObjectValue[] => {
   const res: Array<FormObjectValue> = [];
 
@@ -70,6 +71,7 @@ export const locationsOptions = (
       displayLabel: responseValue.name,
       value: responseValue.id,
       hasChildren,
+      chipColor,
     };
     res.push(parentLocation);
     if (responseValue.children && responseValue.children.length > 0) {
@@ -78,6 +80,7 @@ export const locationsOptions = (
           displayLabel: responseLevelValue.name,
           value: responseLevelValue.id,
           parent: parentLocation,
+          chipColor,
         });
       }
     }
