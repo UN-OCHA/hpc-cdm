@@ -34,7 +34,7 @@ const currenciesOptions = (
   response: Array<{
     code: string;
   }>
-): FormObjectValue[] => {
+): util.FormObjectValue[] => {
   return response.map((responseValue) => ({
     displayLabel: responseValue.code,
     value: responseValue.code,
@@ -59,7 +59,8 @@ export const locationsOptions = (
     name: string;
     id: number;
     children?: locations.Location[];
-  }>
+  }>,
+  chipColor?: string
 ): util.FormObjectValue[] => {
   const res: util.FormObjectValue[] = [];
 
@@ -70,6 +71,7 @@ export const locationsOptions = (
       displayLabel: responseValue.name,
       value: responseValue.id,
       hasChildren,
+      chipColor,
     };
     res.push(parentLocation);
     if (responseValue.children && responseValue.children.length > 0) {
@@ -78,6 +80,7 @@ export const locationsOptions = (
           displayLabel: responseLevelValue.name,
           value: responseLevelValue.id,
           parent: parentLocation,
+          chipColor,
         });
       }
     }

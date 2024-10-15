@@ -40,6 +40,7 @@ import ReportingDetail, {
   ReportingDetailProps,
 } from '../reporting-detail';
 import dayjs, { type Dayjs } from 'dayjs';
+import { autofillOrganization } from '../../utils/fn-autofills';
 
 type FlowFormProps = {
   setError: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -356,6 +357,15 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceOrganizations"
                     label="Organization(s)"
                     fnPromise={(query) => fnOrganizations(query, env)}
+                    onChange={(newValue) => {
+                      autofillOrganization(
+                        'fundingSourceOrganizations',
+                        setFieldValue,
+                        values,
+                        env,
+                        newValue
+                      );
+                    }}
                     disabled={initialValues?.isInactive || !!values.parentFlow}
                     isMulti
                   />
@@ -713,6 +723,15 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationOrganizations"
                     label="Organization(s)"
                     fnPromise={(query) => fnOrganizations(query, env)}
+                    onChange={(newValue) => {
+                      autofillOrganization(
+                        'fundingDestinationOrganizations',
+                        setFieldValue,
+                        values,
+                        env,
+                        newValue
+                      );
+                    }}
                     disabled={initialValues?.isInactive}
                     isMulti
                     required
