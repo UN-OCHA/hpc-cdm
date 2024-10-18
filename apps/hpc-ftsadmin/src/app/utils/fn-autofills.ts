@@ -158,8 +158,14 @@ export const autofillOrganization = async ({
 }: AutofillProps) => {
   setFieldValue(fieldName, newValue);
 
+  //  It only applies to source Organization
   //  Organization field is multi select
-  if (!newValue || typeof newValue === 'string' || !Array.isArray(newValue)) {
+  if (
+    !fieldName.includes('Source') ||
+    !newValue ||
+    typeof newValue === 'string' ||
+    !Array.isArray(newValue)
+  ) {
     return;
   }
 
@@ -321,6 +327,50 @@ export const autofillProject = async ({
       setFieldValue,
       values,
       projectGlobalClusters
+    );
+  }
+};
+
+export const autofillPlan = async ({
+  fieldName,
+  setFieldValue,
+  values,
+  env,
+  newValue,
+}: AutofillProps) => {
+  setFieldValue(fieldName, newValue);
+
+  //  Plan field is not multi select
+  if (!newValue || typeof newValue === 'string' || Array.isArray(newValue)) {
+    return;
+  }
+
+  const { years, locations, emergencies } = await env.model.plans.getPlan({
+    id: valueToInteger(newValue.value),
+    scopes: ['years', 'locations', 'emergencies'],
+  });
+
+  if (years && years.length > 0) {
+    helperSetFieldValue(fieldName, 'UsageYears', setFieldValue, values, years);
+  }
+
+  if (locations && locations.length > 0) {
+    helperSetFieldValue(
+      fieldName,
+      'Locations',
+      setFieldValue,
+      values,
+      locations
+    );
+  }
+
+  if (emergencies && emergencies.length > 0) {
+    helperSetFieldValue(
+      fieldName,
+      'Emergencies',
+      setFieldValue,
+      values,
+      emergencies
     );
   }
 };
