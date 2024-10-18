@@ -3,6 +3,7 @@
 .editorconfig
 .npmrc
 LICENSE
+/apps/hpc-ftsadmin/docs/autofill-logic.md
 
 *.conf
 *.png
