@@ -26,6 +26,7 @@ import {
   usageYears,
   currencies,
   fileAssetEntities,
+  governingEntities,
 } from '@unocha/hpc-data';
 import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
@@ -819,6 +820,15 @@ export class LiveModel implements Model {
         this.call({
           pathname: '/v1/global-cluster',
           resultType: globalClusters.GET_GLOBAL_CLUSTERS_RESULT,
+        }),
+    };
+  }
+  get governingEntities(): governingEntities.Model {
+    return {
+      getGoverningEntity: (params) =>
+        this.call({
+          pathname: `/v1/governingEntity/${params.id}`,
+          resultType: governingEntities.GET_GOVERNING_ENTITY_RESULT,
         }),
     };
   }

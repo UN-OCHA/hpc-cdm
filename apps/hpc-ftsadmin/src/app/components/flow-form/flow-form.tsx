@@ -41,6 +41,7 @@ import ReportingDetail, {
 } from '../reporting-detail';
 import dayjs, { type Dayjs } from 'dayjs';
 import {
+  autofillFieldClusters,
   autofillOrganization,
   autofillPlan,
   autofillProject,
@@ -431,6 +432,15 @@ export const FlowForm = (props: FlowFormProps) => {
                             resolve([])
                           )
                     }
+                    onChange={(newValue) =>
+                      autofillFieldClusters({
+                        fieldName: 'fundingSourceFieldClusters',
+                        setFieldValue,
+                        env,
+                        newValue,
+                        values,
+                      })
+                    }
                     disabled={
                       initialValues?.isInactive ||
                       values.fundingSourcePlan === null
@@ -818,11 +828,21 @@ export const FlowForm = (props: FlowFormProps) => {
                             resolve([])
                           )
                     }
+                    onChange={(newValue) =>
+                      autofillFieldClusters({
+                        fieldName: 'fundingDestinationFieldClusters',
+                        setFieldValue,
+                        env,
+                        newValue,
+                        values,
+                      })
+                    }
                     disabled={
                       initialValues?.isInactive ||
                       values.fundingDestinationPlan === null
                     }
                     isAutocompleteAPI={false}
+                    isMulti
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationProject"

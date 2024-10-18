@@ -374,3 +374,41 @@ export const autofillPlan = async ({
     );
   }
 };
+
+export const autofillFieldClusters = async ({
+  fieldName,
+  setFieldValue,
+  values,
+  env,
+  newValue,
+}: AutofillProps) => {
+  setFieldValue(fieldName, newValue);
+
+  //  fieldClusters field is  multi select
+  if (!newValue || typeof newValue === 'string' || !Array.isArray(newValue)) {
+    return;
+  }
+
+  if (newValue && newValue.length > 0) {
+    const fieldClusters = newValue.filter(
+      (fieldCluster) => typeof fieldCluster !== 'string'
+    ) as FormObjectValue[];
+
+    const globalClusters = await Promise.all(
+      fieldClusters.map(async (fC) => {
+        const gE = await env.model.governingEntities.getGoverningEntity({
+          id: valueToInteger(fC.value),
+        });
+        return gE.globalClusters;
+      })
+    ).then((gCs) => gCs.flat());
+
+    helperSetFieldValue(
+      fieldName,
+      'GlobalClusters',
+      setFieldValue,
+      values,
+      globalClusters
+    );
+  }
+};

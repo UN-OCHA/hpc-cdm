@@ -10,6 +10,7 @@ import {
   type fileAssetEntities,
   type flows,
   type globalClusters,
+  type governingEntities,
   type locations,
   type operations,
   type organizations,
@@ -821,6 +822,31 @@ export class Dummy {
           'globalClusters.getGlobalClusters',
           async (): Promise<globalClusters.GetGlobalClustersResult> => {
             return this.data.globalClusters;
+          }
+        ),
+      },
+      governingEntities: {
+        getGoverningEntity: dummyEndpoint(
+          'governingEntities.getGoverningEntity',
+          async ({
+            id,
+          }: governingEntities.GetGoverningEntityParams): Promise<governingEntities.GetGoverningEntityResult> => {
+            // TODO: Fix dummy endpoint
+
+            const gE = this.data.governingEntities.find((gE) => gE.id === id);
+            if (!gE) {
+              throw new errors.NotFoundError();
+            }
+            return {
+              ...gE,
+              governingEntityVersion: {
+                id: 1,
+                governingEntityId: 1,
+                name: 'name',
+                customReference: '',
+              },
+              globalClusters: [],
+            } satisfies governingEntities.GetGoverningEntityResult;
           }
         ),
       },
