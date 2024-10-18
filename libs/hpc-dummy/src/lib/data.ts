@@ -2092,6 +2092,13 @@ export const INITIAL_DATA: DummyData = {
       updatedAt: '2021-08-24T11:52:35.295Z',
     },
   ],
+  governingEntities: [
+    {
+      id: 6850,
+      planId: 1118,
+      entityPrototypeId: 3708,
+    },
+  ],
   keywords: [
     {
       id: 1158,
