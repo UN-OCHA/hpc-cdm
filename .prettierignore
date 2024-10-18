@@ -4,3 +4,5 @@
 /coverage
 
 /.nx/cache
+
+/apps/hpc-ftsadmin/docs/autofill-logic.md
