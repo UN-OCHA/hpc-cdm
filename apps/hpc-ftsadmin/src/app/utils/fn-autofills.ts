@@ -149,7 +149,7 @@ const setPlan = (
   }
 };
 
-export const autofillOrganization = async ({
+export const autofillOrganizations = async ({
   fieldName,
   setFieldValue,
   values,
@@ -384,7 +384,7 @@ export const autofillFieldClusters = async ({
 }: AutofillProps) => {
   setFieldValue(fieldName, newValue);
 
-  //  fieldClusters field is  multi select
+  //  fieldClusters field is multi select
   if (!newValue || typeof newValue === 'string' || !Array.isArray(newValue)) {
     return;
   }
@@ -411,4 +411,50 @@ export const autofillFieldClusters = async ({
       globalClusters
     );
   }
+};
+
+export const autofillGlobalClusters = async ({
+  fieldName,
+  setFieldValue,
+  values,
+  env,
+  newValue,
+}: AutofillProps) => {
+  setFieldValue(fieldName, newValue);
+
+  //  globalClusters field is multi select
+  if (!newValue || typeof newValue === 'string' || !Array.isArray(newValue)) {
+    return;
+  }
+  const newGlobalClusterIds = (
+    newValue.filter((v) => typeof v !== 'string') as FormObjectValue[]
+  ).map((v) => valueToInteger(v.value));
+
+  const direction = fieldName.includes('Destination')
+    ? 'Destination'
+    : 'Source';
+
+  const planId = values[`funding${direction}Plan`]?.value;
+  if (!planId) {
+    return;
+  }
+
+  const globalClusters = await env.model.governingEntities
+    .getGoverningEntitiesByPlanId({
+      planId: valueToInteger(planId),
+      excludeAttachments: true,
+    })
+    .then((gEs) =>
+      gEs.filter((gE) =>
+        gE.globalClusterIds.some((id) => newGlobalClusterIds.includes(id))
+      )
+    );
+
+  helperSetFieldValue(
+    fieldName,
+    'FieldClusters',
+    setFieldValue,
+    values,
+    globalClusters
+  );
 };

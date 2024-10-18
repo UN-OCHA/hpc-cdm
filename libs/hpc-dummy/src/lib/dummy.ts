@@ -852,6 +852,28 @@ export class Dummy {
             } satisfies governingEntities.GetGoverningEntityResult;
           }
         ),
+        getGoverningEntitiesByPlanId: dummyEndpoint(
+          'governingEntities.getGoverningEntitiesByPlanId',
+          async ({
+            planId,
+            excludeAttachments,
+          }: governingEntities.GetGoverningEntitiesByPlanIdParams): Promise<governingEntities.GetGoverningEntitiesByPlanIdResult> => {
+            // TODO: Fix dummy endpoint
+            const gEs = this.data.governingEntities
+              .filter((gE) => gE.planId === planId)
+              .map((gE) => ({
+                ...gE,
+                governingEntityVersion: {
+                  id: 1,
+                  governingEntityId: 1,
+                  name: 'name',
+                  customReference: '',
+                },
+                globalClusterIds: [],
+              }));
+            return gEs;
+          }
+        ),
       },
       locations: {
         getAutocompleteLocations: dummyEndpoint(

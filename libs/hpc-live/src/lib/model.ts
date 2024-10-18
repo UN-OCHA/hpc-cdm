@@ -806,6 +806,18 @@ export class LiveModel implements Model {
           pathname: `/v1/governingEntity/${params.id}`,
           resultType: governingEntities.GET_GOVERNING_ENTITY_RESULT,
         }),
+      getGoverningEntitiesByPlanId: ({ planId, excludeAttachments }) =>
+        this.call({
+          pathname: `/v1/governingEntity`,
+          queryParams: {
+            planId: planId.toString(),
+            ...(excludeAttachments !== undefined
+              ? { excludeAttachments: excludeAttachments.toString() }
+              : {}),
+          },
+          resultType:
+            governingEntities.GET_GOVERNING_ENTITIES_BY_PLAN_ID_RESULT,
+        }),
     };
   }
   get locations(): locations.Model {
