@@ -13,13 +13,13 @@ import {
   fnFlowStatusId,
   fnFlowTypeId,
   fnGlobalClusters,
+  fnGoverningEntities,
   fnLocations,
   fnOrganizations,
   fnPlans,
   fnProjects,
   fnUsageYears,
 } from '../../utils/fn-promises';
-import AutocompleteSelectReview from './inputs/autocomplete-pending-review';
 import { C } from '@unocha/hpc-ui';
 import NumberFieldReview from './inputs/number-field-pending-review';
 import TextFieldReview from './inputs/text-field-pending-review';
@@ -322,7 +322,6 @@ export const FlowForm = (props: FlowFormProps) => {
     setFieldValue('firstReported', newValue);
   };
 
-  console.log(initialValues);
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -409,12 +408,24 @@ export const FlowForm = (props: FlowFormProps) => {
                     fnPromise={(query) => fnPlans(query, env)}
                     disabled={initialValues?.isInactive || !!values.parentFlow}
                   />
-                  {/* TODO: Properly implement Field Clusters */}
-                  <AutocompleteSelectReview
+                  <AsyncAutocompleteSelectReview
                     fieldName="fundingSourceFieldClusters"
                     label="Field Cluster(s)"
-                    options={[]}
-                    disabled={values.fundingSourcePlan === null}
+                    fnPromise={() =>
+                      values.fundingSourcePlan?.value
+                        ? fnGoverningEntities(
+                            env,
+                            valueToInteger(values.fundingSourcePlan.value)
+                          )
+                        : new Promise<FormObjectValue[]>((resolve) =>
+                            resolve([])
+                          )
+                    }
+                    disabled={
+                      initialValues?.isInactive ||
+                      values.fundingSourcePlan === null
+                    }
+                    isAutocompleteAPI={false}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -438,7 +449,6 @@ export const FlowForm = (props: FlowFormProps) => {
                   <FormGroup title="Flow">
                     <Box sx={tw`grid grid-cols-2 gap-y-8 gap-x-24`}>
                       <div>
-                        {/* TODO: Verify this field works as expected */}
                         <C.CheckBox
                           name="isNewMoney"
                           label="Is this flow new money ?"
@@ -785,15 +795,24 @@ export const FlowForm = (props: FlowFormProps) => {
                     fnPromise={(query) => fnPlans(query, env)}
                     disabled={initialValues?.isInactive}
                   />
-                  {/* TODO: Properly implement Field Clusters */}
-                  <AutocompleteSelectReview
+                  <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationFieldClusters"
                     label="Field Cluster(s)"
-                    options={[]}
+                    fnPromise={() =>
+                      values.fundingDestinationPlan?.value
+                        ? fnGoverningEntities(
+                            env,
+                            valueToInteger(values.fundingDestinationPlan.value)
+                          )
+                        : new Promise<FormObjectValue[]>((resolve) =>
+                            resolve([])
+                          )
+                    }
                     disabled={
                       initialValues?.isInactive ||
                       values.fundingDestinationPlan === null
                     }
+                    isAutocompleteAPI={false}
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationProject"
