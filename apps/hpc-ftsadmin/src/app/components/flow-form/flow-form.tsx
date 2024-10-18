@@ -42,6 +42,7 @@ import ReportingDetail, {
 import dayjs, { type Dayjs } from 'dayjs';
 import {
   autofillOrganization,
+  autofillPlan,
   autofillProject,
 } from '../../utils/fn-autofills';
 
@@ -406,6 +407,15 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourcePlan"
                     label="Plan"
                     fnPromise={(query) => fnPlans(query, env)}
+                    onChange={(newValue) => {
+                      autofillPlan({
+                        fieldName: 'fundingSourcePlan',
+                        setFieldValue,
+                        values,
+                        env,
+                        newValue,
+                      });
+                    }}
                     disabled={initialValues?.isInactive || !!values.parentFlow}
                   />
                   <AsyncAutocompleteSelectReview
@@ -745,15 +755,6 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationOrganizations"
                     label="Organization(s)"
                     fnPromise={(query) => fnOrganizations(query, env)}
-                    onChange={(newValue) => {
-                      autofillOrganization({
-                        fieldName: 'fundingDestinationOrganizations',
-                        setFieldValue,
-                        values,
-                        env,
-                        newValue,
-                      });
-                    }}
                     disabled={initialValues?.isInactive}
                     isMulti
                     required
@@ -793,6 +794,15 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationPlan"
                     label="Plan"
                     fnPromise={(query) => fnPlans(query, env)}
+                    onChange={(newValue) => {
+                      autofillPlan({
+                        fieldName: 'fundingDestinationPlan',
+                        setFieldValue,
+                        values,
+                        env,
+                        newValue,
+                      });
+                    }}
                     disabled={initialValues?.isInactive}
                   />
                   <AsyncAutocompleteSelectReview
