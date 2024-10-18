@@ -40,7 +40,10 @@ import ReportingDetail, {
   ReportingDetailProps,
 } from '../reporting-detail';
 import dayjs, { type Dayjs } from 'dayjs';
-import { autofillOrganization } from '../../utils/fn-autofills';
+import {
+  autofillOrganization,
+  autofillProject,
+} from '../../utils/fn-autofills';
 
 type FlowFormProps = {
   setError: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -358,13 +361,13 @@ export const FlowForm = (props: FlowFormProps) => {
                     label="Organization(s)"
                     fnPromise={(query) => fnOrganizations(query, env)}
                     onChange={(newValue) => {
-                      autofillOrganization(
-                        'fundingSourceOrganizations',
+                      autofillOrganization({
+                        fieldName: 'fundingSourceOrganizations',
                         setFieldValue,
                         values,
                         env,
-                        newValue
-                      );
+                        newValue,
+                      });
                     }}
                     disabled={initialValues?.isInactive || !!values.parentFlow}
                     isMulti
@@ -418,6 +421,15 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceProject"
                     label="Project"
                     fnPromise={(query) => fnProjects(query, env)}
+                    onChange={(newValue) => {
+                      autofillProject({
+                        fieldName: 'fundingSourceProject',
+                        setFieldValue,
+                        values,
+                        env,
+                        newValue,
+                      });
+                    }}
                     disabled={initialValues?.isInactive || !!values.parentFlow}
                   />
                 </FormGroup>
@@ -724,13 +736,13 @@ export const FlowForm = (props: FlowFormProps) => {
                     label="Organization(s)"
                     fnPromise={(query) => fnOrganizations(query, env)}
                     onChange={(newValue) => {
-                      autofillOrganization(
-                        'fundingDestinationOrganizations',
+                      autofillOrganization({
+                        fieldName: 'fundingDestinationOrganizations',
                         setFieldValue,
                         values,
                         env,
-                        newValue
-                      );
+                        newValue,
+                      });
                     }}
                     disabled={initialValues?.isInactive}
                     isMulti
@@ -787,6 +799,15 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationProject"
                     label="Project"
                     fnPromise={(query) => fnProjects(query, env)}
+                    onChange={(newValue) => {
+                      autofillProject({
+                        fieldName: 'fundingDestinationProject',
+                        setFieldValue,
+                        values,
+                        env,
+                        newValue,
+                      });
+                    }}
                     disabled={initialValues?.isInactive}
                   />
                 </FormGroup>

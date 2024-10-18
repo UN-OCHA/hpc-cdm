@@ -14,6 +14,25 @@ export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(
   permissions: t.Type<P>
 ) => t.type({ data, permissions });
 
+export const recursiveIntersection = (codecs: t.Mixed[]): t.Mixed => {
+  if (codecs.length === 0) {
+    throw new Error('Cannot intersect an empty array');
+  }
+
+  if (codecs.length === 1) {
+    return codecs[0];
+  }
+
+  const [first, second, ...rest] = codecs;
+  const intersected = t.intersection([first, second]);
+
+  if (rest.length === 0) {
+    return intersected;
+  }
+
+  return recursiveIntersection([intersected, ...rest]);
+};
+
 const INTEGER_REGEX = /^[0-9]+$/;
 const CURRENCY_INTEGER_REGEX = /^[0-9]+(,[0-9]+)*$/;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
