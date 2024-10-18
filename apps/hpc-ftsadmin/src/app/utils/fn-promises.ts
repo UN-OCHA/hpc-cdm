@@ -160,6 +160,15 @@ export const fnGlobalClusters = async (env: Environment) => {
   return defaultOptions(response);
 };
 
+export const fnGoverningEntities = async (env: Environment, id: number) => {
+  const response = await env.model.plans.getPlan({
+    id,
+    scopes: ['governingEntities'],
+  });
+
+  return governingEntitiesOptions(response.governingEntities);
+};
+
 export const fnEmergencies = async (
   query: { query: string },
   env: Environment
