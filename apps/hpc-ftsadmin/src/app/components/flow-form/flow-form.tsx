@@ -42,7 +42,8 @@ import ReportingDetail, {
 import dayjs, { type Dayjs } from 'dayjs';
 import {
   autofillFieldClusters,
-  autofillOrganization,
+  autofillGlobalClusters,
+  autofillOrganizations,
   autofillPlan,
   autofillProject,
 } from '../../utils/fn-autofills';
@@ -362,7 +363,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     label="Organization(s)"
                     fnPromise={(query) => fnOrganizations(query, env)}
                     onChange={(newValue) => {
-                      autofillOrganization({
+                      autofillOrganizations({
                         fieldName: 'fundingSourceOrganizations',
                         setFieldValue,
                         values,
@@ -400,6 +401,15 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceGlobalClusters"
                     label="Global Cluster(s)"
                     fnPromise={() => fnGlobalClusters(env)}
+                    onChange={(newValue) =>
+                      autofillGlobalClusters({
+                        fieldName: 'fundingSourceGlobalClusters',
+                        setFieldValue,
+                        env,
+                        values,
+                        newValue,
+                      })
+                    }
                     isAutocompleteAPI={false}
                     disabled={initialValues?.isInactive || !!values.parentFlow}
                     isMulti
@@ -796,6 +806,15 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationGlobalClusters"
                     label="Global Cluster(s)"
                     fnPromise={() => fnGlobalClusters(env)}
+                    onChange={(newValue) =>
+                      autofillGlobalClusters({
+                        fieldName: 'fundingDestinationGlobalClusters',
+                        setFieldValue,
+                        env,
+                        values,
+                        newValue,
+                      })
+                    }
                     isAutocompleteAPI={false}
                     disabled={initialValues?.isInactive}
                     isMulti
