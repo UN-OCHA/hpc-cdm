@@ -13,6 +13,7 @@ import {
   plans,
   projects,
   usageYears,
+  governingEntities,
 } from '@unocha/hpc-data';
 /**
  * TODO: make into union of different assignee types
@@ -146,6 +147,7 @@ const CURRENCY = currencies.CURRENCY;
 const KEYWORD = categories.KEYWORD;
 const EMERGENCY = emergencies.EMERGENCY;
 const GLOBAL_CLUSTER = globalClusters.GLOBAL_CLUSTER;
+const GOVERNING_ENTITY = governingEntities.GOVERNING_ENTITY;
 const LOCATION = locations.LOCATION;
 const ORGANIZATION = organizations.ORGANIZATION;
 const PLAN = plans.PLAN;
@@ -162,6 +164,7 @@ export const DUMMY_DATA = t.type(
     emergencies: t.array(EMERGENCY),
     flows: t.array(FLOW),
     globalClusters: t.array(GLOBAL_CLUSTER),
+    governingEntities: t.array(GOVERNING_ENTITY),
     keywords: t.array(KEYWORD),
     locations: t.array(LOCATION),
     operations: t.array(OPERATION),
