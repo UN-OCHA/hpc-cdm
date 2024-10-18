@@ -11,11 +11,13 @@ export const defaultOptions = (
   response: Array<{
     name: string;
     id: number;
-  }>
+  }>,
+  chipColor?: string
 ): FormObjectValue[] => {
   return response.map((responseValue) => ({
     displayLabel: responseValue.name,
     value: responseValue.id,
+    chipColor,
   }));
 };
 
@@ -46,11 +48,13 @@ export const organizationsOptions = (
     name: string;
     abbreviation: string;
     id: number;
-  }>
+  }>,
+  chipColor?: string
 ): FormObjectValue[] => {
   return response.map((responseValue) => ({
     displayLabel: `${responseValue.name} [${responseValue.abbreviation}]`,
     value: responseValue.id,
+    chipColor,
   }));
 };
 
@@ -92,11 +96,24 @@ export const usageYearsOptions = (
   response: Array<{
     year: string;
     id: number;
-  }>
+  }>,
+  chipColor?: string
 ): FormObjectValue[] => {
   return response.map((responseValue) => ({
     displayLabel: responseValue.year,
     value: responseValue.id,
+    chipColor,
+  }));
+};
+
+export const governingEntitiesOptions = (
+  response: Array<{ id: number; governingEntityVersion: { name: string } }>,
+  chipColor?: string
+) => {
+  return response.map((responseValue) => ({
+    displayLabel: responseValue.governingEntityVersion.name,
+    value: responseValue.id,
+    chipColor,
   }));
 };
 // Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop

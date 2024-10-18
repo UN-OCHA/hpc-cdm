@@ -895,11 +895,16 @@ export class LiveModel implements Model {
           pathname: `/v1/object/autocomplete/plan/${params.query}`,
           resultType: plans.GET_PLANS_AUTOCOMPLETE_RESULT,
         }),
-      getPlan: (params) =>
-        this.call({
-          pathname: `v2/plan/${params.id}`,
-          resultType: plans.PLAN,
-        }),
+      getPlan: ({ id, scopes }) => {
+        console.log(plans.getPlanResultCodec(scopes));
+        return this.call({
+          pathname: `v2/plan/${id}`,
+          queryParams: {
+            scopes: scopes.join(','),
+          },
+          resultType: plans.getPlanResultCodec(scopes),
+        });
+      },
     };
   }
   get projects(): projects.Model {
@@ -908,6 +913,11 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v1/object/autocomplete/project/${params.query}`,
           resultType: projects.GET_PROJECTS_AUTOCOMPLETE_RESULT,
+        }),
+      getProject: ({ id }) =>
+        this.call({
+          pathname: `/v2/project/${id}`,
+          resultType: projects.GET_PROJECT_RESULT,
         }),
     };
   }
@@ -1057,6 +1067,11 @@ export class LiveModel implements Model {
       getUsageYears: () =>
         this.call({
           pathname: '/v1/fts/usage-year',
+          resultType: usageYears.GET_USAGE_YEARS_RESULT,
+        }),
+      getAutocompleteUsageYears: (params) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/usageYear/${params.query}`,
           resultType: usageYears.GET_USAGE_YEARS_RESULT,
         }),
     };

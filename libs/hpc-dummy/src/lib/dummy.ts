@@ -1164,12 +1164,16 @@ export class Dummy {
         ),
         getPlan: dummyEndpoint(
           'plans.getPlan',
-          async ({ id }: { id: number }): Promise<plans.Plan> => {
+          async <T extends plans.GetPlanScope[]>({
+            id,
+            scopes,
+          }: plans.GetPlanParams<T>): Promise<plans.GetPlanResult<T>> => {
             const plan = this.data.plans.find((plan) => plan.id === id);
             if (!plan) {
               throw new errors.NotFoundError();
             }
-            return plan;
+            //  TODO: Fix dummy endpoint
+            return plan as any;
           }
         ),
       },
@@ -1182,6 +1186,14 @@ export class Dummy {
             return this.data.projects.filter((project) =>
               project.name.toUpperCase().includes(query.toUpperCase())
             );
+          }
+        ),
+        getProject: dummyEndpoint(
+          'projects.getProject',
+          async ({
+            id,
+          }: projects.GetProjectParams): Promise<projects.GetProjectResult> => {
+            throw new errors.NotFoundError();
           }
         ),
       },
@@ -1317,6 +1329,16 @@ export class Dummy {
           'usageYear.getUsageYears',
           async (): Promise<usageYears.GetUsageYearsResult> => {
             return this.data.usageYears;
+          }
+        ),
+        getAutocompleteUsageYears: dummyEndpoint(
+          'usageYear.getAutocompleteUsageYears',
+          async (
+            params: usageYears.GetUsageYearsAutocompleteParams
+          ): Promise<usageYears.GetUsageYearsResult> => {
+            return this.data.usageYears.filter((usageYear) =>
+              usageYear.year.includes(params.query)
+            );
           }
         ),
       },
