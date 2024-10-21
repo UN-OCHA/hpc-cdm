@@ -59,7 +59,7 @@ export const INTEGER_ARRAY_FROM_STRING = new t.Type<number[], number[]>(
         ? t.success(v)
         : t.failure(v, c);
     } else if (typeof v === 'string') {
-      const nums = v.split(',');
+      const nums = v.split(',').filter((n) => n.trim() !== '');
       return nums.every((n) => INTEGER_REGEX.test(n))
         ? t.success(nums.map((n) => parseInt(n)))
         : t.failure(v, c);
