@@ -425,28 +425,6 @@ export const DATE_FROM_STRING = new t.Type(
   t.identity
 );
 
-const isFormObjectValue = (v: unknown): v is FormObjectValue =>
-  typeof v === 'object' &&
-  !Array.isArray(v) &&
-  v !== null &&
-  Object.keys(v).includes('displayLabel') &&
-  Object.keys(v).includes('value');
-
-/**
- * Accepts a FormObjectValue.
- */
-export const FORM_OBJECT_VALUE = new t.Type<FormObjectValue, FormObjectValue>(
-  'FORM_OBJECT_VALUE',
-  isFormObjectValue,
-  (v, c) => {
-    if (isFormObjectValue(v)) {
-      return t.success(v);
-    }
-    return t.failure(v, c);
-  },
-  t.identity
-);
-
 export const VALID_DAYJS_DATE = new t.Type<Dayjs, Dayjs>(
   'VALID_DAYJS_DATE',
   (u): u is Dayjs => u instanceof Dayjs,
@@ -471,3 +449,17 @@ export const ABORT_SIGNAL = new t.Type<AbortSignal, AbortSignal, unknown>(
 );
 
 export type AbortSignalType = t.TypeOf<typeof ABORT_SIGNAL>;
+export const YEAR_FROM_STRING = new t.Type<string, string>(
+  'YEAR_FROM_STRING',
+  t.string.is,
+  (v, c) => {
+    if (typeof v === 'string') {
+      if (v.match(/^\d{4}$/) && parseInt(v) >= 1950 && parseInt(v) <= 2100) {
+        return t.success(v);
+      }
+      return t.failure(v, c);
+    }
+    return t.failure(v, c);
+  },
+  t.identity
+);

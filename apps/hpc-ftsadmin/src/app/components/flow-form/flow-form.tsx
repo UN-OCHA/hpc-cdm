@@ -24,6 +24,7 @@ import { C } from '@unocha/hpc-ui';
 import NumberFieldReview from './inputs/number-field-pending-review';
 import TextFieldReview from './inputs/text-field-pending-review';
 import { MdAdd, MdClose } from 'react-icons/md';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import validateForm from '../../utils/form-validation';
 import { Link, useNavigate } from 'react-router';
 import * as paths from '../../paths';
@@ -47,6 +48,8 @@ import {
   autofillPlan,
   autofillProject,
 } from '../../utils/fn-autofills';
+import { validateFlowForWarnings } from '../../utils/fn-validations';
+import { useState } from 'react';
 
 type FlowFormProps = {
   setError: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -119,16 +122,6 @@ const UNTreasuryLinkComponent = tw.a`
 const FormGroupPaper = tw(Paper)`
   p-6
 `;
-const CurrentSpan = tw.span`
-  px-2
-  py-1
-  mx-2
-  bg-unocha-primary-light
-  border-unocha-primary
-  border
-  border-solid
-  rounded-[4px]
-`;
 const LatestSpan = tw.span`
   px-2
   py-1
@@ -188,8 +181,33 @@ export const INITIAL_FORM_VALUES: FlowFormType = {
   isInactive: false,
 };
 
-const FORM_VALIDATION_SCHEMA = io.type({
+export type FlowFormValidationKeys =
+  | 'amountUSD'
+  | 'amountOriginalCurrency'
+  | 'donorBudgetYear'
+  | 'exchangeRate'
+  | 'flowStatus'
+  | 'flowDescription'
+  | 'firstReported'
+  | 'flowDate'
+  | 'fundingSourceOrganizations'
+  | 'fundingSourceUsageYears'
+  | 'fundingDestinationOrganizations'
+  | 'fundingDestinationUsageYears';
+
+const FORM_VALIDATION_SCHEMA: io.TypeC<
+  Record<FlowFormValidationKeys, io.Mixed>
+> = io.type({
   amountUSD: codecs.CURRENCY_INTEGER_GREATER_THAN_0_FROM_STRING,
+  amountOriginalCurrency: io.union([
+    codecs.EMPTY_STRING,
+    codecs.POSITIVE_NUMBER_FROM_STRING,
+  ]),
+  donorBudgetYear: io.union([codecs.EMPTY_STRING, codecs.YEAR_FROM_STRING]),
+  exchangeRate: io.union([
+    codecs.EMPTY_STRING,
+    codecs.POSITIVE_NUMBER_FROM_STRING,
+  ]),
   flowStatus: codecs.NON_NULL_VALUE,
   flowDescription: codecs.NON_EMPTY_STRING,
   firstReported: codecs.VALID_DAYJS_DATE,
@@ -199,6 +217,24 @@ const FORM_VALIDATION_SCHEMA = io.type({
   fundingDestinationOrganizations: codecs.NON_EMPTY_ARRAY,
   fundingDestinationUsageYears: codecs.NON_EMPTY_ARRAY,
 });
+
+const VALIDATION_ERROR_MESSAGES: Record<
+  keyof io.TypeOf<typeof FORM_VALIDATION_SCHEMA>,
+  string
+> = {
+  amountUSD: 'The value must be greater than 0',
+  amountOriginalCurrency: 'The value must be a positive number',
+  donorBudgetYear: 'The value needs to be of format YYYY',
+  exchangeRate: 'The value must be a positive number',
+  flowStatus: 'This field is required',
+  flowDescription: 'This field is required',
+  firstReported: 'This field is required',
+  flowDate: 'This field is required',
+  fundingSourceOrganizations: 'This field is required',
+  fundingSourceUsageYears: 'This field is required',
+  fundingDestinationOrganizations: 'This field is required',
+  fundingDestinationUsageYears: 'This field is required',
+};
 
 export const FormGroup = ({
   title,
@@ -275,9 +311,15 @@ export const FlowForm = (props: FlowFormProps) => {
   const navigate = useNavigate();
 
   const { setError, initialValues } = props;
+  const [loading, setLoading] = useState(false);
+  const handleSubmit = async (values: FlowFormTypeValidated) => {
+    setLoading(true);
+    const isValid = await validateFlowForWarnings(values, setError);
+    if (!isValid) {
+      setLoading(false);
+      return;
+    }
 
-  const handleSubmit = (values: FlowFormTypeValidated) => {
-    //  TODO: Add form validation at this point
     if (props.flow?.id) {
       env.model.flows
         .updateFlow({
@@ -288,9 +330,11 @@ export const FlowForm = (props: FlowFormProps) => {
           },
         })
         .then(() => {
+          setLoading(false);
           props.load();
         })
         .catch((err) => {
+          setLoading(false);
           setError(err.json.message);
         });
     } else {
@@ -302,6 +346,7 @@ export const FlowForm = (props: FlowFormProps) => {
           });
         })
         .catch((err) => {
+          setLoading(false);
           console.error(err);
           setError(err.json.message);
         });
@@ -331,7 +376,13 @@ export const FlowForm = (props: FlowFormProps) => {
         <Formik
           initialValues={initialValues || INITIAL_FORM_VALUES}
           onSubmit={(values) => handleSubmit(values as FlowFormTypeValidated)}
-          validate={(values) => validateForm(values, FORM_VALIDATION_SCHEMA)}
+          validate={(values) =>
+            validateForm(
+              values,
+              FORM_VALIDATION_SCHEMA,
+              VALIDATION_ERROR_MESSAGES
+            )
+          }
         >
           {({ values, isValid, setFieldValue }) => (
             <Form>
@@ -736,6 +787,13 @@ export const FlowForm = (props: FlowFormProps) => {
                             <span
                               key={`flowVersion${flowVersion.id}v${flowVersion.versionID}`}
                             >
+                              {flowVersion.versionID ===
+                                props.flow?.versionID && (
+                                <VisibilityIcon
+                                  color="primary"
+                                  sx={tw`me-4 float-start`}
+                                />
+                              )}
                               <Link
                                 to={paths.flow(
                                   flowVersion.id,
@@ -746,10 +804,6 @@ export const FlowForm = (props: FlowFormProps) => {
                               >
                                 #{flowVersion.id}v{flowVersion.versionID}
                               </Link>{' '}
-                              {flowVersion.versionID ===
-                                props.flow?.versionID && (
-                                <CurrentSpan>Viewing</CurrentSpan>
-                              )}
                               {flowVersion.activeStatus && (
                                 <LatestSpan>Latest</LatestSpan>
                               )}
@@ -896,7 +950,11 @@ export const FlowForm = (props: FlowFormProps) => {
                       : 'Please fill all required fields'}
                   </span>
                   {isValid && (
-                    <C.ButtonSubmit color="primary_light" text="Submit" />
+                    <C.ButtonSubmit
+                      color="primary_light"
+                      text="Submit"
+                      displayLoading={loading}
+                    />
                   )}
                 </Box>
               </Snackbar>
