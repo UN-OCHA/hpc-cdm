@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 
-const GLOBAL_CLUSTER = t.type({
+export const GLOBAL_CLUSTER = t.type({
   id: t.number,
   hrinfoId: t.union([t.number, t.null]),
   type: t.string,

@@ -1,7 +1,7 @@
 import { LanguageKey, t } from '../../i18n';
 import { Strings } from '../../i18n/iface';
 import { Query } from '../components/tables/table-utils';
-import { FilterKeys } from './parse-filters';
+import { FilterKey } from './parse-filters';
 
 /** Declare which tables there can be */
 export type TableType = 'flows' | 'organizations' | 'keywords';
@@ -63,7 +63,7 @@ export interface TableHeadersProps<
 
 type HeaderType = {
   id: number;
-  label: FilterKeys;
+  label: FilterKey;
   active: boolean;
 };
 
@@ -159,13 +159,13 @@ export const POSSIBLE_FLOW_HEADER_VALUES: Record<
     id: 15,
     identifierID: 'reportDetail.sourceID',
     label: 'sourceID',
-    sortable: true,
+    sortable: false,
   },
   16: {
     id: 16,
     identifierID: 'reportDetail.reporterRefCode',
     label: 'reporterRefCode',
-    sortable: true,
+    sortable: false,
   },
 };
 
@@ -194,31 +194,31 @@ export const POSSIBLE_ORGANIZATION_VALUES: Record<
   4: {
     id: 4,
     identifierID: 'organization.type',
-    sortable: true,
+    sortable: false,
     label: 'type',
   },
   5: {
     id: 5,
     identifierID: 'organization.subType',
-    sortable: true,
+    sortable: false,
     label: 'subType',
   },
   6: {
     id: 6,
     identifierID: 'organization.location',
-    sortable: true,
+    sortable: false,
     label: 'location',
   },
   7: {
     id: 7,
     identifierID: 'organization.createdBy',
-    sortable: true,
+    sortable: false,
     label: 'createdBy',
   },
   8: {
     id: 8,
     identifierID: 'organization.updatedBy',
-    sortable: true,
+    sortable: false,
     label: 'updatedBy',
   },
 };

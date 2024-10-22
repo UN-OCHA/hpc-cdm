@@ -14,6 +14,7 @@ import {
   projects,
   globalClusters,
   usageYears,
+  flows,
 } from '@unocha/hpc-data';
 import isEqual from 'lodash/isEqual';
 
@@ -484,193 +485,67 @@ export class Dummy {
         ),
       },
 
-      /** TODO: Did not try to implement it proper data since I don't use it */
       categories: {
         getCategories: dummyEndpoint(
           'categories.getCategories',
-          async (): Promise<categories.GetCategoriesResult> => {
-            // Implement the dummy data retrieval logic here
-            // Replace the following line with the actual implementation
-            return [
-              {
-                id: 1158,
-                name: 'Asia 2002',
-                description: null,
-                parentID: null,
-                code: null,
-                group: 'keywords',
-                includeTotals: null,
-                createdAt: '2017-01-14T02:49:28.386Z',
-                updatedAt: '2017-01-14T02:49:28.386Z',
-              },
-              {
-                id: 137,
-                name: 'Carryover',
-                description: null,
-                parentID: null,
-                code: null,
-                group: 'flowType',
-                includeTotals: null,
-                createdAt: '2017-01-13T22:18:02.844Z',
-                updatedAt: '2017-01-13T22:18:02.844Z',
-              },
-              {
-                id: 48,
-                name: 'Paid',
-                description: null,
-                parentID: null,
-                code: null,
-                group: 'flowStatus',
-                includeTotals: null,
-                createdAt: '2017-01-13T14:20:32.042Z',
-                updatedAt: '2017-01-13T14:20:32.042Z',
-              },
-            ];
+          async ({
+            query,
+          }: categories.GetCategoriesParams): Promise<categories.GetCategoriesResult> => {
+            return this.data.categories.filter(
+              (category) => category.group === query
+            );
           }
         ),
         getKeywords: dummyEndpoint(
           'categories.getKeywords',
           async (): Promise<categories.GetKeywordsResult> => {
-            // Implement the dummy data retrieval logic here
-            // Replace the following line with the actual implementation
-            return [
-              {
-                id: 1158,
-                name: 'Asia 2002',
-                description: null,
-                parentID: null,
-                code: null,
-                group: 'keywords',
-                includeTotals: null,
-                createdAt: '2017-01-14T02:49:28.386Z',
-                updatedAt: '2017-01-14T02:49:28.386Z',
-                refCount: '2',
-              },
-              {
-                id: 137,
-                name: 'Carryover',
-                description: null,
-                parentID: null,
-                code: null,
-                group: 'flowType',
-                includeTotals: null,
-                createdAt: '2017-01-13T22:18:02.844Z',
-                updatedAt: '2017-01-13T22:18:02.844Z',
-                refCount: '5',
-              },
-            ];
+            return this.data.keywords;
           }
         ),
         deleteKeyword: dummyEndpoint(
           'categories.deleteKeyword',
-          async (): Promise<categories.DeleteKeywordResult> => {
-            // Implement the dummy data retrieval logic here
-            // Replace the following line with the actual implementation
+          async ({
+            id,
+          }: categories.DeleteKeywordParams): Promise<categories.DeleteKeywordResult> => {
+            //  TODO: Properly implement, on reload dummy data resets
+            this.data.keywords = this.data.keywords.filter(
+              (keyword) => keyword.id !== id
+            );
             return undefined;
           }
         ),
         updateKeyword: dummyEndpoint(
           'categories.updateKeyword',
-          async (): Promise<categories.Category> => {
-            // Implement the dummy data retrieval logic here
-            // Replace the following line with the actual implementation
-            return {
-              id: 1158,
-              name: 'Asia 2002',
-              description: null,
-              parentID: null,
-              code: null,
-              group: 'keywords',
-              includeTotals: null,
-              createdAt: '2017-01-14T02:49:28.386Z',
-              updatedAt: '2017-01-14T02:49:28.386Z',
-            };
+          async (params: categories.Keyword): Promise<categories.Category> => {
+            this.data.keywords = this.data.keywords.map((keyword) => {
+              if (keyword.id === params.id) {
+                return params;
+              }
+              return keyword;
+            });
+            return params;
+          }
+        ),
+        mergeKeywords: dummyEndpoint(
+          'categories.mergeKeywords',
+          async (): Promise<categories.MergeKeywordResult> => {
+            /**
+             * TODO: Implement mocked logic for mergeKeywords
+             */
+
+            return undefined;
           }
         ),
       },
       emergencies: {
         getAutocompleteEmergencies: dummyEndpoint(
           'emergencies.getAutocompleteEmergencies',
-          async (): Promise<emergencies.GetEmergenciesAutocompleteResult> => {
-            // Implement the dummy data retrieval logic here
-            // Replace the following line with the actual implementation
-            return [
-              {
-                id: 513,
-                name: 'AFGHANISTAN - Floods - June 2010',
-                description:
-                  'The floods took place in the Northeastern Region of Afghanistan in June 2010. Nine (9) people died and more than 50 villages affected.',
-                date: '2010-06-02T00:00:00.000Z',
-                glideId: 'FL-2010-000127-AFG',
-                levelThree: false,
-                active: true,
-                restricted: false,
-                createdAt: '2017-01-14T00:52:09.851Z',
-                updatedAt: '2017-01-14T00:52:09.851Z',
-              },
-              {
-                id: 509,
-                name: 'AFGHANISTAN - Floods and Avalanches - Feb 2010',
-                description:
-                  'At least 20 people have died in floods and avalanches, including flash floods, triggered by heaviest rain and snow in Afghanistan for 50 years.',
-                date: '2010-02-02T00:00:00.000Z',
-                glideId: 'FL-2010-000021-AFG',
-                levelThree: false,
-                active: true,
-                restricted: false,
-                createdAt: '2017-01-14T00:52:09.833Z',
-                updatedAt: '2017-01-14T00:52:09.833Z',
-              },
-              {
-                id: 409,
-                name: 'AFGHANISTAN - Avalanches and Heavy Snowfalls - January 2008',
-                description:
-                  'AFGHANISTAN - Avalanches and Heavy Snowfalls - January 2008',
-                date: '2008-01-17T00:00:00.000Z',
-                glideId: 'AV-2008-000003-AFG',
-                levelThree: false,
-                active: true,
-                restricted: false,
-                createdAt: '2017-01-14T00:52:09.434Z',
-                updatedAt: '2017-01-14T00:52:09.434Z',
-              },
-              {
-                id: 362,
-                name: 'AFGHANISTAN - Floods - November 2006',
-                description: 'AFGHANISTAN - Floods - November 2006',
-                date: '2006-11-13T00:00:00.000Z',
-                glideId: 'FF-2006-000163-AFG',
-                levelThree: false,
-                active: true,
-                restricted: false,
-                createdAt: '2017-01-14T00:52:09.267Z',
-                updatedAt: '2017-01-14T00:52:09.267Z',
-              },
-              {
-                id: 340,
-                name: 'Afghanistan Drought 2006',
-                description: '',
-                date: '2006-01-01T00:00:00.000Z',
-                glideId: null,
-                levelThree: false,
-                active: true,
-                restricted: false,
-                createdAt: '2017-01-14T00:52:09.154Z',
-                updatedAt: '2017-01-14T00:52:09.154Z',
-              },
-              {
-                id: 286,
-                name: 'AFGHANISTAN - Flood - June 2005',
-                description: 'AFGHANISTAN - Flood - June 2005',
-                date: '2005-06-20T00:00:00.000Z',
-                glideId: 'FL-2005-000094-AFG',
-                levelThree: false,
-                active: true,
-                restricted: false,
-                createdAt: '2017-01-14T00:52:08.895Z',
-                updatedAt: '2017-01-14T00:52:08.895Z',
-              },
-            ];
+          async ({
+            query,
+          }: emergencies.GetEmergenciesAutocompleteParams): Promise<emergencies.GetEmergenciesAutocompleteResult> => {
+            return this.data.emergencies.filter((emergency) =>
+              emergency.name.toUpperCase().includes(query.toUpperCase())
+            );
           }
         ),
       },
@@ -681,13 +556,78 @@ export class Dummy {
         getFlow: dummyEndpoint('flows.getFlow', async () => {
           throw new errors.NotFoundError();
         }),
-        searchFlows: dummyEndpoint('flows.searchFlows', async () => {
-          throw new errors.NotFoundError();
-        }),
+        searchFlows: dummyEndpoint(
+          'flows.searchFlows',
+          async (params: flows.SearchFlowsParams) => {
+            /**
+             * TODO: Implement mocked logic for filters
+             */
+
+            let flows = this.data.flows.filter(
+              (flow) => !flow.categories?.some((category) => category.id === 45)
+            );
+            /** pending filter */
+            if (params.pending) {
+              flows = this.data.flows.filter(
+                (flow) =>
+                  flow.categories?.some((category) => category.id === 45)
+              );
+            }
+            const searchFlows = {
+              total: flows.length,
+              flows: flows,
+              prevPageCursor: 0,
+              nextPageCursor: 0,
+              hasNextPage: false,
+              hasPreviousPage: false,
+              pageSize: 10,
+            };
+            return { searchFlows };
+          }
+        ),
         bulkRejectPendingFlows: dummyEndpoint(
           'flows.bulkRejectPendingFlows',
-          async () => {
-            throw new errors.NotFoundError();
+          async ({ flows }: flows.BulkRejectPendingFlowsParams) => {
+            const ids = flows.map((flow) => flow.id);
+            const versionIds = flows.map((flow) => flow.versionID);
+
+            this.data.flows = this.data.flows.map((flow) => {
+              if (
+                ids.includes(flow.id) &&
+                versionIds.includes(flow.versionID)
+              ) {
+                return {
+                  ...flow,
+                  categories: [
+                    // We remove 'Pending review' category (id: 45)
+                    ...(flow.categories?.filter(
+                      (category) => category.id !== 45
+                    ) ?? []),
+
+                    // We add 'Rejected' category (id: 87)
+                    {
+                      id: 87,
+                      name: 'Rejected',
+                      parentID: null,
+                      group: 'inactiveReason',
+                      createdAt: '2017-01-13T14:20:34.337Z',
+                      updatedAt: '2017-01-13T14:20:34.337Z',
+                      code: null,
+                      includeTotals: null,
+                      categoryRef: {
+                        objectID: flow.id,
+                        versionID: flow.versionID,
+                        objectType: 'flow',
+                        categoryID: 87,
+                        updatedAt: new Date().toISOString(),
+                      },
+                    },
+                  ],
+                };
+              }
+              return flow;
+            });
+            return flows;
           }
         ),
         getFlowsDownloadXLSX: dummyEndpoint(
@@ -701,604 +641,204 @@ export class Dummy {
         getGlobalClusters: dummyEndpoint(
           'globalClusters.getGlobalClusters',
           async (): Promise<globalClusters.GetGlobalClustersResult> => {
-            // Implement the dummy data retrieval logic here
-            // Replace the following line with the actual implementation
-            return [
-              {
-                id: 26512,
-                hrinfoId: null,
-                type: 'custom',
-                name: 'Agriculture',
-                code: 'AGR',
-                homepage: null,
-                defaultIconId: 'other_clusters_agriculture_icon',
-                parentId: 6,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2017-11-17T00:06:32.440Z',
-                updatedAt: '2021-08-24T11:51:10.748Z',
-              },
-              {
-                id: 1,
-                hrinfoId: 1,
-                type: 'global',
-                name: 'Camp Coordination / Management',
-                code: 'CCM',
-                homepage: 'http://www.globalcccmcluster.org',
-                defaultIconId:
-                  'clusters_camp_coordination_and_camp_management_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2015-09-10T20:26:37.465Z',
-                updatedAt: '2021-08-24T11:51:20.534Z',
-              },
-              {
-                id: 26480,
-                hrinfoId: null,
-                type: 'custom',
-                name: 'Coordination and support services',
-                code: 'CSS',
-                homepage: null,
-                defaultIconId: 'other_clusters_coordination_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2017-01-14T02:13:20.198Z',
-                updatedAt: '2021-08-24T11:51:24.794Z',
-              },
-              {
-                id: 26513,
-                hrinfoId: null,
-                type: 'custom',
-                name: 'COVID-19',
-                code: 'COV19',
-                homepage: null,
-                defaultIconId: null,
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2020-03-24T12:00:00.000Z',
-                updatedAt: '2021-08-24T11:51:28.429Z',
-              },
-              {
-                id: 2,
-                hrinfoId: 2,
-                type: 'global',
-                name: 'Early Recovery',
-                code: 'ERY',
-                homepage:
-                  'https://www.humanitarianresponse.info/en/coordination/clusters/launching-soon',
-                defaultIconId: 'clusters_recovery_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2015-09-10T20:26:37.473Z',
-                updatedAt: '2021-08-24T11:51:32.528Z',
-              },
-              {
-                id: 3,
-                hrinfoId: 3,
-                type: 'global',
-                name: 'Education',
-                code: 'EDU',
-                homepage: 'http://educationcluster.net/',
-                defaultIconId: 'clusters_education_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2015-09-10T20:26:37.478Z',
-                updatedAt: '2021-08-24T11:51:36.239Z',
-              },
-              {
-                id: 4,
-                hrinfoId: 4,
-                type: 'global',
-                name: 'Emergency Shelter and NFI',
-                code: 'SHL',
-                homepage: 'https://www.sheltercluster.org',
-                defaultIconId: 'clusters_shelter_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2015-09-10T20:26:37.481Z',
-                updatedAt: '2021-08-24T11:51:39.902Z',
-              },
-              {
-                id: 5,
-                hrinfoId: 5,
-                type: 'global',
-                name: 'Emergency Telecommunications',
-                code: 'TEL',
-                homepage: 'www.ETCluster.org',
-                defaultIconId: 'clusters_emergency_telecommunications_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2015-09-10T20:26:37.485Z',
-                updatedAt: '2021-08-24T11:52:01.065Z',
-              },
-              {
-                id: 6,
-                hrinfoId: 6,
-                type: 'global',
-                name: 'Food Security',
-                code: 'FSC',
-                homepage: 'http://www.foodsecuritycluster.net',
-                defaultIconId: 'disaster_flood_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2015-09-10T20:26:37.489Z',
-                updatedAt: '2021-08-24T11:52:08.350Z',
-              },
-              {
-                id: 7,
-                hrinfoId: 7,
-                type: 'global',
-                name: 'Health',
-                code: 'HEA',
-                homepage: 'http://www.who.int/hac/global_health_cluster/en/',
-                defaultIconId: 'clusters_health_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2015-09-10T20:26:37.494Z',
-                updatedAt: '2021-08-24T11:52:13.708Z',
-              },
-              {
-                id: 8,
-                hrinfoId: 8,
-                type: 'global',
-                name: 'Logistics',
-                code: 'LOG',
-                homepage: 'http://www.logcluster.org',
-                defaultIconId: 'clusters_logistics_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2015-09-10T20:26:37.499Z',
-                updatedAt: '2021-08-24T11:52:18.249Z',
-              },
-              {
-                id: 26479,
-                hrinfoId: null,
-                type: 'custom',
-                name: 'Multi-sector',
-                code: 'MS',
-                homepage: null,
-                defaultIconId: 'other_clusters_multi-sector_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2017-01-14T02:13:20.198Z',
-                updatedAt: '2021-08-24T11:52:24.427Z',
-              },
-              {
-                id: 9,
-                hrinfoId: 9,
-                type: 'global',
-                name: 'Nutrition',
-                code: 'NUT',
-                homepage: 'http://nutritioncluster.net',
-                defaultIconId: 'clusters_nutrition_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2015-09-10T20:26:37.504Z',
-                updatedAt: '2021-08-24T11:52:27.907Z',
-              },
-              {
-                id: 26481,
-                hrinfoId: null,
-                type: 'custom',
-                name: 'Other',
-                code: 'OTH',
-                homepage: null,
-                defaultIconId: null,
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2017-01-14T02:13:20.198Z',
-                updatedAt: '2021-08-24T11:52:31.779Z',
-              },
-              {
-                id: 10,
-                hrinfoId: 10,
-                type: 'global',
-                name: 'Protection',
-                code: 'PRO',
-                homepage: 'http://www.globalprotectioncluster.org',
-                defaultIconId: 'clusters_protection_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2020,
-                createdAt: '2015-09-10T20:26:37.507Z',
-                updatedAt: '2021-08-10T14:35:25.912Z',
-              },
-              {
-                id: 12,
-                hrinfoId: 5403,
-                type: 'aor',
-                name: 'Protection - Child Protection',
-                code: 'PRO-CPN',
-                homepage: 'http://www.cpwg.net/',
-                defaultIconId: null,
-                parentId: null,
-                displayFTSSummariesFromYear: 2020,
-                createdAt: '2015-09-10T20:26:37.515Z',
-                updatedAt: '2021-08-10T14:35:21.625Z',
-              },
-              {
-                id: 13,
-                hrinfoId: 5404,
-                type: 'aor',
-                name: 'Protection - Gender-Based Violence',
-                code: 'PRO-GBV',
-                homepage: 'http://www.gbvaor.net/',
-                defaultIconId: null,
-                parentId: null,
-                displayFTSSummariesFromYear: 2020,
-                createdAt: '2015-09-10T20:26:37.519Z',
-                updatedAt: '2021-08-10T14:35:17.766Z',
-              },
-              {
-                id: 14,
-                hrinfoId: 5405,
-                type: 'aor',
-                name: 'Protection - Housing, Land and Property',
-                code: 'PRO-HLP',
-                homepage:
-                  'http://www.globalprotectioncluster.org/en/areas-of-responsibility/housing-land-and-property.html',
-                defaultIconId: null,
-                parentId: null,
-                displayFTSSummariesFromYear: null,
-                createdAt: '2015-09-10T20:26:37.524Z',
-                updatedAt: '2021-04-26T14:42:40.052Z',
-              },
-              {
-                id: 26546,
-                hrinfoId: null,
-                type: 'aor',
-                name: 'Protection - Human Trafficking & Smuggling',
-                code: 'PRO-HTS',
-                homepage: null,
-                defaultIconId: null,
-                parentId: null,
-                displayFTSSummariesFromYear: null,
-                createdAt: '2021-02-15T15:48:42.661Z',
-                updatedAt: '2021-04-26T14:43:09.171Z',
-              },
-              {
-                id: 15,
-                hrinfoId: 5406,
-                type: 'aor',
-                name: 'Protection - Mine Action',
-                code: 'PRO-MIN',
-                homepage:
-                  'http://www.globalprotectioncluster.org/en/areas-of-responsibility/mine-action.html',
-                defaultIconId: null,
-                parentId: null,
-                displayFTSSummariesFromYear: 2020,
-                createdAt: '2015-09-10T20:26:37.529Z',
-                updatedAt: '2021-08-10T14:35:13.095Z',
-              },
-              {
-                id: 11,
-                hrinfoId: 11,
-                type: 'global',
-                name: 'Water Sanitation Hygiene',
-                code: 'WSH',
-                homepage: 'http://washcluster.net/',
-                defaultIconId: 'clusters_water_sanitation_and_hygiene_icon',
-                parentId: null,
-                displayFTSSummariesFromYear: 2012,
-                createdAt: '2015-09-10T20:26:37.511Z',
-                updatedAt: '2021-08-24T11:52:35.295Z',
-              },
-            ];
+            return this.data.globalClusters;
           }
         ),
       },
       locations: {
         getAutocompleteLocations: dummyEndpoint(
           'locations.getAutocompleteLocations',
-          async (): Promise<locations.GetLocationsAutocompleteResult> => {
-            // Implement the dummy data retrieval logic here
-            // Replace the following line with the actual implementation
-            return [
-              {
-                id: 209,
-                externalId: '389',
-                name: 'Spain',
-                adminLevel: 0,
-                latitude: 40.309787496783,
-                longitude: -3.578125378279,
-                iso3: 'ESP',
-                pcode: null,
-                validOn: null,
-                status: 'active',
-                itosSync: true,
-                createdAt: '2015-09-10T20:25:11.133Z',
-                updatedAt: '2023-01-15T00:05:07.209Z',
-                parentId: null,
-                children: [],
-              },
-            ];
+          async ({
+            query,
+          }: locations.GetLocationsAutocompleteParams): Promise<locations.GetLocationsAutocompleteResult> => {
+            return this.data.locations.filter((location) =>
+              location.name.toUpperCase().includes(query.toUpperCase())
+            );
           }
         ),
       },
       organizations: {
         getAutocompleteOrganizations: dummyEndpoint(
           'organizations.getAutocompleteOrganizations',
-          async (): Promise<organizations.GetOrganizationsResult> => {
-            // Implement the dummy data retrieval logic here
-            // Replace the following line with the actual implementation
-            return [
-              {
-                id: 9093,
-                name: 'Association pour le Secours et le Développement',
-                nativeName: '',
-                abbreviation: 'ASD',
-                url: null,
-                parentID: null,
-                comments:
-                  'Développement coordonne ses programmes autour de 6 domaines d’activités : • Nutrition, santé, pratiques de soins • Sécurité alimentaire et moyens d’existence • Eau, assainissement et hygiène • Plaidoyer et sensibilisation • Abris • Education',
-                verified: true,
-                notes: null,
-                active: true,
-                collectiveInd: false,
-                newOrganizationId: null,
-                createdAt: '2017-10-29T20:45:26.233Z',
-                updatedAt: '2019-05-14T12:19:16.995Z',
-                deletedAt: null,
-                categories: [
-                  {
-                    id: 118,
-                    name: 'NGOs',
-                    description: null,
-                    parentID: null,
-                    code: null,
-                    group: 'organizationType',
-                    includeTotals: null,
-                    createdAt: '2017-01-13T22:18:02.367Z',
-                    updatedAt: '2022-12-15T15:17:12.866Z',
-                    categoryRef: {
-                      objectID: 9093,
-                      versionID: 1,
-                      objectType: 'organization',
-                      categoryID: 118,
-                      createdAt: '2017-10-29T20:45:26.445Z',
-                      updatedAt: '2017-10-29T20:45:26.445Z',
-                    },
-                  },
-                  {
-                    id: 1810,
-                    name: 'National NGOs/CSOs',
-                    description: null,
-                    parentID: 1802,
-                    code: null,
-                    group: 'organizationLevel',
-                    includeTotals: null,
-                    createdAt: '2022-12-15T15:17:15.037Z',
-                    updatedAt: '2022-12-15T15:17:15.037Z',
-                    categoryRef: {
-                      objectID: 9093,
-                      versionID: 1,
-                      objectType: 'organization',
-                      categoryID: 1810,
-                      createdAt: '2022-12-15T15:17:25.240Z',
-                      updatedAt: '2022-12-15T15:17:25.240Z',
-                    },
-                  },
-                  {
-                    id: 1802,
-                    name: 'Local and National Non-State Actors',
-                    description: null,
-                    parentID: null,
-                    code: null,
-                    group: 'organizationLevel',
-                    includeTotals: null,
-                    createdAt: '2022-12-15T15:17:12.799Z',
-                    updatedAt: '2022-12-15T15:17:12.799Z',
-                    categoryRef: {
-                      objectID: 9093,
-                      versionID: 1,
-                      objectType: 'organization',
-                      categoryID: 1802,
-                      createdAt: '2022-12-15T15:17:25.240Z',
-                      updatedAt: '2022-12-15T15:17:25.240Z',
-                    },
-                  },
-                  {
-                    id: 130,
-                    name: 'National NGOs/CSOs',
-                    description: null,
-                    parentID: 118,
-                    code: null,
-                    group: 'organizationType',
-                    includeTotals: null,
-                    createdAt: '2017-01-13T22:18:02.688Z',
-                    updatedAt: '2022-12-15T15:17:15.025Z',
-                    categoryRef: {
-                      objectID: 9093,
-                      versionID: 1,
-                      objectType: 'organization',
-                      categoryID: 130,
-                      createdAt: '2019-05-14T12:18:30.858Z',
-                      updatedAt: '2019-05-14T12:18:30.858Z',
-                    },
-                  },
-                ],
-              },
-            ];
+          async ({
+            query,
+          }: organizations.GetOrganizationsAutocompleteParams): Promise<organizations.GetOrganizationsResult> => {
+            return this.data.organizations.filter((organization) =>
+              organization.name.toUpperCase().includes(query.toUpperCase())
+            );
           }
         ),
         searchOrganizations: dummyEndpoint(
           'organizations.searchOrganizations',
-          async (): Promise<organizations.SearchOrnganizationResult> => {
-            return {
-              count: '1',
-              organizations: [
-                {
-                  id: 9093,
-                  name: 'Association pour le Secours et le Développement',
-                  nativeName: '',
-                  abbreviation: 'ASD',
-                  active: true,
-                  categories: [
-                    {
-                      name: 'NGOs',
-                      group: 'organizationType',
-                      parentID: null,
-                    },
-                  ],
-                  locations: [],
+          async (): Promise<organizations.SearchOrganizationResult> => {
+            const parsedOrganizations = this.data.organizations.map(
+              (organization) => {
+                const {
+                  id,
+                  name,
+                  nativeName,
+                  abbreviation,
+                  active,
+                  categories,
+                  locations,
+                } = organization;
+                return {
+                  id,
+                  name,
+                  nativeName,
+                  abbreviation,
+                  active,
+                  categories:
+                    categories?.map((category) => {
+                      const { name: categoryName, group, parentID } = category;
+                      return { name: categoryName, group, parentID };
+                    }) ?? [],
+                  locations:
+                    locations?.map((location) => {
+                      const {
+                        id: locationID,
+                        name: locationName,
+                        parentId: parentID,
+                      } = location;
+                      return { id: locationID, name: locationName, parentID };
+                    }) ?? [],
                   create: [],
                   update: [],
-                },
-              ],
+                };
+              }
+            );
+
+            return {
+              count: this.data.organizations.length.toString(),
+              organizations: parsedOrganizations,
             };
           }
         ),
         getOrganization: dummyEndpoint(
           'organizations.getOrganization',
-          async (): Promise<organizations.GetOrganizationResult> => {
-            return {
-              id: 9093,
-              name: 'Association pour le Secours et le Développement',
-              nativeName: '',
-              abbreviation: 'ASD',
-              url: null,
-              parentID: null,
-              comments:
-                'Développement coordonne ses programmes autour de 6 domaines d’activités : • Nutrition, santé, pratiques de soins • Sécurité alimentaire et moyens d’existence • Eau, assainissement et hygiène • Plaidoyer et sensibilisation • Abris • Education',
-              verified: true,
-              notes: null,
-              active: true,
-              collectiveInd: false,
-              newOrganizationId: null,
-              createdAt: '2017-10-29T20:45:26.233Z',
-              updatedAt: '2019-05-14T12:19:16.995Z',
-              deletedAt: null,
-              categories: [
-                {
-                  id: 118,
-                  name: 'NGOs',
-                  description: null,
-                  parentID: null,
-                  code: null,
-                  group: 'organizationType',
-                  includeTotals: null,
-                  createdAt: '2017-01-13T22:18:02.367Z',
-                  updatedAt: '2022-12-15T15:17:12.866Z',
-                  categoryRef: {
-                    objectID: 9093,
-                    versionID: 1,
-                    objectType: 'organization',
-                    categoryID: 118,
-                    createdAt: '2017-10-29T20:45:26.445Z',
-                    updatedAt: '2017-10-29T20:45:26.445Z',
-                  },
-                },
-                {
-                  id: 1810,
-                  name: 'National NGOs/CSOs',
-                  description: null,
-                  parentID: 1802,
-                  code: null,
-                  group: 'organizationLevel',
-                  includeTotals: null,
-                  createdAt: '2022-12-15T15:17:15.037Z',
-                  updatedAt: '2022-12-15T15:17:15.037Z',
-                  categoryRef: {
-                    objectID: 9093,
-                    versionID: 1,
-                    objectType: 'organization',
-                    categoryID: 1810,
-                    createdAt: '2022-12-15T15:17:25.240Z',
-                    updatedAt: '2022-12-15T15:17:25.240Z',
-                  },
-                },
-                {
-                  id: 1802,
-                  name: 'Local and National Non-State Actors',
-                  description: null,
-                  parentID: null,
-                  code: null,
-                  group: 'organizationLevel',
-                  includeTotals: null,
-                  createdAt: '2022-12-15T15:17:12.799Z',
-                  updatedAt: '2022-12-15T15:17:12.799Z',
-                  categoryRef: {
-                    objectID: 9093,
-                    versionID: 1,
-                    objectType: 'organization',
-                    categoryID: 1802,
-                    createdAt: '2022-12-15T15:17:25.240Z',
-                    updatedAt: '2022-12-15T15:17:25.240Z',
-                  },
-                },
-                {
-                  id: 130,
-                  name: 'National NGOs/CSOs',
-                  description: null,
-                  parentID: 118,
-                  code: null,
-                  group: 'organizationType',
-                  includeTotals: null,
-                  createdAt: '2017-01-13T22:18:02.688Z',
-                  updatedAt: '2022-12-15T15:17:15.025Z',
-                  categoryRef: {
-                    objectID: 9093,
-                    versionID: 1,
-                    objectType: 'organization',
-                    categoryID: 130,
-                    createdAt: '2019-05-14T12:18:30.858Z',
-                    updatedAt: '2019-05-14T12:18:30.858Z',
-                  },
-                },
-              ],
-              locations: [],
-            };
+          async ({
+            id,
+          }: organizations.GetOrganizationParams): Promise<organizations.GetOrganizationResult> => {
+            const organization = this.data.organizations.find(
+              (organization) => organization.id === id
+            );
+            if (!organization) {
+              throw new errors.NotFoundError();
+            }
+            return organization;
           }
         ),
         createOrganization: dummyEndpoint(
           'organizations.createOrganization',
-          async (): Promise<organizations.CreateOrganizationResult> => {
-            return {
-              id: 9093,
-              name: 'Association pour le Secours et le Développement',
-              nativeName: '',
-              abbreviation: 'ASD',
-              url: null,
-              parentID: null,
-              comments:
-                'Développement coordonne ses programmes autour de 6 domaines d’activités : • Nutrition, santé, pratiques de soins • Sécurité alimentaire et moyens d’existence • Eau, assainissement et hygiène • Plaidoyer et sensibilisation • Abris • Education',
-              verified: true,
-              notes: null,
+          async ({
+            organization,
+          }: organizations.CreateOrganizationParams): Promise<organizations.CreateOrganizationResult> => {
+            const id = Date.now();
+            const date = new Date().toISOString();
+            const organizationWithID: organizations.Organization = {
+              ...organization,
+              id,
+              nativeName: organization.nativeName ?? null,
+              url: organization.url ?? null,
+              parentID: organization.parentID ?? null,
+              comments: organization.comments ?? null,
+              verified: organization.verified ?? false,
+              notes: organization.notes ?? null,
+              locations: this.data.locations.filter(
+                (location) => organization.locations?.includes(location.id)
+              ),
+              categories: this.data.categories
+                .filter(
+                  (category) => organization.categories?.includes(category.id)
+                )
+                .map((category) => ({
+                  ...category,
+                  categoryRef: {
+                    objectID: id,
+                    versionID: 1,
+                    objectType: 'organization',
+                    categoryID: category.id,
+                    createdAt: date,
+                    updatedAt: date,
+                  },
+                })),
+              createdAt: date,
+              updatedAt: date,
+              deletedAt: null,
               active: true,
               collectiveInd: false,
               newOrganizationId: null,
-              createdAt: '2017-10-29T20:45:26.233Z',
-              updatedAt: '2019-05-14T12:19:16.995Z',
-              deletedAt: null,
-              meta: { language: 'en' },
             };
+            this.data.organizations.push(organizationWithID);
+            return { ...organizationWithID, meta: { language: 'en' } };
           }
         ),
         updateOrganization: dummyEndpoint(
           'organizations.updateOrganization',
-          async (): Promise<organizations.UpdateOrganizationResult> => {
+          async (
+            organization: organizations.UpdateOrganizationParams
+          ): Promise<organizations.UpdateOrganizationResult> => {
+            const date = new Date().toISOString();
+            const organizationIndex = this.data.organizations.findIndex(
+              (dataOrganization) => dataOrganization.id === organization.id
+            );
+            const dataOrganization = this.data.organizations[organizationIndex];
+            if (organizationIndex === -1 || !dataOrganization) {
+              throw new errors.NotFoundError();
+            }
+
+            const parsedOrganization: organizations.Organization = {
+              ...organization,
+              abbreviation:
+                organization.abbreviation ?? dataOrganization.abbreviation,
+              active: organization.active ?? dataOrganization.active,
+              collectiveInd:
+                organization.collectiveInd ?? dataOrganization.collectiveInd,
+              comments: organization.comments ?? null,
+              deletedAt: organization.deletedAt ?? null,
+              name: organization.name ?? dataOrganization.name,
+              nativeName: organization.nativeName ?? null,
+              newOrganizationId: organization.newOrganizationId ?? null,
+              notes: organization.notes ?? null,
+              parentID: organization.parentID ?? null,
+              url: organization.url ?? null,
+              verified: organization.verified ?? dataOrganization.verified,
+              parent:
+                this.data.organizations.find(
+                  (org) => org.id === organization.parentID
+                ) ?? null,
+              locations: this.data.locations.filter(
+                (location) => organization.locations?.includes(location.id)
+              ),
+              categories: this.data.categories
+                .filter(
+                  (category) => organization.categories?.includes(category.id)
+                )
+                .map((category) => ({
+                  ...category,
+                  categoryRef: {
+                    objectID: organization.id,
+                    versionID: 1,
+                    objectType: 'organization',
+                    categoryID: category.id,
+                    createdAt: date,
+                    updatedAt: date,
+                  },
+                })),
+              createdAt: organization.createdAt ?? dataOrganization.createdAt,
+              updatedAt: date,
+            };
+            this.data.organizations[organizationIndex] = parsedOrganization;
+            const user = this.data.users.find(
+              (u) => u.id === this.data.currentUser
+            )?.user.name;
             return {
-              id: 9093,
-              name: 'Association pour le Secours et le Développement',
-              nativeName: '',
-              abbreviation: 'ASD',
-              url: null,
-              parentID: null,
-              comments:
-                'Développement coordonne ses programmes autour de 6 domaines d’activités : • Nutrition, santé, pratiques de soins • Sécurité alimentaire et moyens d’existence • Eau, assainissement et hygiène • Plaidoyer et sensibilisation • Abris • Education',
-              verified: true,
-              notes: null,
-              active: true,
-              collectiveInd: false,
-              newOrganizationId: null,
-              createdAt: '2017-10-29T20:45:26.233Z',
-              updatedAt: '2019-05-14T12:19:16.995Z',
-              deletedAt: null,
+              ...parsedOrganization,
               participantLog: [
                 {
-                  createdAt: '2017-10-29T20:45:26.233Z',
-                  editType: 'created',
-                  participant: {
-                    name: 'HPC Admin',
-                  },
+                  participant: user ? { name: user } : null,
+                  createdAt: date,
+                  editType: 'update',
                 },
               ],
             };
@@ -1306,8 +846,45 @@ export class Dummy {
         ),
         deleteOrganization: dummyEndpoint(
           'organizations.deleteOrganization',
-          async (): Promise<organizations.DeleteOrganizationResult> => {
+          async ({
+            id,
+          }: organizations.DeleteOrganizationParams): Promise<organizations.DeleteOrganizationResult> => {
+            const index = this.data.organizations.findIndex(
+              (organization) => organization.id === id
+            );
+            if (index === -1) {
+              throw new errors.NotFoundError();
+            }
+            //  Remove organization
+            this.data.organizations.splice(index, 1);
             return undefined;
+          }
+        ),
+        mergeOrganizations: dummyEndpoint(
+          'organizations.mergeOrganization',
+          async (): Promise<organizations.MergeOrganizationsResult> => {
+            /**
+             * TODO: Implement logic for mergeOrganizations
+             */
+
+            return {
+              id: 9093,
+              name: 'Association pour le Secours et le Développement',
+              nativeName: '',
+              abbreviation: 'ASD',
+              url: null,
+              parentID: null,
+              comments:
+                'Développement coordonne ses programmes autour de 6 domaines d’activités : • Nutrition, santé, pratiques de soins • Sécurité alimentaire et moyens d’existence • Eau, assainissement et hygiène • Plaidoyer et sensibilisation • Abris • Education',
+              verified: true,
+              notes: null,
+              active: true,
+              collectiveInd: false,
+              newOrganizationId: null,
+              createdAt: '2017-10-29T20:45:26.233Z',
+              updatedAt: '2019-05-14T12:19:16.995Z',
+              deletedAt: null,
+            };
           }
         ),
       },
@@ -1395,568 +972,24 @@ export class Dummy {
       plans: {
         getAutocompletePlans: dummyEndpoint(
           'plans.getAutocompletePlans',
-          async (): Promise<plans.GetPlansAutocompleteResult> => {
-            // Implement the dummy data retrieval logic here
-            // Replace the following line with the actual implementation
-            return [
-              {
-                id: 1117,
-                restricted: false,
-                revisionState: 'none',
-                createdAt: '2023-05-18T09:14:13.164Z',
-                updatedAt: '2023-05-18T09:14:13.164Z',
-                planVersionId: 4581,
-                planId: 1117,
-                name: 'Afghanistan Humanitarian Response Plan 2023',
-                startDate: '2023-01-01',
-                endDate: '2023-12-31',
-                comments: null,
-                isForHPCProjects: false,
-                code: 'HAFG23',
-                customLocationCode: null,
-                currentReportingPeriodId: 2611,
-                lastPublishedReportingPeriodId: 2610,
-                clusterSelectionType: 'multi',
-                currentVersion: false,
-                latestVersion: true,
-                latestTaggedVersion: false,
-                versionTags: [],
-              },
-              {
-                id: 1118,
-                restricted: false,
-                revisionState: 'none',
-                createdAt: '2023-03-22T07:55:33.041Z',
-                updatedAt: '2023-03-22T07:56:31.621Z',
-                planVersionId: 4505,
-                planId: 1118,
-                name: 'Afghanistan Situation Regional Refugee Response Plan 2023',
-                startDate: '2023-01-01',
-                endDate: '2023-12-31',
-                comments: null,
-                isForHPCProjects: true,
-                code: 'RAFG23',
-                customLocationCode: 'AFG',
-                currentReportingPeriodId: 2425,
-                lastPublishedReportingPeriodId: null,
-                clusterSelectionType: 'multi',
-                currentVersion: true,
-                latestVersion: true,
-                latestTaggedVersion: true,
-                versionTags: ['1.0'],
-              },
-              {
-                id: 1061,
-                restricted: false,
-                revisionState: 'none',
-                createdAt: '2022-11-17T15:10:10.885Z',
-                updatedAt: '2022-11-17T15:12:10.657Z',
-                planVersionId: 4279,
-                planId: 1061,
-                name: 'Afghanistan Situation Regional Refugee Response Plan 2022',
-                startDate: '2022-01-01',
-                endDate: '2022-12-31',
-                comments: null,
-                isForHPCProjects: true,
-                code: 'RAFG22',
-                customLocationCode: 'AFG',
-                currentReportingPeriodId: 1916,
-                lastPublishedReportingPeriodId: null,
-                clusterSelectionType: 'multi',
-                currentVersion: true,
-                latestVersion: true,
-                latestTaggedVersion: true,
-                versionTags: ['1.2'],
-              },
-              {
-                id: 1100,
-                restricted: false,
-                revisionState: 'none',
-                createdAt: '2023-01-11T09:58:10.749Z',
-                updatedAt: '2023-04-06T10:18:30.355Z',
-                planVersionId: 4355,
-                planId: 1100,
-                name: 'Afghanistan Humanitarian Response Plan 2022',
-                startDate: '2022-01-01',
-                endDate: '2022-12-31',
-                comments: null,
-                isForHPCProjects: false,
-                code: 'HAFG22',
-                customLocationCode: null,
-                currentReportingPeriodId: 2305,
-                lastPublishedReportingPeriodId: 2305,
-                clusterSelectionType: 'multi',
-                currentVersion: true,
-                latestVersion: true,
-                latestTaggedVersion: true,
-                versionTags: ['1.16'],
-              },
-              {
-                id: 1057,
-                restricted: false,
-                revisionState: 'none',
-                createdAt: '2021-09-13T15:21:07.390Z',
-                updatedAt: '2021-11-25T12:23:50.198Z',
-                planVersionId: 3295,
-                planId: 1057,
-                name: 'Afghanistan Flash Appeal 2021',
-                startDate: '2021-09-01',
-                endDate: '2021-12-31',
-                comments: null,
-                isForHPCProjects: true,
-                code: 'FAFG21',
-                customLocationCode: null,
-                currentReportingPeriodId: 1795,
-                lastPublishedReportingPeriodId: null,
-                clusterSelectionType: 'multi',
-                currentVersion: true,
-                latestVersion: true,
-                latestTaggedVersion: true,
-                versionTags: ['1.0', '1.1', '1.2', '1.3', '1.4'],
-              },
-              {
-                id: 1031,
-                restricted: false,
-                revisionState: 'none',
-                createdAt: '2022-01-17T12:07:34.469Z',
-                updatedAt: '2022-06-08T10:01:42.578Z',
-                planVersionId: 3682,
-                planId: 1031,
-                name: 'Afghanistan Humanitarian Response Plan 2021',
-                startDate: '2021-01-01',
-                endDate: '2021-12-31',
-                comments: null,
-                isForHPCProjects: false,
-                code: 'HAFG21',
-                customLocationCode: null,
-                currentReportingPeriodId: 1616,
-                lastPublishedReportingPeriodId: 1616,
-                clusterSelectionType: 'multi',
-                currentVersion: true,
-                latestVersion: true,
-                latestTaggedVersion: true,
-                versionTags: ['3.4'],
-              },
-              {
-                id: 929,
-                restricted: false,
-                revisionState: 'none',
-                createdAt: '2021-01-15T05:45:32.662Z',
-                updatedAt: '2021-01-15T05:45:32.662Z',
-                planVersionId: 2978,
-                planId: 929,
-                name: 'Afghanistan 2020',
-                startDate: '2020-01-01',
-                endDate: '2020-12-31',
-                comments: null,
-                isForHPCProjects: false,
-                code: 'HAFG20',
-                customLocationCode: null,
-                currentReportingPeriodId: 1282,
-                lastPublishedReportingPeriodId: 1281,
-                clusterSelectionType: 'multi',
-                currentVersion: false,
-                latestVersion: true,
-                latestTaggedVersion: false,
-                versionTags: [],
-              },
-              {
-                id: 672,
-                restricted: false,
-                revisionState: 'planDataOnly',
-                createdAt: '2019-12-09T10:05:41.234Z',
-                updatedAt: '2019-12-09T10:05:41.314Z',
-                planVersionId: 1704,
-                planId: 672,
-                name: 'Afghanistan 2019',
-                startDate: '2019-01-01',
-                endDate: '2019-12-31',
-                comments: null,
-                isForHPCProjects: false,
-                code: 'HAFG19',
-                customLocationCode: null,
-                currentReportingPeriodId: 677,
-                lastPublishedReportingPeriodId: 677,
-                clusterSelectionType: null,
-                currentVersion: false,
-                latestVersion: true,
-                latestTaggedVersion: false,
-                versionTags: [],
-              },
-              {
-                id: 645,
-                restricted: false,
-                revisionState: 'none',
-                createdAt: '2017-10-18T18:14:47.878Z',
-                updatedAt: '2022-05-13T13:44:54.926Z',
-                planVersionId: 524,
-                planId: 645,
-                name: 'Afghanistan 2018',
-                startDate: '2018-01-01',
-                endDate: '2018-12-31',
-                comments: null,
-                isForHPCProjects: false,
-                code: 'HAFG18',
-                customLocationCode: null,
-                currentReportingPeriodId: 375,
-                lastPublishedReportingPeriodId: null,
-                clusterSelectionType: null,
-                currentVersion: true,
-                latestVersion: true,
-                latestTaggedVersion: true,
-                versionTags: ['1.0', '2.0'],
-              },
-              {
-                id: 544,
-                restricted: false,
-                revisionState: 'none',
-                createdAt: '2017-01-14T00:52:56.049Z',
-                updatedAt: '2018-05-01T14:44:45.409Z',
-                planVersionId: 526,
-                planId: 544,
-                name: 'Afghanistan 2017',
-                startDate: '2017-01-01',
-                endDate: '2017-12-31',
-                comments: null,
-                isForHPCProjects: false,
-                code: 'HAFG17',
-                customLocationCode: null,
-                currentReportingPeriodId: 170,
-                lastPublishedReportingPeriodId: 170,
-                clusterSelectionType: null,
-                currentVersion: true,
-                latestVersion: true,
-                latestTaggedVersion: true,
-                versionTags: ['1.0'],
-              },
-              {
-                id: 525,
-                restricted: false,
-                revisionState: null,
-                createdAt: '2017-01-14T00:52:56.005Z',
-                updatedAt: '2017-02-22T17:18:26.096Z',
-                planVersionId: 504,
-                planId: 525,
-                name: 'Afghanistan Flash Appeal: One million people on the move (September - December 2016)',
-                startDate: '2016-09-01',
-                endDate: '2016-12-31',
-                comments: null,
-                isForHPCProjects: false,
-                code: 'FAFG16',
-                customLocationCode: null,
-                currentReportingPeriodId: null,
-                lastPublishedReportingPeriodId: null,
-                clusterSelectionType: null,
-                currentVersion: true,
-                latestVersion: true,
-                latestTaggedVersion: true,
-                versionTags: ['1.0'],
-              },
-              {
-                id: 512,
-                restricted: false,
-                revisionState: null,
-                createdAt: '2017-01-14T00:52:55.964Z',
-                updatedAt: '2017-02-22T17:18:25.908Z',
-                planVersionId: 464,
-                planId: 512,
-                name: 'Afghanistan 2016',
-                startDate: '2016-01-01',
-                endDate: '2016-12-31',
-                comments: null,
-                isForHPCProjects: false,
-                code: 'HAFG16',
-                customLocationCode: null,
-                currentReportingPeriodId: null,
-                lastPublishedReportingPeriodId: null,
-                clusterSelectionType: null,
-                currentVersion: true,
-                latestVersion: true,
-                latestTaggedVersion: true,
-                versionTags: ['1.0'],
-              },
-              {
-                id: 462,
-                restricted: false,
-                revisionState: null,
-                createdAt: '2017-01-14T00:52:55.823Z',
-                updatedAt: '2017-02-22T17:18:25.039Z',
-                planVersionId: 1082,
-                planId: 462,
-                name: 'Afghanistan 2015',
-                startDate: '2015-01-01',
-                endDate: '2015-12-31',
-                comments: null,
-                isForHPCProjects: false,
-                code: 'HAFG15',
-                customLocationCode: null,
-                currentReportingPeriodId: null,
-                lastPublishedReportingPeriodId: null,
-                clusterSelectionType: null,
-                currentVersion: true,
-                latestVersion: true,
-                latestTaggedVersion: true,
-                versionTags: ['1.0'],
-              },
-              {
-                id: 426,
-                restricted: false,
-                revisionState: null,
-                createdAt: '2017-01-14T00:52:55.726Z',
-                updatedAt: '2017-02-22T17:18:24.205Z',
-                planVersionId: 997,
-                planId: 426,
-                name: 'Afghanistan 2014',
-                startDate: '2014-01-01',
-                endDate: '2014-12-31',
-                comments: null,
-                isForHPCProjects: false,
-                code: 'HAFG14',
-                customLocationCode: null,
-                currentReportingPeriodId: null,
-                lastPublishedReportingPeriodId: null,
-                clusterSelectionType: null,
-                currentVersion: true,
-                latestVersion: true,
-                latestTaggedVersion: true,
-                versionTags: ['1.0'],
-              },
-            ];
+          async ({
+            query,
+          }: plans.GetPlansAutocompleteParams): Promise<plans.GetPlansAutocompleteResult> => {
+            return this.data.plans.filter((plan) =>
+              plan.name.toUpperCase().includes(query.toUpperCase())
+            );
           }
         ),
       },
       projects: {
         getAutocompleteProjects: dummyEndpoint(
           'projects.getAutocompleteProjects',
-          async (): Promise<projects.GetProjectsAutocompleteResult> => {
-            // Implement the dummy data retrieval logic here
-            // Replace the following line with the actual implementation
-            return [
-              {
-                id: 1987,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:57.141Z',
-                code: 'apts626',
-                currentPublishedVersionId: 3974,
-                creatorParticipantId: null,
-                latestVersionId: 3974,
-                implementationStatus: 'Implementing',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Return of Qualified Afghans (RQA)',
-                version: 2,
-                projectVersionCode: 'apts626',
-                visible: true,
-              },
-              {
-                id: 1988,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:57.153Z',
-                code: 'apts627',
-                currentPublishedVersionId: 3976,
-                creatorParticipantId: null,
-                latestVersionId: 3976,
-                implementationStatus: 'Implementing',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Health and Nutrition in old refugee camps and urban communities with large Afghan refugees in Pakistan',
-                version: 2,
-                projectVersionCode: 'apts627',
-                visible: true,
-              },
-              {
-                id: 1989,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:57.185Z',
-                code: 'apts628',
-                currentPublishedVersionId: 3978,
-                creatorParticipantId: null,
-                latestVersionId: 3978,
-                implementationStatus: 'Implementing',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Logistics and Field Coordination for Afghanistan operations',
-                version: 2,
-                projectVersionCode: 'apts628',
-                visible: true,
-              },
-              {
-                id: 1991,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:57.306Z',
-                code: 'apts630',
-                currentPublishedVersionId: 3982,
-                creatorParticipantId: null,
-                latestVersionId: 3982,
-                implementationStatus: 'Implementing',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Promotion of Safe Motherhood in Afghanistan',
-                version: 2,
-                projectVersionCode: 'apts630',
-                visible: true,
-              },
-              {
-                id: 2001,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:57.819Z',
-                code: 'apts641',
-                currentPublishedVersionId: 4002,
-                creatorParticipantId: null,
-                latestVersionId: 4002,
-                implementationStatus: 'Planning',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Formal and non-formal education for Afghan Refugee children (boys and girls) at Roghani Camps 1 & 2, Chaman',
-                version: 2,
-                projectVersionCode: 'apts641',
-                visible: true,
-              },
-              {
-                id: 2002,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:57.909Z',
-                code: 'apts645',
-                currentPublishedVersionId: 4004,
-                creatorParticipantId: null,
-                latestVersionId: 4004,
-                implementationStatus: 'Planning',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Support to 9 supplementary feeding centers & 3 therapeutic feeding centers in Afghanistan',
-                version: 2,
-                projectVersionCode: 'apts645',
-                visible: true,
-              },
-              {
-                id: 2004,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:57.938Z',
-                code: 'apts647',
-                currentPublishedVersionId: 4008,
-                creatorParticipantId: null,
-                latestVersionId: 4008,
-                implementationStatus: 'Planning',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Support to Kabul central laboratory and  11 provincial laboratories in Afghanistan',
-                version: 2,
-                projectVersionCode: 'apts647',
-                visible: true,
-              },
-              {
-                id: 2027,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:59.008Z',
-                code: 'apts673',
-                currentPublishedVersionId: 4054,
-                creatorParticipantId: null,
-                latestVersionId: 4054,
-                implementationStatus: 'Planning',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Engineering programme for Afghanistan-I',
-                version: 2,
-                projectVersionCode: 'apts673',
-                visible: true,
-              },
-              {
-                id: 2028,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:59.019Z',
-                code: 'apts674',
-                currentPublishedVersionId: 4056,
-                creatorParticipantId: null,
-                latestVersionId: 4056,
-                implementationStatus: 'Planning',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Construction of 600 wells and 7 water supply systems in 12 target districts of Northern Afghanistan',
-                version: 2,
-                projectVersionCode: 'apts674',
-                visible: true,
-              },
-              {
-                id: 2043,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:59.639Z',
-                code: 'apts690',
-                currentPublishedVersionId: 4086,
-                creatorParticipantId: null,
-                latestVersionId: 4086,
-                implementationStatus: 'Planning',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Basic Mental Health Care Project, in Ningarhar province, Afghanistan.',
-                version: 2,
-                projectVersionCode: 'apts690',
-                visible: true,
-              },
-              {
-                id: 2045,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:59.686Z',
-                code: 'apts692',
-                currentPublishedVersionId: 4090,
-                creatorParticipantId: null,
-                latestVersionId: 4090,
-                implementationStatus: 'Implementing',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Control of Vector-Borne Diseases in Afghanistan:·\tPrevention and Control of Malaria ·\tAlleviation of Suffering from Cutaneous Leishmaniasis',
-                version: 2,
-                projectVersionCode: 'apts692',
-                visible: true,
-              },
-              {
-                id: 2046,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:59.740Z',
-                code: 'apts693',
-                currentPublishedVersionId: 4092,
-                creatorParticipantId: null,
-                latestVersionId: 4092,
-                implementationStatus: 'Planning',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Afghan Refugee Assistance and Administrative Support',
-                version: 2,
-                projectVersionCode: 'apts693',
-                visible: true,
-              },
-              {
-                id: 2047,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:59.810Z',
-                code: 'apts694',
-                currentPublishedVersionId: 4094,
-                creatorParticipantId: null,
-                latestVersionId: 4094,
-                implementationStatus: 'Implementing',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Health Care Support Project (HCSP), Ningarhar Province Afghanistan.',
-                version: 2,
-                projectVersionCode: 'apts694',
-                visible: true,
-              },
-              {
-                id: 2048,
-                createdAt: '2002-02-28T00:00:00.000Z',
-                updatedAt: '2017-02-06T20:16:59.822Z',
-                code: 'apts695',
-                currentPublishedVersionId: 4096,
-                creatorParticipantId: null,
-                latestVersionId: 4096,
-                implementationStatus: 'Planning',
-                pdf: null,
-                sourceProjectId: null,
-                name: 'Afghan Refugee Health and Education',
-                version: 2,
-                projectVersionCode: 'apts695',
-                visible: true,
-              },
-            ];
+          async ({
+            query,
+          }: projects.GetProjectsAutocompleteParams): Promise<projects.GetProjectsAutocompleteResult> => {
+            return this.data.projects.filter((project) =>
+              project.name.toUpperCase().includes(query.toUpperCase())
+            );
           }
         ),
       },
@@ -2091,274 +1124,7 @@ export class Dummy {
         getUsageYears: dummyEndpoint(
           'usageYear.getUsageYears',
           async (): Promise<usageYears.GetUsageYearsResult> => {
-            // Implement the dummy data retrieval logic here
-            // Replace the following line with the actual implementation
-            return [
-              {
-                id: 20,
-                year: '1999',
-                createdAt: '2016-02-23T15:03:30.774Z',
-                updatedAt: '2016-02-23T15:03:30.774Z',
-              },
-              {
-                id: 21,
-                year: '2000',
-                createdAt: '2016-02-23T15:03:30.779Z',
-                updatedAt: '2016-02-23T15:03:30.779Z',
-              },
-              {
-                id: 22,
-                year: '2001',
-                createdAt: '2016-02-23T15:03:30.783Z',
-                updatedAt: '2016-02-23T15:03:30.783Z',
-              },
-              {
-                id: 23,
-                year: '2002',
-                createdAt: '2016-02-23T15:03:30.796Z',
-                updatedAt: '2016-02-23T15:03:30.796Z',
-              },
-              {
-                id: 24,
-                year: '2003',
-                createdAt: '2016-02-23T15:03:30.804Z',
-                updatedAt: '2016-02-23T15:03:30.804Z',
-              },
-              {
-                id: 25,
-                year: '2004',
-                createdAt: '2016-02-23T15:03:30.806Z',
-                updatedAt: '2016-02-23T15:03:30.806Z',
-              },
-              {
-                id: 26,
-                year: '2005',
-                createdAt: '2016-02-23T15:03:30.808Z',
-                updatedAt: '2016-02-23T15:03:30.808Z',
-              },
-              {
-                id: 27,
-                year: '2006',
-                createdAt: '2016-02-23T15:03:30.816Z',
-                updatedAt: '2016-02-23T15:03:30.816Z',
-              },
-              {
-                id: 28,
-                year: '2007',
-                createdAt: '2016-02-23T15:03:30.827Z',
-                updatedAt: '2016-02-23T15:03:30.827Z',
-              },
-              {
-                id: 29,
-                year: '2008',
-                createdAt: '2016-02-23T15:03:30.830Z',
-                updatedAt: '2016-02-23T15:03:30.830Z',
-              },
-              {
-                id: 30,
-                year: '2009',
-                createdAt: '2016-02-23T15:03:30.832Z',
-                updatedAt: '2016-02-23T15:03:30.832Z',
-              },
-              {
-                id: 31,
-                year: '2010',
-                createdAt: '2016-02-23T15:03:30.840Z',
-                updatedAt: '2016-02-23T15:03:30.840Z',
-              },
-              {
-                id: 32,
-                year: '2011',
-                createdAt: '2016-02-23T15:03:30.852Z',
-                updatedAt: '2016-02-23T15:03:30.852Z',
-              },
-              {
-                id: 33,
-                year: '2012',
-                createdAt: '2016-02-23T15:03:30.862Z',
-                updatedAt: '2016-02-23T15:03:30.862Z',
-              },
-              {
-                id: 34,
-                year: '2014',
-                createdAt: '2016-02-23T15:03:30.870Z',
-                updatedAt: '2016-02-23T15:03:30.870Z',
-              },
-              {
-                id: 35,
-                year: '2013',
-                createdAt: '2016-02-23T15:03:30.875Z',
-                updatedAt: '2016-02-23T15:03:30.875Z',
-              },
-              {
-                id: 36,
-                year: '2016',
-                createdAt: '2016-02-23T15:03:30.879Z',
-                updatedAt: '2016-02-23T15:03:30.879Z',
-              },
-              {
-                id: 37,
-                year: '2015',
-                createdAt: '2016-02-23T15:03:30.883Z',
-                updatedAt: '2016-02-23T15:03:30.883Z',
-              },
-              {
-                id: 38,
-                year: '2017',
-                createdAt: '2016-02-23T15:03:30.890Z',
-                updatedAt: '2016-02-23T15:03:30.890Z',
-              },
-              {
-                id: 39,
-                year: '2018',
-                createdAt: '2016-02-23T15:03:30.903Z',
-                updatedAt: '2016-02-23T15:03:30.903Z',
-              },
-              {
-                id: 40,
-                year: '2019',
-                createdAt: '2016-02-23T15:03:30.909Z',
-                updatedAt: '2016-02-23T15:03:30.909Z',
-              },
-              {
-                id: 41,
-                year: '2020',
-                createdAt: '2016-02-23T15:03:30.916Z',
-                updatedAt: '2016-02-23T15:03:30.916Z',
-              },
-              {
-                id: 42,
-                year: '2021',
-                createdAt: '2016-02-23T15:03:30.923Z',
-                updatedAt: '2016-02-23T15:03:30.923Z',
-              },
-              {
-                id: 43,
-                year: '2022',
-                createdAt: '2016-02-23T15:03:30.928Z',
-                updatedAt: '2016-02-23T15:03:30.928Z',
-              },
-              {
-                id: 44,
-                year: '2023',
-                createdAt: '2016-02-23T15:03:30.941Z',
-                updatedAt: '2016-02-23T15:03:30.941Z',
-              },
-              {
-                id: 45,
-                year: '2024',
-                createdAt: '2016-02-23T15:03:30.953Z',
-                updatedAt: '2016-02-23T15:03:30.953Z',
-              },
-              {
-                id: 46,
-                year: '2025',
-                createdAt: '2016-02-23T15:03:30.955Z',
-                updatedAt: '2016-02-23T15:03:30.955Z',
-              },
-              {
-                id: 47,
-                year: '2026',
-                createdAt: '2016-02-23T15:03:30.959Z',
-                updatedAt: '2016-02-23T15:03:30.959Z',
-              },
-              {
-                id: 48,
-                year: '2027',
-                createdAt: '2016-02-23T15:03:30.975Z',
-                updatedAt: '2016-02-23T15:03:30.975Z',
-              },
-              {
-                id: 49,
-                year: '2028',
-                createdAt: '2016-02-23T15:03:30.984Z',
-                updatedAt: '2016-02-23T15:03:30.984Z',
-              },
-              {
-                id: 50,
-                year: '2029',
-                createdAt: '2016-02-23T15:03:30.990Z',
-                updatedAt: '2016-02-23T15:03:30.990Z',
-              },
-              {
-                id: 51,
-                year: '2030',
-                createdAt: '2016-02-23T15:03:30.993Z',
-                updatedAt: '2016-02-23T15:03:30.993Z',
-              },
-              {
-                id: 52,
-                year: '2031',
-                createdAt: '2016-02-23T15:03:31.000Z',
-                updatedAt: '2016-02-23T15:03:31.000Z',
-              },
-              {
-                id: 53,
-                year: '2033',
-                createdAt: '2016-02-23T15:03:31.008Z',
-                updatedAt: '2016-02-23T15:03:31.008Z',
-              },
-              {
-                id: 54,
-                year: '2034',
-                createdAt: '2016-02-23T15:03:31.016Z',
-                updatedAt: '2016-02-23T15:03:31.016Z',
-              },
-              {
-                id: 55,
-                year: '2032',
-                createdAt: '2016-02-23T15:03:31.020Z',
-                updatedAt: '2016-02-23T15:03:31.020Z',
-              },
-              {
-                id: 56,
-                year: '2035',
-                createdAt: '2016-02-23T15:03:31.025Z',
-                updatedAt: '2016-02-23T15:03:31.025Z',
-              },
-              {
-                id: 57,
-                year: '2036',
-                createdAt: '2016-02-23T15:03:31.028Z',
-                updatedAt: '2016-02-23T15:03:31.028Z',
-              },
-              {
-                id: 58,
-                year: '2037',
-                createdAt: '2016-02-23T15:03:31.043Z',
-                updatedAt: '2016-02-23T15:03:31.043Z',
-              },
-              {
-                id: 59,
-                year: '2038',
-                createdAt: '2016-02-23T15:03:31.049Z',
-                updatedAt: '2016-02-23T15:03:31.049Z',
-              },
-              {
-                id: 60,
-                year: '2039',
-                createdAt: '2016-02-23T15:03:31.057Z',
-                updatedAt: '2016-02-23T15:03:31.057Z',
-              },
-              {
-                id: 61,
-                year: '2040',
-                createdAt: '2016-02-23T15:03:31.062Z',
-                updatedAt: '2016-02-23T15:03:31.062Z',
-              },
-              {
-                id: 62,
-                year: '2042',
-                createdAt: '2016-02-23T15:03:31.070Z',
-                updatedAt: '2016-02-23T15:03:31.070Z',
-              },
-              {
-                id: 63,
-                year: '2043',
-                createdAt: '2016-02-23T15:03:31.073Z',
-                updatedAt: '2016-02-23T15:03:31.073Z',
-              },
-            ];
+            return this.data.usageYears;
           }
         ),
       },

@@ -9,7 +9,7 @@ import { Strings } from '../../i18n/iface';
 import { OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { Dayjs } from 'dayjs';
 import { FlowsFilterValues } from '../components/filters/filter-flows-table';
-import { valueToInteger } from './map-functions';
+import { currencyToInteger, valueToInteger } from './map-functions';
 
 /*
  * The whole idea of this filtering system is to parse
@@ -25,12 +25,12 @@ export type Filters =
   | PendingFlowsFilterValues
   | OrganizationFilterValues;
 
-export type FilterKeys =
+export type FilterKey =
   | keyof Strings['components']['flowsFilter']['filters']
   | keyof Strings['components']['pendingFlowsFilter']['filters']
   | keyof Strings['components']['organizationsFilter']['filters'];
 
-export type FilterValues =
+export type FilterValue =
   | string
   | string[]
   | boolean
@@ -39,9 +39,11 @@ export type FilterValues =
   | Array<FormObjectValue>
   | Dayjs;
 
-export type Filter<T extends FilterKeys> = {
+export type EmptyValue = null | '' | [] | false;
+
+export type Filter<T extends FilterKey> = {
   [key in T]?: {
-    value: FilterValues;
+    value: FilterValue;
     displayValue: string;
   };
 };
@@ -59,20 +61,26 @@ export type FlowStatusType =
  * Type guard functions
  */
 
-const filterValueIsString = (value: FilterValues | number): value is string => {
+const isEmptyValue = (value: unknown): value is EmptyValue =>
+  value === null ||
+  value === false ||
+  (typeof value === 'string' && value === '') ||
+  (Array.isArray(value) && value.length === 0);
+
+const filterValueIsString = (value: FilterValue | number): value is string => {
   return typeof value === 'string';
 };
 
-const filterValueIsArrayString = (value: FilterValues): value is string[] => {
+const filterValueIsArrayString = (value: FilterValue): value is string[] => {
   return Array.isArray(value) && typeof value[0] === 'string';
 };
 
-const filterValueIsBoolean = (value: FilterValues): value is boolean => {
+const filterValueIsBoolean = (value: FilterValue): value is boolean => {
   return typeof value === 'boolean';
 };
 
 const filterValueIsFormObjectValue = (
-  value: FilterValues
+  value: FilterValue
 ): value is FormObjectValue => {
   return (
     typeof value === 'object' &&
@@ -84,12 +92,12 @@ const filterValueIsFormObjectValue = (
 };
 
 const filterValueIsArrayFormObjectValue = (
-  value: FilterValues
+  value: FilterValue
 ): value is Array<FormObjectValue> => {
   return Array.isArray(value) && typeof value[0] !== 'string';
 };
 
-const filterValueIsDayJS = (value: FilterValues): value is Dayjs => {
+const filterValueIsDayJS = (value: FilterValue): value is Dayjs => {
   return (
     typeof value === 'object' &&
     !Array.isArray(value) &&
@@ -99,7 +107,7 @@ const filterValueIsDayJS = (value: FilterValues): value is Dayjs => {
 };
 
 const filterValueIsFlowStatusType = (
-  value: FilterValues | number
+  value: FilterValue | number
 ): value is FlowStatusType => {
   const values = [
     'commitment',
@@ -121,17 +129,21 @@ const parseInInitialValues = <T extends Filters>(
   initialValues: T
 ) => {
   for (const key in initialValues) {
-    filters[key] = filters[key] ? filters[key] : initialValues[key];
+    filters[key] =
+      filters[key] !== undefined ? filters[key] : initialValues[key];
   }
   return filters;
 };
-export const parseOutInitialValues = <T extends Filters>(
+export const parseOutEmptyInitialValues = <T extends Filters>(
   filters: T,
   initialValues: T
 ) => {
   const res = {} as T;
   for (const key in filters) {
-    if (JSON.stringify(filters[key]) !== JSON.stringify(initialValues[key]))
+    if (
+      !isEmptyValue(filters[key]) ||
+      JSON.stringify(filters[key]) !== JSON.stringify(initialValues[key])
+    )
       res[key] = filters[key];
   }
   return res;
@@ -140,7 +152,7 @@ export const encodeFilters = <T extends Filters>(
   filters: T,
   initialValue: T
 ) => {
-  const cleanedFilters = parseOutInitialValues(filters, initialValue);
+  const cleanedFilters = parseOutEmptyInitialValues(filters, initialValue);
   return JSON.stringify(cleanedFilters);
 };
 
@@ -179,7 +191,7 @@ function isFlowObjectTypes(value: string): value is FlowObjectTypes {
   ].includes(value);
 }
 export const extractDirectionObject = (
-  inputString: FilterKeys
+  inputString: FilterKey
 ): {
   direction: 'source' | 'destination';
   object: FlowObjectTypes;
@@ -214,15 +226,15 @@ type FlowObjectTypes =
   | 'emergency';
 
 export const parseFormFilters = <
-  T extends FilterKeys,
+  T extends FilterKey,
   K extends {
-    [x in T]?: FilterValues | undefined;
+    [x in T]?: FilterValue | undefined;
   },
 >(
   filters: K,
   initialValues: K
 ): Filter<T> => {
-  const cleanedFilters = parseOutInitialValues(filters, initialValues);
+  const cleanedFilters = parseOutEmptyInitialValues(filters, initialValues);
   const parsedFormValue: Filter<T> = {};
   for (const key in cleanedFilters) {
     const fieldValue = cleanedFilters[key];
@@ -340,7 +352,7 @@ export const parseFlowFilters = (
             break;
           }
           if (filterValueIsString(amountUSD)) {
-            res.flowFilters[key] = valueToInteger(amountUSD);
+            res.flowFilters[key] = currencyToInteger(amountUSD);
           }
           break;
         }
@@ -357,7 +369,6 @@ export const parseFlowFilters = (
         case 'flowType':
         case 'flowStatus': {
           const filterValue = filters[key]?.value;
-          console.log(filterValue);
           if (!filterValue) {
             break;
           }
@@ -480,12 +491,24 @@ export const parseOrganizationFilters = (
             break;
           }
           if (filterValueIsFormObjectValue(locations)) {
-            res.search[key] = [
-              {
-                name: locations.displayLabel,
-                id: valueToInteger(locations.value),
-              },
-            ];
+            const location = {
+              name: locations.displayLabel,
+              id: valueToInteger(locations.value),
+            };
+            if (locations.parent) {
+              res.search[key] = [
+                {
+                  ...location,
+                  parentId: valueToInteger(locations.parent.value),
+                },
+                {
+                  name: locations.parent.displayLabel,
+                  id: valueToInteger(locations.parent.value),
+                },
+              ];
+            } else {
+              res.search[key] = [location];
+            }
           }
           break;
         }
