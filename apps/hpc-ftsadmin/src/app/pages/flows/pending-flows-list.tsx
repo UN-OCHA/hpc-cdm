@@ -22,7 +22,7 @@ import {
 import FlowsTable, {
   FlowsTableProps,
 } from '../../components/tables/flows-table';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 interface Props {
   className?: string;
@@ -35,9 +35,7 @@ const LandingContainer = tw.div`
 `;
 
 export default (props: Props) => {
-  const [abortController, setAbortController] = useState<AbortController>(
-    new AbortController()
-  );
+  const abortControllerRef = useRef<AbortController>(new AbortController());
 
   const [query, setQuery] = useQueryParams({
     page: withDefault(NumberParam, 0),
@@ -73,24 +71,14 @@ export default (props: Props) => {
   });
 
   const handleAbortController = useCallback(() => {
-    // Abort the ongoing requests
-    abortController.abort();
-
-    // Create a new AbortController for the next requests
-    const newAbortController = new AbortController();
-    setAbortController(newAbortController);
-
-    // Perform actions with the updated filter values
-
-    // Pass the new AbortSignal to FlowsTableGraphQL
-    // This can be part of your state or directly passed as a prop
-  }, [abortController]);
+    abortControllerRef.current.abort();
+    abortControllerRef.current = new AbortController();
+  }, []);
 
   useEffect(() => {
     return () => {
-      handleAbortController();
+      abortControllerRef.current.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const pendingFlowsTableProps: FlowsTableProps = {
@@ -100,7 +88,7 @@ export default (props: Props) => {
     query: query,
     setQuery: setQuery,
     pending: true,
-    abortSignal: abortController.signal,
+    abortSignal: abortControllerRef.current.signal,
   };
 
   return (
