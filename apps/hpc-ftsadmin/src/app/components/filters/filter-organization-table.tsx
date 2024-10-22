@@ -20,6 +20,7 @@ interface Props {
   query: Query;
   setQuery: (newQuery: Query) => void;
   lang: LanguageKey;
+  handleAbortController: () => void;
 }
 export interface OrganizationFilterValues {
   organization?: string;
@@ -46,7 +47,7 @@ const StyledDiv = tw.div`
   gap-x-4
 `;
 export const FilterOrganizationsTable = (props: Props) => {
-  const { environment, setQuery, query, lang } = props;
+  const { environment, setQuery, query, lang, handleAbortController } = props;
   const filters = decodeFilters(
     query.filters,
     ORGANIZATIONS_FILTER_INITIAL_VALUES
@@ -57,10 +58,17 @@ export const FilterOrganizationsTable = (props: Props) => {
   });
 
   const handleSubmit = (values: OrganizationFilterValues) => {
+    const encodedFilters = encodeFilters(
+      values,
+      ORGANIZATIONS_FILTER_INITIAL_VALUES
+    );
+    if (query.filters !== encodedFilters) {
+      handleAbortController();
+    }
     setQuery({
       ...query,
       page: 0,
-      filters: encodeFilters(values, ORGANIZATIONS_FILTER_INITIAL_VALUES),
+      filters: encodedFilters,
     });
   };
   const handleResetForm = (
@@ -68,11 +76,18 @@ export const FilterOrganizationsTable = (props: Props) => {
       nextState?: Partial<FormikState<OrganizationFilterValues>>
     ) => void
   ) => {
+    const encodedFilters = encodeFilters(
+      {},
+      ORGANIZATIONS_FILTER_INITIAL_VALUES
+    );
     formikResetForm();
+    if (query.filters !== encodedFilters) {
+      handleAbortController();
+    }
     setQuery({
       ...query,
       page: 0,
-      filters: encodeFilters({}, ORGANIZATIONS_FILTER_INITIAL_VALUES),
+      filters: encodedFilters,
     });
   };
   return (

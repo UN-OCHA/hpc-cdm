@@ -62,6 +62,7 @@ export interface OrganizationTableProps {
   rowsPerPageOption: number[];
   query: Query;
   setQuery: (newQuery: Query) => void;
+  abortSignal: AbortSignal;
 }
 
 export default function OrganizationTable(props: OrganizationTableProps) {
@@ -87,6 +88,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
         offset: query.page * query.rowsPerPage,
         orderBy: query.orderBy,
         orderDir: query.orderDir,
+        signal: props.abortSignal,
         ...parseOrganizationFilters(parsedFilters).search,
       },
     })
