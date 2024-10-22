@@ -16,7 +16,7 @@ import {
   fnLocations,
   fnOrganizations,
 } from '../utils/fn-promises';
-import validateForm, { parseFieldError } from '../utils/form-validation';
+import validateForm from '../utils/form-validation';
 import { parseError, valueToInteger } from '../utils/map-functions';
 interface Props {
   id?: number;
@@ -130,11 +130,30 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
       keyof Strings['components']['organizationUpdateCreate']['errors']
     >();
   const [errorValue, setErrorValue] = useState('');
-  const FORM_VALIDATION = io.partial({
+
+  const FORM_VALIDATION = io.type({
     name: util.NON_EMPTY_STRING,
     abbreviation: util.NON_EMPTY_STRING,
     organizationTypes: util.NON_EMPTY_ARRAY,
   });
+
+  const VALIDATION_ERROR_MESSAGES: Record<
+    keyof io.TypeOf<typeof FORM_VALIDATION>,
+    string
+  > = {
+    name: t.t(
+      lang,
+      (s) => s.components.organizationUpdateCreate.formErrors.name
+    ),
+    abbreviation: t.t(
+      lang,
+      (s) => s.components.organizationUpdateCreate.formErrors.abbreviation
+    ),
+    organizationTypes: t.t(
+      lang,
+      (s) => s.components.organizationUpdateCreate.formErrors.organizationType
+    ),
+  };
 
   const errorHandling = (err: Error) => {
     if (errors.isDuplicateError(err)) {
@@ -167,7 +186,9 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
       enableReinitialize
       initialValues={initialValues ?? ADD_EDIT_ORGANIZATION_INITIAL_VALUES}
       onSubmit={handleSubmit}
-      validate={(values) => validateForm(values, FORM_VALIDATION)}
+      validate={(values) =>
+        validateForm(values, FORM_VALIDATION, VALIDATION_ERROR_MESSAGES)
+      }
     >
       {({ initialValues }) => (
         <Form>
@@ -187,15 +208,6 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.name
             )}
             name="name"
-            error={(metaError) =>
-              parseFieldError(
-                metaError,
-                t.t(
-                  lang,
-                  (s) => s.components.organizationUpdateCreate.formErrors.name
-                )
-              )
-            }
             required
           />
           <C.TextFieldWrapper
@@ -204,17 +216,6 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.abbreviation
             )}
             name="abbreviation"
-            error={(metaError) =>
-              parseFieldError(
-                metaError,
-                t.t(
-                  lang,
-                  (s) =>
-                    s.components.organizationUpdateCreate.formErrors
-                      .abbreviation
-                )
-              )
-            }
             required
           />
           <C.TextFieldWrapper
@@ -282,17 +283,6 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
             isAutocompleteAPI={false}
             isMulti
             required
-            error={(metaError) =>
-              parseFieldError(
-                metaError,
-                t.t(
-                  lang,
-                  (s) =>
-                    s.components.organizationUpdateCreate.formErrors
-                      .organizationType
-                )
-              )
-            }
           />
           <InfoText>
             {t.t(

@@ -3,19 +3,15 @@ import { isRight } from 'fp-ts/lib/Either';
 import type * as io from 'io-ts';
 import { isKey } from './parse-filters';
 
-export const parseFieldError = (validationError: string, error: string) => {
-  if (validationError === '{validationError}') {
-    return error;
-  }
-};
 const isStringUndefined = (value: unknown): value is string | undefined =>
   typeof value === 'string' || value === undefined;
 /**
  * Validate form fields when using io-ts as a validator. validationSchema key names must be the same as the ones supplied to values
  */
-const validateForm = <T extends object, K extends io.Any>(
+const validateForm = <T, K extends keyof T>(
   values: T,
-  validationSchema: K
+  validationSchema: io.TypeC<Record<K, io.Mixed>>,
+  errorMessages?: Record<K, string>
 ) => {
   const result = validationSchema.decode(values);
   if (isRight(result)) {
@@ -29,7 +25,11 @@ const validateForm = <T extends object, K extends io.Any>(
         // Did not find a better solution, but I think it is
         // fine to let it like that for the moment
         if (isStringUndefined(errors[key])) {
-          (errors[key] as string | undefined) = '{validationError}'; // Placeholder to change for i18n text
+          let validationErrorMessage = '{validationError}'; // Placeholder to change for i18n text
+          if (errorMessages && isKey(errorMessages, key)) {
+            validationErrorMessage = errorMessages[key];
+          }
+          (errors[key] as string | undefined) = validationErrorMessage;
         }
       }
     }

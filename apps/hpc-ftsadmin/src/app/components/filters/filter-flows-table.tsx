@@ -83,9 +83,16 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   restricted: false,
 };
 
-const FORM_VALIDATION = io.partial({
+const FORM_VALIDATION = io.type({
   flowID: io.array(util.POSITIVE_INTEGER_FROM_STRING),
 });
+
+const VALIDATION_ERROR_MESSAGES: Record<
+  keyof io.TypeOf<typeof FORM_VALIDATION>,
+  string
+> = {
+  flowID: 'Only numbers are allowed in this field',
+};
 
 const StyledDiv = tw.div`
   my-6
@@ -134,7 +141,9 @@ export const FilterFlowsTable = (props: Props) => {
       <Formik
         enableReinitialize
         initialValues={queryFilters}
-        validate={(values) => validateForm(values, FORM_VALIDATION)}
+        validate={(values) =>
+          validateForm(values, FORM_VALIDATION, VALIDATION_ERROR_MESSAGES)
+        }
         onSubmit={handleSubmit}
       >
         {({ resetForm }) => (

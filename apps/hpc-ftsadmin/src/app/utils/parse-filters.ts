@@ -175,8 +175,8 @@ export const decodeFilters = <T extends Filters>(
   }
 };
 
-export function isKey<T extends object>(x: T, k: PropertyKey): k is keyof T {
-  return k in x;
+export function isKey<T>(x: T, k: PropertyKey): k is keyof T {
+  return typeof x === 'object' && x !== null && k in x;
 }
 
 export function isFlowObjectTypes(value: string): value is FlowObjectTypes {

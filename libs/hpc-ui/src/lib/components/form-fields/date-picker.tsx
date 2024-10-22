@@ -1,4 +1,4 @@
-import { Link, TextField } from '@mui/material';
+import { Link, TextField, type TextFieldProps } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import {
   DatePicker as BaseDatePicker,
@@ -41,8 +41,14 @@ const DatePicker = ({
   onChange,
   disabled,
 }: DatePickerProps) => {
-  const [field, , helpers] = useField(name);
+  const [field, meta, helpers] = useField(name);
   const { setFieldValue } = useFormikContext();
+
+  const textFieldErrorProps: Partial<TextFieldProps> = {};
+  if (meta.error && meta.touched) {
+    textFieldErrorProps.error = true;
+    textFieldErrorProps.helperText = meta.error;
+  }
 
   const datePickerProps: DatePickerPropsMUI<Dayjs> = {
     ...field,
@@ -71,6 +77,7 @@ const DatePicker = ({
           disabled={disabled}
           InputLabelProps={{ shrink: true }}
           size="small"
+          {...textFieldErrorProps}
         />
       ),
     },

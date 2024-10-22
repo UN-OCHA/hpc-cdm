@@ -36,7 +36,6 @@ export type AsyncAutocompleteSelectProps = {
   fnPromise: ({ query }: { query: string }) => Promise<util.FormObjectValue[]>;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
-  error?: (metaError: string) => string | undefined;
   required?: boolean;
   allowChildrenRender?: boolean;
   removeOptions?: util.FormObjectValue[];
@@ -81,7 +80,6 @@ const AsyncAutocompleteSelect = ({
   placeholder,
   fnPromise,
   isMulti,
-  error,
   isAutocompleteAPI,
   required,
   allowChildrenRender,
@@ -259,14 +257,8 @@ const AsyncAutocompleteSelect = ({
             </>
           ),
         }}
-        error={!!(meta && meta.touched && meta.error)}
-        helperText={
-          meta && meta.touched && meta.error
-            ? error
-              ? error(meta.error)
-              : meta.error
-            : undefined
-        }
+        error={!!(meta.touched && meta.error)}
+        helperText={meta.touched && meta.error ? meta.error : undefined}
       />
     ),
   };

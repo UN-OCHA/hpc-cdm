@@ -107,6 +107,10 @@ const MergeModal = (props: MergeModalProps) => {
     mergingEntities: null,
     receivingEntity: null,
   };
+
+  const env = getEnv();
+  const lang = getContext().lang;
+
   const ORGANIZATION_FORM_VALIDATION = io.type({
     mergingEntities: codecs.NON_EMPTY_ARRAY,
     receivingEntity: codecs.NON_NULL_VALUE,
@@ -116,8 +120,19 @@ const MergeModal = (props: MergeModalProps) => {
     receivingEntity: codecs.NON_NULL_VALUE,
   });
 
-  const env = getEnv();
-  const lang = getContext().lang;
+  const VALIDATION_ERROR_MESSAGES: Record<
+    keyof io.TypeOf<typeof ORGANIZATION_FORM_VALIDATION>,
+    string
+  > = {
+    mergingEntities: t.t(
+      lang,
+      (s) => s.components.mergeModal.formError.mergingEntity
+    ),
+    receivingEntity: t.t(
+      lang,
+      (s) => s.components.mergeModal.formError.receivingEntity
+    ),
+  };
 
   const isOrganizationType = type === 'organization';
 
@@ -228,7 +243,8 @@ const MergeModal = (props: MergeModalProps) => {
                 values,
                 isOrganizationType
                   ? ORGANIZATION_FORM_VALIDATION
-                  : KEYWORD_FORM_VALIDATION
+                  : KEYWORD_FORM_VALIDATION,
+                VALIDATION_ERROR_MESSAGES
               )
             }
           >
@@ -262,12 +278,6 @@ const MergeModal = (props: MergeModalProps) => {
                           : undefined
                       }
                       required
-                      error={(_) =>
-                        t.t(
-                          lang,
-                          (s) => s.components.mergeModal.formError.mergingEntity
-                        )
-                      }
                     />
                     <EastIcon /> {/** TODO: Support rtl languages */}
                     <C.AsyncAutocompleteSelect
@@ -286,13 +296,6 @@ const MergeModal = (props: MergeModalProps) => {
                         lang
                       )}
                       required
-                      error={(_) =>
-                        t.t(
-                          lang,
-                          (s) =>
-                            s.components.mergeModal.formError.receivingEntity
-                        )
-                      }
                       removeOptions={
                         isOrganizationValues(values)
                           ? values.mergingEntities

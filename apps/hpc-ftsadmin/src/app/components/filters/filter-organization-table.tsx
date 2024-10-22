@@ -28,7 +28,7 @@ export interface OrganizationFilterValues {
   parentOrganization?: util.FormObjectValue | null;
   locations?: util.FormObjectValue | null;
   date?: Dayjs | null;
-  status?: FormObjectValue;
+  status?: util.FormObjectValue;
 }
 
 export const ORGANIZATIONS_FILTER_INITIAL_VALUES: OrganizationFilterValues = {
@@ -53,9 +53,16 @@ export const FilterOrganizationsTable = (props: Props) => {
     ORGANIZATIONS_FILTER_INITIAL_VALUES
   );
 
-  const FORM_VALIDATION = io.partial({
+  const FORM_VALIDATION = io.type({
     date: io.union([util.VALID_DAYJS_DATE, io.null]),
   });
+
+  const VALIDATION_ERROR_MESSAGES: Record<
+    keyof io.TypeOf<typeof FORM_VALIDATION>,
+    string
+  > = {
+    date: 'This field is not in the correct format (DD/MM/YYYY)',
+  };
 
   const handleSubmit = (values: OrganizationFilterValues) => {
     const encodedFilters = encodeFilters(
@@ -104,7 +111,9 @@ export const FilterOrganizationsTable = (props: Props) => {
       <Formik
         enableReinitialize
         initialValues={filters}
-        validate={(values) => validateForm(values, FORM_VALIDATION)}
+        validate={(values) =>
+          validateForm(values, FORM_VALIDATION, VALIDATION_ERROR_MESSAGES)
+        }
         onSubmit={handleSubmit}
       >
         {({ resetForm }) => (

@@ -1,6 +1,6 @@
 import InputAdornment from '@mui/material/InputAdornment';
 import { useField, useFormikContext } from 'formik';
-import { NumericFormat } from 'react-number-format';
+import { type NumberFormatValues, NumericFormat } from 'react-number-format';
 import { StyledTextField } from './text-field';
 
 export interface NumberFieldProps {
@@ -21,15 +21,22 @@ const NumberField = ({
   required,
   disabled,
 }: NumberFieldProps) => {
-  const [field] = useField(name);
+  const [field, meta] = useField(name);
   const { setFieldValue } = useFormikContext<number>();
 
+  const textFieldErrors: { error?: boolean; helperText?: string } = {};
+
+  if (meta && meta.touched && meta.error) {
+    textFieldErrors.error = true;
+    textFieldErrors.helperText = meta.error;
+  }
   return (
     <NumericFormat
       {...field}
+      {...textFieldErrors}
       name={name}
       label={label}
-      onValueChange={(values) => {
+      onValueChange={(values: NumberFormatValues) => {
         setFieldValue(field.name, values.value);
       }}
       thousandSeparator={type === 'currency' || type === 'unknownCurrency'}
@@ -48,6 +55,7 @@ const NumberField = ({
           ) : undefined,
         size: 'small',
         label,
+        ...textFieldErrors,
       }}
     />
   );

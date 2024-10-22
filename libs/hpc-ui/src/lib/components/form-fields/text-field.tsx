@@ -17,7 +17,6 @@ export interface TextFieldWrapperProps {
    *  the number of rows to initially display.
    */
   minRows?: number;
-  error?: (metaError: string) => string | undefined;
   required?: boolean;
   /**
    *  If `onChange()` is passed, it will replace Formik's
@@ -37,7 +36,6 @@ const TextFieldWrapper = ({
   placeholder,
   textarea,
   minRows,
-  error,
   required,
   onChange,
   initialValue,
@@ -57,9 +55,9 @@ const TextFieldWrapper = ({
     size: 'small',
     type: 'text',
   };
-  if (meta && meta.touched && meta.error) {
+  if (meta.touched && meta.error) {
     configTextField.error = true;
-    configTextField.helperText = error ? error(meta.error) : meta.error;
+    configTextField.helperText = meta.error;
   }
   return (
     <StyledTextField
