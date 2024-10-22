@@ -56,7 +56,9 @@ const UploadFile = ({
   return (
     <Box>
       {!file ? (
-        disabled && (
+        disabled ? (
+          <></>
+        ) : (
           <Button
             {...buttonConfig}
             onClick={() => {
