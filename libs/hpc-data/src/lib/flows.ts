@@ -62,7 +62,6 @@ const CREATED_BY_OR_LAST_UPDATED_BY = t.type({
   name: t.string,
 });
 
-/** Delete when finishing off REST flow endpoint (Maybe Matyas needs it) */
 const FLOW_REST = t.intersection([
   t.type({
     id: t.number,
