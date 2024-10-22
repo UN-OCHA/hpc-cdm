@@ -13,16 +13,12 @@ const AutocompleteSelect = ({
   name,
   label,
   options,
-  placeholder,
   readOnly,
-  isMulti,
 }: {
   name: string;
   label: string;
   options: Array<FormObjectValue>;
-  placeholder?: string;
   readOnly?: boolean;
-  isMulti?: boolean;
 }) => {
   const { setFieldValue } = useFormikContext();
   const [field] = useField<FormObjectValue>(name);
@@ -34,7 +30,6 @@ const AutocompleteSelect = ({
     boolean
   > = {
     ...field,
-    multiple: isMulti,
     readOnly,
     options,
     isOptionEqualToValue: (option, value) => option.value === value.value,
@@ -50,7 +45,6 @@ const AutocompleteSelect = ({
         {...params}
         size="small"
         label={label}
-        placeholder={placeholder}
         InputProps={{
           ...params.InputProps,
         }}
