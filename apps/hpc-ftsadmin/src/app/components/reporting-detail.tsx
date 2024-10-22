@@ -230,8 +230,7 @@ const ReportingDetail = ({
             fieldName="sourceSystemRecordId"
             label="Source System Record ID"
             initialValue={sourceSystemRecordId}
-            onChange={(value) => handleChange('sourceSystemRecordId', value)}
-            disabled={disabled}
+            disabled={true}
           />
         </div>
         <div>
