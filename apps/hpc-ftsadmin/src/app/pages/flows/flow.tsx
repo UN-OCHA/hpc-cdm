@@ -5,7 +5,11 @@ import { useLocation, useParams } from 'react-router';
 import { AppContext, getEnv } from '../../context';
 import { t } from '../../../i18n';
 import tw from 'twin.macro';
-import { parseToFlowForm } from '../../utils/parse-flow-form';
+import {
+  type FlowFormTypeSerialized,
+  parseToFlowForm,
+  deserializeFlowForm,
+} from '../../utils/parse-flow-form';
 
 type FlowRouteParams = {
   id: string;
@@ -22,8 +26,13 @@ const InactiveReason = tw.span`
 `;
 
 export default () => {
-  const historyState: { successMessage?: string } | undefined =
-    useLocation().state;
+  const historyState:
+    | {
+        successMessage?: string;
+        flowFormCopyValues?: FlowFormTypeSerialized;
+        flowFormCopyValuesName?: string;
+      }
+    | undefined = useLocation().state;
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState(historyState?.successMessage);
   const { id: idString, version } = useParams<FlowRouteParams>();
@@ -89,9 +98,22 @@ export default () => {
             </C.Loader>
           ) : (
             <PaddingContainer>
-              <C.PageTitle>Add Flow</C.PageTitle>
+              <C.PageTitle>
+                {historyState?.flowFormCopyValues &&
+                historyState?.flowFormCopyValuesName
+                  ? `Copy of Flow ${historyState?.flowFormCopyValuesName}`
+                  : 'Add Flow'}
+              </C.PageTitle>
 
-              <FlowForm setError={setError} load={load} />
+              <FlowForm
+                setError={setError}
+                load={load}
+                initialValues={
+                  historyState?.flowFormCopyValues
+                    ? deserializeFlowForm(historyState.flowFormCopyValues)
+                    : undefined
+                }
+              />
             </PaddingContainer>
           )}
 

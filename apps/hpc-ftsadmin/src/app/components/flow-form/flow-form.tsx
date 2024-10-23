@@ -2,7 +2,7 @@ import { AppContext, getEnv } from '../../context';
 import * as io from 'io-ts';
 import { type FormObjectValue, util as codecs, flows } from '@unocha/hpc-data';
 import { Form, Formik, FormikHelpers } from 'formik';
-import { parseFlowForm } from '../../utils/parse-flow-form';
+import { parseFlowForm, serializeFlowForm } from '../../utils/parse-flow-form';
 import { Box, Grow, Paper, Snackbar, SxProps, Theme } from '@mui/material';
 import tw from 'twin.macro';
 import AsyncAutocompleteSelectReview from './inputs/async-autocomplete-pending-review';
@@ -392,13 +392,22 @@ export const FlowForm = (props: FlowFormProps) => {
                   label="Restricted to internal use"
                 />
               )}
-              {initialValues && !initialValues.isInactive && (
+              {initialValues && !initialValues.isInactive && props.flow && (
                 <>
                   <C.CheckBox
                     name="isErrorCorrection"
                     label="As error correction"
                   />
                   <C.CheckBox name="isInactive" label="Set as inactive" />
+                  <Link
+                    to={paths.addFlow()}
+                    state={{
+                      flowFormCopyValues: serializeFlowForm(values),
+                      flowFormCopyValuesName: `${props.flow?.id}v${props.flow?.versionID}`,
+                    }}
+                  >
+                    Copy Flow
+                  </Link>
                 </>
               )}
               <Box sx={tw`flex mt-6 mx-6 gap-x-10`}>

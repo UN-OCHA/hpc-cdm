@@ -19,6 +19,33 @@ import {
 } from './fn-promises';
 import { ReportingDetailProps } from '../components/reporting-detail';
 import dayjs from 'dayjs';
+import { FlowLinkProps } from '../components/flow-form/flow-link';
+
+type FlowLinkPropsSerialized = Omit<FlowLinkProps, 'flowDate'> & {
+  flowDate: string;
+};
+type ReportingDetailPropsSerialized = Omit<
+  ReportingDetailProps,
+  'dateReported'
+> & {
+  dateReported: string | null;
+};
+export type FlowFormTypeSerialized = Omit<
+  FlowFormType,
+  | 'flowDate'
+  | 'decisionDate'
+  | 'firstReported'
+  | 'reportingDetails'
+  | 'parentFlow'
+  | 'childFlows'
+> & {
+  flowDate: string | null;
+  decisionDate: string | null;
+  firstReported: string | null;
+  reportingDetails: ReportingDetailPropsSerialized[];
+  parentFlow: FlowLinkPropsSerialized | null;
+  childFlows: FlowLinkPropsSerialized[];
+};
 
 type FlowFormFlowObjectKey =
   | 'fundingSourceOrganizations'
@@ -491,4 +518,73 @@ export const parseToFlowForm = (
   };
   // TODO
   return flowForm;
+};
+
+/**
+ * Using `DayJS` classes cant directly be serialized to JSON,
+ * so we need to convert them to strings.
+ * This function is used to copy flows.
+ * **ATTENTION:**`sourceSystemRecordId` is set to empty string.
+ */
+export const serializeFlowForm = (
+  values: FlowFormType
+): FlowFormTypeSerialized => {
+  const {
+    flowDate,
+    decisionDate,
+    firstReported,
+    reportingDetails,
+    parentFlow,
+  } = values;
+
+  return {
+    ...values,
+    flowDate: flowDate?.toISOString() ?? null,
+    decisionDate: decisionDate?.toISOString() ?? null,
+    firstReported: firstReported?.toISOString() ?? null,
+    parentFlow: parentFlow
+      ? { ...parentFlow, flowDate: parentFlow.flowDate?.toISOString() }
+      : null,
+    childFlows: values.childFlows.map((childFlow) => ({
+      ...childFlow,
+      flowDate: childFlow.flowDate?.toISOString(),
+    })),
+    reportingDetails: reportingDetails.map((reportingDetail) => ({
+      ...reportingDetail,
+      dateReported: reportingDetail.dateReported?.toISOString() ?? null,
+      sourceSystemRecordId: '',
+    })),
+  };
+};
+
+export const deserializeFlowForm = (
+  values: FlowFormTypeSerialized
+): FlowFormType => {
+  const {
+    flowDate,
+    decisionDate,
+    firstReported,
+    reportingDetails,
+    parentFlow,
+  } = values;
+
+  return {
+    ...values,
+    flowDate: flowDate ? dayjs(flowDate) : null,
+    decisionDate: decisionDate ? dayjs(decisionDate) : null,
+    firstReported: firstReported ? dayjs(firstReported) : null,
+    parentFlow: parentFlow
+      ? { ...parentFlow, flowDate: dayjs(parentFlow.flowDate) }
+      : null,
+    childFlows: values.childFlows.map((childFlow) => ({
+      ...childFlow,
+      flowDate: dayjs(childFlow.flowDate),
+    })),
+    reportingDetails: reportingDetails.map((reportingDetail) => ({
+      ...reportingDetail,
+      dateReported: reportingDetail.dateReported
+        ? dayjs(reportingDetail.dateReported)
+        : null,
+    })),
+  };
 };
