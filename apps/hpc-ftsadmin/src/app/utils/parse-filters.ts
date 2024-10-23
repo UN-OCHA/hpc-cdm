@@ -39,7 +39,7 @@ export type FilterValue =
   | util.FormObjectValue[]
   | Dayjs;
 
-export type EmptyValue = null | '' | [] | false;
+type EmptyValue = null | '' | [] | false;
 
 export type Filter<T extends FilterKey> = {
   [key in T]?: {
