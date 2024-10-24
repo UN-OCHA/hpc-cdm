@@ -9,10 +9,10 @@ import DraggableList from './lib/components/draggable-list';
 import ErrorMessage from './lib/components/error-message';
 import AsyncAutocompleteSelect, {
   type AsyncAutocompleteSelectProps as AsyncAutocompleteSelectExportProps,
-} from './lib/components/form-fields/async-autocomplete-field';
+} from './lib/components/form-fields/async-autocomplete-select-field';
 import AutocompleteSelect, {
   type AutocompleteSelectProps as AutocompleteSelectExportProps,
-} from './lib/components/form-fields/autocomplete-field';
+} from './lib/components/form-fields/autocomplete-select-field';
 import CheckBox from './lib/components/form-fields/checkbox';
 import DatePicker, {
   type DatePickerProps as DatePickerExportProps,
