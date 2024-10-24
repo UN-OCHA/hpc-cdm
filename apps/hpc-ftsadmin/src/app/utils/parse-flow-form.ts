@@ -10,7 +10,11 @@ import {
   flowToFlowLinkProps,
   valueToInteger,
 } from './map-functions';
-import { FlowObjectTypes, isFlowObjectTypes } from './parse-filters';
+import {
+  FlowObjectTypes,
+  encodeFilters,
+  isFlowObjectTypes,
+} from './parse-filters';
 import {
   defaultOptions,
   locationsOptions,
@@ -20,6 +24,11 @@ import {
 import { ReportingDetailProps } from '../components/reporting-detail';
 import dayjs from 'dayjs';
 import { FlowLinkProps } from '../components/flow-form/flow-link';
+import {
+  FLOWS_FILTER_INITIAL_VALUES,
+  FlowsFilterValues,
+} from '../components/filters/filter-flows-table';
+import { Environment } from '../../environments/interface';
 
 type FlowLinkPropsSerialized = Omit<FlowLinkProps, 'flowDate'> & {
   flowDate: string;
@@ -587,4 +596,59 @@ export const deserializeFlowForm = (
         : null,
     })),
   };
+};
+
+const flowFormToFlowsFilterValues = async (
+  values: FlowFormType,
+  env: Environment
+): Promise<FlowsFilterValues> => {
+  const res: FlowsFilterValues = {};
+  const plans = values.fundingDestinationPlan?.value
+    ? await env.model.plans
+        .getAutocompletePlansById({
+          id: valueToInteger(values.fundingDestinationPlan.value),
+        })
+        .then((res) =>
+          res.map((plan) => ({
+            displayLabel: `Plan ID: ${plan.id}`,
+            value: plan.id,
+          }))
+        )
+    : null;
+
+  res.includeChildrenOfParkedFlows = true;
+
+  res.sourceLocations = values.fundingSourceLocations;
+  res.sourceOrganizations = values.fundingSourceOrganizations;
+
+  res.destinationOrganizations = values.fundingDestinationOrganizations;
+  res.destinationPlans =
+    plans ??
+    (values.fundingDestinationPlan
+      ? [values.fundingDestinationPlan]
+      : undefined);
+
+  return res;
+};
+
+export const queryParamsFlowFilter = async (
+  flowFormValues: FlowFormType,
+  env: Environment
+): Promise<string> => {
+  const flowsFilterValues = await flowFormToFlowsFilterValues(
+    flowFormValues,
+    env
+  );
+  const paramsObject: Record<string, string> = {
+    orderBy: 'flow.updatedAt',
+    orderDir: 'DESC',
+    page: '0',
+    rowsPerPage: '50',
+    filters: JSON.stringify(
+      encodeFilters(flowsFilterValues, FLOWS_FILTER_INITIAL_VALUES)
+    ),
+  };
+
+  const params = new URLSearchParams(paramsObject);
+  return params.toString();
 };

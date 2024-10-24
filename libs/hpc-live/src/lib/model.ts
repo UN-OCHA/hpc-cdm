@@ -945,13 +945,18 @@ export class LiveModel implements Model {
       getPlan: ({ id, scopes }) => {
         console.log(plans.getPlanResultCodec(scopes));
         return this.call({
-          pathname: `v2/plan/${id}`,
+          pathname: `/v2/plan/${id}`,
           queryParams: {
             scopes: scopes.join(','),
           },
           resultType: plans.getPlanResultCodec(scopes),
         });
       },
+      getAutocompletePlansById: ({ id }) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/id/plan/${id}`,
+          resultType: plans.GET_AUTOCOMPLETE_PLANS_BY_ID_RESULT,
+        }),
     };
   }
   get projects(): projects.Model {

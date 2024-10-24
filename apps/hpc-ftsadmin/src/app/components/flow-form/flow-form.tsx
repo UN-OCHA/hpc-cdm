@@ -2,7 +2,11 @@ import { AppContext, getEnv } from '../../context';
 import * as io from 'io-ts';
 import { type FormObjectValue, util as codecs, flows } from '@unocha/hpc-data';
 import { Form, Formik, FormikHelpers } from 'formik';
-import { parseFlowForm, serializeFlowForm } from '../../utils/parse-flow-form';
+import {
+  parseFlowForm,
+  queryParamsFlowFilter,
+  serializeFlowForm,
+} from '../../utils/parse-flow-form';
 import { Box, Grow, Paper, Snackbar, SxProps, Theme } from '@mui/material';
 import tw from 'twin.macro';
 import AsyncAutocompleteSelectReview from './inputs/async-autocomplete-pending-review';
@@ -310,7 +314,7 @@ export const FlowForm = (props: FlowFormProps) => {
   const env = getEnv();
   const navigate = useNavigate();
 
-  const { setError, initialValues } = props;
+  const { setError, initialValues, flow } = props;
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (values: FlowFormTypeValidated) => {
     setLoading(true);
@@ -320,13 +324,13 @@ export const FlowForm = (props: FlowFormProps) => {
       return;
     }
 
-    if (props.flow?.id) {
+    if (flow?.id) {
       env.model.flows
         .updateFlow({
           flow: {
-            ...parseFlowForm(values, props.flow?.id).flow,
-            id: props.flow.id,
-            versionID: props.flow.versionID,
+            ...parseFlowForm(values, flow?.id).flow,
+            id: flow.id,
+            versionID: flow.versionID,
           },
         })
         .then(() => {
@@ -339,7 +343,7 @@ export const FlowForm = (props: FlowFormProps) => {
         });
     } else {
       env.model.flows
-        .createFlow(parseFlowForm(values, props.flow?.id))
+        .createFlow(parseFlowForm(values, flow?.id))
         .then((res) => {
           navigate(paths.flow(res.id, res.versionID), {
             state: { successMessage: 'success message' },
@@ -370,6 +374,18 @@ export const FlowForm = (props: FlowFormProps) => {
     setFieldValue('firstReported', newValue);
   };
 
+  const handleSearchSimilarFlows = async (
+    definedInitialValues: FlowFormType
+  ) => {
+    const flowsFilterValues = await queryParamsFlowFilter(
+      definedInitialValues,
+      env
+    );
+
+    const newUrl = `${paths.flows()}?${flowsFilterValues}`;
+    window.open(newUrl, '_blank');
+  };
+
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -392,8 +408,8 @@ export const FlowForm = (props: FlowFormProps) => {
                   label="Restricted to internal use"
                 />
               )}
-              {initialValues && !initialValues.isInactive && props.flow && (
-                <>
+              {initialValues && !initialValues.isInactive && flow && (
+                <Box sx={tw`flex gap-x-6 items-center`}>
                   <C.CheckBox
                     name="isErrorCorrection"
                     label="As error correction"
@@ -403,12 +419,19 @@ export const FlowForm = (props: FlowFormProps) => {
                     to={paths.addFlow()}
                     state={{
                       flowFormCopyValues: serializeFlowForm(values),
-                      flowFormCopyValuesName: `${props.flow?.id}v${props.flow?.versionID}`,
+                      flowFormCopyValuesName: `${flow?.id}v${flow?.versionID}`,
                     }}
                   >
                     Copy Flow
                   </Link>
-                </>
+                  <C.Button
+                    color="primary"
+                    onClick={() => {
+                      handleSearchSimilarFlows(initialValues);
+                    }}
+                    text="Search similar Flows"
+                  />
+                </Box>
               )}
               <Box sx={tw`flex mt-6 mx-6 gap-x-10`}>
                 <FormGroup
@@ -784,10 +807,10 @@ export const FlowForm = (props: FlowFormProps) => {
                     />
                   )}
 
-                  {(props.flow?.versions?.length ?? 0) > 0 && (
+                  {(flow?.versions?.length ?? 0) > 0 && (
                     <FormGroup title="Flow Versions">
                       <Box sx={tw`flex flex-col px-4 gap-y-6`}>
-                        {props.flow?.versions
+                        {flow?.versions
                           ?.sort(
                             (flowVersion, previous) =>
                               previous.versionID - flowVersion.versionID
@@ -796,8 +819,7 @@ export const FlowForm = (props: FlowFormProps) => {
                             <span
                               key={`flowVersion${flowVersion.id}v${flowVersion.versionID}`}
                             >
-                              {flowVersion.versionID ===
-                                props.flow?.versionID && (
+                              {flowVersion.versionID === flow?.versionID && (
                                 <VisibilityIcon
                                   color="primary"
                                   sx={tw`me-4 float-start`}

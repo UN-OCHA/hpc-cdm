@@ -142,10 +142,33 @@ export const getPlanResultCodec = <T extends GetPlanScope[]>(
 
   return recursiveIntersection([GET_PLAN_RESULT_PART, ...codecs]);
 };
+
+const GET_AUTOCOMPLETE_PLANS_BY_ID_PARAMS = t.type({
+  id: t.number,
+});
+export type GetAutocompletePlansByIdParams = t.TypeOf<
+  typeof GET_AUTOCOMPLETE_PLANS_BY_ID_PARAMS
+>;
+
+export const GET_AUTOCOMPLETE_PLANS_BY_ID_RESULT = t.array(
+  t.type({
+    id: t.number,
+    restricted: t.boolean,
+    revisionState: t.union([t.string, t.null]),
+  })
+);
+
+export type GetAutocompletePlansByIdResult = t.TypeOf<
+  typeof GET_AUTOCOMPLETE_PLANS_BY_ID_RESULT
+>;
+
 export interface Model {
   getAutocompletePlans(
     params: GetPlansAutocompleteParams
   ): Promise<GetPlansAutocompleteResult>;
+  getAutocompletePlansById(
+    params: GetAutocompletePlansByIdParams
+  ): Promise<GetAutocompletePlansByIdResult>;
   getPlan<T extends GetPlanScope[]>(
     params: GetPlanParams<T>
   ): Promise<GetPlanResult<T>>;

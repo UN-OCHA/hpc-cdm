@@ -1221,6 +1221,19 @@ export class Dummy {
             return plan as any;
           }
         ),
+        getAutocompletePlansById: dummyEndpoint(
+          'plans.getAutocompletePlansById',
+          async ({
+            id,
+          }: plans.GetAutocompletePlansByIdParams): Promise<plans.GetAutocompletePlansByIdResult> => {
+            const plans = this.data.plans.filter((plan) => plan.id === id);
+            if (!plans) {
+              throw new errors.NotFoundError();
+            }
+            //  TODO: Fix dummy endpoint
+            return plans;
+          }
+        ),
       },
       projects: {
         getAutocompleteProjects: dummyEndpoint(
