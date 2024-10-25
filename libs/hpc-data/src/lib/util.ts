@@ -7,6 +7,7 @@ export type FormObjectValue = {
   parent?: FormObjectValue;
   hasChildren?: boolean;
   chipColor?: string;
+  tooltip?: string;
 };
 
 export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(

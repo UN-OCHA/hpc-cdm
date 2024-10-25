@@ -206,7 +206,22 @@ const FLOW_REST_VERSION = t.type({
   deletedAt: t.union([t.string, t.null]),
 });
 
-/** Delete when finishing off REST flow endpoint (Maybe Matyas needs it) */
+const FLOW_IMPORT_INFORMATION = t.type({ key: t.string, valueId: t.number });
+const FLOW_REST_EXTERNAL_REFERENCE = t.type({
+  id: t.number,
+  systemID: t.string,
+  flowID: t.number,
+  externalRecordID: t.string,
+  externalRecordDate: t.string,
+  versionID: t.number,
+  createdAt: t.string,
+  updatedAt: t.string,
+  importInformation: t.partial({
+    inferred: t.array(FLOW_IMPORT_INFORMATION),
+    transferred: t.array(FLOW_IMPORT_INFORMATION),
+  }),
+});
+
 const FLOW_REST = t.intersection([
   FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES,
   t.type({
@@ -214,6 +229,7 @@ const FLOW_REST = t.intersection([
     parents: t.array(PARENT_CHILDREN_FLOW),
     categories: t.array(CATEGORY),
     reportDetails: t.array(FLOW_REST_REPORT_DETAIL),
+    externalReferences: t.array(FLOW_REST_EXTERNAL_REFERENCE),
   }),
   t.partial({
     versions: t.array(FLOW_REST_VERSION),

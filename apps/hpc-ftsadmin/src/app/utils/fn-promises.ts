@@ -11,13 +11,15 @@ export const defaultOptions = (
   response: Array<{
     name: string;
     id: number;
-  }>,
-  chipColor?: string
+    chipColor?: string;
+    tooltip?: string;
+  }>
 ): util.FormObjectValue[] => {
-  return response.map((responseValue) => ({
-    displayLabel: responseValue.name,
-    value: responseValue.id,
+  return response.map(({ name, id, chipColor, tooltip }) => ({
+    displayLabel: name,
+    value: id,
     chipColor,
+    tooltip,
   }));
 };
 
@@ -26,9 +28,9 @@ const nameToSnakeCase = (
     name: string;
   }>
 ): util.FormObjectValue[] => {
-  return response.map((responseValue) => ({
-    displayLabel: responseValue.name,
-    value: responseValue.name.toLocaleLowerCase().replace(' ', '_'),
+  return response.map(({ name }) => ({
+    displayLabel: name,
+    value: name.toLocaleLowerCase().replace(' ', '_'),
   }));
 };
 
@@ -37,9 +39,9 @@ const currenciesOptions = (
     code: string;
   }>
 ): util.FormObjectValue[] => {
-  return response.map((responseValue) => ({
-    displayLabel: responseValue.code,
-    value: responseValue.code,
+  return response.map(({ code }) => ({
+    displayLabel: code,
+    value: code,
   }));
 };
 
@@ -48,13 +50,15 @@ export const organizationsOptions = (
     name: string;
     abbreviation: string;
     id: number;
-  }>,
-  chipColor?: string
+    chipColor?: string;
+    tooltip?: string;
+  }>
 ): util.FormObjectValue[] => {
-  return response.map((responseValue) => ({
-    displayLabel: `${responseValue.name} [${responseValue.abbreviation}]`,
-    value: responseValue.id,
+  return response.map(({ name, abbreviation, id, chipColor, tooltip }) => ({
+    displayLabel: `${name} [${abbreviation}]`,
+    value: id,
     chipColor,
+    tooltip,
   }));
 };
 
@@ -63,28 +67,30 @@ export const locationsOptions = (
     name: string;
     id: number;
     children?: locations.Location[];
-  }>,
-  chipColor?: string
+    chipColor?: string;
+    tooltip?: string;
+  }>
 ): util.FormObjectValue[] => {
   const res: util.FormObjectValue[] = [];
 
-  for (const responseValue of response) {
-    const hasChildren =
-      responseValue.children && responseValue.children.length > 0;
+  for (const { children, name, id, chipColor, tooltip } of response) {
+    const hasChildren = children && children.length > 0;
     const parentLocation: util.FormObjectValue = {
-      displayLabel: responseValue.name,
-      value: responseValue.id,
+      displayLabel: name,
+      value: id,
       hasChildren,
       chipColor,
+      tooltip,
     };
     res.push(parentLocation);
-    if (responseValue.children && responseValue.children.length > 0) {
-      for (const responseLevelValue of responseValue.children) {
+    if (children && children.length > 0) {
+      for (const responseLevelValue of children) {
         res.push({
           displayLabel: responseLevelValue.name,
           value: responseLevelValue.id,
           parent: parentLocation,
           chipColor,
+          tooltip,
         });
       }
     }
@@ -96,24 +102,31 @@ export const usageYearsOptions = (
   response: Array<{
     year: string;
     id: number;
-  }>,
-  chipColor?: string
+    chipColor?: string;
+    tooltip?: string;
+  }>
 ): util.FormObjectValue[] => {
-  return response.map((responseValue) => ({
-    displayLabel: responseValue.year,
-    value: responseValue.id,
+  return response.map(({ year, id, chipColor, tooltip }) => ({
+    displayLabel: year,
+    value: id,
     chipColor,
+    tooltip,
   }));
 };
 
 export const governingEntitiesOptions = (
-  response: Array<{ id: number; governingEntityVersion: { name: string } }>,
-  chipColor?: string
+  response: Array<{
+    id: number;
+    governingEntityVersion: { name: string };
+    chipColor?: string;
+    tooltip?: string;
+  }>
 ) => {
-  return response.map((responseValue) => ({
-    displayLabel: responseValue.governingEntityVersion.name,
-    value: responseValue.id,
+  return response.map(({ governingEntityVersion, id, chipColor, tooltip }) => ({
+    displayLabel: governingEntityVersion.name,
+    value: id,
     chipColor,
+    tooltip,
   }));
 };
 // Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop

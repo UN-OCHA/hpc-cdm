@@ -29,6 +29,16 @@ import {
   FlowsFilterValues,
 } from '../components/filters/filter-flows-table';
 import { Environment } from '../../environments/interface';
+import { THEME } from '@unocha/hpc-ui';
+
+type EntityName =
+  | 'location'
+  | 'emergency'
+  | 'globalCluster'
+  | 'organization'
+  | 'plan'
+  | 'project'
+  | 'usageYear';
 
 type FlowLinkPropsSerialized = Omit<FlowLinkProps, 'flowDate'> & {
   flowDate: string;
@@ -73,6 +83,9 @@ type FlowFormFlowObjectKey =
   | 'fundingDestinationProject'
   | 'fundingDestinationUsageYears'
   | 'fundingDestinationFieldClusters';
+
+const TRANSFERRED_CHIP_COLOR = THEME.colors.pallete.blue.light;
+const INFERRED_CHIP_COLOR = THEME.colors.pallete.orange.variant1;
 
 const categoryIds = (categories: Array<{ value: number | string } | null>) => {
   const ids: number[] = [];
@@ -325,6 +338,73 @@ const categoriesToFlowForm = (values: flows.GetFlowResult) => {
   }, {} as FlowFormType);
 };
 
+const isInferred = (
+  flow: flows.GetFlowResult,
+  entity: { id: number },
+  direction: 'source' | 'destination',
+  entityName: EntityName
+) => {
+  if (flow.externalReferences.length === 0) {
+    return false;
+  }
+
+  const inferredList = flow.externalReferences.map((eR) => {
+    if (!eR.importInformation.inferred) {
+      return false;
+    }
+    return eR.importInformation.inferred.some(
+      (inf) =>
+        inf.key.includes(direction) &&
+        inf.key.includes(entityName) &&
+        inf.valueId === entity.id
+    );
+  });
+  return inferredList.some((inf) => inf === true);
+};
+
+const isTransferred = (
+  flow: flows.GetFlowResult,
+  entity: { id: number },
+  direction: 'source' | 'destination',
+  entityName: EntityName
+) => {
+  if (flow.externalReferences.length === 0) {
+    return false;
+  }
+
+  const transferredList = flow.externalReferences.map((eR) => {
+    if (!eR.importInformation.transferred) {
+      return false;
+    }
+    return eR.importInformation.transferred.some(
+      (inf) =>
+        inf.key.includes(direction) &&
+        inf.key.includes(entityName) &&
+        inf.valueId === entity.id
+    );
+  });
+
+  return transferredList.some((trans) => trans === true);
+};
+
+const inferredTransferredChipColor = (
+  flow: flows.GetFlowResult,
+  entity: {
+    id: number;
+    flowObject: { refDirection: 'source' | 'destination' };
+  },
+  entityName: EntityName
+) => {
+  if (isInferred(flow, entity, entity.flowObject.refDirection, entityName)) {
+    return { chipColor: INFERRED_CHIP_COLOR, tooltip: 'Inferred' };
+  }
+  if (isTransferred(flow, entity, entity.flowObject.refDirection, entityName)) {
+    return { chipColor: TRANSFERRED_CHIP_COLOR, tooltip: 'Transferred' };
+  }
+
+  return {};
+};
+
 const flowObjectToFormObjectValue = (
   flow: flows.GetFlowResult,
   keys: FlowFormFlowObjectKey[]
@@ -334,22 +414,36 @@ const flowObjectToFormObjectValue = (
     FlowFormType[FlowFormFlowObjectKey]
   > = {
     fundingSourceOrganizations: organizationsOptions(
-      flow.organizations.filter(
-        (org) => org.flowObject.refDirection === 'source'
-      )
+      flow.organizations
+        .filter((org) => org.flowObject.refDirection === 'source')
+        .map((org) => ({
+          ...org,
+          ...inferredTransferredChipColor(flow, org, 'organization'),
+        }))
     ),
     fundingSourceLocations: locationsOptions(
-      flow.locations.filter((loc) => loc.flowObject.refDirection === 'source')
+      flow.locations
+        .filter((loc) => loc.flowObject.refDirection === 'source')
+        .map((loc) => ({
+          ...loc,
+          ...inferredTransferredChipColor(flow, loc, 'location'),
+        }))
     ),
     fundingSourceEmergencies: defaultOptions(
-      flow.emergencies.filter(
-        (emergency) => emergency.flowObject.refDirection === 'source'
-      )
+      flow.emergencies
+        .filter((emergency) => emergency.flowObject.refDirection === 'source')
+        .map((emergency) => ({
+          ...emergency,
+          ...inferredTransferredChipColor(flow, emergency, 'emergency'),
+        }))
     ),
     fundingSourceGlobalClusters: defaultOptions(
-      flow.globalClusters.filter(
-        (gC) => gC.flowObject.refDirection === 'source'
-      )
+      flow.globalClusters
+        .filter((gC) => gC.flowObject.refDirection === 'source')
+        .map((gC) => ({
+          ...gC,
+          ...inferredTransferredChipColor(flow, gC, 'globalCluster'),
+        }))
     ),
     fundingSourcePlan:
       flow.plans
@@ -368,9 +462,12 @@ const flowObjectToFormObjectValue = (
         }))
         .at(0) ?? null,
     fundingSourceUsageYears: usageYearsOptions(
-      flow.usageYears.filter(
-        (usageYear) => usageYear.flowObject.refDirection === 'source'
-      )
+      flow.usageYears
+        .filter((usageYear) => usageYear.flowObject.refDirection === 'source')
+        .map((usageYear) => ({
+          ...usageYear,
+          ...inferredTransferredChipColor(flow, usageYear, 'usageYear'),
+        }))
     ),
     fundingSourceFieldClusters: flow.clusters
       .filter((cluster) => cluster.flowObject.refDirection === 'source')
@@ -379,24 +476,38 @@ const flowObjectToFormObjectValue = (
         value: cluster.id,
       })),
     fundingDestinationOrganizations: organizationsOptions(
-      flow.organizations.filter(
-        (org) => org.flowObject.refDirection === 'destination'
-      )
+      flow.organizations
+        .filter((org) => org.flowObject.refDirection === 'destination')
+        .map((org) => ({
+          ...org,
+          ...inferredTransferredChipColor(flow, org, 'organization'),
+        }))
     ),
     fundingDestinationLocations: locationsOptions(
-      flow.locations.filter(
-        (loc) => loc.flowObject.refDirection === 'destination'
-      )
+      flow.locations
+        .filter((loc) => loc.flowObject.refDirection === 'destination')
+        .map((loc) => ({
+          ...loc,
+          ...inferredTransferredChipColor(flow, loc, 'location'),
+        }))
     ),
     fundingDestinationEmergencies: defaultOptions(
-      flow.emergencies.filter(
-        (emergency) => emergency.flowObject.refDirection === 'destination'
-      )
+      flow.emergencies
+        .filter(
+          (emergency) => emergency.flowObject.refDirection === 'destination'
+        )
+        .map((emergency) => ({
+          ...emergency,
+          ...inferredTransferredChipColor(flow, emergency, 'emergency'),
+        }))
     ),
     fundingDestinationGlobalClusters: defaultOptions(
-      flow.globalClusters.filter(
-        (gC) => gC.flowObject.refDirection === 'destination'
-      )
+      flow.globalClusters
+        .filter((gC) => gC.flowObject.refDirection === 'destination')
+        .map((gC) => ({
+          ...gC,
+          ...inferredTransferredChipColor(flow, gC, 'globalCluster'),
+        }))
     ),
     fundingDestinationPlan:
       flow.plans
@@ -415,9 +526,14 @@ const flowObjectToFormObjectValue = (
         }))
         .at(0) ?? null,
     fundingDestinationUsageYears: usageYearsOptions(
-      flow.usageYears.filter(
-        (usageYear) => usageYear.flowObject.refDirection === 'destination'
-      )
+      flow.usageYears
+        .filter(
+          (usageYear) => usageYear.flowObject.refDirection === 'destination'
+        )
+        .map((usageYear) => ({
+          ...usageYear,
+          ...inferredTransferredChipColor(flow, usageYear, 'usageYear'),
+        }))
     ),
     fundingDestinationFieldClusters: flow.clusters
       .filter((cluster) => cluster.flowObject.refDirection === 'destination')

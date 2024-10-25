@@ -3,6 +3,7 @@ import {
   type AutocompleteProps,
   Chip,
   CircularProgress,
+  Tooltip,
 } from '@mui/material';
 import { type util } from '@unocha/hpc-data';
 import { useField, useFormikContext } from 'formik';
@@ -225,13 +226,20 @@ const AsyncAutocompleteSelect = ({
       );
     },
     renderTags: (value, getTagProps) =>
-      value.map((option, index) => (
-        <Chip
-          label={option.displayLabel}
-          {...getTagProps({ index })}
-          sx={option.chipColor ? { bgcolor: option.chipColor } : {}}
-        />
-      )),
+      value.map((option, index) => {
+        const chipOptions = {
+          label: option.displayLabel,
+          ...getTagProps({ index }),
+          sx: option.chipColor ? { bgcolor: option.chipColor } : {},
+        };
+        return option.tooltip ? (
+          <Tooltip title={option.tooltip}>
+            <Chip {...chipOptions} />
+          </Tooltip>
+        ) : (
+          <Chip {...chipOptions} />
+        );
+      }),
     getOptionDisabled: (option) =>
       isMulti === true &&
       field.value.some((a) => a.parent?.value === option.value),

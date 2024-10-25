@@ -17,6 +17,7 @@ const COLOR_PALETTE = {
     dark2: '#b44d0e',
     dark1: '#d05b10',
     normal: '#e16856', // From style guide
+    variant1: '#e19956',
     light: '#fd9282',
   },
   yellow: {

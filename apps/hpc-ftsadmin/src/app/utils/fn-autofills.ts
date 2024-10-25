@@ -4,7 +4,6 @@ import { FormikHelpers } from 'formik';
 import { Environment } from '../../environments/interface';
 import { valueToInteger } from './map-functions';
 import {
-  defaultOptions,
   governingEntitiesOptions,
   locationsOptions,
   organizationsOptions,
@@ -68,10 +67,6 @@ const isUsageYears = (
   newUniqueValues: FieldValueType[keyof FieldValueType]
 ): newUniqueValues is FieldValueType['UsageYears'] =>
   fieldName === 'UsageYears';
-const isLocations = (
-  fieldName: unknown,
-  newUniqueValues: FieldValueType[keyof FieldValueType]
-): newUniqueValues is FieldValueType['Locations'] => fieldName === 'Locations';
 const isGoverningEntities = (
   fieldName: unknown,
   newUniqueValues: FieldValueType[keyof FieldValueType]
@@ -109,20 +104,23 @@ const helperSetFieldValue = <T extends keyof FieldValueType>(
 
   if (isOrganizations(objectType, newUniqueValues)) {
     formObjectValues = organizationsOptions(
-      newUniqueValues,
-      AUTOFILL_CHIP_COLOR
+      newUniqueValues.map((org) => ({ ...org, chipColor: AUTOFILL_CHIP_COLOR }))
     );
-  } else if (isLocations(objectType, newUniqueValues)) {
-    formObjectValues = locationsOptions(newUniqueValues, AUTOFILL_CHIP_COLOR);
-  } else if (isUsageYears(objectType, newUniqueValues)) {
-    formObjectValues = usageYearsOptions(newUniqueValues, AUTOFILL_CHIP_COLOR);
   } else if (isGoverningEntities(objectType, newUniqueValues)) {
     formObjectValues = governingEntitiesOptions(
-      newUniqueValues,
-      AUTOFILL_CHIP_COLOR
+      newUniqueValues.map((gE) => ({ ...gE, chipColor: AUTOFILL_CHIP_COLOR }))
+    );
+  } else if (isUsageYears(objectType, newUniqueValues)) {
+    formObjectValues = usageYearsOptions(
+      newUniqueValues.map((year) => ({
+        ...year,
+        chipColor: AUTOFILL_CHIP_COLOR,
+      }))
     );
   } else {
-    formObjectValues = defaultOptions(newUniqueValues, AUTOFILL_CHIP_COLOR);
+    formObjectValues = locationsOptions(
+      newUniqueValues.map((loc) => ({ ...loc, chipColor: AUTOFILL_CHIP_COLOR }))
+    );
   }
 
   setFieldValue(formKey, [...formValue, ...formObjectValues]);

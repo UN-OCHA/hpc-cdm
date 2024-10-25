@@ -752,6 +752,7 @@ export class Dummy {
               parents: [],
               reportDetails: [],
               versions: [],
+              externalReferences: [],
             };
             return res;
           }
@@ -812,6 +813,7 @@ export class Dummy {
               parents: [],
               reportDetails: [],
               versions: [],
+              externalReferences: [],
             };
             return res;
           }
