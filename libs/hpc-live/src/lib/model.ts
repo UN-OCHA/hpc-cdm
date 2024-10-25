@@ -5,13 +5,23 @@ import { util } from '@unocha/hpc-core';
 import {
   Model,
   forms,
+  flows,
+  locations,
+  organizations,
   operations,
   reportingWindows,
   access,
   errors,
   util as dataUtil,
+  categories,
+  plans,
+  projects,
+  emergencies,
+  systems,
+  globalClusters,
+  usageYears,
 } from '@unocha/hpc-data';
-
+import { searchFlowsParams } from './utils';
 interface URLInterface {
   new (url: string): {
     pathname: string;
@@ -22,14 +32,14 @@ interface URLInterface {
   };
 }
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH';
-
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 interface RequestInit {
   method?: HttpMethod;
   headers: {
     [id: string]: string;
   };
   body?: string | ArrayBuffer;
+  signal?: AbortSignal;
 }
 
 interface Response {
@@ -175,7 +185,7 @@ export const LIVE_TYPES = {
         }),
       }),
       t.partial({
-        targetId: dataUtil.INTEGER_FROM_STRING,
+        targetId: dataUtil.POSITIVE_INTEGER_FROM_STRING,
       }),
     ]),
     /**
@@ -217,6 +227,106 @@ export class LiveModel implements Model {
   private readonly URL: URLInterface;
   private readonly fetch: FetchInterface;
   private readonly sha256Hash: (data: ArrayBuffer) => Promise<string>;
+
+  private readonly searchFlowFields = `flows {
+    id
+    updatedAt
+    amountUSD
+    versionID
+    activeStatus
+    restricted
+    exchangeRate
+    flowDate
+    newMoney
+    decisionDate
+    categories {
+      id
+      name
+      group
+      createdAt
+      updatedAt
+      description
+      parentID
+      code
+      includeTotals
+      categoryRef {
+        objectID
+        versionID
+        objectType
+        categoryID
+        updatedAt
+      }
+    }
+
+    organizations {
+      id
+      name
+      direction
+      abbreviation
+    }
+
+    destinationOrganizations {
+      id
+      name
+      direction
+      abbreviation
+    }
+
+    sourceOrganizations {
+      id
+      name
+      direction
+      abbreviation
+    }
+
+    plans {
+      id
+      name
+      direction
+    }
+
+    usageYears {
+      year
+      direction
+    }
+    childIDs
+    parentIDs
+    origAmount
+    origCurrency
+    locations{
+      id
+      name
+      direction
+    }
+    externalReferences {
+      systemID
+      flowID
+      externalRecordID
+      externalRecordDate
+      versionID
+      createdAt
+      updatedAt
+    }
+    reportDetails {
+      id
+      flowID
+      versionID
+      contactInfo
+      refCode
+      organizationID
+      channel
+      source
+      date
+      verified
+      updatedAt
+      createdAt
+      sourceID
+    }
+    parkedParentSource{
+      orgName
+      organization
+    }
+  }`;
 
   public constructor(config: Config) {
     this.config = config;
@@ -260,6 +370,7 @@ export class LiveModel implements Model {
     queryParams,
     resultType,
     body,
+    signal,
   }: {
     method?: HttpMethod;
     pathname: string;
@@ -277,8 +388,10 @@ export class LiveModel implements Model {
           data: string | ArrayBuffer;
           contentType: string;
         };
+    signal?: AbortSignal;
   }) => {
     const { url, init } = this.baseFetchInit({ pathname, method, queryParams });
+    init.signal = signal;
     if (body) {
       if (body.type === 'json') {
         init.body = JSON.stringify(body.data);
@@ -305,6 +418,11 @@ export class LiveModel implements Model {
         otherUser: string;
         code?: string;
         message: errors.UserErrorKey;
+        details?: {
+          code: string;
+          detail: string;
+          table: string;
+        };
       };
       if (json?.code === 'ConflictError') {
         throw new errors.ConflictError(json.timestamp, json.otherUser);
@@ -313,6 +431,16 @@ export class LiveModel implements Model {
         errors.USER_ERROR_KEYS.includes(json?.message)
       ) {
         throw new errors.UserError(json.message);
+      } else if (
+        json?.code === 'BadRequestError' &&
+        json.details?.code === '23505' && // error code for duplicate primary key
+        json.details.detail &&
+        json.details.table
+      ) {
+        throw new errors.DuplicateError(
+          json.details.detail,
+          json.details.table
+        );
       } else {
         const message =
           json?.code && json?.message
@@ -394,6 +522,239 @@ export class LiveModel implements Model {
     };
   }
 
+  get categories(): categories.Model {
+    return {
+      getCategories: (params) =>
+        this.call({
+          pathname: '/v2/category',
+          queryParams: {
+            group: params.query,
+          },
+          resultType: categories.GET_CATEGORIES_RESULT,
+        }),
+      getKeywords: () =>
+        this.call({
+          pathname: '/v2/category',
+          queryParams: {
+            group: 'keywords',
+            scopes: 'relatedCount',
+          },
+          resultType: categories.GET_KEYWORDS_RESULT,
+        }),
+      deleteKeyword: (params) =>
+        this.call({
+          pathname: `/v2/category/${params.id}`,
+          method: 'DELETE',
+          resultType: categories.DELETE_KEYWORD_RESULT,
+        }),
+      updateKeyword: (params) =>
+        this.call({
+          pathname: `/v2/category/${params.id}`,
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data: { data: { ...params } },
+          },
+          resultType: categories.CATEGORY,
+        }),
+    };
+  }
+  get emergencies(): emergencies.Model {
+    return {
+      getAutocompleteEmergencies: (params) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/emergency/${params.query}`,
+          resultType: emergencies.GET_EMERGENCIES_AUTOCOMPLETE_RESULT,
+        }),
+    };
+  }
+  get systems(): systems.Model {
+    return {
+      getSystems: () =>
+        this.call({
+          pathname: '/v1/external/systems',
+          resultType: systems.GET_SYSTEMS_RESULT,
+        }),
+    };
+  }
+  get flows(): flows.Model {
+    return {
+      getFlowREST: (params) =>
+        this.call({
+          pathname: `/v2/flow/${params.id}`,
+          resultType: flows.GET_FLOW_RESULT,
+        }),
+      getFlow: (params) =>
+        this.call({
+          pathname: `/v4/graphql`,
+          method: 'POST',
+          body: {
+            type: 'raw',
+            data: ` query Flow{
+              flow(id: ${params}) {
+                  createdAt
+                  updatedAt
+                  deletedAt
+                  id
+                  versionID
+                  amountUSD
+                  flowDate
+                  decisionDate
+                  firstReportedDate
+                  budgetYear
+                  origAmount
+                  origCurrency
+                  exchangeRate
+                  activeStatus
+                  newMoney
+                  restricted
+                  description
+                  notes
+                  versionStartDate
+                  versionEndDate
+                  createdBy
+                  lastUpdatedBy
+              }
+          }`,
+            contentType: 'application/json; charset=utf-8',
+          },
+          resultType: flows.GET_FLOW_RESULT,
+        }),
+      /**
+       * TODO: Dynamically fetch only necessary fields, Ex: if we don't display 'NewMoney' we shouldn't ask for it
+       */
+      searchFlows: (params) => {
+        const query = `query {
+          searchFlows${searchFlowsParams(params)} {
+            total
+            
+            prevPageCursor
+        
+            hasNextPage
+        
+            nextPageCursor
+        
+            hasPreviousPage
+        
+            pageSize
+
+            ${this.searchFlowFields}
+          }
+        }`;
+        return this.call({
+          pathname: `/v4/graphql`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: {
+              query: query,
+            },
+          },
+          signal: params.signal,
+          resultType: flows.SEARCH_FLOWS_RESULT,
+        });
+      },
+      bulkRejectPendingFlows: (params) =>
+        this.call({
+          pathname: `/v1/flow/bulkupdatestatus/87`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.BULK_REJECT_PENDING_FLOWS_RESULT,
+        }),
+      getFlowsDownloadXLSX: (params) => {
+        const query = `query {
+          searchFlowsBatches${searchFlowsParams(params)} {
+            ${this.searchFlowFields}
+          }
+        }`;
+        return this.call({
+          pathname: `/v4/graphql`,
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: {
+              query: query,
+            },
+          },
+          signal: params.signal,
+          resultType: flows.SEARCH_FLOWS_BATCHES_RESULT,
+        });
+      },
+    };
+  }
+  get globalClusters(): globalClusters.Model {
+    return {
+      getGlobalClusters: () =>
+        this.call({
+          pathname: '/v1/global-cluster',
+          resultType: globalClusters.GET_GLOBAL_CLUSTERS_RESULT,
+        }),
+    };
+  }
+  get locations(): locations.Model {
+    return {
+      getAutocompleteLocations: (params) =>
+        this.call({
+          pathname: `/v1/location/autocomplete/${params.query}`,
+          resultType: locations.GET_LOCATIONS_AUTOCOMPLETE_RESULT,
+        }),
+    };
+  }
+  get organizations(): organizations.Model {
+    return {
+      getAutocompleteOrganizations: (params) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/organization/${params.query}`,
+          resultType: organizations.GET_ORGANIZATIONS_RESULT,
+        }),
+      searchOrganizations: (params) =>
+        this.call({
+          pathname: '/v1/organization/search',
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: organizations.SEARCH_ORGANIZATION_RESULT,
+        }),
+      getOrganization: (params) =>
+        this.call({
+          pathname: `/v1/organization/id/${params.id}`,
+          method: 'GET',
+          resultType: organizations.ORGANIZATION,
+        }),
+      createOrganization: (params) =>
+        this.call({
+          pathname: '/v1/organization/create',
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: organizations.CREATE_ORGANIZATION_RESULT,
+        }),
+      updateOrganization: (params) =>
+        this.call({
+          pathname: `/v1/organization/update/${params.id}`,
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data: { organization: { ...params } },
+          },
+          resultType: organizations.UPDATE_ORGANIZATION_RESULT,
+        }),
+      deleteOrganization: (params) =>
+        this.call({
+          pathname: `/v1/organization/delete/${params.id}`,
+          method: 'POST',
+          resultType: organizations.DELETE_ORGANIZATION_RESULT,
+        }),
+    };
+  }
+
   get operations(): operations.Model {
     return {
       getClusters: (params) =>
@@ -413,7 +774,24 @@ export class LiveModel implements Model {
         }),
     };
   }
-
+  get plans(): plans.Model {
+    return {
+      getAutocompletePlans: (params) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/plan/${params.query}`,
+          resultType: plans.GET_PLANS_AUTOCOMPLETE_RESULT,
+        }),
+    };
+  }
+  get projects(): projects.Model {
+    return {
+      getAutocompleteProjects: (params) =>
+        this.call({
+          pathname: `/v1/object/autocomplete/project/${params.query}`,
+          resultType: projects.GET_PROJECTS_AUTOCOMPLETE_RESULT,
+        }),
+    };
+  }
   get reportingWindows(): reportingWindows.Model {
     /**
      * Remove all the files from the map that aren't one of these.
@@ -553,6 +931,15 @@ export class LiveModel implements Model {
           return handleAssignmentResult(result);
         }
       },
+    };
+  }
+  get usageYears(): usageYears.Model {
+    return {
+      getUsageYears: () =>
+        this.call({
+          pathname: '/v1/fts/usage-year',
+          resultType: usageYears.GET_USAGE_YEARS_RESULT,
+        }),
     };
   }
 

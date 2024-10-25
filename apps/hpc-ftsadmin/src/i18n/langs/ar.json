@@ -1,3 +1,312 @@
 {
-  "title": "HPC FTS Admin"
+  "title": "المسؤول عن FTS",
+  "user": {
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج"
+  },
+  "errors": {
+    "unableToLoadFTSAdmin": "غير قادر على تحميل المسؤول عن FTS"
+  },
+  "common": {
+    "devEnvironmentWarnings": {
+      "dummy": "هذا هو مثيل تجريبي للمسؤول عن FTS، المعلومات التي تدخلها هنا ستُخزن فقط في متصفحك ولن تُرسل إلى خادمنا.",
+      "dev": "هذا هو مثيل اختباري للمسؤول عن FTS، المعلومات التي تدخلها هنا ستُحذف بشكل دوري."
+    }
+  },
+  "components": {
+    "appTitle": {
+      "primary": "وحدة بيانات FTS"
+    },
+    "acceptableUseNotification": {
+      "login": "انقر هنا لتسجيل الدخول",
+      "title": "تنويه استخدام مقبول",
+      "p1": "يُمنع الوصول غير المصرح به إلى نظام الكمبيوتر التابع للأمم المتحدة وفقًا لـ ST/SGB/2004/15 («استخدام موارد تكنولوجيا المعلومات والاتصالات والبيانات» بتاريخ 29 نوفمبر 2004).",
+      "p2": "يجب على المستخدمين المصرح لهم التأكد من أن استخدامهم لموارد تكنولوجيا المعلومات والاتصالات (ICT) وبيانات ICT متسق مع التزاماتهم كأعضاء في الطاقم أو أي التزامات أخرى قد تنطبق عليهم.",
+      "p3": "يُخضع جميع استخدامات موارد تكنولوجيا المعلومات والاتصالات وبيانات ICT للمراقبة والتحقيق وفقًا لما هو مبين في ST/SGB/2004/15.",
+      "p4": "استخدام هذا النظام من قبل أي مستخدم، مصرح به أو غير مصرح به، يشكل موافقة على اللوائح والقواعد المعمول بها في الأمم المتحدة."
+    },
+    "dialogs": {
+      "okay": "تأكيد",
+      "cancel": "إلغاء"
+    },
+    "notFound": {
+      "title": "الصفحة غير موجودة",
+      "info": "لم نتمكن من العثور على الصفحة التي كنت تبحث عنها",
+      "back": "العودة"
+    },
+    "invalidRouteParam": {
+      "title": "مسار غير صالح",
+      "info": "تم اكتشاف رقم تعريف غير صحيح في عنوان URL",
+      "back": "العودة"
+    },
+    "loader": {
+      "loading": "جاري التحميل...",
+      "error": "خطأ:",
+      "retry": "إعادة المحاولة"
+    },
+    "unsupportedBrowser": {
+      "title": "المتصفح غير مدعوم!",
+      "info": "للأسف، المتصفح الحالي الخاص بك غير مدعوم. يرجى التبديل إما إلى Firefox أو Google Chrome. لفعل ذلك، قم بنسخ عنوان النموذج (الرابط) أعلاه، ثم افتح Firefox أو Chrome والصق العنوان في المتصفح."
+    },
+    "flowsTable": {
+      "headers": {
+        "id": "المعرف",
+        "status": "الحالة",
+        "updatedCreated": "تم التحديث/تم الإنشاء",
+        "dataProvider": "مزود البيانات",
+        "amountUSD": "المبلغ بالدولار الأمريكي",
+        "sourceOrganization": "المؤسسة المصدرة",
+        "destinationOrganization": "المؤسسة الوجهة",
+        "destinationPlan": "الخطة الوجهة",
+        "destinationCountry": "البلد الوجهة",
+        "destinationYear": "العام الوجهة",
+        "details": "التفاصيل",
+        "exchangeRate": "سعر الصرف",
+        "flowDate": "تاريخ التدفق",
+        "newMoney": "عملة جديدة",
+        "decisionDate": "تاريخ القرار",
+        "sourceID": "معرّف النظام المصدر",
+        "reporterRefCode": "الرمز المرجعي للمراسل"
+      },
+      "update": "تحديث",
+      "new": "جديد",
+      "restricted": "مقيد",
+      "inactive": "غير نشط",
+      "child": "فرعي",
+      "parent": "أصلي",
+      "notFound": {
+        "title": "لم يتم العثور على تدفقات",
+        "info": "لم نتمكن من تحميل التدفقات"
+      },
+      "reportTooltip": "مُبلغ عنها من قبل {organization} في {date} عبر {channel}",
+      "parkedSource": "المصدر المتوقف",
+      "sortBy": "الترتيب حسب",
+      "totalAmount": "المبلغ الإجمالي: ",
+      "rejectPendingFlows": "رفض الأنسجة المعلقة",
+      "downloadDisabled": "التنزيل مسموح به فقط عند وجود على الأقل تطبيق فلتر واحد",
+      "totalAmountDisabled": "المبلغ الإجمالي مسموح به فقط عند وجود على الأقل تطبيق فلتر واحد",
+      "tableSettings": {
+        "title": "إعدادات الجدول",
+        "save": "حفظ",
+        "info": "المغادرة دون النقر على زر 'حفظ' لن يحدث تحديثا للجدول"
+      }
+    },
+
+    "flowsFilter": {
+      "title": "المرشحات",
+      "button": {
+        "primary": "البحث",
+        "secondary": "مسح الحقول"
+      },
+      "headers": {
+        "flowDetails": "تفاصيل التدفق",
+        "sourceDetails": "تفاصيل المصدر",
+        "destinationDetails": "تفاصيل الوجهة"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "تضمين أطفال التدفق المتطابق",
+        "restricted": "مقيد",
+        "flowID": "معرف التدفق",
+        "amountUSD": "المبلغ بالدولار الأمريكي",
+        "keywords": "الكلمات الرئيسية",
+        "flowStatus": "حالة التدفق",
+        "flowType": "نوع التدفق",
+        "flowActiveStatus": "حالة التدفق النشطة",
+        "reporterRefCode": "رمز مرجعي للمبلغ",
+        "sourceSystemID": "معرف نظام المصدر",
+        "legacyID": "معرف التدفق القديم",
+        "sourceOrganizations": "المنظمة(ات) المصدرة",
+        "sourceLocations": "البلدان المصدرة",
+        "sourceUsageYears": "سنوات الاستخدام المصدرة",
+        "sourceProjects": "المشروعات المصدرة",
+        "sourcePlans": "الخطط المصدرة",
+        "sourceGlobalClusters": "المجموعات العالمية المصدرة",
+        "sourceEmergencies": "الحالات الطارئة المصدرة",
+        "destinationOrganizations": "المنظمة(ات) الوجهة",
+        "destinationLocations": "البلدان الوجهة",
+        "destinationUsageYears": "سنوات الاستخدام الوجهة",
+        "destinationProjects": "المشروعات الوجهة",
+        "destinationPlans": "الخطط الوجهة",
+        "destinationGlobalClusters": "المجموعات العالمية الوجهة",
+        "destinationEmergencies": "الحالات الطارئة الوجهة"
+      },
+      "errors": {
+        "flowID": "قم بتقديم الأعداد الصحيحة الإيجابية فقط كقيم"
+      },
+      "info": {
+        "filterInfo": "استخدام القيم المفصولة ب ',' سينشئ قيم متعددة. النسخ واللصق يعملان أيضًا مع هذه الوظيفة."
+      },
+      "showMore": "عرض المزيد",
+      "tooltips": {
+        "filters": "المرشحات"
+      }
+    },
+    "keywordTable": {
+      "headers": {
+        "id": "المعرف",
+        "name": "الاسم",
+        "relatedFlows": "التدفقات ذات الصلة",
+        "public": "عام"
+      },
+      "modal": {
+        "text": "هل أنت متأكد أنك تريد حذف هذه الكلمة الرئيسية؟",
+        "principalButton": "حذف",
+        "secondaryButton": "إلغاء"
+      },
+      "errors": {
+        "unknown": "حدث خطأ غير متوقع أثناء إنشاء/تحديث الكلمة الرئيسية.",
+        "duplicate": "يوجد كلمة رئيسية بالفعل بالاسم {keywordName}. يرجى اختيار اسم مختلف."
+      },
+      "labels": {
+        "newName": "الاسم الجديد",
+        "save": "حفظ",
+        "public": "عام",
+        "cancel": "إلغاء",
+        "delete": "حذف"
+      }
+    },
+    "pendingFlowsFilter": {
+      "title": "المرشحات",
+      "button": {
+        "primary": "البحث",
+        "secondary": "مسح الحقول"
+      },
+      "headers": {
+        "flowDetails": "تفاصيل التدفق",
+        "sourceDetails": "تفاصيل المصدر",
+        "destinationDetails": "تفاصيل الوجهة"
+      },
+      "filters": {
+        "includeChildrenOfParkedFlows": "تضمين أطفال التدفق المتطابق",
+        "status": "الحالة",
+        "dataProvider": "مزود البيانات",
+        "flowType": "نوع التدفق",
+        "reporterRefCode": "رمز مرجعي للمبلغ",
+        "sourceOrganizations": "المنظمة(ات) المصدرة",
+        "sourceLocations": "البلدان المصدرة",
+        "destinationOrganizations": "المنظمة(ات) الوجهة",
+        "destinationLocations": "البلدان الوجهة",
+        "destinationUsageYears": "سنوات الاستخدام الوجهة",
+        "details": "تفاصيل"
+      },
+      "showMore": "عرض المزيد",
+      "tooltips": {
+        "filters": "المرشحات"
+      }
+    },
+    "organizationsFilter": {
+      "title": "المرشحات",
+      "button": {
+        "primary": "البحث",
+        "secondary": "مسح الحقول"
+      },
+      "headers": {
+        "organizationDetails": "تفاصيل المنظمة"
+      },
+      "filters": {
+        "organization": "اسم المنظمة",
+        "status": "نشط",
+        "date": "تمت الإضافة/التعديل منذ",
+        "locations": "البلد(ان)",
+        "organizationType": "نوع المنظمة",
+        "parentOrganization": "المنظمة الأم"
+      },
+      "showMore": "عرض المزيد",
+      "tooltips": {
+        "filters": "المرشحات"
+      }
+    },
+    "organizationTable": {
+      "headers": {
+        "id": "المعرف",
+        "name": "المنظمة",
+        "abbreviation": "الاختصار",
+        "type": "النوع",
+        "subType": "النوع الفرعي",
+        "location": "الموقع",
+        "createdBy": "تم الإنشاء بواسطة",
+        "updatedBy": "تم التحديث بواسطة"
+      },
+      "update": "تحديث",
+      "new": "جديد",
+      "restricted": "مقيد",
+      "inactive": "غير نشط",
+      "notFound": {
+        "title": "لم يتم العثور على منظمات",
+        "info": "لم نتمكن من تحميل المنظمات"
+      },
+      "sortBy": "ترتيب حسب",
+      "tableSettings": {
+        "title": "إعدادات الجدول",
+        "save": "حفظ",
+        "info": "المغادرة دون النقر على زر 'حفظ' لن يحدث تحديثا للجدول"
+      }
+    },
+    "organizationUpdateCreate": {
+      "title": {
+        "create": "إضافة مؤسسة"
+      },
+      "fields": {
+        "name": "اسم المؤسسة",
+        "abbreviation": "اختصار المؤسسة",
+        "nativeName": "الاسم بلغة أخرى",
+        "locations": "البلد(ان)",
+        "url": "رابط الموقع الإلكتروني",
+        "active": "نشط",
+        "verified": "تم التحقق",
+        "notes": "تعليقات",
+        "organizationTypes": "نوع المؤسسة",
+        "organizationLevel": "مستوى المؤسسة",
+        "parent": "المؤسسة الأم",
+        "collectiveInd": "مؤسسة جماعية",
+        "comments": "وصف المؤسسة"
+      },
+      "errors": {
+        "duplicate": "توجد مؤسسة بالفعل باسم {organizationName}. يرجى اختيار اسم مختلف.",
+        "unknown": "خطأ غير متوقع أثناء إنشاء/تحديث المؤسسة"
+      },
+      "formErrors": {
+        "name": "اسم المؤسسة هو حقل مطلوب",
+        "abbreviation": "اختصار المؤسسة هو حقل مطلوب",
+        "organizationType": "نوع المؤسسة هو حقل مطلوب"
+      },
+      "modal": {
+        "text": "هل أنت متأكد أنك تريد حذف هذا التدفق؟ سيتم حذف جميع المعلومات.",
+        "principalButton": "حذف",
+        "secondaryButton": "إلغاء"
+      },
+      "text": {
+        "collectiveOrganization": "تشير إعدادات المؤسسة الجماعية إلى أن المؤسسة هي 'بديل' لمؤسسة واحدة أو أكثر من نفس نوع المؤسسة (على سبيل المثال، \"منظمات الصليب الأحمر\"، ويتم استخدامها عندما لا يتم معرفة المؤسسات المحددة أو يجب إخفاؤها لأغراض الأمان",
+        "organizationType": "هذا حقل للقراءة فقط يمتلأ استنادًا إلى 'نوع المؤسسة'",
+        "create": "قدم المعلومات لإضافة مؤسسة جديدة، ستكون هذه المؤسسة متاحة في جميع تطبيقات أدوات HPC. الحقول المميزة بعلامة '*' إلزامية.",
+        "edit": "تحرير المؤسسة المحددة، أو انقر على زر الحذف لحذف المؤسسة نهائياً، ستكون هذه المؤسسة متاحة في جميع تطبيقات أدوات HPC. الحقول المميزة بعلامة '*' إلزامية"
+      },
+      "create": "إنشاء",
+      "update": "تحديث"
+    }
+  },
+  "navigation": {
+    "flows": "التدفقات",
+    "keywords": "الكلمات الرئيسية",
+    "pendingFlows": "التدفقات المعلقة",
+    "organizations": "المنظمات",
+    "rpm": "وحدة تخطيط الاستجابة",
+    "prism": "نظام المشاريع عبر الإنترنت",
+    "ftsWebsite": "موقع FTS",
+    "help": "المساعدة"
+  },
+  "routes": {
+    "flows": {
+      "title": "البحث في التدفقات التمويلية"
+    },
+    "keywords": {
+      "title": "إدارة الكلمات الرئيسية"
+    },
+    "pendingFlows": {
+      "title": "البحث في التدفقات المعلقة"
+    },
+    "organizations": {
+      "title": "المؤسسات"
+    }
+  }
 }
