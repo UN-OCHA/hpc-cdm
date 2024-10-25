@@ -568,12 +568,17 @@ const reportDetailsToReportingDetailProps = (
     dateReported: reportDetail.date ? dayjs(reportDetail.date) : null,
     reporterReferenceCode: reportDetail.refCode ?? '',
     reporterContactInfo: reportDetail.contactInfo ?? '',
-    reportFileTitle: reportDetail.reportFiles[0]?.title ?? '',
+    reportFileTitle:
+      reportDetail.reportFiles.find((rF) => rF.type === 'file')?.title ?? '',
     file: fileAssetEntityToFileUploadResult(
-      reportDetail.reportFiles[0]?.fileAssetEntity
+      reportDetail.reportFiles.find((rF) => rF.type === 'file')?.fileAssetEntity
     ),
-    reportURLTitle: reportDetail.reportFiles[1]?.title ?? '',
-    url: reportDetail.reportFiles[1]?.url ?? '',
+    reportURLTitle:
+      reportDetail.reportFiles.find((rF) => rF.type.toLowerCase() === 'url')
+        ?.title ?? '',
+    url:
+      reportDetail.reportFiles.find((rF) => rF.type.toLowerCase() === 'url')
+        ?.url ?? '',
   }));
 };
 
