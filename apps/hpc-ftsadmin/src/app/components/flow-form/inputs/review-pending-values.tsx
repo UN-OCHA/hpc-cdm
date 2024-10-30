@@ -8,12 +8,21 @@ import { t } from '../../../../i18n';
 import { getContext } from '../../../context';
 import { useFormikContext } from 'formik';
 import type { FlowFormType } from '../flow-form';
+import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
+type InputFieldsTypes =
+  | 'MultiAutocomplete'
+  | 'Autocomplete'
+  | 'Date'
+  | 'Radio'
+  | 'Text';
 export type ReviewPendingValuesProps = {
   fieldName:
     | keyof FlowFormType
     | keyof FlowFormType['reportingDetails'][number];
-  pendingValues?: string | FormObjectValue | FormObjectValue[] | null;
+  componentType: InputFieldsTypes;
+  pendingValues?: Dayjs | string | FormObjectValue | FormObjectValue[] | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClick?: (...args: any[]) => unknown;
 };
@@ -21,6 +30,7 @@ export type ReviewPendingValuesProps = {
 const BluePaper = tw(Paper)`
   bg-unocha-primary
   p-6
+  mt-4
 `;
 const ChipContainer = tw.div`
   my-6
@@ -40,13 +50,17 @@ const isFormObjectValue = (
   pendingValues: ReviewPendingValuesProps['pendingValues']
 ): pendingValues is FormObjectValue =>
   pendingValues !== null &&
+  pendingValues !== undefined &&
   !Array.isArray(pendingValues) &&
-  typeof pendingValues !== 'string';
+  typeof pendingValues !== 'string' &&
+  'value' in pendingValues;
 
 const isString = (
   pendingValues: ReviewPendingValuesProps['pendingValues']
 ): pendingValues is string =>
-  !Array.isArray(pendingValues) && typeof pendingValues === 'string';
+  !Array.isArray(pendingValues) &&
+  typeof pendingValues === 'string' &&
+  pendingValues !== '';
 
 const isBlank = (pendingValues: ReviewPendingValuesProps['pendingValues']) =>
   (Array.isArray(pendingValues) && pendingValues.length === 0) ||
@@ -61,6 +75,7 @@ const RenderPendingValue = ({ label }: { label: string }) => (
 
 const ReviewPendingValues = ({
   fieldName,
+  componentType,
   pendingValues,
   onClick,
 }: ReviewPendingValuesProps) => {
@@ -71,6 +86,16 @@ const ReviewPendingValues = ({
     return;
   }
 
+  const MAP_COMPONENT_TYPE_TO_IS_TYPE: Record<InputFieldsTypes, boolean> = {
+    MultiAutocomplete:
+      isFormObjectValueArray(pendingValues) || isBlank(pendingValues),
+    Autocomplete: isFormObjectValue(pendingValues) || isBlank(pendingValues),
+    Date: dayjs.isDayjs(pendingValues) || isBlank(pendingValues),
+    Radio: isString(pendingValues),
+    Text: isString(pendingValues) || isBlank(pendingValues),
+  };
+  const isUnmatched = !MAP_COMPONENT_TYPE_TO_IS_TYPE[componentType];
+
   const handleClick = () => {
     if (onClick) {
       onClick();
@@ -78,7 +103,7 @@ const ReviewPendingValues = ({
     setIsVisible(false);
   };
   const handleAccept = () => {
-    if (!isString(pendingValues)) {
+    if (!isUnmatched) {
       setFieldValue(fieldName, pendingValues);
       handleClick();
     }
@@ -99,27 +124,30 @@ const ReviewPendingValues = ({
           ))}
 
         {isString(pendingValues) && (
-          <>
-            <RenderPendingValue label={pendingValues} />
-            <span
-              style={{
-                color: THEME.colors.secondary.light,
-                display: 'block',
-                textAlign: 'start',
-              }}
-            >
-              {t.t(lang, (s) => s.components.reviewPendingValues.unmatched)}
-            </span>
-          </>
+          <RenderPendingValue label={pendingValues} />
         )}
 
         {isFormObjectValue(pendingValues) && (
           <RenderPendingValue label={pendingValues.displayLabel} />
         )}
 
+        {dayjs.isDayjs(pendingValues) && (
+          <RenderPendingValue label={pendingValues.format('DD/MM/YYYY')} />
+        )}
+        {isUnmatched && (
+          <span
+            style={{
+              color: THEME.colors.secondary.light,
+              display: 'block',
+              textAlign: 'start',
+            }}
+          >
+            {t.t(lang, (s) => s.components.reviewPendingValues.unmatched)}
+          </span>
+        )}
         {isBlank(pendingValues) && <p style={{ color: '#fff' }}>[blank]</p>}
       </ChipContainer>
-      {!isString(pendingValues) && (
+      {!isUnmatched && (
         <Box sx={tw`flex gap-x-4 justify-end`}>
           <C.Button
             text={t.t(
@@ -139,7 +167,7 @@ const ReviewPendingValues = ({
           />
         </Box>
       )}
-      {isString(pendingValues) && (
+      {isUnmatched && (
         <Box sx={tw`flex justify-end`}>
           <C.Button
             text={t.t(

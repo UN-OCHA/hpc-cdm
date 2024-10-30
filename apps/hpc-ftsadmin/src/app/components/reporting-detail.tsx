@@ -1,13 +1,9 @@
 import { FormObjectValue, fileAssetEntities } from '@unocha/hpc-data';
 import { FlowFormType, FormGroup } from './flow-form/flow-form';
-import AsyncAutocompleteSelectReview from './flow-form/inputs/async-autocomplete-pending-review';
 import { fnCategories, fnOrganizations } from '../utils/fn-promises';
 import { getEnv } from '../context';
 import tw from 'twin.macro';
-import RadioButtonFieldReview from './flow-form/inputs/radio-button-peding-review';
 import { useFormikContext } from 'formik';
-import TextFieldReview from './flow-form/inputs/text-field-pending-review';
-import DatePickerReview from './flow-form/inputs/date-picker-pending-review';
 import { Box } from '@mui/material';
 import { Dayjs } from 'dayjs';
 import { C } from '@unocha/hpc-ui';
@@ -170,8 +166,8 @@ const ReportingDetail = ({
     >
       <Box sx={tw`grid grid-cols-2 gap-y-8 gap-x-24`}>
         <div>
-          <RadioButtonFieldReview
-            fieldName="reportSource"
+          <C.RadioButtonField
+            name="reportSource"
             label="Report Source"
             options={REPORT_SOURCES}
             value={
@@ -184,8 +180,8 @@ const ReportingDetail = ({
             }
             disabled={disabled}
           />
-          <AsyncAutocompleteSelectReview
-            fieldName="reportedByOrganization"
+          <C.AsyncAutocompleteSelect
+            name="reportedByOrganization"
             label="Reported by Organization"
             fnPromise={(query) => fnOrganizations(query, env)}
             required
@@ -217,8 +213,8 @@ const ReportingDetail = ({
                 </ReportingOrganizationSuggestion>
               ))}
           </div>
-          <AsyncAutocompleteSelectReview
-            fieldName="reportChannel"
+          <C.AsyncAutocompleteSelect
+            name="reportChannel"
             label="Report Channel"
             fnPromise={() => fnCategories('reportChannel', env)}
             isAutocompleteAPI={false}
@@ -226,16 +222,16 @@ const ReportingDetail = ({
             onChange={(value) => handleChange('reportChannel', value)}
             disabled={disabled}
           />
-          <TextFieldReview
-            fieldName="sourceSystemRecordId"
+          <C.TextFieldWrapper
+            name="sourceSystemRecordId"
             label="Source System Record ID"
             initialValue={sourceSystemRecordId}
             disabled={true}
           />
         </div>
         <div>
-          <RadioButtonFieldReview
-            fieldName="verified"
+          <C.RadioButtonField
+            name="verified"
             label="Verified"
             options={[
               { displayLabel: 'Verified', value: 'true' },
@@ -245,22 +241,22 @@ const ReportingDetail = ({
             onChange={(value) => handleChange('verified', value)}
             disabled={disabled}
           />
-          <DatePickerReview
-            fieldName="dateReported"
+          <C.DatePicker
+            name="dateReported"
             label="Date Reported"
             initialValue={dateReported}
             onChange={(value) => handleChange('dateReported', value)}
             disabled={disabled}
           />
-          <TextFieldReview
-            fieldName="reporterReferenceCode"
+          <C.TextFieldWrapper
+            name="reporterReferenceCode"
             label="Reporter Reference Code"
             initialValue={reporterReferenceCode}
             onChange={(value) => handleChange('reporterReferenceCode', value)}
             disabled={disabled}
           />
-          <TextFieldReview
-            fieldName="reporterContactInfo"
+          <C.TextFieldWrapper
+            name="reporterContactInfo"
             label="Reporter Contact Information"
             textarea
             minRows={2}
@@ -275,8 +271,8 @@ const ReportingDetail = ({
       >
         <Box sx={tw`basis-1/2 max-w-[50%]`}>
           <span>Report File:</span>
-          <TextFieldReview
-            fieldName="reportFileTitle"
+          <C.TextFieldWrapper
+            name="reportFileTitle"
             label="Title"
             placeholder="Title"
             initialValue={reportFileTitle}
@@ -309,16 +305,16 @@ const ReportingDetail = ({
         </Box>
         <Box sx={tw`basis-1/2 max-w-[50%]`}>
           <span>Report URL:</span>
-          <TextFieldReview
-            fieldName="reportURLTitle"
+          <C.TextFieldWrapper
+            name="reportURLTitle"
             label="Title"
             placeholder="Title"
             initialValue={reportURLTitle}
             onChange={(value) => handleChange('reportURLTitle', value)}
             disabled={disabled}
           />
-          <TextFieldReview
-            fieldName="url"
+          <C.TextFieldWrapper
+            name="url"
             label="URL"
             placeholder="URL"
             initialValue={url}

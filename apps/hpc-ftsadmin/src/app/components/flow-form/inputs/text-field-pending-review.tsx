@@ -4,7 +4,7 @@ import ReviewPendingValues, {
 } from './review-pending-values';
 
 type TextFieldReviewProps = Omit<TextFieldWrapperProps, 'name'> &
-  ReviewPendingValuesProps;
+  Omit<ReviewPendingValuesProps, 'componentType'>;
 
 const TextFieldReview = (props: TextFieldReviewProps) => {
   const { fieldName, pendingValues, onClick, ...textFieldProps } = props;
@@ -16,7 +16,7 @@ const TextFieldReview = (props: TextFieldReviewProps) => {
   };
   return (
     <div>
-      <ReviewPendingValues {...reviewPendingValuesProps} />
+      <ReviewPendingValues {...reviewPendingValuesProps} componentType="Text" />
       <C.TextFieldWrapper {...textFieldProps} name={fieldName} />
     </div>
   );

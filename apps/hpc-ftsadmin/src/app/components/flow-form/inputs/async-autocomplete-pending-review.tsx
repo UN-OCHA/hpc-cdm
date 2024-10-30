@@ -8,7 +8,7 @@ type AsyncAutocompleteSelectReviewProps = { sx?: SxProps<Theme> } & Omit<
   AsyncAutocompleteSelectProps,
   'name'
 > &
-  ReviewPendingValuesProps;
+  Omit<ReviewPendingValuesProps, 'componentType'>;
 
 const AsyncAutocompleteSelectReview = (
   props: AsyncAutocompleteSelectReviewProps
@@ -23,7 +23,10 @@ const AsyncAutocompleteSelectReview = (
   };
   return (
     <Box sx={props.sx}>
-      <ReviewPendingValues {...reviewPendingValuesProps} />
+      <ReviewPendingValues
+        {...reviewPendingValuesProps}
+        componentType={props.isMulti ? 'MultiAutocomplete' : 'Autocomplete'}
+      />
       <C.AsyncAutocompleteSelect
         {...asyncAutocompleteSelectProps}
         name={fieldName}

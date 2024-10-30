@@ -87,6 +87,25 @@ type FlowFormFlowObjectKey =
 const TRANSFERRED_CHIP_COLOR = THEME.colors.pallete.blue.light;
 const INFERRED_CHIP_COLOR = THEME.colors.pallete.orange.variant1;
 
+const FUNDING_KEYS: FlowFormFlowObjectKey[] = [
+  'fundingSourceOrganizations',
+  'fundingSourceLocations',
+  'fundingSourceEmergencies',
+  'fundingSourceGlobalClusters',
+  'fundingSourcePlan',
+  'fundingSourceProject',
+  'fundingSourceUsageYears',
+  'fundingSourceFieldClusters',
+  'fundingDestinationOrganizations',
+  'fundingDestinationLocations',
+  'fundingDestinationEmergencies',
+  'fundingDestinationGlobalClusters',
+  'fundingDestinationPlan',
+  'fundingDestinationProject',
+  'fundingDestinationUsageYears',
+  'fundingDestinationFieldClusters',
+];
+
 const categoryIds = (categories: Array<{ value: number | string } | null>) => {
   const ids: number[] = [];
   for (const category of categories) {
@@ -236,7 +255,8 @@ const reportingDetailPropsToReportDetails = (
 //  TODO: Implement this function
 export const parseFlowForm = (
   values: FlowFormTypeValidated,
-  id?: number
+  id?: number,
+  isPending?: { isApproved?: boolean; isSaved?: boolean }
 ): flows.CreateFlowParams => {
   const {
     method,
@@ -276,12 +296,16 @@ export const parseFlowForm = (
     ...keywords,
   ]);
 
+  if (isPending?.isSaved) {
+    // Pending Review Category ID : 45
+    categories.push(45);
+  }
   const flowObjects = getFundingValues(values).flatMap((key) =>
     extractDirectionObject(key, values)
   );
 
   const flow: flows.CreateFlowParams['flow'] = {
-    activeStatus: !isInactive,
+    activeStatus: !isInactive || !!isPending?.isApproved,
     amountUSD: currencyToInteger(amountUSD),
     budgetYear: valueToInteger(donorBudgetYear),
     categories,
@@ -293,12 +317,18 @@ export const parseFlowForm = (
     flowDate: flowDate.toISOString(),
     flowObjects,
     isCancellation: null, //  TODO
-    isErrorCorrection,
-
+    isErrorCorrection:
+      isErrorCorrection || isPending?.isApproved || isPending?.isSaved,
+    isApprovedFlowVersion: isPending?.isApproved || isPending?.isSaved,
     //  TODO: Don't hardcode this
-    inactiveReason: isInactive
-      ? [{ group: 'inactiveReason', id: 12, name: 'Cancelled' }]
-      : [],
+    inactiveReason: [
+      ...(isInactive
+        ? [{ group: 'inactiveReason', id: 12, name: 'Cancelled' }]
+        : []),
+      ...(isPending?.isSaved
+        ? [{ group: 'inactiveReason', id: 45, name: 'Pending review' }]
+        : []),
+    ],
     newCategories: [], //  TODO
     newMoney,
     notes,
@@ -407,14 +437,16 @@ const inferredTransferredChipColor = (
 
 const flowObjectToFormObjectValue = (
   flow: flows.GetFlowResult,
-  keys: FlowFormFlowObjectKey[]
+  keys: FlowFormFlowObjectKey[],
+  parent?: flows.GetFlowResult
 ): FlowFormType => {
+  const sourceFlow = parent ?? flow;
   const MAP_KEYS_TO_FIELDS: Record<
     FlowFormFlowObjectKey,
     FlowFormType[FlowFormFlowObjectKey]
   > = {
     fundingSourceOrganizations: organizationsOptions(
-      flow.organizations
+      sourceFlow.organizations
         .filter((org) => org.flowObject.refDirection === 'source')
         .map((org) => ({
           ...org,
@@ -422,7 +454,7 @@ const flowObjectToFormObjectValue = (
         }))
     ),
     fundingSourceLocations: locationsOptions(
-      flow.locations
+      sourceFlow.locations
         .filter((loc) => loc.flowObject.refDirection === 'source')
         .map((loc) => ({
           ...loc,
@@ -430,7 +462,7 @@ const flowObjectToFormObjectValue = (
         }))
     ),
     fundingSourceEmergencies: defaultOptions(
-      flow.emergencies
+      sourceFlow.emergencies
         .filter((emergency) => emergency.flowObject.refDirection === 'source')
         .map((emergency) => ({
           ...emergency,
@@ -438,7 +470,7 @@ const flowObjectToFormObjectValue = (
         }))
     ),
     fundingSourceGlobalClusters: defaultOptions(
-      flow.globalClusters
+      sourceFlow.globalClusters
         .filter((gC) => gC.flowObject.refDirection === 'source')
         .map((gC) => ({
           ...gC,
@@ -446,7 +478,7 @@ const flowObjectToFormObjectValue = (
         }))
     ),
     fundingSourcePlan:
-      flow.plans
+      sourceFlow.plans
         .filter((plan) => plan.flowObject.refDirection === 'source')
         .map((plan) => ({
           displayLabel: plan.planVersion.name,
@@ -454,7 +486,7 @@ const flowObjectToFormObjectValue = (
         }))
         .at(0) ?? null,
     fundingSourceProject:
-      flow.projects
+      sourceFlow.projects
         .filter((project) => project.flowObject.refDirection === 'source')
         .map((project) => ({
           displayLabel: project.projectVersions[0]?.name,
@@ -462,14 +494,14 @@ const flowObjectToFormObjectValue = (
         }))
         .at(0) ?? null,
     fundingSourceUsageYears: usageYearsOptions(
-      flow.usageYears
+      sourceFlow.usageYears
         .filter((usageYear) => usageYear.flowObject.refDirection === 'source')
         .map((usageYear) => ({
           ...usageYear,
           ...inferredTransferredChipColor(flow, usageYear, 'usageYear'),
         }))
     ),
-    fundingSourceFieldClusters: flow.clusters
+    fundingSourceFieldClusters: sourceFlow.clusters
       .filter((cluster) => cluster.flowObject.refDirection === 'source')
       .map((cluster) => ({
         displayLabel: cluster.governingEntityVersion.name,
@@ -605,24 +637,7 @@ export const parseToFlowForm = (
   const flowForm: FlowFormType = {
     ...INITIAL_FORM_VALUES,
     ...categoriesToFlowForm(flow),
-    ...flowObjectToFormObjectValue(flow, [
-      'fundingSourceOrganizations',
-      'fundingSourceLocations',
-      'fundingSourceEmergencies',
-      'fundingSourceGlobalClusters',
-      'fundingSourcePlan',
-      'fundingSourceProject',
-      'fundingSourceUsageYears',
-      'fundingSourceFieldClusters',
-      'fundingDestinationOrganizations',
-      'fundingDestinationLocations',
-      'fundingDestinationEmergencies',
-      'fundingDestinationGlobalClusters',
-      'fundingDestinationPlan',
-      'fundingDestinationProject',
-      'fundingDestinationUsageYears',
-      'fundingDestinationFieldClusters',
-    ]),
+    ...flowObjectToFormObjectValue(flow, FUNDING_KEYS, parents?.[0]),
     amountUSD,
     flowDescription,
     amountOriginalCurrency:
@@ -772,4 +787,218 @@ export const queryParamsFlowFilter = async (
 
   const params = new URLSearchParams(paramsObject);
   return params.toString();
+};
+
+/**
+ *  It returns the values that differ from both flows with
+ *  the values from the incoming flow
+ */
+const compareFlowForms = (
+  currentFlow: FlowFormType,
+  incomingFlow: FlowFormType
+): Partial<FlowFormType> => {
+  const result: Partial<FlowFormType> = {};
+  const isDifferentFormObjectValue = (
+    currentValue: FormObjectValue | null,
+    incomingValue: FormObjectValue | null
+  ) => {
+    if (currentValue === incomingValue) return false;
+    if ((!currentValue && incomingValue) || (currentValue && !incomingValue))
+      return true;
+    return currentValue?.value !== incomingValue?.value;
+  };
+
+  const isDifferentFlowLinkProps = (
+    currentFlowLink: FlowLinkProps | null,
+    incomingFlowLink: FlowLinkProps | null
+  ) => {
+    if (currentFlowLink === incomingFlowLink) return false;
+    if (
+      (!currentFlowLink && incomingFlowLink) ||
+      (currentFlowLink && !incomingFlowLink)
+    )
+      return true;
+    return (
+      currentFlowLink?.id !== incomingFlowLink?.id ||
+      currentFlowLink?.versionID !== incomingFlowLink?.versionID
+    );
+  };
+
+  const isDifferentDayjs = (
+    currentDate: dayjs.Dayjs | null,
+    incomingDate: dayjs.Dayjs | null
+  ): boolean => {
+    if (currentDate === incomingDate) return false;
+    if ((!currentDate && incomingDate) || (currentDate && !incomingDate))
+      return true;
+    return !currentDate?.isSame(incomingDate);
+  };
+
+  const isDifferentArray = <T>(
+    currentArray: T[],
+    incomingArray: T[],
+    comparator: (a: T, b: T) => boolean
+  ) => {
+    if (currentArray.length === 0 && incomingArray.length === 0) return false;
+    if (currentArray.length !== incomingArray.length) return true;
+
+    for (const item of currentArray) {
+      if (!incomingArray.some((i) => comparator(item, i))) {
+        return false;
+      }
+    }
+    return true;
+  };
+  let typedKey: keyof FlowFormType;
+  for (typedKey in currentFlow) {
+    const key = typedKey;
+    switch (key) {
+      // For FormObjectValue[]
+      case 'fundingSourceOrganizations':
+      case 'fundingSourceUsageYears':
+      case 'fundingSourceLocations':
+      case 'fundingSourceEmergencies':
+      case 'fundingSourceGlobalClusters':
+      case 'fundingSourceFieldClusters':
+      case 'fundingDestinationOrganizations':
+      case 'fundingDestinationUsageYears':
+      case 'fundingDestinationLocations':
+      case 'fundingDestinationEmergencies':
+      case 'fundingDestinationGlobalClusters':
+      case 'fundingDestinationFieldClusters':
+      case 'keywords': {
+        const currentValue = currentFlow[key];
+        const incomingValue = incomingFlow[key];
+        if (
+          isDifferentArray(
+            currentValue,
+            incomingValue,
+            isDifferentFormObjectValue
+          )
+        ) {
+          result[key] = incomingValue;
+        }
+        break;
+      }
+      // For FormObjectValue | null
+      case 'fundingSourceProject':
+      case 'fundingSourcePlan':
+      case 'fundingDestinationProject':
+      case 'fundingDestinationPlan':
+      case 'currency':
+      case 'flowType':
+      case 'flowStatus':
+      case 'contributionType':
+      case 'earmarkingType':
+      case 'method':
+      case 'beneficiaryGroup': {
+        const currentValue = currentFlow[key];
+        const incomingValue = incomingFlow[key];
+        if (isDifferentFormObjectValue(currentValue, incomingValue)) {
+          result[key] = incomingValue;
+        }
+        break;
+      }
+
+      // For FlowLinkProps | null
+      case 'parentFlow': {
+        const currentValue = currentFlow[key];
+        const incomingValue = incomingFlow[key];
+        if (isDifferentFlowLinkProps(currentValue, incomingValue)) {
+          result[key] = incomingValue;
+        }
+        break;
+      }
+
+      case 'childFlows': {
+        const currentValue = currentFlow[key];
+        const incomingValue = incomingFlow[key];
+        if (
+          isDifferentArray(
+            currentValue,
+            incomingValue,
+            isDifferentFlowLinkProps
+          )
+        ) {
+          result[key] = incomingValue;
+        }
+        break;
+      }
+      // For Dayjs dates
+      case 'firstReported':
+      case 'decisionDate':
+      case 'flowDate': {
+        const currentValue = currentFlow[key];
+        const incomingValue = incomingFlow[key];
+        if (isDifferentDayjs(currentValue, incomingValue)) {
+          result[key] = incomingValue;
+        }
+        break;
+      }
+      // For primitive or direct comparisons
+      case 'isNewMoney':
+      case 'restricted': {
+        const currentValue = currentFlow[key];
+        const incomingValue = incomingFlow[key];
+        if (currentValue !== incomingValue) {
+          result[key] = incomingValue;
+        }
+        break;
+      }
+      case 'amountUSD':
+      case 'amountOriginalCurrency':
+      case 'exchangeRate':
+      case 'flowDescription':
+      case 'donorBudgetYear':
+      case 'notes': {
+        const currentValue = currentFlow[key];
+        const incomingValue = incomingFlow[key];
+        if (currentValue !== incomingValue) {
+          result[key] = incomingValue;
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+  return result;
+};
+
+const isFundingKey = (key: string): key is FlowFormFlowObjectKey =>
+  FUNDING_KEYS.some((k) => k === key);
+
+export const pendingValuesFlowForm = (
+  initialValues?: FlowFormType,
+  flow?: flows.GetFlowResult
+): Partial<FlowFormType> | null => {
+  if (!flow || !initialValues) {
+    return null;
+  }
+  const MAP_SINGULAR_TO_KEY: Record<string, string> = {
+    organization: 'Organizations',
+    location: 'Locations',
+    emergency: 'Emergencies',
+    globalCluster: 'GlobalClusters',
+    plan: 'Plan',
+    project: 'Project',
+    usageYear: 'UsageYears',
+    fieldCluster: 'FieldClusters',
+  };
+
+  const comparedFlow = compareFlowForms(initialValues, parseToFlowForm(flow));
+  for (const eD of flow.externalData) {
+    const key = `funding${
+      eD.refDirection === 'destination' ? 'Destination' : 'Source'
+    }${MAP_SINGULAR_TO_KEY[eD.objectType]}`;
+    console.log(key);
+    if (isFundingKey(key)) {
+      // TODO: Review how this any casting works, technically it should be
+      // like this because it's unknown and after we will check if is type
+      // mismatch
+      comparedFlow[key] = eD.data as any;
+    }
+  }
+  console.log(comparedFlow);
+  return comparedFlow;
 };

@@ -4,6 +4,7 @@ import { type FormObjectValue, util as codecs, flows } from '@unocha/hpc-data';
 import { Form, Formik, FormikHelpers } from 'formik';
 import {
   parseFlowForm,
+  pendingValuesFlowForm,
   queryParamsFlowFilter,
   serializeFlowForm,
 } from '../../utils/parse-flow-form';
@@ -54,12 +55,14 @@ import {
 } from '../../utils/fn-autofills';
 import { validateFlowForWarnings } from '../../utils/fn-validations';
 import { useState } from 'react';
+import DatePickerReview from './inputs/date-picker-pending-review';
 
 type FlowFormProps = {
   setError: React.Dispatch<React.SetStateAction<string | undefined>>;
   load: () => void;
   initialValues?: FlowFormType;
   flow?: flows.GetFlowResult;
+  isPending?: boolean;
 };
 
 export type FlowFormType = {
@@ -314,8 +317,13 @@ export const FlowForm = (props: FlowFormProps) => {
   const env = getEnv();
   const navigate = useNavigate();
 
-  const { setError, initialValues, flow } = props;
+  const { setError, initialValues, flow, isPending } = props;
   const [loading, setLoading] = useState(false);
+  const pendingValues = isPending
+    ? pendingValuesFlowForm(initialValues, flow)
+    : undefined;
+  const isDisabled = initialValues?.isInactive && !isPending;
+
   const handleSubmit = async (values: FlowFormTypeValidated) => {
     setLoading(true);
     const isValid = await validateFlowForWarnings(values, setError);
@@ -328,7 +336,7 @@ export const FlowForm = (props: FlowFormProps) => {
       env.model.flows
         .updateFlow({
           flow: {
-            ...parseFlowForm(values, flow?.id).flow,
+            ...parseFlowForm(values, flow.id, { isApproved: isPending }).flow,
             id: flow.id,
             versionID: flow.versionID,
           },
@@ -352,6 +360,33 @@ export const FlowForm = (props: FlowFormProps) => {
         .catch((err) => {
           setLoading(false);
           console.error(err);
+          setError(err.json.message);
+        });
+    }
+  };
+  const handlePendingFlowSave = async (values: FlowFormTypeValidated) => {
+    setLoading(true);
+    const isValid = await validateFlowForWarnings(values, setError);
+    if (!isValid) {
+      setLoading(false);
+      return;
+    }
+
+    if (flow?.id) {
+      env.model.flows
+        .updateFlow({
+          flow: {
+            ...parseFlowForm(values, flow.id, { isSaved: isPending }).flow,
+            id: flow.id,
+            versionID: flow.versionID,
+          },
+        })
+        .then(() => {
+          setLoading(false);
+          props.load();
+        })
+        .catch((err) => {
+          setLoading(false);
           setError(err.json.message);
         });
     }
@@ -402,19 +437,23 @@ export const FlowForm = (props: FlowFormProps) => {
         >
           {({ values, isValid, setFieldValue }) => (
             <Form>
-              {!initialValues?.isInactive && (
+              {!isDisabled && (
                 <C.CheckBox
                   name="restricted"
                   label="Restricted to internal use"
                 />
               )}
-              {initialValues && !initialValues.isInactive && flow && (
+              {initialValues && flow && (
                 <Box sx={tw`flex gap-x-6 items-center`}>
                   <C.CheckBox
                     name="isErrorCorrection"
                     label="As error correction"
                   />
-                  <C.CheckBox name="isInactive" label="Set as inactive" />
+                  <C.CheckBox
+                    name="isInactive"
+                    label="Set as inactive"
+                    disabled={isDisabled}
+                  />
                   <Link
                     to={paths.addFlow()}
                     state={{
@@ -454,7 +493,12 @@ export const FlowForm = (props: FlowFormProps) => {
                         newValue,
                       });
                     }}
-                    disabled={initialValues?.isInactive || !!values.parentFlow}
+                    disabled={isDisabled || !!values.parentFlow}
+                    pendingValues={
+                      !values.parentFlow
+                        ? pendingValues?.fundingSourceOrganizations
+                        : undefined
+                    }
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -462,7 +506,12 @@ export const FlowForm = (props: FlowFormProps) => {
                     label="Usage Year(s)"
                     fnPromise={() => fnUsageYears(env)}
                     isAutocompleteAPI={false}
-                    disabled={initialValues?.isInactive || !!values.parentFlow}
+                    disabled={isDisabled || !!values.parentFlow}
+                    pendingValues={
+                      !values.parentFlow
+                        ? pendingValues?.fundingSourceUsageYears
+                        : undefined
+                    }
                     isMulti
                     required
                   />
@@ -470,14 +519,24 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceLocations"
                     label="Location(s)"
                     fnPromise={(query) => fnLocations(query, env)}
-                    disabled={initialValues?.isInactive || !!values.parentFlow}
+                    disabled={isDisabled || !!values.parentFlow}
+                    pendingValues={
+                      !values.parentFlow
+                        ? pendingValues?.fundingSourceLocations
+                        : undefined
+                    }
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingSourceEmergencies"
                     label="Emergency(ies)"
                     fnPromise={(query) => fnEmergencies(query, env)}
-                    disabled={initialValues?.isInactive || !!values.parentFlow}
+                    disabled={isDisabled || !!values.parentFlow}
+                    pendingValues={
+                      !values.parentFlow
+                        ? pendingValues?.fundingSourceEmergencies
+                        : undefined
+                    }
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -494,7 +553,12 @@ export const FlowForm = (props: FlowFormProps) => {
                       })
                     }
                     isAutocompleteAPI={false}
-                    disabled={initialValues?.isInactive || !!values.parentFlow}
+                    disabled={isDisabled || !!values.parentFlow}
+                    pendingValues={
+                      !values.parentFlow
+                        ? pendingValues?.fundingSourceGlobalClusters
+                        : undefined
+                    }
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -510,7 +574,12 @@ export const FlowForm = (props: FlowFormProps) => {
                         newValue,
                       });
                     }}
-                    disabled={initialValues?.isInactive || !!values.parentFlow}
+                    disabled={isDisabled || !!values.parentFlow}
+                    pendingValues={
+                      !values.parentFlow
+                        ? pendingValues?.fundingSourcePlan
+                        : undefined
+                    }
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingSourceFieldClusters"
@@ -534,11 +603,13 @@ export const FlowForm = (props: FlowFormProps) => {
                         values,
                       })
                     }
-                    disabled={
-                      initialValues?.isInactive ||
-                      values.fundingSourcePlan === null
-                    }
+                    disabled={isDisabled || values.fundingSourcePlan === null}
                     isAutocompleteAPI={false}
+                    pendingValues={
+                      !values.parentFlow
+                        ? pendingValues?.fundingSourceFieldClusters
+                        : undefined
+                    }
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -554,7 +625,12 @@ export const FlowForm = (props: FlowFormProps) => {
                         newValue,
                       });
                     }}
-                    disabled={initialValues?.isInactive || !!values.parentFlow}
+                    disabled={isDisabled || !!values.parentFlow}
+                    pendingValues={
+                      !values.parentFlow
+                        ? pendingValues?.fundingSourceProject
+                        : undefined
+                    }
                   />
                 </FormGroup>
 
@@ -565,13 +641,14 @@ export const FlowForm = (props: FlowFormProps) => {
                         <C.CheckBox
                           name="isNewMoney"
                           label="Is this flow new money ?"
-                          disabled={initialValues?.isInactive}
+                          disabled={isDisabled}
                         />
                         <NumberFieldReview
                           fieldName="amountUSD"
                           label="Funding Amount in USD"
                           type="currency"
-                          disabled={initialValues?.isInactive}
+                          disabled={isDisabled}
+                          pendingValues={pendingValues?.amountUSD}
                           required
                         />
                         <Box
@@ -583,7 +660,10 @@ export const FlowForm = (props: FlowFormProps) => {
                               label="Funding amount (Original currency)"
                               type="unknownCurrency"
                               sx={tw`basis-4/6`}
-                              disabled={initialValues?.isInactive}
+                              disabled={isDisabled}
+                              pendingValues={
+                                pendingValues?.amountOriginalCurrency
+                              }
                             />
                             <AsyncAutocompleteSelectReview
                               fieldName="currency"
@@ -591,14 +671,16 @@ export const FlowForm = (props: FlowFormProps) => {
                               fnPromise={() => fnCurrencies(env)}
                               isAutocompleteAPI={false}
                               sx={tw`basis-2/6`}
-                              disabled={initialValues?.isInactive}
+                              disabled={isDisabled}
+                              pendingValues={pendingValues?.currency}
                             />
                           </Box>
                           <NumberFieldReview
                             fieldName="exchangeRate"
                             label="Exchange Rate Used"
                             type="float"
-                            disabled={initialValues?.isInactive}
+                            disabled={isDisabled}
+                            pendingValues={pendingValues?.exchangeRate}
                           />
                           <UNTreasuryLinkComponent
                             href="https://treasury.un.org/operationalrates/OperationalRates.php"
@@ -623,12 +705,13 @@ export const FlowForm = (props: FlowFormProps) => {
                           required
                           textarea
                           minRows={2}
-                          disabled={initialValues?.isInactive}
+                          disabled={isDisabled}
+                          pendingValues={pendingValues?.flowDescription}
                         />
                         <Box sx={tw`flex gap-4`}>
-                          <C.DatePicker
+                          <DatePickerReview
                             label="First Reported (DD/MM/YY)"
-                            name="firstReported"
+                            fieldName="firstReported"
                             onChange={(value) =>
                               handleChangeFirstReported(
                                 value,
@@ -636,12 +719,14 @@ export const FlowForm = (props: FlowFormProps) => {
                                 values
                               )
                             }
-                            disabled={initialValues?.isInactive}
+                            disabled={isDisabled}
+                            pendingValues={pendingValues?.firstReported}
                           />
-                          <C.DatePicker
+                          <DatePickerReview
                             label="Decision Date (DD/MM/YY)"
-                            name="decisionDate"
-                            disabled={initialValues?.isInactive}
+                            fieldName="decisionDate"
+                            disabled={isDisabled}
+                            pendingValues={pendingValues?.decisionDate}
                           />
                         </Box>
                         <NumberFieldReview
@@ -649,7 +734,8 @@ export const FlowForm = (props: FlowFormProps) => {
                           fieldName="donorBudgetYear"
                           type="number"
                           placeholder="YYYY"
-                          disabled={initialValues?.isInactive}
+                          disabled={isDisabled}
+                          pendingValues={pendingValues?.donorBudgetYear}
                         />
                       </div>
                       <div>
@@ -658,19 +744,22 @@ export const FlowForm = (props: FlowFormProps) => {
                           label="Flow Type"
                           fnPromise={() => fnFlowTypeId(env)}
                           isAutocompleteAPI={false}
-                          disabled={initialValues?.isInactive}
+                          disabled={isDisabled}
+                          pendingValues={pendingValues?.flowType}
                         />
                         <AsyncAutocompleteSelectReview
                           fieldName="flowStatus"
                           label="Flow Status"
                           fnPromise={() => fnFlowStatusId(env)}
                           isAutocompleteAPI={false}
-                          disabled={initialValues?.isInactive}
+                          disabled={isDisabled}
+                          pendingValues={pendingValues?.flowStatus}
                         />
-                        <C.DatePicker
+                        <DatePickerReview
                           label="Flow Date"
-                          name="flowDate"
-                          disabled={initialValues?.isInactive}
+                          fieldName="flowDate"
+                          disabled={isDisabled}
+                          pendingValues={pendingValues?.flowDate}
                         />
                         <AsyncAutocompleteSelectReview
                           fieldName="contributionType"
@@ -679,21 +768,24 @@ export const FlowForm = (props: FlowFormProps) => {
                             fnCategories('contributionType', env)
                           }
                           isAutocompleteAPI={false}
-                          disabled={initialValues?.isInactive}
+                          disabled={isDisabled}
+                          pendingValues={pendingValues?.contributionType}
                         />
                         <AsyncAutocompleteSelectReview
                           fieldName="earmarkingType"
                           label="GB Earmarking"
                           fnPromise={() => fnCategories('earmarkingType', env)}
                           isAutocompleteAPI={false}
-                          disabled={initialValues?.isInactive}
+                          disabled={isDisabled}
+                          pendingValues={pendingValues?.earmarkingType}
                         />
                         <AsyncAutocompleteSelectReview
                           fieldName="method"
                           label="Aid Modality"
                           fnPromise={() => fnCategories('method', env)}
                           isAutocompleteAPI={false}
-                          disabled={initialValues?.isInactive}
+                          disabled={isDisabled}
+                          pendingValues={pendingValues?.method}
                           required
                         />
                         <AsyncAutocompleteSelectReview
@@ -701,7 +793,8 @@ export const FlowForm = (props: FlowFormProps) => {
                           label="Keyword(s)"
                           fnPromise={() => fnCategories('keywords', env)}
                           isAutocompleteAPI={false}
-                          disabled={initialValues?.isInactive}
+                          disabled={isDisabled}
+                          pendingValues={pendingValues?.keywords}
                           isMulti
                         />
                         <AsyncAutocompleteSelectReview
@@ -711,7 +804,8 @@ export const FlowForm = (props: FlowFormProps) => {
                             fnCategories('beneficiaryGroup', env)
                           }
                           isAutocompleteAPI={false}
-                          disabled={initialValues?.isInactive}
+                          disabled={isDisabled}
+                          pendingValues={pendingValues?.beneficiaryGroup}
                         />
                       </div>
                     </Box>
@@ -720,7 +814,8 @@ export const FlowForm = (props: FlowFormProps) => {
                       label="Notes"
                       textarea
                       minRows={3}
-                      disabled={initialValues?.isInactive}
+                      disabled={isDisabled}
+                      pendingValues={pendingValues?.notes}
                     />
                   </FormGroup>
                   <FormGroup title="Linked Flows">
@@ -764,7 +859,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         </Box>
                       </Box>
                     )}
-                    {!initialValues?.isInactive && (
+                    {!isDisabled && (
                       <Box sx={tw`flex gap-x-4`}>
                         {!values.parentFlow && (
                           <FlowSearch
@@ -785,28 +880,25 @@ export const FlowForm = (props: FlowFormProps) => {
                     values.reportingDetails.map((_, index) => (
                       <ReportingDetail
                         index={index}
-                        disabled={initialValues?.isInactive}
+                        disabled={
+                          isDisabled &&
+                          index < initialValues.reportingDetails.length
+                        }
                       />
                     ))
                   ) : (
-                    <ReportingDetail
-                      index={0}
-                      disabled={initialValues?.isInactive}
-                    />
+                    <ReportingDetail index={0} disabled={isDisabled} />
                   )}
-                  {!initialValues?.isInactive && (
-                    <C.Button
-                      text="Add Reporting Detail"
-                      onClick={() =>
-                        setFieldValue('reportingDetails', [
-                          ...values.reportingDetails,
-                          REPORTING_DETAIL_INITIAL_VALUES,
-                        ])
-                      }
-                      color="primary"
-                    />
-                  )}
-
+                  <C.Button
+                    text="Add Reporting Detail"
+                    onClick={() =>
+                      setFieldValue('reportingDetails', [
+                        ...values.reportingDetails,
+                        REPORTING_DETAIL_INITIAL_VALUES,
+                      ])
+                    }
+                    color="primary"
+                  />
                   {(flow?.versions?.length ?? 0) > 0 && (
                     <FormGroup title="Flow Versions">
                       <Box sx={tw`flex flex-col px-4 gap-y-6`}>
@@ -860,7 +952,10 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationOrganizations"
                     label="Organization(s)"
                     fnPromise={(query) => fnOrganizations(query, env)}
-                    disabled={initialValues?.isInactive}
+                    disabled={isDisabled}
+                    pendingValues={
+                      pendingValues?.fundingDestinationOrganizations
+                    }
                     isMulti
                     required
                   />
@@ -869,7 +964,8 @@ export const FlowForm = (props: FlowFormProps) => {
                     label="Usage Year(s)"
                     fnPromise={() => fnUsageYears(env)}
                     isAutocompleteAPI={false}
-                    disabled={initialValues?.isInactive}
+                    disabled={isDisabled}
+                    pendingValues={pendingValues?.fundingDestinationUsageYears}
                     isMulti
                     required
                   />
@@ -877,14 +973,16 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationLocations"
                     label="Location(s)"
                     fnPromise={(query) => fnLocations(query, env)}
-                    disabled={initialValues?.isInactive}
+                    disabled={isDisabled}
+                    pendingValues={pendingValues?.fundingDestinationLocations}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationEmergencies"
                     label="Emergency(ies)"
                     fnPromise={(query) => fnEmergencies(query, env)}
-                    disabled={initialValues?.isInactive}
+                    disabled={isDisabled}
+                    pendingValues={pendingValues?.fundingDestinationEmergencies}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -901,7 +999,10 @@ export const FlowForm = (props: FlowFormProps) => {
                       })
                     }
                     isAutocompleteAPI={false}
-                    disabled={initialValues?.isInactive}
+                    disabled={isDisabled}
+                    pendingValues={
+                      pendingValues?.fundingDestinationGlobalClusters
+                    }
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -917,7 +1018,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         newValue,
                       });
                     }}
-                    disabled={initialValues?.isInactive}
+                    disabled={isDisabled}
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationFieldClusters"
@@ -942,10 +1043,12 @@ export const FlowForm = (props: FlowFormProps) => {
                       })
                     }
                     disabled={
-                      initialValues?.isInactive ||
-                      values.fundingDestinationPlan === null
+                      isDisabled || values.fundingDestinationPlan === null
                     }
                     isAutocompleteAPI={false}
+                    pendingValues={
+                      pendingValues?.fundingDestinationFieldClusters
+                    }
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -961,7 +1064,8 @@ export const FlowForm = (props: FlowFormProps) => {
                         newValue,
                       });
                     }}
-                    disabled={initialValues?.isInactive}
+                    disabled={isDisabled}
+                    pendingValues={pendingValues?.fundingDestinationProject}
                   />
                 </FormGroup>
               </Box>
@@ -984,6 +1088,29 @@ export const FlowForm = (props: FlowFormProps) => {
                     <C.ButtonSubmit
                       color="primary_light"
                       text="Submit"
+                      displayLoading={loading}
+                    />
+                  )}
+                  {isPending && (
+                    <C.Button
+                      onClick={async () => {
+                        handlePendingFlowSave(values as FlowFormTypeValidated);
+                      }}
+                      color="primary_light"
+                      text="Save"
+                      displayLoading={loading}
+                    />
+                  )}
+                  {flow?.activeStatus === false && (
+                    <C.Button
+                      onClick={async () => {
+                        handleSubmit({
+                          ...values,
+                          isInactive: false,
+                        } as FlowFormTypeValidated);
+                      }}
+                      color="primary_light"
+                      text="Reactivate"
                       displayLoading={loading}
                     />
                   )}

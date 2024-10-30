@@ -10,15 +10,25 @@ import {
   parseToFlowForm,
   deserializeFlowForm,
 } from '../../utils/parse-flow-form';
+import { flows } from '@unocha/hpc-data';
+import dayjs from 'dayjs';
 
 type FlowRouteParams = {
   id: string;
   version?: string;
 };
 
+type FlowRestPending = Omit<flows.GetFlowResult, 'activeVersion'> & {
+  activeVersion: flows.GetFlowResult;
+};
+
 const PaddingContainer = tw.div`
   xl:px-12
   px-6
+`;
+
+const UpdatedCreatedBy = tw.h4`
+  m-0
 `;
 
 const InactiveReason = tw.span`
@@ -36,6 +46,9 @@ export default () => {
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState(historyState?.successMessage);
   const { id: idString, version } = useParams<FlowRouteParams>();
+
+  const isPending = (flow: flows.GetFlowResult): flow is FlowRestPending =>
+    flow.categories.some((c) => c.name === 'Pending review');
 
   const id = parseInt(idString ?? '', 10);
   const versionID = parseInt(version ?? '', 10);
@@ -81,6 +94,16 @@ export default () => {
               {({ flow, parents, children }) => (
                 <PaddingContainer>
                   <C.PageTitle>{`Flow ${flow.id}v${flow.versionID}`}</C.PageTitle>
+                  <UpdatedCreatedBy>{`Updated ${dayjs(flow.updatedAt).format(
+                    'DD/MM/YYYY'
+                  )} by ${
+                    flow.lastUpdatedBy?.name ?? 'FTS User'
+                  }`}</UpdatedCreatedBy>
+                  <UpdatedCreatedBy>{`Created ${dayjs(flow.createdAt).format(
+                    'DD/MM/YYYY'
+                  )} by ${
+                    flow.createdBy?.name ?? 'FTS User'
+                  }`}</UpdatedCreatedBy>
                   {!flow.activeStatus && (
                     <InactiveReason>{`This flow is not active because it has been marked as ${
                       flow.categories.find((c) => c.group === 'inactiveReason')
@@ -89,9 +112,21 @@ export default () => {
                   )}
                   <FlowForm
                     setError={setError}
-                    initialValues={parseToFlowForm(flow, parents, children)}
+                    initialValues={
+                      isPending(flow)
+                        ? parseToFlowForm(
+                            {
+                              ...(flow.activeVersion ?? flow),
+                              reportDetails: flow.reportDetails,
+                            },
+                            parents,
+                            children
+                          )
+                        : parseToFlowForm(flow, parents, children)
+                    }
                     flow={flow}
                     load={load}
+                    isPending={isPending(flow)}
                   />
                 </PaddingContainer>
               )}

@@ -4,7 +4,7 @@ import ReviewPendingValues, {
 } from './review-pending-values';
 
 type AutocompleteSelectReviewProps = Omit<AutocompleteSelectProps, 'name'> &
-  ReviewPendingValuesProps;
+  Omit<ReviewPendingValuesProps, 'componentType'>;
 
 const AutocompleteSelectReview = (props: AutocompleteSelectReviewProps) => {
   const { fieldName, pendingValues, onClick, ...asyncAutocompleteSelectProps } =
@@ -17,7 +17,10 @@ const AutocompleteSelectReview = (props: AutocompleteSelectReviewProps) => {
   };
   return (
     <div>
-      <ReviewPendingValues {...reviewPendingValuesProps} />
+      <ReviewPendingValues
+        {...reviewPendingValuesProps}
+        componentType="Autocomplete"
+      />
       <C.AutocompleteSelect
         {...asyncAutocompleteSelectProps}
         name={fieldName}

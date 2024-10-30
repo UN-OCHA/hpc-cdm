@@ -222,21 +222,58 @@ const FLOW_REST_EXTERNAL_REFERENCE = t.type({
   }),
 });
 
-const FLOW_REST = t.intersection([
-  FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES,
-  t.type({
-    children: t.array(PARENT_CHILDREN_FLOW),
-    parents: t.array(PARENT_CHILDREN_FLOW),
-    categories: t.array(CATEGORY),
-    reportDetails: t.array(FLOW_REST_REPORT_DETAIL),
-    externalReferences: t.array(FLOW_REST_EXTERNAL_REFERENCE),
-  }),
-  t.partial({
-    versions: t.array(FLOW_REST_VERSION),
-  }),
-]);
+const FLOW_REST_EXTERNAL_DATA = t.type({
+  id: t.number,
+  systemID: t.string,
+  flowID: t.number,
+  externalRefID: t.union([t.string, t.null]),
+  externalRefDate: t.union([t.string, t.null]),
+  versionID: t.number,
+  createdAt: t.string,
+  updatedAt: t.string,
+  data: t.unknown,
+  matched: t.boolean,
+  refDirection: DIRECTION,
+  objectType: t.string,
+});
 
-export type FlowREST = t.TypeOf<typeof FLOW_REST>;
+const CREATED_UPDATED_BY = t.type({
+  name: t.string,
+});
+export type FlowREST = t.TypeOf<
+  typeof FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES
+> & {
+  children: Array<t.TypeOf<typeof PARENT_CHILDREN_FLOW>>;
+  parents: Array<t.TypeOf<typeof PARENT_CHILDREN_FLOW>>;
+  categories: Array<t.TypeOf<typeof CATEGORY>>;
+  reportDetails: Array<t.TypeOf<typeof FLOW_REST_REPORT_DETAIL>>;
+  externalReferences: Array<t.TypeOf<typeof FLOW_REST_EXTERNAL_REFERENCE>>;
+  externalData: Array<t.TypeOf<typeof FLOW_REST_EXTERNAL_DATA>>;
+  versions?: Array<t.TypeOf<typeof FLOW_REST_VERSION>>;
+  activeVersion?: FlowREST;
+  createdBy?: t.TypeOf<typeof CREATED_UPDATED_BY> | null;
+  lastUpdatedBy?: t.TypeOf<typeof CREATED_UPDATED_BY> | null;
+};
+
+const FLOW_REST: t.Type<FlowREST> = t.recursion('FLOW_REST', () =>
+  t.intersection([
+    FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES,
+    t.type({
+      children: t.array(PARENT_CHILDREN_FLOW),
+      parents: t.array(PARENT_CHILDREN_FLOW),
+      categories: t.array(CATEGORY),
+      reportDetails: t.array(FLOW_REST_REPORT_DETAIL),
+      externalReferences: t.array(FLOW_REST_EXTERNAL_REFERENCE),
+      externalData: t.array(FLOW_REST_EXTERNAL_DATA),
+    }),
+    t.partial({
+      versions: t.array(FLOW_REST_VERSION),
+      activeVersion: FLOW_REST,
+      createdBy: t.union([CREATED_UPDATED_BY, t.null]),
+      lastUpdatedBy: t.union([CREATED_UPDATED_BY, t.null]),
+    }),
+  ])
+);
 
 export const GET_FLOW_PARAMS = t.type({
   id: POSITIVE_INTEGER_FROM_STRING,

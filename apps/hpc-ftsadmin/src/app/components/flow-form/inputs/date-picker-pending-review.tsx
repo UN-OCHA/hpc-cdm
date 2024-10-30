@@ -8,7 +8,7 @@ type DatePickerReviewProps = { sx?: SxProps<Theme> } & Omit<
   DatePickerProps,
   'name'
 > &
-  ReviewPendingValuesProps;
+  Omit<ReviewPendingValuesProps, 'componentType'>;
 
 const DatePickerReview = (props: DatePickerReviewProps) => {
   const { fieldName, pendingValues, onClick, ...datePickerProps } = props;
@@ -20,7 +20,7 @@ const DatePickerReview = (props: DatePickerReviewProps) => {
   };
   return (
     <Box sx={props.sx}>
-      <ReviewPendingValues {...reviewPendingValuesProps} />
+      <ReviewPendingValues {...reviewPendingValuesProps} componentType="Date" />
       <C.DatePicker {...datePickerProps} name={fieldName} />
     </Box>
   );

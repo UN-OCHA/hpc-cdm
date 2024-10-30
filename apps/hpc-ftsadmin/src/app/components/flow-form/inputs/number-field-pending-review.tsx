@@ -8,7 +8,7 @@ type NumberFieldReviewProps = { sx?: SxProps<Theme> } & Omit<
   NumberFieldProps,
   'name'
 > &
-  ReviewPendingValuesProps;
+  Omit<ReviewPendingValuesProps, 'componentType'>;
 
 const NumberFieldReview = (props: NumberFieldReviewProps) => {
   const { fieldName, pendingValues, onClick, ...numberFieldProps } = props;
@@ -20,7 +20,7 @@ const NumberFieldReview = (props: NumberFieldReviewProps) => {
   };
   return (
     <Box sx={props.sx}>
-      <ReviewPendingValues {...reviewPendingValuesProps} />
+      <ReviewPendingValues {...reviewPendingValuesProps} componentType="Text" />
       <C.NumberField {...numberFieldProps} name={fieldName} />
     </Box>
   );
