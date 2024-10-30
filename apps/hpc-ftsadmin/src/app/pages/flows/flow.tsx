@@ -35,6 +35,11 @@ const InactiveReason = tw.span`
   text-unocha-warning-dark
 `;
 
+const LegacyId = tw.span`
+  my-2
+  text-unocha-pallete-blue
+`;
+
 export default () => {
   const historyState:
     | {
@@ -109,6 +114,11 @@ export default () => {
                       flow.categories.find((c) => c.group === 'inactiveReason')
                         ?.name ?? 'Inactive by unknown reasons'
                     }`}</InactiveReason>
+                  )}
+                  {flow.legacy?.legacyID && (
+                    <LegacyId>
+                      Legacy contribution ID: {flow.legacy.legacyID}
+                    </LegacyId>
                   )}
                   <FlowForm
                     setError={setError}
