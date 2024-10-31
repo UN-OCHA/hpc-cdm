@@ -33,11 +33,13 @@ const UpdatedCreatedBy = tw.h4`
 
 const InactiveReason = tw.span`
   text-unocha-warning-dark
+  block
 `;
 
 const LegacyId = tw.span`
   my-2
   text-unocha-pallete-blue
+  block
 `;
 
 export default () => {
@@ -110,9 +112,13 @@ export default () => {
                     flow.createdBy?.name ?? 'FTS User'
                   }`}</UpdatedCreatedBy>
                   {!flow.activeStatus && (
-                    <InactiveReason>{`This flow is not active because it has been marked as ${
-                      flow.categories.find((c) => c.group === 'inactiveReason')
-                        ?.name ?? 'Inactive by unknown reasons'
+                    <InactiveReason>{`This flow ${
+                      flow.deletedAt
+                        ? 'has been deleted'
+                        : 'is not active because it has been marked as ' +
+                          (flow.categories.find(
+                            (c) => c.group === 'inactiveReason'
+                          )?.name ?? 'Inactive by unknown reasons')
                     }`}</InactiveReason>
                   )}
                   {flow.legacy?.legacyID && (

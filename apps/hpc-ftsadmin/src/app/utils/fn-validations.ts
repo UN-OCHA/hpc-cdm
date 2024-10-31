@@ -87,3 +87,10 @@ export const validateFlowForWarnings = async (
 
   return true;
 };
+
+export const validateFlowIsUnlinked = (flow: FlowFormType) => {
+  if (!flow.parentFlow && flow.childFlows.length === 0) {
+    return true;
+  }
+  return false;
+};

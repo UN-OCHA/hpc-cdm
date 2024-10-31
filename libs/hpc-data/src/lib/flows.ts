@@ -648,6 +648,18 @@ export const GET_FLOWS_AUTOCOMPLETE_RESULT = t.array(
 export type GetFlowsAutocompleteResult = t.TypeOf<
   typeof GET_FLOWS_AUTOCOMPLETE_RESULT
 >;
+
+export const DELETE_FLOW_PARAMS = t.type({
+  flowId: t.number,
+  versionID: t.number,
+});
+
+export type DeleteFlowParams = t.TypeOf<typeof DELETE_FLOW_PARAMS>;
+
+export const DELETE_FLOW_RESULT = t.string;
+
+export type DeleteFlowResult = t.TypeOf<typeof DELETE_FLOW_RESULT>;
+
 export interface Model {
   getFlowREST(params: GetFlowParams): Promise<GetFlowResult>;
   getFlowVersionREST(params: GetFlowVersionParams): Promise<GetFlowResult>;
@@ -661,6 +673,7 @@ export interface Model {
   ): Promise<SearchFlowsBatchesResult>;
   createFlow(params: CreateFlowParams): Promise<GetFlowResult>;
   updateFlow(params: UpdateFlowParams): Promise<GetFlowResult>;
+  deleteFlow(params: DeleteFlowParams): Promise<DeleteFlowResult>;
   getAutocompleteFlows(
     params: GetFlowsAutocompleteParams
   ): Promise<GetFlowsAutocompleteResult>;

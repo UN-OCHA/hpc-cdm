@@ -812,6 +812,12 @@ export class LiveModel implements Model {
           },
           resultType: flows.GET_FLOW_RESULT,
         }),
+      deleteFlow: ({ flowId, versionID }) =>
+        this.call({
+          pathname: `/v1/flow/delete/${flowId}/version/${versionID}`,
+          method: 'POST',
+          resultType: flows.DELETE_FLOW_RESULT,
+        }),
     };
   }
   get globalClusters(): globalClusters.Model {

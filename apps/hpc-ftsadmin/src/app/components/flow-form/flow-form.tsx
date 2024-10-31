@@ -53,7 +53,10 @@ import {
   autofillPlan,
   autofillProject,
 } from '../../utils/fn-autofills';
-import { validateFlowForWarnings } from '../../utils/fn-validations';
+import {
+  validateFlowForWarnings,
+  validateFlowIsUnlinked,
+} from '../../utils/fn-validations';
 import { useState } from 'react';
 import DatePickerReview from './inputs/date-picker-pending-review';
 
@@ -272,12 +275,15 @@ const FlowAmountButton = ({
   amountOriginalCurrency,
   exchangeRate,
   setFieldValue,
+  disabled,
 }: {
   amountUSD: FlowFormType['amountUSD'];
   amountOriginalCurrency: FlowFormType['amountOriginalCurrency'];
   exchangeRate: FlowFormType['exchangeRate'];
   setFieldValue: FormikHelpers<FlowFormType>['setFieldValue'];
+  disabled?: boolean;
 }) => {
+  if (disabled) return;
   const amountUSDInt = currencyToInteger(amountUSD);
   const amountOriginalCurrencyInt = currencyToInteger(amountOriginalCurrency);
   const exchangeRateFloat = parseFloat(exchangeRate);
@@ -323,7 +329,7 @@ export const FlowForm = (props: FlowFormProps) => {
     ? pendingValuesFlowForm(initialValues, flow)
     : undefined;
   const isDisabled = initialValues?.isInactive && !isPending;
-
+  const isDeleted = !!flow?.deletedAt;
   const handleSubmit = async (values: FlowFormTypeValidated) => {
     setLoading(true);
     const isValid = await validateFlowForWarnings(values, setError);
@@ -347,7 +353,7 @@ export const FlowForm = (props: FlowFormProps) => {
         })
         .catch((err) => {
           setLoading(false);
-          setError(err.json.message);
+          setError('error message');
         });
     } else {
       env.model.flows
@@ -421,6 +427,37 @@ export const FlowForm = (props: FlowFormProps) => {
     window.open(newUrl, '_blank');
   };
 
+  const handleDeleteFlow = async (values: FlowFormType) => {
+    setLoading(true);
+    if (!validateFlowIsUnlinked(values) || !flow) {
+      setError('Please unlink all flows');
+      return;
+    }
+    if (
+      !window.confirm(
+        'Flows with linked flows cannot be deleted, are you sure you want to delete this flow?'
+      )
+    ) {
+      setLoading(false);
+      return;
+    }
+    env.model.flows
+      .deleteFlow({
+        flowId: flow.id,
+        versionID: flow.versionID,
+      })
+      .then(() => {
+        navigate(paths.flows(), {
+          state: { successMessage: 'success message' },
+        });
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.error(err);
+        setError('error message');
+      });
+  };
+
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -443,7 +480,7 @@ export const FlowForm = (props: FlowFormProps) => {
                   label="Restricted to internal use"
                 />
               )}
-              {initialValues && flow && (
+              {initialValues && flow && !isDeleted && (
                 <Box sx={tw`flex gap-x-6 items-center`}>
                   <C.CheckBox
                     name="isErrorCorrection"
@@ -469,6 +506,11 @@ export const FlowForm = (props: FlowFormProps) => {
                       handleSearchSimilarFlows(initialValues);
                     }}
                     text="Search similar Flows"
+                  />
+                  <C.Button
+                    color="secondary"
+                    onClick={() => handleDeleteFlow(values)}
+                    text="Delete Flow"
                   />
                 </Box>
               )}
@@ -696,6 +738,7 @@ export const FlowForm = (props: FlowFormProps) => {
                               values.amountOriginalCurrency
                             }
                             exchangeRate={values.exchangeRate}
+                            disabled={isDisabled}
                           />
                         </Box>
                         <TextFieldReview
@@ -881,24 +924,27 @@ export const FlowForm = (props: FlowFormProps) => {
                       <ReportingDetail
                         index={index}
                         disabled={
-                          isDisabled &&
-                          index < initialValues.reportingDetails.length
+                          (isDisabled &&
+                            index < initialValues.reportingDetails.length) ||
+                          isDeleted
                         }
                       />
                     ))
                   ) : (
                     <ReportingDetail index={0} disabled={isDisabled} />
                   )}
-                  <C.Button
-                    text="Add Reporting Detail"
-                    onClick={() =>
-                      setFieldValue('reportingDetails', [
-                        ...values.reportingDetails,
-                        REPORTING_DETAIL_INITIAL_VALUES,
-                      ])
-                    }
-                    color="primary"
-                  />
+                  {!isDeleted && (
+                    <C.Button
+                      text="Add Reporting Detail"
+                      onClick={() =>
+                        setFieldValue('reportingDetails', [
+                          ...values.reportingDetails,
+                          REPORTING_DETAIL_INITIAL_VALUES,
+                        ])
+                      }
+                      color="primary"
+                    />
+                  )}
                   {(flow?.versions?.length ?? 0) > 0 && (
                     <FormGroup title="Flow Versions">
                       <Box sx={tw`flex flex-col px-4 gap-y-6`}>
@@ -1069,53 +1115,57 @@ export const FlowForm = (props: FlowFormProps) => {
                   />
                 </FormGroup>
               </Box>
-              <Snackbar
-                open
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                sx={tw`rounded-[4px] bg-unocha-primary`}
-                TransitionComponent={Grow}
-              >
-                {/* TODO: Write this better */}
-                <Box
-                  sx={tw`px-10 py-3 flex gap-x-4 items-center transition-all`}
+              {!isDeleted && (
+                <Snackbar
+                  open
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  sx={tw`rounded-[4px] bg-unocha-primary`}
+                  TransitionComponent={Grow}
                 >
-                  <span style={{ color: '#fff' }}>
-                    {isValid
-                      ? 'Form is ready for submit'
-                      : 'Please fill all required fields'}
-                  </span>
-                  {isValid && (
-                    <C.ButtonSubmit
-                      color="primary_light"
-                      text="Submit"
-                      displayLoading={loading}
-                    />
-                  )}
-                  {isPending && (
-                    <C.Button
-                      onClick={async () => {
-                        handlePendingFlowSave(values as FlowFormTypeValidated);
-                      }}
-                      color="primary_light"
-                      text="Save"
-                      displayLoading={loading}
-                    />
-                  )}
-                  {flow?.activeStatus === false && (
-                    <C.Button
-                      onClick={async () => {
-                        handleSubmit({
-                          ...values,
-                          isInactive: false,
-                        } as FlowFormTypeValidated);
-                      }}
-                      color="primary_light"
-                      text="Reactivate"
-                      displayLoading={loading}
-                    />
-                  )}
-                </Box>
-              </Snackbar>
+                  {/* TODO: Write this better */}
+                  <Box
+                    sx={tw`px-10 py-3 flex gap-x-4 items-center transition-all`}
+                  >
+                    <span style={{ color: '#fff' }}>
+                      {isValid
+                        ? 'Form is ready for submit'
+                        : 'Please fill all required fields'}
+                    </span>
+                    {isValid && (
+                      <C.ButtonSubmit
+                        color="primary_light"
+                        text="Submit"
+                        displayLoading={loading}
+                      />
+                    )}
+                    {isPending && (
+                      <C.Button
+                        onClick={async () => {
+                          handlePendingFlowSave(
+                            values as FlowFormTypeValidated
+                          );
+                        }}
+                        color="primary_light"
+                        text="Save"
+                        displayLoading={loading}
+                      />
+                    )}
+                    {flow?.activeStatus === false && (
+                      <C.Button
+                        onClick={async () => {
+                          handleSubmit({
+                            ...values,
+                            isInactive: false,
+                          } as FlowFormTypeValidated);
+                        }}
+                        color="primary_light"
+                        text="Reactivate"
+                        displayLoading={loading}
+                      />
+                    )}
+                  </Box>
+                </Snackbar>
+              )}
             </Form>
           )}
         </Formik>

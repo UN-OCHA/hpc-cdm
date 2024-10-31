@@ -1,4 +1,6 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
+import { useState } from 'react';
+import { useLocation } from 'react-router';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import FilterFlowsTable, {
@@ -30,6 +32,11 @@ const LandingContainer = tw.div`
 `;
 export default (props: Props) => {
   const rowsPerPageOptions = [10, 25, 50, 100];
+
+  const state: { successMessage?: string; errorMessage?: string } | undefined =
+    useLocation().state;
+  const [successMessage, setSuccessMessage] = useState(state?.successMessage);
+  const [errorMessage, setErrorMessage] = useState(state?.errorMessage);
 
   const [query, setQuery] = useQueryParams({
     codec: FLOW_PARAMS_CODEC,
@@ -67,6 +74,16 @@ export default (props: Props) => {
               <FlowsTable {...flowsTableProps} />
             </LandingContainer>
           </Container>
+          <C.MessageAlert
+            setMessage={setSuccessMessage}
+            severity="success"
+            message={successMessage}
+          />
+          <C.MessageAlert
+            setMessage={setErrorMessage}
+            severity="error"
+            message={errorMessage}
+          />
         </div>
       )}
     </AppContext.Consumer>

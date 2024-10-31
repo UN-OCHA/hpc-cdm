@@ -820,6 +820,18 @@ export class Dummy {
             return res;
           }
         ),
+        deleteFlow: dummyEndpoint(
+          'flows.deleteFlow',
+          async ({
+            flowId,
+            versionID,
+          }: flows.DeleteFlowParams): Promise<flows.DeleteFlowResult> => {
+            this.data.flows = this.data.flows.filter(
+              (f) => f.id !== flowId && f.versionID !== versionID
+            );
+            return `Successfully deleted flow ${flowId}v${versionID}`;
+          }
+        ),
       },
       globalClusters: {
         getGlobalClusters: dummyEndpoint(

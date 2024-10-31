@@ -247,7 +247,7 @@ const reportingDetailPropsToReportDetails = (
             ? [valueToInteger(reportDetail.reportChannel.value)]
             : []),
         ],
-        newlyAdded: !!id,
+        newlyAdded: !!id, // TODO: This is not true
         reportFiles: createReportFiles(reportDetail),
       }) satisfies flows.CreateFlowParams['flow']['reportDetails'][number]
   );
