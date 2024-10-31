@@ -351,18 +351,18 @@ const isCategoryGroupKeyFlowForm = (
     'contributionType',
     'method',
     'beneficiaryGroup',
-    'keyword',
   ].includes(group);
 };
 
 const categoriesToFlowForm = (values: flows.GetFlowResult) => {
   return values.categories.reduce((acc, { group, id, name }) => {
-    let savedGroup = group;
-    if (savedGroup === 'keyword') {
-      savedGroup += 's';
-    }
-    if (isCategoryGroupKeyFlowForm(savedGroup)) {
-      return { ...acc, [savedGroup]: { displayLabel: name, value: id } };
+    if (group === 'keywords') {
+      return {
+        ...acc,
+        [group]: [...(acc.keywords ?? []), { displayLabel: name, value: id }],
+      };
+    } else if (isCategoryGroupKeyFlowForm(group)) {
+      return { ...acc, [group]: { displayLabel: name, value: id } };
     }
     return acc;
   }, {} as FlowFormType);

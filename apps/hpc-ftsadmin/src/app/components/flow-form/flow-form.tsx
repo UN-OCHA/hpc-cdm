@@ -66,6 +66,7 @@ type FlowFormProps = {
   initialValues?: FlowFormType;
   flow?: flows.GetFlowResult;
   isPending?: boolean;
+  isInactive?: boolean;
 };
 
 export type FlowFormType = {
@@ -323,12 +324,12 @@ export const FlowForm = (props: FlowFormProps) => {
   const env = getEnv();
   const navigate = useNavigate();
 
-  const { setError, initialValues, flow, isPending } = props;
+  const { setError, initialValues, flow, isPending, isInactive } = props;
   const [loading, setLoading] = useState(false);
   const pendingValues = isPending
     ? pendingValuesFlowForm(initialValues, flow)
     : undefined;
-  const isDisabled = initialValues?.isInactive && !isPending;
+  const isDisabled = isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
   const handleSubmit = async (values: FlowFormTypeValidated) => {
     setLoading(true);
@@ -458,6 +459,55 @@ export const FlowForm = (props: FlowFormProps) => {
       });
   };
 
+  const handleRejectFlow = async (values: FlowFormType) => {
+    if (!flow) {
+      return;
+    }
+    const isValid = await validateFlowForWarnings(values, setError);
+    if (!isValid) {
+      setError('The values are not valid');
+      return;
+    }
+
+    const rejected = await env.model.categories
+      .getCategories({
+        query: 'inactiveReason',
+      })
+      .then((categories) =>
+        categories.find((category) => category.name === 'Rejected')
+      );
+
+    if (!rejected) {
+      setError(
+        'Internal Error: Flow could not be set as Rejected because category does not exist'
+      );
+      return;
+    }
+
+    const newFlow = parseFlowForm(values as FlowFormTypeValidated, flow.id, {
+      isApproved: isPending,
+    }).flow;
+
+    env.model.flows
+      .updateFlow({
+        flow: {
+          ...newFlow,
+          categories: [...newFlow.categories, rejected.id],
+          inactiveReason: [...(newFlow.inactiveReason ?? []), rejected],
+          id: flow.id,
+          versionID: flow.versionID,
+        },
+      })
+      .then(() => {
+        setLoading(false);
+        props.load();
+      })
+      .catch((err) => {
+        setLoading(false);
+        setError('error message');
+      });
+  };
+
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -512,6 +562,13 @@ export const FlowForm = (props: FlowFormProps) => {
                     onClick={() => handleDeleteFlow(values)}
                     text="Delete Flow"
                   />
+                  {isPending && (
+                    <C.Button
+                      color="secondary"
+                      onClick={() => handleRejectFlow(values)}
+                      text="Reject Flow"
+                    />
+                  )}
                 </Box>
               )}
               <Box sx={tw`flex mt-6 mx-6 gap-x-10`}>
@@ -925,6 +982,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         index={index}
                         disabled={
                           (isDisabled &&
+                            initialValues &&
                             index < initialValues.reportingDetails.length) ||
                           isDeleted
                         }
@@ -1131,7 +1189,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         ? 'Form is ready for submit'
                         : 'Please fill all required fields'}
                     </span>
-                    {isValid && (
+                    {isValid && !isInactive && (
                       <C.ButtonSubmit
                         color="primary_light"
                         text="Submit"
@@ -1150,7 +1208,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         displayLoading={loading}
                       />
                     )}
-                    {flow?.activeStatus === false && (
+                    {isInactive && (
                       <C.Button
                         onClick={async () => {
                           handleSubmit({

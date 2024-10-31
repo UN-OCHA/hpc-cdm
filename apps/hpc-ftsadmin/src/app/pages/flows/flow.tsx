@@ -56,6 +56,9 @@ export default () => {
 
   const isPending = (flow: flows.GetFlowResult): flow is FlowRestPending =>
     flow.categories.some((c) => c.name === 'Pending review');
+  const isInactive = (flow: flows.GetFlowResult) =>
+    !flow.activeStatus ||
+    flow.categories.some((c) => c.group === 'inactiveReason');
 
   const id = parseInt(idString ?? '', 10);
   const versionID = parseInt(version ?? '', 10);
@@ -111,7 +114,7 @@ export default () => {
                   )} by ${
                     flow.createdBy?.name ?? 'FTS User'
                   }`}</UpdatedCreatedBy>
-                  {!flow.activeStatus && (
+                  {isInactive(flow) && (
                     <InactiveReason>{`This flow ${
                       flow.deletedAt
                         ? 'has been deleted'
@@ -143,6 +146,7 @@ export default () => {
                     flow={flow}
                     load={load}
                     isPending={isPending(flow)}
+                    isInactive={isInactive(flow)}
                   />
                 </PaddingContainer>
               )}
