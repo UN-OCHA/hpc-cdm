@@ -45,7 +45,8 @@ import ReportingDetail, {
   REPORTING_DETAIL_INITIAL_VALUES,
   ReportingDetailProps,
 } from '../reporting-detail';
-import dayjs, { type Dayjs } from 'dayjs';
+import dayjs from '../../../libs/dayjs';
+import type { Dayjs } from 'dayjs';
 import {
   autofillFieldClusters,
   autofillGlobalClusters,
@@ -1034,10 +1035,9 @@ export const FlowForm = (props: FlowFormProps) => {
                               {flowVersion.activeStatus && (
                                 <LatestSpan>Latest</LatestSpan>
                               )}
-                              Created at{' '}
-                              {dayjs(flowVersion.createdAt).format('D/M/YYYY')},
-                              and latest updated at{' '}
-                              {dayjs(flowVersion.updatedAt).format('D/M/YYYY')}
+                              Created at {dayjs(flowVersion.createdAt).format()}
+                              , and latest updated at{' '}
+                              {dayjs(flowVersion.updatedAt).format()}
                             </span>
                           ))}
                       </Box>

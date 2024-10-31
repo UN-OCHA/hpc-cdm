@@ -37,7 +37,7 @@ export const parseUpdatedCreatedBy = (
     return new Date(a.date) > new Date(b.date) ? a : b;
   });
 
-  return `${participantName} (${dayjs(date).locale(lang).format('D/M/YYYY')})`;
+  return `${participantName} (${dayjs(date).format()})`;
 };
 
 export const flowToFlowLinkProps = (

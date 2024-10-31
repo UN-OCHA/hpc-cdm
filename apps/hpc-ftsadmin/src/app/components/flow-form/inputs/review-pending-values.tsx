@@ -9,7 +9,7 @@ import { getContext } from '../../../context';
 import { useFormikContext } from 'formik';
 import type { FlowFormType } from '../flow-form';
 import type { Dayjs } from 'dayjs';
-import dayjs from 'dayjs';
+import dayjs from '../../../../libs/dayjs';
 
 type InputFieldsTypes =
   | 'MultiAutocomplete'
@@ -132,7 +132,7 @@ const ReviewPendingValues = ({
         )}
 
         {dayjs.isDayjs(pendingValues) && (
-          <RenderPendingValue label={pendingValues.format('DD/MM/YYYY')} />
+          <RenderPendingValue label={pendingValues.format()} />
         )}
         {isUnmatched && (
           <span

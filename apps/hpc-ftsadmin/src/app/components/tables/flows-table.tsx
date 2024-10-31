@@ -27,6 +27,7 @@ import { MdInfoOutline } from 'react-icons/md';
 import { useNavigate } from 'react-router';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
+import dayjs from '../../../libs/dayjs';
 import { getContext } from '../../context';
 import * as paths from '../../paths';
 import { downloadExcel } from '../../utils/download-excel';
@@ -162,10 +163,7 @@ export default function FlowsTable(props: FlowsTableProps) {
           title={t
             .t(lang, (s) => s.components.flowsTable.reportTooltip)
             .replace('{organization}', org.name)
-            .replace(
-              '{date}',
-              Intl.DateTimeFormat('en-GB').format(new Date(rd[0].date))
-            )
+            .replace('{date}', dayjs(rd[0].date).format())
             .replace('{channel}', rd[0].channel)}
         >
           <IconButton size="small">
@@ -281,9 +279,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-updated"
                     >
-                      {Intl.DateTimeFormat('en-GB').format(
-                        new Date(row.updatedAt)
-                      )}
+                      {dayjs(row.updatedAt).format()}
                     </TableCell>
                   );
                 case 'externalReference.systemID':
@@ -508,9 +504,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       data-test="flows-table-decisionDate"
                     >
                       {row.decisionDate
-                        ? Intl.DateTimeFormat('en-GB').format(
-                            new Date(row.decisionDate)
-                          )
+                        ? dayjs(row.decisionDate).format()
                         : '--'}
                     </TableCell>
                   );
@@ -531,11 +525,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-flowDate"
                     >
-                      {row.flowDate
-                        ? Intl.DateTimeFormat('en-GB').format(
-                            new Date(row.flowDate)
-                          )
-                        : '--'}
+                      {row.flowDate ? dayjs(row.flowDate).format() : '--'}
                     </TableCell>
                   );
                 case 'reportDetail.sourceID': {

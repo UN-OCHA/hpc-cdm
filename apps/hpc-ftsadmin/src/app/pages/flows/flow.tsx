@@ -11,7 +11,7 @@ import {
   deserializeFlowForm,
 } from '../../utils/parse-flow-form';
 import { flows } from '@unocha/hpc-data';
-import dayjs from 'dayjs';
+import dayjs from '../../../libs/dayjs';
 
 type FlowRouteParams = {
   id: string;
@@ -104,14 +104,14 @@ export default () => {
               {({ flow, parents, children }) => (
                 <PaddingContainer>
                   <C.PageTitle>{`Flow ${flow.id}v${flow.versionID}`}</C.PageTitle>
-                  <UpdatedCreatedBy>{`Updated ${dayjs(flow.updatedAt).format(
-                    'DD/MM/YYYY'
-                  )} by ${
+                  <UpdatedCreatedBy>{`Updated ${dayjs(
+                    flow.updatedAt
+                  ).format()} by ${
                     flow.lastUpdatedBy?.name ?? 'FTS User'
                   }`}</UpdatedCreatedBy>
-                  <UpdatedCreatedBy>{`Created ${dayjs(flow.createdAt).format(
-                    'DD/MM/YYYY'
-                  )} by ${
+                  <UpdatedCreatedBy>{`Created ${dayjs(
+                    flow.createdAt
+                  ).format()} by ${
                     flow.createdBy?.name ?? 'FTS User'
                   }`}</UpdatedCreatedBy>
                   {isInactive(flow) && (

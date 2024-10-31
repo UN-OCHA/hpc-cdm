@@ -21,7 +21,7 @@ import {
   flowLinkToFormObjectValue,
   flowToFormObjectValue,
 } from '../../utils/map-functions';
-import dayjs from 'dayjs';
+import dayjs from '../../../libs/dayjs';
 
 type FlowSearchProps = {
   name: 'parentFlow' | 'childFlows';

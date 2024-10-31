@@ -6,7 +6,6 @@ import dayjs from 'dayjs';
 import { util } from '@unocha/hpc-core';
 
 const EMPTY_CELL = '--';
-const DATE_FORMAT = 'D/M/YYYY';
 
 export const downloadExcel = async (
   data: flows.SearchFlowsBatchesResult,
@@ -67,7 +66,7 @@ export const downloadExcel = async (
 
           case 'decisionDate':
             tableRow[displayLabel] = flow.decisionDate
-              ? dayjs(flow.decisionDate).locale(lang).format(DATE_FORMAT)
+              ? dayjs(flow.decisionDate).format()
               : EMPTY_CELL;
             break;
 
@@ -145,7 +144,7 @@ export const downloadExcel = async (
 
           case 'flowDate':
             tableRow[displayLabel] = flow.flowDate
-              ? dayjs(flow.flowDate).locale(lang).format(DATE_FORMAT)
+              ? dayjs(flow.flowDate).format()
               : EMPTY_CELL;
             break;
 
@@ -203,9 +202,7 @@ export const downloadExcel = async (
             break;
 
           case 'updatedCreated':
-            tableRow[displayLabel] = dayjs(flow.updatedAt)
-              .locale(lang)
-              .format(DATE_FORMAT);
+            tableRow[displayLabel] = dayjs(flow.updatedAt).format();
             break;
         }
       }
