@@ -347,7 +347,7 @@ export const FlowForm = (props: FlowFormProps) => {
         .updateFlow({
           flow: {
             ...(
-              await parseFlowForm(values, env, flow.id, {
+              await parseFlowForm(values, env, initialValues, {
                 isApproved: isPending,
               })
             ).flow,
@@ -364,7 +364,7 @@ export const FlowForm = (props: FlowFormProps) => {
         .finally(() => setSubmitLoading(false));
     } else {
       env.model.flows
-        .createFlow(await parseFlowForm(values, env, flow?.id))
+        .createFlow(await parseFlowForm(values, env, initialValues))
         .then((res) => {
           navigate(paths.flow(res.id, res.versionID), {
             state: { successMessage: 'success message' },
@@ -389,7 +389,7 @@ export const FlowForm = (props: FlowFormProps) => {
         .updateFlow({
           flow: {
             ...(
-              await parseFlowForm(values, env, flow.id, {
+              await parseFlowForm(values, env, initialValues, {
                 isSaved: isPending,
               })
             ).flow,
@@ -500,7 +500,7 @@ export const FlowForm = (props: FlowFormProps) => {
     const newFlow = await parseFlowForm(
       values as FlowFormTypeValidated,
       env,
-      flow.id,
+      initialValues,
       {
         isApproved: isPending,
       }

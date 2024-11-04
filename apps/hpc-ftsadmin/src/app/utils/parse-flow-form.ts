@@ -222,10 +222,10 @@ const createReportFiles = (
 
 const reportingDetailPropsToReportDetails = (
   reportDetailProps: ReportingDetailProps[],
-  id?: number
+  initialValues?: FlowFormType
 ): flows.CreateFlowParams['flow']['reportDetails'] => {
   return reportDetailProps.map(
-    (reportDetail) =>
+    (reportDetail, index) =>
       ({
         contactInfo: reportDetail.reporterContactInfo,
         source: reportDetail.reportSource,
@@ -247,7 +247,8 @@ const reportingDetailPropsToReportDetails = (
             ? [valueToInteger(reportDetail.reportChannel.value)]
             : []),
         ],
-        newlyAdded: !!id, // TODO: This is not true
+        newlyAdded:
+          !!initialValues && index >= initialValues.reportingDetails.length,
         reportFiles: createReportFiles(reportDetail),
       }) satisfies flows.CreateFlowParams['flow']['reportDetails'][number]
   );
@@ -255,7 +256,7 @@ const reportingDetailPropsToReportDetails = (
 export const parseFlowForm = async (
   values: FlowFormTypeValidated,
   env: Environment,
-  id?: number,
+  initialValues?: FlowFormType,
   isPending?: { isApproved?: boolean; isSaved?: boolean }
 ): Promise<flows.CreateFlowParams> => {
   const {
@@ -347,7 +348,10 @@ export const parseFlowForm = async (
     origAmount: currencyToInteger(amountOriginalCurrency),
     origCurrency: currency?.value.toString() ?? null,
     parents: values.parentFlow ? [{ parentID: values.parentFlow.id }] : [],
-    reportDetails: reportingDetailPropsToReportDetails(reportingDetails, id),
+    reportDetails: reportingDetailPropsToReportDetails(
+      reportingDetails,
+      initialValues
+    ),
     restricted,
   };
   return { flow };
