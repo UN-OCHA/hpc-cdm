@@ -1007,9 +1007,9 @@ export const pendingValuesFlowForm = (
       eD.refDirection === 'destination' ? 'Destination' : 'Source'
     }${MAP_SINGULAR_TO_KEY[eD.objectType]}`;
     if (isFundingKey(key)) {
-      // TODO: Review how this any casting works, technically it should be
-      // like this because it's unknown and after we will check if is type
-      // mismatch
+      // Even though types mismatch, when this values is passed
+      // to any pending review component, it will check if types
+      // mismatch and will show a warning.
       comparedFlow[key] = eD.data as any;
     }
   }

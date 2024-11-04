@@ -231,7 +231,7 @@ const FLOW_REST_EXTERNAL_DATA = t.type({
   versionID: t.number,
   createdAt: t.string,
   updatedAt: t.string,
-  data: t.unknown,
+  data: t.string,
   matched: t.boolean,
   refDirection: DIRECTION,
   objectType: t.string,
