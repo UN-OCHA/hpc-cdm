@@ -326,20 +326,22 @@ export const FlowForm = (props: FlowFormProps) => {
   const navigate = useNavigate();
 
   const { setError, initialValues, flow, isPending, isInactive } = props;
-  const [loading, setLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [rejectLoading, setRejectLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
   const pendingValues = isPending
     ? pendingValuesFlowForm(initialValues, flow)
     : undefined;
   const isDisabled = isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
   const handleSubmit = async (values: FlowFormTypeValidated) => {
-    setLoading(true);
     const isValid = await validateFlowForWarnings(values, setError);
     if (!isValid) {
-      setLoading(false);
       return;
     }
-
+    setSubmitLoading(true);
     if (flow?.id) {
       env.model.flows
         .updateFlow({
@@ -350,13 +352,12 @@ export const FlowForm = (props: FlowFormProps) => {
           },
         })
         .then(() => {
-          setLoading(false);
           props.load();
         })
         .catch((err) => {
-          setLoading(false);
           setError('error message');
-        });
+        })
+        .finally(() => setSubmitLoading(false));
     } else {
       env.model.flows
         .createFlow(parseFlowForm(values, flow?.id))
@@ -366,21 +367,20 @@ export const FlowForm = (props: FlowFormProps) => {
           });
         })
         .catch((err) => {
-          setLoading(false);
           console.error(err);
           setError(err.json.message);
-        });
+        })
+        .finally(() => setSubmitLoading(false));
     }
   };
   const handlePendingFlowSave = async (values: FlowFormTypeValidated) => {
-    setLoading(true);
     const isValid = await validateFlowForWarnings(values, setError);
     if (!isValid) {
-      setLoading(false);
       return;
     }
 
     if (flow?.id) {
+      setSaveLoading(true);
       env.model.flows
         .updateFlow({
           flow: {
@@ -390,13 +390,12 @@ export const FlowForm = (props: FlowFormProps) => {
           },
         })
         .then(() => {
-          setLoading(false);
           props.load();
         })
         .catch((err) => {
-          setLoading(false);
           setError(err.json.message);
-        });
+        })
+        .finally(() => setSaveLoading(false));
     }
   };
   const handleChangeFirstReported = (
@@ -430,17 +429,17 @@ export const FlowForm = (props: FlowFormProps) => {
   };
 
   const handleDeleteFlow = async (values: FlowFormType) => {
-    setLoading(true);
     if (!validateFlowIsUnlinked(values) || !flow) {
       setError('Please unlink all flows');
       return;
     }
+    setDeleteLoading(true);
     if (
       !window.confirm(
         'Flows with linked flows cannot be deleted, are you sure you want to delete this flow?'
       )
     ) {
-      setLoading(false);
+      setDeleteLoading(false);
       return;
     }
     env.model.flows
@@ -454,10 +453,10 @@ export const FlowForm = (props: FlowFormProps) => {
         });
       })
       .catch((err) => {
-        setLoading(false);
         console.error(err);
         setError('error message');
-      });
+      })
+      .finally(() => setDeleteLoading(false));
   };
 
   const handleRejectFlow = async (values: FlowFormType) => {
@@ -469,14 +468,19 @@ export const FlowForm = (props: FlowFormProps) => {
       setError('The values are not valid');
       return;
     }
-
+    setRejectLoading(true);
     const rejected = await env.model.categories
       .getCategories({
         query: 'inactiveReason',
       })
       .then((categories) =>
         categories.find((category) => category.name === 'Rejected')
-      );
+      )
+      .catch((err) => {
+        console.error(err);
+        setRejectLoading(false);
+        setError('error message');
+      });
 
     if (!rejected) {
       setError(
@@ -500,13 +504,12 @@ export const FlowForm = (props: FlowFormProps) => {
         },
       })
       .then(() => {
-        setLoading(false);
         props.load();
       })
       .catch((err) => {
-        setLoading(false);
         setError('error message');
-      });
+      })
+      .finally(() => setRejectLoading(false));
   };
 
   return (
@@ -562,12 +565,14 @@ export const FlowForm = (props: FlowFormProps) => {
                     color="secondary"
                     onClick={() => handleDeleteFlow(values)}
                     text="Delete Flow"
+                    displayLoading={deleteLoading}
                   />
                   {isPending && (
                     <C.Button
                       color="secondary"
                       onClick={() => handleRejectFlow(values)}
                       text="Reject Flow"
+                      displayLoading={rejectLoading}
                     />
                   )}
                 </Box>
@@ -1193,7 +1198,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       <C.ButtonSubmit
                         color="primary_light"
                         text="Submit"
-                        displayLoading={loading}
+                        displayLoading={submitLoading}
                       />
                     )}
                     {isPending && (
@@ -1205,7 +1210,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         }}
                         color="primary_light"
                         text="Save"
-                        displayLoading={loading}
+                        displayLoading={saveLoading}
                       />
                     )}
                     {isInactive && (
@@ -1218,7 +1223,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         }}
                         color="primary_light"
                         text="Reactivate"
-                        displayLoading={loading}
+                        displayLoading={submitLoading}
                       />
                     )}
                   </Box>
