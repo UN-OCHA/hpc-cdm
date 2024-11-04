@@ -252,12 +252,12 @@ const reportingDetailPropsToReportDetails = (
       }) satisfies flows.CreateFlowParams['flow']['reportDetails'][number]
   );
 };
-//  TODO: Implement this function
-export const parseFlowForm = (
+export const parseFlowForm = async (
   values: FlowFormTypeValidated,
+  env: Environment,
   id?: number,
   isPending?: { isApproved?: boolean; isSaved?: boolean }
-): flows.CreateFlowParams => {
+): Promise<flows.CreateFlowParams> => {
   const {
     method,
     amountOriginalCurrency,
@@ -283,6 +283,21 @@ export const parseFlowForm = (
     restricted,
   } = values;
 
+  const inactiveReasons = await env.model.categories.getCategories({
+    query: 'inactiveReason',
+  });
+
+  let pendingReviewCategory;
+  let cancelledCategory;
+  for (const inactiveReason of inactiveReasons) {
+    if (inactiveReason.name === 'Pending review') {
+      pendingReviewCategory = inactiveReason;
+    }
+    if (inactiveReason.name === 'Cancelled') {
+      cancelledCategory = inactiveReason;
+    }
+  }
+
   const notes = dirtyNotes || undefined;
   const exchangeRate = dirtyExchangeRate || undefined;
 
@@ -295,11 +310,16 @@ export const parseFlowForm = (
     flowType,
     ...keywords,
   ]);
-
-  if (isPending?.isSaved) {
-    // Pending Review Category ID : 45
-    categories.push(45);
+  const inactiveReason = [];
+  if (isPending?.isSaved && pendingReviewCategory) {
+    categories.push(pendingReviewCategory.id);
+    inactiveReason.push(pendingReviewCategory);
   }
+  if (isInactive && cancelledCategory) {
+    categories.push(cancelledCategory.id);
+    inactiveReason.push(cancelledCategory);
+  }
+
   const flowObjects = getFundingValues(values).flatMap((key) =>
     extractDirectionObject(key, values)
   );
@@ -320,15 +340,7 @@ export const parseFlowForm = (
     isErrorCorrection:
       isErrorCorrection || isPending?.isApproved || isPending?.isSaved,
     isApprovedFlowVersion: isPending?.isApproved || isPending?.isSaved,
-    //  TODO: Don't hardcode this
-    inactiveReason: [
-      ...(isInactive
-        ? [{ group: 'inactiveReason', id: 12, name: 'Cancelled' }]
-        : []),
-      ...(isPending?.isSaved
-        ? [{ group: 'inactiveReason', id: 45, name: 'Pending review' }]
-        : []),
-    ],
+    inactiveReason,
     newCategories: [], //  TODO
     newMoney,
     notes,
