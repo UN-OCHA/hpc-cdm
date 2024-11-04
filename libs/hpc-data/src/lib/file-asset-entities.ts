@@ -38,8 +38,6 @@ export const FILE_ASSET_UPLOAD = t.type({
   name: t.string,
 });
 
-//  TODO: REVIEW MATYAS' CODE >.<
-
 export const BLOB_TYPE = new t.Type<Blob>(
   'Blob',
   (input: unknown): input is Blob => input instanceof Blob,

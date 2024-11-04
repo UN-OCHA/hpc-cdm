@@ -1198,7 +1198,6 @@ export const FlowForm = (props: FlowFormProps) => {
                   sx={tw`rounded-[4px] bg-unocha-primary`}
                   TransitionComponent={Grow}
                 >
-                  {/* TODO: Write this better */}
                   <Box
                     sx={tw`px-10 py-3 flex gap-x-4 items-center transition-all`}
                   >

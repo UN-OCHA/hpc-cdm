@@ -96,7 +96,6 @@ const ReportingDetail = ({
       ...values.reportingDetails[index],
       [fieldName]: value,
     };
-    console.log(value);
     const reportingDetails = values.reportingDetails;
     reportingDetails[index] = newReportingDetail;
 

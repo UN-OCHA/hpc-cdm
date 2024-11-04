@@ -949,7 +949,6 @@ export class LiveModel implements Model {
           resultType: plans.GET_PLANS_AUTOCOMPLETE_RESULT,
         }),
       getPlan: ({ id, scopes }) => {
-        console.log(plans.getPlanResultCodec(scopes));
         return this.call({
           pathname: `/v2/plan/${id}`,
           queryParams: {

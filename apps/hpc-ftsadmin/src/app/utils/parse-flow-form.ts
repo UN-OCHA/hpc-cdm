@@ -677,7 +677,6 @@ export const parseToFlowForm = (
     reportingDetails: reportDetailsToReportingDetailProps(reportDetails),
     restricted,
   };
-  // TODO
   return flowForm;
 };
 
@@ -1007,7 +1006,6 @@ export const pendingValuesFlowForm = (
     const key = `funding${
       eD.refDirection === 'destination' ? 'Destination' : 'Source'
     }${MAP_SINGULAR_TO_KEY[eD.objectType]}`;
-    console.log(key);
     if (isFundingKey(key)) {
       // TODO: Review how this any casting works, technically it should be
       // like this because it's unknown and after we will check if is type
@@ -1015,6 +1013,5 @@ export const pendingValuesFlowForm = (
       comparedFlow[key] = eD.data as any;
     }
   }
-  console.log(comparedFlow);
   return comparedFlow;
 };
