@@ -695,23 +695,28 @@ export const serializeFlowForm = (
     firstReported,
     reportingDetails,
     parentFlow,
+    ...restValues
   } = values;
 
   return {
-    ...values,
-    flowDate: flowDate?.toISOString() ?? null,
-    decisionDate: decisionDate?.toISOString() ?? null,
-    firstReported: firstReported?.toISOString() ?? null,
+    ...restValues,
+    flowDate: flowDate?.isValid() ? flowDate.toISOString() : null,
+    decisionDate: decisionDate?.isValid() ? decisionDate.toISOString() : null,
+    firstReported: firstReported?.isValid()
+      ? firstReported.toISOString()
+      : null,
     parentFlow: parentFlow
-      ? { ...parentFlow, flowDate: parentFlow.flowDate?.toISOString() }
+      ? { ...parentFlow, flowDate: parentFlow.flowDate.toISOString() }
       : null,
     childFlows: values.childFlows.map((childFlow) => ({
       ...childFlow,
-      flowDate: childFlow.flowDate?.toISOString(),
+      flowDate: childFlow.flowDate.toISOString(),
     })),
     reportingDetails: reportingDetails.map((reportingDetail) => ({
       ...reportingDetail,
-      dateReported: reportingDetail.dateReported?.toISOString() ?? null,
+      dateReported: reportingDetail.dateReported?.isValid()
+        ? reportingDetail.dateReported?.toISOString()
+        : null,
       sourceSystemRecordId: '',
     })),
   };

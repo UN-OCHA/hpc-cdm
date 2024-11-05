@@ -431,7 +431,7 @@ export const VALID_DAYJS_DATE = new t.Type<Dayjs, Dayjs>(
   (u): u is Dayjs => u instanceof Dayjs,
   (v, c) => {
     if (isDayjs(v)) {
-      if (isDateValid(v.toISOString().split('T').at(0))) {
+      if (v.isValid() && v.year() >= 1950 && v.year() <= 2099) {
         return t.success(v);
       }
       return t.failure(v, c);

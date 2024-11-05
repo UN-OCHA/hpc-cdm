@@ -6,7 +6,7 @@ import {
 } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { type Dayjs } from 'dayjs';
-import { useField, useFormikContext } from 'formik';
+import { useField } from 'formik';
 import tw from 'twin.macro';
 import dayjs from '../../i18n/utils/dayjs';
 import { THEME } from '../../theme';
@@ -41,8 +41,7 @@ const DatePicker = ({
   onChange,
   disabled,
 }: DatePickerProps) => {
-  const [field, meta, helpers] = useField(name);
-  const { setFieldValue } = useFormikContext();
+  const [field, meta, { setValue, setTouched }] = useField(name);
 
   const textFieldErrorProps: Partial<TextFieldProps> = {};
   if (meta.error && meta.touched) {
@@ -59,14 +58,16 @@ const DatePicker = ({
       console.error(error);
     },
     ...(onChange
-      ? { onChange: (date) => onChange(date) }
+      ? {
+          onChange: (date) => {
+            setTouched(true);
+            onChange(date);
+          },
+        }
       : {
           onChange: (date) => {
-            if (date === null) {
-              setFieldValue(name, null);
-            } else {
-              setFieldValue(name, dayjs(date));
-            }
+            setTouched(true);
+            setValue(date);
           },
         }),
     label,
@@ -102,7 +103,7 @@ const DatePicker = ({
               if (onChange) {
                 onChange(dayjs());
               } else {
-                helpers.setValue(dayjs());
+                setValue(dayjs());
               }
             }}
           >
