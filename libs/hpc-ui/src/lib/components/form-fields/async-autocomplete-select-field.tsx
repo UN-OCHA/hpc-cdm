@@ -99,10 +99,9 @@ const AsyncAutocompleteSelect = ({
   const [debouncedInputValue, setDebouncedInputValue] = useState('');
   const isLoading =
     isOpen && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
-  const actualYear = new Date().getFullYear();
 
   useEffect(() => {
-    const delay = 300;
+    const delay = isFetch ? 0 : 300;
     const debounceTimer = setTimeout(() => {
       setDebouncedInputValue(inputValue);
     }, delay);
@@ -110,32 +109,26 @@ const AsyncAutocompleteSelect = ({
     return () => {
       clearTimeout(debounceTimer);
     };
-  }, [inputValue]);
+  }, [inputValue, isFetch]);
 
   useEffect(() => {
     let isActive = true;
-    if (
-      isAutocompleteAPI &&
-      (debouncedInputValue === '' || debouncedInputValue.length < 3)
-    ) {
+    const input = debouncedInputValue;
+
+    if (isAutocompleteAPI && (input === '' || input.length < 3)) {
       setOptions([]);
       setData([]);
       setIsFetch(false);
       return;
     }
     if (
-      (data.length > 0 &&
-        (debouncedInputValue.length >= 3 || !isAutocompleteAPI) &&
-        debouncedInputValue.length > 0) ||
-      (debouncedInputValue.length === 0 &&
-        options.at(0)?.displayLabel !== (actualYear - 5).toString() &&
-        options.at(-1)?.displayLabel !== (actualYear + 5).toString())
+      data.length > 0 &&
+      (input.length >= 3 || !isAutocompleteAPI) &&
+      input.length > 0
     ) {
       setOptions(
         data.filter((x) =>
-          x.displayLabel
-            .toUpperCase()
-            .includes(debouncedInputValue.toUpperCase())
+          x.displayLabel.toUpperCase().includes(input.toUpperCase())
         )
       );
     }
@@ -148,7 +141,7 @@ const AsyncAutocompleteSelect = ({
         let response: util.FormObjectValue[];
         if (fnPromise) {
           response = await fnPromise({
-            query: debouncedInputValue,
+            query: input,
           });
         } else {
           response = field.value;
@@ -166,7 +159,7 @@ const AsyncAutocompleteSelect = ({
     return () => {
       isActive = false;
     };
-  }, [isOpen, inputValue]);
+  }, [debouncedInputValue, isOpen]);
 
   useEffect(() => {
     if (!isOpen && isAutocompleteAPI) {

@@ -2,10 +2,11 @@ import {
   type categories,
   type flows,
   type locations,
+  type usageYears,
   type util,
 } from '@unocha/hpc-data';
 import { type Environment } from '../../environments/interface';
-import { flowToFormObjectValue } from './map-functions';
+import { flowToFormObjectValue, valueToInteger } from './map-functions';
 
 export const defaultOptions = (
   response: Array<{
@@ -143,7 +144,21 @@ export const fnOrganizations = async (
 export const fnUsageYears = async (
   env: Environment
 ): Promise<util.FormObjectValue[]> => {
-  const response = await env.model.usageYears.getUsageYears();
+  const CURRENT_YEAR = new Date().getFullYear();
+  const response = await env.model.usageYears
+    .getUsageYears()
+    .then((usageYears) => {
+      const sortedUsageYears: usageYears.GetUsageYearsResult = [];
+      for (const usageYear of usageYears) {
+        const yearDifference = CURRENT_YEAR - valueToInteger(usageYear.year);
+        if (yearDifference <= 5 && yearDifference >= -5) {
+          sortedUsageYears.unshift(usageYear);
+        } else {
+          sortedUsageYears.push(usageYear);
+        }
+      }
+      return sortedUsageYears;
+    });
   return usageYearsOptions(response);
 };
 
