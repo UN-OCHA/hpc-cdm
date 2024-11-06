@@ -456,3 +456,40 @@ export const autofillGlobalClusters = async ({
     globalClusters
   );
 };
+
+export const autofillUsageYears = async ({
+  fieldName,
+  setFieldValue,
+  values,
+  env,
+  newValue,
+}: AutofillProps) => {
+  setFieldValue(fieldName, newValue);
+
+  //  usageYears field is multi select
+  if (
+    !newValue ||
+    typeof newValue === 'string' ||
+    !Array.isArray(newValue) ||
+    newValue.length < 2 ||
+    values.keywords.some((keyword) => keyword.displayLabel === 'Multiyear')
+  ) {
+    return;
+  }
+  const multiyear = await env.model.categories
+    .getKeywords()
+    .then((keywords) =>
+      keywords.find((keyword) => keyword.name === 'Multiyear')
+    );
+
+  if (!multiyear) {
+    return;
+  }
+  setFieldValue('keywords', [
+    ...values.keywords,
+    {
+      displayLabel: multiyear.name,
+      value: multiyear.id,
+    } satisfies FormObjectValue,
+  ]);
+};

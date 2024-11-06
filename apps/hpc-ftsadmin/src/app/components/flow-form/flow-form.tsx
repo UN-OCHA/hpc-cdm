@@ -53,6 +53,7 @@ import {
   autofillOrganizations,
   autofillPlan,
   autofillProject,
+  autofillUsageYears,
 } from '../../utils/fn-autofills';
 import {
   validateFlowForWarnings,
@@ -623,6 +624,15 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceUsageYears"
                     label="Usage Year(s)"
                     fnPromise={() => fnUsageYears(env)}
+                    onChange={(newValue) =>
+                      autofillUsageYears({
+                        fieldName: 'fundingSourceUsageYears',
+                        setFieldValue,
+                        values,
+                        env,
+                        newValue,
+                      })
+                    }
                     isAutocompleteAPI={false}
                     disabled={isDisabled || !!values.parentFlow}
                     pendingValues={
@@ -1085,6 +1095,15 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationUsageYears"
                     label="Usage Year(s)"
                     fnPromise={() => fnUsageYears(env)}
+                    onChange={(newValue) =>
+                      autofillUsageYears({
+                        fieldName: 'fundingDestinationUsageYears',
+                        setFieldValue,
+                        values,
+                        env,
+                        newValue,
+                      })
+                    }
                     isAutocompleteAPI={false}
                     disabled={isDisabled}
                     pendingValues={pendingValues?.fundingDestinationUsageYears}
