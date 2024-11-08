@@ -762,7 +762,7 @@ export const FlowForm = (props: FlowFormProps) => {
                   />
                 </FormGroup>
 
-                <Box sx={tw`basis-8/12 max-w-[66.666%] flex flex-col gap-y-4`}>
+                <Box sx={tw`basis-3/5 max-w-[60%] flex flex-col gap-y-4`}>
                   <FormGroup title="Flow">
                     <Box sx={tw`grid grid-cols-2 gap-y-8 gap-x-24`}>
                       <div>
