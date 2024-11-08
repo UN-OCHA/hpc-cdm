@@ -328,7 +328,6 @@ export const FlowForm = (props: FlowFormProps) => {
 
   const { setError, initialValues, flow, isPending, isInactive } = props;
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [saveLoading, setSaveLoading] = useState(false);
   const [rejectLoading, setRejectLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -337,9 +336,26 @@ export const FlowForm = (props: FlowFormProps) => {
     : undefined;
   const isDisabled = isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
-  const handleSubmit = async (values: FlowFormTypeValidated) => {
-    const isValid = await validateFlowForWarnings(values, setError, env);
-    if (!isValid) {
+
+  const isValid = async (
+    values: FlowFormTypeValidated,
+    validateIfFlow?: boolean
+  ) => {
+    if (validateIfFlow && !flow) {
+      return false;
+    }
+    if (!(await validateFlowForWarnings(values, setError, env))) {
+      setError('The values are not valid');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (
+    values: FlowFormTypeValidated,
+    isSaved?: boolean
+  ) => {
+    if (!isValid(values)) {
       return;
     }
     setSubmitLoading(true);
@@ -349,7 +365,8 @@ export const FlowForm = (props: FlowFormProps) => {
           flow: {
             ...(
               await parseFlowForm(values, env, initialValues, {
-                isApproved: isPending,
+                isApproved: isPending && !isSaved,
+                isSaved,
               })
             ).flow,
             id: flow.id,
@@ -376,35 +393,6 @@ export const FlowForm = (props: FlowFormProps) => {
           setError(err.json.message);
         })
         .finally(() => setSubmitLoading(false));
-    }
-  };
-  const handlePendingFlowSave = async (values: FlowFormTypeValidated) => {
-    const isValid = await validateFlowForWarnings(values, setError, env);
-    if (!isValid) {
-      return;
-    }
-
-    if (flow?.id) {
-      setSaveLoading(true);
-      env.model.flows
-        .updateFlow({
-          flow: {
-            ...(
-              await parseFlowForm(values, env, initialValues, {
-                isSaved: isPending,
-              })
-            ).flow,
-            id: flow.id,
-            versionID: flow.versionID,
-          },
-        })
-        .then(() => {
-          props.load();
-        })
-        .catch((err) => {
-          setError(err.json.message);
-        })
-        .finally(() => setSaveLoading(false));
     }
   };
   const handleChangeFirstReported = (
@@ -438,19 +426,14 @@ export const FlowForm = (props: FlowFormProps) => {
   };
 
   const handleDeleteFlow = async (values: FlowFormType) => {
+    if (!window.confirm('Are you sure you want to delete this flow?')) {
+      return;
+    }
     if (!validateFlowIsUnlinked(values) || !flow) {
       setError('Please unlink all flows');
       return;
     }
     setDeleteLoading(true);
-    if (
-      !window.confirm(
-        'Flows with linked flows cannot be deleted, are you sure you want to delete this flow?'
-      )
-    ) {
-      setDeleteLoading(false);
-      return;
-    }
     env.model.flows
       .deleteFlow({
         flowId: flow.id,
@@ -472,9 +455,7 @@ export const FlowForm = (props: FlowFormProps) => {
     if (!flow) {
       return;
     }
-    const isValid = await validateFlowForWarnings(values, setError, env);
-    if (!isValid) {
-      setError('The values are not valid');
+    if (!window.confirm('Are you sure you want to reject this flow?')) {
       return;
     }
     setRejectLoading(true);
@@ -1235,13 +1216,11 @@ export const FlowForm = (props: FlowFormProps) => {
                     {isPending && (
                       <C.Button
                         onClick={async () => {
-                          handlePendingFlowSave(
-                            values as FlowFormTypeValidated
-                          );
+                          handleSubmit(values as FlowFormTypeValidated, true);
                         }}
                         color="primary_light"
                         text="Save"
-                        displayLoading={saveLoading}
+                        displayLoading={submitLoading}
                       />
                     )}
                     {isInactive && !isPending && (
