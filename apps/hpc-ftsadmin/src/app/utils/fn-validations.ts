@@ -1,4 +1,3 @@
-import * as t from 'io-ts';
 import type { FlowFormType } from '../components/flow-form/flow-form';
 import { valueToInteger } from './map-functions';
 import React from 'react';
