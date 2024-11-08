@@ -79,12 +79,21 @@ export default () => {
         env.model.flows.getFlowREST({ id: child.childID })
       )
     );
+    const inactiveReasons = await env.model.categories.getCategories({
+      query: 'inactiveReason',
+    });
 
     return {
       flow,
       parents,
       children,
+      inactiveReasons,
     };
+  });
+  const [inactiveReasonsState] = useDataLoader([], async () => {
+    return await env.model.categories.getCategories({
+      query: 'inactiveReason',
+    });
   });
 
   return (
@@ -101,7 +110,7 @@ export default () => {
                 },
               }}
             >
-              {({ flow, parents, children }) => (
+              {({ flow, parents, children, inactiveReasons }) => (
                 <PaddingContainer>
                   <C.PageTitle>{`Flow ${flow.id}v${flow.versionID}`}</C.PageTitle>
                   <UpdatedCreatedBy>{`Updated ${dayjs(
@@ -145,6 +154,7 @@ export default () => {
                     }
                     flow={flow}
                     load={load}
+                    inactiveReasons={inactiveReasons}
                     isPending={isPending(flow)}
                     isInactive={isInactive(flow)}
                   />
@@ -159,16 +169,28 @@ export default () => {
                   ? `Copy of Flow ${historyState?.flowFormCopyValuesName}`
                   : 'Add Flow'}
               </C.PageTitle>
-
-              <FlowForm
-                setError={setError}
-                load={load}
-                initialValues={
-                  historyState?.flowFormCopyValues
-                    ? deserializeFlowForm(historyState.flowFormCopyValues)
-                    : undefined
-                }
-              />
+              <C.Loader
+                loader={inactiveReasonsState}
+                strings={{
+                  ...t.get(lang, (s) => s.components.loader),
+                  notFound: {
+                    ...t.get(lang, (s) => s.components.notFound),
+                  },
+                }}
+              >
+                {(inactiveReasons) => (
+                  <FlowForm
+                    setError={setError}
+                    load={load}
+                    inactiveReasons={inactiveReasons}
+                    initialValues={
+                      historyState?.flowFormCopyValues
+                        ? deserializeFlowForm(historyState.flowFormCopyValues)
+                        : undefined
+                    }
+                  />
+                )}
+              </C.Loader>
             </PaddingContainer>
           )}
 

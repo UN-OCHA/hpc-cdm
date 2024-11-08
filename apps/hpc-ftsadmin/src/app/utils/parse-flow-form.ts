@@ -1,4 +1,9 @@
-import { FormObjectValue, flows, reportFiles } from '@unocha/hpc-data';
+import {
+  FormObjectValue,
+  categories,
+  flows,
+  reportFiles,
+} from '@unocha/hpc-data';
 import {
   INITIAL_FORM_VALUES,
   type FlowFormType,
@@ -30,6 +35,7 @@ import {
 } from '../components/filters/filter-flows-table';
 import { Environment } from '../../environments/interface';
 import { THEME } from '@unocha/hpc-ui';
+import { PENDING_REVIEW } from './constants';
 
 type EntityName =
   | 'location'
@@ -253,12 +259,12 @@ const reportingDetailPropsToReportDetails = (
       }) satisfies flows.CreateFlowParams['flow']['reportDetails'][number]
   );
 };
-export const parseFlowForm = async (
+export const parseFlowForm = (
   values: FlowFormTypeValidated,
-  env: Environment,
+  inactiveReasons: categories.GetCategoriesResult,
   initialValues?: FlowFormType,
   isPending?: { isApproved?: boolean; isSaved?: boolean }
-): Promise<flows.CreateFlowParams> => {
+): flows.CreateFlowParams => {
   const {
     method,
     amountOriginalCurrency,
@@ -284,14 +290,10 @@ export const parseFlowForm = async (
     restricted,
   } = values;
 
-  const inactiveReasons = await env.model.categories.getCategories({
-    query: 'inactiveReason',
-  });
-
   let pendingReviewCategory;
   let cancelledCategory;
   for (const inactiveReason of inactiveReasons) {
-    if (inactiveReason.name === 'Pending review') {
+    if (inactiveReason.name === PENDING_REVIEW) {
       pendingReviewCategory = inactiveReason;
     }
     if (inactiveReason.name === 'Cancelled') {

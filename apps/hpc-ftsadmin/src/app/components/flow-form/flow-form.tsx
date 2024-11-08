@@ -1,6 +1,11 @@
 import { AppContext, getEnv } from '../../context';
 import * as io from 'io-ts';
-import { type FormObjectValue, util as codecs, flows } from '@unocha/hpc-data';
+import {
+  type FormObjectValue,
+  util as codecs,
+  flows,
+  categories,
+} from '@unocha/hpc-data';
 import { Form, Formik, FormikHelpers } from 'formik';
 import {
   parseFlowForm,
@@ -61,10 +66,12 @@ import {
 } from '../../utils/fn-validations';
 import { useState } from 'react';
 import DatePickerReview from './inputs/date-picker-pending-review';
+import { PENDING_REVIEW } from '../../utils/constants';
 
 type FlowFormProps = {
   setError: React.Dispatch<React.SetStateAction<string | undefined>>;
   load: () => void;
+  inactiveReasons: categories.GetCategoriesResult;
   initialValues?: FlowFormType;
   flow?: flows.GetFlowResult;
   isPending?: boolean;
@@ -135,15 +142,23 @@ const UNTreasuryLinkComponent = tw.a`
 const FormGroupPaper = tw(Paper)`
   p-6
 `;
-const LatestSpan = tw.span`
+const SPAN_STYLES = `
   px-2
   py-1
   mx-2
-  bg-unocha-success-light
-  border-unocha-success
   border
   border-solid
   rounded-[4px]
+`;
+const LatestSpan = tw.span`
+  ${SPAN_STYLES}
+  bg-unocha-success-light
+  border-unocha-success
+`;
+const PendingReviewSpan = tw.span`
+  ${SPAN_STYLES}
+  bg-unocha-pallete-orange-light
+  border-unocha-pallete-orange
 `;
 
 export const INITIAL_FORM_VALUES: FlowFormType = {
@@ -326,7 +341,14 @@ export const FlowForm = (props: FlowFormProps) => {
   const env = getEnv();
   const navigate = useNavigate();
 
-  const { setError, initialValues, flow, isPending, isInactive } = props;
+  const {
+    setError,
+    initialValues,
+    flow,
+    isPending,
+    isInactive,
+    inactiveReasons,
+  } = props;
   const [submitLoading, setSubmitLoading] = useState(false);
   const [rejectLoading, setRejectLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -334,6 +356,11 @@ export const FlowForm = (props: FlowFormProps) => {
   const pendingValues = isPending
     ? pendingValuesFlowForm(initialValues, flow)
     : undefined;
+
+  const pendingReviewCategory = inactiveReasons.find(
+    (category) => category.name === PENDING_REVIEW
+  );
+
   const isDisabled = isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
 
@@ -363,12 +390,10 @@ export const FlowForm = (props: FlowFormProps) => {
       env.model.flows
         .updateFlow({
           flow: {
-            ...(
-              await parseFlowForm(values, env, initialValues, {
-                isApproved: isPending && !isSaved,
-                isSaved,
-              })
-            ).flow,
+            ...parseFlowForm(values, inactiveReasons, initialValues, {
+              isApproved: isPending && !isSaved,
+              isSaved,
+            }).flow,
             id: flow.id,
             versionID: flow.versionID,
           },
@@ -382,7 +407,7 @@ export const FlowForm = (props: FlowFormProps) => {
         .finally(() => setSubmitLoading(false));
     } else {
       env.model.flows
-        .createFlow(await parseFlowForm(values, env, initialValues))
+        .createFlow(parseFlowForm(values, inactiveReasons, initialValues))
         .then((res) => {
           navigate(paths.flow(res.id, res.versionID), {
             state: { successMessage: 'success message' },
@@ -479,14 +504,14 @@ export const FlowForm = (props: FlowFormProps) => {
       return;
     }
 
-    const newFlow = await parseFlowForm(
+    const newFlow = parseFlowForm(
       values as FlowFormTypeValidated,
-      env,
+      inactiveReasons,
       initialValues,
       {
         isApproved: isPending,
       }
-    ).then((res) => res.flow);
+    ).flow;
 
     env.model.flows
       .updateFlow({
@@ -1042,7 +1067,15 @@ export const FlowForm = (props: FlowFormProps) => {
                                 #{flowVersion.id}v{flowVersion.versionID}
                               </Link>{' '}
                               {flowVersion.activeStatus && (
-                                <LatestSpan>Latest</LatestSpan>
+                                <LatestSpan>Active</LatestSpan>
+                              )}
+                              {flowVersion.categories.some(
+                                (cat) =>
+                                  cat.categoryID === pendingReviewCategory?.id
+                              ) && (
+                                <PendingReviewSpan>
+                                  Pending Review
+                                </PendingReviewSpan>
                               )}
                               Created at {dayjs(flowVersion.createdAt).format()}
                               , and latest updated at{' '}

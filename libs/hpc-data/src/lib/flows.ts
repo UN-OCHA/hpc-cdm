@@ -204,6 +204,12 @@ const FLOW_REST_VERSION = t.type({
   createdAt: t.string,
   updatedAt: t.string,
   deletedAt: t.union([t.string, t.null]),
+  categories: t.array(
+    t.type({
+      versionID: t.number,
+      categoryID: t.number,
+    })
+  ),
 });
 
 const FLOW_IMPORT_INFORMATION = t.type({ key: t.string, valueId: t.number });
