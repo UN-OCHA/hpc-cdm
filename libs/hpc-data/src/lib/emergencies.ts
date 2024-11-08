@@ -22,13 +22,18 @@ export type GetEmergenciesAutocompleteParams = t.TypeOf<
   typeof GET_EMERGENCIES_AUTOCOMPLETE_PARAMS
 >;
 
-export const GET_EMERGENCIES_AUTOCOMPLETE_RESULT = t.array(EMERGENCY);
-export type GetEmergenciesAutocompleteResult = t.TypeOf<
-  typeof GET_EMERGENCIES_AUTOCOMPLETE_RESULT
->;
+export const GET_EMERGENCIES_RESULT = t.array(EMERGENCY);
+export type GetEmergenciesResult = t.TypeOf<typeof GET_EMERGENCIES_RESULT>;
+
+const GET_EMERGENCIES_PARAMS = t.partial({
+  years: t.array(t.number),
+  locations: t.array(t.number),
+});
+export type GetEmergenciesParams = t.TypeOf<typeof GET_EMERGENCIES_PARAMS>;
 
 export interface Model {
   getAutocompleteEmergencies(
     params: GetEmergenciesAutocompleteParams
-  ): Promise<GetEmergenciesAutocompleteResult>;
+  ): Promise<GetEmergenciesResult>;
+  getEmergencies(params: GetEmergenciesParams): Promise<GetEmergenciesResult>;
 }

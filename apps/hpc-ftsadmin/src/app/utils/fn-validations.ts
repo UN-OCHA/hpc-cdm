@@ -2,6 +2,7 @@ import * as t from 'io-ts';
 import type { FlowFormType } from '../components/flow-form/flow-form';
 import { valueToInteger } from './map-functions';
 import React from 'react';
+import { Environment } from '../../environments/interface';
 
 const validateEarmarking = (values: FlowFormType) => {
   if (!values.earmarkingType) {
@@ -35,10 +36,20 @@ const validateReportingOrganization = (values: FlowFormType) => {
   }
 };
 
-const validateEmergency = async (values: FlowFormType) => {
-  // TODO: It should have an endpoint, ask backend team to do it
-
-  return 'This flow has an emergency, do you still want to save?';
+const validateEmergency = async (values: FlowFormType, env: Environment) => {
+  const years = values.fundingDestinationUsageYears.map((usageYear) =>
+    valueToInteger(usageYear.displayLabel)
+  );
+  const locations = values.fundingDestinationLocations.map((location) =>
+    valueToInteger(location.value)
+  );
+  const emergencies = await env.model.emergencies.getEmergencies({
+    years,
+    locations,
+  });
+  if (emergencies.length > 0) {
+    return `This flow has at least one emergency available for the selected year(s) and location(s), like ${emergencies[0].name} do you still want to save?`;
+  }
 };
 
 const validateReportingDetails = (values: FlowFormType) => {
@@ -63,7 +74,8 @@ const validateReportingDetails = (values: FlowFormType) => {
 
 export const validateFlowForWarnings = async (
   values: FlowFormType,
-  setError: React.Dispatch<React.SetStateAction<string | undefined>>
+  setError: React.Dispatch<React.SetStateAction<string | undefined>>,
+  env: Environment
 ) => {
   const reportingDetailWarning = validateReportingDetails(values);
   if (reportingDetailWarning) {
@@ -74,7 +86,7 @@ export const validateFlowForWarnings = async (
   const warnings: (string | undefined)[] = [
     validateEarmarking(values),
     validateReportingOrganization(values),
-    await validateEmergency(values),
+    await validateEmergency(values, env),
   ];
 
   for (const warning of warnings) {

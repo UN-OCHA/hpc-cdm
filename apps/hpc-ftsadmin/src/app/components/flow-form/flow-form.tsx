@@ -338,7 +338,7 @@ export const FlowForm = (props: FlowFormProps) => {
   const isDisabled = isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
   const handleSubmit = async (values: FlowFormTypeValidated) => {
-    const isValid = await validateFlowForWarnings(values, setError);
+    const isValid = await validateFlowForWarnings(values, setError, env);
     if (!isValid) {
       return;
     }
@@ -379,7 +379,7 @@ export const FlowForm = (props: FlowFormProps) => {
     }
   };
   const handlePendingFlowSave = async (values: FlowFormTypeValidated) => {
-    const isValid = await validateFlowForWarnings(values, setError);
+    const isValid = await validateFlowForWarnings(values, setError, env);
     if (!isValid) {
       return;
     }
@@ -472,7 +472,7 @@ export const FlowForm = (props: FlowFormProps) => {
     if (!flow) {
       return;
     }
-    const isValid = await validateFlowForWarnings(values, setError);
+    const isValid = await validateFlowForWarnings(values, setError, env);
     if (!isValid) {
       setError('The values are not valid');
       return;

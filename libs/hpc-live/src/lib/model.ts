@@ -658,8 +658,23 @@ export class LiveModel implements Model {
       getAutocompleteEmergencies: (params) =>
         this.call({
           pathname: `/v1/object/autocomplete/emergency/${params.query}`,
-          resultType: emergencies.GET_EMERGENCIES_AUTOCOMPLETE_RESULT,
+          resultType: emergencies.GET_EMERGENCIES_RESULT,
         }),
+      getEmergencies: ({ years, locations }) => {
+        const queryParams: { years?: string; locations?: string } = {};
+        if (years) {
+          queryParams.years = years.join(',');
+        }
+        if (locations) {
+          queryParams.locations = locations.join(',');
+        }
+
+        return this.call({
+          pathname: `/v1/emergency`,
+          queryParams,
+          resultType: emergencies.GET_EMERGENCIES_RESULT,
+        });
+      },
     };
   }
   get systems(): systems.Model {

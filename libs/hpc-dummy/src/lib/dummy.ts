@@ -550,10 +550,19 @@ export class Dummy {
           'emergencies.getAutocompleteEmergencies',
           async ({
             query,
-          }: emergencies.GetEmergenciesAutocompleteParams): Promise<emergencies.GetEmergenciesAutocompleteResult> => {
+          }: emergencies.GetEmergenciesAutocompleteParams): Promise<emergencies.GetEmergenciesResult> => {
             return this.data.emergencies.filter((emergency) =>
               emergency.name.toUpperCase().includes(query.toUpperCase())
             );
+          }
+        ),
+        getEmergencies: dummyEndpoint(
+          'emergencies.getEmergencies',
+          async ({
+            years,
+            locations,
+          }: emergencies.GetEmergenciesParams): Promise<emergencies.GetEmergenciesResult> => {
+            return this.data.emergencies;
           }
         ),
       },
