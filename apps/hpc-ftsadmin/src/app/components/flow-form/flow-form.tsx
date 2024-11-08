@@ -1244,7 +1244,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         displayLoading={saveLoading}
                       />
                     )}
-                    {isInactive && (
+                    {isInactive && !isPending && (
                       <C.Button
                         onClick={async () => {
                           handleSubmit({
