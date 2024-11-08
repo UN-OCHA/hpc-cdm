@@ -225,12 +225,16 @@ const AsyncAutocompleteSelect = ({
           ...getTagProps({ index }),
           sx: option.chipColor ? { bgcolor: option.chipColor } : {},
         };
-        return option.tooltip ? (
-          <Tooltip title={option.tooltip}>
+        return (
+          <Tooltip
+            title={
+              option.tooltip
+                ? `${chipOptions.label} [${option.tooltip}]`
+                : chipOptions.label
+            }
+          >
             <Chip {...chipOptions} />
           </Tooltip>
-        ) : (
-          <Chip {...chipOptions} />
         );
       }),
     getOptionDisabled: (option) =>
