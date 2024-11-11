@@ -484,18 +484,9 @@ export const FlowForm = (props: FlowFormProps) => {
       return;
     }
     setRejectLoading(true);
-    const rejected = await env.model.categories
-      .getCategories({
-        query: 'inactiveReason',
-      })
-      .then((categories) =>
-        categories.find((category) => category.name === 'Rejected')
-      )
-      .catch((err) => {
-        console.error(err);
-        setRejectLoading(false);
-        setError('error message');
-      });
+    const rejected = inactiveReasons.find(
+      (category) => category.name === 'Rejected'
+    );
 
     if (!rejected) {
       setError(
@@ -517,6 +508,7 @@ export const FlowForm = (props: FlowFormProps) => {
       .updateFlow({
         flow: {
           ...newFlow,
+          activeStatus: false,
           categories: [...newFlow.categories, rejected.id],
           inactiveReason: [...(newFlow.inactiveReason ?? []), rejected],
           id: flow.id,
@@ -1243,6 +1235,13 @@ export const FlowForm = (props: FlowFormProps) => {
                       <C.ButtonSubmit
                         color="primary_light"
                         text="Submit"
+                        displayLoading={submitLoading}
+                      />
+                    )}
+                    {isValid && isPending && (
+                      <C.ButtonSubmit
+                        color="primary_light"
+                        text="Save & Approve"
                         displayLoading={submitLoading}
                       />
                     )}
