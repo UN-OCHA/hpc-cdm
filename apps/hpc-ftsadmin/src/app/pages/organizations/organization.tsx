@@ -48,7 +48,7 @@ const orgCategoryTo = (
           .filter(
             (cat) => cat.group === 'organizationType' && cat.parentID === null
           )
-          .map((cat) => ({ displayLabel: cat.name, value: cat.id.toString() }))
+          .map((cat) => ({ displayLabel: cat.name, value: cat.id }))
       );
 
       break;
@@ -59,7 +59,7 @@ const orgCategoryTo = (
           .filter(
             (cat) => cat.group === 'organizationType' && cat.parentID !== null
           )
-          .map((cat) => ({ displayLabel: cat.name, value: cat.id.toString() }))
+          .map((cat) => ({ displayLabel: cat.name, value: cat.id }))
       );
 
       break;
@@ -70,7 +70,7 @@ const orgCategoryTo = (
           .filter(
             (cat) => cat.group === 'organizationLevel' && cat.parentID === null
           )
-          .map((cat) => ({ displayLabel: cat.name, value: cat.id.toString() }))
+          .map((cat) => ({ displayLabel: cat.name, value: cat.id }))
       );
       break;
     }
@@ -113,15 +113,13 @@ const parseOrganizationToInitialValue = (
   if (locations) {
     const preLocations: Array<FormObjectValue> = locations.map((location) => ({
       displayLabel: location.name,
-      value: location.id.toString(),
+      value: location.id,
     }));
     const locationsWithParent: Array<FormObjectValue> = preLocations.map(
       (preLocation, index) => {
         const locationParentID = locations[index].parentId;
         if (locationParentID) {
-          const parent = preLocations.find(
-            (a) => a.value === locationParentID.toString()
-          );
+          const parent = preLocations.find((a) => a.value === locationParentID);
           if (parent) {
             return {
               ...preLocation,
@@ -138,7 +136,7 @@ const parseOrganizationToInitialValue = (
     res.locations = locationsWithParent;
   }
   res.parent = parent
-    ? { displayLabel: parent.name, value: parent.id.toString() }
+    ? { displayLabel: parent.name, value: parent.id }
     : undefined;
   res.organizationLevel = orgCategoryTo(categories, 'level').at(0);
   res.organizationTypes = [
