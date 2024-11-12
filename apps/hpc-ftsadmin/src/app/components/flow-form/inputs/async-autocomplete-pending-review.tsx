@@ -13,12 +13,18 @@ type AsyncAutocompleteSelectReviewProps = { sx?: SxProps<Theme> } & Omit<
 const AsyncAutocompleteSelectReview = (
   props: AsyncAutocompleteSelectReviewProps
 ) => {
-  const { fieldName, pendingValues, onClick, ...asyncAutocompleteSelectProps } =
-    props;
+  const {
+    fieldName,
+    pendingValues,
+    onClick,
+    setPendingValuesHandled,
+    ...asyncAutocompleteSelectProps
+  } = props;
 
   const reviewPendingValuesProps = {
     fieldName,
     pendingValues,
+    setPendingValuesHandled,
     onClick,
   };
   return (

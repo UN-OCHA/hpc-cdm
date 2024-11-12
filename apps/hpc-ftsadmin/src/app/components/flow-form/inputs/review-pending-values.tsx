@@ -1,7 +1,7 @@
 import { Box, Chip, Paper, Tooltip } from '@mui/material';
 import { FormObjectValue } from '@unocha/hpc-data';
 import { C, THEME } from '@unocha/hpc-ui';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import tw from 'twin.macro';
 import WarningIcon from '@mui/icons-material/Warning';
 import { t } from '../../../../i18n';
@@ -22,6 +22,7 @@ export type ReviewPendingValuesProps = {
     | keyof FlowFormType
     | keyof FlowFormType['reportingDetails'][number];
   componentType: InputFieldsTypes;
+  setPendingValuesHandled: React.Dispatch<React.SetStateAction<number>>;
   pendingValues?: Dayjs | string | FormObjectValue | FormObjectValue[] | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClick?: (...args: any[]) => unknown;
@@ -77,6 +78,7 @@ const ReviewPendingValues = ({
   fieldName,
   componentType,
   pendingValues,
+  setPendingValuesHandled,
   onClick,
 }: ReviewPendingValuesProps) => {
   const [isVisible, setIsVisible] = useState(true);
@@ -100,6 +102,7 @@ const ReviewPendingValues = ({
     if (onClick) {
       onClick();
     }
+    setPendingValuesHandled((count) => count + 1);
     setIsVisible(false);
   };
   const handleAccept = () => {
@@ -120,7 +123,9 @@ const ReviewPendingValues = ({
       <ChipContainer>
         {isFormObjectValueArray(pendingValues) &&
           pendingValues.map((pendingValue) => (
-            <RenderPendingValue label={pendingValue.displayLabel} />
+            <React.Fragment key={pendingValue.value}>
+              <RenderPendingValue label={pendingValue.displayLabel} />
+            </React.Fragment>
           ))}
 
         {isString(pendingValues) && (

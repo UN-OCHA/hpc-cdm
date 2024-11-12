@@ -232,6 +232,7 @@ const AsyncAutocompleteSelect = ({
                 ? `${chipOptions.label} [${option.tooltip}]`
                 : chipOptions.label
             }
+            key={`${name}-${option.value}`}
           >
             <Chip {...chipOptions} />
           </Tooltip>

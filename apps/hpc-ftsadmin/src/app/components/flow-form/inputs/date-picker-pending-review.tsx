@@ -11,11 +11,18 @@ type DatePickerReviewProps = { sx?: SxProps<Theme> } & Omit<
   Omit<ReviewPendingValuesProps, 'componentType'>;
 
 const DatePickerReview = (props: DatePickerReviewProps) => {
-  const { fieldName, pendingValues, onClick, ...datePickerProps } = props;
+  const {
+    fieldName,
+    pendingValues,
+    onClick,
+    setPendingValuesHandled,
+    ...datePickerProps
+  } = props;
 
   const reviewPendingValuesProps = {
     fieldName,
     pendingValues,
+    setPendingValuesHandled,
     onClick,
   };
   return (

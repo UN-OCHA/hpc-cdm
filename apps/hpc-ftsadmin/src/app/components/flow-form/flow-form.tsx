@@ -64,7 +64,7 @@ import {
   validateFlowForWarnings,
   validateFlowIsUnlinked,
 } from '../../utils/fn-validations';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import DatePickerReview from './inputs/date-picker-pending-review';
 import { PENDING_REVIEW } from '../../utils/constants';
 
@@ -218,9 +218,7 @@ export type FlowFormValidationKeys =
   | 'flowDescription'
   | 'firstReported'
   | 'flowDate'
-  | 'fundingSourceOrganizations'
   | 'fundingSourceUsageYears'
-  | 'fundingDestinationOrganizations'
   | 'fundingDestinationUsageYears';
 
 const FORM_VALIDATION_SCHEMA: io.TypeC<
@@ -240,9 +238,7 @@ const FORM_VALIDATION_SCHEMA: io.TypeC<
   flowDescription: codecs.NON_EMPTY_STRING,
   firstReported: codecs.VALID_DAYJS_DATE,
   flowDate: codecs.VALID_DAYJS_DATE,
-  fundingSourceOrganizations: codecs.NON_EMPTY_ARRAY,
   fundingSourceUsageYears: codecs.NON_EMPTY_ARRAY,
-  fundingDestinationOrganizations: codecs.NON_EMPTY_ARRAY,
   fundingDestinationUsageYears: codecs.NON_EMPTY_ARRAY,
 });
 
@@ -258,9 +254,7 @@ const VALIDATION_ERROR_MESSAGES: Record<
   flowDescription: 'This field is required',
   firstReported: 'This field is required',
   flowDate: 'This field is required',
-  fundingSourceOrganizations: 'This field is required',
   fundingSourceUsageYears: 'This field is required',
-  fundingDestinationOrganizations: 'This field is required',
   fundingDestinationUsageYears: 'This field is required',
 };
 
@@ -352,6 +346,7 @@ export const FlowForm = (props: FlowFormProps) => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [rejectLoading, setRejectLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [pendingValuesHandled, setPendingValuesHandled] = useState(0);
 
   const pendingValues = isPending
     ? pendingValuesFlowForm(initialValues, flow)
@@ -375,6 +370,14 @@ export const FlowForm = (props: FlowFormProps) => {
       setError('The values are not valid');
       return false;
     }
+    if (
+      isPending &&
+      pendingValues &&
+      pendingValuesHandled !== Object.keys(pendingValues).length
+    ) {
+      setError('Please handle all pending values');
+      return false;
+    }
     return true;
   };
 
@@ -382,7 +385,8 @@ export const FlowForm = (props: FlowFormProps) => {
     values: FlowFormTypeValidated,
     isSaved?: boolean
   ) => {
-    if (!isValid(values)) {
+    const valid = await isValid(values);
+    if (!valid) {
       return;
     }
     setSubmitLoading(true);
@@ -601,6 +605,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceOrganizations"
                     label="Organization(s)"
                     fnPromise={(query) => fnOrganizations(query, env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) => {
                       autofillOrganizations({
                         fieldName: 'fundingSourceOrganizations',
@@ -622,6 +627,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceUsageYears"
                     label="Usage Year(s)"
                     fnPromise={() => fnUsageYears(env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) =>
                       autofillUsageYears({
                         fieldName: 'fundingSourceUsageYears',
@@ -645,6 +651,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceLocations"
                     label="Location(s)"
                     fnPromise={(query) => fnLocations(query, env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     disabled={isDisabled || !!values.parentFlow}
                     pendingValues={
                       !values.parentFlow
@@ -657,6 +664,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceEmergencies"
                     label="Emergency(ies)"
                     fnPromise={(query) => fnEmergencies(query, env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     disabled={isDisabled || !!values.parentFlow}
                     pendingValues={
                       !values.parentFlow
@@ -669,6 +677,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceGlobalClusters"
                     label="Global Cluster(s)"
                     fnPromise={() => fnGlobalClusters(env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) =>
                       autofillGlobalClusters({
                         fieldName: 'fundingSourceGlobalClusters',
@@ -691,6 +700,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourcePlan"
                     label="Plan"
                     fnPromise={(query) => fnPlans(query, env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) => {
                       autofillPlan({
                         fieldName: 'fundingSourcePlan',
@@ -720,6 +730,7 @@ export const FlowForm = (props: FlowFormProps) => {
                             resolve([])
                           )
                     }
+                    setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) =>
                       autofillFieldClusters({
                         fieldName: 'fundingSourceFieldClusters',
@@ -742,6 +753,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingSourceProject"
                     label="Project"
                     fnPromise={(query) => fnProjects(query, env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) => {
                       autofillProject({
                         fieldName: 'fundingSourceProject',
@@ -773,6 +785,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           fieldName="amountUSD"
                           label="Funding Amount in USD"
                           type="currency"
+                          setPendingValuesHandled={setPendingValuesHandled}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.amountUSD}
                           required
@@ -785,6 +798,7 @@ export const FlowForm = (props: FlowFormProps) => {
                               fieldName="amountOriginalCurrency"
                               label="Funding amount (Original currency)"
                               type="unknownCurrency"
+                              setPendingValuesHandled={setPendingValuesHandled}
                               sx={tw`basis-4/6`}
                               disabled={isDisabled}
                               pendingValues={
@@ -795,6 +809,7 @@ export const FlowForm = (props: FlowFormProps) => {
                               fieldName="currency"
                               label="Currency"
                               fnPromise={() => fnCurrencies(env)}
+                              setPendingValuesHandled={setPendingValuesHandled}
                               isAutocompleteAPI={false}
                               sx={tw`basis-2/6`}
                               disabled={isDisabled}
@@ -805,6 +820,7 @@ export const FlowForm = (props: FlowFormProps) => {
                             fieldName="exchangeRate"
                             label="Exchange Rate Used"
                             type="float"
+                            setPendingValuesHandled={setPendingValuesHandled}
                             disabled={isDisabled}
                             pendingValues={pendingValues?.exchangeRate}
                           />
@@ -829,6 +845,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           fieldName="flowDescription"
                           label="Funding Flow Description"
                           placeholder="1-2 sentences for flow name"
+                          setPendingValuesHandled={setPendingValuesHandled}
                           required
                           textarea
                           minRows={2}
@@ -846,12 +863,15 @@ export const FlowForm = (props: FlowFormProps) => {
                                 values
                               )
                             }
+                            setPendingValuesHandled={setPendingValuesHandled}
                             disabled={isDisabled}
                             pendingValues={pendingValues?.firstReported}
+                            required
                           />
                           <DatePickerReview
                             label="Decision Date (DD/MM/YY)"
                             fieldName="decisionDate"
+                            setPendingValuesHandled={setPendingValuesHandled}
                             disabled={isDisabled}
                             pendingValues={pendingValues?.decisionDate}
                           />
@@ -861,6 +881,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           fieldName="donorBudgetYear"
                           type="number"
                           placeholder="YYYY"
+                          setPendingValuesHandled={setPendingValuesHandled}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.donorBudgetYear}
                         />
@@ -870,23 +891,29 @@ export const FlowForm = (props: FlowFormProps) => {
                           fieldName="flowType"
                           label="Flow Type"
                           fnPromise={() => fnFlowTypeId(env)}
+                          setPendingValuesHandled={setPendingValuesHandled}
                           isAutocompleteAPI={false}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.flowType}
+                          required
                         />
                         <AsyncAutocompleteSelectReview
                           fieldName="flowStatus"
                           label="Flow Status"
                           fnPromise={() => fnFlowStatusId(env)}
+                          setPendingValuesHandled={setPendingValuesHandled}
                           isAutocompleteAPI={false}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.flowStatus}
+                          required
                         />
                         <DatePickerReview
                           label="Flow Date"
                           fieldName="flowDate"
+                          setPendingValuesHandled={setPendingValuesHandled}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.flowDate}
+                          required
                         />
                         <AsyncAutocompleteSelectReview
                           fieldName="contributionType"
@@ -894,6 +921,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           fnPromise={() =>
                             fnCategories('contributionType', env)
                           }
+                          setPendingValuesHandled={setPendingValuesHandled}
                           isAutocompleteAPI={false}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.contributionType}
@@ -902,6 +930,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           fieldName="earmarkingType"
                           label="GB Earmarking"
                           fnPromise={() => fnCategories('earmarkingType', env)}
+                          setPendingValuesHandled={setPendingValuesHandled}
                           isAutocompleteAPI={false}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.earmarkingType}
@@ -910,6 +939,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           fieldName="method"
                           label="Aid Modality"
                           fnPromise={() => fnCategories('method', env)}
+                          setPendingValuesHandled={setPendingValuesHandled}
                           isAutocompleteAPI={false}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.method}
@@ -919,6 +949,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           fieldName="keywords"
                           label="Keyword(s)"
                           fnPromise={() => fnCategories('keywords', env)}
+                          setPendingValuesHandled={setPendingValuesHandled}
                           isAutocompleteAPI={false}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.keywords}
@@ -930,6 +961,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           fnPromise={() =>
                             fnCategories('beneficiaryGroup', env)
                           }
+                          setPendingValuesHandled={setPendingValuesHandled}
                           isAutocompleteAPI={false}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.beneficiaryGroup}
@@ -939,6 +971,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     <TextFieldReview
                       fieldName="notes"
                       label="Notes"
+                      setPendingValuesHandled={setPendingValuesHandled}
                       textarea
                       minRows={3}
                       disabled={isDisabled}
@@ -1005,15 +1038,17 @@ export const FlowForm = (props: FlowFormProps) => {
                   </FormGroup>
                   {values.reportingDetails.length > 0 ? (
                     values.reportingDetails.map((_, index) => (
-                      <ReportingDetail
-                        index={index}
-                        disabled={
-                          (isDisabled &&
-                            initialValues &&
-                            index < initialValues.reportingDetails.length) ||
-                          isDeleted
-                        }
-                      />
+                      <React.Fragment key={index}>
+                        <ReportingDetail
+                          index={index}
+                          disabled={
+                            (isDisabled &&
+                              initialValues &&
+                              index < initialValues.reportingDetails.length) ||
+                            isDeleted
+                          }
+                        />
+                      </React.Fragment>
                     ))
                   ) : (
                     <ReportingDetail index={0} disabled={isDisabled} />
@@ -1090,17 +1125,18 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationOrganizations"
                     label="Organization(s)"
                     fnPromise={(query) => fnOrganizations(query, env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     disabled={isDisabled}
                     pendingValues={
                       pendingValues?.fundingDestinationOrganizations
                     }
                     isMulti
-                    required
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationUsageYears"
                     label="Usage Year(s)"
                     fnPromise={() => fnUsageYears(env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) =>
                       autofillUsageYears({
                         fieldName: 'fundingDestinationUsageYears',
@@ -1120,6 +1156,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationLocations"
                     label="Location(s)"
                     fnPromise={(query) => fnLocations(query, env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     disabled={isDisabled}
                     pendingValues={pendingValues?.fundingDestinationLocations}
                     isMulti
@@ -1128,6 +1165,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationEmergencies"
                     label="Emergency(ies)"
                     fnPromise={(query) => fnEmergencies(query, env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     disabled={isDisabled}
                     pendingValues={pendingValues?.fundingDestinationEmergencies}
                     isMulti
@@ -1136,6 +1174,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationGlobalClusters"
                     label="Global Cluster(s)"
                     fnPromise={() => fnGlobalClusters(env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) =>
                       autofillGlobalClusters({
                         fieldName: 'fundingDestinationGlobalClusters',
@@ -1156,6 +1195,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationPlan"
                     label="Plan"
                     fnPromise={(query) => fnPlans(query, env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) => {
                       autofillPlan({
                         fieldName: 'fundingDestinationPlan',
@@ -1180,6 +1220,7 @@ export const FlowForm = (props: FlowFormProps) => {
                             resolve([])
                           )
                     }
+                    setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) =>
                       autofillFieldClusters({
                         fieldName: 'fundingDestinationFieldClusters',
@@ -1202,6 +1243,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     fieldName="fundingDestinationProject"
                     label="Project"
                     fnPromise={(query) => fnProjects(query, env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) => {
                       autofillProject({
                         fieldName: 'fundingDestinationProject',

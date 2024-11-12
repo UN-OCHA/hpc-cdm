@@ -830,22 +830,6 @@ const compareFlowForms = (
     return currentValue?.value !== incomingValue?.value;
   };
 
-  const isDifferentFlowLinkProps = (
-    currentFlowLink: FlowLinkProps | null,
-    incomingFlowLink: FlowLinkProps | null
-  ) => {
-    if (currentFlowLink === incomingFlowLink) return false;
-    if (
-      (!currentFlowLink && incomingFlowLink) ||
-      (currentFlowLink && !incomingFlowLink)
-    )
-      return true;
-    return (
-      currentFlowLink?.id !== incomingFlowLink?.id ||
-      currentFlowLink?.versionID !== incomingFlowLink?.versionID
-    );
-  };
-
   const isDifferentDayjs = (
     currentDate: dayjs.Dayjs | null,
     incomingDate: dayjs.Dayjs | null
@@ -922,30 +906,6 @@ const compareFlowForms = (
         break;
       }
 
-      // For FlowLinkProps | null
-      case 'parentFlow': {
-        const currentValue = currentFlow[key];
-        const incomingValue = incomingFlow[key];
-        if (isDifferentFlowLinkProps(currentValue, incomingValue)) {
-          result[key] = incomingValue;
-        }
-        break;
-      }
-
-      case 'childFlows': {
-        const currentValue = currentFlow[key];
-        const incomingValue = incomingFlow[key];
-        if (
-          isDifferentArray(
-            currentValue,
-            incomingValue,
-            isDifferentFlowLinkProps
-          )
-        ) {
-          result[key] = incomingValue;
-        }
-        break;
-      }
       // For Dayjs dates
       case 'firstReported':
       case 'decisionDate':

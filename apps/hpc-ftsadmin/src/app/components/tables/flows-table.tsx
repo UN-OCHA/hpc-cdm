@@ -340,18 +340,16 @@ export default function FlowsTable(props: FlowsTableProps) {
                       {row.organizations
                         ?.filter((org) => org.direction === 'source')
                         .map((org, index) => (
-                          <>
+                          <React.Fragment key={`source_${row.id}_${index}`}>
                             <Tooltip
                               title={org.name}
                               placement="top"
                               followCursor={true}
                             >
-                              <span key={`source_${row.id}_${index}`}>
-                                {org.abbreviation}
-                              </span>
+                              <span>{org.abbreviation}</span>
                             </Tooltip>
                             {renderReportDetail(org, row, lang)}
-                          </>
+                          </React.Fragment>
                         ))}
                     </TableCell>
                   );
@@ -365,18 +363,18 @@ export default function FlowsTable(props: FlowsTableProps) {
                       {row.organizations
                         ?.filter((org) => org.direction === 'destination')
                         .map((org, index) => (
-                          <>
+                          <React.Fragment
+                            key={`destination_${row.id}_${index}`}
+                          >
                             <Tooltip
                               title={org.name}
                               placement="top"
                               followCursor={true}
                             >
-                              <span key={`destination_${row.id}_${index}`}>
-                                {org.abbreviation}
-                              </span>
+                              <span>{org.abbreviation}</span>
                             </Tooltip>
                             {renderReportDetail(org, row, lang)}
-                          </>
+                          </React.Fragment>
                         ))}
                     </TableCell>
                   );

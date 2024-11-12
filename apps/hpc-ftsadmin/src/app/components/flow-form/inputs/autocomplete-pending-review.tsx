@@ -7,12 +7,18 @@ type AutocompleteSelectReviewProps = Omit<AutocompleteSelectProps, 'name'> &
   Omit<ReviewPendingValuesProps, 'componentType'>;
 
 const AutocompleteSelectReview = (props: AutocompleteSelectReviewProps) => {
-  const { fieldName, pendingValues, onClick, ...asyncAutocompleteSelectProps } =
-    props;
+  const {
+    fieldName,
+    pendingValues,
+    setPendingValuesHandled,
+    onClick,
+    ...asyncAutocompleteSelectProps
+  } = props;
 
   const reviewPendingValuesProps = {
     fieldName,
     pendingValues,
+    setPendingValuesHandled,
     onClick,
   };
   return (

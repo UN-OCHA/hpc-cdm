@@ -11,11 +11,18 @@ type RadioButtonFieldReviewProps = { sx?: SxProps<Theme> } & Omit<
   Omit<ReviewPendingValuesProps, 'componentType'>;
 
 const RadioButtonFieldReview = (props: RadioButtonFieldReviewProps) => {
-  const { fieldName, pendingValues, onClick, ...radioButtonFieldProps } = props;
+  const {
+    fieldName,
+    pendingValues,
+    onClick,
+    setPendingValuesHandled,
+    ...radioButtonFieldProps
+  } = props;
 
   const reviewPendingValuesProps = {
     fieldName,
     pendingValues,
+    setPendingValuesHandled,
     onClick,
   };
   return (

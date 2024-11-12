@@ -220,6 +220,7 @@ const ReportingDetail = ({
             initialValue={reportChannel}
             onChange={(value) => handleChange('reportChannel', value)}
             disabled={disabled}
+            required
           />
           <C.TextFieldWrapper
             name="sourceSystemRecordId"

@@ -7,11 +7,18 @@ type TextFieldReviewProps = Omit<TextFieldWrapperProps, 'name'> &
   Omit<ReviewPendingValuesProps, 'componentType'>;
 
 const TextFieldReview = (props: TextFieldReviewProps) => {
-  const { fieldName, pendingValues, onClick, ...textFieldProps } = props;
+  const {
+    fieldName,
+    pendingValues,
+    setPendingValuesHandled,
+    onClick,
+    ...textFieldProps
+  } = props;
 
   const reviewPendingValuesProps = {
     fieldName,
     pendingValues,
+    setPendingValuesHandled,
     onClick,
   };
   return (

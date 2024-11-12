@@ -11,11 +11,18 @@ type NumberFieldReviewProps = { sx?: SxProps<Theme> } & Omit<
   Omit<ReviewPendingValuesProps, 'componentType'>;
 
 const NumberFieldReview = (props: NumberFieldReviewProps) => {
-  const { fieldName, pendingValues, onClick, ...numberFieldProps } = props;
+  const {
+    fieldName,
+    pendingValues,
+    setPendingValuesHandled,
+    onClick,
+    ...numberFieldProps
+  } = props;
 
   const reviewPendingValuesProps = {
     fieldName,
     pendingValues,
+    setPendingValuesHandled,
     onClick,
   };
   return (

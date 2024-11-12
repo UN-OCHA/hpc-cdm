@@ -23,6 +23,7 @@ export type DatePickerProps = {
   initialValue?: Dayjs | null;
   onChange?: (value: Dayjs | null) => unknown;
   disabled?: boolean;
+  required?: boolean;
 };
 
 const StyledDatePicker = tw.div`
@@ -40,6 +41,7 @@ const DatePicker = ({
   initialValue,
   onChange,
   disabled,
+  required,
 }: DatePickerProps) => {
   const [field, meta, { setValue, setTouched }] = useField(name);
 
@@ -70,7 +72,7 @@ const DatePicker = ({
             setValue(date);
           },
         }),
-    label,
+    label: `${label}${required ? '*' : ''}`,
     slots: {
       textField: (params) => (
         <TextField
