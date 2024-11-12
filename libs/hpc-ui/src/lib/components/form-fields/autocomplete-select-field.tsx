@@ -10,6 +10,7 @@ export type AutocompleteSelectProps = {
   options: util.FormObjectValue[];
   readOnly?: boolean;
   disabled?: boolean;
+  required?: boolean;
 };
 const StyledAutocomplete = tw(Autocomplete)`
   min-w-[10rem]
@@ -22,6 +23,7 @@ const AutocompleteSelect = ({
   options,
   readOnly,
   disabled,
+  required,
 }: AutocompleteSelectProps) => {
   const { setFieldValue } = useFormikContext();
   const [field] = useField<util.FormObjectValue>(name);
@@ -51,6 +53,7 @@ const AutocompleteSelect = ({
         size="small"
         label={label}
         disabled={disabled}
+        required={required}
         InputProps={{
           ...params.InputProps,
         }}

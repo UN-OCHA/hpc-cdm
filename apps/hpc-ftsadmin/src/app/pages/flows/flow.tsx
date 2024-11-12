@@ -12,6 +12,7 @@ import {
 } from '../../utils/parse-flow-form';
 import { flows } from '@unocha/hpc-data';
 import dayjs from '../../../libs/dayjs';
+import { fnCategories, fnFlowTypeId } from '../../utils/fn-promises';
 
 type FlowRouteParams = {
   id: string;
@@ -63,44 +64,55 @@ export default () => {
   const id = parseInt(idString ?? '', 10);
   const versionID = parseInt(version ?? '', 10);
   const env = getEnv();
-  const [state, load] = useDataLoader([id], async () => {
-    const flow = version
-      ? await env.model.flows.getFlowVersionREST({ id, versionID })
-      : await env.model.flows.getFlowREST({ id });
 
-    const parents = await Promise.all(
-      flow.parents.map((parent) =>
-        env.model.flows.getFlowREST({ id: parent.parentID })
-      )
-    );
-
-    const children = await Promise.all(
-      flow.children.map((child) =>
-        env.model.flows.getFlowREST({ id: child.childID })
-      )
-    );
-    const inactiveReasons = await env.model.categories.getCategories({
-      query: 'inactiveReason',
-    });
-
-    return {
-      flow,
-      parents,
-      children,
-      inactiveReasons,
+  if (id) {
+    const getFlow = (version?: number) => {
+      if (version) {
+        return env.model.flows.getFlowVersionREST({ id, versionID: version });
+      }
+      return env.model.flows.getFlowREST({ id });
     };
-  });
-  const [inactiveReasonsState] = useDataLoader([], async () => {
-    return await env.model.categories.getCategories({
-      query: 'inactiveReason',
-    });
-  });
 
-  return (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <>
-          {idString ? (
+    const [state, load] = useDataLoader([id], async () => {
+      const [flow, inactiveReasons, flowType, contributionType, method] =
+        await Promise.all([
+          getFlow(versionID),
+          env.model.categories.getCategories({
+            query: 'inactiveReason',
+          }),
+          fnFlowTypeId(env),
+          fnCategories('contributionType', env),
+          fnCategories('method', env),
+        ]);
+
+      const [parents, children] = await Promise.all([
+        Promise.all(
+          flow.parents.map((parent) =>
+            env.model.flows.getFlowREST({ id: parent.parentID })
+          )
+        ),
+        Promise.all(
+          flow.children.map((child) =>
+            env.model.flows.getFlowREST({ id: child.childID })
+          )
+        ),
+      ]);
+
+      return {
+        flow,
+        parents,
+        children,
+        inactiveReasons,
+        flowType,
+        contributionType,
+        method,
+      };
+    });
+
+    return (
+      <AppContext.Consumer>
+        {({ lang }) => (
+          <>
             <C.Loader
               loader={state}
               strings={{
@@ -110,7 +122,15 @@ export default () => {
                 },
               }}
             >
-              {({ flow, parents, children, inactiveReasons }) => (
+              {({
+                flow,
+                parents,
+                children,
+                inactiveReasons,
+                flowType,
+                contributionType,
+                method,
+              }) => (
                 <PaddingContainer>
                   <C.PageTitle>{`Flow ${flow.id}v${flow.versionID}`}</C.PageTitle>
                   <UpdatedCreatedBy>{`Updated ${dayjs(
@@ -155,57 +175,98 @@ export default () => {
                     flow={flow}
                     load={load}
                     inactiveReasons={inactiveReasons}
+                    flowType={flowType}
+                    contributionType={contributionType}
+                    method={method}
                     isPending={isPending(flow)}
                     isInactive={isInactive(flow)}
                   />
                 </PaddingContainer>
               )}
             </C.Loader>
-          ) : (
-            <PaddingContainer>
-              <C.PageTitle>
-                {historyState?.flowFormCopyValues &&
-                historyState?.flowFormCopyValuesName
-                  ? `Copy of Flow ${historyState?.flowFormCopyValuesName}`
-                  : 'Add Flow'}
-              </C.PageTitle>
-              <C.Loader
-                loader={inactiveReasonsState}
-                strings={{
-                  ...t.get(lang, (s) => s.components.loader),
-                  notFound: {
-                    ...t.get(lang, (s) => s.components.notFound),
-                  },
-                }}
-              >
-                {(inactiveReasons) => (
+            <C.MessageAlert
+              setMessage={setError}
+              message={error}
+              severity="error"
+            />
+            <C.MessageAlert
+              setMessage={setSuccess}
+              message={success}
+              severity="success"
+            />
+          </>
+        )}
+      </AppContext.Consumer>
+    );
+  } else {
+    const [state, load] = useDataLoader([], async () => {
+      const [inactiveReasons, flowType, contributionType, method] =
+        await Promise.all([
+          env.model.categories.getCategories({
+            query: 'inactiveReason',
+          }),
+          fnFlowTypeId(env),
+          fnCategories('contributionType', env),
+          fnCategories('method', env),
+        ]);
+      return {
+        inactiveReasons,
+        flowType,
+        contributionType,
+        method,
+      };
+    });
+
+    return (
+      <AppContext.Consumer>
+        {({ lang }) => (
+          <>
+            <C.Loader
+              loader={state}
+              strings={{
+                ...t.get(lang, (s) => s.components.loader),
+                notFound: {
+                  ...t.get(lang, (s) => s.components.notFound),
+                },
+              }}
+            >
+              {({ inactiveReasons, flowType, contributionType, method }) => (
+                <PaddingContainer>
+                  <C.PageTitle>
+                    {historyState?.flowFormCopyValues &&
+                    historyState?.flowFormCopyValuesName
+                      ? `Copy of Flow ${historyState?.flowFormCopyValuesName}`
+                      : 'Add Flow'}
+                  </C.PageTitle>
                   <FlowForm
                     setError={setError}
                     load={load}
                     inactiveReasons={inactiveReasons}
+                    flowType={flowType}
+                    contributionType={contributionType}
+                    method={method}
                     initialValues={
                       historyState?.flowFormCopyValues
                         ? deserializeFlowForm(historyState.flowFormCopyValues)
                         : undefined
                     }
                   />
-                )}
-              </C.Loader>
-            </PaddingContainer>
-          )}
-
-          <C.MessageAlert
-            setMessage={setError}
-            message={error}
-            severity="error"
-          />
-          <C.MessageAlert
-            setMessage={setSuccess}
-            message={success}
-            severity="success"
-          />
-        </>
-      )}
-    </AppContext.Consumer>
-  );
+                </PaddingContainer>
+              )}
+            </C.Loader>
+            <C.MessageAlert
+              setMessage={setError}
+              message={error}
+              severity="error"
+            />
+            <C.MessageAlert
+              setMessage={setSuccess}
+              message={success}
+              severity="success"
+            />
+          </>
+        )}
+      </AppContext.Consumer>
+    );
+  }
 };

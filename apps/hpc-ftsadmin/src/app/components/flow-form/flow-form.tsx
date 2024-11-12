@@ -21,7 +21,6 @@ import {
   fnCurrencies,
   fnEmergencies,
   fnFlowStatusId,
-  fnFlowTypeId,
   fnGlobalClusters,
   fnGoverningEntities,
   fnLocations,
@@ -67,11 +66,15 @@ import {
 import React, { useState } from 'react';
 import DatePickerReview from './inputs/date-picker-pending-review';
 import { PENDING_REVIEW } from '../../utils/constants';
+import AutocompleteSelectReview from './inputs/autocomplete-pending-review';
 
 type FlowFormProps = {
   setError: React.Dispatch<React.SetStateAction<string | undefined>>;
   load: () => void;
   inactiveReasons: categories.GetCategoriesResult;
+  flowType: FormObjectValue[];
+  contributionType: FormObjectValue[];
+  method: FormObjectValue[];
   initialValues?: FlowFormType;
   flow?: flows.GetFlowResult;
   isPending?: boolean;
@@ -337,11 +340,15 @@ export const FlowForm = (props: FlowFormProps) => {
 
   const {
     setError,
+    load,
     initialValues,
     flow,
     isPending,
     isInactive,
     inactiveReasons,
+    flowType,
+    contributionType,
+    method,
   } = props;
   const [submitLoading, setSubmitLoading] = useState(false);
   const [rejectLoading, setRejectLoading] = useState(false);
@@ -358,6 +365,19 @@ export const FlowForm = (props: FlowFormProps) => {
 
   const isDisabled = isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
+
+  const flowInitialValues = initialValues ?? {
+    ...INITIAL_FORM_VALUES,
+    flowType:
+      flowType.find((v) => v.displayLabel === 'Standard') ??
+      INITIAL_FORM_VALUES['flowType'],
+    contributionType:
+      contributionType.find((v) => v.displayLabel === 'Financial') ??
+      INITIAL_FORM_VALUES['contributionType'],
+    method:
+      method.find((v) => v.displayLabel === 'Traditional aid') ??
+      INITIAL_FORM_VALUES['method'],
+  };
 
   const isValid = async (
     values: FlowFormTypeValidated,
@@ -403,7 +423,7 @@ export const FlowForm = (props: FlowFormProps) => {
           },
         })
         .then(() => {
-          props.load();
+          load();
         })
         .catch((err) => {
           setError('error message');
@@ -520,7 +540,7 @@ export const FlowForm = (props: FlowFormProps) => {
         },
       })
       .then(() => {
-        props.load();
+        load();
       })
       .catch((err) => {
         setError('error message');
@@ -532,7 +552,7 @@ export const FlowForm = (props: FlowFormProps) => {
     <AppContext.Consumer>
       {({ lang }) => (
         <Formik
-          initialValues={initialValues || INITIAL_FORM_VALUES}
+          initialValues={flowInitialValues}
           onSubmit={(values) => handleSubmit(values as FlowFormTypeValidated)}
           validate={(values) =>
             validateForm(
@@ -887,12 +907,11 @@ export const FlowForm = (props: FlowFormProps) => {
                         />
                       </div>
                       <div>
-                        <AsyncAutocompleteSelectReview
+                        <AutocompleteSelectReview
                           fieldName="flowType"
                           label="Flow Type"
-                          fnPromise={() => fnFlowTypeId(env)}
+                          options={flowType}
                           setPendingValuesHandled={setPendingValuesHandled}
-                          isAutocompleteAPI={false}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.flowType}
                           required
@@ -915,14 +934,11 @@ export const FlowForm = (props: FlowFormProps) => {
                           pendingValues={pendingValues?.flowDate}
                           required
                         />
-                        <AsyncAutocompleteSelectReview
+                        <AutocompleteSelectReview
                           fieldName="contributionType"
                           label="Contribution Type"
-                          fnPromise={() =>
-                            fnCategories('contributionType', env)
-                          }
+                          options={contributionType}
                           setPendingValuesHandled={setPendingValuesHandled}
-                          isAutocompleteAPI={false}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.contributionType}
                         />
@@ -935,12 +951,11 @@ export const FlowForm = (props: FlowFormProps) => {
                           disabled={isDisabled}
                           pendingValues={pendingValues?.earmarkingType}
                         />
-                        <AsyncAutocompleteSelectReview
+                        <AutocompleteSelectReview
                           fieldName="method"
                           label="Aid Modality"
-                          fnPromise={() => fnCategories('method', env)}
+                          options={method}
                           setPendingValuesHandled={setPendingValuesHandled}
-                          isAutocompleteAPI={false}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.method}
                           required
