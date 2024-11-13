@@ -768,6 +768,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         : undefined
                     }
                     isMulti
+                    observedValue={values.fundingSourcePlan?.value.toString()}
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingSourceProject"
@@ -1253,6 +1254,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       pendingValues?.fundingDestinationFieldClusters
                     }
                     isMulti
+                    observedValue={values.fundingDestinationPlan?.value.toString()}
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationProject"

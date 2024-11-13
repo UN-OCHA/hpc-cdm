@@ -47,11 +47,13 @@ export type AsyncAutocompleteSelectProps = {
       | null
   ) => void;
   disabled?: boolean;
-  /** This prop is used only if we are not using
+  /**
+   *  This prop is used only if we are not using
    *  `Formik`, if you are using `Formik`, you don't need
    *  to pass this prop.
    */
   initialValue?: util.FormObjectValue | util.FormObjectValue[] | null;
+  observedValue?: string;
 };
 
 /**
@@ -88,6 +90,7 @@ const AsyncAutocompleteSelect = ({
   onChange,
   disabled,
   initialValue,
+  observedValue,
 }: AsyncAutocompleteSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -167,7 +170,13 @@ const AsyncAutocompleteSelect = ({
       setData([]);
       setIsFetch(false);
     }
-  }, [isOpen, isAutocompleteAPI]);
+  }, [isOpen, isAutocompleteAPI, fnPromise]);
+
+  useEffect(() => {
+    setOptions([]);
+    setData([]);
+    setIsFetch(false);
+  }, [observedValue]);
 
   const configAutocomplete:  AutocompleteProps<
     util.FormObjectValue,

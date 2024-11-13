@@ -337,7 +337,10 @@ export const autofillPlan = async ({
   newValue,
 }: AutofillProps) => {
   setFieldValue(fieldName, newValue);
+  const direction = fieldName.includes('Source') ? 'Source' : 'Destination';
 
+  // When Plan is modified or set to null, we need to clear Field Clusters
+  setFieldValue(`funding${direction}FieldClusters`, []);
   //  Plan field is not multi select
   if (!newValue || typeof newValue === 'string' || Array.isArray(newValue)) {
     return;
