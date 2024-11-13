@@ -311,7 +311,6 @@ const CHILD_METHOD_TYPE = t.type({
 
 const CHILDREN_TYPE = t.type({
   childID: t.union([t.number, t.string]),
-  // origCurrency: t.union([t.string, t.null]),
 });
 
 const PARENT = t.type({
@@ -348,10 +347,6 @@ const CREATE_FLOW_REPORT_DETAIL = t.type({
   reportFiles: t.array(CREATE_FILE),
 });
 
-/**
- * TODO: This type was created by an old developer of the team, and we should
- * verify that they are all correctly typed.
- */
 const CREATE_FLOW = t.intersection([
   t.type({
     activeStatus: t.boolean,
@@ -374,15 +369,14 @@ const CREATE_FLOW = t.intersection([
   t.partial({
     notes: t.string,
     pendingStatus: t.union([t.boolean, t.array(t.string)]),
-    categorySources: t.array(t.unknown), // TODO: TO properly define type, here it was defined messy
-    cancelled: t.union([t.boolean, t.null]), // TODO: Not always present
-    childMethod: t.union([t.string, CHILD_METHOD_TYPE]), // TODO: Not sure, came from matyas
-    planEntities: t.union([t.boolean, t.array(t.string)]), // TODO: Not always present
-    planIndicated: t.union([t.boolean, t.array(t.string)]), // TODO: Not always present
-    isApprovedFlowVersion: t.union([t.boolean, t.null]), // TODO: Not always present
-    isErrorCorrection: t.union([t.boolean, t.null]), // TODO: Not always present
-    inactiveReason: t.array(FLOW_FORM_FIELD), // TODO: Not always present
-    rejected: t.union([t.boolean, t.null]), // TODO: Not always present
+    cancelled: t.union([t.boolean, t.null]),
+    childMethod: t.union([t.string, CHILD_METHOD_TYPE]),
+    planEntities: t.union([t.boolean, t.array(t.string)]),
+    planIndicated: t.union([t.boolean, t.array(t.string)]),
+    isApprovedFlowVersion: t.union([t.boolean, t.null]),
+    isErrorCorrection: t.union([t.boolean, t.null]),
+    inactiveReason: t.array(FLOW_FORM_FIELD),
+    rejected: t.union([t.boolean, t.null]),
     versions: t.array(
       t.type({
         id: t.number,
@@ -391,7 +385,7 @@ const CREATE_FLOW = t.intersection([
         isPending: t.boolean,
         isCancelled: t.boolean,
       })
-    ), // TODO: Not always present
+    ),
     budgetYear: t.number,
     origAmount: t.union([NUMBER_FROM_STRING, t.null]),
     exchangeRate: t.union([t.string, t.null]),
@@ -448,22 +442,9 @@ const FLOW_EXTERNAL_REFERENCE = t.type({
 });
 
 const FLOW_REPORT_DETAIL = t.intersection([
-  t.type({
-    id: t.number,
-    versionID: t.number,
-    source: t.string,
-    verified: t.boolean,
-    updatedAt: t.string,
-    createdAt: t.string,
-  }),
+  REPORT_DETAIL,
   t.partial({
-    flowID: t.number,
-    date: t.union([t.string, t.null]),
     channel: t.union([t.string, t.null]),
-    contactInfo: t.union([t.string, t.null]),
-    sourceID: t.union([t.string, t.null]),
-    refCode: t.union([t.string, t.null]),
-    organizationID: t.number,
   }),
 ]);
 
