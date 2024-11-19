@@ -350,14 +350,7 @@ const FlowAmountButton = ({
   const amountOriginalCurrencyInt = currencyToInteger(amountOriginalCurrency);
   const exchangeRateFloat = parseFloat(exchangeRate);
 
-  if (amountUSDInt && amountOriginalCurrencyInt && !exchangeRateFloat) {
-    const buttonProps = {
-      onClick: () =>
-        setFieldValue('exchangeRate', amountOriginalCurrencyInt / amountUSDInt),
-      text: t.t(lang, (s) => s.components.flowAmountButton.exchangeRate),
-    };
-    return <C.Button color="primary" {...buttonProps} className="text-end" />;
-  } else if (amountUSDInt && !amountOriginalCurrencyInt && exchangeRateFloat) {
+  if (amountUSDInt && !amountOriginalCurrencyInt && exchangeRateFloat) {
     const buttonProps = {
       onClick: () =>
         setFieldValue(
@@ -381,7 +374,12 @@ const FlowAmountButton = ({
     };
     return <C.Button color="primary" {...buttonProps} className="text-end" />;
   }
-  return;
+  const buttonProps = {
+    onClick: () =>
+      setFieldValue('exchangeRate', amountOriginalCurrencyInt / amountUSDInt),
+    text: t.t(lang, (s) => s.components.flowAmountButton.exchangeRate),
+  };
+  return <C.Button color="primary" {...buttonProps} className="text-end" />;
 };
 
 export const FlowForm = (props: FlowFormProps) => {
