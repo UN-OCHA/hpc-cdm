@@ -252,16 +252,16 @@ export const autofillProject = async ({
 
   if (projectPlan) {
     setPlan(fieldName, values, setFieldValue, projectPlan);
-    const { emergencies, governingEntities, locations } =
-      await env.model.plans.getPlan({
+    const [{ emergencies, locations }, governingEntities] = await Promise.all([
+      env.model.plans.getPlan({
         id: projectPlan.id,
-        scopes: [
-          'emergencies',
-          'governingEntities',
-          'planVersion',
-          'locations',
-        ],
-      });
+        scopes: ['emergencies', 'planVersion', 'locations'],
+      }),
+      env.model.governingEntities.getGoverningEntitiesByPlanId({
+        planId: valueToInteger(projectPlan.id),
+        excludeAttachments: true,
+      }),
+    ]);
     projectLocations = projectLocations.filter((projectLocation) =>
       locations.some((planLocation) => planLocation.id === projectLocation.id)
     );
@@ -273,12 +273,16 @@ export const autofillProject = async ({
       values,
       emergencies
     );
+
+    const projectGlobalClustersIds = projectGlobalClusters.map((gC) => gC.id);
     helperSetFieldValue(
       fieldName,
       'FieldClusters',
       setFieldValue,
       values,
-      governingEntities
+      governingEntities.filter((gE) =>
+        gE.globalClusterIds.some((id) => projectGlobalClustersIds.includes(id))
+      )
     );
   }
 
