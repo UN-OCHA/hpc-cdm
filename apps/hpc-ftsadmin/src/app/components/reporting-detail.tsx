@@ -1,13 +1,14 @@
 import { FormObjectValue, fileAssetEntities } from '@unocha/hpc-data';
 import { FlowFormType, FormGroup } from './flow-form/flow-form';
 import { fnCategories, fnOrganizations } from '../utils/fn-promises';
-import { getEnv } from '../context';
+import { getContext } from '../context';
 import tw from 'twin.macro';
 import { useFormikContext } from 'formik';
 import { Box } from '@mui/material';
 import { Dayjs } from 'dayjs';
 import { C } from '@unocha/hpc-ui';
 import { MdUploadFile } from 'react-icons/md';
+import { t } from '../../i18n';
 
 export type ReportingDetailProps = {
   reportSource: 'Primary' | 'Secondary';
@@ -52,6 +53,7 @@ const ReportingDetail = ({
   index: number;
   disabled?: boolean;
 }) => {
+  const { env: getEnv, lang } = getContext();
   const env = getEnv();
 
   const { values, setFieldValue } = useFormikContext<FlowFormType>();
@@ -71,16 +73,47 @@ const ReportingDetail = ({
     reporterReferenceCode,
   } = values.reportingDetails[index] ?? REPORTING_DETAIL_INITIAL_VALUES;
 
-  const REPORT_SOURCES = [
-    {
-      displayLabel: 'Primary',
-      value: 'Primary',
-    },
-    {
-      displayLabel: 'Secondary',
-      value: 'Secondary',
-    },
-  ];
+  const reportSourceOptions = () => {
+    const PRIMARY = 'Primary';
+    const SECONDARY = 'Secondary';
+    return [
+      {
+        displayLabel: t.t(
+          lang,
+          (s) => s.components.reportingDetail.reportSource.options[PRIMARY]
+        ),
+        value: PRIMARY,
+      },
+      {
+        displayLabel: t.t(
+          lang,
+          (s) => s.components.reportingDetail.reportSource.options[SECONDARY]
+        ),
+        value: SECONDARY,
+      },
+    ];
+  };
+
+  const verifiedOptions = () => {
+    const VERIFIED = 'true';
+    const UNVERIFIED = 'false';
+    return [
+      {
+        displayLabel: t.t(
+          lang,
+          (s) => s.components.reportingDetail.verified.options[VERIFIED]
+        ),
+        value: VERIFIED,
+      },
+      {
+        displayLabel: t.t(
+          lang,
+          (s) => s.components.reportingDetail.verified.options[UNVERIFIED]
+        ),
+        value: UNVERIFIED,
+      },
+    ];
+  };
 
   const handleRemoveReportingDetail = () => {
     const reportingDetails = values.reportingDetails;
@@ -159,7 +192,9 @@ const ReportingDetail = ({
   };
   return (
     <FormGroup
-      title={`Reporting Detail ${index !== 0 ? index + 1 : ''}`}
+      title={t.t(lang, (s) => s.components.reportingDetail.title, {
+        index: index !== 0 ? index + 1 : '',
+      })}
       styles={tw`p-6`}
       closeButtonAction={index > 0 ? handleRemoveReportingDetail : undefined}
     >
@@ -167,8 +202,11 @@ const ReportingDetail = ({
         <div>
           <C.RadioButtonField
             name="reportSource"
-            label="Report Source"
-            options={REPORT_SOURCES}
+            label={t.t(
+              lang,
+              (s) => s.components.reportingDetail.reportSource.label
+            )}
+            options={reportSourceOptions()}
             value={
               reportSource ?? REPORTING_DETAIL_INITIAL_VALUES['reportSource']
             }
@@ -181,7 +219,10 @@ const ReportingDetail = ({
           />
           <C.AsyncAutocompleteSelect
             name="reportedByOrganization"
-            label="Reported by Organization"
+            label={t.t(
+              lang,
+              (s) => s.components.reportingDetail.reportedByOrganization.label
+            )}
             fnPromise={(query) => fnOrganizations(query, env)}
             required
             initialValue={reportedByOrganization}
@@ -192,29 +233,43 @@ const ReportingDetail = ({
             {!disabled &&
               values.fundingSourceOrganizations.length +
                 values.fundingDestinationOrganizations.length >
-                0 && <span> Organizations already on this flow: </span>}
-            {!disabled &&
-              values.fundingSourceOrganizations.map((org) => (
-                <ReportingOrganizationSuggestion
-                  onClick={() => handleChange('reportedByOrganization', org)}
-                  key={org.value}
-                >
-                  {` ${org.displayLabel} `}
-                </ReportingOrganizationSuggestion>
-              ))}
-            {!disabled &&
-              values.fundingDestinationOrganizations.map((org) => (
-                <ReportingOrganizationSuggestion
-                  onClick={() => handleChange('reportedByOrganization', org)}
-                  key={org.value}
-                >
-                  {` ${org.displayLabel} `}
-                </ReportingOrganizationSuggestion>
-              ))}
+                0 && (
+                <span>
+                  {t.t(
+                    lang,
+                    (s) =>
+                      s.components.reportingDetail.reportedByOrganization
+                        .organizationsInFlow
+                  )}
+                  {values.fundingSourceOrganizations.map((org) => (
+                    <ReportingOrganizationSuggestion
+                      onClick={() =>
+                        handleChange('reportedByOrganization', org)
+                      }
+                      key={org.value}
+                    >
+                      {` ${org.displayLabel} `}
+                    </ReportingOrganizationSuggestion>
+                  ))}
+                  {values.fundingDestinationOrganizations.map((org) => (
+                    <ReportingOrganizationSuggestion
+                      onClick={() =>
+                        handleChange('reportedByOrganization', org)
+                      }
+                      key={org.value}
+                    >
+                      {` ${org.displayLabel} `}
+                    </ReportingOrganizationSuggestion>
+                  ))}
+                </span>
+              )}
           </div>
           <C.AsyncAutocompleteSelect
             name="reportChannel"
-            label="Report Channel"
+            label={t.t(
+              lang,
+              (s) => s.components.reportingDetail.reportChannel.label
+            )}
             fnPromise={() => fnCategories('reportChannel', env)}
             isAutocompleteAPI={false}
             initialValue={reportChannel}
@@ -224,7 +279,10 @@ const ReportingDetail = ({
           />
           <C.TextFieldWrapper
             name="sourceSystemRecordId"
-            label="Source System Record ID"
+            label={t.t(
+              lang,
+              (s) => s.components.reportingDetail.sourceSystemRecordId.label
+            )}
             initialValue={sourceSystemRecordId}
             disabled={true}
           />
@@ -232,32 +290,42 @@ const ReportingDetail = ({
         <div>
           <C.RadioButtonField
             name="verified"
-            label="Verified"
-            options={[
-              { displayLabel: 'Verified', value: 'true' },
-              { displayLabel: 'Unverified', value: 'false' },
-            ]}
+            label={t.t(
+              lang,
+              (s) => s.components.reportingDetail.verified.label
+            )}
+            options={verifiedOptions()}
             value={verified}
             onChange={(value) => handleChange('verified', value)}
             disabled={disabled}
           />
           <C.DatePicker
             name="dateReported"
-            label="Date Reported"
+            label={t.t(
+              lang,
+              (s) => s.components.reportingDetail.dateReported.label
+            )}
             initialValue={dateReported}
             onChange={(value) => handleChange('dateReported', value)}
             disabled={disabled}
+            todayText={t.t(lang, (s) => s.components.datePicker.today)}
           />
           <C.TextFieldWrapper
             name="reporterReferenceCode"
-            label="Reporter Reference Code"
+            label={t.t(
+              lang,
+              (s) => s.components.reportingDetail.reporterReferenceCode.label
+            )}
             initialValue={reporterReferenceCode}
             onChange={(value) => handleChange('reporterReferenceCode', value)}
             disabled={disabled}
           />
           <C.TextFieldWrapper
             name="reporterContactInfo"
-            label="Reporter Contact Information"
+            label={t.t(
+              lang,
+              (s) => s.components.reportingDetail.reporterContactInfo.label
+            )}
             textarea
             minRows={2}
             initialValue={reporterContactInfo}
@@ -270,11 +338,19 @@ const ReportingDetail = ({
         sx={tw`flex gap-x-10 justify-around p-4 my-4 border border-solid border-unocha-panel-border rounded-[4px] flex-grow-0`}
       >
         <Box sx={tw`basis-1/2 max-w-[50%]`}>
-          <span>Report File:</span>
+          <span>
+            {t.t(lang, (s) => s.components.reportingDetail.fileSection)}
+          </span>
           <C.TextFieldWrapper
             name="reportFileTitle"
-            label="Title"
-            placeholder="Title"
+            label={t.t(
+              lang,
+              (s) => s.components.reportingDetail.reportFileTitle.label
+            )}
+            placeholder={t.t(
+              lang,
+              (s) => s.components.reportingDetail.reportFileTitle.label
+            )}
             initialValue={reportFileTitle}
             onChange={(value) => {
               handleChange('reportFileTitle', value);
@@ -286,7 +362,7 @@ const ReportingDetail = ({
             name="file"
             buttonConfig={{
               color: 'primary',
-              text: 'Upload',
+              text: t.t(lang, (s) => s.components.upload.buttonText),
               startIcon: MdUploadFile,
             }}
             onUpload={handleUploadFile}
@@ -304,19 +380,30 @@ const ReportingDetail = ({
           />
         </Box>
         <Box sx={tw`basis-1/2 max-w-[50%]`}>
-          <span>Report URL:</span>
+          <span>
+            {t.t(lang, (s) => s.components.reportingDetail.urlSection)}
+          </span>
           <C.TextFieldWrapper
             name="reportURLTitle"
-            label="Title"
-            placeholder="Title"
+            label={t.t(
+              lang,
+              (s) => s.components.reportingDetail.reportURLTitle.label
+            )}
+            placeholder={t.t(
+              lang,
+              (s) => s.components.reportingDetail.reportURLTitle.label
+            )}
             initialValue={reportURLTitle}
             onChange={(value) => handleChange('reportURLTitle', value)}
             disabled={disabled}
           />
           <C.TextFieldWrapper
             name="url"
-            label="URL"
-            placeholder="URL"
+            label={t.t(lang, (s) => s.components.reportingDetail.url.label)}
+            placeholder={t.t(
+              lang,
+              (s) => s.components.reportingDetail.url.label
+            )}
             initialValue={url}
             onChange={(value) => handleChange('url', value)}
             disabled={disabled}

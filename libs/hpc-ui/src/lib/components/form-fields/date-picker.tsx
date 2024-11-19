@@ -24,6 +24,7 @@ export type DatePickerProps = {
   onChange?: (value: Dayjs | null) => unknown;
   disabled?: boolean;
   required?: boolean;
+  todayText?: string;
 };
 
 const StyledDatePicker = tw.div`
@@ -42,6 +43,7 @@ const DatePicker = ({
   onChange,
   disabled,
   required,
+  todayText = 'Today',
 }: DatePickerProps) => {
   const [field, meta, { setValue, setTouched }] = useField(name);
 
@@ -109,7 +111,7 @@ const DatePicker = ({
               }
             }}
           >
-            Today
+            {todayText}
           </Link>
         )}
       </StyledDatePicker>

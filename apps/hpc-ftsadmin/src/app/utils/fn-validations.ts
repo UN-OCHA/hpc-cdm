@@ -2,14 +2,18 @@ import type { FlowFormType } from '../components/flow-form/flow-form';
 import { valueToInteger } from './map-functions';
 import React from 'react';
 import { Environment } from '../../environments/interface';
+import { type LanguageKey, t } from '../../i18n';
 
-const validateEarmarking = (values: FlowFormType) => {
+const validateEarmarking = (values: FlowFormType, lang: LanguageKey) => {
   if (!values.earmarkingType) {
-    return 'Earmarking value is blank, do you still want to save?';
+    return t.t(lang, (s) => s.components.flowForm.submitValidation.earmarking);
   }
 };
 
-const validateReportingOrganization = (values: FlowFormType) => {
+const validateReportingOrganization = (
+  values: FlowFormType,
+  lang: LanguageKey
+) => {
   const reportingOrganizationIds = values.reportingDetails
     .map((rD) => {
       if (rD.reportedByOrganization?.value) {
@@ -30,12 +34,19 @@ const validateReportingOrganization = (values: FlowFormType) => {
 
   for (const reportingOrganizationId of reportingOrganizationIds) {
     if (!fundingOrganizationIds.includes(reportingOrganizationId)) {
-      return "Your flow's Report Detail organization doesn't match the source or destination organization  or that of its parked parent. Are you sure this is right?";
+      return t.t(
+        lang,
+        (s) => s.components.flowForm.submitValidation.reportingOrganization
+      );
     }
   }
 };
 
-const validateEmergency = async (values: FlowFormType, env: Environment) => {
+const validateEmergency = async (
+  values: FlowFormType,
+  env: Environment,
+  lang: LanguageKey
+) => {
   const years = values.fundingDestinationUsageYears.map((usageYear) =>
     valueToInteger(usageYear.displayLabel)
   );
@@ -47,26 +58,38 @@ const validateEmergency = async (values: FlowFormType, env: Environment) => {
     locations,
   });
   if (emergencies.length > 0) {
-    return `This flow has at least one emergency available for the selected year(s) and location(s), like ${emergencies[0].name} do you still want to save?`;
+    return t.t(lang, (s) => s.components.flowForm.submitValidation.emergency, {
+      emergency: emergencies[0].name,
+    });
   }
 };
 
-const validateReportingDetails = (values: FlowFormType) => {
+const validateReportingDetails = (values: FlowFormType, lang: LanguageKey) => {
   const reportingDetails = values.reportingDetails;
   for (const reportingDetail of reportingDetails) {
     if (
       !reportingDetail.reportedByOrganization ||
       !reportingDetail.reportChannel
     ) {
-      return 'Please fill all required fields of Reporting Details';
+      return t.t(
+        lang,
+        (s) =>
+          s.components.flowForm.submitValidation.reportingDetails.requiredFields
+      );
     }
 
     if (reportingDetail.file && !reportingDetail.reportFileTitle) {
-      return 'Please fill the Title field for the uploaded file in Reporting Details';
+      return t.t(
+        lang,
+        (s) => s.components.flowForm.submitValidation.reportingDetails.fileTitle
+      );
     }
 
     if (reportingDetail.url && !reportingDetail.reportURLTitle) {
-      return 'Please fill the Title field for the url supplied in Reporting Details';
+      return t.t(
+        lang,
+        (s) => s.components.flowForm.submitValidation.reportingDetails.urlTitle
+      );
     }
   }
 };
@@ -74,18 +97,19 @@ const validateReportingDetails = (values: FlowFormType) => {
 export const validateFlowForWarnings = async (
   values: FlowFormType,
   setError: React.Dispatch<React.SetStateAction<string | undefined>>,
-  env: Environment
+  env: Environment,
+  lang: LanguageKey
 ) => {
-  const reportingDetailWarning = validateReportingDetails(values);
+  const reportingDetailWarning = validateReportingDetails(values, lang);
   if (reportingDetailWarning) {
     setError(reportingDetailWarning);
     return false;
   }
 
   const warnings: (string | undefined)[] = [
-    validateEarmarking(values),
-    validateReportingOrganization(values),
-    await validateEmergency(values, env),
+    validateEarmarking(values, lang),
+    validateReportingOrganization(values, lang),
+    await validateEmergency(values, env, lang),
   ];
 
   for (const warning of warnings) {

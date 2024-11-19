@@ -25,6 +25,9 @@
       "p3": "يُخضع جميع استخدامات موارد تكنولوجيا المعلومات والاتصالات وبيانات ICT للمراقبة والتحقيق وفقًا لما هو مبين في ST/SGB/2004/15.",
       "p4": "استخدام هذا النظام من قبل أي مستخدم، مصرح به أو غير مصرح به، يشكل موافقة على اللوائح والقواعد المعمول بها في الأمم المتحدة."
     },
+    "datePicker": {
+      "today": "اليوم"
+    },
     "dialogs": {
       "okay": "تأكيد",
       "cancel": "إلغاء"
@@ -60,6 +63,146 @@
     "unsupportedBrowser": {
       "title": "المتصفح غير مدعوم!",
       "info": "للأسف، المتصفح الحالي الخاص بك غير مدعوم. يرجى التبديل إما إلى Firefox أو Google Chrome. لفعل ذلك، قم بنسخ عنوان النموذج (الرابط) أعلاه، ثم افتح Firefox أو Chrome والصق العنوان في المتصفح."
+    },
+    "flow": {
+      "updatedBy": "تم التحديث في {date} بواسطة {user}",
+      "createdBy": "تم الإنشاء في {date} بواسطة {user}",
+      "deleted": "تم حذف هذا التدفق",
+      "inactiveReason": "هذا التدفق غير نشط لأنه تم تعيينه كـ {reason}",
+      "unknownInactiveReasons": "أسباب غير معروفة لعدم النشاط",
+      "legacyID": "معرف المساهمة القديم: {id}",
+      "copyOfFlow": "نسخة من التدفق {name}",
+      "addFLow": "إضافة تدفق"
+    },
+    "flowAmountButton": {
+      "amountOriginalCurrency": "حساب القيمة بالعملة الأصلية",
+      "amountUSD": "حساب القيمة بالدولار الأمريكي",
+      "exchangeRate": "حساب سعر الصرف"
+    },
+    "flowForm": {
+      "activeTag": "نشط",
+      "addReportingDetail": "إضافة تفاصيل التقرير",
+      "codecValidation": {
+        "amountUSD": "القيمة يجب أن تكون أكبر من 0",
+        "amountOriginalCurrency": "القيمة يجب أن تكون رقمًا موجبًا",
+        "donorBudgetYear": "القيمة يجب أن تكون بصيغة YYYY",
+        "exchangeRate": "القيمة يجب أن تكون رقمًا موجبًا",
+        "flowStatus": "هذا الحقل مطلوب",
+        "flowDescription": "هذا الحقل مطلوب",
+        "firstReported": "هذا الحقل مطلوب",
+        "flowDate": "هذا الحقل مطلوب",
+        "fundingSourceUsageYears": "هذا الحقل مطلوب",
+        "fundingDestinationUsageYears": "هذا الحقل مطلوب"
+      },
+      "copyFlow": "نسخ التدفق",
+      "createdUpdated": "تم الإنشاء في {createdDate}، وآخر تحديث في {updatedDate}",
+      "deleteFlow": "حذف التدفق",
+      "fields": {
+        "restricted": "مقتصر على الاستخدام الداخلي",
+        "isErrorCorrection": "كإصلاح للأخطاء",
+        "isInactive": "تعيين كغير نشط",
+        "fundingSourceOrganizations": "المنظمة/المنظمات",
+        "fundingSourceUsageYears": "سنة/سنوات الاستخدام",
+        "fundingSourceLocations": "الموقع/المواقع",
+        "fundingSourceEmergencies": "الطوارئ",
+        "fundingSourceGlobalClusters": "المجموعات العالمية",
+        "fundingSourcePlan": "الخطة",
+        "fundingSourceFieldClusters": "مجموعات الحقول",
+        "fundingSourceProject": "المشروع",
+        "fundingDestinationOrganizations": "المنظمة/المنظمات",
+        "fundingDestinationUsageYears": "سنة/سنوات الاستخدام",
+        "fundingDestinationLocations": "الموقع/المواقع",
+        "fundingDestinationEmergencies": "الطوارئ",
+        "fundingDestinationGlobalClusters": "المجموعات العالمية",
+        "fundingDestinationPlan": "الخطة",
+        "fundingDestinationFieldClusters": "مجموعات الحقول",
+        "fundingDestinationProject": "المشروع",
+        "isNewMoney": "هل هذا التدفق يمثل أموالاً جديدة؟",
+        "amountUSD": "مبلغ التمويل بالدولار الأمريكي",
+        "amountOriginalCurrency": "مبلغ التمويل (بالعملة الأصلية)",
+        "currency": "العملة",
+        "exchangeRate": "سعر الصرف المستخدم",
+        "flowDescription": {
+          "label": "وصف تدفق التمويل",
+          "placeholder": "1-2 جملة لوصف اسم التدفق"
+        },
+        "firstReported": "تم الإبلاغ عنه لأول مرة",
+        "decisionDate": "تاريخ القرار",
+        "donorBudgetYear": "سنة ميزانية المانح",
+        "flowType": "نوع التدفق",
+        "flowStatus": "حالة التدفق",
+        "flowDate": "تاريخ التدفق",
+        "contributionType": "نوع المساهمة",
+        "earmarkingType": "GB تحديد الأهداف",
+        "method": "طريقة المساعدة",
+        "keywords": "الكلمات الرئيسية",
+        "beneficiaryGroup": "مجموعة المستفيدين",
+        "notes": "الملاحظات",
+        "parentFlow": "إضافة تدفق رئيسي",
+        "childFlows": "إضافة تدفق فرعي"
+      },
+      "links": {
+        "UNTreasury": "أسعار الصرف التشغيلية لخزانة الأمم المتحدة"
+      },
+      "pendingReviewTag": "بانتظار المراجعة",
+      "rejectFlow": {
+        "button": "رفض التدفق",
+        "confirm": "هل أنت متأكد أنك تريد رفض هذا التدفق؟",
+        "categoryNotFound": "خطأ داخلي: لا يمكن تعيين التدفق كرفض لأن الفئة غير موجودة"
+      },
+      "searchSimilarFlow": "البحث عن تدفقات مماثلة",
+      "sectionTitles": {
+        "sourceFlow": "مصدر التدفق",
+        "destinationFlow": "وجهة التدفق",
+        "flowDetails": "تفاصيل التدفق",
+        "flowLink": "التدفقات المرتبطة",
+        "flowVersion": "إصدارات التدفق"
+      },
+      "submitValidation": {
+        "submitButton": {
+          "reactivate": {
+            "button": "إعادة تنشيط"
+          },
+          "submit": {
+            "label": {
+              "true": "يمكن تقديم التدفق",
+              "false": "يرجى ملء جميع الحقول المطلوبة"
+            },
+            "button": "تقديم"
+          },
+          "save": {
+            "button": "حفظ"
+          },
+          "saveAndApprove": {
+            "button": "حفظ والموافقة"
+          }
+        },
+        "reportingDetails": {
+          "requiredFields": "يرجى ملء جميع الحقول المطلوبة لتفاصيل التقرير",
+          "fileTitle": "يرجى ملء حقل العنوان للملف المرفوع في تفاصيل التقرير",
+          "urlTitle": "يرجى ملء حقل العنوان للرابط المقدم في تفاصيل التقرير"
+        },
+        "createSuccess": "تم إنشاء التدفق بنجاح",
+        "deleteFlowWarning": "هل أنت متأكد أنك تريد حذف هذا التدفق؟",
+        "deleteLinkedFlows": "يرجى فك ارتباط جميع التدفقات قبل المتابعة",
+        "deleteSuccess": "تم حذف التدفق بنجاح",
+        "earmarking": "قيمة تحديد الأهداف فارغة، هل تريد الحفظ على أي حال؟",
+        "emergency": "هذا التدفق يحتوي على حالة طوارئ واحدة على الأقل متاحة للسنوات والمواقع المحددة مثل {emergency}. هل تريد الحفظ على أي حال؟",
+        "pendingValues": "يرجى معالجة جميع القيم المعلقة",
+        "reportingOrganization": "المنظمة في تفاصيل تقرير التدفق الخاص بك لا تتطابق مع المنظمة المصدر أو الوجهة. هل أنت متأكد أن هذا صحيح؟",
+        "unknownError": "حدث خطأ غير متوقع أثناء إنشاء/تحديث التدفق"
+      },
+      "warning": {
+        "sourceFlow": "مصدر التدفق مرتبط بوجهة رئيسية. لتعديل هذه الحقول، قم بإزالة التدفق الرئيسي أو قم بإجراء التغييرات مباشرة عليه.",
+        "destinationFlow": "لقد أضفت تدفقًا فرعيًا لهذا التدفق. تحديث وجهة التمويل لهذا التدفق سيؤدي إلى تحديث مصادر التمويل للتدفقات الفرعية. إذا كنت لا تريد تحديث مصادر تمويل التدفقات الفرعية، فقم بإلغاء الربط أولاً."
+      }
+    },
+    "flowLink": {
+      "unlink": "إلغاء الربط"
+    },
+    "flowSearch": {
+      "title": "البحث عن تدفقات",
+      "flowId": "أدخل معرف التدفق:"
     },
     "flowsTable": {
       "headers": {
@@ -333,6 +476,59 @@
       },
       "create": "إنشاء",
       "update": "تحديث"
+    },
+    "reportingDetail": {
+      "title": "تفاصيل التقرير {index}",
+      "fileSection": "ملف التقرير:",
+      "urlSection": "رابط التقرير:",
+      "reportSource": {
+        "label": "مصدر التقرير",
+        "options": {
+          "Primary": "رئيسي",
+          "Secondary": "ثانوي"
+        }
+      },
+      "reportedByOrganization": {
+        "label": "تم الإبلاغ من قبل المنظمة",
+        "organizationsInFlow": "المنظمات الموجودة بالفعل في هذا التدفق: "
+      },
+      "reportChannel": {
+        "label": "قناة التقرير"
+      },
+      "sourceSystemRecordId": {
+        "label": "معرف سجل النظام المصدر"
+      },
+      "verified": {
+        "label": "تم التحقق",
+        "options": {
+          "true": "تم التحقق",
+          "false": "غير متحقق"
+        }
+      },
+      "dateReported": {
+        "label": "تاريخ التقرير"
+      },
+      "reporterReferenceCode": {
+        "label": "رمز مرجع المبلغ"
+      },
+      "reporterContactInfo": {
+        "label": "معلومات الاتصال بالمبلغ"
+      },
+      "reportFileTitle": {
+        "label": "عنوان ملف التقرير"
+      },
+      "file": {
+        "label": "ملف التقرير"
+      },
+      "reportURLTitle": {
+        "label": "عنوان رابط التقرير"
+      },
+      "url": {
+        "label": "رابط التقرير"
+      }
+    },
+    "upload": {
+      "buttonText": "تحميل"
     }
   },
   "navigation": {

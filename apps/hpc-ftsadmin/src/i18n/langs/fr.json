@@ -25,6 +25,9 @@
       "p3": "Toute utilisation des ressources TIC et des données TIC fait l’objet d’un suivi et d’une enquête comme indiqué dans le document ST/SGB/2004/15.",
       "p4": "L'utilisation de ce système par tout utilisateur, autorisé ou non, constitue un consentement aux règlements et règles applicables de l'ONU"
     },
+    "datePicker": {
+      "today": "Aujourd'hui"
+    },
     "dialogs": {
       "okay": "Confirmer",
       "cancel": "Annuler"
@@ -60,6 +63,146 @@
     "unsupportedBrowser": {
       "title": "Navigateur non compatible! ",
       "info": "Malheureusement, votre présent navigateur n’est pas compatible. Veuillez utiliser Firefox ou Chrome. Pour ce faire, simplement copiez le lien (URL) dessus, ouvrez Firefox, ou Chrome, et collez le lien sur la barre d’adresse du nouveau navigateur."
+    },
+    "flow": {
+      "updatedBy": "Mis à jour le {date} par {user}",
+      "createdBy": "Créé le {date} par {user}",
+      "deleted": "Ce flux a été supprimé",
+      "inactiveReason": "Ce flux n'est pas actif car il a été marqué comme {reason}",
+      "unknownInactiveReasons": "Raisons inactives inconnues",
+      "legacyID": "ID de contribution hérité : {id}",
+      "copyOfFlow": "Copie du flux {name}",
+      "addFLow": "Ajouter un flux"
+    },
+    "flowAmountButton": {
+      "amountOriginalCurrency": "Calculer le montant d'origine",
+      "amountUSD": "Calculer le montant en USD",
+      "exchangeRate": "Calculer le taux de change"
+    },
+    "flowForm": {
+      "activeTag": "Actif",
+      "addReportingDetail": "Ajouter un détail de rapport",
+      "codecValidation": {
+        "amountUSD": "La valeur doit être supérieure à 0",
+        "amountOriginalCurrency": "La valeur doit être un nombre positif",
+        "donorBudgetYear": "La valeur doit être au format AAAA",
+        "exchangeRate": "La valeur doit être un nombre positif",
+        "flowStatus": "Ce champ est obligatoire",
+        "flowDescription": "Ce champ est obligatoire",
+        "firstReported": "Ce champ est obligatoire",
+        "flowDate": "Ce champ est obligatoire",
+        "fundingSourceUsageYears": "Ce champ est obligatoire",
+        "fundingDestinationUsageYears": "Ce champ est obligatoire"
+      },
+      "copyFlow": "Copier le flux",
+      "createdUpdated": "Créé le {createdDate}, et dernière mise à jour le {updatedDate}",
+      "deleteFlow": "Supprimer le flux",
+      "fields": {
+        "restricted": "Restreint à un usage interne",
+        "isErrorCorrection": "Comme correction d'erreur",
+        "isInactive": "Définir comme inactif",
+        "fundingSourceOrganizations": "Organisation(s)",
+        "fundingSourceUsageYears": "Année(s) d'utilisation",
+        "fundingSourceLocations": "Lieu(x)",
+        "fundingSourceEmergencies": "Urgence(s)",
+        "fundingSourceGlobalClusters": "Cluster(s) global(aux)",
+        "fundingSourcePlan": "Plan",
+        "fundingSourceFieldClusters": "Cluster(s) sur le terrain",
+        "fundingSourceProject": "Projet",
+        "fundingDestinationOrganizations": "Organisation(s)",
+        "fundingDestinationUsageYears": "Année(s) d'utilisation",
+        "fundingDestinationLocations": "Lieu(x)",
+        "fundingDestinationEmergencies": "Urgence(s)",
+        "fundingDestinationGlobalClusters": "Cluster(s) global(aux)",
+        "fundingDestinationPlan": "Plan",
+        "fundingDestinationFieldClusters": "Cluster(s) sur le terrain",
+        "fundingDestinationProject": "Projet",
+        "isNewMoney": "Ce flux représente-t-il de l'argent neuf ?",
+        "amountUSD": "Montant du financement en USD",
+        "amountOriginalCurrency": "Montant du financement (Devise d'origine)",
+        "currency": "Devise",
+        "exchangeRate": "Taux de change utilisé",
+        "flowDescription": {
+          "label": "Description du flux de financement",
+          "placeholder": "1-2 phrases pour le nom du flux"
+        },
+        "firstReported": "Première déclaration",
+        "decisionDate": "Date de décision",
+        "donorBudgetYear": "Année budgétaire du donateur",
+        "flowType": "Type de flux",
+        "flowStatus": "Statut du flux",
+        "flowDate": "Date du flux",
+        "contributionType": "Type de contribution",
+        "earmarkingType": "Earmarking GB",
+        "method": "Modalité d'aide",
+        "keywords": "Mot(s)-clé(s)",
+        "beneficiaryGroup": "Groupe de bénéficiaires",
+        "notes": "Notes",
+        "parentFlow": "Ajouter un flux parent",
+        "childFlows": "Ajouter un flux enfant"
+      },
+      "links": {
+        "UNTreasury": "Taux opérationnels du Trésor de l'ONU"
+      },
+      "pendingReviewTag": "En attente de révision",
+      "rejectFlow": {
+        "button": "Rejeter le flux",
+        "confirm": "Êtes-vous sûr de vouloir rejeter ce flux ?",
+        "categoryNotFound": "Erreur interne : Le flux n'a pas pu être défini comme rejeté car la catégorie n'existe pas"
+      },
+      "searchSimilarFlow": "Rechercher des flux similaires",
+      "sectionTitles": {
+        "sourceFlow": "Flux source",
+        "destinationFlow": "Flux de destination",
+        "flowDetails": "Détails du flux",
+        "flowLink": "Flux liés",
+        "flowVersion": "Versions de flux"
+      },
+      "submitValidation": {
+        "submitButton": {
+          "reactivate": {
+            "button": "Réactiver"
+          },
+          "submit": {
+            "label": {
+              "true": "Le flux peut être soumis",
+              "false": "Veuillez remplir tous les champs obligatoires"
+            },
+            "button": "Soumettre"
+          },
+          "save": {
+            "button": "Enregistrer"
+          },
+          "saveAndApprove": {
+            "button": "Enregistrer et approuver"
+          }
+        },
+        "reportingDetails": {
+          "requiredFields": "Veuillez remplir tous les champs obligatoires des détails du rapport",
+          "fileTitle": "Veuillez remplir le champ Titre pour le fichier téléchargé dans les détails du rapport",
+          "urlTitle": "Veuillez remplir le champ Titre pour l'URL fournie dans les détails du rapport"
+        },
+        "createSuccess": "Flux créé avec succès",
+        "deleteFlowWarning": "Êtes-vous sûr de vouloir supprimer ce flux ?",
+        "deleteLinkedFlows": "Dissociez tous les flux avant de continuer",
+        "deleteSuccess": "Le flux a été supprimé avec succès",
+        "earmarking": "La valeur d'earmarking est vide, souhaitez-vous tout de même enregistrer ?",
+        "emergency": "Ce flux a au moins une urgence disponible pour les années et les lieux sélectionnés, comme {emergency}, souhaitez-vous tout de même enregistrer ?",
+        "pendingValues": "Veuillez gérer toutes les valeurs en attente",
+        "reportingOrganization": "L'organisation des détails du rapport de votre flux ne correspond pas à l'organisation source ou de destination. Êtes-vous sûr que c'est correct ?",
+        "unknownError": "Erreur inattendue lors de la création/mise à jour du flux"
+      },
+      "warning": {
+        "sourceFlow": "Source de flux associée à une destination parent. Pour modifier ces champs, supprimez le flux parent ou apportez les modifications directement au flux parent.",
+        "destinationFlow": "Vous avez ajouté un flux enfant à ce flux. Mettre à jour les destinations de financement pour ce flux mettra à jour les sources de financement des flux enfants. Si vous ne souhaitez pas mettre à jour les sources de financement des flux enfants, dissociez-les d'abord."
+      }
+    },
+    "flowLink": {
+      "unlink": "Dissocier"
+    },
+    "flowSearch": {
+      "title": "Rechercher des flux",
+      "flowId": "Introduisez l'ID du flux :"
     },
     "flowsTable": {
       "headers": {
@@ -332,6 +475,59 @@
       },
       "create": "Créer",
       "update": "Mettre à jour"
+    },
+    "reportingDetail": {
+      "title": "Détail du rapport {index}",
+      "fileSection": "Fichier du rapport:",
+      "urlSection": "URL du rapport:",
+      "reportSource": {
+        "label": "Source du rapport",
+        "options": {
+          "Primary": "Primaire",
+          "Secondary": "Secondaire"
+        }
+      },
+      "reportedByOrganization": {
+        "label": "Rapporté par l'organisation",
+        "organizationsInFlow": "Organisations déjà sur ce flux : "
+      },
+      "reportChannel": {
+        "label": "Canal de rapport"
+      },
+      "sourceSystemRecordId": {
+        "label": "ID de l'enregistrement du système source"
+      },
+      "verified": {
+        "label": "Vérifié",
+        "options": {
+          "true": "Vérifié",
+          "false": "Non vérifié"
+        }
+      },
+      "dateReported": {
+        "label": "Date du rapport"
+      },
+      "reporterReferenceCode": {
+        "label": "Code de référence du rapporteur"
+      },
+      "reporterContactInfo": {
+        "label": "Informations de contact du rapporteur"
+      },
+      "reportFileTitle": {
+        "label": "Titre du fichier du rapport"
+      },
+      "file": {
+        "label": "Fichier du rapport"
+      },
+      "reportURLTitle": {
+        "label": "Titre de l'URL du rapport"
+      },
+      "url": {
+        "label": "URL du rapport"
+      }
+    },
+    "upload": {
+      "buttonText": "Télécharger"
     }
   },
   "navigation": {

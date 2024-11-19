@@ -25,6 +25,9 @@
       "p3": "All use of ICT resources and ICT data is subject to monitoring and investigation as set forth in ST/SGB/2004/15",
       "p4": "Use of this system by any user, authorized or unauthorized, constitutes consent to the applicable UN regulations and rules"
     },
+    "datePicker": {
+      "today": "Today"
+    },
     "dialogs": {
       "okay": "Confirm",
       "cancel": "Cancel"
@@ -60,6 +63,146 @@
     "unsupportedBrowser": {
       "title": "Unsupported Browser!",
       "info": "Unfortunately, your current browser is not supported. Please switch to either Firefox or Google Chrome. To do this, simply copy the form address (URL) above, then open Firefox or Chrome, and paste the address into the browser."
+    },
+    "flow": {
+      "updatedBy": "Updated {date} by {user}",
+      "createdBy": "Created {date} by {user}",
+      "deleted": "This flow has been deleted",
+      "inactiveReason": "This flow is not active because it has been marked as {reason}",
+      "unknownInactiveReasons": "Unknown inactive reasons",
+      "legacyID": "Legacy contribution ID: {id}",
+      "copyOfFlow": "Copy of Flow {name}",
+      "addFLow": "Add Flow"
+    },
+    "flowAmountButton": {
+      "amountOriginalCurrency": "Calculate the original amount",
+      "amountUSD": "Calculate the USD amount",
+      "exchangeRate": "Calculate the exchange rate"
+    },
+    "flowForm": {
+      "activeTag": "Active",
+      "addReportingDetail": "Add Reporting Detail",
+      "codecValidation": {
+        "amountUSD": "The value must be greater than 0",
+        "amountOriginalCurrency": "The value must be a positive number",
+        "donorBudgetYear": "The value needs to be of format YYYY",
+        "exchangeRate": "The value must be a positive number",
+        "flowStatus": "This field is required",
+        "flowDescription": "This field is required",
+        "firstReported": "This field is required",
+        "flowDate": "This field is required",
+        "fundingSourceUsageYears": "This field is required",
+        "fundingDestinationUsageYears": "This field is required"
+      },
+      "copyFlow": "Copy Flow",
+      "createdUpdated": "Created at {createdDate}, and latest updated at {updatedDate}",
+      "deleteFlow": "Delete Flow",
+      "fields": {
+        "restricted": "Restricted to internal use",
+        "isErrorCorrection": "As error correction",
+        "isInactive": "Set as inactive",
+        "fundingSourceOrganizations": "Organization(s)",
+        "fundingSourceUsageYears": "Usage Year(s)",
+        "fundingSourceLocations": "Location(s)",
+        "fundingSourceEmergencies": "Emergency(ies)",
+        "fundingSourceGlobalClusters": "Global Cluster(s)",
+        "fundingSourcePlan": "Plan",
+        "fundingSourceFieldClusters": "Field Cluster(s)",
+        "fundingSourceProject": "Project",
+        "fundingDestinationOrganizations": "Organization(s)",
+        "fundingDestinationUsageYears": "Usage Year(s)",
+        "fundingDestinationLocations": "Location(s)",
+        "fundingDestinationEmergencies": "Emergency(ies)",
+        "fundingDestinationGlobalClusters": "Global Cluster(s)",
+        "fundingDestinationPlan": "Plan",
+        "fundingDestinationFieldClusters": "Field Cluster(s)",
+        "fundingDestinationProject": "Project",
+        "isNewMoney": "Is this flow new money?",
+        "amountUSD": "Funding Amount in USD",
+        "amountOriginalCurrency": "Funding amount (Original currency)",
+        "currency": "Currency",
+        "exchangeRate": "Exchange Rate Used",
+        "flowDescription": {
+          "label": "Funding Flow Description",
+          "placeholder": "1-2 sentences for flow name"
+        },
+        "firstReported": "First Reported",
+        "decisionDate": "Decision Date",
+        "donorBudgetYear": "Donor Budget Year",
+        "flowType": "Flow Type",
+        "flowStatus": "Flow Status",
+        "flowDate": "Flow Date",
+        "contributionType": "Contribution Type",
+        "earmarkingType": "GB Earmarking",
+        "method": "Aid Modality",
+        "keywords": "Keyword(s)",
+        "beneficiaryGroup": "Beneficiary group",
+        "notes": "Notes",
+        "parentFlow": "Add Parent Flow",
+        "childFlows": "Add Child Flow"
+      },
+      "links": {
+        "UNTreasury": "UN Treasury Operational Rates"
+      },
+      "pendingReviewTag": "Pending Review",
+      "rejectFlow": {
+        "button": "Reject Flow",
+        "confirm": "Are you sure you want to reject this flow?",
+        "categoryNotFound": "Internal Error: Flow could not be set as Rejected because category does not exist"
+      },
+      "searchSimilarFlow": "Search similar Flows",
+      "sectionTitles": {
+        "sourceFlow": "Source Flow",
+        "destinationFlow": "Destination Flow",
+        "flowDetails": "Flow Details",
+        "flowLink": "Linked Flows",
+        "flowVersion": "Flow Versions"
+      },
+      "submitValidation": {
+        "submitButton": {
+          "reactivate": {
+            "button": "Reactivate"
+          },
+          "submit": {
+            "label": {
+              "true": "Flow can be submitted",
+              "false": "Please fill all required fields"
+            },
+            "button": "Submit"
+          },
+          "save": {
+            "button": "Save"
+          },
+          "saveAndApprove": {
+            "button": "Save & Approve"
+          }
+        },
+        "reportingDetails": {
+          "requiredFields": "Please fill all required fields of Reporting Details",
+          "fileTitle": "Please fill the Title field for the uploaded file in Reporting Details",
+          "urlTitle": "Please fill the Title field for the url supplied in Reporting Details"
+        },
+        "createSuccess": "Flow created successfully",
+        "deleteFlowWarning": "Are you sure you want to delete this flow?",
+        "deleteLinkedFlows": "Unlink all flows before proceeding",
+        "deleteSuccess": "Flow has been deleted successfully",
+        "earmarking": "Earmarking value is blank, do you still want to save?",
+        "emergency": "This flow has at least one emergency available for the selected year(s) and location(s), like {emergency} do you still want to save",
+        "pendingValues": "Please handle all pending values",
+        "reportingOrganization": "Your flow's Report Detail organization doesn't match the source or destination organization. Are you sure this is right?",
+        "unknownError": "Unexpected error while creating/updating flow"
+      },
+      "warning": {
+        "sourceFlow": "Flow Source associated with Parent Destination. To edit these fields, remove the Parent flow or make changes directly to the Parent flow.",
+        "destinationFlow": "You have added a Child flow for this flow. Updating the Funding Destination(s) for this flow will update the Funding Source(s) for the child flows. If you don't want to update the Child flow's funding sources, unlink it first."
+      }
+    },
+    "flowLink": {
+      "unlink": "Unlink"
+    },
+    "flowSearch": {
+      "title": "Search flows",
+      "flowId": "Introduce Flow ID:"
     },
     "flowsTable": {
       "headers": {
@@ -333,6 +476,59 @@
       },
       "create": "Create",
       "update": "Update"
+    },
+    "reportingDetail": {
+      "title": "Reporting Detail {index}",
+      "fileSection": "Report File:",
+      "urlSection": "Report URL:",
+      "reportSource": {
+        "label": "Report Source",
+        "options": {
+          "Primary": "Primary",
+          "Secondary": "Secondary"
+        }
+      },
+      "reportedByOrganization": {
+        "label": "Reported by Organization",
+        "organizationsInFlow": "Organizations already on this flow: "
+      },
+      "reportChannel": {
+        "label": "Report Channel"
+      },
+      "sourceSystemRecordId": {
+        "label": "Source System Record ID"
+      },
+      "verified": {
+        "label": "Verified",
+        "options": {
+          "true": "Verified",
+          "false": "Unverified"
+        }
+      },
+      "dateReported": {
+        "label": "Date Reported"
+      },
+      "reporterReferenceCode": {
+        "label": "Reporter Reference Code"
+      },
+      "reporterContactInfo": {
+        "label": "Reporter Contact Information"
+      },
+      "reportFileTitle": {
+        "label": "Report File Title"
+      },
+      "file": {
+        "label": "Report File"
+      },
+      "reportURLTitle": {
+        "label": "Report URL Title"
+      },
+      "url": {
+        "label": "Report URL"
+      }
+    },
+    "upload": {
+      "buttonText": "Upload"
     }
   },
   "navigation": {

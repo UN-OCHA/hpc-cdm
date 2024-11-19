@@ -174,7 +174,7 @@ const FlowSearch = (props: FlowSearchProps) => {
       >
         <ModalContainer>
           <Box sx={tw`w-full`}>
-            <h2>Flow Search</h2>
+            <h2>{t.t(lang, (s) => s.components.flowSearch.title)}</h2>
             <Box sx={tw`flex items-center gap-x-4`}>
               <C.AsyncAutocompleteSelect
                 fnPromise={(query) =>
@@ -185,7 +185,7 @@ const FlowSearch = (props: FlowSearchProps) => {
                   )
                 }
                 name="flow"
-                label="Introduce Flow ID:"
+                label={t.t(lang, (s) => s.components.flowSearch.flowId)}
                 onChange={(newValue) => {
                   if (newValue && isFormObjectValue(newValue)) {
                     setFlow(newValue);

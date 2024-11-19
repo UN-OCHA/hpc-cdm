@@ -43,6 +43,8 @@ const LegacyId = tw.span`
   block
 `;
 
+const DEFAULT_USERNAME = 'FTS User';
+
 export default () => {
   const historyState:
     | {
@@ -133,29 +135,39 @@ export default () => {
               }) => (
                 <PaddingContainer>
                   <C.PageTitle>{`Flow ${flow.id}v${flow.versionID}`}</C.PageTitle>
-                  <UpdatedCreatedBy>{`Updated ${dayjs(
-                    flow.updatedAt
-                  ).format()} by ${
-                    flow.lastUpdatedBy?.name ?? 'FTS User'
-                  }`}</UpdatedCreatedBy>
-                  <UpdatedCreatedBy>{`Created ${dayjs(
-                    flow.createdAt
-                  ).format()} by ${
-                    flow.createdBy?.name ?? 'FTS User'
-                  }`}</UpdatedCreatedBy>
+                  <UpdatedCreatedBy>
+                    {t.t(lang, (s) => s.components.flow.updatedBy, {
+                      date: dayjs(flow.updatedAt).format(),
+                      user: flow.lastUpdatedBy?.name ?? DEFAULT_USERNAME,
+                    })}
+                  </UpdatedCreatedBy>
+                  <UpdatedCreatedBy>
+                    {t.t(lang, (s) => s.components.flow.createdBy, {
+                      date: dayjs(flow.createdAt).format(),
+                      user: flow.createdBy?.name ?? DEFAULT_USERNAME,
+                    })}
+                  </UpdatedCreatedBy>
                   {isInactive(flow) && (
-                    <InactiveReason>{`This flow ${
-                      flow.deletedAt
-                        ? 'has been deleted'
-                        : 'is not active because it has been marked as ' +
-                          (flow.categories.find(
-                            (c) => c.group === 'inactiveReason'
-                          )?.name ?? 'Inactive by unknown reasons')
-                    }`}</InactiveReason>
+                    <InactiveReason>
+                      {flow.deletedAt
+                        ? t.t(lang, (s) => s.components.flow.deleted)
+                        : t.t(lang, (s) => s.components.flow.inactiveReason, {
+                            reason:
+                              flow.categories.find(
+                                (c) => c.group === 'inactiveReason'
+                              )?.name ??
+                              t.t(
+                                lang,
+                                (s) => s.components.flow.unknownInactiveReasons
+                              ),
+                          })}
+                    </InactiveReason>
                   )}
                   {flow.legacy?.legacyID && (
                     <LegacyId>
-                      Legacy contribution ID: {flow.legacy.legacyID}
+                      {t.t(lang, (s) => s.components.flow.legacyID, {
+                        id: flow.legacy.legacyID,
+                      })}
                     </LegacyId>
                   )}
                   <FlowForm
@@ -235,8 +247,10 @@ export default () => {
                   <C.PageTitle>
                     {historyState?.flowFormCopyValues &&
                     historyState?.flowFormCopyValuesName
-                      ? `Copy of Flow ${historyState?.flowFormCopyValuesName}`
-                      : 'Add Flow'}
+                      ? t.t(lang, (s) => s.components.flow.copyOfFlow, {
+                          name: historyState?.flowFormCopyValuesName,
+                        })
+                      : t.t(lang, (s) => s.components.flow.addFLow)}
                   </C.PageTitle>
                   <FlowForm
                     setError={setError}

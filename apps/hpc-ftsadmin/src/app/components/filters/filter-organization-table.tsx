@@ -186,6 +186,7 @@ export const FilterOrganizationsTable = (props: Props) => {
                   lang,
                   (s) => s.components.organizationsFilter.filters.date
                 )}
+                todayText={t.t(lang, (s) => s.components.datePicker.today)}
               />
               <C.AutocompleteSelect
                 name="status"
