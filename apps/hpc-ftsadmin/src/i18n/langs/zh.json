@@ -159,6 +159,7 @@
         "flowVersion": "资金流版本"
       },
       "submitValidation": {
+        "dataConsistency": "所选的{entity}：{selected} 与可能的预期 {entity}：{expected} 不匹配",
         "submitButton": {
           "reactivate": {
             "button": "重新激活"

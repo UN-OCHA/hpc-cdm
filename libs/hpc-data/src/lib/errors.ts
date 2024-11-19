@@ -3,6 +3,7 @@ const ABORT_ERROR = 'abort_error';
 const CONFLICT_ERROR = 'conflict';
 const DUPLICATE_ERROR = 'duplicate';
 const USER_ERROR = 'user_error';
+const DATA_CONSISTENCY_ERROR = 'data_consistency_error';
 
 export const USER_ERROR_KEYS = [
   'access.userAlreadyInvited',
@@ -113,3 +114,22 @@ export class DuplicateError extends Error {
 export const isDuplicateError = (error: Error): error is DuplicateError =>
   error instanceof DuplicateError ||
   (error && (error as DuplicateError).code === DUPLICATE_ERROR);
+
+export type DataConsistencyErrorReason = Array<{
+  type: string;
+  values: unknown;
+}>;
+export class DataConsistencyError extends Error {
+  public readonly code = DATA_CONSISTENCY_ERROR;
+  public readonly reason: DataConsistencyErrorReason;
+  public constructor(reason: DataConsistencyErrorReason) {
+    super(DATA_CONSISTENCY_ERROR);
+    this.reason = reason;
+  }
+}
+
+export const isDataConsistencyError = (
+  error: Error
+): error is DataConsistencyError =>
+  error instanceof DataConsistencyError ||
+  (error && (error as DataConsistencyError).code === DATA_CONSISTENCY_ERROR);

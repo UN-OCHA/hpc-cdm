@@ -4,6 +4,7 @@ import tw from 'twin.macro';
 
 const AlertWrapper = tw.div`
   mb-4
+  max-w-[50vw]
 `;
 
 type MessageAlertProps<T> = {

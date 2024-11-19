@@ -5,9 +5,14 @@ import {
   util as codecs,
   flows,
   categories,
+  errors,
+  usageYears,
+  locations,
+  governingEntities,
 } from '@unocha/hpc-data';
 import { Form, Formik, FormikHelpers } from 'formik';
 import {
+  RefDirection,
   parseFlowForm,
   pendingValuesFlowForm,
   queryParamsFlowFilter,
@@ -138,6 +143,31 @@ export type FlowFormTypeValidated = Omit<
   flowDate: NonNullable<FlowFormType['flowDate']>;
   flowStatus: NonNullable<FlowFormType['flowStatus']>;
 };
+
+type ConsistencyErrorReasons = {
+  usageYears: Array<
+    { refDirection: RefDirection; options: number[] } & usageYears.UsageYear
+  >;
+  locations: Array<
+    {
+      refDirection: RefDirection;
+      options: locations.Location[];
+    } & locations.Location
+  >;
+  governingEntities: Array<
+    {
+      name: string;
+      refDirection: RefDirection;
+      options: Array<{ name: string } & governingEntities.GoverningEntity>;
+    } & governingEntities.GoverningEntity
+  >;
+};
+type ConsistencyErrorReasonMap = {
+  [K in keyof ConsistencyErrorReasons]: {
+    type: K;
+    values: ConsistencyErrorReasons[K];
+  };
+}[keyof ConsistencyErrorReasons];
 
 const UNTreasuryLinkComponent = tw.a`
   text-lg
@@ -423,15 +453,65 @@ export const FlowForm = (props: FlowFormProps) => {
     return true;
   };
 
+  const isUsageYearValues = (
+    value: ConsistencyErrorReasons[keyof ConsistencyErrorReasons][number],
+    type: keyof ConsistencyErrorReasons
+  ): value is ConsistencyErrorReasons['usageYears'][number] =>
+    type === 'usageYears';
+  const isDataConsistencyErrorMap = (
+    reason: errors.DataConsistencyErrorReason[number]
+  ): reason is ConsistencyErrorReasonMap => {
+    const KEYS: (keyof ConsistencyErrorReasons)[] = [
+      'usageYears',
+      'locations',
+      'governingEntities',
+    ];
+    return KEYS.some((key) => key === reason.type);
+  };
+  const handleDataConsistencyError = (err: errors.DataConsistencyError) => {
+    const message = err.reason
+      .map((r) => {
+        let messageReason = '';
+        if (!isDataConsistencyErrorMap(r)) {
+          return messageReason;
+        }
+        const { type, values } = r;
+        messageReason += t.t(
+          lang,
+          (s) => s.components.flowForm.submitValidation.dataConsistency,
+          {
+            entity: type,
+            selected: values
+              .map((v) => (isUsageYearValues(v, type) ? v.year : v.name))
+              .join(', '),
+            expected: [
+              ...new Set(
+                values.flatMap((v) =>
+                  isUsageYearValues(v, type)
+                    ? v.options.map((o) => `${o}`)
+                    : v.options.map((o) => o.name)
+                )
+              ),
+            ].join(', '),
+          }
+        );
+        return messageReason;
+      })
+      .join(' | ');
+
+    return message;
+  };
+
   const handleSubmit = async (
     values: FlowFormTypeValidated,
     isSaved?: boolean
   ) => {
+    setSubmitLoading(true);
     const valid = await isValid(values);
     if (!valid) {
+      setSubmitLoading(false);
       return;
     }
-    setSubmitLoading(true);
     if (flow?.id) {
       env.model.flows
         .updateFlow({
@@ -448,6 +528,10 @@ export const FlowForm = (props: FlowFormProps) => {
           load();
         })
         .catch((err) => {
+          if (errors.isDataConsistencyError(err)) {
+            setError(handleDataConsistencyError(err));
+            return;
+          }
           const errorMessage = err.json.message;
           if (typeof errorMessage === 'string') {
             setError(errorMessage);
@@ -522,6 +606,7 @@ export const FlowForm = (props: FlowFormProps) => {
   };
 
   const handleDeleteFlow = async (values: FlowFormType) => {
+    setDeleteLoading(true);
     if (
       !window.confirm(
         t.t(
@@ -530,6 +615,7 @@ export const FlowForm = (props: FlowFormProps) => {
         )
       )
     ) {
+      setDeleteLoading(false);
       return;
     }
     if (!validateFlowIsUnlinked(values) || !flow) {
@@ -539,9 +625,9 @@ export const FlowForm = (props: FlowFormProps) => {
           (s) => s.components.flowForm.submitValidation.deleteLinkedFlows
         )
       );
+      setDeleteLoading(false);
       return;
     }
-    setDeleteLoading(true);
     env.model.flows
       .deleteFlow({
         flowId: flow.id,
@@ -576,7 +662,9 @@ export const FlowForm = (props: FlowFormProps) => {
   };
 
   const handleRejectFlow = async (values: FlowFormType) => {
+    setRejectLoading(true);
     if (!flow) {
+      setRejectLoading(false);
       return;
     }
     if (
@@ -584,9 +672,9 @@ export const FlowForm = (props: FlowFormProps) => {
         t.t(lang, (s) => s.components.flowForm.rejectFlow.confirm)
       )
     ) {
+      setRejectLoading(false);
       return;
     }
-    setRejectLoading(true);
     const rejected = inactiveReasons.find(
       (category) => category.name === 'Rejected'
     );

@@ -454,9 +454,10 @@ export class LiveModel implements Model {
         code?: string;
         message: errors.UserErrorKey;
         details?: {
-          code: string;
-          detail: string;
-          table: string;
+          code?: string;
+          detail?: string;
+          table?: string;
+          reason?: errors.DataConsistencyErrorReason;
         };
       };
       if (json?.code === 'ConflictError') {
@@ -476,6 +477,8 @@ export class LiveModel implements Model {
           json.details.detail,
           json.details.table
         );
+      } else if (json.details?.reason) {
+        throw new errors.DataConsistencyError(json.details.reason);
       } else {
         const message =
           json?.code && json?.message

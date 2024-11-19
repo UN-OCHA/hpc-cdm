@@ -159,6 +159,7 @@
         "flowVersion": "إصدارات التدفق"
       },
       "submitValidation": {
+        "dataConsistency": "الـ {entity} المحددة: {selected} لا تتطابق مع الـ {entity} المتوقعة: {expected}",
         "submitButton": {
           "reactivate": {
             "button": "إعادة تنشيط"

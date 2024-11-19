@@ -159,6 +159,7 @@
         "flowVersion": "Flow Versions"
       },
       "submitValidation": {
+        "dataConsistency": "The selected {entity}: [{selected}] do not match the possible expected {entity}: [{expected}]",
         "submitButton": {
           "reactivate": {
             "button": "Reactivate"

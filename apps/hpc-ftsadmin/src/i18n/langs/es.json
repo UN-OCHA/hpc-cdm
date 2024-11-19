@@ -159,6 +159,7 @@
         "flowVersion": "Versiones de flujo"
       },
       "submitValidation": {
+        "dataConsistency": "La/Lo(s) {entity} seleccionada: {selected} no coincide con la/lo(s) {entity} esperada posible: {expected}",
         "submitButton": {
           "reactivate": {
             "button": "Reactivar"

@@ -184,6 +184,7 @@ export function isFlowObjectTypes(value: string): value is FlowObjectTypes {
     'location',
     'emergency',
     'globalCluster',
+    'governingEntity',
     'organization',
     'plan',
     'project',
@@ -222,6 +223,7 @@ export type FlowObjectTypes =
   | 'project'
   | 'plan'
   | 'globalCluster'
+  | 'governingEntity'
   | 'emergency';
 
 export const parseFormFilters = <

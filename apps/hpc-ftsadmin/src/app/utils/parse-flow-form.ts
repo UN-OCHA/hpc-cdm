@@ -90,6 +90,8 @@ type FlowFormFlowObjectKey =
   | 'fundingDestinationUsageYears'
   | 'fundingDestinationFieldClusters';
 
+export type RefDirection = 'source' | 'destination';
+
 const TRANSFERRED_CHIP_COLOR = THEME.colors.pallete.blue.light;
 const INFERRED_CHIP_COLOR = THEME.colors.pallete.orange.variant1;
 
@@ -181,7 +183,10 @@ const extractDirectionObject = (
   );
 
   if (match && values[key] !== null) {
-    let singularObject = match[2].replace(/ies$/, 'y');
+    let singularObject =
+      match[2] === 'FieldClusters'
+        ? 'governingEntity'
+        : match[2].replace(/ies$/, 'y');
     singularObject = singularObject.replace(/s$/, '');
     const direction = match[1];
     const lowerCaseSingularObject =
@@ -389,7 +394,7 @@ const categoriesToFlowForm = (values: flows.GetFlowResult) => {
 const isInferred = (
   flow: flows.GetFlowResult,
   entity: { id: number },
-  direction: 'source' | 'destination',
+  direction: RefDirection,
   entityName: EntityName
 ) => {
   if (flow.externalReferences.length === 0) {
@@ -413,7 +418,7 @@ const isInferred = (
 const isTransferred = (
   flow: flows.GetFlowResult,
   entity: { id: number },
-  direction: 'source' | 'destination',
+  direction: RefDirection,
   entityName: EntityName
 ) => {
   if (flow.externalReferences.length === 0) {
