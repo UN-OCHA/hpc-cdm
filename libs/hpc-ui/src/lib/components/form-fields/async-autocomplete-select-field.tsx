@@ -9,6 +9,7 @@ import { type util } from '@unocha/hpc-data';
 import { useField, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
+import { REQUIRED_BORDER_STYLE } from '../../util';
 import { StyledTextField } from './text-field';
 
 const FlexDiv = tw.div`ms-8 border-l border-l-slate-400 border-solid border-y-0 border-r-0`;
@@ -92,6 +93,11 @@ const AsyncAutocompleteSelect = ({
   initialValue,
   observedValue,
 }: AsyncAutocompleteSelectProps) => {
+  const [controlledValue, setControlledValue] = useState<
+    | NonNullable<string | util.FormObjectValue>
+    | Array<string | util.FormObjectValue>
+    | null
+  >();
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const { setFieldValue } = useFormikContext<util.FormObjectValue[]>();
@@ -102,6 +108,13 @@ const AsyncAutocompleteSelect = ({
   const [debouncedInputValue, setDebouncedInputValue] = useState('');
   const isLoading =
     isOpen && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
+
+  const isEmptyUncontrolledFormObjectValueArray =
+    !onChange && Array.isArray(field.value) && field.value.length === 0;
+  const isEmptyUncontrolledFormObjectValue = !onChange && !field.value;
+  const isEmptyControlledFormObjectValueArray =
+    onChange && Array.isArray(controlledValue) && controlledValue.length === 0;
+  const isEmptyControlledFormObjectValue = onChange && !controlledValue;
 
   useEffect(() => {
     const delay = isFetch ? 0 : 300;
@@ -174,7 +187,18 @@ const AsyncAutocompleteSelect = ({
     setIsFetch(false);
   }, [observedValue]);
 
-  const configAutocomplete:  AutocompleteProps<
+  /*
+   *  Here we observe when the value changes by user
+   *  actions, for instance, if another field triggers
+   *  a change in the value of this field, we want to
+   *  update the controlled value to see if the required
+   *  field is filled or not.
+   */
+  useEffect(() => {
+    setControlledValue(field.value);
+  }, [field.value]);
+
+  const configAutocomplete: AutocompleteProps<
     util.FormObjectValue,
     boolean,
     boolean,
@@ -189,7 +213,7 @@ const AsyncAutocompleteSelect = ({
     onClose: () => {
       setIsOpen(false);
     },
-     open: isOpen,
+    open: isOpen,
     isOptionEqualToValue: (option, value) => option.value === value?.value,
     options,
     getOptionLabel: (op) =>
@@ -199,9 +223,10 @@ const AsyncAutocompleteSelect = ({
     ChipProps: { size: 'small' },
     onChange: (_, newValue) => {
       if (onChange) {
+        setControlledValue(newValue);
         onChange(newValue);
       } else {
-        // For multiple selections, newValue will be an array of selected values
+        //  For multiple selections, newValue will be an array of selected values
         setFieldValue(name, newValue);
       }
     },
@@ -249,12 +274,22 @@ const AsyncAutocompleteSelect = ({
     renderInput: (params) => (
       <StyledTextField
         {...params}
+        sx={
+          required &&
+          (isEmptyUncontrolledFormObjectValueArray ||
+            isEmptyUncontrolledFormObjectValue ||
+            isEmptyControlledFormObjectValueArray ||
+            isEmptyControlledFormObjectValue)
+            ? REQUIRED_BORDER_STYLE
+            : undefined
+        }
         size="small"
-        label={`${label}${required ? '*' : ''}`}
+        label={label}
+        required={required}
         placeholder={placeholder}
         inputProps={{
           ...params.inputProps,
-          /** Needed to support native <input /> required on 'multiple' autocomplete select */
+          //  Needed to support native <input /> required on 'multiple' autocomplete select
           required: isMulti && required ? field.value.length === 0 : undefined,
         }}
         InputProps={{

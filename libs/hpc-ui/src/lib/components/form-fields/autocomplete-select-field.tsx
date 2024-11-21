@@ -2,6 +2,7 @@ import { Autocomplete, type AutocompleteProps } from '@mui/material';
 import { type util } from '@unocha/hpc-data';
 import { useField, useFormikContext } from 'formik';
 import tw from 'twin.macro';
+import { REQUIRED_BORDER_STYLE } from '../../util';
 import { StyledTextField } from './text-field';
 
 export type AutocompleteSelectProps = {
@@ -50,6 +51,7 @@ const AutocompleteSelect = ({
     renderInput: (params) => (
       <StyledTextField
         {...params}
+        sx={required && !field.value ? REQUIRED_BORDER_STYLE : undefined}
         size="small"
         label={label}
         disabled={disabled}

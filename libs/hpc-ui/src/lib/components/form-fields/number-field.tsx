@@ -2,6 +2,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useField } from 'formik';
 import { useEffect, useState } from 'react';
 import { type NumberFormatValues, NumericFormat } from 'react-number-format';
+import { REQUIRED_BORDER_STYLE } from '../../util';
 import { StyledTextField } from './text-field';
 
 export interface NumberFieldProps {
@@ -48,6 +49,7 @@ const NumberField = ({
     <NumericFormat
       {...fieldWithNoOnChange}
       {...textFieldErrors}
+      sx={required && !field.value ? REQUIRED_BORDER_STYLE : undefined}
       name={name}
       label={label}
       onValueChange={(values: NumberFormatValues) => {

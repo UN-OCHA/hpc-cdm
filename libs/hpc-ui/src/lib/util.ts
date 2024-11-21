@@ -1,5 +1,6 @@
 import { errors } from '@unocha/hpc-data';
 import { useEffect, useState } from 'react';
+import tw from 'twin.macro';
 
 export type DataLoaderState<T> =
   | { type: 'loading' }
@@ -18,6 +19,11 @@ export type DataLoaderState<T> =
 type Primitive = string | boolean | number | symbol | null | undefined;
 
 type DepsBaseType = [Primitive, ...Primitive[]] | [{ [id: string]: Primitive }];
+
+export const REQUIRED_BORDER_STYLE = tw`
+  [&_fieldset]:border-s-unocha-pallete-orange-dark1
+  [&_fieldset]:border-s-4
+`;
 
 const hasObjDeps = (
   deps: DepsBaseType

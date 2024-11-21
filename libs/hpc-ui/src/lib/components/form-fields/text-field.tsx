@@ -1,6 +1,7 @@
 import { TextField, type TextFieldProps } from '@mui/material';
 import { useField } from 'formik';
 import tw from 'twin.macro';
+import { REQUIRED_BORDER_STYLE } from '../../util';
 
 export const StyledTextField = tw(TextField)`
   min-w-[10rem]
@@ -44,6 +45,7 @@ const TextFieldWrapper = ({
   const [field, meta] = useField(name);
   const configTextField: TextFieldProps = {
     ...field,
+    sx: required && !field.value ? REQUIRED_BORDER_STYLE : undefined,
     label,
     id: name,
     disabled,

@@ -10,6 +10,7 @@ import { useField } from 'formik';
 import tw from 'twin.macro';
 import dayjs from '../../i18n/utils/dayjs';
 import { THEME } from '../../theme';
+import { REQUIRED_BORDER_STYLE } from '../../util';
 
 export type DatePickerProps = {
   name: string;
@@ -74,12 +75,14 @@ const DatePicker = ({
             setValue(date);
           },
         }),
-    label: `${label}${required ? '*' : ''}`,
+    label,
     slots: {
       textField: (params) => (
         <TextField
           {...params}
+          sx={required && !field.value ? REQUIRED_BORDER_STYLE : undefined}
           disabled={disabled}
+          required={required}
           InputLabelProps={{ shrink: true }}
           size="small"
           {...textFieldErrorProps}
