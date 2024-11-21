@@ -124,11 +124,7 @@ const AsyncAutocompleteSelect = ({
       setIsFetch(false);
       return;
     }
-    if (
-      data.length > 0 &&
-      (input.length >= 3 || !isAutocompleteAPI) &&
-      input.length > 0
-    ) {
+    if (data.length > 0 && (input.length >= 3 || !isAutocompleteAPI)) {
       setOptions(
         data.filter((x) =>
           x.displayLabel.toUpperCase().includes(input.toUpperCase())
