@@ -27,7 +27,8 @@ const AutocompleteSelect = ({
   required,
 }: AutocompleteSelectProps) => {
   const { setFieldValue } = useFormikContext();
-  const [field] = useField<util.FormObjectValue>(name);
+  const [field, meta, { setTouched: setIsTouched }] =
+    useField<util.FormObjectValue[]>(name);
 
   const configAutocomplete: AutocompleteProps<
     util.FormObjectValue,
@@ -39,6 +40,9 @@ const AutocompleteSelect = ({
     disabled,
     readOnly,
     options,
+    onClose: () => {
+      setIsTouched(true);
+    },
     isOptionEqualToValue: (option, value) => option.value === value.value,
     getOptionLabel: (op) =>
       typeof op === 'string' ? op : op.displayLabel ?? '',
@@ -59,6 +63,8 @@ const AutocompleteSelect = ({
         InputProps={{
           ...params.InputProps,
         }}
+        error={!!(meta.touched && meta.error)}
+        helperText={meta.touched && meta.error ? meta.error : undefined}
       />
     ),
   };

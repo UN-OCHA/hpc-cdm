@@ -49,11 +49,19 @@ export type AsyncAutocompleteSelectProps = {
   ) => void;
   disabled?: boolean;
   /**
+   *  **Warning:**
    *  This prop is used only if we are not using
    *  `Formik`, if you are using `Formik`, you don't need
-   *  to pass this prop.
+   *  to pass this prop. This is for controlled fields
    */
   initialValue?: util.FormObjectValue | util.FormObjectValue[] | null;
+  /**
+   *  **Warning:**
+   *  This prop is used only if we are not using
+   *  `Formik`, if you are using `Formik`, you don't need
+   *  to pass this prop. This is for controlled fields
+   */
+  controlledError?: string;
   observedValue?: string;
 };
 
@@ -92,16 +100,20 @@ const AsyncAutocompleteSelect = ({
   disabled,
   initialValue,
   observedValue,
+  controlledError,
 }: AsyncAutocompleteSelectProps) => {
   const [controlledValue, setControlledValue] = useState<
     | NonNullable<string | util.FormObjectValue>
     | Array<string | util.FormObjectValue>
     | null
   >();
+
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const { setFieldValue } = useFormikContext<util.FormObjectValue[]>();
-  const [field, meta] = useField<util.FormObjectValue[]>(name);
+  const [field, meta, { setTouched: setIsTouched }] =
+    useField<util.FormObjectValue[]>(name);
+  const [isControlledTouched, setIsControlledTouched] = useState(false);
   const [options, setOptions] = useState<util.FormObjectValue[]>([]);
   const [data, setData] = useState<util.FormObjectValue[]>([]);
   const [isFetch, setIsFetch] = useState(false);
@@ -209,6 +221,8 @@ const AsyncAutocompleteSelect = ({
     disabled,
     onOpen: () => {
       setIsOpen(true);
+      setIsTouched(true);
+      setIsControlledTouched(true);
     },
     onClose: () => {
       setIsOpen(false);
@@ -303,8 +317,16 @@ const AsyncAutocompleteSelect = ({
             </>
           ),
         }}
-        error={!!(meta.touched && meta.error)}
-        helperText={meta.touched && meta.error ? meta.error : undefined}
+        error={
+          (meta.touched && !!meta.error) ||
+          (isControlledTouched && !!controlledError)
+        }
+        helperText={
+          (meta.touched && meta.error) ||
+          (isControlledTouched && controlledError)
+            ? meta.error ?? controlledError
+            : undefined
+        }
       />
     ),
   };

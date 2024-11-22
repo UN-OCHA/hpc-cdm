@@ -88,6 +88,7 @@
         "donorBudgetYear": "القيمة يجب أن تكون بصيغة YYYY",
         "exchangeRate": "القيمة يجب أن تكون رقمًا موجبًا",
         "flowStatus": "هذا الحقل مطلوب",
+        "flowType": "هذا الحقل مطلوب",
         "flowDescription": "هذا الحقل مطلوب",
         "firstReported": "هذا الحقل مطلوب",
         "flowDate": "هذا الحقل مطلوب",
@@ -526,6 +527,9 @@
       },
       "url": {
         "label": "رابط التقرير"
+      },
+      "validation": {
+        "required": "هذا الحقل مطلوب"
       }
     },
     "upload": {

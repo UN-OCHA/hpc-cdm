@@ -71,7 +71,6 @@ const NumberField = ({
           ) : undefined,
         size: 'small',
         label,
-        ...textFieldErrors,
       }}
     />
   );

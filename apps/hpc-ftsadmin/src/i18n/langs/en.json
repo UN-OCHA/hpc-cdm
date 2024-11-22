@@ -88,6 +88,7 @@
         "donorBudgetYear": "The value needs to be of format YYYY",
         "exchangeRate": "The value must be a positive number",
         "flowStatus": "This field is required",
+        "flowType": "This field is required",
         "flowDescription": "This field is required",
         "firstReported": "This field is required",
         "flowDate": "This field is required",
@@ -526,6 +527,9 @@
       },
       "url": {
         "label": "Report URL"
+      },
+      "validation": {
+        "required": "This field is required"
       }
     },
     "upload": {

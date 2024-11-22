@@ -88,6 +88,7 @@
         "donorBudgetYear": "La valeur doit être au format AAAA",
         "exchangeRate": "La valeur doit être un nombre positif",
         "flowStatus": "Ce champ est obligatoire",
+        "flowType": "Ce champ est obligatoire",
         "flowDescription": "Ce champ est obligatoire",
         "firstReported": "Ce champ est obligatoire",
         "flowDate": "Ce champ est obligatoire",
@@ -525,6 +526,9 @@
       },
       "url": {
         "label": "URL du rapport"
+      },
+      "validation": {
+        "required": "Ce champ est obligatoire"
       }
     },
     "upload": {

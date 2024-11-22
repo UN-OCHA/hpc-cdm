@@ -88,6 +88,7 @@
         "donorBudgetYear": "值需要采用 YYYY 格式",
         "exchangeRate": "值必须是正数",
         "flowStatus": "此字段为必填项",
+        "flowType": "此字段为必填项",
         "flowDescription": "此字段为必填项",
         "firstReported": "此字段为必填项",
         "flowDate": "此字段为必填项",
@@ -528,6 +529,9 @@
       },
       "url": {
         "label": "报告链接"
+      },
+      "validation": {
+        "required": "此字段为必填项"
       }
     },
     "upload": {

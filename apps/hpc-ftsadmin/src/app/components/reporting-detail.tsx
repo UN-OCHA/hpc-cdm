@@ -8,7 +8,7 @@ import { Box } from '@mui/material';
 import { Dayjs } from 'dayjs';
 import { C } from '@unocha/hpc-ui';
 import { MdUploadFile } from 'react-icons/md';
-import { t } from '../../i18n';
+import { LanguageKey, t } from '../../i18n';
 
 export type ReportingDetailProps = {
   reportSource: 'Primary' | 'Secondary';
@@ -45,6 +45,14 @@ const ReportingOrganizationSuggestion = tw.span`
   hover:cursor-pointer
   hover:underline
 `;
+
+export const validateReportingDetailsRequiredField = (
+  value: FormObjectValue | null,
+  lang: LanguageKey
+) =>
+  !value
+    ? t.t(lang, (s) => s.components.reportingDetail.validation.required)
+    : undefined;
 
 const ReportingDetail = ({
   index,
@@ -228,6 +236,10 @@ const ReportingDetail = ({
             initialValue={reportedByOrganization}
             onChange={(value) => handleChange('reportedByOrganization', value)}
             disabled={disabled}
+            controlledError={validateReportingDetailsRequiredField(
+              values.reportingDetails[index].reportedByOrganization,
+              lang
+            )}
           />
           <div>
             {!disabled &&
@@ -275,6 +287,10 @@ const ReportingDetail = ({
             initialValue={reportChannel}
             onChange={(value) => handleChange('reportChannel', value)}
             disabled={disabled}
+            controlledError={validateReportingDetailsRequiredField(
+              values.reportingDetails[index].reportChannel,
+              lang
+            )}
             required
           />
           <C.TextFieldWrapper
