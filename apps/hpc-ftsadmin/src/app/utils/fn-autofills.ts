@@ -399,14 +399,19 @@ export const autofillFieldClusters = async ({
       (fieldCluster) => typeof fieldCluster !== 'string'
     ) as FormObjectValue[];
 
-    const globalClusters = await Promise.all(
-      fieldClusters.map(async (fC) => {
-        const gE = await env.model.governingEntities.getGoverningEntity({
-          id: valueToInteger(fC.value),
-        });
-        return gE.globalClusters;
+    // Here we make sure to just take the newly added value
+    // in case the user removed some of the previously
+    // auto filled values
+    const lastFieldClusterAdded = fieldClusters.at(-1);
+    if (!lastFieldClusterAdded) {
+      return;
+    }
+
+    const globalClusters = await env.model.governingEntities
+      .getGoverningEntity({
+        id: valueToInteger(lastFieldClusterAdded.value),
       })
-    ).then((gCs) => gCs.flat());
+      .then((gE) => gE.globalClusters);
 
     helperSetFieldValue(
       fieldName,
