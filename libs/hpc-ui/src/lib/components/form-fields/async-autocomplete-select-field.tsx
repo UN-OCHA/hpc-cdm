@@ -125,8 +125,11 @@ const AsyncAutocompleteSelect = ({
     !onChange && Array.isArray(field.value) && field.value.length === 0;
   const isEmptyUncontrolledFormObjectValue = !onChange && !field.value;
   const isEmptyControlledFormObjectValueArray =
-    onChange && Array.isArray(controlledValue) && controlledValue.length === 0;
-  const isEmptyControlledFormObjectValue = onChange && !controlledValue;
+    onChange &&
+    ((Array.isArray(controlledValue) && controlledValue.length === 0) ||
+      (Array.isArray(initialValue) && initialValue.length === 0));
+  const isEmptyControlledFormObjectValue =
+    onChange && !(controlledValue ?? initialValue);
 
   useEffect(() => {
     const delay = isFetch ? 0 : 300;
