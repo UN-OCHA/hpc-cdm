@@ -143,6 +143,7 @@ const FORM = t.type(
 );
 
 const FLOW = flows.FLOW_V4;
+const FLOW_REST = flows.GET_FLOW_RESULT;
 const CATEGORY = categories.CATEGORY;
 const CURRENCY = currencies.CURRENCY;
 const KEYWORD = categories.KEYWORD;
@@ -165,6 +166,7 @@ export const DUMMY_DATA = t.type(
     currentUser: t.union([t.null, t.number]),
     emergencies: t.array(EMERGENCY),
     flows: t.array(FLOW),
+    flowRest: t.array(FLOW_REST),
     globalClusters: t.array(GLOBAL_CLUSTER),
     governingEntities: t.array(GOVERNING_ENTITY),
     jobs: t.array(JOB),

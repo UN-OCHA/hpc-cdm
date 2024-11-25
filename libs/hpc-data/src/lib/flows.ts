@@ -184,7 +184,7 @@ export const GET_FLOW_PARAMS = t.intersection([
   }),
 ]);
 
-type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
+export type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
 
 const GET_FLOW_REPORT_DETAIL = t.type({
   ...REPORT_DETAIL.props,

@@ -615,10 +615,17 @@ export class Dummy {
         }),
       },
       flows: {
-        getFlow: dummyEndpoint('flows.getFlow', async () => {
-          throw new errors.NotFoundError();
-        }),
-        getFlowV4: dummyEndpoint('flows.getFlowV4', async () => {
+        getFlow: dummyEndpoint(
+          'flows.getFlow',
+          async ({ id }: flows.GetFlowParams) => {
+            const flow = this.data.flowRest.find((flow) => flow.id === id);
+            if (!flow) {
+              throw new errors.NotFoundError();
+            }
+            return flow;
+          }
+        ),
+        getFlowV4: dummyEndpoint('flows.getFlow', async () => {
           throw new errors.NotFoundError();
         }),
         getAutocompleteFlows: dummyEndpoint(
@@ -845,7 +852,7 @@ export class Dummy {
             versionID,
           }: flows.DeleteFlowParams): Promise<flows.DeleteFlowResult> => {
             this.data.flows = this.data.flows.filter(
-              (f) => f.id !== flowId && f.versionID !== versionID
+              (f) => !(f.id === flowId && f.versionID === versionID)
             );
             return `Successfully deleted flow ${flowId}v${versionID}`;
           }
