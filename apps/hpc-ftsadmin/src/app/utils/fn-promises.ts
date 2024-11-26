@@ -130,6 +130,23 @@ export const governingEntitiesOptions = (
     tooltip,
   }));
 };
+
+const projectsOptions = (
+  response: Array<{
+    name: string;
+    id: number;
+    code: string | null;
+    chipColor?: string;
+    tooltip?: string;
+  }>
+): FormObjectValue[] => {
+  return response.map(({ name, id, chipColor, tooltip, code }) => ({
+    displayLabel: `${name}${code ? ' [' + code + ']' : ''}`,
+    value: id,
+    chipColor,
+    tooltip,
+  }));
+};
 // Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop
 
 export const fnOrganizations = async (
@@ -175,7 +192,7 @@ export const fnProjects = async (
   env: Environment
 ) => {
   const response = await env.model.projects.getAutocompleteProjects(query);
-  return defaultOptions(response);
+  return projectsOptions(response);
 };
 
 export const fnPlans = async (query: { query: string }, env: Environment) => {
