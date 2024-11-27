@@ -95,9 +95,9 @@ const CREATED_BY_OR_LAST_UPDATED_BY = t.type({
 const FLOW_AUTOCOMPLETE_PROJECT = t.type({
   id: t.number,
   code: optional(t.string),
-  currentPublishedVersionId: t.number,
+  currentPublishedVersionId: optional(t.number),
   creatorParticipantId: optional(t.number),
-  latestVersionId: t.number,
+  latestVersionId: optional(t.number),
   implementationStatus: optional(t.string),
   flowObject: t.type({
     refDirection: FLOW_OBJECT_REF_DIRECTION,

@@ -168,7 +168,7 @@ export const App = () => {
                                 path: paths.addFlow(),
                                 icon: MdAdd,
                                 selected: false,
-                                dataTest: 'addFlow-nav-button',
+                                dataTest: 'add-flow-nav-button',
                               },
                             ]}
                             className={CLASSES.CONTAINER.FLUID}

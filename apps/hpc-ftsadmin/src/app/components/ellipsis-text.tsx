@@ -1,9 +1,11 @@
 const EllipsisText = ({
   children,
   maxWidth,
+  dataTest,
 }: {
   children: React.ReactNode;
   maxWidth: number | string;
+  dataTest?: string;
 }) => {
   return (
     <div
@@ -13,6 +15,7 @@ const EllipsisText = ({
         textOverflow: 'ellipsis',
         maxWidth,
       }}
+      data-test={dataTest}
     >
       {children}
     </div>

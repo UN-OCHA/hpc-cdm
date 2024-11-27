@@ -92,6 +92,7 @@ const filterByDirection = <
 
 const FlowSearch = (props: FlowSearchProps) => {
   const { name, text, startIcon, currentFlow } = props;
+  const hierarchy = name === 'parentFlow' ? 'parent' : 'child';
 
   const env = getEnv();
   const lang = getContext().lang;
@@ -186,6 +187,7 @@ const FlowSearch = (props: FlowSearchProps) => {
           color="neutral"
           onClick={() => setIsOpen(true)}
           startIcon={startIcon}
+          dataTest={`add-flow-add-${hierarchy}-flow-button`}
         />
       </StyledDiv>
       <Modal
@@ -224,6 +226,7 @@ const FlowSearch = (props: FlowSearchProps) => {
                 }}
                 removeOptions={removeOptions}
                 removeOptionsFn={removeOptionsFn}
+                dataTest={`add-flow-add-${hierarchy}-flow-field`}
               />
             </Box>
             <Box sx={tw`text-end mt-4`}>
@@ -231,6 +234,7 @@ const FlowSearch = (props: FlowSearchProps) => {
                 color="primary"
                 text={t.t(lang, (s) => s.components.mergeModal.button.next)}
                 onClick={() => handleSubmit()}
+                dataTest="add-flow-add-parent-flow-submit-button"
               />
             </Box>
           </Box>

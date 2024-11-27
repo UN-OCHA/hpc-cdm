@@ -153,7 +153,16 @@ const GOVERNING_ENTITY = governingEntities.GOVERNING_ENTITY;
 const LOCATION = locations.LOCATION_WITH_CHILDREN;
 const ORGANIZATION = organizations.ORGANIZATION;
 const PLAN = plans.PLAN_AUTOCOMPLETE;
+const PLAN_EXTENDED = plans.getPlanResultCodec([
+  'emergencies',
+  'locations',
+  'planVersion',
+  'years',
+  'governingEntities',
+  'categories',
+]);
 const PROJECT = projects.PROJECT_AUTOCOMPLETE;
+const PROJECT_EXTENDED = projects.GET_PROJECT_RESULT;
 const USAGE_YEAR = usageYears.USAGE_YEAR;
 const JOB = jobs.JOB;
 
@@ -165,6 +174,7 @@ export const DUMMY_DATA = t.type(
     currencies: t.array(CURRENCY),
     currentUser: t.union([t.null, t.number]),
     emergencies: t.array(EMERGENCY),
+    files: t.array(t.unknown),
     flows: t.array(FLOW),
     flowRest: t.array(FLOW_REST),
     globalClusters: t.array(GLOBAL_CLUSTER),
@@ -176,7 +186,9 @@ export const DUMMY_DATA = t.type(
     operationClusters: t.array(OPERATION_CLUSTER),
     organizations: t.array(ORGANIZATION),
     plans: t.array(PLAN),
+    plansExtended: t.array(PLAN_EXTENDED),
     projects: t.array(PROJECT),
+    projectsExtended: t.array(PROJECT_EXTENDED),
     reportingWindows: t.array(REPORTING_WINDOW),
     usageYears: t.array(USAGE_YEAR),
     forms: t.array(FORM),

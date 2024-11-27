@@ -397,12 +397,14 @@ const FlowAmountButton = ({
   exchangeRate,
   setFieldValue,
   disabled,
+  dataTest,
 }: {
   amountUSD: FlowFormType['amountUSD'];
   amountOriginalCurrency: FlowFormType['amountOriginalCurrency'];
   exchangeRate: FlowFormType['exchangeRate'];
   setFieldValue: FormikHelpers<FlowFormType>['setFieldValue'];
   disabled?: boolean;
+  dataTest?: string;
 }) => {
   const { lang } = getContext();
 
@@ -425,7 +427,14 @@ const FlowAmountButton = ({
         (s) => s.components.flowAmountButton.amountOriginalCurrency
       ),
     };
-    return <C.Button color="primary" {...buttonProps} className="text-end" />;
+    return (
+      <C.Button
+        color="primary"
+        {...buttonProps}
+        className="text-end"
+        dataTest={dataTest}
+      />
+    );
   } else if (!amountUSDInt && amountOriginalCurrencyInt && exchangeRateFloat) {
     const buttonProps = {
       onClick: () =>
@@ -435,14 +444,28 @@ const FlowAmountButton = ({
         ),
       text: t.t(lang, (s) => s.components.flowAmountButton.amountUSD),
     };
-    return <C.Button color="primary" {...buttonProps} className="text-end" />;
+    return (
+      <C.Button
+        color="primary"
+        {...buttonProps}
+        className="text-end"
+        dataTest={dataTest}
+      />
+    );
   }
   const buttonProps = {
     onClick: () =>
       setFieldValue('exchangeRate', amountOriginalCurrencyInt / amountUSDInt),
     text: t.t(lang, (s) => s.components.flowAmountButton.exchangeRate),
   };
-  return <C.Button color="primary" {...buttonProps} className="text-end" />;
+  return (
+    <C.Button
+      color="primary"
+      {...buttonProps}
+      className="text-end"
+      dataTest={dataTest}
+    />
+  );
 };
 
 const BlockNavigationOnUnsavedChanges = ({
@@ -1061,6 +1084,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         flow.versionID
                       ),
                     }}
+                    data-test="add-flow-copy-button"
                   >
                     {t.t(lang, (s) => s.components.flowForm.copyFlow)}
                   </Link>
@@ -1150,6 +1174,14 @@ export const FlowForm = (props: FlowFormProps) => {
                       <FormGroupReadOnly
                         fields={OVERRIDING_FLOW_KEYS}
                         values={values}
+                        dataTest={{
+                          fundingSourceOrganizations:
+                            'add-flow-readonly-source-organization-field',
+                          fundingSourceUsageYears:
+                            'add-flow-readonly-source-usage-year-field',
+                          fundingSourceLocations:
+                            'add-flow-readonly-source-location-field',
+                        }}
                       />
                     </>
                   ) : (
@@ -1186,6 +1218,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           pendingValues?.fundingSourceOrganizations
                         }
                         shouldAcceptChange={shouldAcceptAllPendingChanges}
+                        dataTest="add-flow-source-organization-field"
                         isMulti
                       />
                       <AsyncAutocompleteSelectReview
@@ -1220,6 +1253,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         pendingValues={pendingValues?.fundingSourceUsageYears}
                         firstViewCondition={usageYearFirstViewCondition}
                         shouldAcceptChange={shouldAcceptAllPendingChanges}
+                        dataTest="add-flow-source-usage-year-field"
                         isMulti
                         required
                       />
@@ -1244,6 +1278,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         disabled={isDisabled}
                         pendingValues={pendingValues?.fundingSourceLocations}
                         shouldAcceptChange={shouldAcceptAllPendingChanges}
+                        dataTest="add-flow-source-location-field"
                         isMulti
                       />
                       <AsyncAutocompleteSelectReview
@@ -1476,6 +1511,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       pendingValues?.fundingDestinationOrganizations
                     }
                     shouldAcceptChange={shouldAcceptAllPendingChanges}
+                    dataTest="add-flow-destination-organization-field"
                     isMulti
                   />
                   {values.fundingDestinationOrganizations.some(
@@ -1536,6 +1572,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     pendingValues={pendingValues?.fundingDestinationUsageYears}
                     firstViewCondition={usageYearFirstViewCondition}
                     shouldAcceptChange={shouldAcceptAllPendingChanges}
+                    dataTest="add-flow-destination-usage-year-field"
                     isMulti
                     required
                   />
@@ -1560,6 +1597,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     disabled={isDisabled}
                     pendingValues={pendingValues?.fundingDestinationLocations}
                     shouldAcceptChange={shouldAcceptAllPendingChanges}
+                    dataTest="add-flow-destination-location-field"
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -1595,6 +1633,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       pendingValues?.fundingDestinationGlobalClusters
                     }
                     shouldAcceptChange={shouldAcceptAllPendingChanges}
+                    dataTest="add-flow-destination-global-cluster-field"
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -1627,6 +1666,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     pendingValues={pendingValues?.fundingDestinationPlan}
                     shouldAcceptChange={shouldAcceptAllPendingChanges}
                     valueLimit={1}
+                    dataTest="add-flow-destination-plan-field"
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -1743,6 +1783,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     pendingValues={pendingValues?.fundingDestinationProject}
                     shouldAcceptChange={shouldAcceptAllPendingChanges}
                     valueLimit={1}
+                    dataTest="add-flow-destination-project-field"
                     isMulti
                   />
                 </FormGroup>
@@ -1775,6 +1816,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       disabled={isDisabled}
                       pendingValues={pendingValues?.amountUSD}
                       shouldAcceptChange={shouldAcceptAllPendingChanges}
+                      dataTest="add-flow-amount-USD-field"
                       allowNegative
                       required
                     />
@@ -1796,6 +1838,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           disabled={isDisabled}
                           pendingValues={pendingValues?.amountOriginalCurrency}
                           shouldAcceptChange={shouldAcceptAllPendingChanges}
+                          dataTest="add-flow-original-currency-funding-amount-field"
                           allowNegative
                         />
                         <AsyncAutocompleteSelectReview
@@ -1811,6 +1854,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           disabled={isDisabled}
                           pendingValues={pendingValues?.currency}
                           shouldAcceptChange={shouldAcceptAllPendingChanges}
+                          dataTest="add-flow-original-currency-field"
                         />
                       </Box>
                       <NumberFieldReview
@@ -1824,6 +1868,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         disabled={isDisabled}
                         pendingValues={pendingValues?.exchangeRate}
                         shouldAcceptChange={shouldAcceptAllPendingChanges}
+                        dataTest="add-flow-exchange-rate-field"
                       />
                       <UNTreasuryLinkComponent
                         href="https://treasury.un.org/operationalrates/OperationalRates.php"
@@ -1841,6 +1886,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         amountOriginalCurrency={values.amountOriginalCurrency}
                         exchangeRate={values.exchangeRate}
                         disabled={isDisabled}
+                        dataTest="add-flow-original-currency-button"
                       />
                     </Box>
                     <TextFieldReview
@@ -1857,12 +1903,13 @@ export const FlowForm = (props: FlowFormProps) => {
                             .placeholder
                       )}
                       setPendingValuesHandled={setPendingValuesHandled}
-                      required
-                      textarea
                       minRows={2}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.flowDescription}
                       shouldAcceptChange={shouldAcceptAllPendingChanges}
+                      dataTest="add-flow-description-field"
+                      required
+                      textarea
                     />
                     <Box sx={tw`flex gap-4`}>
                       <DatePickerReview
@@ -1886,6 +1933,10 @@ export const FlowForm = (props: FlowFormProps) => {
                         pendingValues={pendingValues?.firstReported}
                         lang={lang}
                         shouldAcceptChange={shouldAcceptAllPendingChanges}
+                        dataTest={{
+                          field: 'add-flow-first-reported-field',
+                          today: 'add-flow-first-reported-today',
+                        }}
                         required
                       />
                       <DatePickerReview
@@ -1900,6 +1951,10 @@ export const FlowForm = (props: FlowFormProps) => {
                         pendingValues={pendingValues?.decisionDate}
                         lang={lang}
                         shouldAcceptChange={shouldAcceptAllPendingChanges}
+                        dataTest={{
+                          field: 'add-flow-decision-date-field',
+                          today: 'add-flow-decision-date-today',
+                        }}
                       />
                     </Box>
                     <NumberFieldReview
@@ -1941,6 +1996,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       disabled={isDisabled}
                       pendingValues={pendingValues?.flowStatus}
                       shouldAcceptChange={shouldAcceptAllPendingChanges}
+                      dataTest="add-flow-flow-status-field"
                       required
                     />
                     <DatePickerReview
@@ -1954,6 +2010,10 @@ export const FlowForm = (props: FlowFormProps) => {
                       pendingValues={pendingValues?.flowDate}
                       lang={lang}
                       shouldAcceptChange={shouldAcceptAllPendingChanges}
+                      dataTest={{
+                        field: 'add-flow-flow-date-field',
+                        today: 'add-flow-flow-date-today',
+                      }}
                       required
                     />
                     <AutocompleteSelectReview
@@ -2059,7 +2119,7 @@ export const FlowForm = (props: FlowFormProps) => {
                   )}
                 >
                   {values.parentFlow && (
-                    <Box sx={tw`my-4`}>
+                    <Box sx={tw`my-4`} data-test="add-flow-parent-flow-table">
                       <h3>
                         {t.t(lang, (s) => s.components.flowLink.parentFlow)}
                       </h3>
@@ -2072,7 +2132,7 @@ export const FlowForm = (props: FlowFormProps) => {
                   )}
 
                   {values.childFlows.length > 0 && (
-                    <Box sx={tw`mb-4`}>
+                    <Box sx={tw`mb-4`} data-test="add-flow-child-flow-table">
                       <h3>
                         {t.t(lang, (s) => s.components.flowLink.childFlows)}
                       </h3>
@@ -2247,6 +2307,7 @@ export const FlowForm = (props: FlowFormProps) => {
                             .submit.button
                       )}
                       shouldDisplayLoading={isSubmitLoading}
+                      dataTest="add-flow-create-button"
                     />
                   )}
                   {isValid && isPending && (

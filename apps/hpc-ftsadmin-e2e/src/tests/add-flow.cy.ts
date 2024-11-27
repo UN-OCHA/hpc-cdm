@@ -1,3 +1,4 @@
+import * as dayjs from 'dayjs';
 import * as ADD_FLOW from '../fixtures/add-flow.json';
 import { selectOption } from '../support/select-component-utils';
 
@@ -8,10 +9,10 @@ describe('hpc-ftsadmin add-flow', () => {
     cy.visit('/');
     cy.location('pathname').should('eq', '/flows');
     cy.typedGet('add-flow-nav-button').click();
-    cy.location('pathname').should('eq', '/flow/add');
+    cy.location('pathname').should('eq', '/flows/add');
   });
 
-  it('bulkRejectPendingFlows workflow', () => {
+  it('Add flow', () => {
     cy.typedGet('add-flow-source-organization-field').type(
       ADD_FLOW['test1']['add-flow-source-organization-field']
     );
@@ -34,7 +35,7 @@ describe('hpc-ftsadmin add-flow', () => {
     selectOption(ADD_FLOW['test1']['add-flow-destination-project-field']);
 
     cy.typedGet('add-flow-destination-plan-field').should(
-      'contain',
+      'contain.html',
       'Afghanistan 2002 (ITAP for the Afghan People)'
     );
     cy.typedGet('add-flow-destination-global-cluster-field').should(
@@ -43,7 +44,7 @@ describe('hpc-ftsadmin add-flow', () => {
     );
     cy.typedGet('add-flow-destination-usage-year-field').should(
       'contain',
-      '2022'
+      '2002'
     );
     cy.typedGet('add-flow-destination-location-field').should(
       'contain',
@@ -58,13 +59,11 @@ describe('hpc-ftsadmin add-flow', () => {
      * Original Currency related testing
      */
 
-    cy.typedGet('add-flow-original-currency-dropdown').click();
-
     cy.typedGet('add-flow-original-currency-funding-amount-field').type(
       ADD_FLOW['test1']['add-flow-original-currency-funding-amount-field']
     );
     cy.typedGet('add-flow-original-currency-field').click();
-    selectOption('LAK');
+    selectOption('EUR');
 
     cy.typedGet('add-flow-exchange-rate-field').type(
       ADD_FLOW['test1']['add-flow-exchange-rate-field']
@@ -99,6 +98,7 @@ describe('hpc-ftsadmin add-flow', () => {
       'contain.text',
       'Calculate the exchange rate'
     );
+
     /*
      * --------------------------------------------------------
      */
@@ -107,22 +107,23 @@ describe('hpc-ftsadmin add-flow', () => {
       ADD_FLOW['test1']['add-flow-description-field']
     );
 
-    const date = new Date().toLocaleDateString('en-GB');
-    cy.typedGet('add-flow-first-reported-field').type(date);
-    cy.typedGet('add-flow-decision-date-field').type(date);
+    const date = dayjs().format('DD/MM/YYYY');
+    cy.typedGet('add-flow-first-reported-today').click();
+    cy.typedGet('add-flow-decision-date-today').click();
 
     cy.typedGet('add-flow-flow-status-field').click();
     selectOption('Commitment');
 
-    cy.typedGet('add-flow-flow-date-field').type(date);
+    cy.typedGet('add-flow-flow-date-today').click();
 
-    // Properly write
-    cy.typedGet('add-flow-reported-by-organization-options').click();
+    cy.typedGet(
+      'add-flow-reported-by-organization-0-options-destination-0'
+    ).click();
 
-    cy.typedGet('add-flow-reported-channel-field').click();
+    cy.typedGet('add-flow-reported-channel-field-0').click();
     selectOption('Fax');
 
-    cy.typedGet('add-flow-date-reported-field').should('contain', date);
+    cy.typedGet('add-flow-date-reported-field-0').should('contain.html', date);
 
     cy.typedGet('add-flow-create-button').click();
 
@@ -132,20 +133,27 @@ describe('hpc-ftsadmin add-flow', () => {
 
     cy.typedGet('add-flow-add-parent-flow-button').click();
 
-    // TODO: Get previous flow ID
-    cy.typedGet('add-flow-add-parent-flow-field').type('PREVIOUS FLOW ID');
-    selectOption('PREVIOUS FLOW ID');
+    // Flow 316064 is part of mocked data
+    cy.typedGet('add-flow-add-parent-flow-field').type('316064');
+    selectOption('316064');
 
     cy.typedGet('add-flow-add-parent-flow-submit-button').click();
 
     cy.typedGet('add-flow-parent-flow-table').should('exist');
-  });
 
-  /**
-   * TODO: Add more checking to the test once edit flow is in the app
-   */
-  it('Enter pending-flow', () => {
-    cy.typedGet('flows-table-row-305776v1').click();
-    cy.location('pathname').should('eq', '/flows/305776');
+    //  Verify source data gets updated when
+    //  a parent flow is selected
+    cy.typedGet('add-flow-readonly-source-organization-field').should(
+      'contain',
+      'United States of America, Government of [USA]'
+    );
+    cy.typedGet('add-flow-readonly-source-usage-year-field').should(
+      'contain',
+      '2023'
+    );
+    cy.typedGet('add-flow-readonly-source-location-field').should(
+      'contain',
+      'United States'
+    );
   });
 });

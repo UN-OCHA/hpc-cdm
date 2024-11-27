@@ -62,11 +62,46 @@ Cypress.Commands.add('login', (username: string) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(dataWithUser));
 });
 
+type DatePickerDataTest = 'field' | 'today';
+type ChildParent = 'child' | 'parent';
 /**
  * When removing `data-test` properties from code,
  * please also remove it from here
  */
 export type DataTest =
+  | 'add-flow-nav-button'
+  | 'add-flow-source-organization-field'
+  | 'add-flow-source-location-field'
+  | 'add-flow-source-usage-year-field'
+  | 'add-flow-destination-project-field'
+  | 'add-flow-destination-plan-field'
+  | 'add-flow-destination-global-cluster-field'
+  | 'add-flow-destination-usage-year-field'
+  | 'add-flow-destination-location-field'
+  | 'add-flow-destination-organization-field'
+  | 'add-flow-original-currency-funding-amount-field'
+  | 'add-flow-original-currency-field'
+  | 'add-flow-exchange-rate-field'
+  | 'add-flow-original-currency-button'
+  | 'add-flow-amount-USD-field'
+  | 'add-flow-description-field'
+  | 'add-flow-readonly-source-organization-field'
+  | 'add-flow-readonly-source-location-field'
+  | 'add-flow-readonly-source-usage-year-field'
+  | `add-flow-first-reported-${DatePickerDataTest}`
+  | `add-flow-decision-date-${DatePickerDataTest}`
+  | 'add-flow-flow-status-field'
+  | `add-flow-flow-date-${DatePickerDataTest}`
+  | `add-flow-reported-by-organization-${number}-options-${number}`
+  | `add-flow-reported-channel-field-${number}`
+  | `add-flow-date-reported-${DatePickerDataTest}-${number}`
+  | 'add-flow-create-button'
+  | 'add-flow-copy-button'
+  | 'add-flow-title'
+  | 'add-flow-add-parent-flow-button'
+  | `add-flow-add-${ChildParent}-flow-field`
+  | 'add-flow-add-parent-flow-submit-button'
+  | `add-flow-${ChildParent}-flow-table`
   | 'flows-nav-button'
   | 'flows-table'
   | 'flows-table-checkbox'

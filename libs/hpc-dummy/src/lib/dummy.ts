@@ -584,9 +584,10 @@ export class Dummy {
         fileUpload: dummyEndpoint(
           'fileAssetEntities.fileUpload',
           async (
-            _file: FormData
+            file: FormData
           ): Promise<fileAssetEntities.FileUploadResult> => {
             //  TODO: Properly add mocked data
+            this.data.files.push(file);
             return {
               collection: 'fts',
               createdAt: new Date(),
@@ -602,7 +603,8 @@ export class Dummy {
           }
         ),
         fileDelete: dummyEndpoint('fileAssetEntities.fileDelete', async () => {
-          throw new errors.NotFoundError();
+          this.data.files = [];
+          return null;
         }),
         fileDownload: dummyEndpoint(
           'fileAssetEntities.fileDownload',
@@ -631,14 +633,13 @@ export class Dummy {
         getAutocompleteFlows: dummyEndpoint(
           'flows.getAutocompleteFlows',
           async (params: flows.GetFlowsAutocompleteParams) => {
-            return this.data.flows.filter((flow) => {
-              return (
+            return this.data.flowRest.filter(
+              (flow) =>
                 flow.description
                   ?.toLowerCase()
                   .includes(params.query.toLowerCase()) ??
                 flow.id.toString().includes(params.query)
-              );
-            }) as any; //  TODO: Remove any
+            );
           }
         ),
         searchFlows: dummyEndpoint(
@@ -727,9 +728,12 @@ export class Dummy {
               amountUSD,
               decisionDate,
               exchangeRate,
+              origAmount,
+              origCurrency,
               flowDate,
               newMoney: isNewMoney,
               restricted: isRestricted,
+              reportDetails,
             } = params.flow;
 
             // TODO: Properly mock data
@@ -740,6 +744,9 @@ export class Dummy {
               amountUSD,
               decisionDate,
               exchangeRate: exchangeRate ?? null,
+              origAmount: origAmount ?? null,
+              origCurrency,
+              createdAt: new Date(),
               updatedAt: new Date(),
               flowDate,
               newMoney: isNewMoney,
@@ -751,6 +758,7 @@ export class Dummy {
             const participant = { name: 'Me' };
             const res: flows.GetFlowResult = {
               ...flow,
+              versionEndDate: null,
               firstReportedDate: null,
               versionStartDate: null,
               createdAt: new Date(),
@@ -773,11 +781,119 @@ export class Dummy {
               clusters: [],
               children: [],
               parents: [],
-              reportDetails: [],
+              reportDetails: reportDetails.map((rD) => ({
+                ...rD,
+                categories: [],
+                organization: {
+                  id: 2915,
+                  name: "United Nations Children's Fund",
+                  nativeName:
+                    "United Nations Children's Fund formerly United Nations International Children's Emergency Fund",
+                  abbreviation: 'UNICEF',
+                  url: 'https://www.unicef.org/',
+                  parentID: null,
+                  comments:
+                    'UNICEF works in over 190 countries and territories to save children’s lives, to defend their rights, and to help them fulfil their potential, from early childhood through adolescence. And we never give up.',
+                  verified: true,
+                  notes: null,
+                  active: true,
+                  collectiveInd: false,
+                  newOrganizationId: null,
+                  createdAt: new Date('2017-01-14T00:53:57.358Z'),
+                  updatedAt: new Date('2023-04-23T12:03:56.439Z'),
+                  deletedAt: null,
+                  categories: [
+                    {
+                      id: 1822,
+                      name: 'UN Agencies',
+                      description: null,
+                      parentID: 1804,
+                      code: null,
+                      group: 'organizationLevel',
+                      createdAt: new Date('2022-12-15T15:17:28.230Z'),
+                      updatedAt: new Date('2022-12-15T15:17:28.230Z'),
+                      categoryRef: {
+                        objectID: 2915,
+                        versionID: 1,
+                        objectType: 'organization',
+                        categoryID: 1822,
+                        createdAt: new Date('2022-12-15T15:17:28.257Z'),
+                        updatedAt: new Date('2022-12-15T15:17:28.257Z'),
+                      },
+                    },
+                    {
+                      id: 116,
+                      name: 'Multilateral Organizations',
+                      description: null,
+                      parentID: null,
+                      code: null,
+                      group: 'organizationType',
+                      createdAt: new Date('2017-01-13T22:18:02.282Z'),
+                      updatedAt: new Date('2022-12-15T15:17:12.882Z'),
+                      categoryRef: {
+                        objectID: 2915,
+                        versionID: 1,
+                        objectType: 'organization',
+                        categoryID: 116,
+                        createdAt: new Date('2017-01-14T00:57:01.596Z'),
+                        updatedAt: new Date('2017-01-14T00:57:01.596Z'),
+                      },
+                    },
+                    {
+                      id: 1804,
+                      name: 'International Actors',
+                      description: null,
+                      parentID: null,
+                      code: null,
+                      group: 'organizationLevel',
+                      createdAt: new Date('2022-12-15T15:17:12.844Z'),
+                      updatedAt: new Date('2022-12-15T15:17:12.844Z'),
+                      categoryRef: {
+                        objectID: 2915,
+                        versionID: 1,
+                        objectType: 'organization',
+                        categoryID: 1804,
+                        createdAt: new Date('2022-12-15T15:17:28.257Z'),
+                        updatedAt: new Date('2022-12-15T15:17:28.257Z'),
+                      },
+                    },
+                    {
+                      id: 1821,
+                      name: 'UN Agencies',
+                      description: null,
+                      parentID: 116,
+                      code: null,
+                      group: 'organizationType',
+                      createdAt: new Date('2022-12-15T15:17:28.228Z'),
+                      updatedAt: new Date('2022-12-15T15:17:28.228Z'),
+                      categoryRef: {
+                        objectID: 2915,
+                        versionID: 1,
+                        objectType: 'organization',
+                        categoryID: 1821,
+                        createdAt: new Date('2022-12-15T15:17:28.257Z'),
+                        updatedAt: new Date('2022-12-15T15:17:28.257Z'),
+                      },
+                    },
+                  ],
+                },
+                reportFiles: [],
+                flowID: id,
+                versionID: 1,
+                id: 123_123,
+                sourceID: rD.sourceID?.toString() ?? Date.now().toString(),
+                createdAt: new Date('2022-12-15T15:17:28.257Z'),
+                updatedAt: new Date('2022-12-15T15:17:28.257Z'),
+              })),
               versions: [],
               externalReferences: [],
               externalData: [],
-            } as any;
+              budgetYear: null,
+              deletedAt: null,
+              legacy: null,
+              restricted: false,
+            };
+            this.data.flowRest.push(res);
             return res;
           }
         ),
@@ -1281,14 +1397,20 @@ export class Dummy {
           'plans.getPlan',
           async <T extends plans.GetPlanScope[]>({
             id,
-            scopes: _scopes,
+            scopes,
           }: plans.GetPlanParams<T>): Promise<plans.GetPlanResult<T>> => {
-            const plan = this.data.plans.find((plan) => plan.id === id);
+            const plan = this.data.plansExtended.find((plan) => plan.id === id);
             if (!plan) {
               throw new errors.NotFoundError();
             }
-            //  TODO: Fix dummy endpoint
-            return plan as any;
+            const planWithSelectedScopes: any = {
+              id: plan.id,
+              restricted: plan.restricted,
+            };
+            for (const scope of scopes) {
+              planWithSelectedScopes[scope] = plan[scope];
+            }
+            return planWithSelectedScopes;
           }
         ),
         getAutocompletePlansById: dummyEndpoint(
@@ -1300,7 +1422,6 @@ export class Dummy {
             if (!plans) {
               throw new errors.NotFoundError();
             }
-            //  TODO: Fix dummy endpoint
             return plans;
           }
         ),
@@ -1311,17 +1432,25 @@ export class Dummy {
           async ({
             query,
           }: projects.GetProjectsAutocompleteParams): Promise<projects.GetProjectsAutocompleteResult> => {
-            return this.data.projects.filter((project) =>
-              project.name.toUpperCase().includes(query.toUpperCase())
+            return this.data.projects.filter(
+              (project) =>
+                project.name.toUpperCase().includes(query.toUpperCase()) ||
+                project.code?.toUpperCase().includes(query.toUpperCase())
             );
           }
         ),
         getProject: dummyEndpoint(
           'projects.getProject',
           async ({
-            id: _id,
+            id,
           }: projects.GetProjectParams): Promise<projects.GetProjectResult> => {
-            throw new errors.NotFoundError();
+            const project = this.data.projectsExtended.find(
+              (project) => project.id === id
+            );
+            if (!project) {
+              throw new errors.NotFoundError();
+            }
+            return project;
           }
         ),
       },

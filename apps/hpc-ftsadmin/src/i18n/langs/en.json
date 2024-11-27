@@ -83,8 +83,8 @@
       "cancellationFlow": "This is a Cancellation Request. Choose Approve to complete the request or choose Reject to ignore the request. Not that this may be a cancellation for an existing flow, but that flow wasn't found by our automatic import scripts (which is why it is a new pending update. You might need to search for this flow and manually cancel it yourself)"
     },
     "flowAmountButton": {
-      "amountOriginalCurrency": "Calculate the original amount",
-      "amountUSD": "Calculate the USD amount",
+      "amountOriginalCurrency": "Calculate funding amount in its original currency",
+      "amountUSD": "Calculate the funding amount in USD",
       "exchangeRate": "Calculate the exchange rate"
     },
     "flowForm": {
