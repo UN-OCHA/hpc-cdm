@@ -134,7 +134,7 @@ const ReviewPendingValues = ({
   }
 
   return (
-    <BluePaper elevation={3}>
+    <BluePaper elevation={3} data-test="pending-flows-popup">
       <Box sx={tw`flex justify-between`}>
         <HeaderContainer>
           <WarningIcon color="warning" />

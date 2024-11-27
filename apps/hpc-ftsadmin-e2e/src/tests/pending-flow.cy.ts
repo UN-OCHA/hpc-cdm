@@ -20,11 +20,15 @@ describe('hpc-ftsadmin pending-flow', () => {
     cy.typedGet('flows-table').should('not.exist');
   });
 
-  /**
-   * TODO: Add more checking to the test once edit flow is in the app
-   */
   it('Enter pending-flow', () => {
-    cy.typedGet('flows-table-row-305776v1').click();
-    cy.location('pathname').should('eq', '/flows/305776/1');
+    cy.typedGet('flows-table-row-328879v1').find('a').click();
+    cy.location('pathname').should('eq', '/flows/328879/1');
+    cy.get('span')
+      .contains(
+        'This flow is not active because it has been marked as Pending review'
+      )
+      .should('exist');
+
+    cy.typedGet('pending-flows-popup').should('have.length', 4);
   });
 });

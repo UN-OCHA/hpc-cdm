@@ -128,6 +128,7 @@ export type DataTest =
   | `flows-table-header-${string}` // TableHeadersProps<FlowHeaderID>.label as value
   | 'pending-flows-nav-button'
   | 'pending-flows-bulk-reject-button'
+  | 'pending-flows-popup'
   | 'keywords-nav-button'
   | 'keywords-table-id'
   | 'keywords-table-name'
