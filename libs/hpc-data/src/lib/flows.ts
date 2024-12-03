@@ -153,13 +153,13 @@ const FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES = t.intersection([
     id: t.number,
     versionID: t.number,
     amountUSD: t.string,
-    flowDate: t.string,
+    flowDate: t.union([t.string, t.null]), //  Some Pending Flows are saved with null flowDate
     decisionDate: t.union([t.string, t.null]),
     firstReportedDate: t.union([t.string, t.null]), //  firstReportedDate is nullable in some old flows
     activeStatus: t.boolean,
     restricted: t.boolean,
     newMoney: t.boolean,
-    description: t.string,
+    description: t.union([t.string, t.null]), //  Some Pending Flows are saved with null description
     flowObjects: t.array(FLOW_OBJECT),
     plans: t.array(FLOW_AUTOCOMPLETE_PLAN),
     organizations: t.array(FLOW_AUTOCOMPLETE_ORGANIZATION),

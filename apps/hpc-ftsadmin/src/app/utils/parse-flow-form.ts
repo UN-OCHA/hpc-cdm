@@ -48,7 +48,7 @@ type EntityName =
   | 'usageYear';
 
 type FlowLinkPropsSerialized = Omit<FlowLinkProps, 'flowDate'> & {
-  flowDate: string;
+  flowDate: string | null;
 };
 type ReportingDetailPropsSerialized = Omit<
   ReportingDetailProps,
@@ -648,7 +648,7 @@ export const parseToFlowForm = (
   const {
     activeStatus,
     amountUSD,
-    description: flowDescription,
+    description,
     origAmount,
     origCurrency,
     decisionDate,
@@ -665,7 +665,7 @@ export const parseToFlowForm = (
     ...categoriesToFlowForm(flow),
     ...flowObjectToFormObjectValue(flow, FUNDING_KEYS, parents?.[0]),
     amountUSD,
-    flowDescription,
+    flowDescription: description ?? '',
     amountOriginalCurrency:
       origAmount ?? INITIAL_FORM_VALUES['amountOriginalCurrency'],
     currency: origCurrency
@@ -679,7 +679,7 @@ export const parseToFlowForm = (
       ? dayjs(firstReportedDate)
       : INITIAL_FORM_VALUES['firstReported'],
     exchangeRate: exchangeRate ?? INITIAL_FORM_VALUES['exchangeRate'],
-    flowDate: dayjs(flowDate),
+    flowDate: flowDate ? dayjs(flowDate) : INITIAL_FORM_VALUES['flowDate'],
     isInactive: !activeStatus,
     isNewMoney,
     notes: notes ?? INITIAL_FORM_VALUES['notes'],
@@ -716,11 +716,16 @@ export const serializeFlowForm = (
       ? firstReported.toISOString()
       : null,
     parentFlow: parentFlow
-      ? { ...parentFlow, flowDate: parentFlow.flowDate.toISOString() }
+      ? {
+          ...parentFlow,
+          flowDate: parentFlow.flowDate
+            ? parentFlow.flowDate.toISOString()
+            : null,
+        }
       : null,
     childFlows: values.childFlows.map((childFlow) => ({
       ...childFlow,
-      flowDate: childFlow.flowDate.toISOString(),
+      flowDate: childFlow.flowDate ? childFlow.flowDate.toISOString() : null,
     })),
     reportingDetails: reportingDetails.map((reportingDetail) => ({
       ...reportingDetail,

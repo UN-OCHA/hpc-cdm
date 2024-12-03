@@ -46,7 +46,7 @@ export const flowToFlowLinkProps = (
   return {
     id: flow.id,
     versionID: flow.versionID,
-    description: flow.description,
+    description: flow.description ?? '',
     destinationOrganization: flow.organizations.filter(
       (org) => org.flowObject.refDirection === 'destination'
     )[0]?.name,
