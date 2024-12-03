@@ -42,6 +42,7 @@ type EntityName =
   | 'emergency'
   | 'globalCluster'
   | 'organization'
+  | 'anonymizedOrganization'
   | 'plan'
   | 'project'
   | 'usageYear';
@@ -72,30 +73,12 @@ export type FlowFormTypeSerialized = Omit<
   childFlows: FlowLinkPropsSerialized[];
 };
 
-type FlowFormFlowObjectKey =
-  | 'fundingSourceOrganizations'
-  | 'fundingSourceLocations'
-  | 'fundingSourceEmergencies'
-  | 'fundingSourceGlobalClusters'
-  | 'fundingSourcePlan'
-  | 'fundingSourceProject'
-  | 'fundingSourceUsageYears'
-  | 'fundingSourceFieldClusters'
-  | 'fundingDestinationOrganizations'
-  | 'fundingDestinationLocations'
-  | 'fundingDestinationEmergencies'
-  | 'fundingDestinationGlobalClusters'
-  | 'fundingDestinationPlan'
-  | 'fundingDestinationProject'
-  | 'fundingDestinationUsageYears'
-  | 'fundingDestinationFieldClusters';
-
 export type RefDirection = 'source' | 'destination';
 
 const TRANSFERRED_CHIP_COLOR = THEME.colors.pallete.blue.light;
 const INFERRED_CHIP_COLOR = THEME.colors.pallete.orange.variant1;
 
-const FUNDING_KEYS: FlowFormFlowObjectKey[] = [
+const FUNDING_KEYS = [
   'fundingSourceOrganizations',
   'fundingSourceLocations',
   'fundingSourceEmergencies',
@@ -105,6 +88,7 @@ const FUNDING_KEYS: FlowFormFlowObjectKey[] = [
   'fundingSourceUsageYears',
   'fundingSourceFieldClusters',
   'fundingDestinationOrganizations',
+  'fundingDestinationAnonymizedOrganizations',
   'fundingDestinationLocations',
   'fundingDestinationEmergencies',
   'fundingDestinationGlobalClusters',
@@ -112,7 +96,8 @@ const FUNDING_KEYS: FlowFormFlowObjectKey[] = [
   'fundingDestinationProject',
   'fundingDestinationUsageYears',
   'fundingDestinationFieldClusters',
-];
+] as const;
+type FlowFormFlowObjectKey = (typeof FUNDING_KEYS)[number];
 
 const categoryIds = (categories: Array<{ value: number | string } | null>) => {
   const ids: number[] = [];
@@ -179,7 +164,7 @@ const extractDirectionObject = (
   values: FlowFormTypeValidated
 ): flows.FlowObject[] => {
   const match = key.match(
-    /^(fundingSource|fundingDestination)(Locations|Emergencies|GlobalClusters|Organizations|Plan|Project|UsageYears|FieldClusters)$/
+    /^(fundingSource|fundingDestination)(Locations|Emergencies|GlobalClusters|Organizations|AnonymizedOrganizations|Plan|Project|UsageYears|FieldClusters)$/
   );
 
   if (match && values[key] !== null) {
@@ -460,7 +445,7 @@ const inferredTransferredChipColor = (
 
 const flowObjectToFormObjectValue = (
   flow: flows.GetFlowResult,
-  keys: FlowFormFlowObjectKey[],
+  keys: readonly FlowFormFlowObjectKey[],
   parent?: flows.GetFlowResult
 ): FlowFormType => {
   const sourceFlow = parent ?? flow;
@@ -536,6 +521,24 @@ const flowObjectToFormObjectValue = (
         .map((org) => ({
           ...org,
           ...inferredTransferredChipColor(flow, org, 'organization'),
+        }))
+    ),
+    fundingDestinationAnonymizedOrganizations: organizationsOptions(
+      flow.anonymizedOrganizations
+        .filter((org) =>
+          flow.flowObjects.some(
+            (flowObject) =>
+              flowObject.objectID === org.id &&
+              flowObject.refDirection === 'destination'
+          )
+        )
+        .map((org) => ({
+          ...org,
+          ...inferredTransferredChipColor(
+            flow,
+            { ...org, flowObject: { refDirection: 'destination' } },
+            'anonymizedOrganization'
+          ),
         }))
     ),
     fundingDestinationLocations: locationsOptions(

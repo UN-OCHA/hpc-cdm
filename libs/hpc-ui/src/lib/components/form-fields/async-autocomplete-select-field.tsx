@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { type util } from '@unocha/hpc-data';
 import { useField, useFormikContext } from 'formik';
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import { REQUIRED_BORDER_STYLE } from '../../util';
 import { StyledTextField } from './text-field';
@@ -33,7 +33,7 @@ const StyledAutocomplete = tw(Autocomplete)`
 
 export type AsyncAutocompleteSelectProps = {
   name: string;
-  label: string;
+  label: string | ReactNode;
   placeholder?: string;
   fnPromise: ({ query }: { query: string }) => Promise<util.FormObjectValue[]>;
   isMulti?: boolean;

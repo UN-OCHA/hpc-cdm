@@ -8,6 +8,7 @@ export type FormObjectValue = {
   hasChildren?: boolean;
   chipColor?: string;
   tooltip?: string;
+  confidential?: boolean;
 };
 
 export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(

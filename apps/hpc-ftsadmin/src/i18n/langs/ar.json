@@ -111,6 +111,7 @@
         "fundingSourceFieldClusters": "مجموعات الحقول",
         "fundingSourceProject": "المشروع",
         "fundingDestinationOrganizations": "المنظمة/المنظمات",
+        "fundingDestinationAnonymizedOrganizations": "المنظمة(ات) المجهولة",
         "fundingDestinationUsageYears": "سنة/سنوات الاستخدام",
         "fundingDestinationLocations": "الموقع/المواقع",
         "fundingDestinationEmergencies": "الطوارئ",

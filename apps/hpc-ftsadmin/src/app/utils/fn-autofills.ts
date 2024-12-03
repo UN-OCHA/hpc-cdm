@@ -21,6 +21,7 @@ type FundingObjectKeys =
   | 'fundingSourceFieldClusters'
   | 'fundingDestinationLocations'
   | 'fundingDestinationOrganizations'
+  | 'fundingDestinationAnonymizedOrganizations'
   | 'fundingDestinationGlobalClusters'
   | 'fundingDestinationEmergencies'
   | 'fundingDestinationUsageYears'

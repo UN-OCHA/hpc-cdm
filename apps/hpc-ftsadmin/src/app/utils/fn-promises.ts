@@ -51,16 +51,20 @@ export const organizationsOptions = (
     name: string;
     abbreviation: string;
     id: number;
+    collectiveInd?: boolean;
     chipColor?: string;
     tooltip?: string;
   }>
 ): util.FormObjectValue[] => {
-  return response.map(({ name, abbreviation, id, chipColor, tooltip }) => ({
-    displayLabel: `${name} [${abbreviation}]`,
-    value: id,
-    chipColor,
-    tooltip,
-  }));
+  return response.map(
+    ({ name, abbreviation, id, chipColor, tooltip, collectiveInd }) => ({
+      displayLabel: `${name} [${abbreviation}]`,
+      value: id,
+      confidential: collectiveInd,
+      chipColor,
+      tooltip,
+    })
+  );
 };
 
 export const locationsOptions = (
@@ -139,9 +143,9 @@ const projectsOptions = (
     chipColor?: string;
     tooltip?: string;
   }>
-): FormObjectValue[] => {
+): util.FormObjectValue[] => {
   return response.map(({ name, id, chipColor, tooltip, code }) => ({
-    displayLabel: `${name}${code ? ' [' + code + ']' : ''}`,
+    displayLabel: `${name}${code ? ` [${code}]` : ''}`,
     value: id,
     chipColor,
     tooltip,

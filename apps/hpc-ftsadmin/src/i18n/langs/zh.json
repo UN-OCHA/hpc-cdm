@@ -111,6 +111,7 @@
         "fundingSourceFieldClusters": "现场集群",
         "fundingSourceProject": "项目",
         "fundingDestinationOrganizations": "组织",
+        "fundingDestinationAnonymizedOrganizations": "匿名化组织(们)",
         "fundingDestinationUsageYears": "使用年份",
         "fundingDestinationLocations": "位置",
         "fundingDestinationEmergencies": "紧急情况",

@@ -179,17 +179,22 @@ export function isKey<T>(x: T, k: PropertyKey): k is keyof T {
   return typeof x === 'object' && x !== null && k in x;
 }
 
+const FLOW_OBJECT_TYPES = [
+  'location',
+  'emergency',
+  'globalCluster',
+  'governingEntity',
+  'organization',
+  'anonymizedOrganization',
+  'plan',
+  'project',
+  'usageYear',
+] as const;
+
+export type FlowObjectTypes = (typeof FLOW_OBJECT_TYPES)[number];
+
 export function isFlowObjectTypes(value: string): value is FlowObjectTypes {
-  return [
-    'location',
-    'emergency',
-    'globalCluster',
-    'governingEntity',
-    'organization',
-    'plan',
-    'project',
-    'usageYear',
-  ].includes(value);
+  return FLOW_OBJECT_TYPES.some((flowObjectType) => flowObjectType === value);
 }
 export const extractDirectionObject = (
   inputString: FilterKey
@@ -214,17 +219,6 @@ export const extractDirectionObject = (
   }
   return null;
 };
-
-export type FlowObjectTypes =
-  | 'location'
-  | 'organization'
-  | 'usageYear'
-  | 'location'
-  | 'project'
-  | 'plan'
-  | 'globalCluster'
-  | 'governingEntity'
-  | 'emergency';
 
 export const parseFormFilters = <
   T extends FilterKey,

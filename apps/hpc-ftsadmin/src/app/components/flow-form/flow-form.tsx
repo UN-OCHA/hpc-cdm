@@ -74,6 +74,7 @@ import DatePickerReview from './inputs/date-picker-pending-review';
 import { PENDING_REVIEW } from '../../utils/constants';
 import AutocompleteSelectReview from './inputs/autocomplete-pending-review';
 import { LanguageKey, t } from '../../../i18n';
+import { FaUserSecret } from 'react-icons/fa';
 
 type FlowFormProps = {
   setError: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -99,6 +100,7 @@ export type FlowFormType = {
   fundingSourcePlan: FormObjectValue | null;
 
   fundingDestinationOrganizations: FormObjectValue[];
+  fundingDestinationAnonymizedOrganizations: FormObjectValue[];
   fundingDestinationUsageYears: FormObjectValue[];
   fundingDestinationLocations: FormObjectValue[];
   fundingDestinationEmergencies: FormObjectValue[];
@@ -207,6 +209,7 @@ export const INITIAL_FORM_VALUES: FlowFormType = {
   fundingSourcePlan: null,
 
   fundingDestinationOrganizations: [],
+  fundingDestinationAnonymizedOrganizations: [],
   fundingDestinationUsageYears: [],
   fundingDestinationLocations: [],
   fundingDestinationEmergencies: [],
@@ -715,6 +718,26 @@ export const FlowForm = (props: FlowFormProps) => {
       .finally(() => setRejectLoading(false));
   };
 
+  const handleFundingDestinationOrganizations = (
+    newValue:
+      | NonNullable<string | FormObjectValue>
+      | (string | FormObjectValue)[]
+      | null,
+    setFieldValue: FormikHelpers<FlowFormType>['setFieldValue']
+  ) => {
+    const isFormObjectValueArray = (
+      val: Array<string | FormObjectValue>
+    ): val is FormObjectValue[] => !val.some((val) => typeof val === 'string');
+
+    setFieldValue('fundingDestinationOrganizations', newValue);
+    if (!Array.isArray(newValue) || !isFormObjectValueArray(newValue)) {
+      return;
+    }
+
+    if (!newValue.some((org) => org.confidential)) {
+      setFieldValue('fundingDestinationAnonymizedOrganizations', []);
+    }
+  };
   return (
     <Formik
       initialValues={flowInitialValues}
@@ -1049,11 +1072,44 @@ export const FlowForm = (props: FlowFormProps) => {
                     fnPromise={(query) => fnOrganizations(query, env)}
                     setPendingValuesHandled={setPendingValuesHandled}
                     disabled={isDisabled}
+                    onChange={(newValue) =>
+                      handleFundingDestinationOrganizations(
+                        newValue,
+                        setFieldValue
+                      )
+                    }
                     pendingValues={
                       pendingValues?.fundingDestinationOrganizations
                     }
                     isMulti
                   />
+                  {values.fundingDestinationOrganizations.some(
+                    (org) => org.confidential
+                  ) && (
+                    <AsyncAutocompleteSelectReview
+                      fieldName="fundingDestinationAnonymizedOrganizations"
+                      label={
+                        <Box sx={tw`flex items-center gap-x-4`}>
+                          <FaUserSecret />
+                          {t.t(
+                            lang,
+                            (s) =>
+                              s.components.flowForm.fields
+                                .fundingDestinationAnonymizedOrganizations
+                          )}
+                        </Box>
+                      }
+                      fnPromise={(query) => fnOrganizations(query, env)}
+                      setPendingValuesHandled={setPendingValuesHandled}
+                      disabled={isDisabled || !!values.parentFlow}
+                      pendingValues={
+                        !values.parentFlow
+                          ? pendingValues?.fundingDestinationAnonymizedOrganizations
+                          : undefined
+                      }
+                      isMulti
+                    />
+                  )}
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationUsageYears"
                     label={t.t(

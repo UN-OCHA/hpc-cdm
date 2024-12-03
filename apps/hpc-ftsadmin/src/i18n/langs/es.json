@@ -111,6 +111,7 @@
         "fundingSourceFieldClusters": "Cluster(s) de campo",
         "fundingSourceProject": "Proyecto",
         "fundingDestinationOrganizations": "Organización(es)",
+        "fundingDestinationAnonymizedOrganizations": "Organización(es) anonimizada(s)",
         "fundingDestinationUsageYears": "Año(s) de uso",
         "fundingDestinationLocations": "Ubicación(es)",
         "fundingDestinationEmergencies": "Emergencia(s)",
