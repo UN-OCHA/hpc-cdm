@@ -176,13 +176,11 @@ export const autofillOrganizations = async ({
     id: valueToInteger(lastOrganization.value),
   });
 
-  if (fieldName.includes('Source')) {
-    const org = await env.model.organizations.getOrganization({
-      id: valueToInteger(lastOrganization.value),
-    });
-    if (org.categories?.some((cat) => cat.name === 'Pooled Funds')) {
-      setFieldValue('isNewMoney', false);
-    }
+  const org = await env.model.organizations.getOrganization({
+    id: valueToInteger(lastOrganization.value),
+  });
+  if (org.categories?.some((cat) => cat.name === 'Pooled Funds')) {
+    setFieldValue('isNewMoney', false);
   }
 
   const organizationLocations = organization.locations;
