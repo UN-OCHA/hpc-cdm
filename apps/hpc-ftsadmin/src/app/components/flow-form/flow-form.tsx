@@ -552,7 +552,10 @@ export const FlowForm = (props: FlowFormProps) => {
           });
         })
         .catch((err) => {
-          console.error(err);
+          if (errors.isDataConsistencyError(err)) {
+            setError(handleDataConsistencyError(err));
+            return;
+          }
           const errorMessage = err.json.message;
           if (typeof errorMessage === 'string') {
             setError(errorMessage);
