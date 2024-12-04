@@ -170,15 +170,16 @@ export const fnUsageYears = async (
     .getUsageYears()
     .then((usageYears) => {
       const sortedUsageYears: usageYears.GetUsageYearsResult = [];
+      const displayFirstUsageYears = [];
       for (const usageYear of usageYears) {
         const yearDifference = CURRENT_YEAR - valueToInteger(usageYear.year);
-        if (yearDifference <= 5 && yearDifference >= -5) {
-          sortedUsageYears.unshift(usageYear);
+        if (yearDifference < 5 && yearDifference > -5) {
+          displayFirstUsageYears.push(usageYear);
         } else {
           sortedUsageYears.push(usageYear);
         }
       }
-      return sortedUsageYears;
+      return [...displayFirstUsageYears, ...sortedUsageYears];
     });
   return usageYearsOptions(response);
 };
