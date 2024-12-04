@@ -387,7 +387,7 @@ const isInferred = (
   }
 
   const inferredList = flow.externalReferences.map((eR) => {
-    if (!eR.importInformation.inferred) {
+    if (!eR.importInformation?.inferred) {
       return false;
     }
     return eR.importInformation.inferred.some(
@@ -411,7 +411,7 @@ const isTransferred = (
   }
 
   const transferredList = flow.externalReferences.map((eR) => {
-    if (!eR.importInformation.transferred) {
+    if (!eR.importInformation?.transferred) {
       return false;
     }
     return eR.importInformation.transferred.some(

@@ -224,10 +224,13 @@ const FLOW_REST_EXTERNAL_REFERENCE = t.type({
   versionID: t.number,
   createdAt: t.string,
   updatedAt: t.string,
-  importInformation: t.partial({
-    inferred: t.array(FLOW_IMPORT_INFORMATION),
-    transferred: t.array(FLOW_IMPORT_INFORMATION),
-  }),
+  importInformation: t.union([
+    t.partial({
+      inferred: t.array(FLOW_IMPORT_INFORMATION),
+      transferred: t.array(FLOW_IMPORT_INFORMATION),
+    }),
+    t.null,
+  ]),
 });
 
 const FLOW_REST_EXTERNAL_DATA = t.type({
