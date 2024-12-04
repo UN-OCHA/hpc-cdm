@@ -837,7 +837,6 @@ const compareFlowForms = (
     currentValue: FormObjectValue | null,
     incomingValue: FormObjectValue | null
   ) => {
-    if (currentValue === incomingValue) return false;
     if ((!currentValue && incomingValue) || (currentValue && !incomingValue))
       return true;
     return currentValue?.value !== incomingValue?.value;
@@ -862,11 +861,11 @@ const compareFlowForms = (
     if (currentArray.length !== incomingArray.length) return true;
 
     for (const item of currentArray) {
-      if (!incomingArray.some((i) => comparator(item, i))) {
-        return false;
+      if (!incomingArray.some((i) => !comparator(item, i))) {
+        return true;
       }
     }
-    return true;
+    return false;
   };
   let typedKey: keyof FlowFormType;
   for (typedKey in currentFlow) {
