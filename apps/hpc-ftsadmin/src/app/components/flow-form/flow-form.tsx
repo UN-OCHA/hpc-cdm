@@ -25,7 +25,6 @@ import {
   fnCategories,
   fnCurrencies,
   fnEmergencies,
-  fnFlowStatusId,
   fnGlobalClusters,
   fnGoverningEntities,
   fnLocations,
@@ -83,6 +82,8 @@ type FlowFormProps = {
   flowType: FormObjectValue[];
   contributionType: FormObjectValue[];
   method: FormObjectValue[];
+  flowStatus: FormObjectValue[];
+  earmarkingType: FormObjectValue[];
   initialValues?: FlowFormType;
   flow?: flows.GetFlowResult;
   isPending?: boolean;
@@ -393,6 +394,8 @@ export const FlowForm = (props: FlowFormProps) => {
     flowType,
     contributionType,
     method,
+    earmarkingType,
+    flowStatus,
   } = props;
   const [submitLoading, setSubmitLoading] = useState(false);
   const [rejectLoading, setRejectLoading] = useState(false);
@@ -1445,15 +1448,14 @@ export const FlowForm = (props: FlowFormProps) => {
                       pendingValues={pendingValues?.flowType}
                       required
                     />
-                    <AsyncAutocompleteSelectReview
+                    <AutocompleteSelectReview
                       fieldName="flowStatus"
                       label={t.t(
                         lang,
                         (s) => s.components.flowForm.fields.flowStatus
                       )}
-                      fnPromise={() => fnFlowStatusId(env)}
+                      options={flowStatus}
                       setPendingValuesHandled={setPendingValuesHandled}
-                      isAutocompleteAPI={false}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.flowStatus}
                       required
@@ -1484,15 +1486,14 @@ export const FlowForm = (props: FlowFormProps) => {
                       disabled={isDisabled}
                       pendingValues={pendingValues?.contributionType}
                     />
-                    <AsyncAutocompleteSelectReview
+                    <AutocompleteSelectReview
                       fieldName="earmarkingType"
                       label={t.t(
                         lang,
                         (s) => s.components.flowForm.fields.earmarkingType
                       )}
-                      fnPromise={() => fnCategories('earmarkingType', env)}
+                      options={earmarkingType}
                       setPendingValuesHandled={setPendingValuesHandled}
-                      isAutocompleteAPI={false}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.earmarkingType}
                     />

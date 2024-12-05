@@ -12,7 +12,11 @@ import {
 } from '../../utils/parse-flow-form';
 import { flows } from '@unocha/hpc-data';
 import dayjs from '../../../libs/dayjs';
-import { fnCategories, fnFlowTypeId } from '../../utils/fn-promises';
+import {
+  fnCategories,
+  fnFlowStatusId,
+  fnFlowTypeId,
+} from '../../utils/fn-promises';
 
 type FlowRouteParams = {
   id: string;
@@ -76,16 +80,25 @@ export default () => {
     };
 
     const [state, load] = useDataLoader([id], async () => {
-      const [flow, inactiveReasons, flowType, contributionType, method] =
-        await Promise.all([
-          getFlow(versionID),
-          env.model.categories.getCategories({
-            query: 'inactiveReason',
-          }),
-          fnFlowTypeId(env),
-          fnCategories('contributionType', env),
-          fnCategories('method', env),
-        ]);
+      const [
+        flow,
+        inactiveReasons,
+        flowType,
+        contributionType,
+        method,
+        earmarkingType,
+        flowStatus,
+      ] = await Promise.all([
+        getFlow(versionID),
+        env.model.categories.getCategories({
+          query: 'inactiveReason',
+        }),
+        fnFlowTypeId(env),
+        fnCategories('contributionType', env),
+        fnCategories('method', env),
+        fnCategories('earmarkingType', env),
+        fnFlowStatusId(env),
+      ]);
 
       const [parents, children] = await Promise.all([
         Promise.all(
@@ -108,6 +121,8 @@ export default () => {
         flowType,
         contributionType,
         method,
+        earmarkingType,
+        flowStatus,
       };
     });
 
@@ -124,15 +139,7 @@ export default () => {
                 },
               }}
             >
-              {({
-                flow,
-                parents,
-                children,
-                inactiveReasons,
-                flowType,
-                contributionType,
-                method,
-              }) => (
+              {({ flow, parents, children, ...otherFlowFormProps }) => (
                 <PaddingContainer>
                   <C.PageTitle>{`Flow ${flow.id}v${flow.versionID}`}</C.PageTitle>
                   <UpdatedCreatedBy>
@@ -186,12 +193,9 @@ export default () => {
                     }
                     flow={flow}
                     load={load}
-                    inactiveReasons={inactiveReasons}
-                    flowType={flowType}
-                    contributionType={contributionType}
-                    method={method}
                     isPending={isPending(flow)}
                     isInactive={isInactive(flow)}
+                    {...otherFlowFormProps}
                   />
                 </PaddingContainer>
               )}
@@ -212,20 +216,30 @@ export default () => {
     );
   } else {
     const [state, load] = useDataLoader([], async () => {
-      const [inactiveReasons, flowType, contributionType, method] =
-        await Promise.all([
-          env.model.categories.getCategories({
-            query: 'inactiveReason',
-          }),
-          fnFlowTypeId(env),
-          fnCategories('contributionType', env),
-          fnCategories('method', env),
-        ]);
+      const [
+        inactiveReasons,
+        flowType,
+        contributionType,
+        method,
+        earmarkingType,
+        flowStatus,
+      ] = await Promise.all([
+        env.model.categories.getCategories({
+          query: 'inactiveReason',
+        }),
+        fnFlowTypeId(env),
+        fnCategories('contributionType', env),
+        fnCategories('method', env),
+        fnCategories('earmarkingType', env),
+        fnFlowStatusId(env),
+      ]);
       return {
         inactiveReasons,
         flowType,
         contributionType,
         method,
+        earmarkingType,
+        flowStatus,
       };
     });
 
@@ -242,7 +256,7 @@ export default () => {
                 },
               }}
             >
-              {({ inactiveReasons, flowType, contributionType, method }) => (
+              {(flowFormProps) => (
                 <PaddingContainer>
                   <C.PageTitle>
                     {historyState?.flowFormCopyValues &&
@@ -253,12 +267,9 @@ export default () => {
                       : t.t(lang, (s) => s.components.flow.addFLow)}
                   </C.PageTitle>
                   <FlowForm
+                    {...flowFormProps}
                     setError={setError}
                     load={load}
-                    inactiveReasons={inactiveReasons}
-                    flowType={flowType}
-                    contributionType={contributionType}
-                    method={method}
                     initialValues={
                       historyState?.flowFormCopyValues
                         ? deserializeFlowForm(historyState.flowFormCopyValues)
