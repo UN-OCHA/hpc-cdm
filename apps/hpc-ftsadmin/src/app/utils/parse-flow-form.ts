@@ -877,7 +877,21 @@ const compareFlowForms = (
       case 'fundingSourceLocations':
       case 'fundingSourceEmergencies':
       case 'fundingSourceGlobalClusters':
-      case 'fundingSourceFieldClusters':
+      case 'fundingSourceFieldClusters': {
+        const currentValue = currentFlow[key];
+        const incomingValue = incomingFlow[key];
+        if (
+          isDifferentArray(
+            currentValue,
+            incomingValue,
+            isDifferentFormObjectValue
+          ) &&
+          !currentFlow.parentFlow
+        ) {
+          result[key] = incomingValue;
+        }
+        break;
+      }
       case 'fundingDestinationOrganizations':
       case 'fundingDestinationUsageYears':
       case 'fundingDestinationLocations':
@@ -900,7 +914,17 @@ const compareFlowForms = (
       }
       // For FormObjectValue | null
       case 'fundingSourceProject':
-      case 'fundingSourcePlan':
+      case 'fundingSourcePlan': {
+        const currentValue = currentFlow[key];
+        const incomingValue = incomingFlow[key];
+        if (
+          isDifferentFormObjectValue(currentValue, incomingValue) &&
+          !currentFlow.parentFlow
+        ) {
+          result[key] = incomingValue;
+        }
+        break;
+      }
       case 'fundingDestinationProject':
       case 'fundingDestinationPlan':
       case 'currency':
