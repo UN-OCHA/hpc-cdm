@@ -1,9 +1,23 @@
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import { QueryParamProvider } from 'use-query-params';
-import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from 'react-router-dom';
 
 import App from './app/app';
+
+import * as paths from './app/paths';
+import PageFlowsList from './app/pages/flows/flows-list';
+import PageKeywordsList from './app/pages/keywords/keyword-list';
+import PageNotFound from './app/pages/not-found';
+import PagePendingFlowsList from './app/pages/flows/pending-flows-list';
+import PageOrganizationsList from './app/pages/organizations/organization-list';
+import PageOrganization from './app/pages/organizations/organization';
+
+import { RouteParamsValidator } from './app/components/route-params-validator';
+import { QueryParamProvider } from 'use-query-params';
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -11,10 +25,32 @@ if (!rootElement) {
 }
 const root = ReactDOM.createRoot(rootElement);
 
-root.render(
-  <BrowserRouter>
-    <QueryParamProvider adapter={ReactRouter6Adapter}>
-      <App />
-    </QueryParamProvider>
-  </BrowserRouter>
-);
+const router = createBrowserRouter([
+  {
+    path: paths.home(),
+    element: (
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <App />
+      </QueryParamProvider>
+    ),
+    children: [
+      { path: paths.home(), element: <Navigate to={paths.flows()} /> },
+      { path: paths.flows(), element: <PageFlowsList /> },
+      { path: paths.pendingFlows(), element: <PagePendingFlowsList /> },
+      { path: paths.organizations(), element: <PageOrganizationsList /> },
+      {
+        path: paths.organizationRoot(),
+        element: (
+          <RouteParamsValidator
+            element={<PageOrganization />}
+            routeParam="id"
+          />
+        ),
+      },
+      { path: paths.addOrganization(), element: <PageOrganization /> },
+      { path: paths.keywords(), element: <PageKeywordsList /> },
+      { path: paths.splat(), element: <PageNotFound /> },
+    ],
+  },
+]);
+root.render(<RouterProvider router={router} />);
