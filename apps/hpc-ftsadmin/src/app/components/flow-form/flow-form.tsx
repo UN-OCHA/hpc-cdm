@@ -509,6 +509,16 @@ export const FlowForm = (props: FlowFormProps) => {
       return;
     }
     if (flow?.id) {
+      if (values.isInactive && !validateFlowIsUnlinked(values)) {
+        setError(
+          t.t(
+            lang,
+            (s) => s.components.flowForm.submitValidation.deleteLinkedFlows
+          )
+        );
+        setSubmitLoading(false);
+        return;
+      }
       env.model.flows
         .updateFlow({
           flow: {
