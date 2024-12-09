@@ -160,10 +160,8 @@ const FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES = t.intersection([
     restricted: t.boolean,
     newMoney: t.boolean,
     description: t.union([t.string, t.null]), //  Some Pending Flows are saved with null description
-    flowObjects: t.array(FLOW_OBJECT),
     plans: t.array(FLOW_AUTOCOMPLETE_PLAN),
     organizations: t.array(FLOW_AUTOCOMPLETE_ORGANIZATION),
-    anonymizedOrganizations: t.array(ORGANIZATION),
     locations: t.array(FLOW_AUTOCOMPLETE_LOCATION),
     globalClusters: t.array(FLOW_AUTOCOMPLETE_DEFAULT_OBJECT),
     usageYears: t.array(FLOW_AUTOCOMPLETE_USAGE_YEAR),
@@ -254,6 +252,8 @@ const CREATED_UPDATED_BY = t.type({
 export type FlowREST = t.TypeOf<
   typeof FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES
 > & {
+  anonymizedOrganizations: Array<t.TypeOf<typeof ORGANIZATION>>;
+  flowObjects: Array<t.TypeOf<typeof FLOW_OBJECT>>;
   children: Array<t.TypeOf<typeof PARENT_CHILDREN_FLOW>>;
   parents: Array<t.TypeOf<typeof PARENT_CHILDREN_FLOW>>;
   categories: Array<t.TypeOf<typeof CATEGORY>>;
@@ -270,6 +270,8 @@ const FLOW_REST: t.Type<FlowREST> = t.recursion('FLOW_REST', () =>
   t.intersection([
     FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES,
     t.type({
+      anonymizedOrganizations: t.array(ORGANIZATION),
+      flowObjects: t.array(FLOW_OBJECT),
       children: t.array(PARENT_CHILDREN_FLOW),
       parents: t.array(PARENT_CHILDREN_FLOW),
       categories: t.array(CATEGORY),
