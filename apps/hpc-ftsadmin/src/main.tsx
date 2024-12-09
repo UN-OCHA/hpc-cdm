@@ -14,7 +14,7 @@ import PageOrganization from './app/pages/organizations/organization';
 
 import { RouteParamsValidator } from './app/components/route-params-validator';
 import { QueryParamProvider } from 'use-query-params';
-import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
+import { ReactRouter7Adapter } from './libs/useQueryParams';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -26,7 +26,7 @@ const router = createBrowserRouter([
   {
     path: paths.home(),
     element: (
-      <QueryParamProvider adapter={ReactRouter6Adapter}>
+      <QueryParamProvider adapter={ReactRouter7Adapter}>
         <App />
       </QueryParamProvider>
     ),
