@@ -25,32 +25,45 @@ if (!rootElement) {
 }
 const root = ReactDOM.createRoot(rootElement);
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: paths.home(),
+      element: (
+        <QueryParamProvider adapter={ReactRouter6Adapter}>
+          <App />
+        </QueryParamProvider>
+      ),
+      children: [
+        { path: paths.home(), element: <Navigate to={paths.flows()} /> },
+        { path: paths.flows(), element: <PageFlowsList /> },
+        { path: paths.pendingFlows(), element: <PagePendingFlowsList /> },
+        { path: paths.organizations(), element: <PageOrganizationsList /> },
+        {
+          path: paths.organizationRoot(),
+          element: (
+            <RouteParamsValidator
+              element={<PageOrganization />}
+              routeParam="id"
+            />
+          ),
+        },
+        { path: paths.addOrganization(), element: <PageOrganization /> },
+        { path: paths.keywords(), element: <PageKeywordsList /> },
+        { path: paths.splat(), element: <PageNotFound /> },
+      ],
+    },
+  ],
   {
-    path: paths.home(),
-    element: (
-      <QueryParamProvider adapter={ReactRouter6Adapter}>
-        <App />
-      </QueryParamProvider>
-    ),
-    children: [
-      { path: paths.home(), element: <Navigate to={paths.flows()} /> },
-      { path: paths.flows(), element: <PageFlowsList /> },
-      { path: paths.pendingFlows(), element: <PagePendingFlowsList /> },
-      { path: paths.organizations(), element: <PageOrganizationsList /> },
-      {
-        path: paths.organizationRoot(),
-        element: (
-          <RouteParamsValidator
-            element={<PageOrganization />}
-            routeParam="id"
-          />
-        ),
-      },
-      { path: paths.addOrganization(), element: <PageOrganization /> },
-      { path: paths.keywords(), element: <PageKeywordsList /> },
-      { path: paths.splat(), element: <PageNotFound /> },
-    ],
-  },
-]);
-root.render(<RouterProvider router={router} />);
+    future: {
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_relativeSplatPath: true,
+      v7_skipActionErrorRevalidation: true,
+    },
+  }
+);
+root.render(
+  <RouterProvider router={router} future={{ v7_startTransition: true }} />
+);
