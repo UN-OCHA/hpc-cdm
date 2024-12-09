@@ -49,7 +49,7 @@ import {
   TopRowContainer,
   handleTableSettingsInfoClose,
 } from './table-utils';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import * as paths from '../../paths';
 import { util } from '@unocha/hpc-core';
 import { LocalStorageSchema } from '../../utils/local-storage-type';

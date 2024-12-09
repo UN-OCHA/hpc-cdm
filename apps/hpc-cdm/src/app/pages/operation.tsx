@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Route, Routes, useParams } from 'react-router-dom';
+import { Navigate, Route, Routes, useParams } from 'react-router';
 
 import { CLASSES, C, dataLoader } from '@unocha/hpc-ui';
 

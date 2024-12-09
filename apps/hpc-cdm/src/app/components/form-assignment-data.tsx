@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { t } from '../../i18n';
 import { C, dataLoader } from '@unocha/hpc-ui';
 import { reportingWindows } from '@unocha/hpc-data';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 
 import { AppContext, getEnv } from '../context';
 import { EnketoEditableForm } from './enketo';

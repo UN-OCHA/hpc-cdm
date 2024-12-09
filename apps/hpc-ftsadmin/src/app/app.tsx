@@ -8,7 +8,7 @@ import {
   ThemeProvider,
 } from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import env, { Environment } from '../environments/environment';

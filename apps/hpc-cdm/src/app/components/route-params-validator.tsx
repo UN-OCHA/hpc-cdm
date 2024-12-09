@@ -1,6 +1,6 @@
 import { C } from '@unocha/hpc-ui';
 import { useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
 
