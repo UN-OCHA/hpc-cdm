@@ -152,7 +152,7 @@ const ReviewPendingValues = ({
         )}
         {isBlank(pendingValues) && <p style={{ color: '#fff' }}>[blank]</p>}
       </ChipContainer>
-      {!isUnmatched && (
+      {!isUnmatched ? (
         <Box sx={tw`flex gap-x-4 justify-end`}>
           <C.Button
             text={t.t(
@@ -171,8 +171,7 @@ const ReviewPendingValues = ({
             color="secondary_light"
           />
         </Box>
-      )}
-      {isUnmatched && (
+      ) : (
         <Box sx={tw`flex justify-end`}>
           <C.Button
             text={t.t(
