@@ -36,7 +36,8 @@ import {
 import { C } from '@unocha/hpc-ui';
 import NumberFieldReview from './inputs/number-field-pending-review';
 import TextFieldReview from './inputs/text-field-pending-review';
-import { MdAdd, MdClose } from 'react-icons/md';
+import { MdAdd, MdClose, MdOutlineSearch } from 'react-icons/md';
+import { FaTrashAlt } from 'react-icons/fa';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import validateForm from '../../utils/form-validation';
 import { Link, useNavigate } from 'react-router';
@@ -825,12 +826,14 @@ export const FlowForm = (props: FlowFormProps) => {
                     lang,
                     (s) => s.components.flowForm.searchSimilarFlow
                   )}
+                  startIcon={MdOutlineSearch}
                 />
                 <C.Button
                   color="secondary"
                   onClick={() => handleDeleteFlow(values)}
                   text={t.t(lang, (s) => s.components.flowForm.deleteFlow)}
                   displayLoading={deleteLoading}
+                  startIcon={FaTrashAlt}
                 />
                 {isPending && (
                   <C.Button
@@ -841,6 +844,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       (s) => s.components.flowForm.rejectFlow.button
                     )}
                     displayLoading={rejectLoading}
+                    startIcon={MdClose}
                   />
                 )}
               </Box>
