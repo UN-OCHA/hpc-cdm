@@ -117,8 +117,7 @@
     "ts-jest": "29.1.0",
     "ts-node": "10.9.1",
     "twin.macro": "3.4.1",
-    "typescript": "5.2.2",
-    "use-query-params": "2.2.1"
+    "typescript": "5.2.2"
   },
   "babelMacros": {
     "twin": {
