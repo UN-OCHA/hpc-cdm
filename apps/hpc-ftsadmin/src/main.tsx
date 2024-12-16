@@ -13,8 +13,6 @@ import PageOrganizationsList from './app/pages/organizations/organization-list';
 import PageOrganization from './app/pages/organizations/organization';
 
 import { RouteParamsValidator } from './app/components/route-params-validator';
-import { QueryParamProvider } from 'use-query-params';
-import { ReactRouter7Adapter } from './libs/useQueryParams';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -25,11 +23,7 @@ const root = ReactDOM.createRoot(rootElement);
 const router = createBrowserRouter([
   {
     path: paths.home(),
-    element: (
-      <QueryParamProvider adapter={ReactRouter7Adapter}>
-        <App />
-      </QueryParamProvider>
-    ),
+    element: <App />,
     children: [
       { path: paths.home(), element: <Navigate to={paths.flows()} /> },
       { path: paths.flows(), element: <PageFlowsList /> },
