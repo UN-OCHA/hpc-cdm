@@ -45,7 +45,8 @@ import { downloadExcel } from '../../utils/download-excel';
 import DownloadIcon from '@mui/icons-material/Download';
 import {
   ChipDiv,
-  Query,
+  type FlowQuery,
+  type SetQuery,
   RejectPendingFlowsButton,
   RenderChipsRow,
   StyledLoader,
@@ -64,8 +65,8 @@ export interface FlowsTableProps {
   headers: TableHeadersProps<FlowHeaderID>[];
   initialValues: FlowsFilterValues | PendingFlowsFilterValues;
   rowsPerPageOption: number[];
-  query: Query;
-  setQuery: (newQuery: Query) => void;
+  query: FlowQuery;
+  setQuery: SetQuery<FlowQuery>;
   abortSignal?: AbortSignal;
   pending?: boolean;
 }

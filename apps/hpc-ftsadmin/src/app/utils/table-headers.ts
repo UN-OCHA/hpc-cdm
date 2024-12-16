@@ -1,6 +1,6 @@
 import { LanguageKey, t } from '../../i18n';
 import { Strings } from '../../i18n/iface';
-import { Query } from '../components/tables/table-utils';
+import type { Query, SetQuery } from '../components/tables/table-utils';
 import { FilterKeys } from './parse-filters';
 
 /** Declare which tables there can be */
@@ -310,11 +310,11 @@ const defaultEncodeTableHeaders = (table: TableType) => {
  * Encodes the query param to obtain a string suitable for the URL,
  * use it alongside `decodeTableHeaders()`
  */
-export const encodeTableHeaders = (
+export const encodeTableHeaders = <T extends Query>(
   headers: Array<HeaderType>,
   table: TableType = 'flows',
-  query?: Query,
-  setQuery?: (newQuery: Query) => void
+  query?: T,
+  setQuery?: SetQuery<T>
 ): string => {
   if (headers.length === 0) {
     return defaultEncodeTableHeaders(table);
@@ -399,12 +399,12 @@ const defaultDecodeTableHeaders = (
 /**
  * Decodes the query param to obtain an ordered list of table headers
  */
-export const decodeTableHeaders = (
+export const decodeTableHeaders = <T extends Query>(
   queryParam: string,
   lang: LanguageKey,
   table: TableType = 'flows',
-  query?: Query,
-  setQuery?: (newQuery: Query) => void
+  query?: T,
+  setQuery?: SetQuery<T>
 ): Array<
   TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
 > => {

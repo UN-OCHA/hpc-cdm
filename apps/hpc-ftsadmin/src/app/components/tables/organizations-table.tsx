@@ -41,7 +41,8 @@ import { parseUpdatedCreatedBy } from '../../utils/map-functions';
 import { OrganizationFilterValues } from '../filters/filter-organization-table';
 import {
   ChipDiv,
-  Query,
+  type OrganizationQuery,
+  type SetQuery,
   RenderChipsRow,
   StyledLoader,
   TableHeaderButton,
@@ -59,8 +60,8 @@ export interface OrganizationTableProps {
   headers: TableHeadersProps<OrganizationHeaderID>[];
   initialValues: OrganizationFilterValues;
   rowsPerPageOption: number[];
-  query: Query;
-  setQuery: (newQuery: Query) => void;
+  query: OrganizationQuery;
+  setQuery: SetQuery<OrganizationQuery>;
 }
 
 export default function OrganizationTable(props: OrganizationTableProps) {

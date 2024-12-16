@@ -5,7 +5,7 @@ import { C } from '@unocha/hpc-ui';
 import { FormObjectValue } from '@unocha/hpc-data';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import { t } from '../../../i18n';
-import { Query } from '../tables/table-utils';
+import type { FlowQuery, SetQuery } from '../tables/table-utils';
 import { useContext } from 'react';
 import { AppContext } from '../../context';
 import {
@@ -14,8 +14,8 @@ import {
   fnUsageYears,
 } from '../../utils/fn-promises';
 interface Props {
-  query: Query;
-  setQuery: (newQuery: Query) => void;
+  query: FlowQuery;
+  setQuery: SetQuery<FlowQuery>;
   handleAbortController: () => void;
 }
 export interface PendingFlowsFilterValues {

@@ -37,7 +37,8 @@ import {
 
 import {
   ChipDiv,
-  Query,
+  type KeywordQuery,
+  type SetQuery,
   StyledLoader,
   TableHeaderButton,
   TopRowContainer,
@@ -51,15 +52,10 @@ import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { Strings } from '../../../i18n/iface';
 import { parseError } from '../../utils/map-functions';
 
-export type KeywordQuery = {
-  orderBy: string;
-  orderDir: string;
-  tableHeaders: string;
-};
 export interface KeywordTableProps {
   headers: TableHeadersProps<KeywordHeaderID>[];
   query: KeywordQuery;
-  setQuery: (newQuery: KeywordQuery) => void;
+  setQuery: SetQuery<KeywordQuery>;
 }
 
 /**
@@ -507,7 +503,7 @@ export default function KeywordTable(props: KeywordTableProps) {
                           query.tableHeaders,
                           lang,
                           'keywords',
-                          query as Query,
+                          query,
                           setQuery
                         )}
                         onClick={(element) => {
@@ -517,7 +513,7 @@ export default function KeywordTable(props: KeywordTableProps) {
                               tableHeaders: encodeTableHeaders(
                                 element,
                                 'keywords',
-                                query as Query,
+                                query,
                                 setQuery
                               ),
                             });

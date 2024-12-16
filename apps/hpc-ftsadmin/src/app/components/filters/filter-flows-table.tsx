@@ -9,7 +9,7 @@ import { t } from '../../../i18n';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
 import { util } from '@unocha/hpc-core';
 import { Alert } from '@mui/material';
-import { Query } from '../tables/table-utils';
+import type { FlowQuery, SetQuery } from '../tables/table-utils';
 import { AppContext } from '../../context';
 import { util as codecs, FormObjectValue } from '@unocha/hpc-data';
 import validateForm from '../../utils/form-validation';
@@ -25,8 +25,8 @@ import {
 } from '../../utils/fn-promises';
 
 interface Props {
-  query: Query;
-  setQuery: (newQuery: Query) => void;
+  query: FlowQuery;
+  setQuery: SetQuery<FlowQuery>;
   handleAbortController: () => void;
 }
 export interface FlowsFilterValues {
@@ -136,11 +136,14 @@ export const FilterFlowsTable = (props: Props) => {
     if (query.filters !== encodedFilters) {
       handleAbortController();
     }
-    setQuery({
-      ...query,
-      page: 0,
-      filters: encodedFilters,
-    });
+    setQuery(
+      {
+        ...query,
+        page: 0,
+        filters: encodedFilters,
+      },
+      true
+    );
   };
   return (
     <C.SearchFilter title={t.t(lang, (s) => s.components.flowsFilter.title)}>
