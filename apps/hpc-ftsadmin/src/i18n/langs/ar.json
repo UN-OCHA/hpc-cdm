@@ -137,6 +137,7 @@
         "contributionType": "نوع المساهمة",
         "earmarkingType": "GB تحديد الأهداف",
         "method": "طريقة المساعدة",
+        "childMethod": "نوع برمجة التحويلات النقدية (CTP)",
         "keywords": "الكلمات الرئيسية",
         "beneficiaryGroup": "مجموعة المستفيدين",
         "notes": "الملاحظات",

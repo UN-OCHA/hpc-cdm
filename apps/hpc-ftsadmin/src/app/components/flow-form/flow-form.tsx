@@ -12,7 +12,9 @@ import {
 } from '@unocha/hpc-data';
 import { Form, Formik, FormikHelpers } from 'formik';
 import {
+  CTP,
   RefDirection,
+  isMethodOption,
   parseFlowForm,
   pendingValuesFlowForm,
   queryParamsFlowFilter,
@@ -126,6 +128,7 @@ export type FlowFormType = {
   contributionType: FormObjectValue | null;
   earmarkingType: FormObjectValue | null;
   method: FormObjectValue | null;
+  childMethod: FormObjectValue | null;
   keywords: FormObjectValue[];
   beneficiaryGroup: FormObjectValue | null;
   notes: string;
@@ -235,6 +238,7 @@ export const INITIAL_FORM_VALUES: FlowFormType = {
   contributionType: null,
   earmarkingType: null,
   method: null,
+  childMethod: null,
   keywords: [],
   beneficiaryGroup: null,
   notes: '',
@@ -413,6 +417,14 @@ export const FlowForm = (props: FlowFormProps) => {
 
   const isDisabled = isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
+
+  const [methodOptions, childMethodOptions] = method.reduce(
+    (acc, value) => {
+      acc[isMethodOption(value) ? 0 : 1].push(value);
+      return acc;
+    },
+    [[], []] as [FormObjectValue[], FormObjectValue[]]
+  );
 
   const flowInitialValues = initialValues ?? {
     ...INITIAL_FORM_VALUES,
@@ -754,6 +766,23 @@ export const FlowForm = (props: FlowFormProps) => {
     if (!newValue.some((org) => org.confidential)) {
       setFieldValue('fundingDestinationAnonymizedOrganizations', []);
     }
+  };
+
+  const handleMethod = (
+    newValue:
+      | NonNullable<string | FormObjectValue>
+      | (string | FormObjectValue)[]
+      | null,
+    setFieldValue: FormikHelpers<FlowFormType>['setFieldValue']
+  ) => {
+    setFieldValue('method', newValue);
+
+    //  childMethod is `FormObjectValue`
+    if (Array.isArray(newValue) || typeof newValue === 'string') {
+      return;
+    }
+
+    setFieldValue('childMethod', null);
   };
   return (
     <Formik
@@ -1517,12 +1546,29 @@ export const FlowForm = (props: FlowFormProps) => {
                         lang,
                         (s) => s.components.flowForm.fields.method
                       )}
-                      options={method}
+                      options={methodOptions}
                       setPendingValuesHandled={setPendingValuesHandled}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.method}
+                      onChange={(newValue) =>
+                        handleMethod(newValue, setFieldValue)
+                      }
                       required
                     />
+                    {values.method?.displayLabel === CTP && (
+                      <AutocompleteSelectReview
+                        fieldName="childMethod"
+                        label={t.t(
+                          lang,
+                          (s) => s.components.flowForm.fields.childMethod
+                        )}
+                        options={childMethodOptions}
+                        setPendingValuesHandled={setPendingValuesHandled}
+                        disabled={isDisabled}
+                        pendingValues={pendingValues?.childMethod}
+                      />
+                    )}
+
                     <AsyncAutocompleteSelectReview
                       fieldName="keywords"
                       label={t.t(

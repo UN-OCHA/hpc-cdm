@@ -12,6 +12,12 @@ export type AutocompleteSelectProps = {
   readOnly?: boolean;
   disabled?: boolean;
   required?: boolean;
+  onChange?: (
+    newValue:
+      | NonNullable<string | util.FormObjectValue>
+      | Array<string | util.FormObjectValue>
+      | null
+  ) => void;
 };
 const StyledAutocomplete = tw(Autocomplete)`
   min-w-[10rem]
@@ -25,6 +31,7 @@ const AutocompleteSelect = ({
   readOnly,
   disabled,
   required,
+  onChange,
 }: AutocompleteSelectProps) => {
   const { setFieldValue } = useFormikContext();
   const [field, meta, { setTouched: setIsTouched }] =
@@ -48,8 +55,12 @@ const AutocompleteSelect = ({
       typeof op === 'string' ? op : op.displayLabel ?? '',
     ChipProps: { size: 'small' },
     onChange: (_, newValue) => {
-      // For multiple selections, newValue will be an array of selected values
-      setFieldValue(name, newValue);
+      if (onChange) {
+        onChange(newValue);
+      } else {
+        // For multiple selections, newValue will be an array of selected values
+        setFieldValue(name, newValue);
+      }
     },
 
     renderInput: (params) => (
@@ -63,7 +74,7 @@ const AutocompleteSelect = ({
         InputProps={{
           ...params.InputProps,
         }}
-        error={!!(meta.touched && meta.error)}
+        error={meta.touched && !!meta.error}
         helperText={meta.touched && meta.error ? meta.error : undefined}
       />
     ),

@@ -137,6 +137,7 @@
         "contributionType": "Contribution Type",
         "earmarkingType": "GB Earmarking",
         "method": "Aid Modality",
+        "childMethod": "Cash Transfer Programming (CTP) Type",
         "keywords": "Keyword(s)",
         "beneficiaryGroup": "Beneficiary group",
         "notes": "Notes",

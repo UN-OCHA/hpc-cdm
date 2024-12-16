@@ -137,6 +137,7 @@
         "contributionType": "贡献类型",
         "earmarkingType": "GB 标记类型",
         "method": "援助方式",
+        "childMethod": "现金转移编程（CTP）类型",
         "keywords": "关键词",
         "beneficiaryGroup": "受益群体",
         "notes": "备注",

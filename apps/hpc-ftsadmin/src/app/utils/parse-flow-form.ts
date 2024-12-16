@@ -99,6 +99,10 @@ const FUNDING_KEYS = [
 ] as const;
 type FlowFormFlowObjectKey = (typeof FUNDING_KEYS)[number];
 
+export const CTP = 'Cash transfer programming (CTP)' as const;
+export const isMethodOption = (value: FormObjectValue) =>
+  value.displayLabel === 'Traditional aid' || value.displayLabel === CTP;
+
 const categoryIds = (categories: Array<{ value: number | string } | null>) => {
   const ids: number[] = [];
   for (const category of categories) {
@@ -257,6 +261,7 @@ export const parseFlowForm = (
 ): flows.CreateFlowParams => {
   const {
     method,
+    childMethod,
     amountOriginalCurrency,
     amountUSD,
     beneficiaryGroup,
@@ -296,6 +301,7 @@ export const parseFlowForm = (
 
   const categories = categoryIds([
     method,
+    childMethod,
     beneficiaryGroup,
     contributionType,
     earmarkingType,
@@ -370,7 +376,11 @@ const categoriesToFlowForm = (values: flows.GetFlowResult) => {
         [group]: [...(acc.keywords ?? []), { displayLabel: name, value: id }],
       };
     } else if (isCategoryGroupKeyFlowForm(group)) {
-      return { ...acc, [group]: { displayLabel: name, value: id } };
+      const parsedValue: FormObjectValue = { displayLabel: name, value: id };
+      if (group === 'method' && !isMethodOption(parsedValue)) {
+        return { ...acc, childMethod: parsedValue };
+      }
+      return { ...acc, [group]: parsedValue };
     }
     return acc;
   }, {} as FlowFormType);
