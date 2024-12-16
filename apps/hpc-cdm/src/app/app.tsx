@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, Route, Routes } from 'react-router';
+import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -11,13 +11,8 @@ import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
 import * as paths from './paths';
 import PageMeta from './components/page-meta';
-import { RouteParamsValidator } from './components/route-params-validator';
 
-import PageAdmin from './pages/admin';
 import PageNotLoggedIn from './pages/not-logged-in';
-import PageNotFound from './pages/not-found';
-import PageOperationsList from './pages/operations-list';
-import PageOperation from './pages/operation';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
   const warning = env.getDevHeaderWarning(lang);
@@ -143,32 +138,7 @@ export const App = () => {
                             : []),
                         ]}
                       />
-                      <Routes>
-                        <Route
-                          path={paths.home()}
-                          element={<Navigate to={paths.operations()} />}
-                        />
-                        <Route
-                          path={paths.operations()}
-                          element={<PageOperationsList />}
-                        />
-                        <Route
-                          path={paths.operationRoot()}
-                          element={
-                            <RouteParamsValidator
-                              element={<PageOperation />}
-                              routeParam="id"
-                            />
-                          }
-                        />
-                        {canModifyGlobalUserAccess && (
-                          <Route
-                            path={paths.adminRoot()}
-                            element={<PageAdmin />}
-                          />
-                        )}
-                        <Route path={paths.root()} element={<PageNotFound />} />
-                      </Routes>
+                      <Outlet />
                     </LoggedInContainer>
                   ) : (
                     <>
