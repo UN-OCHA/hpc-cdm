@@ -187,9 +187,11 @@
           "urlTitle": "Por favor complete el campo Título para la URL proporcionada en los detalles del informe"
         },
         "createSuccess": "Flujo creado con éxito",
+        "updateSuccess": "Flujo actualizado con éxito",
         "deleteFlowWarning": "¿Está seguro de que desea eliminar este flujo?",
         "deleteLinkedFlows": "Desvincule todos los flujos antes de continuar",
         "deleteSuccess": "El flujo ha sido eliminado con éxito",
+        "rejectSuccess": "El flujo ha sido rechazado con éxito",
         "earmarking": "El valor de earmarking está vacío, ¿aún desea guardar?",
         "emergency": "Este flujo tiene al menos una emergencia disponible para los años y ubicaciones seleccionados, como {emergency}, ¿aún desea guardar?",
         "pendingValues": "Por favor gestione todos los valores pendientes",
@@ -323,6 +325,10 @@
         "unknown": "Error inesperado al crear/actualizar la palabra clave.",
         "duplicate": "Ya existe una palabra clave con el nombre {keywordName}. Por favor, elige un nombre diferente."
       },
+      "success": {
+        "update": "Palabra clave actualizada con éxito",
+        "delete": "Palabra clave eliminada con éxito"
+      },
       "labels": {
         "newName": "Nuevo Nombre",
         "edit": "Editar",
@@ -344,6 +350,9 @@
       "error": {
         "conflict": "Se ha producido un conflicto al fusionar {entities}",
         "unknown": "Se ha producido un error desconocido al fusionar {entities}"
+      },
+      "success": {
+        "merge": "Fusión de {entities} realizada con éxito"
       },
       "organization": {
         "singular": "Organización",
@@ -470,6 +479,11 @@
         "text": "¿Estás seguro de que quieres eliminar este flujo? Toda la información sera eliminada.",
         "principalButton": "Eliminar",
         "secondaryButton": "Cancelar"
+      },
+      "success": {
+        "create": "Organización {organizationName} creada con éxito",
+        "update": "Organización {organizationName} actualizada con éxito",
+        "delete": "Organización {organizationName} eliminada con éxito"
       },
       "text": {
         "collectiveOrganization": "La configuración de Organización Colectiva indica que la organización es un 'sustituto' de una o más organizaciones del mismo tipo de organización (por ejemplo, 'Organizaciones de la Cruz Roja'), y se utiliza cuando las organizaciones específicas no son conocidas o deben ocultarse por motivos de seguridad.",

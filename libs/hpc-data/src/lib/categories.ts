@@ -52,6 +52,8 @@ export const KEYWORD = t.type({
 
 export type Keyword = t.TypeOf<typeof KEYWORD>;
 
+const STATUS_OK = t.type({ status: t.keyof({ ok: 'ok' }) });
+
 export const GET_CATEGORIES_PARAMS = t.type({
   query: CATEGORY_GROUP,
 });
@@ -71,7 +73,7 @@ export const DELETE_KEYWORD_PARAMS = t.type({
 });
 export type DeleteKeywordParams = t.TypeOf<typeof DELETE_KEYWORD_PARAMS>;
 
-export const DELETE_KEYWORD_RESULT = t.undefined;
+export const DELETE_KEYWORD_RESULT = STATUS_OK;
 export type DeleteKeywordResult = t.TypeOf<typeof DELETE_KEYWORD_RESULT>;
 
 export const MERGE_KEYWORDS_PARAMS = t.type({
@@ -80,7 +82,7 @@ export const MERGE_KEYWORDS_PARAMS = t.type({
 });
 export type MergeKeywordParams = t.TypeOf<typeof MERGE_KEYWORDS_PARAMS>;
 
-export const MERGE_KEYWORD_RESULT = t.undefined;
+export const MERGE_KEYWORD_RESULT = STATUS_OK;
 export type MergeKeywordResult = t.TypeOf<typeof MERGE_KEYWORD_RESULT>;
 
 export interface Model {

@@ -1,4 +1,5 @@
-import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
+import { C, CLASSES, combineClasses, type Message } from '@unocha/hpc-ui';
+import { useState } from 'react';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import FilterPendingFlowsTable, {
@@ -27,6 +28,8 @@ const LandingContainer = tw.div`
 `;
 
 export default (props: Props) => {
+  const [messages, setMessages] = useState<Message[]>([]);
+
   const [query, setQuery] = useQueryParams({
     codec: FLOW_PARAMS_CODEC,
     initialValues: {
@@ -42,10 +45,11 @@ export default (props: Props) => {
   const pendingFlowsTableProps: FlowsTableProps = {
     headers: DEFAULT_FLOW_TABLE_HEADERS,
     initialValues: PENDING_FLOWS_FILTER_INITIAL_VALUES,
-    rowsPerPageOption: [10, 25, 50, 100],
+    rowsPerPageOptions: [10, 25, 50, 100],
     query,
     setQuery,
     pending: true,
+    setMessages,
   };
 
   return (
@@ -64,6 +68,7 @@ export default (props: Props) => {
               <FlowsTable {...pendingFlowsTableProps} />
             </LandingContainer>
           </Container>
+          <C.MessageAlert setMessages={setMessages} messages={messages} />
         </div>
       )}
     </AppContext.Consumer>

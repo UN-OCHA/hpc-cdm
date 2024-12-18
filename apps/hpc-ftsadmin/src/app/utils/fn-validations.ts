@@ -3,6 +3,7 @@ import { valueToInteger } from './map-functions';
 import React from 'react';
 import { Environment } from '../../environments/interface';
 import { type LanguageKey, t } from '../../i18n';
+import type { Message } from '@unocha/hpc-ui';
 
 const validateEarmarking = (values: FlowFormType, lang: LanguageKey) => {
   if (!values.earmarkingType) {
@@ -96,13 +97,20 @@ const validateReportingDetails = (values: FlowFormType, lang: LanguageKey) => {
 
 export const validateFlowForWarnings = async (
   values: FlowFormType,
-  setError: React.Dispatch<React.SetStateAction<string | undefined>>,
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
   env: Environment,
   lang: LanguageKey
 ) => {
   const reportingDetailWarning = validateReportingDetails(values, lang);
   if (reportingDetailWarning) {
-    setError(reportingDetailWarning);
+    setMessages((prev) => [
+      {
+        message: reportingDetailWarning,
+        severity: 'error',
+        key: Date.now(),
+      } satisfies Message,
+      ...prev,
+    ]);
     return false;
   }
 

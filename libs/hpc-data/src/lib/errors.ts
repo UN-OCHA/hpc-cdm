@@ -76,6 +76,12 @@ export const isConflictError = (error: Error): error is ConflictError =>
   error instanceof ConflictError ||
   (error && (error as ConflictError).code === CONFLICT_ERROR);
 
+/*
+ * TODO: Remove DuplicateError as soon as issue with update organization
+ * endpoint is solved. Currently when we update an organization we throw
+ * a DB error instead of a ConflictError
+ */
+
 /**
  * An error thrown when the user creates a new Entity with a
  * duplicated primary key of an already existing one

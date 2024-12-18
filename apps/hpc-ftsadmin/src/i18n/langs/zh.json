@@ -187,9 +187,11 @@
           "urlTitle": "请为报告详细信息中提供的 URL 填写标题字段"
         },
         "createSuccess": "资金流创建成功",
+        "updateSuccess": "流程更新成功",
         "deleteFlowWarning": "您确定要删除此资金流吗？",
         "deleteLinkedFlows": "继续之前，请先取消关联所有资金流",
         "deleteSuccess": "资金流已成功删除",
+        "rejectSuccess": "流程已成功拒绝",
         "earmarking": "标记值为空，您仍要保存吗？",
         "emergency": "此资金流在所选年份和地点至少有一个可用的紧急情况，如 {emergency}，您仍要保存吗？",
         "pendingValues": "请处理所有待处理的值",
@@ -326,6 +328,10 @@
         "unknown": "创建/更新关键字时发生意外错误。",
         "duplicate": "已经存在名为 {keywordName} 的关键字。请选择一个不同的名称。"
       },
+      "success": {
+        "update": "关键词更新成功",
+        "delete": "关键词已成功删除"
+      },
       "labels": {
         "newName": "新名称",
         "edit": "编辑",
@@ -347,6 +353,9 @@
       "error": {
         "conflict": "在合并{entities}时发生冲突",
         "unknown": "在合并{entities}时发生未知错误"
+      },
+      "success": {
+        "merge": "成功合并 {entities}"
       },
       "organization": {
         "singular": "组织",
@@ -473,6 +482,11 @@
         "text": "您确定要删除此流程吗？所有信息将被删除。",
         "principalButton": "删除",
         "secondaryButton": "取消"
+      },
+      "success": {
+        "create": "{organizationName} 组织创建成功",
+        "update": "{organizationName} 组织更新成功",
+        "delete": "{organizationName} 组织已成功删除"
       },
       "text": {
         "collectiveOrganization": "集体组织设置指示该组织是同一类型的一个或多个组织的“替代品”（例如，“红十字组织”），当不知道具体组织或出于安全目的需要对其进行掩码时使用",

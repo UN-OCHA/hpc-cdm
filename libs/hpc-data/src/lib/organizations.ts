@@ -146,7 +146,20 @@ export const GET_ORGANIZATION_PARAMS = t.type({
   id: t.number,
 });
 
-export type GetOrganizationResult = t.TypeOf<typeof ORGANIZATION>;
+export const GET_ORGANIZATION_RESULT = t.intersection([
+  ORGANIZATION,
+  t.type({
+    participantLog: t.array(
+      t.type({
+        editType: t.string,
+        createdAt: t.string,
+        participant: t.union([t.type({ name: t.string }), t.null]),
+      })
+    ),
+  }),
+]);
+
+export type GetOrganizationResult = t.TypeOf<typeof GET_ORGANIZATION_RESULT>;
 
 export type GetOrganizationParams = t.TypeOf<typeof GET_ORGANIZATION_PARAMS>;
 
@@ -207,22 +220,7 @@ export type UpdateOrganizationParams = t.TypeOf<
   typeof UPDATE_ORGANIZATION_PARAMS
 >;
 
-export const UPDATE_ORGANIZATION_RESULT = t.intersection([
-  ORGANIZATION,
-  t.type({
-    participantLog: t.array(
-      t.type({
-        editType: t.string,
-        createdAt: t.string,
-        participant: t.union([t.type({ name: t.string }), t.null]),
-      })
-    ),
-  }),
-]);
-
-export type UpdateOrganizationResult = t.TypeOf<
-  typeof UPDATE_ORGANIZATION_RESULT
->;
+export type UpdateOrganizationResult = t.TypeOf<typeof ORGANIZATION>;
 
 export const DELETE_ORGANIZATION_PARAMS = t.type({
   id: t.number,
@@ -231,7 +229,7 @@ export type DeleteOrganizationParams = t.TypeOf<
   typeof DELETE_ORGANIZATION_PARAMS
 >;
 
-export const DELETE_ORGANIZATION_RESULT = t.undefined;
+export const DELETE_ORGANIZATION_RESULT = t.type({ status: t.literal('ok') });
 
 export type DeleteOrganizationResult = t.TypeOf<
   typeof DELETE_ORGANIZATION_RESULT

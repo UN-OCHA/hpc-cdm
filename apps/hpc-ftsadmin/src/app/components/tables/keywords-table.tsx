@@ -18,18 +18,18 @@ import {
   Tooltip,
 } from '@mui/material';
 import { type categories, errors } from '@unocha/hpc-data';
-import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
+import { C, CLASSES, type Message, useDataLoader } from '@unocha/hpc-ui';
 import React, { createContext, useContext, useState } from 'react';
 import { type LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
 
 import {
-  type KeywordHeaderID,
-  type TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
   isCompatibleTableHeaderType,
   isTableHeadersPropsKeyword,
+  type KeywordHeaderID,
+  type TableHeadersProps,
 } from '../../utils/table-headers';
 
 import tw from 'twin.macro';
@@ -43,8 +43,6 @@ import {
 } from './table-utils';
 
 import { Form, Formik } from 'formik';
-import { type Strings } from '../../../i18n/iface';
-import { parseError } from '../../utils/map-functions';
 import InfoAlert from '../info-alert';
 import MergeModal from '../merge-modal';
 
@@ -87,6 +85,27 @@ function by<T>(
   };
 }
 
+const parseError = (
+  error: 'unknown' | 'duplicate' | 'conflict',
+  lang: LanguageKey,
+  errorValue?: string
+) => {
+  const translatedError = t.t(
+    lang,
+    (s) => {
+      if (error !== 'conflict') {
+        return s.components.keywordTable.errors[error];
+      }
+      return s.components.keywordTable.errors.unknown;
+    },
+    error === 'duplicate' && errorValue
+      ? { keywordName: errorValue }
+      : undefined
+  );
+
+  return translatedError;
+};
+
 function typeQuery(value: string): keyof categories.Keyword {
   if (value === 'keyword.id') {
     return 'id';
@@ -113,16 +132,8 @@ const FieldsWrapper = tw.div`
   gap-x-8
 `;
 const KeywordTableContext = createContext<{
-  setErrorUpdate?: React.Dispatch<
-    React.SetStateAction<
-      | {
-          code: keyof Strings['components']['keywordTable']['errors'];
-          value: string;
-        }
-      | undefined
-    >
-  >;
-  setSuccessUpdate?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setMessages?: React.Dispatch<React.SetStateAction<Message[]>>;
+  load?: () => void;
 }>({});
 
 type EditableRowProps = {
@@ -138,7 +149,7 @@ const EditableRow = ({
   entityEdited,
 }: EditableRowProps) => {
   const keywordIconSize = tw`h-8 w-8`;
-  const { setErrorUpdate, setSuccessUpdate } = useContext(KeywordTableContext);
+  const { setMessages, load } = useContext(KeywordTableContext);
   const env = getEnv();
   const [isEdit, setEdit] = useState(false);
 
@@ -170,19 +181,43 @@ const EditableRow = ({
             env.model.categories
               .updateKeyword(modfiedKeyword)
               .then(() => {
-                if (setSuccessUpdate) {
-                  setSuccessUpdate('Success!');
+                if (setMessages) {
+                  setMessages((prev) => [
+                    {
+                      message: t.t(
+                        lang,
+                        (s) => s.components.keywordTable.success.update
+                      ),
+                      severity: 'success',
+                      key: Date.now(),
+                    } satisfies Message,
+                    ...prev,
+                  ]);
                 }
                 setEntityEdited(!entityEdited);
               })
               .catch((error) => {
                 if (errors.isDuplicateError(error)) {
-                  if (setErrorUpdate) {
-                    setErrorUpdate({ code: error.code, value: error.value });
+                  if (setMessages) {
+                    setMessages((prev) => [
+                      {
+                        message: parseError(error.code, lang, error.value),
+                        severity: 'error',
+                        key: Date.now(),
+                      } satisfies Message,
+                      ...prev,
+                    ]);
                   }
-                } else if (setErrorUpdate) {
-                    setErrorUpdate({ code: 'unknown', value: 'unknown' });
-                  }
+                } else if (setMessages) {
+                  setMessages((prev) => [
+                    {
+                      message: parseError('unknown', lang),
+                      severity: 'error',
+                      key: Date.now(),
+                    } satisfies Message,
+                    ...prev,
+                  ]);
+                }
               });
             setEdit(false);
           }}
@@ -228,7 +263,24 @@ const EditableRow = ({
         confirmModal={t.get(lang, (s) => s.components.keywordTable.modal)}
         tooltipText={t.t(lang, (s) => s.components.keywordTable.labels.delete)}
         iconSx={keywordIconSize}
-        reloadAfterSuccess
+        onSuccess={() => {
+          if (setMessages) {
+            setMessages((prev) => [
+              {
+                message: t.t(
+                  lang,
+                  (s) => s.components.keywordTable.success.delete
+                ),
+                severity: 'success',
+                key: Date.now(),
+              } satisfies Message,
+              ...prev,
+            ]);
+          }
+          if (load) {
+            load();
+          }
+        }}
       />
     </IconContainer>
   );
@@ -240,14 +292,10 @@ const KeywordTable = (props: KeywordTableProps) => {
   const [query, setQuery] = [props.query, props.setQuery];
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
   const [isEntityEdited, setIsEntityEdited] = useState(false);
-  const state = dataLoader([isEntityEdited], () =>
+  const [state, load] = useDataLoader([isEntityEdited], () =>
     env.model.categories.getKeywords(props.abortSignal)
   );
-  const [errorUpdate, setErrorUpdate] = useState<{
-    code: keyof Strings['components']['keywordTable']['errors'];
-    value: string;
-  }>();
-  const [successUpdate, setSuccessUpdate] = useState<string>();
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const handleSort = (newSort: KeywordHeaderID) => {
     const shouldChangeDir = newSort === query.orderBy;
@@ -440,11 +488,7 @@ const KeywordTable = (props: KeywordTableProps) => {
     <AppContext.Consumer>
       {({ lang }) => (
         <>
-          <C.MessageAlert
-            setMessage={setSuccessUpdate}
-            message={successUpdate}
-            severity="success"
-          />
+          <C.MessageAlert setMessages={setMessages} messages={messages} />
           <StyledLoader
             loader={state}
             strings={{
@@ -456,22 +500,14 @@ const KeywordTable = (props: KeywordTableProps) => {
             }}
           >
             {(data) => (
-              <KeywordTableContext.Provider
-                value={{ setErrorUpdate, setSuccessUpdate }}
-              >
-                <C.MessageAlert
-                  setMessage={setErrorUpdate}
-                  message={parseError(
-                    errorUpdate?.code,
-                    'keywordTable',
-                    lang,
-                    errorUpdate?.value
-                  )}
-                  severity="error"
-                />
+              <KeywordTableContext.Provider value={{ setMessages, load }}>
                 <ChipDiv>
                   <TopRowContainer>
-                    <MergeModal type="keyword" />
+                    <MergeModal
+                      type="keyword"
+                      setMessages={setMessages}
+                      load={load}
+                    />
                     <TableHeaderButton
                       size="small"
                       onClick={() => setShouldOpenSettings(!shouldOpenSettings)}

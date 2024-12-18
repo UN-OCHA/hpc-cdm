@@ -1,4 +1,4 @@
-import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
+import { C, CLASSES, combineClasses, type Message } from '@unocha/hpc-ui';
 import { useState } from 'react';
 import { useLocation } from 'react-router';
 import tw from 'twin.macro';
@@ -33,10 +33,18 @@ const LandingContainer = tw.div`
 export default (props: Props) => {
   const rowsPerPageOptions = [10, 25, 50, 100];
 
-  const state: { successMessage?: string; errorMessage?: string } | undefined =
-    useLocation().state;
-  const [successMessage, setSuccessMessage] = useState(state?.successMessage);
-  const [errorMessage, setErrorMessage] = useState(state?.errorMessage);
+  const state: { successMessage?: string } | undefined = useLocation().state;
+  const [messages, setMessages] = useState<Message[]>([
+    ...(state?.successMessage
+      ? [
+          {
+            message: state.successMessage,
+            severity: 'success',
+            key: Date.now(),
+          } satisfies Message,
+        ]
+      : []),
+  ]);
 
   const [query, setQuery] = useQueryParams({
     codec: FLOW_PARAMS_CODEC,
@@ -52,10 +60,11 @@ export default (props: Props) => {
 
   const flowsTableProps: FlowsTableProps = {
     headers: DEFAULT_FLOW_TABLE_HEADERS,
-    rowsPerPageOption: rowsPerPageOptions,
+    rowsPerPageOptions,
     initialValues: FLOWS_FILTER_INITIAL_VALUES,
     query,
     setQuery,
+    setMessages,
   };
 
   return (
@@ -74,16 +83,7 @@ export default (props: Props) => {
               <FlowsTable {...flowsTableProps} />
             </LandingContainer>
           </Container>
-          <C.MessageAlert
-            setMessage={setSuccessMessage}
-            severity="success"
-            message={successMessage}
-          />
-          <C.MessageAlert
-            setMessage={setErrorMessage}
-            severity="error"
-            message={errorMessage}
-          />
+          <C.MessageAlert setMessages={setMessages} messages={messages} />
         </div>
       )}
     </AppContext.Consumer>

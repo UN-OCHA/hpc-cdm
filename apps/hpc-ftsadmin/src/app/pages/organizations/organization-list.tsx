@@ -1,5 +1,6 @@
-import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
+import { C, CLASSES, combineClasses, type Message } from '@unocha/hpc-ui';
 import { useCallback, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import FilterOrganizationsTable, {
@@ -29,6 +30,20 @@ const LandingContainer = tw.div`
 `;
 export default (props: Props) => {
   const rowsPerPageOptions = [10, 25, 50, 100];
+
+  const state: { successMessage?: string } = useLocation().state;
+  const [messages, setMessages] = useState<Message[]>(
+    state?.successMessage
+      ? [
+          {
+            message: state.successMessage,
+            severity: 'success',
+            key: Date.now(),
+          } satisfies Message,
+        ]
+      : []
+  );
+
   const [abortController, setAbortController] = useState<AbortController>(
     new AbortController()
   );
@@ -72,6 +87,7 @@ export default (props: Props) => {
     query,
     setQuery,
     abortSignal: abortController.signal,
+    setMessages,
   };
 
   const env = getEnv();
@@ -97,6 +113,7 @@ export default (props: Props) => {
               <OrganizationTable {...organizationTableProps} />
             </LandingContainer>
           </Container>
+          <C.MessageAlert setMessages={setMessages} messages={messages} />
         </div>
       )}
     </AppContext.Consumer>

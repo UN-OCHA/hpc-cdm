@@ -899,7 +899,7 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v1/organization/id/${params.id}`,
           method: 'GET',
-          resultType: organizations.ORGANIZATION,
+          resultType: organizations.GET_ORGANIZATION_RESULT,
         }),
       createOrganization: (params) =>
         this.call({
@@ -919,7 +919,7 @@ export class LiveModel implements Model {
             type: 'json',
             data: { organization: { ...params } },
           },
-          resultType: organizations.UPDATE_ORGANIZATION_RESULT,
+          resultType: organizations.ORGANIZATION,
         }),
       deleteOrganization: (params) =>
         this.call({

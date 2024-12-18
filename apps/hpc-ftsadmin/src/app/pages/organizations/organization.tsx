@@ -1,6 +1,12 @@
 import { type organizations, type util } from '@unocha/hpc-data';
-import { C, CLASSES, combineClasses, useDataLoader } from '@unocha/hpc-ui';
-import { useParams } from 'react-router';
+import {
+  C,
+  CLASSES,
+  combineClasses,
+  useDataLoader,
+  type Message,
+} from '@unocha/hpc-ui';
+import { useLocation, useParams } from 'react-router';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import OrganizationForm, {
@@ -8,6 +14,8 @@ import OrganizationForm, {
 } from '../../components/organization-form';
 import PageMeta from '../../components/page-meta';
 import { AppContext, getEnv } from '../../context';
+
+import { useState } from 'react';
 
 interface Props {
   className?: string;
@@ -111,11 +119,11 @@ const parseOrganizationToInitialValue = (
   res.notes = notes ?? undefined;
   res.comments = comments ?? undefined;
   if (locations) {
-    const preLocations: Array<FormObjectValue> = locations.map((location) => ({
+    const preLocations: util.FormObjectValue[] = locations.map((location) => ({
       displayLabel: location.name,
       value: location.id,
     }));
-    const locationsWithParent: Array<FormObjectValue> = preLocations.map(
+    const locationsWithParent: util.FormObjectValue[] = preLocations.map(
       (preLocation, index) => {
         const locationParentID = locations[index].parentId;
         if (locationParentID) {
@@ -150,6 +158,21 @@ export default (props: Props) => {
   const { id: idString } = useParams<OrganizationRouteParams>();
   const id = parseInt(idString ?? '', 10);
   const env = getEnv();
+
+  const locationState: { successMessage?: string } | null = useLocation().state;
+
+  const [messages, setMessages] = useState<Message[]>([
+    ...(locationState?.successMessage
+      ? [
+          {
+            message: locationState.successMessage,
+            key: Date.now(),
+            severity: 'success',
+          } satisfies Message,
+        ]
+      : []),
+  ]);
+
   const [state, load] = useDataLoader([id], () =>
     env.model.organizations.getOrganization({ id })
   );
@@ -183,6 +206,7 @@ export default (props: Props) => {
                         )}
                       </InfoText>
                       <OrganizationForm
+                        setMessages={setMessages}
                         initialValues={parseOrganizationToInitialValue(data)}
                         id={id}
                         load={load}
@@ -204,9 +228,10 @@ export default (props: Props) => {
                       (s) => s.components.organizationUpdateCreate.text.create
                     )}
                   </InfoText>
-                  <OrganizationForm />
+                  <OrganizationForm setMessages={setMessages} />
                 </PaddingContainer>
               )}
+              <C.MessageAlert setMessages={setMessages} messages={messages} />
             </LandingContainer>
           </Container>
         </div>

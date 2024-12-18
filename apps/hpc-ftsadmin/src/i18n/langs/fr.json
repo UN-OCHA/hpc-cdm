@@ -187,9 +187,11 @@
           "urlTitle": "Veuillez remplir le champ Titre pour l'URL fournie dans les détails du rapport"
         },
         "createSuccess": "Flux créé avec succès",
+        "updateSuccess": "Flux mis à jour avec succès",
         "deleteFlowWarning": "Êtes-vous sûr de vouloir supprimer ce flux ?",
         "deleteLinkedFlows": "Dissociez tous les flux avant de continuer",
         "deleteSuccess": "Le flux a été supprimé avec succès",
+        "rejectSuccess": "Le flux a été rejeté avec succès",
         "earmarking": "La valeur d'earmarking est vide, souhaitez-vous tout de même enregistrer ?",
         "emergency": "Ce flux a au moins une urgence disponible pour les années et les lieux sélectionnés, comme {emergency}, souhaitez-vous tout de même enregistrer ?",
         "pendingValues": "Veuillez gérer toutes les valeurs en attente",
@@ -323,6 +325,10 @@
         "unknown": "Erreur inattendue lors de la création/mise à jour du mot-clé.",
         "duplicate": "Un mot-clé avec le nom {keywordName} existe déjà. Veuillez choisir un nom différent."
       },
+      "success": {
+        "update": "Mot-clé mis à jour avec succès",
+        "delete": "Mot-clé supprimé avec succès"
+      },
       "labels": {
         "newName": "Nouveau Nom",
         "edit": "Modifier",
@@ -344,6 +350,9 @@
       "error": {
         "conflict": "Il y a eu un conflit lors de la fusion de {entities}",
         "unknown": "Il y a eu une erreur inconnue lors de la fusion de {entities}"
+      },
+      "success": {
+        "merge": "Fusion de {entities} réussie"
       },
       "organization": {
         "singular": "Organisation",
@@ -470,6 +479,11 @@
         "text": "Êtes-vous sûr de vouloir supprimer ce flux ? Toutes les informations seront supprimées.",
         "principalButton": "Supprimer",
         "secondaryButton": "Annuler"
+      },
+      "success": {
+        "create": "Organisation {organizationName} créée avec succès",
+        "update": "Organisation {organizationName} mise à jour avec succès",
+        "delete": "Organisation {organizationName} supprimée avec succès"
       },
       "text": {
         "collectiveOrganization": "Le paramètre d'organisation collective indique que l'organisation est un \"remplaçant\" pour une ou plusieurs organisations du même type d'organisation (par exemple, \"Organisations de la Croix-Rouge\"), et est utilisé lorsque les organisations spécifiques ne sont pas connues ou doivent être masquées à des fins de sécurité",

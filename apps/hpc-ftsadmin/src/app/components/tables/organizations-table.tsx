@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 import { type organizations } from '@unocha/hpc-data';
-import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
+import { C, CLASSES, type Message, useDataLoader } from '@unocha/hpc-ui';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import tw from 'twin.macro';
@@ -65,6 +65,7 @@ export interface OrganizationTableProps {
   query: OrganizationQuery;
   setQuery: SetQuery<OrganizationQuery>;
   abortSignal: AbortSignal;
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 }
 
 const OrganizationTable = (props: OrganizationTableProps) => {
@@ -83,7 +84,7 @@ const OrganizationTable = (props: OrganizationTableProps) => {
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
   const navigate = useNavigate();
 
-  const state = dataLoader([query], () =>
+  const [state, load] = useDataLoader([query], () =>
     env.model.organizations.searchOrganizations({
       search: {
         limit: query.rowsPerPage,
@@ -410,7 +411,11 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                         color="neutral"
                       />
                     </ButtonWrapper>
-                    <MergeModal type="organization" />
+                    <MergeModal
+                      type="organization"
+                      setMessages={props.setMessages}
+                      load={load}
+                    />
                     <TableHeaderButton
                       size="small"
                       onClick={() => setShouldOpenSettings(!shouldOpenSettings)}

@@ -1,5 +1,5 @@
 import { Box, Modal } from '@mui/material';
-import { C } from '@unocha/hpc-ui';
+import { C, type Message } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import { fnCategories, fnOrganizations } from '../utils/fn-promises';
 import { getContext, getEnv } from '../context';
@@ -13,10 +13,11 @@ import validateForm from '../utils/form-validation';
 import { valueToInteger } from '../utils/map-functions';
 import { useNavigate } from 'react-router';
 import { LanguageKey, t } from '../../i18n';
-import { Strings } from '../../i18n/iface';
 
 type MergeModalProps = {
   type: 'organization' | 'keyword';
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  load: () => void;
 };
 type OrganizationMergeModalValues = {
   mergingEntities: Array<FormObjectValue>;
@@ -55,7 +56,6 @@ const isOrganizationValues = (
 ): values is OrganizationMergeModalValues =>
   Array.isArray(values.mergingEntities);
 
-const reloadPage = () => window.location.reload();
 const parseEntityString = (
   value: string,
   type: 'organization' | 'keyword',
@@ -96,7 +96,7 @@ const ConfirmationText = ({
   return <p>{text}</p>;
 };
 const MergeModal = (props: MergeModalProps) => {
-  const { type } = props;
+  const { type, setMessages, load } = props;
   const navigate = useNavigate();
 
   const ORGANIZATION_INITIAL_VALUES: OrganizationMergeModalValues = {
@@ -142,8 +142,6 @@ const MergeModal = (props: MergeModalProps) => {
   const [confirmValues, setConfirmValues] = React.useState(
     isOrganizationType ? ORGANIZATION_INITIAL_VALUES : KEYWORD_INITIAL_VALUES
   );
-  const [error, setError] =
-    React.useState<keyof Strings['components']['mergeModal']['error']>();
 
   const confirmStep = (
     values: OrganizationMergeModalValues | KeywordMergeModalValues
@@ -173,17 +171,39 @@ const MergeModal = (props: MergeModalProps) => {
           },
         })
         .then(() => {
-          setLoading(false);
-          navigate(paths.organization(receivingOrganizationID));
+          navigate(paths.organization(receivingOrganizationID), {
+            state: {
+              successMessage: t.t(
+                lang,
+                (s) => s.components.mergeModal.success.merge,
+                {
+                  entities: 'organizations',
+                }
+              ),
+            },
+          });
         })
         .catch((err) => {
-          setLoading(false);
-          if (errors.isConflictError(err)) {
-            setError('conflict');
-          } else {
-            setError('unknown');
-          }
-        });
+          setMessages((prev) => [
+            {
+              message: parseEntityString(
+                t.t(
+                  lang,
+                  (s) =>
+                    s.components.mergeModal.error[
+                      errors.isConflictError(err) ? 'conflict' : 'unknown'
+                    ]
+                ),
+                type,
+                lang
+              ),
+              severity: 'error',
+              key: Date.now(),
+            } satisfies Message,
+            ...prev,
+          ]);
+        })
+        .finally(() => setLoading(false));
     } else {
       if (!isKeywordValues(values)) {
         return;
@@ -198,17 +218,39 @@ const MergeModal = (props: MergeModalProps) => {
           receivingKeywordID: valueToInteger(values.receivingEntity.value),
         })
         .then(() => {
-          setLoading(false);
-          reloadPage();
+          load();
+          setMessages((prev) => [
+            {
+              message: t.t(lang, (s) => s.components.mergeModal.success.merge, {
+                entities: 'keywords',
+              }),
+              severity: 'success',
+              key: Date.now(),
+            } satisfies Message,
+            ...prev,
+          ]);
         })
         .catch((err) => {
-          setLoading(false);
-          if (errors.isConflictError(err)) {
-            setError('conflict');
-          } else {
-            setError('unknown');
-          }
-        });
+          setMessages((prev) => [
+            {
+              message: parseEntityString(
+                t.t(
+                  lang,
+                  (s) =>
+                    s.components.mergeModal.error[
+                      errors.isConflictError(err) ? 'conflict' : 'unknown'
+                    ]
+                ),
+                type,
+                lang
+              ),
+              severity: 'error',
+              key: Date.now(),
+            } satisfies Message,
+            ...prev,
+          ]);
+        })
+        .finally(() => setLoading(false));
     }
   };
   return (
@@ -277,6 +319,7 @@ const MergeModal = (props: MergeModalProps) => {
                           ? [values.receivingEntity]
                           : undefined
                       }
+                      isAutocompleteAPI={isOrganizationType}
                       required
                     />
                     <EastIcon /> {/** TODO: Support rtl languages */}
@@ -295,7 +338,7 @@ const MergeModal = (props: MergeModalProps) => {
                         type,
                         lang
                       )}
-                      required
+                      isAutocompleteAPI={isOrganizationType}
                       removeOptions={
                         isOrganizationValues(values)
                           ? values.mergingEntities
@@ -303,6 +346,7 @@ const MergeModal = (props: MergeModalProps) => {
                           ? [values.mergingEntities]
                           : undefined
                       }
+                      required
                     />
                   </Box>
                   <Box sx={tw`text-end mt-4`}>
@@ -317,22 +361,6 @@ const MergeModal = (props: MergeModalProps) => {
                 </Box>
 
                 <Box sx={!isFirstStep ? tw`w-full` : tw`hidden`}>
-                  <C.MessageAlert
-                    setMessage={setError}
-                    message={
-                      error
-                        ? parseEntityString(
-                            t.t(
-                              lang,
-                              (s) => s.components.mergeModal.error[error]
-                            ),
-                            type,
-                            lang
-                          )
-                        : undefined
-                    }
-                    severity="error"
-                  />
                   <ConfirmationText lang={lang} {...confirmValues} />
                   <Box sx={tw`flex justify-end gap-x-4`}>
                     <C.Button

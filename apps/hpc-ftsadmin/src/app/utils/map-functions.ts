@@ -5,7 +5,7 @@ import {
   type util,
 } from '@unocha/hpc-data';
 import dayjs from 'dayjs';
-import { type LanguageKey, t } from '../../i18n';
+import { type LanguageKey } from '../../i18n';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
 
 export const valueToInteger = (value: string | number) => {
@@ -91,34 +91,4 @@ export const fileAssetEntityToFileUploadResult = (
     self,
     file: `/public${self}`,
   };
-};
-
-export const parseError = (
-  error: 'unknown' | 'duplicate' | 'conflict' | undefined,
-  component: 'organizationUpdateCreate' | 'keywordTable',
-  lang: LanguageKey,
-  errorValue?: string
-) => {
-  if (!error) {
-    return;
-  }
-  const translatedError = t.t(lang, (s) => {
-    if (component === 'keywordTable' && error !== 'conflict') {
-      return s.components[component].errors[error];
-    } else if (component === 'organizationUpdateCreate') {
-      return s.components[component].errors[error];
-    }
-    return s.components[component].errors.unknown;
-  });
-
-  if (error === 'duplicate' && errorValue) {
-    return translatedError.replace(
-      `${
-        component === 'keywordTable' ? '{keywordName}' : '{organizationName}'
-      }`,
-      errorValue
-    );
-  }
-
-  return translatedError;
 };

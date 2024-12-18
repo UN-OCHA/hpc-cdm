@@ -3,12 +3,11 @@ import tw from 'twin.macro';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import { errors, util, type organizations } from '@unocha/hpc-data';
-import { C } from '@unocha/hpc-ui';
+import { C, type Message } from '@unocha/hpc-ui';
 import * as io from 'io-ts';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router';
 import { t } from '../../i18n';
-import { type Strings } from '../../i18n/iface';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 import {
@@ -17,8 +16,9 @@ import {
   fnOrganizations,
 } from '../utils/fn-promises';
 import validateForm from '../utils/form-validation';
-import { parseError, valueToInteger } from '../utils/map-functions';
+import { valueToInteger } from '../utils/map-functions';
 interface Props {
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   id?: number;
   load?: () => void;
   initialValues?: AddEditOrganizationValues;
@@ -120,16 +120,16 @@ const formToCreate = (
   return res;
 };
 
-export const OrganizationForm = ({ initialValues, id, load }: Props) => {
+export const OrganizationForm = ({
+  setMessages,
+  initialValues,
+  id,
+  load,
+}: Props) => {
   const { lang, env } = useContext(AppContext);
   const environment = env();
   const navigate = useNavigate();
   const type: 'update' | 'create' = id ? 'update' : 'create';
-  const [formError, setFormError] =
-    useState<
-      keyof Strings['components']['organizationUpdateCreate']['errors']
-    >();
-  const [errorValue, setErrorValue] = useState('');
 
   const FORM_VALIDATION = io.type({
     name: util.NON_EMPTY_STRING,
@@ -155,14 +155,44 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
     ),
   };
 
-  const errorHandling = (err: Error) => {
-    if (errors.isDuplicateError(err)) {
-      setErrorValue(err.value);
-      setFormError(err.code);
-    } else if (errors.isConflictError(err)) {
-      setFormError(err.code);
+  const errorHandling = (error: Error) => {
+    if (errors.isDuplicateError(error)) {
+      setMessages((prev) => [
+        {
+          message: t.t(
+            lang,
+            (s) => s.components.organizationUpdateCreate.errors[error.code],
+            { organizationName: error.value }
+          ),
+          severity: 'error',
+          key: Date.now(),
+        },
+        ...prev,
+      ]);
+    } else if (errors.isConflictError(error)) {
+      setMessages((prev) => [
+        {
+          message: t.t(
+            lang,
+            (s) => s.components.organizationUpdateCreate.errors[error.code]
+          ),
+          severity: 'error',
+          key: Date.now(),
+        },
+        ...prev,
+      ]);
     } else {
-      setFormError('unknown');
+      setMessages((prev) => [
+        {
+          message: t.t(
+            lang,
+            (s) => s.components.organizationUpdateCreate.errors.unknown
+          ),
+          severity: 'error',
+          key: Date.now(),
+        },
+        ...prev,
+      ]);
     }
   };
 
@@ -170,13 +200,35 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
     if (id && load) {
       await environment.model.organizations
         .updateOrganization(formToUpdate(values, id))
-        .finally(load)
+        .then(() => {
+          load();
+          setMessages((prev) => [
+            {
+              message: t.t(
+                lang,
+                (s) => s.components.organizationUpdateCreate.success.update,
+                { organizationName: values.name }
+              ),
+              severity: 'success',
+              key: Date.now(),
+            },
+            ...prev,
+          ]);
+        })
         .catch((error) => errorHandling(error));
     } else {
       await environment.model.organizations
         .createOrganization(formToCreate(values))
         .then((org) => {
-          navigate(paths.organization(org.id));
+          navigate(paths.organization(org.id), {
+            state: {
+              successMessage: t.t(
+                lang,
+                (s) => s.components.organizationUpdateCreate.success.create,
+                { organizationName: values.name }
+              ),
+            },
+          });
         })
         .catch((error) => errorHandling(error));
     }
@@ -192,16 +244,6 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
     >
       {({ initialValues }) => (
         <Form>
-          <C.MessageAlert
-            setMessage={setFormError}
-            message={parseError(
-              formError,
-              'organizationUpdateCreate',
-              lang,
-              errorValue
-            )}
-            severity="error"
-          />
           <C.TextFieldWrapper
             label={t.t(
               lang,
@@ -352,12 +394,24 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
                   lang,
                   (s) => s.components.organizationUpdateCreate.modal
                 )}
-                redirectAfterFetch={paths.organizations()}
+                redirectAfterFetch={{
+                  to: paths.organizations(),
+                  options: {
+                    state: {
+                      successMessage: t.t(
+                        lang,
+                        (s) =>
+                          s.components.organizationUpdateCreate.success.delete,
+                        { organizationName: initialValues.name }
+                      ),
+                    },
+                  },
+                }}
               />
             )}
             <AlignButton>
               <C.ButtonSubmit
-                color={formError ? 'secondary' : 'primary'}
+                color="primary"
                 text={t.t(
                   lang,
                   (s) => s.components.organizationUpdateCreate[type]

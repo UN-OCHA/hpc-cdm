@@ -34,7 +34,9 @@ import List from './lib/components/list';
 import ListItem from './lib/components/list-item';
 import Loader from './lib/components/loader';
 import MainNavigation from './lib/components/main-navigation';
-import MessageAlert from './lib/components/message-alert';
+import MessageAlert, {
+  type Message as MessageExport,
+} from './lib/components/message-alert';
 import NotFound from './lib/components/not-found';
 import PageTitle from './lib/components/page-title';
 import SearchFilter from './lib/components/search-filter';
@@ -99,6 +101,7 @@ export type AutocompleteSelectProps = AutocompleteSelectExportProps;
 export type NumberFieldProps = NumberFieldExportProps;
 export type RadioButtonFieldProps = RadioButtonFieldExportProps;
 export type DatePickerProps = DatePickerExportProps;
+export type Message = MessageExport;
 
 export { COMPONENTS as C, ICONS };
 

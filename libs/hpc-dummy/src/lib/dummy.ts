@@ -511,7 +511,7 @@ export class Dummy {
             this.data.keywords = this.data.keywords.filter(
               (keyword) => keyword.id !== id
             );
-            return undefined;
+            return { status: 'ok' };
           }
         ),
         updateKeyword: dummyEndpoint(
@@ -532,8 +532,7 @@ export class Dummy {
             /**
              * TODO: Implement mocked logic for mergeKeywords
              */
-
-            return undefined;
+            return { status: 'ok' };
           }
         ),
       },
@@ -975,13 +974,27 @@ export class Dummy {
           async ({
             id,
           }: organizations.GetOrganizationParams): Promise<organizations.GetOrganizationResult> => {
+            const date = new Date().toISOString();
             const organization = this.data.organizations.find(
               (organization) => organization.id === id
             );
             if (!organization) {
               throw new errors.NotFoundError();
             }
-            return organization;
+            const user = this.data.users.find(
+              (u) => u.id === this.data.currentUser
+            )?.user.name;
+
+            return {
+              ...organization,
+              participantLog: [
+                {
+                  participant: user ? { name: user } : null,
+                  createdAt: date,
+                  editType: 'update',
+                },
+              ],
+            };
           }
         ),
         createOrganization: dummyEndpoint(
@@ -1085,19 +1098,7 @@ export class Dummy {
               updatedAt: date,
             };
             this.data.organizations[organizationIndex] = parsedOrganization;
-            const user = this.data.users.find(
-              (u) => u.id === this.data.currentUser
-            )?.user.name;
-            return {
-              ...parsedOrganization,
-              participantLog: [
-                {
-                  participant: user ? { name: user } : null,
-                  createdAt: date,
-                  editType: 'update',
-                },
-              ],
-            };
+            return parsedOrganization;
           }
         ),
         deleteOrganization: dummyEndpoint(
@@ -1113,7 +1114,7 @@ export class Dummy {
             }
             //  Remove organization
             this.data.organizations.splice(index, 1);
-            return undefined;
+            return { status: 'ok' };
           }
         ),
         mergeOrganizations: dummyEndpoint(

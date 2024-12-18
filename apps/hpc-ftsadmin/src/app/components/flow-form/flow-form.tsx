@@ -35,7 +35,7 @@ import {
   fnProjects,
   fnUsageYears,
 } from '../../utils/fn-promises';
-import { C } from '@unocha/hpc-ui';
+import { C, type Message } from '@unocha/hpc-ui';
 import NumberFieldReview from './inputs/number-field-pending-review';
 import TextFieldReview from './inputs/text-field-pending-review';
 import { MdAdd, MdClose, MdOutlineSearch } from 'react-icons/md';
@@ -79,7 +79,7 @@ import { LanguageKey, t } from '../../../i18n';
 import { FaUserSecret } from 'react-icons/fa';
 
 type FlowFormProps = {
-  setError: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   load: () => void;
   inactiveReasons: categories.GetCategoriesResult;
   flowType: FormObjectValue[];
@@ -389,7 +389,7 @@ export const FlowForm = (props: FlowFormProps) => {
   const navigate = useNavigate();
 
   const {
-    setError,
+    setMessages,
     load,
     initialValues,
     flow,
@@ -446,7 +446,7 @@ export const FlowForm = (props: FlowFormProps) => {
     if (validateIfFlow && !flow) {
       return false;
     }
-    if (!(await validateFlowForWarnings(values, setError, env, lang))) {
+    if (!(await validateFlowForWarnings(values, setMessages, env, lang))) {
       return false;
     }
     if (
@@ -454,9 +454,17 @@ export const FlowForm = (props: FlowFormProps) => {
       pendingValues &&
       pendingValuesHandled !== Object.keys(pendingValues).length
     ) {
-      setError(
-        t.t(lang, (s) => s.components.flowForm.submitValidation.pendingValues)
-      );
+      setMessages((prev) => [
+        {
+          message: t.t(
+            lang,
+            (s) => s.components.flowForm.submitValidation.pendingValues
+          ),
+          severity: 'error',
+          key: Date.now(),
+        },
+        ...prev,
+      ]);
       return false;
     }
     return true;
@@ -523,12 +531,17 @@ export const FlowForm = (props: FlowFormProps) => {
     }
     if (flow?.id) {
       if (values.isInactive && !validateFlowIsUnlinked(values)) {
-        setError(
-          t.t(
-            lang,
-            (s) => s.components.flowForm.submitValidation.deleteLinkedFlows
-          )
-        );
+        setMessages((prev) => [
+          {
+            message: t.t(
+              lang,
+              (s) => s.components.flowForm.submitValidation.deleteLinkedFlows
+            ),
+            severity: 'error',
+            key: Date.now(),
+          },
+          ...prev,
+        ]);
         setSubmitLoading(false);
         return;
       }
@@ -544,24 +557,36 @@ export const FlowForm = (props: FlowFormProps) => {
           },
         })
         .then(() => {
+          setMessages((prev) => [
+            {
+              message: t.t(
+                lang,
+                (s) => s.components.flowForm.submitValidation.updateSuccess
+              ),
+              severity: 'success',
+              key: Date.now(),
+            },
+            ...prev,
+          ]);
           load();
         })
         .catch((err) => {
-          if (errors.isDataConsistencyError(err)) {
-            setError(handleDataConsistencyError(err));
-            return;
-          }
-          const errorMessage = err.json.message;
-          if (typeof errorMessage === 'string') {
-            setError(errorMessage);
-          } else {
-            setError(
-              t.t(
-                lang,
-                (s) => s.components.flowForm.submitValidation.unknownError
-              )
-            );
-          }
+          const errorMessage = err.json?.message;
+          setMessages((prev) => [
+            {
+              message: errors.isDataConsistencyError(err)
+                ? handleDataConsistencyError(err)
+                : typeof errorMessage === 'string'
+                ? errorMessage
+                : t.t(
+                    lang,
+                    (s) => s.components.flowForm.submitValidation.unknownError
+                  ),
+              severity: 'error',
+              key: Date.now(),
+            },
+            ...prev,
+          ]);
         })
         .finally(() => setSubmitLoading(false));
     } else {
@@ -578,20 +603,24 @@ export const FlowForm = (props: FlowFormProps) => {
           });
         })
         .catch((err) => {
+          const errorMessage = err.json?.message;
           if (errors.isDataConsistencyError(err)) {
-            setError(handleDataConsistencyError(err));
+            setMessages((prev) => [
+              {
+                message: errors.isDataConsistencyError(err)
+                  ? handleDataConsistencyError(err)
+                  : typeof errorMessage === 'string'
+                  ? errorMessage
+                  : t.t(
+                      lang,
+                      (s) => s.components.flowForm.submitValidation.unknownError
+                    ),
+                severity: 'error',
+                key: Date.now(),
+              },
+              ...prev,
+            ]);
             return;
-          }
-          const errorMessage = err.json.message;
-          if (typeof errorMessage === 'string') {
-            setError(errorMessage);
-          } else {
-            setError(
-              t.t(
-                lang,
-                (s) => s.components.flowForm.submitValidation.unknownError
-              )
-            );
           }
         })
         .finally(() => setSubmitLoading(false));
@@ -641,12 +670,17 @@ export const FlowForm = (props: FlowFormProps) => {
       return;
     }
     if (!validateFlowIsUnlinked(values) || !flow) {
-      setError(
-        t.t(
-          lang,
-          (s) => s.components.flowForm.submitValidation.deleteLinkedFlows
-        )
-      );
+      setMessages((prev) => [
+        {
+          message: t.t(
+            lang,
+            (s) => s.components.flowForm.submitValidation.deleteLinkedFlows
+          ),
+          severity: 'error',
+          key: Date.now(),
+        },
+        ...prev,
+      ]);
       setDeleteLoading(false);
       return;
     }
@@ -668,17 +702,21 @@ export const FlowForm = (props: FlowFormProps) => {
       .catch((err) => {
         console.error(err);
         // TODO: Verify err.json.message is a possible error
-        const errorMessage = err.json.message;
-        if (typeof errorMessage === 'string') {
-          setError(errorMessage);
-        } else {
-          setError(
-            t.t(
-              lang,
-              (s) => s.components.flowForm.submitValidation.unknownError
-            )
-          );
-        }
+        const errorMessage = err.json?.message;
+        setMessages((prev) => [
+          {
+            message:
+              typeof errorMessage === 'string'
+                ? errorMessage
+                : t.t(
+                    lang,
+                    (s) => s.components.flowForm.submitValidation.unknownError
+                  ),
+            severity: 'error',
+            key: Date.now(),
+          },
+          ...prev,
+        ]);
       })
       .finally(() => setDeleteLoading(false));
   };
@@ -702,9 +740,17 @@ export const FlowForm = (props: FlowFormProps) => {
     );
 
     if (!rejected) {
-      setError(
-        t.t(lang, (s) => s.components.flowForm.rejectFlow.categoryNotFound)
-      );
+      setMessages((prev) => [
+        {
+          message: t.t(
+            lang,
+            (s) => s.components.flowForm.rejectFlow.categoryNotFound
+          ),
+          severity: 'error',
+          key: Date.now(),
+        },
+        ...prev,
+      ]);
       return;
     }
 
@@ -729,20 +775,35 @@ export const FlowForm = (props: FlowFormProps) => {
         },
       })
       .then(() => {
+        setMessages((prev) => [
+          {
+            message: t.t(
+              lang,
+              (s) => s.components.flowForm.submitValidation.rejectSuccess
+            ),
+            severity: 'success',
+            key: Date.now(),
+          },
+          ...prev,
+        ]);
         load();
       })
       .catch((err) => {
-        const errorMessage = err.json.message;
-        if (typeof errorMessage === 'string') {
-          setError(errorMessage);
-        } else {
-          setError(
-            t.t(
-              lang,
-              (s) => s.components.flowForm.submitValidation.unknownError
-            )
-          );
-        }
+        const errorMessage = err.json?.message;
+        setMessages((prev) => [
+          {
+            message:
+              typeof errorMessage === 'string'
+                ? errorMessage
+                : t.t(
+                    lang,
+                    (s) => s.components.flowForm.submitValidation.unknownError
+                  ),
+            severity: 'error',
+            key: Date.now(),
+          },
+          ...prev,
+        ]);
       })
       .finally(() => setRejectLoading(false));
   };

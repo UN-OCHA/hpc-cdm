@@ -1,4 +1,4 @@
-import { C, useDataLoader } from '@unocha/hpc-ui';
+import { C, type Message, useDataLoader } from '@unocha/hpc-ui';
 import { FlowForm } from '../../components/flow-form/flow-form';
 import { useState } from 'react';
 import { useLocation, useParams } from 'react-router';
@@ -57,8 +57,17 @@ export default () => {
         flowFormCopyValuesName?: string;
       }
     | undefined = useLocation().state;
-  const [error, setError] = useState<string | undefined>();
-  const [success, setSuccess] = useState(historyState?.successMessage);
+  const [messages, setMessages] = useState<Message[]>([
+    ...(historyState?.successMessage
+      ? [
+          {
+            message: historyState.successMessage,
+            severity: 'success',
+            key: Date.now(),
+          } satisfies Message,
+        ]
+      : []),
+  ]);
   const { id: idString, version } = useParams<FlowRouteParams>();
 
   const isPending = (flow: flows.GetFlowResult): flow is FlowRestPending =>
@@ -178,7 +187,7 @@ export default () => {
                     </LegacyId>
                   )}
                   <FlowForm
-                    setError={setError}
+                    setMessages={setMessages}
                     initialValues={
                       isPending(flow)
                         ? parseToFlowForm(
@@ -200,16 +209,7 @@ export default () => {
                 </PaddingContainer>
               )}
             </C.Loader>
-            <C.MessageAlert
-              setMessage={setError}
-              message={error}
-              severity="error"
-            />
-            <C.MessageAlert
-              setMessage={setSuccess}
-              message={success}
-              severity="success"
-            />
+            <C.MessageAlert setMessages={setMessages} messages={messages} />
           </>
         )}
       </AppContext.Consumer>
@@ -268,7 +268,7 @@ export default () => {
                   </C.PageTitle>
                   <FlowForm
                     {...flowFormProps}
-                    setError={setError}
+                    setMessages={setMessages}
                     load={load}
                     initialValues={
                       historyState?.flowFormCopyValues
@@ -279,16 +279,7 @@ export default () => {
                 </PaddingContainer>
               )}
             </C.Loader>
-            <C.MessageAlert
-              setMessage={setError}
-              message={error}
-              severity="error"
-            />
-            <C.MessageAlert
-              setMessage={setSuccess}
-              message={success}
-              severity="success"
-            />
+            <C.MessageAlert setMessages={setMessages} messages={messages} />
           </>
         )}
       </AppContext.Consumer>

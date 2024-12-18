@@ -4,7 +4,7 @@ import { IconButton, Modal, type SvgIconProps, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import * as React from 'react';
-import { useNavigate } from 'react-router';
+import { type NavigateOptions, type To, useNavigate } from 'react-router';
 import tw from 'twin.macro';
 import { Button } from './button';
 
@@ -19,8 +19,8 @@ interface AsyncIconButtonProps {
     secondaryButton?: string;
   };
   iconSx?: React.CSSProperties;
-  redirectAfterFetch?: string;
-  reloadAfterSuccess?: boolean;
+  redirectAfterFetch?: { to: To; options?: NavigateOptions };
+  onSuccess?: () => void;
 }
 
 const ModalPaper = tw.div`
@@ -48,7 +48,7 @@ const AsyncIconButton = ({
   confirmModal,
   iconSx,
   redirectAfterFetch,
-  reloadAfterSuccess,
+  onSuccess,
 }: AsyncIconButtonProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
@@ -76,21 +76,25 @@ const AsyncIconButton = ({
       setHasError(false);
       setIsLoading(true);
       setConfirmed(false);
-      try {
-        await fnPromise();
-        setIsSuccess(true);
-        setIsLoading(false);
-        if (redirectAfterFetch) {
-          navigate(redirectAfterFetch);
-        }
-        if (reloadAfterSuccess) {
-          globalThis.location.reload();
-        }
-      } catch (error) {
-        console.error(error);
-        setHasError(true);
-        setIsLoading(false);
-      }
+
+      fnPromise()
+        .then(() => {
+          setIsSuccess(true);
+          if (redirectAfterFetch) {
+            const { to, options } = redirectAfterFetch;
+            navigate(to, options);
+          }
+          if (onSuccess) {
+            onSuccess();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          setHasError(true);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   };
 
