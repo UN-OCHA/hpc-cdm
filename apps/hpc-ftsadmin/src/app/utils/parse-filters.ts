@@ -57,7 +57,7 @@ export type FlowStatusType =
   | 'pass_through'
   | 'standard';
 
-/**
+/*
  * Type guard functions
  */
 
@@ -247,8 +247,8 @@ export const parseFormFilters = <
         JSON.stringify(parsedFormValue[key]?.value) !==
         JSON.stringify(fieldValue)
       ) {
-        // Type missmatch is due to the typing is only accepting
-        // string values for keys, instead of `string | number | symbol`
+        //  Type missmatch is due to the typing is only accepting
+        //  string values for keys, instead of `string | number | symbol`
         parsedFormValue[key as unknown as T] = {
           displayValue,
           value: fieldValue,
