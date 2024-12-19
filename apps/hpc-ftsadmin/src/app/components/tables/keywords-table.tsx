@@ -173,13 +173,13 @@ const EditableRow = ({
             public: row.description === 'public',
           }}
           onSubmit={(values) => {
-            const modfiedKeyword: categories.Keyword = {
+            const modifiedKeyword: categories.Keyword = {
               ...row,
               name: values.keyword,
               description: values.public ? 'public' : null,
             };
             env.model.categories
-              .updateKeyword(modfiedKeyword)
+              .updateKeyword(modifiedKeyword)
               .then(() => {
                 if (setMessages) {
                   setMessages((prev) => [

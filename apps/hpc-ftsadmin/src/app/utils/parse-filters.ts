@@ -169,7 +169,7 @@ export const decodeFilters = <T extends Filters>(
   } catch (error) {
     console.warn(
       error,
-      'Error parsing query to JSON. Reseting to initial Values...'
+      'Error parsing query to JSON. Resetting to initial Values...'
     );
     return initialValues;
   }
@@ -247,7 +247,7 @@ export const parseFormFilters = <
         JSON.stringify(parsedFormValue[key]?.value) !==
         JSON.stringify(fieldValue)
       ) {
-        //  Type missmatch is due to the typing is only accepting
+        //  Type miss-match is due to the typing is only accepting
         //  string values for keys, instead of `string | number | symbol`
         parsedFormValue[key as unknown as T] = {
           displayValue,
