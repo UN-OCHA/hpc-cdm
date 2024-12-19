@@ -23,7 +23,7 @@ export interface TextFieldWrapperProps {
    *  If `onChange()` is passed, it will replace Formik's
    *  `onChange()` prop
    */
-  onChange?: (...args: any[]) => unknown;
+  onChange?: (...args: unknown[]) => unknown;
   /** This prop is used only if we are not using
    *  `Formik`, if you are using `Formik`, you don't need
    *  to pass this prop.
