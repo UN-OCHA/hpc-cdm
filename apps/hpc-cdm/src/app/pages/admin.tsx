@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router';
 
 import { CLASSES, C } from '@unocha/hpc-ui';
 
+import PageNotFound from '../pages/not-found';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
@@ -15,7 +16,7 @@ const PageAdmin = () => {
       {({ lang, access }) => {
         const { canModifyGlobalUserAccess } = access().permissions;
         if (!canModifyGlobalUserAccess) {
-          return <Navigate to={paths.home()} />;
+          return <PageNotFound />;
         }
         return (
           <div className={CLASSES.CONTAINER.CENTERED}>
