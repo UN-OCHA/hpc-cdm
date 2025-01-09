@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IconType } from 'react-icons/lib';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import { combineClasses } from '../classes';
 import { styled } from '../theme';

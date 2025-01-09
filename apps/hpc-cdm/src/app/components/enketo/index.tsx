@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { reportingWindows, errors } from '@unocha/hpc-data';
 import { styled } from '@unocha/hpc-ui';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import dayjs from '../../../libraries/dayjs';
 

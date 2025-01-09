@@ -82,7 +82,7 @@ const AsyncAutocompleteSelect = ({
     return () => {
       active = false;
     };
-  }, [loading, inputValue, isAutocompleteAPI, data, fnPromise]);
+  }, [open, inputValue]);
 
   useEffect(() => {
     if (!open && isAutocompleteAPI) {

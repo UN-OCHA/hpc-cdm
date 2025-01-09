@@ -8,7 +8,7 @@ import {
   ThemeProvider,
 } from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import env, { Environment } from '../environments/environment';
@@ -16,15 +16,8 @@ import { LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
 import PageMeta from './components/page-meta';
 import { AppContext, contextFromEnv } from './context';
 import { Z_INDEX } from './layout';
-import PageFlowsList from './pages/flows/flows-list';
-import PageKeywordsList from './pages/keywords/keyword-list';
-import PageNotFound from './pages/not-found';
 import PageNotLoggedIn from './pages/not-logged-in';
-import PagePendingFlowsList from './pages/flows/pending-flows-list';
-import PageOrganizationsList from './pages/organizations/organization-list';
-import PageOrganization from './pages/organizations/organization';
 import * as paths from './paths';
-import { RouteParamsValidator } from './components/route-params-validator';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
   const warning = env.getDevHeaderWarning(lang);
@@ -180,42 +173,7 @@ export const App = () => {
                             : []),
                         ]}
                       />
-                      <Routes>
-                        <Route
-                          path={paths.home()}
-                          element={<Navigate to={paths.flows()} />}
-                        />
-                        <Route
-                          path={paths.flows()}
-                          element={<PageFlowsList />}
-                        />
-                        <Route
-                          path={paths.pendingFlows()}
-                          element={<PagePendingFlowsList />}
-                        />
-                        <Route
-                          path={paths.organizations()}
-                          element={<PageOrganizationsList />}
-                        />
-                        <Route
-                          path={paths.organizationRoot()}
-                          element={
-                            <RouteParamsValidator
-                              element={<PageOrganization />}
-                              routeParam="id"
-                            />
-                          }
-                        />
-                        <Route
-                          path={paths.addOrganization()}
-                          element={<PageOrganization />}
-                        />
-                        <Route
-                          path={paths.keywords()}
-                          element={<PageKeywordsList />}
-                        />
-                        <Route element={<PageNotFound />} />
-                      </Routes>
+                      <Outlet />
                     </LoggedInContainer>
                   ) : (
                     <>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, useParams } from 'react-router-dom';
+import { Route, Routes, useParams } from 'react-router';
 
 import { C, styled } from '@unocha/hpc-ui';
 import { operations } from '@unocha/hpc-data';

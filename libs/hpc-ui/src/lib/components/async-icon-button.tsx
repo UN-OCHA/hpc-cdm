@@ -6,7 +6,7 @@ import tw from 'twin.macro';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { IconButton, Modal, SvgIconProps, Tooltip } from '@mui/material';
 import { Button } from './button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 interface AsyncIconButtonProps {
   fnPromise: () => Promise<void | unknown>;

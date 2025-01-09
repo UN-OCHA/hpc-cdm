@@ -3,7 +3,7 @@ import { t } from '../../../i18n';
 import PageMeta from '../../components/page-meta';
 import { AppContext, getEnv } from '../../context';
 import tw from 'twin.macro';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import OrganizationForm, {
   AddEditOrganizationValues,
 } from '../../components/organization-form';
