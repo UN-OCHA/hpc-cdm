@@ -18,6 +18,7 @@ import {
   fnPlans,
   fnProjects,
   fnUsageYears,
+  usageYearFirstViewCondition,
 } from '../../utils/fn-promises';
 import validateForm from '../../utils/form-validation';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
@@ -304,8 +305,9 @@ export const FilterFlowsTable = (props: Props) => {
                 )}
                 name="sourceUsageYears"
                 fnPromise={() => fnUsageYears(environment)}
-                isMulti
+                firstViewCondition={usageYearFirstViewCondition}
                 isAutocompleteAPI={false}
+                isMulti
               />
               <C.Section
                 title={t.t(lang, (s) => s.components.flowsFilter.showMore)}
@@ -383,8 +385,9 @@ export const FilterFlowsTable = (props: Props) => {
                 )}
                 name="destinationUsageYears"
                 fnPromise={() => fnUsageYears(environment)}
-                isMulti
+                firstViewCondition={usageYearFirstViewCondition}
                 isAutocompleteAPI={false}
+                isMulti
               />
               <C.Section
                 title={t.t(lang, (s) => s.components.flowsFilter.showMore)}

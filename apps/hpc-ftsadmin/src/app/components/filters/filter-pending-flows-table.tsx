@@ -10,6 +10,7 @@ import {
   fnLocations,
   fnOrganizations,
   fnUsageYears,
+  usageYearFirstViewCondition,
 } from '../../utils/fn-promises';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import type { FlowQuery, SetQuery } from '../tables/table-utils';
@@ -209,8 +210,9 @@ export const FilterPendingFlowsTable = (props: Props) => {
                 )}
                 name="destinationUsageYears"
                 fnPromise={() => fnUsageYears(environment)}
-                isMulti
+                firstViewCondition={usageYearFirstViewCondition}
                 isAutocompleteAPI={false}
+                isMulti
               />
             </C.Section>
             <C.CheckBox

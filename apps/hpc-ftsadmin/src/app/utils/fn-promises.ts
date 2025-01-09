@@ -162,6 +162,14 @@ export const fnOrganizations = async (
   return organizationsOptions(response);
 };
 
+const YEARS_OPTION_RANGE = 5;
+export const usageYearFirstViewCondition = (usageYear: FormObjectValue) => {
+  const currentYear = new Date().getFullYear();
+  return (
+    parseInt(usageYear.displayLabel) > currentYear - YEARS_OPTION_RANGE &&
+    parseInt(usageYear.displayLabel) < currentYear + YEARS_OPTION_RANGE
+  );
+};
 export const fnUsageYears = async (
   env: Environment
 ): Promise<util.FormObjectValue[]> => {
@@ -173,7 +181,10 @@ export const fnUsageYears = async (
       const displayFirstUsageYears = [];
       for (const usageYear of usageYears) {
         const yearDifference = CURRENT_YEAR - valueToInteger(usageYear.year);
-        if (yearDifference < 5 && yearDifference > -5) {
+        if (
+          yearDifference < YEARS_OPTION_RANGE &&
+          yearDifference > -YEARS_OPTION_RANGE
+        ) {
           displayFirstUsageYears.push(usageYear);
         } else {
           sortedUsageYears.push(usageYear);

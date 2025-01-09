@@ -63,6 +63,11 @@ export type AsyncAutocompleteSelectProps = {
    */
   controlledError?: string;
   observedValue?: string;
+  /**
+   *  If a function is passed, it will filter the options
+   *  to display in the first view of the autocomplete
+   */
+  firstViewCondition?: (option: util.FormObjectValue) => boolean;
 };
 
 /**
@@ -101,6 +106,7 @@ const AsyncAutocompleteSelect = ({
   initialValue,
   observedValue,
   controlledError,
+  firstViewCondition,
 }: AsyncAutocompleteSelectProps) => {
   const [controlledValue, setControlledValue] = useState<
     | NonNullable<string | util.FormObjectValue>
@@ -153,11 +159,15 @@ const AsyncAutocompleteSelect = ({
       return;
     }
     if (data.length > 0 && (input.length >= 3 || !isAutocompleteAPI)) {
-      setOptions(
-        data.filter((x) =>
-          x.displayLabel.toUpperCase().includes(input.toUpperCase())
-        )
-      );
+      if (firstViewCondition && input.length === 0) {
+        setOptions(data.filter(firstViewCondition));
+      } else {
+        setOptions(
+          data.filter((x) =>
+            x.displayLabel.toUpperCase().includes(input.toUpperCase())
+          )
+        );
+      }
     }
 
     if (!isLoading && !(typeof field.value === 'string')) {
@@ -175,7 +185,11 @@ const AsyncAutocompleteSelect = ({
         }
         setData(removeFormObjectValueFromFirstArray(response, removeOptions));
         if (isActive) {
-          setOptions(response);
+          if (firstViewCondition) {
+            setOptions(response.filter(firstViewCondition));
+          } else {
+            setOptions(response);
+          }
         }
         setIsFetch(true);
       } catch (error) {

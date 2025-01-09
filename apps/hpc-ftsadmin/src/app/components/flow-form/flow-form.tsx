@@ -34,6 +34,7 @@ import {
   fnPlans,
   fnProjects,
   fnUsageYears,
+  usageYearFirstViewCondition,
 } from '../../utils/fn-promises';
 import { C, type Message } from '@unocha/hpc-ui';
 import NumberFieldReview from './inputs/number-field-pending-review';
@@ -402,6 +403,7 @@ export const FlowForm = (props: FlowFormProps) => {
     earmarkingType,
     flowStatus,
   } = props;
+
   const [submitLoading, setSubmitLoading] = useState(false);
   const [rejectLoading, setRejectLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -1010,6 +1012,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         ? pendingValues?.fundingSourceUsageYears
                         : undefined
                     }
+                    firstViewCondition={usageYearFirstViewCondition}
                     isMulti
                     required
                   />
@@ -1245,6 +1248,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     isAutocompleteAPI={false}
                     disabled={isDisabled}
                     pendingValues={pendingValues?.fundingDestinationUsageYears}
+                    firstViewCondition={usageYearFirstViewCondition}
                     isMulti
                     required
                   />
