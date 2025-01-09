@@ -179,8 +179,22 @@ export const autofillOrganizations = async ({
   const org = await env.model.organizations.getOrganization({
     id: valueToInteger(lastOrganization.value),
   });
-  if (org.categories?.some((cat) => cat.name === 'Pooled Funds')) {
+
+  const hasGovernmentsType = org.categories?.some(
+    (cat) => cat.name === 'Governments'
+  );
+  if (
+    org.categories?.some((cat) => cat.name === 'Pooled Funds') ||
+    !hasGovernmentsType
+  ) {
     setFieldValue('isNewMoney', false);
+  }
+  if (hasGovernmentsType) {
+    setFieldValue('isNewMoney', true);
+  }
+
+  if (!hasGovernmentsType) {
+    return;
   }
 
   const organizationLocations = organization.locations;

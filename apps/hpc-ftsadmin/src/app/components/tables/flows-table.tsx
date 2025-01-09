@@ -235,6 +235,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                     versionID: row.versionID,
                   }}
                   onChange={(event) => handleCheckboxChange(event, row)}
+                  isControlled
                 />
               </TableCell>
             )}

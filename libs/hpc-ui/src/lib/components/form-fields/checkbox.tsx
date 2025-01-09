@@ -13,6 +13,7 @@ const CheckBox = ({
   value,
   onChange,
   disabled,
+  isControlled,
 }: {
   name: string;
   label?: string;
@@ -20,6 +21,7 @@ const CheckBox = ({
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void | unknown;
   size?: 'small' | 'medium';
   disabled?: boolean;
+  isControlled?: boolean;
 }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext();
@@ -40,7 +42,12 @@ const CheckBox = ({
       <Checkbox
         onChange={(event) => handleChange(event)}
         size={size}
-        defaultChecked={typeof field.value === 'boolean' ? field.value : false}
+        {...(isControlled
+          ? {
+              defaultChecked:
+                typeof field.value === 'boolean' ? field.value : false,
+            }
+          : { checked: !!field.value })}
       />
     ),
   };
