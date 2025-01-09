@@ -24,7 +24,7 @@ import { C, CLASSES, type Message, useDataLoader } from '@unocha/hpc-ui';
 import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import { MdInfoOutline } from 'react-icons/md';
-import { useNavigate } from 'react-router';
+import { Link } from 'react-router';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
 import dayjs from '../../../libs/dayjs';
@@ -61,7 +61,6 @@ import {
   type SetQuery,
   StyledLoader,
   TableHeaderButton,
-  TableRowClick,
   TopRowContainer,
 } from './table-utils';
 
@@ -87,7 +86,6 @@ export default function FlowsTable(props: FlowsTableProps) {
   const parsedFilters = parseFlowFilters(tableFilters, props.pending);
   const [query, setQuery] = [props.query, props.setQuery];
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
-  const navigate = useNavigate();
   const [state, load] = useDataLoader([query], () =>
     environment.model.flows.searchFlows({
       limit: query.rowsPerPage,
@@ -211,8 +209,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     return (
       <>
         {data.searchFlows.flows.map((row) => (
-          <TableRowClick
-            onClick={() => navigate(paths.flow(row.id, row.versionID))}
+          <TableRow
             key={`${row.id}v${row.versionID}`}
             sx={{
               backgroundColor: selectedRows.map((x) => x.id).includes(row.id)
@@ -226,7 +223,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                 component="th"
                 scope="row"
                 data-test="flows-table-checkbox"
-                onClick={(e) => e.stopPropagation()}
+                onClick={({ stopPropagation }) => stopPropagation()}
               >
                 <C.CheckBox
                   name="flows"
@@ -253,7 +250,9 @@ export default function FlowsTable(props: FlowsTableProps) {
                       scope="row"
                       data-test="flows-table-id"
                     >
-                      {row.id} v{row.versionID}
+                      <Link to={paths.flow(row.id, row.versionID)}>
+                        {row.id} v{row.versionID}
+                      </Link>
                     </TableCell>
                   );
                 case 'flow.versionID':
@@ -576,7 +575,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                   return null;
               }
             })}
-          </TableRowClick>
+          </TableRow>
         ))}
       </>
     );
