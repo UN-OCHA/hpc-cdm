@@ -256,6 +256,7 @@ const reportingDetailPropsToReportDetails = (
 export const parseFlowForm = (
   values: FlowFormTypeValidated,
   inactiveReasons: categories.GetCategoriesResult,
+  flowTypes: FormObjectValue[],
   initialValues?: FlowFormType,
   isPending?: { isApproved?: boolean; isSaved?: boolean }
 ): flows.CreateFlowParams => {
@@ -275,12 +276,13 @@ export const parseFlowForm = (
     flowDescription: description,
     flowDate,
     flowStatus,
-    flowType,
+    flowType: unprocessedFlowType,
     isNewMoney: newMoney,
     isErrorCorrection,
     isInactive,
     keywords,
     notes: dirtyNotes,
+    childFlows,
     reportingDetails,
     restricted,
   } = values;
@@ -298,6 +300,11 @@ export const parseFlowForm = (
 
   const notes = dirtyNotes || undefined;
   const exchangeRate = dirtyExchangeRate || undefined;
+
+  const parked = flowTypes.find((ft) => ft.displayLabel === 'Parked');
+  //  Flows that are parent flows, are always parked
+  const flowType =
+    parked && childFlows.length > 0 ? parked : unprocessedFlowType;
 
   const categories = categoryIds([
     method,
