@@ -203,6 +203,10 @@ const PendingReviewSpan = tw.span`
   bg-unocha-pallete-orange-light
   border-unocha-pallete-orange
 `;
+const AddReportingDetailButton = tw(C.Button)`
+  flex
+  justify-center
+`;
 
 export const INITIAL_FORM_VALUES: FlowFormType = {
   fundingSourceOrganizations: [],
@@ -319,15 +323,28 @@ export const FormGroup = ({
   styles?: SxProps<Theme>;
   closeButtonAction?: () => void;
 }) => {
+  const { lang } = getContext();
   return (
     <FormGroupPaper elevation={3} sx={styles}>
       <Box sx={tw`flex items-center justify-between`}>
         <h2>{title}</h2>
         {closeButtonAction && (
-          <MdClose onClick={closeButtonAction} style={{ cursor: 'pointer' }} />
+          <MdClose
+            onClick={closeButtonAction}
+            style={{ cursor: 'pointer', fontSize: '25px' }}
+          />
         )}
       </Box>
       {children}
+      {closeButtonAction && (
+        <Box sx={tw`pt-4 flex justify-end`}>
+          <C.Button
+            color="secondary"
+            onClick={closeButtonAction}
+            text={t.t(lang, (s) => s.components.reportingDetail.removeButton)}
+          />
+        </Box>
+      )}
     </FormGroupPaper>
   );
 };
@@ -1761,7 +1778,8 @@ export const FlowForm = (props: FlowFormProps) => {
                 <ReportingDetail index={0} disabled={isDisabled} />
               )}
               {!isDeleted && (
-                <C.Button
+                <AddReportingDetailButton
+                  startIcon={MdAdd}
                   text={t.t(
                     lang,
                     (s) => s.components.flowForm.addReportingDetail

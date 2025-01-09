@@ -498,6 +498,7 @@
       "title": "Détail du rapport {index}",
       "fileSection": "Fichier du rapport:",
       "urlSection": "URL du rapport:",
+      "removeButton": "Supprimer les détails du rapport",
       "reportSource": {
         "label": "Source du rapport",
         "options": {

@@ -501,6 +501,7 @@
       "title": "报告详情 {index}",
       "fileSection": "报告文件：",
       "urlSection": "报告链接：",
+      "removeButton": "移除报告详情",
       "reportSource": {
         "label": "报告来源",
         "options": {

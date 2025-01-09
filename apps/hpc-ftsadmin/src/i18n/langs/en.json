@@ -499,6 +499,7 @@
       "title": "Reporting Detail {index}",
       "fileSection": "Report File:",
       "urlSection": "Report URL:",
+      "removeButton": "Remove Reporting Detail",
       "reportSource": {
         "label": "Report Source",
         "options": {

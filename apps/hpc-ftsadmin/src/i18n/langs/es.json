@@ -498,6 +498,7 @@
       "title": "Detalle del informe {index}",
       "fileSection": "Archivo del informe:",
       "urlSection": "URL del informe:",
+      "removeButton": "Eliminar detalle del informe",
       "reportSource": {
         "label": "Fuente del informe",
         "options": {

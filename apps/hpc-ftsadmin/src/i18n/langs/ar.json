@@ -499,6 +499,7 @@
       "title": "تفاصيل التقرير {index}",
       "fileSection": "ملف التقرير:",
       "urlSection": "رابط التقرير:",
+      "removeButton": "إزالة تفاصيل التقرير",
       "reportSource": {
         "label": "مصدر التقرير",
         "options": {
