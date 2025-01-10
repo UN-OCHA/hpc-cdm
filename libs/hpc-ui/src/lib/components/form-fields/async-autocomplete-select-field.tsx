@@ -177,8 +177,11 @@ const AsyncAutocompleteSelect = ({
       try {
         let response: util.FormObjectValue[];
         if (fnPromise) {
+          //  Don't include trailing spaces on query
+          const query =
+            input.charAt(input.length - 1) === ' ' ? input.trimEnd() : input;
           response = await fnPromise({
-            query: input,
+            query,
           });
         } else {
           response = field.value;
