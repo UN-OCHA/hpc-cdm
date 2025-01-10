@@ -78,6 +78,7 @@ import { PENDING_REVIEW } from '../../utils/constants';
 import AutocompleteSelectReview from './inputs/autocomplete-pending-review';
 import { LanguageKey, t } from '../../../i18n';
 import { FaUserSecret } from 'react-icons/fa';
+import FormGroupReadOnly from './form-group-readonly';
 
 type FlowFormProps = {
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
@@ -970,214 +971,240 @@ export const FlowForm = (props: FlowFormProps) => {
                   )}
                   styles={tw`basis-1/2`}
                 >
-                  {values.parentFlow && (
-                    <FlowLinkWarning
-                      text={t.t(
-                        lang,
-                        (s) => s.components.flowForm.warning.sourceFlow
-                      )}
-                    />
-                  )}
-                  <AsyncAutocompleteSelectReview
-                    fieldName="fundingSourceOrganizations"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields.fundingSourceOrganizations
-                    )}
-                    fnPromise={(query) => fnOrganizations(query, env)}
-                    setPendingValuesHandled={setPendingValuesHandled}
-                    onChange={(newValue) => {
-                      autofillOrganizations({
-                        fieldName: 'fundingSourceOrganizations',
-                        setFieldValue,
-                        values,
-                        env,
-                        newValue,
-                      });
-                    }}
-                    disabled={isDisabled || !!values.parentFlow}
-                    pendingValues={
-                      !values.parentFlow
-                        ? pendingValues?.fundingSourceOrganizations
-                        : undefined
-                    }
-                    isMulti
-                  />
-                  <AsyncAutocompleteSelectReview
-                    fieldName="fundingSourceUsageYears"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields.fundingSourceUsageYears
-                    )}
-                    fnPromise={() => fnUsageYears(env)}
-                    setPendingValuesHandled={setPendingValuesHandled}
-                    onChange={(newValue) =>
-                      autofillUsageYears({
-                        fieldName: 'fundingSourceUsageYears',
-                        setFieldValue,
-                        values,
-                        env,
-                        newValue,
-                      })
-                    }
-                    isAutocompleteAPI={false}
-                    disabled={isDisabled || !!values.parentFlow}
-                    pendingValues={
-                      !values.parentFlow
-                        ? pendingValues?.fundingSourceUsageYears
-                        : undefined
-                    }
-                    firstViewCondition={usageYearFirstViewCondition}
-                    isMulti
-                    required
-                  />
-                  <AsyncAutocompleteSelectReview
-                    fieldName="fundingSourceLocations"
-                    label={t.t(
-                      lang,
-                      (s) => s.components.flowForm.fields.fundingSourceLocations
-                    )}
-                    fnPromise={(query) => fnLocations(query, env)}
-                    setPendingValuesHandled={setPendingValuesHandled}
-                    disabled={isDisabled || !!values.parentFlow}
-                    pendingValues={
-                      !values.parentFlow
-                        ? pendingValues?.fundingSourceLocations
-                        : undefined
-                    }
-                    isMulti
-                  />
-                  <AsyncAutocompleteSelectReview
-                    fieldName="fundingSourceEmergencies"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields.fundingSourceEmergencies
-                    )}
-                    fnPromise={(query) => fnEmergencies(query, env)}
-                    setPendingValuesHandled={setPendingValuesHandled}
-                    disabled={isDisabled || !!values.parentFlow}
-                    pendingValues={
-                      !values.parentFlow
-                        ? pendingValues?.fundingSourceEmergencies
-                        : undefined
-                    }
-                    isMulti
-                  />
-                  <AsyncAutocompleteSelectReview
-                    fieldName="fundingSourceGlobalClusters"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields.fundingSourceGlobalClusters
-                    )}
-                    fnPromise={() => fnGlobalClusters(env)}
-                    setPendingValuesHandled={setPendingValuesHandled}
-                    onChange={(newValue) =>
-                      autofillGlobalClusters({
-                        fieldName: 'fundingSourceGlobalClusters',
-                        setFieldValue,
-                        env,
-                        values,
-                        newValue,
-                      })
-                    }
-                    isAutocompleteAPI={false}
-                    disabled={isDisabled || !!values.parentFlow}
-                    pendingValues={
-                      !values.parentFlow
-                        ? pendingValues?.fundingSourceGlobalClusters
-                        : undefined
-                    }
-                    isMulti
-                  />
-                  <AsyncAutocompleteSelectReview
-                    fieldName="fundingSourcePlan"
-                    label={t.t(
-                      lang,
-                      (s) => s.components.flowForm.fields.fundingSourcePlan
-                    )}
-                    fnPromise={(query) => fnPlans(query, env)}
-                    setPendingValuesHandled={setPendingValuesHandled}
-                    onChange={(newValue) => {
-                      autofillPlan({
-                        fieldName: 'fundingSourcePlan',
-                        setFieldValue,
-                        values,
-                        env,
-                        newValue,
-                      });
-                    }}
-                    disabled={isDisabled || !!values.parentFlow}
-                    pendingValues={
-                      !values.parentFlow
-                        ? pendingValues?.fundingSourcePlan
-                        : undefined
-                    }
-                  />
-                  <AsyncAutocompleteSelectReview
-                    fieldName="fundingSourceFieldClusters"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields.fundingSourceFieldClusters
-                    )}
-                    fnPromise={() =>
-                      values.fundingSourcePlan?.value
-                        ? fnGoverningEntities(
+                  {values.parentFlow ? (
+                    <>
+                      <FlowLinkWarning
+                        text={t.t(
+                          lang,
+                          (s) => s.components.flowForm.warning.sourceFlow
+                        )}
+                      />
+                      <FormGroupReadOnly
+                        fields={[
+                          'fundingSourceOrganizations',
+                          'fundingSourceUsageYears',
+                          'fundingSourceLocations',
+                          'fundingSourceEmergencies',
+                          'fundingSourceGlobalClusters',
+                          'fundingSourcePlan',
+                          'fundingSourceFieldClusters',
+                          'fundingSourceProject',
+                        ]}
+                        values={values}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <AsyncAutocompleteSelectReview
+                        fieldName="fundingSourceOrganizations"
+                        label={t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingSourceOrganizations
+                        )}
+                        fnPromise={(query) => fnOrganizations(query, env)}
+                        setPendingValuesHandled={setPendingValuesHandled}
+                        onChange={(newValue) => {
+                          autofillOrganizations({
+                            fieldName: 'fundingSourceOrganizations',
+                            setFieldValue,
+                            values,
                             env,
-                            valueToInteger(values.fundingSourcePlan.value)
-                          )
-                        : new Promise<FormObjectValue[]>((resolve) =>
-                            resolve([])
-                          )
-                    }
-                    setPendingValuesHandled={setPendingValuesHandled}
-                    onChange={(newValue) =>
-                      autofillFieldClusters({
-                        fieldName: 'fundingSourceFieldClusters',
-                        setFieldValue,
-                        env,
-                        newValue,
-                        values,
-                      })
-                    }
-                    disabled={isDisabled || values.fundingSourcePlan === null}
-                    isAutocompleteAPI={false}
-                    pendingValues={
-                      !values.parentFlow
-                        ? pendingValues?.fundingSourceFieldClusters
-                        : undefined
-                    }
-                    isMulti
-                    observedValue={values.fundingSourcePlan?.value.toString()}
-                  />
-                  <AsyncAutocompleteSelectReview
-                    fieldName="fundingSourceProject"
-                    label={t.t(
-                      lang,
-                      (s) => s.components.flowForm.fields.fundingSourceProject
-                    )}
-                    fnPromise={(query) => fnProjects(query, env)}
-                    setPendingValuesHandled={setPendingValuesHandled}
-                    onChange={(newValue) => {
-                      autofillProject({
-                        fieldName: 'fundingSourceProject',
-                        setFieldValue,
-                        values,
-                        env,
-                        newValue,
-                      });
-                    }}
-                    disabled={isDisabled || !!values.parentFlow}
-                    pendingValues={
-                      !values.parentFlow
-                        ? pendingValues?.fundingSourceProject
-                        : undefined
-                    }
-                  />
+                            newValue,
+                          });
+                        }}
+                        disabled={isDisabled}
+                        pendingValues={
+                          !values.parentFlow
+                            ? pendingValues?.fundingSourceOrganizations
+                            : undefined
+                        }
+                        isMulti
+                      />
+                      <AsyncAutocompleteSelectReview
+                        fieldName="fundingSourceUsageYears"
+                        label={t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields.fundingSourceUsageYears
+                        )}
+                        fnPromise={() => fnUsageYears(env)}
+                        setPendingValuesHandled={setPendingValuesHandled}
+                        onChange={(newValue) =>
+                          autofillUsageYears({
+                            fieldName: 'fundingSourceUsageYears',
+                            setFieldValue,
+                            values,
+                            env,
+                            newValue,
+                          })
+                        }
+                        isAutocompleteAPI={false}
+                        disabled={isDisabled}
+                        pendingValues={
+                          !values.parentFlow
+                            ? pendingValues?.fundingSourceUsageYears
+                            : undefined
+                        }
+                        firstViewCondition={usageYearFirstViewCondition}
+                        isMulti
+                        required
+                      />
+                      <AsyncAutocompleteSelectReview
+                        fieldName="fundingSourceLocations"
+                        label={t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields.fundingSourceLocations
+                        )}
+                        fnPromise={(query) => fnLocations(query, env)}
+                        setPendingValuesHandled={setPendingValuesHandled}
+                        disabled={isDisabled}
+                        pendingValues={
+                          !values.parentFlow
+                            ? pendingValues?.fundingSourceLocations
+                            : undefined
+                        }
+                        isMulti
+                      />
+                      <AsyncAutocompleteSelectReview
+                        fieldName="fundingSourceEmergencies"
+                        label={t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingSourceEmergencies
+                        )}
+                        fnPromise={(query) => fnEmergencies(query, env)}
+                        setPendingValuesHandled={setPendingValuesHandled}
+                        disabled={isDisabled}
+                        pendingValues={
+                          !values.parentFlow
+                            ? pendingValues?.fundingSourceEmergencies
+                            : undefined
+                        }
+                        isMulti
+                      />
+                      <AsyncAutocompleteSelectReview
+                        fieldName="fundingSourceGlobalClusters"
+                        label={t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingSourceGlobalClusters
+                        )}
+                        fnPromise={() => fnGlobalClusters(env)}
+                        setPendingValuesHandled={setPendingValuesHandled}
+                        onChange={(newValue) =>
+                          autofillGlobalClusters({
+                            fieldName: 'fundingSourceGlobalClusters',
+                            setFieldValue,
+                            env,
+                            values,
+                            newValue,
+                          })
+                        }
+                        isAutocompleteAPI={false}
+                        disabled={isDisabled}
+                        pendingValues={
+                          !values.parentFlow
+                            ? pendingValues?.fundingSourceGlobalClusters
+                            : undefined
+                        }
+                        isMulti
+                      />
+                      <AsyncAutocompleteSelectReview
+                        fieldName="fundingSourcePlan"
+                        label={t.t(
+                          lang,
+                          (s) => s.components.flowForm.fields.fundingSourcePlan
+                        )}
+                        fnPromise={(query) => fnPlans(query, env)}
+                        setPendingValuesHandled={setPendingValuesHandled}
+                        onChange={(newValue) => {
+                          autofillPlan({
+                            fieldName: 'fundingSourcePlan',
+                            setFieldValue,
+                            values,
+                            env,
+                            newValue,
+                          });
+                        }}
+                        disabled={isDisabled}
+                        pendingValues={
+                          !values.parentFlow
+                            ? pendingValues?.fundingSourcePlan
+                            : undefined
+                        }
+                      />
+                      <AsyncAutocompleteSelectReview
+                        fieldName="fundingSourceFieldClusters"
+                        label={t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingSourceFieldClusters
+                        )}
+                        fnPromise={() =>
+                          values.fundingSourcePlan?.value
+                            ? fnGoverningEntities(
+                                env,
+                                valueToInteger(values.fundingSourcePlan.value)
+                              )
+                            : new Promise<FormObjectValue[]>((resolve) =>
+                                resolve([])
+                              )
+                        }
+                        setPendingValuesHandled={setPendingValuesHandled}
+                        onChange={(newValue) =>
+                          autofillFieldClusters({
+                            fieldName: 'fundingSourceFieldClusters',
+                            setFieldValue,
+                            env,
+                            newValue,
+                            values,
+                          })
+                        }
+                        disabled={
+                          isDisabled || values.fundingSourcePlan === null
+                        }
+                        isAutocompleteAPI={false}
+                        pendingValues={
+                          !values.parentFlow
+                            ? pendingValues?.fundingSourceFieldClusters
+                            : undefined
+                        }
+                        isMulti
+                        observedValue={values.fundingSourcePlan?.value.toString()}
+                      />
+                      <AsyncAutocompleteSelectReview
+                        fieldName="fundingSourceProject"
+                        label={t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields.fundingSourceProject
+                        )}
+                        fnPromise={(query) => fnProjects(query, env)}
+                        setPendingValuesHandled={setPendingValuesHandled}
+                        onChange={(newValue) => {
+                          autofillProject({
+                            fieldName: 'fundingSourceProject',
+                            setFieldValue,
+                            values,
+                            env,
+                            newValue,
+                          });
+                        }}
+                        disabled={isDisabled}
+                        pendingValues={
+                          !values.parentFlow
+                            ? pendingValues?.fundingSourceProject
+                            : undefined
+                        }
+                      />
+                    </>
+                  )}
                 </FormGroup>
                 <FormGroup
                   title={t.t(
