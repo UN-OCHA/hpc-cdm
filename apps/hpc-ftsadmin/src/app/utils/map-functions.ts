@@ -58,6 +58,7 @@ export const flowToFlowLinkProps = (
     projectName: flow.projects.filter(
       (proj) => proj.flowObject.refDirection === 'destination'
     )[0]?.projectVersions[0]?.name,
+    earmarking: flow.categories.find((cat) => cat.group === 'earmarkingType'),
   };
 };
 

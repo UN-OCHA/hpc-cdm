@@ -505,6 +505,38 @@ export const FlowForm = (props: FlowFormProps) => {
     ];
     return KEYS.some((key) => key === reason.type);
   };
+
+  const handleEarmarkingRestriction = (parentValues: FlowLinkProps | null) => {
+    if (!parentValues?.earmarking) {
+      return earmarkingType;
+    }
+    /**
+     * Ordered based on https://fts.unocha.org/glossary
+     */
+    const EARMARKING_FREEDOM = [
+      'Unearmarked',
+      'Softly earmarked',
+      'Earmarked',
+      'Tightly earmarked',
+    ] as const;
+
+    const isParentEarmarking = (
+      earmarking: string
+    ): earmarking is (typeof EARMARKING_FREEDOM)[number] =>
+      EARMARKING_FREEDOM.some((e) => e === earmarking);
+
+    const parentEarmarking = parentValues.earmarking.name;
+    if (!isParentEarmarking(parentEarmarking)) {
+      return earmarkingType;
+    }
+
+    const index = EARMARKING_FREEDOM.indexOf(parentEarmarking);
+    const allowedChildEarmarking = EARMARKING_FREEDOM.slice(index);
+
+    return earmarkingType.filter((e) =>
+      allowedChildEarmarking.some((ae) => ae === e.displayLabel)
+    );
+  };
   const handleDataConsistencyError = (err: errors.DataConsistencyError) => {
     const message = err.reason
       .map((r) => {
@@ -1648,7 +1680,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         lang,
                         (s) => s.components.flowForm.fields.earmarkingType
                       )}
-                      options={earmarkingType}
+                      options={handleEarmarkingRestriction(values.parentFlow)}
                       setPendingValuesHandled={setPendingValuesHandled}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.earmarkingType}

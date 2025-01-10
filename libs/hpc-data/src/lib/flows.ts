@@ -148,7 +148,7 @@ const FLOW_REST_REPORT_DETAIL = t.intersection([
   }),
 ]);
 
-const FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES = t.intersection([
+const FLOW_REST_WITHOUT_PARENTS_CHILDREN = t.intersection([
   t.type({
     id: t.number,
     versionID: t.number,
@@ -160,6 +160,7 @@ const FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES = t.intersection([
     restricted: t.boolean,
     newMoney: t.boolean,
     description: t.union([t.string, t.null]), //  Some Pending Flows are saved with null description
+    categories: t.array(CATEGORY),
     plans: t.array(FLOW_AUTOCOMPLETE_PLAN),
     organizations: t.array(FLOW_AUTOCOMPLETE_ORGANIZATION),
     locations: t.array(FLOW_AUTOCOMPLETE_LOCATION),
@@ -249,9 +250,7 @@ const FLOW_REST_EXTERNAL_DATA = t.type({
 const CREATED_UPDATED_BY = t.type({
   name: t.string,
 });
-export type FlowREST = t.TypeOf<
-  typeof FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES
-> & {
+export type FlowREST = t.TypeOf<typeof FLOW_REST_WITHOUT_PARENTS_CHILDREN> & {
   anonymizedOrganizations: Array<t.TypeOf<typeof ORGANIZATION>>;
   flowObjects: Array<t.TypeOf<typeof FLOW_OBJECT>>;
   children: Array<t.TypeOf<typeof PARENT_CHILDREN_FLOW>>;
@@ -268,13 +267,12 @@ export type FlowREST = t.TypeOf<
 
 const FLOW_REST: t.Type<FlowREST> = t.recursion('FLOW_REST', () =>
   t.intersection([
-    FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES,
+    FLOW_REST_WITHOUT_PARENTS_CHILDREN,
     t.type({
       anonymizedOrganizations: t.array(ORGANIZATION),
       flowObjects: t.array(FLOW_OBJECT),
       children: t.array(PARENT_CHILDREN_FLOW),
       parents: t.array(PARENT_CHILDREN_FLOW),
-      categories: t.array(CATEGORY),
       reportDetails: t.array(FLOW_REST_REPORT_DETAIL),
       externalReferences: t.array(FLOW_REST_EXTERNAL_REFERENCE),
       externalData: t.array(FLOW_REST_EXTERNAL_DATA),
@@ -636,7 +634,7 @@ export type GetFlowsAutocompleteParams = t.TypeOf<
 >;
 
 export const GET_FLOWS_AUTOCOMPLETE_RESULT = t.array(
-  FLOW_REST_WITHOUT_PARENTS_CHILDREN_CATEGORIES
+  FLOW_REST_WITHOUT_PARENTS_CHILDREN
 );
 
 export type GetFlowsAutocompleteResult = t.TypeOf<
