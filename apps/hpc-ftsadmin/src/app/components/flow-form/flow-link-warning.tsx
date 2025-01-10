@@ -1,5 +1,7 @@
 import tw from 'twin.macro';
 import GppMaybeIcon from '@mui/icons-material/GppMaybe';
+import { Link } from 'react-router';
+import * as paths from '../../paths';
 
 const WarningContainer = tw.div`
   border border-solid
@@ -20,7 +22,13 @@ const WarningText = tw.span`
   p-3
 `;
 
-const FlowLinkWarning = ({ text }: { text: string }) => {
+const FlowLinkWarning = ({
+  text,
+  link,
+}: {
+  text: string;
+  link?: { id: number; versionID: number };
+}) => {
   return (
     <WarningContainer>
       <IconContainer>
@@ -31,7 +39,15 @@ const FlowLinkWarning = ({ text }: { text: string }) => {
           }}
         />
       </IconContainer>
-      <WarningText>{text}</WarningText>
+      <WarningText>
+        {text}
+        {link && (
+          <Link
+            to={paths.flow(link.id, link.versionID)}
+            target="_blank"
+          >{`${link.id}v${link.versionID}`}</Link>
+        )}
+      </WarningText>
     </WarningContainer>
   );
 };

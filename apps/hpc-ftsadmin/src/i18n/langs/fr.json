@@ -199,7 +199,7 @@
         "unknownError": "Erreur inattendue lors de la création/mise à jour du flux"
       },
       "warning": {
-        "sourceFlow": "Source de flux associée à une destination parent. Pour modifier ces champs, supprimez le flux parent ou apportez les modifications directement au flux parent.",
+        "sourceFlow": "Source de flux associée à une destination parent. Pour modifier ces champs, supprimez le flux parent ou apportez les modifications directement au flux parent: ",
         "destinationFlow": "Vous avez ajouté un flux enfant à ce flux. Mettre à jour les destinations de financement pour ce flux mettra à jour les sources de financement des flux enfants. Si vous ne souhaitez pas mettre à jour les sources de financement des flux enfants, dissociez-les d'abord."
       }
     },

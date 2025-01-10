@@ -199,7 +199,7 @@
         "unknownError": "Error inesperado al crear/actualizar el flujo"
       },
       "warning": {
-        "sourceFlow": "Fuente de flujo asociada con un destino principal. Para editar estos campos, elimine el flujo principal o realice cambios directamente en el flujo principal.",
+        "sourceFlow": "Fuente de flujo asociada con un destino principal. Para editar estos campos, elimine el flujo principal o realice cambios directamente en el flujo principal: ",
         "destinationFlow": "Ha agregado un flujo secundario a este flujo. Actualizar los destinos de financiación de este flujo actualizará las fuentes de financiación de los flujos secundarios. Si no desea actualizar las fuentes de financiación de los flujos secundarios, desvínclelos primero."
       }
     },

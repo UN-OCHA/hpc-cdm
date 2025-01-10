@@ -199,7 +199,7 @@
         "unknownError": "Unexpected error while creating/updating flow"
       },
       "warning": {
-        "sourceFlow": "Flow Source associated with Parent Destination. To edit these fields, remove the Parent flow or make changes directly to the Parent flow.",
+        "sourceFlow": "Flow Source associated with Parent Destination. To edit these fields, remove the Parent flow or make changes directly to the Parent flow: ",
         "destinationFlow": "You have added a Child flow for this flow. Updating the Funding Destination(s) for this flow will update the Funding Source(s) for the child flows. If you don't want to update the Child flow's funding sources, unlink it first."
       }
     },

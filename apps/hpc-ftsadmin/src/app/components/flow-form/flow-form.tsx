@@ -978,6 +978,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           lang,
                           (s) => s.components.flowForm.warning.sourceFlow
                         )}
+                        link={{ ...values.parentFlow }}
                       />
                       <FormGroupReadOnly
                         fields={[
