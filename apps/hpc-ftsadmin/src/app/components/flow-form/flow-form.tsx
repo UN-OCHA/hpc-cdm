@@ -985,10 +985,10 @@ export const FlowForm = (props: FlowFormProps) => {
                           'fundingSourceOrganizations',
                           'fundingSourceUsageYears',
                           'fundingSourceLocations',
-                          'fundingSourceEmergencies',
                           'fundingSourceGlobalClusters',
                           'fundingSourcePlan',
                           'fundingSourceFieldClusters',
+                          'fundingSourceEmergencies',
                           'fundingSourceProject',
                         ]}
                         values={values}
@@ -1065,24 +1065,6 @@ export const FlowForm = (props: FlowFormProps) => {
                         pendingValues={
                           !values.parentFlow
                             ? pendingValues?.fundingSourceLocations
-                            : undefined
-                        }
-                        isMulti
-                      />
-                      <AsyncAutocompleteSelectReview
-                        fieldName="fundingSourceEmergencies"
-                        label={t.t(
-                          lang,
-                          (s) =>
-                            s.components.flowForm.fields
-                              .fundingSourceEmergencies
-                        )}
-                        fnPromise={(query) => fnEmergencies(query, env)}
-                        setPendingValuesHandled={setPendingValuesHandled}
-                        disabled={isDisabled}
-                        pendingValues={
-                          !values.parentFlow
-                            ? pendingValues?.fundingSourceEmergencies
                             : undefined
                         }
                         isMulti
@@ -1178,6 +1160,24 @@ export const FlowForm = (props: FlowFormProps) => {
                         }
                         isMulti
                         observedValue={values.fundingSourcePlan?.value.toString()}
+                      />
+                      <AsyncAutocompleteSelectReview
+                        fieldName="fundingSourceEmergencies"
+                        label={t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingSourceEmergencies
+                        )}
+                        fnPromise={(query) => fnEmergencies(query, env)}
+                        setPendingValuesHandled={setPendingValuesHandled}
+                        disabled={isDisabled}
+                        pendingValues={
+                          !values.parentFlow
+                            ? pendingValues?.fundingSourceEmergencies
+                            : undefined
+                        }
+                        isMulti
                       />
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourceProject"
@@ -1311,20 +1311,6 @@ export const FlowForm = (props: FlowFormProps) => {
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
-                    fieldName="fundingDestinationEmergencies"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields
-                          .fundingDestinationEmergencies
-                    )}
-                    fnPromise={(query) => fnEmergencies(query, env)}
-                    setPendingValuesHandled={setPendingValuesHandled}
-                    disabled={isDisabled}
-                    pendingValues={pendingValues?.fundingDestinationEmergencies}
-                    isMulti
-                  />
-                  <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationGlobalClusters"
                     label={t.t(
                       lang,
@@ -1406,6 +1392,20 @@ export const FlowForm = (props: FlowFormProps) => {
                     }
                     isMulti
                     observedValue={values.fundingDestinationPlan?.value.toString()}
+                  />
+                  <AsyncAutocompleteSelectReview
+                    fieldName="fundingDestinationEmergencies"
+                    label={t.t(
+                      lang,
+                      (s) =>
+                        s.components.flowForm.fields
+                          .fundingDestinationEmergencies
+                    )}
+                    fnPromise={(query) => fnEmergencies(query, env)}
+                    setPendingValuesHandled={setPendingValuesHandled}
+                    disabled={isDisabled}
+                    pendingValues={pendingValues?.fundingDestinationEmergencies}
+                    isMulti
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationProject"
