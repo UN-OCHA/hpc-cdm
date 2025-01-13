@@ -16,8 +16,6 @@ import type {
 export type Query = {
   orderDir: 'ASC' | 'DESC';
   tableHeaders: string;
-  prevPageCursor?: number;
-  nextPageCursor?: number;
 };
 
 export type FlowQuery = Query & {

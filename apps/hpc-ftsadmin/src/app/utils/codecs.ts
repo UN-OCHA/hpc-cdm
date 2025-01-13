@@ -32,22 +32,16 @@ const ROWS_PER_PAGE = new t.Type<number, number>(
   t.identity
 );
 
-const PARAMS_CODEC = t.intersection([
-  t.type({
-    page: util.INTEGER_FROM_STRING,
-    rowsPerPage: ROWS_PER_PAGE,
-    orderDir: t.keyof({
-      ASC: 'ASC',
-      DESC: 'DESC',
-    }),
-    filters: t.string,
-    tableHeaders: t.string,
+const PARAMS_CODEC = t.type({
+  page: util.INTEGER_FROM_STRING,
+  rowsPerPage: ROWS_PER_PAGE,
+  orderDir: t.keyof({
+    ASC: 'ASC',
+    DESC: 'DESC',
   }),
-  t.partial({
-    prevPageCursor: util.INTEGER_FROM_STRING,
-    nextPageCursor: util.INTEGER_FROM_STRING,
-  }),
-]);
+  filters: t.string,
+  tableHeaders: t.string,
+});
 
 const extractIdentifierIds = <
   T extends OrganizationHeaderID | FlowHeaderID | KeywordHeaderID,
