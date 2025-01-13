@@ -4,16 +4,38 @@ import {
   DEFAULT_FLOW_TABLE_HEADERS,
   DEFAULT_KEYWORD_TABLE_HEADERS,
   DEFAULT_ORGANIZATION_TABLE_HEADERS,
-  FlowHeaderID,
-  KeywordHeaderID,
-  OrganizationHeaderID,
-  TableHeadersProps,
+  type FlowHeaderID,
+  type KeywordHeaderID,
+  type OrganizationHeaderID,
+  type TableHeadersProps,
 } from './table-headers';
+
+const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100] as const;
+const ROWS_PER_PAGE = new t.Type<number, number>(
+  'ROWS_PER_PAGE',
+  t.number.is,
+  (v, c) => {
+    if (typeof v === 'number') {
+      return Number.isInteger(v) &&
+        ROWS_PER_PAGE_OPTIONS.some((row) => row === v)
+        ? t.success(v)
+        : t.failure(v, c);
+    } else if (typeof v === 'string') {
+      return /^[0-9]+$/.test(v) &&
+        ROWS_PER_PAGE_OPTIONS.some((row) => row === parseInt(v))
+        ? t.success(parseInt(v))
+        : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
 
 const PARAMS_CODEC = t.intersection([
   t.type({
     page: util.INTEGER_FROM_STRING,
-    rowsPerPage: util.INTEGER_FROM_STRING,
+    rowsPerPage: ROWS_PER_PAGE,
     orderDir: t.keyof({
       ASC: 'ASC',
       DESC: 'DESC',
@@ -33,8 +55,10 @@ const extractIdentifierIds = <
   val: TableHeadersProps<T>[]
 ) => {
   return val.reduce(
-    (acc, { identifierID: id }) => {
-      acc[id] = id;
+    (acc, { identifierID: id, sortable }) => {
+      if (sortable) {
+        acc[id] = id;
+      }
       return acc;
     },
     {} as Record<T, string>
