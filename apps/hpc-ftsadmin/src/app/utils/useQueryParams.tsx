@@ -1,5 +1,5 @@
 import t from 'io-ts';
-import { type NavigateOptions, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { isRight } from 'fp-ts/lib/Either';
 
 type Props<T> = {
@@ -49,10 +49,7 @@ function useQueryParams<T extends Record<string, string | number>>({
     return result.right;
   };
 
-  const setValidatedSearchParams = (
-    newParams: T,
-    flushSync?: NavigateOptions['flushSync']
-  ) => {
+  const setValidatedSearchParams = (newParams: T) => {
     const result = codec.decode(newParams);
 
     if (!isRight(result)) {
@@ -60,7 +57,7 @@ function useQueryParams<T extends Record<string, string | number>>({
       return;
     }
     const validatedParams = toURLSearchParams(newParams);
-    setSearchParams(validatedParams, { flushSync });
+    setSearchParams(validatedParams);
   };
 
   return [decodeParams(searchParams), setValidatedSearchParams] as const;

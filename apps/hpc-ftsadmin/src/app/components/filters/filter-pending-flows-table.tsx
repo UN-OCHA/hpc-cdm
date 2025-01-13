@@ -80,10 +80,12 @@ export const FilterPendingFlowsTable = (props: Props) => {
     if (query.filters !== encodedFilters) {
       handleAbortController();
     }
-    setQuery({
-      ...query,
-      page: 0,
-      filters: encodedFilters,
+    setTimeout(() => {
+      setQuery({
+        ...query,
+        page: 0,
+        filters: encodedFilters,
+      });
     });
   };
   return (

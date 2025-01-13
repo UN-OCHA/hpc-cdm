@@ -69,14 +69,13 @@ export const FilterOrganizationsTable = (props: Props) => {
     ) => void
   ) => {
     formikResetForm();
-    setQuery(
-      {
+    setTimeout(() => {
+      setQuery({
         ...query,
         page: 0,
         filters: encodeFilters({}, ORGANIZATIONS_FILTER_INITIAL_VALUES),
-      },
-      true
-    );
+      });
+    });
   };
   return (
     <C.SearchFilter

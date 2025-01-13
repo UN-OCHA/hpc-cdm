@@ -136,14 +136,13 @@ export const FilterFlowsTable = (props: Props) => {
     if (query.filters !== encodedFilters) {
       handleAbortController();
     }
-    setQuery(
-      {
+    setTimeout(() => {
+      setQuery({
         ...query,
         page: 0,
         filters: encodedFilters,
-      },
-      true
-    );
+      });
+    });
   };
   return (
     <C.SearchFilter title={t.t(lang, (s) => s.components.flowsFilter.title)}>

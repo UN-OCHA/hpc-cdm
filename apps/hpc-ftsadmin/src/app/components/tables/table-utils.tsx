@@ -12,7 +12,6 @@ import type {
   KeywordHeaderID,
   OrganizationHeaderID,
 } from '../../utils/table-headers';
-import type { NavigateOptions } from 'react-router';
 
 export type Query = {
   orderDir: 'ASC' | 'DESC';
@@ -39,10 +38,7 @@ export type KeywordQuery = Query & {
   orderBy: KeywordHeaderID;
 };
 
-export type SetQuery<T extends Query> = (
-  newQuery: T,
-  flushSync?: NavigateOptions['flushSync']
-) => void;
+export type SetQuery<T extends Query> = (newQuery: T) => void;
 
 export const StyledLoader = tw(C.Loader)`
   mx-auto
