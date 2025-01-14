@@ -179,7 +179,9 @@ const AsyncAutocompleteSelect = ({
         if (fnPromise) {
           //  Don't include trailing spaces on query
           const query =
-            input.charAt(input.length - 1) === ' ' ? input.trimEnd() : input;
+            input.charAt(input.length - 1) === ' ' && input.length > 3
+              ? input.trimEnd()
+              : input;
           response = await fnPromise({
             query,
           });
