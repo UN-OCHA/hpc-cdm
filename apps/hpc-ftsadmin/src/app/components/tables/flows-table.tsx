@@ -223,7 +223,6 @@ export default function FlowsTable(props: FlowsTableProps) {
                 component="th"
                 scope="row"
                 data-test="flows-table-checkbox"
-                onClick={({ stopPropagation }) => stopPropagation()}
               >
                 <C.CheckBox
                   name="flows"
