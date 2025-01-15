@@ -82,6 +82,7 @@
     "flowForm": {
       "activeTag": "نشط",
       "addReportingDetail": "إضافة تفاصيل التقرير",
+      "blockNavigation": "لديك تغييرات غير محفوظة، هل أنت متأكد أنك تريد المغادرة؟",
       "codecValidation": {
         "amountUSD": "القيمة يجب أن تكون أكبر من 0",
         "amountOriginalCurrency": "القيمة يجب أن تكون رقمًا موجبًا",

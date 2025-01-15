@@ -43,7 +43,7 @@ import { MdAdd, MdClose, MdOutlineSearch } from 'react-icons/md';
 import { FaTrashAlt } from 'react-icons/fa';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import validateForm from '../../utils/form-validation';
-import { Link, useNavigate } from 'react-router';
+import { Link, useBeforeUnload, useBlocker, useNavigate } from 'react-router';
 import * as paths from '../../paths';
 import FlowLink, { FlowLinkProps } from './flow-link';
 import FlowSearch from './flow-search';
@@ -400,6 +400,31 @@ const FlowAmountButton = ({
     text: t.t(lang, (s) => s.components.flowAmountButton.exchangeRate),
   };
   return <C.Button color="primary" {...buttonProps} className="text-end" />;
+};
+
+const BlockNavigationOnUnsavedChanges = ({ dirty }: { dirty: boolean }) => {
+  const { lang } = getContext();
+  const message = t.t(lang, (s) => s.components.flowForm.blockNavigation);
+
+  //  User reloading or closing tab
+  useBeforeUnload((event) => {
+    if (dirty) {
+      event.preventDefault();
+      //  Message will not always show ours, depends on browser
+      return message;
+    }
+  });
+
+  //  User navigating away
+  useBlocker(() => {
+    if (dirty) {
+      return !window.confirm(message);
+    }
+    return false;
+  });
+
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  return <></>;
 };
 
 export const FlowForm = (props: FlowFormProps) => {
@@ -912,7 +937,7 @@ export const FlowForm = (props: FlowFormProps) => {
         )
       }
     >
-      {({ values, isValid: formikValid, setFieldValue }) => {
+      {({ values, isValid: formikValid, setFieldValue, dirty }) => {
         const isValid =
           formikValid &&
           values.reportingDetails.reduce(
@@ -927,6 +952,7 @@ export const FlowForm = (props: FlowFormProps) => {
           );
         return (
           <Form>
+            <BlockNavigationOnUnsavedChanges {...{ dirty }} />
             {!isDisabled && (
               <C.CheckBox
                 name="restricted"

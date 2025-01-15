@@ -82,6 +82,7 @@
     "flowForm": {
       "activeTag": "Actif",
       "addReportingDetail": "Ajouter un détail de rapport",
+      "blockNavigation": "Vous avez des modifications non enregistrées, êtes-vous sûr de vouloir partir ?",
       "codecValidation": {
         "amountUSD": "La valeur doit être supérieure à 0",
         "amountOriginalCurrency": "La valeur doit être un nombre positif",

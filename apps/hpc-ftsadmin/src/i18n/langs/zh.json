@@ -82,6 +82,7 @@
     "flowForm": {
       "activeTag": "激活",
       "addReportingDetail": "添加报告详细信息",
+      "blockNavigation": "您有未保存的更改，您确定要离开吗？",
       "codecValidation": {
         "amountUSD": "值必须大于 0",
         "amountOriginalCurrency": "值必须是正数",

@@ -586,13 +586,6 @@ export default function FlowsTable(props: FlowsTableProps) {
     lang: LanguageKey;
     data: flows.SearchFlowsResult;
   }) => {
-    const nonSafeTypedTableHeaders = decodeTableHeaders(
-      query.tableHeaders,
-      lang
-    );
-    const tableHeaders = isTableHeadersPropsFlow(nonSafeTypedTableHeaders)
-      ? nonSafeTypedTableHeaders
-      : [];
     return (
       <Table size="small">
         <TableHead>
