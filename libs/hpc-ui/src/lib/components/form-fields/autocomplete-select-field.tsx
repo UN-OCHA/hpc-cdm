@@ -15,6 +15,7 @@ export type AutocompleteSelectProps = {
   onChange?: (
     newValue: util.FormObjectValue | util.FormObjectValue[] | null
   ) => void;
+  dataTest?: string;
 };
 const StyledAutocomplete = tw(Autocomplete)`
   min-w-[10rem]
@@ -29,6 +30,7 @@ const AutocompleteSelect = ({
   disabled,
   required,
   onChange,
+  dataTest,
 }: AutocompleteSelectProps) => {
   const { setFieldValue } = useFormikContext();
   const [field, meta, { setTouched: setIsTouched }] =
@@ -77,7 +79,7 @@ const AutocompleteSelect = ({
     ),
   };
 
-  return <StyledAutocomplete {...configAutocomplete} />;
+  return <StyledAutocomplete {...configAutocomplete} data-test={dataTest} />;
 };
 
 export default AutocompleteSelect;

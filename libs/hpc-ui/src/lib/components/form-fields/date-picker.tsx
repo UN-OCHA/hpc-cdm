@@ -32,6 +32,10 @@ export type DatePickerProps = {
   };
   disabled?: boolean;
   required?: boolean;
+  dataTest?: {
+    field?: string;
+    today?: string;
+  };
 };
 
 const StyledDatePicker = tw.div`
@@ -49,6 +53,7 @@ const DatePicker = ({
   controlledField,
   disabled,
   required,
+  dataTest,
 }: DatePickerProps) => {
   const [field, meta, { setValue, setTouched }] = useField<Dayjs | null>(name);
   const [isControlledTouched, setIsControlledTouched] = useState(false);
@@ -103,7 +108,7 @@ const DatePicker = ({
   };
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={lang}>
-      <StyledDatePicker>
+      <StyledDatePicker data-test={dataTest?.field}>
         <BaseDatePicker {...datePickerProps} />
         {enableButton && !disabled && (
           <Link
@@ -119,6 +124,7 @@ const DatePicker = ({
                 setValue(today);
               }
             }}
+            data-test={dataTest?.today}
           >
             {t.t(lang, (s) => s.datePicker.today)}
           </Link>

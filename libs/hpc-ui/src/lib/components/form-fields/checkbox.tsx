@@ -17,6 +17,7 @@ const CheckBox = ({
   disabled,
   isControlled,
   sx,
+  dataTest,
 }: {
   name: string;
   label?: string;
@@ -26,6 +27,7 @@ const CheckBox = ({
   disabled?: boolean;
   isControlled?: boolean;
   sx?: SxProps<Theme>;
+  dataTest?: string;
 }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext();
@@ -55,7 +57,7 @@ const CheckBox = ({
       />
     ),
   };
-  return <FormControlLabel sx={sx} {...configCheckBox} />;
+  return <FormControlLabel sx={sx} data-test={dataTest} {...configCheckBox} />;
 };
 
 export default CheckBox;

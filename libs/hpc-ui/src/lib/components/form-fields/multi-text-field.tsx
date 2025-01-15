@@ -21,12 +21,14 @@ const MultiTextField = ({
   placeholder,
   type,
   errorMessage,
+  dataTest,
 }: {
   name: string;
   label: string;
   placeholder?: string;
   type?: 'text' | 'currency';
   errorMessage?: string;
+  dataTest?: string;
 }) => {
   const { setFieldValue } = useFormikContext<string[]>();
   const [field, meta] = useField<string[]>(name);
@@ -101,7 +103,7 @@ const MultiTextField = ({
   if (meta && meta.touched && meta.error) {
     console.error(errorMessage);
   }
-  return <MultiText {...multiTextProps} />;
+  return <MultiText {...multiTextProps} data-test={dataTest} />;
 };
 
 export default MultiTextField;
