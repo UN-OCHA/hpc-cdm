@@ -88,6 +88,7 @@ export default function FlowsTable(props: FlowsTableProps) {
   const [state, load] = useDataLoader([query], () =>
     env.model.flows.searchFlows({
       limit: query.rowsPerPage,
+      page: query.page,
       sortField: query.orderBy,
       sortOrder: query.orderDir,
       ...parsedFilters,

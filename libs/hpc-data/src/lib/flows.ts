@@ -280,6 +280,7 @@ export type NestedFlowFilters = t.TypeOf<typeof NESTED_FLOW_FILTERS>;
 
 export const SEARCH_FLOWS_PARAMS = t.partial({
   limit: t.number,
+  page: t.number,
   sortOrder: t.string,
   sortField: t.string,
   ...FLOW_FILTERS.props,
