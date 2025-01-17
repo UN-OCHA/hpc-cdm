@@ -496,7 +496,10 @@ export class LiveModel implements Model {
     query: DocumentNode;
     resultType: t.Type<T>;
   }) => {
-    const res = await this.apolloClient.query<T>({ query });
+    const res = await this.apolloClient.query<T>({
+      query,
+      fetchPolicy: 'no-cache',
+    });
 
     if (!res.error && !res.errors) {
       const data = res.data;
