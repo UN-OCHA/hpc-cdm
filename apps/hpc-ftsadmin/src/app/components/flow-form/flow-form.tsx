@@ -402,13 +402,23 @@ const FlowAmountButton = ({
   return <C.Button color="primary" {...buttonProps} className="text-end" />;
 };
 
-const BlockNavigationOnUnsavedChanges = ({ dirty }: { dirty: boolean }) => {
+const BlockNavigationOnUnsavedChanges = ({
+  dirty,
+  submitLoading,
+  rejectLoading,
+  deleteLoading,
+}: {
+  dirty: boolean;
+  submitLoading: boolean;
+  rejectLoading: boolean;
+  deleteLoading: boolean;
+}) => {
   const { lang } = getContext();
   const message = t.t(lang, (s) => s.components.flowForm.blockNavigation);
-
+  const isSubmitting = submitLoading || rejectLoading || deleteLoading;
   //  User reloading or closing tab
   useBeforeUnload((event) => {
-    if (dirty) {
+    if (dirty && !isSubmitting) {
       event.preventDefault();
       //  Message will not always show ours, depends on browser
       return message;
@@ -417,7 +427,7 @@ const BlockNavigationOnUnsavedChanges = ({ dirty }: { dirty: boolean }) => {
 
   //  User navigating away
   useBlocker(() => {
-    if (dirty) {
+    if (dirty && !isSubmitting) {
       return !window.confirm(message);
     }
     return false;
@@ -952,7 +962,9 @@ export const FlowForm = (props: FlowFormProps) => {
           );
         return (
           <Form>
-            <BlockNavigationOnUnsavedChanges {...{ dirty }} />
+            <BlockNavigationOnUnsavedChanges
+              {...{ dirty, submitLoading, rejectLoading, deleteLoading }}
+            />
             {!isDisabled && (
               <C.CheckBox
                 name="restricted"
