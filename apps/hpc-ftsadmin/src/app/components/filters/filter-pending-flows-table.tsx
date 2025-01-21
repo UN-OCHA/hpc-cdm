@@ -5,7 +5,7 @@ import { C } from '@unocha/hpc-ui';
 import { FormObjectValue } from '@unocha/hpc-data';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import { t } from '../../../i18n';
-import { Query } from '../tables/table-utils';
+import type { FlowQuery, SetQuery } from '../tables/table-utils';
 import { useContext } from 'react';
 import { AppContext } from '../../context';
 import {
@@ -14,8 +14,8 @@ import {
   fnUsageYears,
 } from '../../utils/fn-promises';
 interface Props {
-  query: Query;
-  setQuery: (newQuery: Query) => void;
+  query: FlowQuery;
+  setQuery: SetQuery<FlowQuery>;
   handleAbortController: () => void;
 }
 export interface PendingFlowsFilterValues {
@@ -80,10 +80,15 @@ export const FilterPendingFlowsTable = (props: Props) => {
     if (query.filters !== encodedFilters) {
       handleAbortController();
     }
-    setQuery({
-      ...query,
-      page: 0,
-      filters: encodedFilters,
+    //  We need to delay this action in a synchronous way to avoid
+    //  calling 2 setState() actions in an uncontrolled way that could
+    //  mess with internal React's component update cycle
+    setTimeout(() => {
+      setQuery({
+        ...query,
+        page: 0,
+        filters: encodedFilters,
+      });
     });
   };
   return (

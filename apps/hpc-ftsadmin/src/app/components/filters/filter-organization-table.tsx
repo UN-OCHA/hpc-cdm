@@ -7,7 +7,7 @@ import { Environment } from '../../../environments/interface';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import { LanguageKey, t } from '../../../i18n';
 import { Dayjs } from 'dayjs';
-import { Query } from '../tables/table-utils';
+import type { OrganizationQuery, SetQuery } from '../tables/table-utils';
 import * as io from 'io-ts';
 import validateForm from '../../utils/form-validation';
 import {
@@ -17,8 +17,8 @@ import {
 } from '../../utils/fn-promises';
 interface Props {
   environment: Environment;
-  query: Query;
-  setQuery: (newQuery: Query) => void;
+  query: OrganizationQuery;
+  setQuery: SetQuery<OrganizationQuery>;
   lang: LanguageKey;
 }
 export interface OrganizationFilterValues {
@@ -69,10 +69,15 @@ export const FilterOrganizationsTable = (props: Props) => {
     ) => void
   ) => {
     formikResetForm();
-    setQuery({
-      ...query,
-      page: 0,
-      filters: encodeFilters({}, ORGANIZATIONS_FILTER_INITIAL_VALUES),
+    //  We need to delay this action in a synchronous way to avoid
+    //  calling 2 setState() actions in an uncontrolled way that could
+    //  mess with internal React's component update cycle
+    setTimeout(() => {
+      setQuery({
+        ...query,
+        page: 0,
+        filters: encodeFilters({}, ORGANIZATIONS_FILTER_INITIAL_VALUES),
+      });
     });
   };
   return (

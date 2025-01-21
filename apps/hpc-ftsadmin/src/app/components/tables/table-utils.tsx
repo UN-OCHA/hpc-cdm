@@ -7,17 +7,36 @@ import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import { C } from '@unocha/hpc-ui';
 import { util } from '@unocha/hpc-core';
 import { LocalStorageSchema } from '../../utils/local-storage-type';
+import type {
+  FlowHeaderID,
+  KeywordHeaderID,
+  OrganizationHeaderID,
+} from '../../utils/table-headers';
 
 export type Query = {
+  orderDir: 'ASC' | 'DESC';
+  tableHeaders: string;
+};
+
+export type FlowQuery = Query & {
   page: number;
   rowsPerPage: number;
-  orderBy: string;
-  orderDir: string;
+  orderBy: FlowHeaderID;
   filters: string;
-  tableHeaders: string;
-  prevPageCursor?: number;
-  nextPageCursor?: number;
 };
+
+export type OrganizationQuery = Query & {
+  page: number;
+  rowsPerPage: number;
+  orderBy: OrganizationHeaderID;
+  filters: string;
+};
+
+export type KeywordQuery = Query & {
+  orderBy: KeywordHeaderID;
+};
+
+export type SetQuery<T extends Query> = (newQuery: T) => void;
 
 export const StyledLoader = tw(C.Loader)`
   mx-auto

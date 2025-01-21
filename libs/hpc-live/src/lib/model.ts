@@ -627,17 +627,9 @@ export class LiveModel implements Model {
         const query = `query {
           searchFlows${searchFlowsParams(params)} {
             total
-            
-            prevPageCursor
-        
             hasNextPage
-        
-            nextPageCursor
-        
             hasPreviousPage
-        
             pageSize
-
             ${this.searchFlowFields}
           }
         }`;

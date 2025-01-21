@@ -3,16 +3,6 @@ import { t } from '../../../i18n';
 import PageMeta from '../../components/page-meta';
 import { AppContext } from '../../context';
 import tw from 'twin.macro';
-
-import {
-  JsonParam,
-  NumberParam,
-  StringParam,
-  createEnumParam,
-  decodeNumber,
-  useQueryParams,
-  withDefault,
-} from 'use-query-params';
 import {
   DEFAULT_FLOW_TABLE_HEADERS,
   encodeTableHeaders,
@@ -24,6 +14,8 @@ import FilterFlowsTable, {
   FLOWS_FILTER_INITIAL_VALUES,
 } from '../../components/filters/filter-flows-table';
 import { useCallback, useEffect, useRef } from 'react';
+import useQueryParams from '../../utils/useQueryParams';
+import { FLOW_PARAMS_CODEC } from '../../utils/codecs';
 
 interface Props {
   className?: string;
@@ -51,44 +43,23 @@ export default (props: Props) => {
   }, []);
 
   const [query, setQuery] = useQueryParams({
-    page: withDefault(NumberParam, 0),
-    rowsPerPage: withDefault(
-      {
-        ...NumberParam,
-        decode: (string) => {
-          // Prevent user requesting more than max number of rows
-          const number = decodeNumber(string);
-          return number && Math.min(number, Math.max(...rowsPerPageOptions));
-        },
-      },
-      50
-    ),
-    orderBy: withDefault(
-      createEnumParam(
-        // Same as filter then map but this is acceptable to typescript
-        DEFAULT_FLOW_TABLE_HEADERS.reduce((acc, curr) => {
-          if (curr.sortable) {
-            return [...acc, curr.identifierID];
-          }
-
-          return acc;
-        }, [] as string[])
-      ),
-      'flow.updatedAt'
-    ),
-    orderDir: withDefault(createEnumParam(['ASC', 'DESC']), 'DESC'),
-    filters: withDefault(JsonParam, JSON.stringify({})),
-    tableHeaders: withDefault(StringParam, encodeTableHeaders([])), // Default value of table headers
-    prevPageCursor: withDefault(NumberParam, undefined),
-    nextPageCursor: withDefault(NumberParam, undefined),
+    codec: FLOW_PARAMS_CODEC,
+    initialValues: {
+      page: 0,
+      rowsPerPage: 50,
+      orderBy: 'flow.updatedAt',
+      orderDir: 'DESC',
+      filters: JSON.stringify({}),
+      tableHeaders: encodeTableHeaders([]), // Default value of table headers
+    },
   });
 
   const flowsTableProps: FlowsTableProps = {
     headers: DEFAULT_FLOW_TABLE_HEADERS,
     rowsPerPageOption: rowsPerPageOptions,
     initialValues: FLOWS_FILTER_INITIAL_VALUES,
-    query: query,
-    setQuery: setQuery,
+    query,
+    setQuery,
     abortSignal: abortControllerRef.current.signal,
   };
 

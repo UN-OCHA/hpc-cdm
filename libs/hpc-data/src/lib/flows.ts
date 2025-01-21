@@ -223,8 +223,6 @@ export const SEARCH_FLOWS_RESULT = t.type({
   searchFlows: t.type({
     total: t.number,
     flows: FLOW_RESULT,
-    prevPageCursor: t.number,
-    nextPageCursor: t.number,
     hasNextPage: t.boolean,
     hasPreviousPage: t.boolean,
     pageSize: t.number,
@@ -282,8 +280,7 @@ export type NestedFlowFilters = t.TypeOf<typeof NESTED_FLOW_FILTERS>;
 
 export const SEARCH_FLOWS_PARAMS = t.partial({
   limit: t.number,
-  prevPageCursor: t.number,
-  nextPageCursor: t.number,
+  page: t.number,
   sortOrder: t.string,
   sortField: t.string,
   ...FLOW_FILTERS.props,

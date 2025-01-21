@@ -45,7 +45,8 @@ import { downloadExcel } from '../../utils/download-excel';
 import DownloadIcon from '@mui/icons-material/Download';
 import {
   ChipDiv,
-  Query,
+  type FlowQuery,
+  type SetQuery,
   RejectPendingFlowsButton,
   RenderChipsRow,
   StyledLoader,
@@ -64,8 +65,8 @@ export interface FlowsTableProps {
   headers: TableHeadersProps<FlowHeaderID>[];
   initialValues: FlowsFilterValues | PendingFlowsFilterValues;
   rowsPerPageOption: number[];
-  query: Query;
-  setQuery: (newQuery: Query) => void;
+  query: FlowQuery;
+  setQuery: SetQuery<FlowQuery>;
   abortSignal?: AbortSignal;
   pending?: boolean;
 }
@@ -81,17 +82,17 @@ export default function FlowsTable(props: FlowsTableProps) {
   const [tableInfoDisplay, setTableInfoDisplay] = useState(
     util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
+
   const parsedFilters = parseFlowFilters(tableFilters, props.pending);
   const navigate = useNavigate();
   const [state, load] = useDataLoader([query], () =>
     env.model.flows.searchFlows({
       limit: query.rowsPerPage,
+      page: query.page,
       sortField: query.orderBy,
       sortOrder: query.orderDir,
       ...parsedFilters,
       signal: props.abortSignal,
-      prevPageCursor: query.prevPageCursor,
-      nextPageCursor: query.nextPageCursor,
     })
   );
   const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
@@ -105,26 +106,11 @@ export default function FlowsTable(props: FlowsTableProps) {
     }
   };
 
-  const handleChangePage = (
-    newPage: number,
-    prevPageCursor: number,
-    nextPageCursor: number
-  ) => {
-    if (newPage > props.query.page) {
-      setQuery({
-        ...query,
-        prevPageCursor: undefined,
-        nextPageCursor: nextPageCursor,
-        page: newPage,
-      });
-    } else {
-      setQuery({
-        ...query,
-        prevPageCursor: prevPageCursor,
-        nextPageCursor: undefined,
-        page: newPage,
-      });
-    }
+  const handleChangePage = (newPage: number) => {
+    setQuery({
+      ...query,
+      page: newPage,
+    });
   };
 
   const handleChangeRowsPerPage = (
@@ -858,13 +844,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       count={data.searchFlows.total}
                       rowsPerPage={query.rowsPerPage}
                       page={query.page}
-                      onPageChange={(_, newPage) =>
-                        handleChangePage(
-                          newPage,
-                          data.searchFlows.prevPageCursor,
-                          data.searchFlows.nextPageCursor
-                        )
-                      }
+                      onPageChange={(_, newPage) => handleChangePage(newPage)}
                       onRowsPerPageChange={handleChangeRowsPerPage}
                     />
                   </TopRowContainer>
@@ -895,13 +875,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                   count={data.searchFlows.total}
                   rowsPerPage={query.rowsPerPage}
                   page={query.page}
-                  onPageChange={(_, newPage) =>
-                    handleChangePage(
-                      newPage,
-                      data.searchFlows.prevPageCursor,
-                      data.searchFlows.nextPageCursor
-                    )
-                  }
+                  onPageChange={(_, newPage) => handleChangePage(newPage)}
                   onRowsPerPageChange={handleChangeRowsPerPage}
                 />
               </>
