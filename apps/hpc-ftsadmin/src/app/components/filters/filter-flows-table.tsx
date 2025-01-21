@@ -136,6 +136,9 @@ export const FilterFlowsTable = (props: Props) => {
     if (query.filters !== encodedFilters) {
       handleAbortController();
     }
+    //  We need to delay this action in a synchronous way to avoid
+    //  calling 2 setState() actions in an uncontrolled way that could
+    //  mess with internal React's component update cycle
     setTimeout(() => {
       setQuery({
         ...query,

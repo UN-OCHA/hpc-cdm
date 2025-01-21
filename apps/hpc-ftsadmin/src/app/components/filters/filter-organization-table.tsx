@@ -69,6 +69,9 @@ export const FilterOrganizationsTable = (props: Props) => {
     ) => void
   ) => {
     formikResetForm();
+    //  We need to delay this action in a synchronous way to avoid
+    //  calling 2 setState() actions in an uncontrolled way that could
+    //  mess with internal React's component update cycle
     setTimeout(() => {
       setQuery({
         ...query,
