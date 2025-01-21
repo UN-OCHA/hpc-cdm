@@ -48,6 +48,31 @@ export const POSITIVE_INTEGER_FROM_STRING = new t.Type<number, number>(
 );
 
 /**
+ * Accepts either an integer, or a string of an integer, that is contained in
+ * `integerOptions`. serializes to a number.
+ */
+export const validInteger = (integerOptions: readonly number[]) =>
+  new t.Type<number, number>(
+    'VALID_INTEGER',
+    t.number.is,
+    (v, c) => {
+      if (typeof v === 'number') {
+        return Number.isInteger(v) && integerOptions.some((row) => row === v)
+          ? t.success(v)
+          : t.failure(v, c);
+      } else if (typeof v === 'string') {
+        return /^\d+$/.test(v) &&
+          integerOptions.some((row) => row === parseInt(v))
+          ? t.success(parseInt(v))
+          : t.failure(v, c);
+      } else {
+        return t.failure(v, c);
+      }
+    },
+    t.identity
+  );
+
+/**
  * Accepts either a number, or a string of a number, serializes to a number type.
  */
 export const NUMBER_FROM_STRING = new t.Type<number, number>(
