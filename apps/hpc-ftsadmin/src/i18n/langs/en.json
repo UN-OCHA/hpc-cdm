@@ -211,6 +211,15 @@
       "title": "Search flows",
       "flowId": "Introduce Flow ID:"
     },
+    "flowVersions": {
+      "direction": {
+        "source": "Source",
+        "destination": "Destination"
+      },
+      "info": {
+        "compareInfo": "By clicking 2 flow version rows, you can compare the differences between them"
+      }
+    },
     "flowsTable": {
       "headers": {
         "id": "ID",

@@ -839,6 +839,18 @@ export class LiveModel implements Model {
           method: 'POST',
           resultType: flows.DELETE_FLOW_RESULT,
         }),
+      compareFlows: ({ flowIdA, flowIdB, versionIdA, versionIdB }) =>
+        this.call({
+          pathname: '/v2/flow/compare',
+          method: 'GET',
+          queryParams: {
+            flowIdA: `${flowIdA}`,
+            flowIdB: `${flowIdB}`,
+            versionIdA: `${versionIdA}`,
+            versionIdB: `${versionIdB}`,
+          },
+          resultType: flows.COMPARE_FLOWS_RESULT,
+        }),
     };
   }
   get globalClusters(): globalClusters.Model {

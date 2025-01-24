@@ -211,6 +211,15 @@
       "title": "搜索资金流",
       "flowId": "输入资金流 ID:"
     },
+    "flowVersions": {
+      "direction": {
+        "source": "来源",
+        "destination": "目的地"
+      },
+      "info": {
+        "compareInfo": "通过点击两个流版本的行，您可以比较版本之间的差异"
+      }
+    },
     "flowsTable": {
       "headers": {
         "id": "ID",

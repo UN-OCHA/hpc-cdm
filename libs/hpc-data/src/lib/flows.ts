@@ -2,6 +2,7 @@ import * as t from 'io-ts';
 
 import {
   DATE_FROM_STRING,
+  INTEGER_FROM_STRING,
   NUMBER_FROM_STRING,
   POSITIVE_INTEGER_FROM_STRING,
 } from './util';
@@ -652,6 +653,89 @@ export const DELETE_FLOW_RESULT = t.string;
 
 export type DeleteFlowResult = t.TypeOf<typeof DELETE_FLOW_RESULT>;
 
+export const COMPARE_FLOWS_PARAMS = t.type({
+  flowIdA: t.number,
+  versionIdA: t.number,
+  flowIdB: t.number,
+  versionIdB: t.number,
+});
+
+export type CompareFlowsParams = t.TypeOf<typeof COMPARE_FLOWS_PARAMS>;
+
+const COMPARE_FLOW_OBJECT = t.type({
+  id: t.number,
+  name: t.string,
+  direction: DIRECTION,
+});
+const COMPARE_FLOW = t.intersection([
+  t.type({
+    flowId: t.number,
+    versionId: t.number,
+    flowObjects: t.partial({
+      plans: t.array(
+        t.intersection([
+          COMPARE_FLOW_OBJECT,
+          t.type({ shortName: t.union([t.string, t.null]), code: t.string }),
+        ])
+      ),
+      projects: t.array(
+        t.intersection([COMPARE_FLOW_OBJECT, t.type({ code: t.string })])
+      ),
+      anonymizedOrganizations: t.array(
+        t.intersection([
+          COMPARE_FLOW_OBJECT,
+          t.type({ abbreviation: t.string }),
+        ])
+      ),
+      organizations: t.array(
+        t.intersection([
+          COMPARE_FLOW_OBJECT,
+          t.type({ abbreviation: t.string }),
+        ])
+      ),
+      usageYears: t.array(
+        t.type({
+          id: t.number,
+          year: INTEGER_FROM_STRING,
+          direction: DIRECTION,
+        })
+      ),
+      locations: t.array(COMPARE_FLOW_OBJECT),
+      emergencies: t.array(COMPARE_FLOW_OBJECT),
+      globalClusters: t.array(COMPARE_FLOW_OBJECT),
+      governingEntities: t.array(COMPARE_FLOW_OBJECT),
+    }),
+  }),
+  t.partial({
+    categories: t.array(
+      t.type({
+        id: CATEGORY.props.id,
+        name: CATEGORY.props.name,
+        group: CATEGORY.props.group,
+      })
+    ),
+    activeStatus: t.boolean,
+    restricted: t.boolean,
+    amountUSD: INTEGER_FROM_STRING,
+    origAmount: t.union([INTEGER_FROM_STRING, t.null]),
+    exchangeRate: t.union([NUMBER_FROM_STRING, t.null]),
+    origCurrency: t.union([t.string, t.null]),
+    budgetYear: t.union([INTEGER_FROM_STRING, t.null]),
+    description: t.string,
+    notes: t.string,
+    flowDate: DATE_FROM_STRING,
+    decisionDate: DATE_FROM_STRING,
+    firstReportedDate: t.union([DATE_FROM_STRING, t.null]),
+  }),
+]);
+
+export const COMPARE_FLOWS_RESULT = t.type({
+  flowA: COMPARE_FLOW,
+  flowB: COMPARE_FLOW,
+});
+
+export type CompareFlowsResult = t.TypeOf<typeof COMPARE_FLOWS_RESULT>;
+
 export interface Model {
   getFlowREST(params: GetFlowParams): Promise<GetFlowResult>;
   getFlowVersionREST(params: GetFlowVersionParams): Promise<GetFlowResult>;
@@ -669,4 +753,5 @@ export interface Model {
   getAutocompleteFlows(
     params: GetFlowsAutocompleteParams
   ): Promise<GetFlowsAutocompleteResult>;
+  compareFlows(params: CompareFlowsParams): Promise<CompareFlowsResult>;
 }

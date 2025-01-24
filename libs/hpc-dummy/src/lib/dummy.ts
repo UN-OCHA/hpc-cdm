@@ -844,6 +844,40 @@ export class Dummy {
             return `Successfully deleted flow ${flowId}v${versionID}`;
           }
         ),
+        compareFlows: dummyEndpoint(
+          'flows.compareFlows',
+          async ({
+            flowIdA,
+            versionIdA,
+            flowIdB,
+            versionIdB,
+          }: flows.CompareFlowsParams): Promise<flows.CompareFlowsResult> => {
+            const flowA = this.data.flows.find(
+              (flow) => flow.id === flowIdA && flow.versionID === versionIdA
+            );
+            const flowB = this.data.flows.find(
+              (flow) => flow.id === flowIdB && flow.versionID === versionIdB
+            );
+            if (!flowA || !flowB) {
+              throw new errors.NotFoundError();
+            }
+            // TODO: Properly mock this endpoint
+            return {
+              flowA: {
+                flowId: flowA.id,
+                versionId: flowA.versionID,
+                categories: [],
+                flowObjects: {},
+              },
+              flowB: {
+                flowId: flowB.id,
+                versionId: flowB.versionID,
+                categories: [],
+                flowObjects: {},
+              },
+            };
+          }
+        ),
       },
       globalClusters: {
         getGlobalClusters: dummyEndpoint(

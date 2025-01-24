@@ -41,7 +41,6 @@ import NumberFieldReview from './inputs/number-field-pending-review';
 import TextFieldReview from './inputs/text-field-pending-review';
 import { MdAdd, MdClose, MdOutlineSearch } from 'react-icons/md';
 import { FaTrashAlt } from 'react-icons/fa';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import validateForm from '../../utils/form-validation';
 import { Link, useBeforeUnload, useBlocker, useNavigate } from 'react-router';
 import * as paths from '../../paths';
@@ -58,7 +57,6 @@ import ReportingDetail, {
   ReportingDetailProps,
   validateReportingDetailsRequiredField,
 } from '../reporting-detail';
-import dayjs from '../../../libs/dayjs';
 import type { Dayjs } from 'dayjs';
 import {
   autofillFieldClusters,
@@ -74,11 +72,11 @@ import {
 } from '../../utils/fn-validations';
 import React, { useState } from 'react';
 import DatePickerReview from './inputs/date-picker-pending-review';
-import { PENDING_REVIEW } from '../../utils/constants';
 import AutocompleteSelectReview from './inputs/autocomplete-pending-review';
 import { LanguageKey, t } from '../../../i18n';
 import { FaUserSecret } from 'react-icons/fa';
 import FormGroupReadOnly from './form-group-readonly';
+import FlowVersions from './flow-version';
 
 type FlowFormProps = {
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
@@ -185,24 +183,6 @@ const UNTreasuryLinkComponent = tw.a`
 `;
 const FormGroupPaper = tw(Paper)`
   p-6
-`;
-const SPAN_STYLES = `
-  px-2
-  py-1
-  mx-2
-  border
-  border-solid
-  rounded-[4px]
-`;
-const LatestSpan = tw.span`
-  ${SPAN_STYLES}
-  bg-unocha-success-light
-  border-unocha-success
-`;
-const PendingReviewSpan = tw.span`
-  ${SPAN_STYLES}
-  bg-unocha-pallete-orange-light
-  border-unocha-pallete-orange
 `;
 const AddReportingDetailButton = tw(C.Button)`
   flex
@@ -465,10 +445,6 @@ export const FlowForm = (props: FlowFormProps) => {
   const pendingValues = isPending
     ? pendingValuesFlowForm(initialValues, flow)
     : undefined;
-
-  const pendingReviewCategory = inactiveReasons.find(
-    (category) => category.name === PENDING_REVIEW
-  );
 
   const isDisabled = isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
@@ -1891,73 +1867,14 @@ export const FlowForm = (props: FlowFormProps) => {
                   color="primary"
                 />
               )}
-              {(flow?.versions?.length ?? 0) > 0 && (
+              {flow?.versions && flow.versions.length > 0 && (
                 <FormGroup
                   title={t.t(
                     lang,
                     (s) => s.components.flowForm.sectionTitles.flowVersion
                   )}
                 >
-                  <Box sx={tw`flex flex-col px-4 gap-y-6`}>
-                    {flow?.versions
-                      ?.sort(
-                        (flowVersion, previous) =>
-                          previous.versionID - flowVersion.versionID
-                      )
-                      .map((flowVersion) => (
-                        <span
-                          key={`flowVersion${flowVersion.id}v${flowVersion.versionID}`}
-                        >
-                          {flowVersion.versionID === flow?.versionID && (
-                            <VisibilityIcon
-                              color="primary"
-                              sx={tw`me-4 float-start`}
-                            />
-                          )}
-                          <Link
-                            to={paths.flow(
-                              flowVersion.id,
-                              flowVersion.versionID
-                            )}
-                            target="_blank"
-                            rel="nofollow noopener noreferrer"
-                          >
-                            #{flowVersion.id}v{flowVersion.versionID}
-                          </Link>{' '}
-                          {flowVersion.activeStatus && (
-                            <LatestSpan>
-                              {t.t(
-                                lang,
-                                (s) => s.components.flowForm.activeTag
-                              )}
-                            </LatestSpan>
-                          )}
-                          {flowVersion.categories.some(
-                            (cat) =>
-                              cat.categoryID === pendingReviewCategory?.id
-                          ) && (
-                            <PendingReviewSpan>
-                              {t.t(
-                                lang,
-                                (s) => s.components.flowForm.pendingReviewTag
-                              )}
-                            </PendingReviewSpan>
-                          )}
-                          {t.t(
-                            lang,
-                            (s) => s.components.flowForm.createdUpdated,
-                            {
-                              createdDate: dayjs(
-                                flowVersion.createdAt
-                              ).format(),
-                              updatedDate: dayjs(
-                                flowVersion.updatedAt
-                              ).format(),
-                            }
-                          )}
-                        </span>
-                      ))}
-                  </Box>
+                  <FlowVersions flow={flow} inactiveReasons={inactiveReasons} />
                 </FormGroup>
               )}
             </Box>

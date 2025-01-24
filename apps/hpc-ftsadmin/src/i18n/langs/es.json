@@ -211,6 +211,15 @@
       "title": "Buscar flujos",
       "flowId": "Introduzca el ID del flujo:"
     },
+    "flowVersions": {
+      "direction": {
+        "source": "Origen",
+        "destination": "Destino"
+      },
+      "info": {
+        "compareInfo": "Al hacer clic en 2 filas de versión de flujo, puede comparar las diferencias entre las versiones"
+      }
+    },
     "flowsTable": {
       "headers": {
         "id": "ID",
