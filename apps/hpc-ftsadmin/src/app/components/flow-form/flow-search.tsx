@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Box, Modal } from '@mui/material';
-import { C } from '@unocha/hpc-ui';
+import { AsyncAutocompleteSelectProps, C } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import {
   defaultOptions,
@@ -66,14 +66,31 @@ const FlowSearch = (props: FlowSearchProps) => {
     ...(currentFlow ? [flowToFormObjectValue(currentFlow)] : []),
   ];
 
+  const removeOptionsFn: AsyncAutocompleteSelectProps['removeOptionsFn'] = (
+    response,
+    removeOptions
+  ) => {
+    if (!removeOptions) {
+      return response;
+    }
+    const res = response.filter(
+      (responseObject) =>
+        !removeOptions.some(
+          (removeOption) =>
+            responseObject.displayLabel === removeOption.displayLabel
+        )
+    );
+    return res;
+  };
+
   const handleSubmit = () => {
     if (flow) {
       const rawFlowLink = JSON.parse(flow.value.toString());
 
-      const flowLink = {
+      const flowLink: FlowLinkProps = {
         ...rawFlowLink,
         flowDate: dayjs(rawFlowLink.flowDate),
-      } as FlowLinkProps;
+      };
 
       const existingValues = values[name];
       if (!existingValues || !Array.isArray(existingValues)) {
@@ -192,6 +209,7 @@ const FlowSearch = (props: FlowSearchProps) => {
                   }
                 }}
                 removeOptions={removeOptions}
+                removeOptionsFn={removeOptionsFn}
               />
             </Box>
             <Box sx={tw`text-end mt-4`}>

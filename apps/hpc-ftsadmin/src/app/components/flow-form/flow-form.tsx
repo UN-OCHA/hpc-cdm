@@ -1821,6 +1821,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           (s) => s.components.flowForm.fields.parentFlow
                         )}
                         startIcon={MdAdd}
+                        currentFlow={flow}
                       />
                     )}
                     <FlowSearch
@@ -1830,6 +1831,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         (s) => s.components.flowForm.fields.childFlows
                       )}
                       startIcon={MdAdd}
+                      currentFlow={flow}
                     />
                   </Box>
                 )}

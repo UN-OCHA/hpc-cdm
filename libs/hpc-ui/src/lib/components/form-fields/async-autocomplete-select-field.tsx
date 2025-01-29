@@ -41,6 +41,10 @@ export type AsyncAutocompleteSelectProps = {
   required?: boolean;
   allowChildrenRender?: boolean;
   removeOptions?: util.FormObjectValue[];
+  removeOptionsFn?: (
+    response: util.FormObjectValue[],
+    removeOptions: util.FormObjectValue[] | undefined
+  ) => util.FormObjectValue[];
   onChange?: (
     newValue:
       | NonNullable<string | util.FormObjectValue>
@@ -71,24 +75,24 @@ export type AsyncAutocompleteSelectProps = {
 };
 
 /**
- *  Removes FormObjectValue objects from first array if in the second array
- *  there is any FormObjectValue whose 'value' property equals any inside the firstArray,
- *  if no second array provided, returns first array
+ *  Removes FormObjectValue objects from `response` array if in
+ *  the `removeOptions` array there is any FormObjectValue
+ *  whose 'value' property equals any inside the `response`,
+ *  if no `removeOptions` array provided, returns `response` array
  */
-const removeFormObjectValueFromFirstArray = (
-  firstArray: util.FormObjectValue[],
-  secondArray: util.FormObjectValue[] | undefined
+const removeOptionsFromResponse = (
+  response: util.FormObjectValue[],
+  removeOptions: util.FormObjectValue[] | undefined
 ) => {
-  if (secondArray) {
-    return firstArray.filter(
-      (firstArrayObject) =>
-        !secondArray.some(
-          (secondArrayObject) =>
-            firstArrayObject.value === secondArrayObject.value
+  if (removeOptions) {
+    return response.filter(
+      (responseObject) =>
+        !removeOptions.some(
+          (removeOption) => responseObject.value === removeOption.value
         )
     );
   }
-  return firstArray;
+  return response;
 };
 
 const AsyncAutocompleteSelect = ({
@@ -101,6 +105,7 @@ const AsyncAutocompleteSelect = ({
   required,
   allowChildrenRender,
   removeOptions,
+  removeOptionsFn = removeOptionsFromResponse,
   onChange,
   disabled,
   initialValue,
@@ -179,7 +184,7 @@ const AsyncAutocompleteSelect = ({
         if (fnPromise) {
           //  Don't include trailing spaces on query
           const query =
-            input.charAt(input.length - 1) === ' ' && input.length > 3
+            input.at(-1) === ' ' && input.length > 3
               ? input.trimEnd()
               : input;
           response = await fnPromise({
@@ -188,12 +193,13 @@ const AsyncAutocompleteSelect = ({
         } else {
           response = field.value;
         }
-        setData(removeFormObjectValueFromFirstArray(response, removeOptions));
+        const filteredResponse = removeOptionsFn(response, removeOptions);
+        setData(filteredResponse);
         if (isActive) {
           if (firstViewCondition) {
-            setOptions(response.filter(firstViewCondition));
+            setOptions(filteredResponse.filter(firstViewCondition));
           } else {
-            setOptions(response);
+            setOptions(filteredResponse);
           }
         }
         setIsFetch(true);
