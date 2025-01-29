@@ -54,6 +54,18 @@ export const validateReportingDetailsRequiredField = (
     ? t.t(lang, (s) => s.components.reportingDetail.validation.required)
     : undefined;
 
+export const validateReportingDetailsURLFormat = (
+  value: string | '',
+  lang: LanguageKey
+) => {
+  if (value === '') {
+    return undefined;
+  }
+  return /^https:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+$/.test(value)
+    ? undefined
+    : t.t(lang, (s) => s.components.reportingDetail.validation.url);
+};
+
 const ReportingDetail = ({
   index,
   disabled,
@@ -423,6 +435,10 @@ const ReportingDetail = ({
             initialValue={url}
             onChange={(value) => handleChange('url', value)}
             disabled={disabled}
+            controlledError={validateReportingDetailsURLFormat(
+              values.reportingDetails[index].url,
+              lang
+            )}
           />
         </Box>
       </Box>

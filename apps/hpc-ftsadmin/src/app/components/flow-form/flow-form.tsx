@@ -56,6 +56,7 @@ import ReportingDetail, {
   REPORTING_DETAIL_INITIAL_VALUES,
   ReportingDetailProps,
   validateReportingDetailsRequiredField,
+  validateReportingDetailsURLFormat,
 } from '../reporting-detail';
 import type { Dayjs } from 'dayjs';
 import {
@@ -934,13 +935,14 @@ export const FlowForm = (props: FlowFormProps) => {
         const isValid =
           formikValid &&
           values.reportingDetails.reduce(
-            (acc, { reportedByOrganization, reportChannel }) =>
+            (acc, { reportedByOrganization, reportChannel, url }) =>
               acc &&
               !validateReportingDetailsRequiredField(
                 reportedByOrganization,
                 lang
               ) &&
-              !validateReportingDetailsRequiredField(reportChannel, lang),
+              !validateReportingDetailsRequiredField(reportChannel, lang) &&
+              !validateReportingDetailsURLFormat(url, lang),
             true
           );
         return (

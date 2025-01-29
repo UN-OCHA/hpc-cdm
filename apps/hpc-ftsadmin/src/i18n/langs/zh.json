@@ -558,7 +558,8 @@
         "label": "报告链接"
       },
       "validation": {
-        "required": "此字段为必填项"
+        "required": "此字段为必填项",
+        "url": "URL必须是 'https://...' 格式"
       }
     },
     "upload": {

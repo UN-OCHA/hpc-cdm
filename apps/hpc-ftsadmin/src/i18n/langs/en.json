@@ -556,7 +556,8 @@
         "label": "Report URL"
       },
       "validation": {
-        "required": "This field is required"
+        "required": "This field is required",
+        "url": "URL must be of format 'https://...'"
       }
     },
     "upload": {

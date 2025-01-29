@@ -555,7 +555,8 @@
         "label": "URL del informe"
       },
       "validation": {
-        "required": "Este campo es obligatorio"
+        "required": "Este campo es obligatorio",
+        "url": "La URL debe tener el formato 'https://...'"
       }
     },
     "upload": {

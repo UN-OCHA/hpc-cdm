@@ -2,6 +2,7 @@ import { TextField, type TextFieldProps } from '@mui/material';
 import { useField } from 'formik';
 import tw from 'twin.macro';
 import { REQUIRED_BORDER_STYLE } from '../../util';
+import { useState } from 'react';
 
 export const StyledTextField = tw(TextField)`
   min-w-[10rem]
@@ -24,11 +25,20 @@ export interface TextFieldWrapperProps {
    *  `onChange()` prop
    */
   onChange?: (...args: unknown[]) => unknown;
-  /** This prop is used only if we are not using
+  /**
+   *  **Warning:**
+   *  This prop is used only if we are not using
    *  `Formik`, if you are using `Formik`, you don't need
-   *  to pass this prop.
+   *  to pass this prop. This is for controlled fields
    */
   initialValue?: string;
+  /**
+   *  **Warning:**
+   *  This prop is used only if we are not using
+   *  `Formik`, if you are using `Formik`, you don't need
+   *  to pass this prop. This is for controlled fields
+   */
+  controlledError?: string;
   disabled?: boolean;
 }
 const TextFieldWrapper = ({
@@ -40,9 +50,11 @@ const TextFieldWrapper = ({
   required,
   onChange,
   initialValue,
+  controlledError,
   disabled,
 }: TextFieldWrapperProps) => {
   const [field, meta] = useField(name);
+  const [controlledTouched, setControlledTouched] = useState(false);
   const configTextField: TextFieldProps = {
     ...field,
     sx: required && !field.value ? REQUIRED_BORDER_STYLE : undefined,
@@ -51,15 +63,19 @@ const TextFieldWrapper = ({
     disabled,
     multiline: textarea,
     minRows,
+    onBlur: () => setControlledTouched(true),
     maxRows: 5,
     required,
     placeholder,
     size: 'small',
     type: 'text',
   };
-  if (meta.touched && meta.error) {
+  if (
+    (meta.touched && meta.error) ||
+    (controlledTouched && !!controlledError)
+  ) {
     configTextField.error = true;
-    configTextField.helperText = meta.error;
+    configTextField.helperText = meta.error ?? controlledError;
   }
   return (
     <StyledTextField
