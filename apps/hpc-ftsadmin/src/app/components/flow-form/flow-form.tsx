@@ -184,6 +184,13 @@ const UNTreasuryLinkComponent = tw.a`
 const FormGroupPaper = tw(Paper)`
   p-6
 `;
+/**
+ * 3.75rem equals to:
+ *  - `p-6` / 2 from `FormGroupPaper`
+ *  - `gap-x-6` from parent container
+ *  - `mx-6` from parent parent container
+ */
+const SOURCE_DESTINATION_MAX_WIDTH = 'max-w-[calc(50%-3.75rem)]';
 const AddReportingDetailButton = tw(C.Button)`
   flex
   justify-center
@@ -1009,13 +1016,13 @@ export const FlowForm = (props: FlowFormProps) => {
               </Box>
             )}
             <Box sx={tw`mt-6 mx-6 flex flex-col gap-y-4`}>
-              <Box sx={tw`flex gap-x-6 `}>
+              <Box sx={tw`flex gap-x-6`}>
                 <FormGroup
                   title={t.t(
                     lang,
                     (s) => s.components.flowForm.sectionTitles.sourceFlow
                   )}
-                  styles={tw`basis-1/2`}
+                  styles={tw`basis-1/2 ${SOURCE_DESTINATION_MAX_WIDTH}`}
                 >
                   {values.parentFlow ? (
                     <>
@@ -1258,7 +1265,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     lang,
                     (s) => s.components.flowForm.sectionTitles.destinationFlow
                   )}
-                  styles={tw`basis-1/2`}
+                  styles={tw`basis-1/2 ${SOURCE_DESTINATION_MAX_WIDTH}`}
                 >
                   {values.childFlows.length > 0 && (
                     <FlowLinkWarning
