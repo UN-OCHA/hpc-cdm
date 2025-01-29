@@ -47,7 +47,7 @@ const AutocompleteSelect = ({
     disabled,
     readOnly,
     options,
-    onClose: () => {
+    onBlur: () => {
       setIsTouched(true);
     },
     isOptionEqualToValue: (option, value) => option.value === value.value,
