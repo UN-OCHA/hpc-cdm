@@ -16,7 +16,7 @@ import { t } from '../../../i18n';
 
 export type FlowVersion = NonNullable<flows.FlowREST['versions']>[number];
 
-type ComparisonMode = 'addition' | 'deletion' | 'modification';
+type ComparisonMode = 'addition' | 'deletion' | 'modification' | 'noop';
 type FlowCompareFlowObject = flows.CompareFlowsResult['flowA']['flowObjects'];
 type FlowCompareFlowObjectReduced = {
   id: number;
@@ -24,6 +24,9 @@ type FlowCompareFlowObjectReduced = {
   direction: NonNullable<
     FlowCompareFlowObject[keyof FlowCompareFlowObject]
   >[number]['direction'];
+  state: NonNullable<
+    FlowCompareFlowObject[keyof FlowCompareFlowObject]
+  >[number]['state'];
 };
 
 const COMMON_STYLES = `
@@ -85,29 +88,74 @@ const COMPARISON: Record<
       <Modification>{flowBValue}</Modification>
     </Box>
   ),
+  noop: ({ flowBValue }) => (
+    <Box>
+      <span>{flowBValue}</span>
+    </Box>
+  ),
 };
 
+const isEmpty = (prop: string | undefined | null) => {
+  return (
+    prop === null ||
+    prop === undefined ||
+    (typeof prop === 'string' && prop === '')
+  );
+};
 const comparisonMode = (
   propA: string | undefined | null,
   propB: string | undefined | null
 ): ComparisonMode => {
-  const isEmpty = (prop: string | undefined | null) => {
-    return (
-      prop === null ||
-      prop === undefined ||
-      (typeof prop === 'string' && prop === '')
-    );
-  };
   if (isEmpty(propA) && !isEmpty(propB)) {
     return 'addition';
   }
   if (!isEmpty(propA) && isEmpty(propB)) {
     return 'deletion';
   }
-
   return 'modification';
 };
 
+const extractNamesJoinTrim = (names: Array<{ name: string }>) =>
+  names
+    .map(({ name }) => name)
+    .join(', ')
+    .trim();
+
+const CompareFlowObjectRow = ({
+  tableCellName,
+  flowAValue,
+  flowBValue,
+}: {
+  tableCellName: React.ReactNode;
+  flowAValue: FlowCompareFlowObjectReduced[];
+  flowBValue: FlowCompareFlowObjectReduced[];
+}) => {
+  if (!flowAValue && !flowBValue) {
+    return;
+  }
+  return (
+    <TableRow>
+      <TableCell10>{tableCellName}</TableCell10>
+      <TableCell45>
+        {flowAValue.length ? (
+          extractNamesJoinTrim(flowAValue)
+        ) : (
+          <Blank>[blank]</Blank>
+        )}
+      </TableCell45>
+      <TableCell45>
+        <Box sx={tw`flex gap-x-2`}>
+          {flowBValue.map((fB) =>
+            COMPARISON[fB.state]({
+              flowAValue: flowAValue.find((fA) => fA.id === fB.id)?.name,
+              flowBValue: fB.name,
+            })
+          )}
+        </Box>
+      </TableCell45>
+    </TableRow>
+  );
+};
 const CompareRow = ({
   tableCellName,
   flowAValue,
@@ -164,42 +212,51 @@ const FlowCompare = ({
   const parseYearToName = (
     flowObject: FlowCompareFlowObject[keyof FlowCompareFlowObject]
   ) =>
-    flowObject?.map((flowObject) =>
-      'year' in flowObject
-        ? {
-            id: flowObject.id,
-            direction: flowObject.direction,
-            name: `${flowObject.year}`,
-          }
+    flowObject?.map((fO) => {
+      const commonProps = {
+        id: fO.id,
+        direction: fO.direction,
+        state: fO.state,
+      };
+      return 'year' in fO
+        ? { ...commonProps, name: `${fO.year}` }
         : {
-            id: flowObject.id,
-            direction: flowObject.direction,
-            name: flowObject.name,
-          }
-    );
-
-  const extractNamesJoinTrim = (names: Array<{ name: string }>) =>
-    names
-      .map(({ name }) => name)
-      .join(', ')
-      .trim();
+            ...commonProps,
+            name: fO.name,
+          };
+    });
 
   const divideSourceDestination = (
     flowObject?: FlowCompareFlowObjectReduced[]
-  ): readonly [string, string] => {
-    const [source, destination] = flowObject?.reduce(
-      (acc, item) => {
-        const clone = structuredClone(acc);
-        clone[item.direction === 'source' ? 0 : 1].push(item);
-        return clone;
-      },
-      [[], []] as [
-        FlowCompareFlowObjectReduced[],
-        FlowCompareFlowObjectReduced[],
-      ]
-    ) ?? [[], []];
-
-    return [extractNamesJoinTrim(source), extractNamesJoinTrim(destination)];
+  ): readonly [
+    FlowCompareFlowObjectReduced[],
+    FlowCompareFlowObjectReduced[],
+  ] => {
+    return (
+      flowObject?.reduce(
+        (acc, item) => {
+          const clone = structuredClone(acc);
+          clone[item.direction === 'source' ? 0 : 1].push(item);
+          return clone;
+        },
+        [[], []] as [
+          FlowCompareFlowObjectReduced[],
+          FlowCompareFlowObjectReduced[],
+        ]
+      ) ?? [[], []]
+    );
+  };
+  /**
+   * The API already returns different values only, but when dividing
+   * them by direction we need to see if the source or/and destination
+   * suffered changes. If both Arrays are empty it means they are in the
+   * same state
+   */
+  const areFlowsDifferent = (
+    flowObjectA: FlowCompareFlowObjectReduced[],
+    flowObjectB: FlowCompareFlowObjectReduced[]
+  ) => {
+    return !(flowObjectA.length === 0 && flowObjectB.length === 0);
   };
 
   return (
@@ -255,8 +312,11 @@ const FlowCompare = ({
 
                       return (
                         <React.Fragment key={flowObjectKey}>
-                          {sourceFlowObjectA !== sourceFlowObjectB && (
-                            <CompareRow
+                          {areFlowsDifferent(
+                            sourceFlowObjectA,
+                            sourceFlowObjectB
+                          ) && (
+                            <CompareFlowObjectRow
                               tableCellName={
                                 <span>
                                   <SourceDestination>
@@ -274,9 +334,11 @@ const FlowCompare = ({
                               flowBValue={sourceFlowObjectB}
                             />
                           )}
-                          {destinationFlowObjectA !==
-                            destinationFlowObjectB && (
-                            <CompareRow
+                          {areFlowsDifferent(
+                            destinationFlowObjectA,
+                            destinationFlowObjectB
+                          ) && (
+                            <CompareFlowObjectRow
                               tableCellName={
                                 <span>
                                   <SourceDestination>

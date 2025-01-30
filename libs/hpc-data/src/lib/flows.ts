@@ -662,11 +662,19 @@ export const COMPARE_FLOWS_PARAMS = t.type({
 
 export type CompareFlowsParams = t.TypeOf<typeof COMPARE_FLOWS_PARAMS>;
 
+const STATE = t.keyof({
+  addition: 'addition',
+  deletion: 'deletion',
+  noop: 'noop',
+});
 const COMPARE_FLOW_OBJECT = t.type({
   id: t.number,
   name: t.string,
   direction: DIRECTION,
+  state: STATE,
 });
+export type State = t.TypeOf<typeof STATE>;
+
 const COMPARE_FLOW = t.intersection([
   t.type({
     flowId: t.number,
@@ -698,6 +706,7 @@ const COMPARE_FLOW = t.intersection([
           id: t.number,
           year: INTEGER_FROM_STRING,
           direction: DIRECTION,
+          state: STATE,
         })
       ),
       locations: t.array(COMPARE_FLOW_OBJECT),
