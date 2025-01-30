@@ -22,6 +22,7 @@ import {
   flowToFormObjectValue,
 } from '../../utils/map-functions';
 import dayjs from '../../../libs/dayjs';
+import FlowLinkWarning from './flow-link-warning';
 
 type FlowSearchProps = {
   name: 'parentFlow' | 'childFlows';
@@ -192,6 +193,15 @@ const FlowSearch = (props: FlowSearchProps) => {
         <ModalContainer>
           <Box sx={tw`w-full`}>
             <h2>{t.t(lang, (s) => s.components.flowSearch.title)}</h2>
+            {removeOptions.length !== 0 && (
+              <FlowLinkWarning
+                text={t.t(lang, (s) => s.components.flowSearch.warning, {
+                  removeOptions: removeOptions
+                    .map(({ displayLabel }) => /^(\d*)/.exec(displayLabel)?.[0])
+                    .join(', '),
+                })}
+              />
+            )}
             <Box sx={tw`flex items-center gap-x-4`}>
               <C.AsyncAutocompleteSelect
                 fnPromise={(query) =>
