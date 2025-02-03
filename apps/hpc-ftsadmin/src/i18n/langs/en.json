@@ -71,7 +71,7 @@
       "inactiveReason": "This flow is not active because it has been marked as {reason}",
       "unknownInactiveReasons": "Unknown inactive reasons",
       "legacyID": "Legacy contribution ID: {id}",
-      "copyOfFlow": "Copy of Flow {name}",
+      "copyOfFlow": "Copy of Flow",
       "addFLow": "Add Flow"
     },
     "flowAmountButton": {

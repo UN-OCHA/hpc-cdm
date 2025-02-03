@@ -71,7 +71,7 @@
       "inactiveReason": "此资金流未激活，因为它已被标记为 {reason}",
       "unknownInactiveReasons": "未知的未激活原因",
       "legacyID": "遗留贡献 ID: {id}",
-      "copyOfFlow": "资金流副本 {name}",
+      "copyOfFlow": "资金流副本",
       "addFLow": "添加资金流"
     },
     "flowAmountButton": {

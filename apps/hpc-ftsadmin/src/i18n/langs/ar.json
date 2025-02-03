@@ -71,7 +71,7 @@
       "inactiveReason": "هذا التدفق غير نشط لأنه تم تعيينه كـ {reason}",
       "unknownInactiveReasons": "أسباب غير معروفة لعدم النشاط",
       "legacyID": "معرف المساهمة القديم: {id}",
-      "copyOfFlow": "نسخة من التدفق {name}",
+      "copyOfFlow": "نسخة من التدفق",
       "addFLow": "إضافة تدفق"
     },
     "flowAmountButton": {

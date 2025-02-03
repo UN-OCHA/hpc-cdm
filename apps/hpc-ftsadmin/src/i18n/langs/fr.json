@@ -71,7 +71,7 @@
       "inactiveReason": "Ce flux n'est pas actif car il a été marqué comme {reason}",
       "unknownInactiveReasons": "Raisons inactives inconnues",
       "legacyID": "ID de contribution hérité : {id}",
-      "copyOfFlow": "Copie du flux {name}",
+      "copyOfFlow": "Copie du flux",
       "addFLow": "Ajouter un flux"
     },
     "flowAmountButton": {

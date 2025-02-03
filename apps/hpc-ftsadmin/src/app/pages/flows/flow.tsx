@@ -1,7 +1,7 @@
 import { C, type Message, useDataLoader } from '@unocha/hpc-ui';
 import { FlowForm } from '../../components/flow-form/flow-form';
 import { useState } from 'react';
-import { useLocation, useParams } from 'react-router';
+import { Link, useLocation, useParams } from 'react-router';
 import { AppContext, getEnv } from '../../context';
 import { t } from '../../../i18n';
 import tw from 'twin.macro';
@@ -55,6 +55,7 @@ export default () => {
         successMessage?: string;
         flowFormCopyValues?: FlowFormTypeSerialized;
         flowFormCopyValuesName?: string;
+        flowFormCopyValuesPath?: string;
       }
     | undefined = useLocation().state;
   const [messages, setMessages] = useState<Message[]>([
@@ -260,11 +261,17 @@ export default () => {
                 <PaddingContainer>
                   <C.PageTitle>
                     {historyState?.flowFormCopyValues &&
-                    historyState?.flowFormCopyValuesName
-                      ? t.t(lang, (s) => s.components.flow.copyOfFlow, {
-                          name: historyState?.flowFormCopyValuesName,
-                        })
-                      : t.t(lang, (s) => s.components.flow.addFLow)}
+                    historyState.flowFormCopyValuesPath &&
+                    historyState.flowFormCopyValuesName ? (
+                      <span>
+                        {t.t(lang, (s) => s.components.flow.copyOfFlow)}{' '}
+                        <Link to={historyState.flowFormCopyValuesPath}>
+                          {historyState.flowFormCopyValuesName}
+                        </Link>
+                      </span>
+                    ) : (
+                      t.t(lang, (s) => s.components.flow.addFLow)
+                    )}
                   </C.PageTitle>
                   <FlowForm
                     {...flowFormProps}

@@ -981,6 +981,7 @@ export const FlowForm = (props: FlowFormProps) => {
                   state={{
                     flowFormCopyValues: serializeFlowForm(values),
                     flowFormCopyValuesName: `${flow?.id}v${flow?.versionID}`,
+                    flowFormCopyValuesPath: paths.flow(flow.id, flow.versionID),
                   }}
                 >
                   {t.t(lang, (s) => s.components.flowForm.copyFlow)}
