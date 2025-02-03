@@ -276,7 +276,7 @@ export const OrganizationForm = ({
               (s) => s.components.organizationUpdateCreate.fields.locations
             )}
             name="locations"
-            fnPromise={(query) => fnLocations(query, environment)}
+            fnPromise={(query) => fnLocations(query, environment, true)}
             isMulti
             allowChildrenRender
           />

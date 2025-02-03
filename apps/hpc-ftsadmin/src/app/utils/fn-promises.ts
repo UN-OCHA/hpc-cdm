@@ -74,7 +74,8 @@ export const locationsOptions = (
     children?: locations.Location[];
     chipColor?: string;
     tooltip?: string;
-  }>
+  }>,
+  includeAllAdminLevel?: boolean
 ): util.FormObjectValue[] => {
   const res: util.FormObjectValue[] = [];
 
@@ -88,7 +89,7 @@ export const locationsOptions = (
       tooltip,
     };
     res.push(parentLocation);
-    if (children && children.length > 0) {
+    if (children && children.length > 0 && includeAllAdminLevel) {
       for (const responseLevelValue of children) {
         res.push({
           displayLabel: responseLevelValue.name,
@@ -163,7 +164,9 @@ export const fnOrganizations = async (
 };
 
 const YEARS_OPTION_RANGE = 5;
-export const usageYearFirstViewCondition = (usageYear: FormObjectValue) => {
+export const usageYearFirstViewCondition = (
+  usageYear: util.FormObjectValue
+) => {
   const currentYear = new Date().getFullYear();
   return (
     parseInt(usageYear.displayLabel) > currentYear - YEARS_OPTION_RANGE &&
@@ -197,10 +200,11 @@ export const fnUsageYears = async (
 
 export const fnLocations = async (
   query: { query: string },
-  env: Environment
+  env: Environment,
+  includeAllAdminLevel?: boolean
 ): Promise<util.FormObjectValue[]> => {
   const response = await env.model.locations.getAutocompleteLocations(query);
-  return locationsOptions(response);
+  return locationsOptions(response, includeAllAdminLevel);
 };
 
 export const fnProjects = async (
