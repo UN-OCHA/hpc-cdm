@@ -64,6 +64,9 @@ export type FlowFormTypeSerialized = Omit<
   | 'reportingDetails'
   | 'parentFlow'
   | 'childFlows'
+  // When copying a flow, the amountUSD and amountOriginalCurrency are not included
+  | 'amountUSD'
+  | 'amountOriginalCurrency'
 > & {
   flowDate: string | null;
   decisionDate: string | null;
@@ -722,6 +725,8 @@ export const serializeFlowForm = (
     firstReported,
     reportingDetails,
     parentFlow,
+    amountUSD: _amountUSD,
+    amountOriginalCurrency: _amountOriginalCurrency,
     ...restValues
   } = values;
 
@@ -767,6 +772,8 @@ export const deserializeFlowForm = (
 
   return {
     ...values,
+    amountUSD: INITIAL_FORM_VALUES['amountUSD'],
+    amountOriginalCurrency: INITIAL_FORM_VALUES['amountOriginalCurrency'],
     flowDate: flowDate ? dayjs(flowDate) : null,
     decisionDate: decisionDate ? dayjs(decisionDate) : null,
     firstReported: firstReported ? dayjs(firstReported) : null,
