@@ -1,6 +1,7 @@
-import { C, CLASSES, combineClasses, type Message } from '@unocha/hpc-ui';
-import { useState } from 'react';
+import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router';
+import { toast } from 'react-toastify';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import FilterFlowsTable, {
@@ -12,6 +13,7 @@ import FlowsTable, {
 } from '../../components/tables/flows-table';
 import { AppContext } from '../../context';
 import { FLOW_PARAMS_CODEC } from '../../utils/codecs';
+import { TOAST_CONFIG } from '../../utils/constants';
 import {
   DEFAULT_FLOW_TABLE_HEADERS,
   encodeTableHeaders,
@@ -34,17 +36,12 @@ export default (props: Props) => {
   const rowsPerPageOptions = [10, 25, 50, 100];
 
   const state: { successMessage?: string } | undefined = useLocation().state;
-  const [messages, setMessages] = useState<Message[]>([
-    ...(state?.successMessage
-      ? [
-          {
-            message: state.successMessage,
-            severity: 'success',
-            key: Date.now(),
-          } satisfies Message,
-        ]
-      : []),
-  ]);
+
+  useEffect(() => {
+    if (state?.successMessage) {
+      toast.success(state.successMessage, TOAST_CONFIG);
+    }
+  }, [state?.successMessage]);
 
   const [query, setQuery] = useQueryParams({
     codec: FLOW_PARAMS_CODEC,
@@ -64,7 +61,6 @@ export default (props: Props) => {
     initialValues: FLOWS_FILTER_INITIAL_VALUES,
     query,
     setQuery,
-    setMessages,
   };
 
   return (
@@ -83,7 +79,6 @@ export default (props: Props) => {
               <FlowsTable {...flowsTableProps} />
             </LandingContainer>
           </Container>
-          <C.MessageAlert setMessages={setMessages} messages={messages} />
         </div>
       )}
     </AppContext.Consumer>

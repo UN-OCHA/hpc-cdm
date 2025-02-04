@@ -1,6 +1,5 @@
-import { C, type Message, useDataLoader } from '@unocha/hpc-ui';
+import { C, useDataLoader } from '@unocha/hpc-ui';
 import { FlowForm } from '../../components/flow-form/flow-form';
-import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
 import { AppContext, getEnv } from '../../context';
 import { t } from '../../../i18n';
@@ -17,6 +16,9 @@ import {
   fnFlowStatusId,
   fnFlowTypeId,
 } from '../../utils/fn-promises';
+import { toast } from 'react-toastify';
+import { TOAST_CONFIG } from '../../utils/constants';
+import { useEffect } from 'react';
 
 type FlowRouteParams = {
   id: string;
@@ -58,17 +60,13 @@ export default () => {
         flowFormCopyValuesPath?: string;
       }
     | undefined = useLocation().state;
-  const [messages, setMessages] = useState<Message[]>([
-    ...(historyState?.successMessage
-      ? [
-          {
-            message: historyState.successMessage,
-            severity: 'success',
-            key: Date.now(),
-          } satisfies Message,
-        ]
-      : []),
-  ]);
+
+  useEffect(() => {
+    if (historyState?.successMessage) {
+      toast.success(historyState.successMessage, TOAST_CONFIG);
+    }
+  }, [historyState?.successMessage]);
+
   const { id: idString, version } = useParams<FlowRouteParams>();
 
   const isPending = (flow: flows.GetFlowResult): flow is FlowRestPending =>
@@ -139,79 +137,75 @@ export default () => {
     return (
       <AppContext.Consumer>
         {({ lang }) => (
-          <>
-            <C.Loader
-              loader={state}
-              strings={{
-                ...t.get(lang, (s) => s.components.loader),
-                notFound: {
-                  ...t.get(lang, (s) => s.components.notFound),
-                },
-              }}
-            >
-              {({ flow, parents, children, ...otherFlowFormProps }) => (
-                <PaddingContainer>
-                  <C.PageTitle>{`Flow ${flow.id}v${flow.versionID}`}</C.PageTitle>
-                  <UpdatedCreatedBy>
-                    {t.t(lang, (s) => s.components.flow.updatedBy, {
-                      date: dayjs(flow.updatedAt).format(),
-                      user: flow.lastUpdatedBy?.name ?? DEFAULT_USERNAME,
+          <C.Loader
+            loader={state}
+            strings={{
+              ...t.get(lang, (s) => s.components.loader),
+              notFound: {
+                ...t.get(lang, (s) => s.components.notFound),
+              },
+            }}
+          >
+            {({ flow, parents, children, ...otherFlowFormProps }) => (
+              <PaddingContainer>
+                <C.PageTitle>{`Flow ${flow.id}v${flow.versionID}`}</C.PageTitle>
+                <UpdatedCreatedBy>
+                  {t.t(lang, (s) => s.components.flow.updatedBy, {
+                    date: dayjs(flow.updatedAt).format(),
+                    user: flow.lastUpdatedBy?.name ?? DEFAULT_USERNAME,
+                  })}
+                </UpdatedCreatedBy>
+                <UpdatedCreatedBy>
+                  {t.t(lang, (s) => s.components.flow.createdBy, {
+                    date: dayjs(flow.createdAt).format(),
+                    user: flow.createdBy?.name ?? DEFAULT_USERNAME,
+                  })}
+                </UpdatedCreatedBy>
+                {isInactive(flow) && (
+                  <InactiveReason>
+                    {flow.deletedAt
+                      ? t.t(lang, (s) => s.components.flow.deleted)
+                      : t.t(lang, (s) => s.components.flow.inactiveReason, {
+                          reason:
+                            flow.categories.find(
+                              (c) => c.group === 'inactiveReason'
+                            )?.name ??
+                            t.t(
+                              lang,
+                              (s) => s.components.flow.unknownInactiveReasons
+                            ),
+                        })}
+                  </InactiveReason>
+                )}
+                {flow.legacy?.legacyID && (
+                  <LegacyId>
+                    {t.t(lang, (s) => s.components.flow.legacyID, {
+                      id: flow.legacy.legacyID,
                     })}
-                  </UpdatedCreatedBy>
-                  <UpdatedCreatedBy>
-                    {t.t(lang, (s) => s.components.flow.createdBy, {
-                      date: dayjs(flow.createdAt).format(),
-                      user: flow.createdBy?.name ?? DEFAULT_USERNAME,
-                    })}
-                  </UpdatedCreatedBy>
-                  {isInactive(flow) && (
-                    <InactiveReason>
-                      {flow.deletedAt
-                        ? t.t(lang, (s) => s.components.flow.deleted)
-                        : t.t(lang, (s) => s.components.flow.inactiveReason, {
-                            reason:
-                              flow.categories.find(
-                                (c) => c.group === 'inactiveReason'
-                              )?.name ??
-                              t.t(
-                                lang,
-                                (s) => s.components.flow.unknownInactiveReasons
-                              ),
-                          })}
-                    </InactiveReason>
-                  )}
-                  {flow.legacy?.legacyID && (
-                    <LegacyId>
-                      {t.t(lang, (s) => s.components.flow.legacyID, {
-                        id: flow.legacy.legacyID,
-                      })}
-                    </LegacyId>
-                  )}
-                  <FlowForm
-                    setMessages={setMessages}
-                    initialValues={
-                      isPending(flow)
-                        ? parseToFlowForm(
-                            {
-                              ...(flow.activeVersion ?? flow),
-                              reportDetails: flow.reportDetails,
-                            },
-                            parents,
-                            children
-                          )
-                        : parseToFlowForm(flow, parents, children)
-                    }
-                    flow={flow}
-                    load={load}
-                    isPending={isPending(flow)}
-                    isInactive={isInactive(flow)}
-                    {...otherFlowFormProps}
-                  />
-                </PaddingContainer>
-              )}
-            </C.Loader>
-            <C.MessageAlert setMessages={setMessages} messages={messages} />
-          </>
+                  </LegacyId>
+                )}
+                <FlowForm
+                  initialValues={
+                    isPending(flow)
+                      ? parseToFlowForm(
+                          {
+                            ...(flow.activeVersion ?? flow),
+                            reportDetails: flow.reportDetails,
+                          },
+                          parents,
+                          children
+                        )
+                      : parseToFlowForm(flow, parents, children)
+                  }
+                  flow={flow}
+                  load={load}
+                  isPending={isPending(flow)}
+                  isInactive={isInactive(flow)}
+                  {...otherFlowFormProps}
+                />
+              </PaddingContainer>
+            )}
+          </C.Loader>
         )}
       </AppContext.Consumer>
     );
@@ -247,47 +241,43 @@ export default () => {
     return (
       <AppContext.Consumer>
         {({ lang }) => (
-          <>
-            <C.Loader
-              loader={state}
-              strings={{
-                ...t.get(lang, (s) => s.components.loader),
-                notFound: {
-                  ...t.get(lang, (s) => s.components.notFound),
-                },
-              }}
-            >
-              {(flowFormProps) => (
-                <PaddingContainer>
-                  <C.PageTitle>
-                    {historyState?.flowFormCopyValues &&
-                    historyState.flowFormCopyValuesPath &&
-                    historyState.flowFormCopyValuesName ? (
-                      <span>
-                        {t.t(lang, (s) => s.components.flow.copyOfFlow)}{' '}
-                        <Link to={historyState.flowFormCopyValuesPath}>
-                          {historyState.flowFormCopyValuesName}
-                        </Link>
-                      </span>
-                    ) : (
-                      t.t(lang, (s) => s.components.flow.addFLow)
-                    )}
-                  </C.PageTitle>
-                  <FlowForm
-                    {...flowFormProps}
-                    setMessages={setMessages}
-                    load={load}
-                    initialValues={
-                      historyState?.flowFormCopyValues
-                        ? deserializeFlowForm(historyState.flowFormCopyValues)
-                        : undefined
-                    }
-                  />
-                </PaddingContainer>
-              )}
-            </C.Loader>
-            <C.MessageAlert setMessages={setMessages} messages={messages} />
-          </>
+          <C.Loader
+            loader={state}
+            strings={{
+              ...t.get(lang, (s) => s.components.loader),
+              notFound: {
+                ...t.get(lang, (s) => s.components.notFound),
+              },
+            }}
+          >
+            {(flowFormProps) => (
+              <PaddingContainer>
+                <C.PageTitle>
+                  {historyState?.flowFormCopyValues &&
+                  historyState.flowFormCopyValuesPath &&
+                  historyState.flowFormCopyValuesName ? (
+                    <span>
+                      {t.t(lang, (s) => s.components.flow.copyOfFlow)}{' '}
+                      <Link to={historyState.flowFormCopyValuesPath}>
+                        {historyState.flowFormCopyValuesName}
+                      </Link>
+                    </span>
+                  ) : (
+                    t.t(lang, (s) => s.components.flow.addFLow)
+                  )}
+                </C.PageTitle>
+                <FlowForm
+                  {...flowFormProps}
+                  load={load}
+                  initialValues={
+                    historyState?.flowFormCopyValues
+                      ? deserializeFlowForm(historyState.flowFormCopyValues)
+                      : undefined
+                  }
+                />
+              </PaddingContainer>
+            )}
+          </C.Loader>
         )}
       </AppContext.Consumer>
     );

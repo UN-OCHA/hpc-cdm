@@ -1,9 +1,9 @@
 import type { FlowFormType } from '../components/flow-form/flow-form';
 import { valueToInteger } from './map-functions';
-import React from 'react';
 import { Environment } from '../../environments/interface';
 import { type LanguageKey, t } from '../../i18n';
-import type { Message } from '@unocha/hpc-ui';
+import { toast } from 'react-toastify';
+import { TOAST_CONFIG_ERROR } from './constants';
 
 const validateEarmarking = (values: FlowFormType, lang: LanguageKey) => {
   if (!values.earmarkingType) {
@@ -97,20 +97,12 @@ const validateReportingDetails = (values: FlowFormType, lang: LanguageKey) => {
 
 export const validateFlowForWarnings = async (
   values: FlowFormType,
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
   env: Environment,
   lang: LanguageKey
 ) => {
   const reportingDetailWarning = validateReportingDetails(values, lang);
   if (reportingDetailWarning) {
-    setMessages((prev) => [
-      {
-        message: reportingDetailWarning,
-        severity: 'error',
-        key: Date.now(),
-      } satisfies Message,
-      ...prev,
-    ]);
+    toast.error(reportingDetailWarning, TOAST_CONFIG_ERROR);
     return false;
   }
 

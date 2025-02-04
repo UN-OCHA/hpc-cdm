@@ -7,10 +7,10 @@ import {
   styled,
   ThemeProvider,
 } from '@unocha/hpc-ui';
-import { MdAdd } from 'react-icons/md';
 import { useEffect, useState } from 'react';
+import { MdAdd } from 'react-icons/md';
 import { Outlet } from 'react-router';
-import { ToastContainer } from 'react-toastify';
+import { Slide, ToastContainer } from 'react-toastify';
 import env, { type Environment } from '../environments/environment';
 import { type LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
 import PageMeta from './components/page-meta';
@@ -55,6 +55,18 @@ const TitlePrimary = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
+`;
+
+/**
+ *  https://fkhadra.github.io/react-toastify/how-to-style#override-css-variables
+ */
+const ToastContainerStyled = styled(ToastContainer)`
+  .Toastify__toast-theme--colored.Toastify__toast--success {
+    background-color: ${(p) => p.theme.colors.pallete.green.normal};
+  }
+  .Toastify__toast-theme--colored.Toastify__toast--error {
+    background-color: ${(p) => p.theme.colors.pallete.red.dark};
+  }
 `;
 
 export const App = () => {
@@ -197,7 +209,7 @@ export const App = () => {
           );
         }}
       </C.Loader>
-      <ToastContainer />
+      <ToastContainerStyled limit={5} stacked transition={Slide} />
     </ThemeProvider>
   );
 };

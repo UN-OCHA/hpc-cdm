@@ -20,16 +20,18 @@ import {
 } from '@mui/material';
 import { util } from '@unocha/hpc-core';
 import { type flows } from '@unocha/hpc-data';
-import { C, CLASSES, type Message, useDataLoader } from '@unocha/hpc-ui';
+import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
 import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import { MdInfoOutline } from 'react-icons/md';
 import { Link } from 'react-router';
+import { toast } from 'react-toastify';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
 import dayjs from '../../../libs/dayjs';
 import { getContext } from '../../context';
 import * as paths from '../../paths';
+import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
 import { downloadExcel } from '../../utils/download-excel';
 import {
   type FilterKey,
@@ -70,7 +72,6 @@ export interface FlowsTableProps {
   rowsPerPageOptions: number[];
   query: FlowQuery;
   setQuery: SetQuery<FlowQuery>;
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   pending?: boolean;
 }
 
@@ -673,32 +674,23 @@ export default function FlowsTable(props: FlowsTableProps) {
         environment.model.flows
           .bulkRejectPendingFlows(values)
           .then(() => {
-            props.setMessages((prev) => [
-              {
-                message: t.t(
-                  lang,
-                  (s) =>
-                    s.components.flowsTable.rejectPendingFlows.state.success
-                ),
-                severity: 'success',
-                key: Date.now(),
-              },
-              ...prev,
-            ]);
+            toast.success(
+              t.t(
+                lang,
+                (s) => s.components.flowsTable.rejectPendingFlows.state.success
+              ),
+              TOAST_CONFIG
+            );
             load();
           })
           .catch(() => {
-            props.setMessages((prev) => [
-              {
-                message: t.t(
-                  lang,
-                  (s) => s.components.flowsTable.rejectPendingFlows.state.error
-                ),
-                severity: 'error',
-                key: Date.now(),
-              },
-              ...prev,
-            ]);
+            toast.error(
+              t.t(
+                lang,
+                (s) => s.components.flowsTable.rejectPendingFlows.state.error
+              ),
+              TOAST_CONFIG_ERROR
+            );
           })
           .finally(() => setIsLoading(false));
       };

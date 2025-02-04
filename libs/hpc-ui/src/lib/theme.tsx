@@ -29,6 +29,7 @@ const COLOR_PALETTE = {
     light: '#96c3e1',
   },
   green: {
+    normal: '#2e7d32',
     light: '#afdfb0',
   },
   gray: {

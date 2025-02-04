@@ -1,12 +1,8 @@
 import { type organizations, type util } from '@unocha/hpc-data';
-import {
-  C,
-  CLASSES,
-  combineClasses,
-  useDataLoader,
-  type Message,
-} from '@unocha/hpc-ui';
+import { C, CLASSES, combineClasses, useDataLoader } from '@unocha/hpc-ui';
+import { useEffect } from 'react';
 import { useLocation, useParams } from 'react-router';
+import { toast } from 'react-toastify';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import OrganizationForm, {
@@ -14,8 +10,7 @@ import OrganizationForm, {
 } from '../../components/organization-form';
 import PageMeta from '../../components/page-meta';
 import { AppContext, getEnv } from '../../context';
-
-import { useState } from 'react';
+import { TOAST_CONFIG } from '../../utils/constants';
 
 interface Props {
   className?: string;
@@ -161,17 +156,11 @@ export default (props: Props) => {
 
   const locationState: { successMessage?: string } | null = useLocation().state;
 
-  const [messages, setMessages] = useState<Message[]>([
-    ...(locationState?.successMessage
-      ? [
-          {
-            message: locationState.successMessage,
-            key: Date.now(),
-            severity: 'success',
-          } satisfies Message,
-        ]
-      : []),
-  ]);
+  useEffect(() => {
+    if (locationState?.successMessage) {
+      toast.success(locationState.successMessage, TOAST_CONFIG);
+    }
+  }, [locationState?.successMessage]);
 
   const [state, load] = useDataLoader([id], () =>
     env.model.organizations.getOrganization({ id })
@@ -206,7 +195,6 @@ export default (props: Props) => {
                         )}
                       </InfoText>
                       <OrganizationForm
-                        setMessages={setMessages}
                         initialValues={parseOrganizationToInitialValue(data)}
                         id={id}
                         load={load}
@@ -228,10 +216,9 @@ export default (props: Props) => {
                       (s) => s.components.organizationUpdateCreate.text.create
                     )}
                   </InfoText>
-                  <OrganizationForm setMessages={setMessages} />
+                  <OrganizationForm />
                 </PaddingContainer>
               )}
-              <C.MessageAlert setMessages={setMessages} messages={messages} />
             </LandingContainer>
           </Container>
         </div>

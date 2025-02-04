@@ -1,5 +1,5 @@
 import { Box, Modal } from '@mui/material';
-import { C, type Message } from '@unocha/hpc-ui';
+import { C } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import { fnCategories, fnOrganizations } from '../utils/fn-promises';
 import { getContext, getEnv } from '../context';
@@ -13,10 +13,11 @@ import validateForm from '../utils/form-validation';
 import { valueToInteger } from '../utils/map-functions';
 import { useNavigate } from 'react-router';
 import { LanguageKey, t } from '../../i18n';
+import { toast } from 'react-toastify';
+import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
 
 type MergeModalProps = {
   type: 'organization' | 'keyword';
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   load: () => void;
 };
 type OrganizationMergeModalValues = {
@@ -96,7 +97,7 @@ const ConfirmationText = ({
   return <p>{text}</p>;
 };
 const MergeModal = (props: MergeModalProps) => {
-  const { type, setMessages, load } = props;
+  const { type, load } = props;
   const navigate = useNavigate();
 
   const ORGANIZATION_INITIAL_VALUES: OrganizationMergeModalValues = {
@@ -184,24 +185,20 @@ const MergeModal = (props: MergeModalProps) => {
           });
         })
         .catch((err) => {
-          setMessages((prev) => [
-            {
-              message: parseEntityString(
-                t.t(
-                  lang,
-                  (s) =>
-                    s.components.mergeModal.error[
-                      errors.isConflictError(err) ? 'conflict' : 'unknown'
-                    ]
-                ),
-                type,
-                lang
+          toast.error(
+            parseEntityString(
+              t.t(
+                lang,
+                (s) =>
+                  s.components.mergeModal.error[
+                    errors.isConflictError(err) ? 'conflict' : 'unknown'
+                  ]
               ),
-              severity: 'error',
-              key: Date.now(),
-            } satisfies Message,
-            ...prev,
-          ]);
+              type,
+              lang
+            ),
+            TOAST_CONFIG_ERROR
+          );
         })
         .finally(() => setLoading(false));
     } else {
@@ -219,36 +216,28 @@ const MergeModal = (props: MergeModalProps) => {
         })
         .then(() => {
           load();
-          setMessages((prev) => [
-            {
-              message: t.t(lang, (s) => s.components.mergeModal.success.merge, {
-                entities: 'keywords',
-              }),
-              severity: 'success',
-              key: Date.now(),
-            } satisfies Message,
-            ...prev,
-          ]);
+          toast.success(
+            t.t(lang, (s) => s.components.mergeModal.success.merge, {
+              entities: 'keywords',
+            }),
+            TOAST_CONFIG
+          );
         })
         .catch((err) => {
-          setMessages((prev) => [
-            {
-              message: parseEntityString(
-                t.t(
-                  lang,
-                  (s) =>
-                    s.components.mergeModal.error[
-                      errors.isConflictError(err) ? 'conflict' : 'unknown'
-                    ]
-                ),
-                type,
-                lang
+          toast.error(
+            parseEntityString(
+              t.t(
+                lang,
+                (s) =>
+                  s.components.mergeModal.error[
+                    errors.isConflictError(err) ? 'conflict' : 'unknown'
+                  ]
               ),
-              severity: 'error',
-              key: Date.now(),
-            } satisfies Message,
-            ...prev,
-          ]);
+              type,
+              lang
+            ),
+            TOAST_CONFIG_ERROR
+          );
         })
         .finally(() => setLoading(false));
     }
