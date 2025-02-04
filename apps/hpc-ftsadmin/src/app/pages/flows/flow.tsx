@@ -89,7 +89,7 @@ export default () => {
       return env.model.flows.getFlowREST({ id });
     };
 
-    const [state, load] = useDataLoader([id], async () => {
+    const [state, load] = useDataLoader([id, version], async () => {
       const [
         flow,
         inactiveReasons,

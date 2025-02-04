@@ -627,7 +627,7 @@ export const FlowForm = (props: FlowFormProps) => {
             versionID: flow.versionID,
           },
         })
-        .then(() => {
+        .then((updatedFlow) => {
           setMessages((prev) => [
             {
               message: t.t(
@@ -639,7 +639,11 @@ export const FlowForm = (props: FlowFormProps) => {
             },
             ...prev,
           ]);
-          load();
+          if (values.isErrorCorrection) {
+            load();
+            return;
+          }
+          navigate(paths.flow(updatedFlow.id, updatedFlow.versionID));
         })
         .catch((err) => {
           const errorMessage = err.json?.message;
