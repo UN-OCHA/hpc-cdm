@@ -290,16 +290,12 @@ export const parseFlowForm = (
     restricted,
   } = values;
 
-  let pendingReviewCategory;
-  let cancelledCategory;
-  for (const inactiveReason of inactiveReasons) {
-    if (inactiveReason.name === PENDING_REVIEW) {
-      pendingReviewCategory = inactiveReason;
-    }
-    if (inactiveReason.name === 'Cancelled') {
-      cancelledCategory = inactiveReason;
-    }
-  }
+  const pendingReviewCategory = inactiveReasons.find(
+    (inactiveReason) => inactiveReason.name === PENDING_REVIEW
+  );
+  const cancelledCategory = inactiveReasons.find(
+    (inactiveReason) => inactiveReason.name === 'Cancelled'
+  );
 
   const notes = dirtyNotes || undefined;
   const exchangeRate = dirtyExchangeRate || undefined;
@@ -794,36 +790,38 @@ export const deserializeFlowForm = (
 };
 
 const flowFormToFlowsFilterValues = async (
-  values: FlowFormType,
+  {
+    fundingDestinationPlan,
+    fundingSourceLocations,
+    fundingSourceOrganizations,
+    fundingDestinationOrganizations,
+  }: FlowFormType,
   env: Environment
 ): Promise<FlowsFilterValues> => {
-  const res: FlowsFilterValues = {};
-  const plans = values.fundingDestinationPlan?.value
+  const destinationPlans = fundingDestinationPlan?.value
     ? await env.model.plans
         .getAutocompletePlansById({
-          id: valueToInteger(values.fundingDestinationPlan.value),
+          id: valueToInteger(fundingDestinationPlan.value),
         })
-        .then((res) =>
-          res.map((plan) => ({
-            displayLabel: `Plan ID: ${plan.id}`,
-            value: plan.id,
-          }))
+        .then((plans) =>
+          plans.map(
+            (plan): FormObjectValue => ({
+              displayLabel: `Plan ID: ${plan.id}`,
+              value: plan.id,
+            })
+          )
         )
-    : null;
+    : fundingDestinationPlan
+    ? [fundingDestinationPlan]
+    : undefined;
 
-  res.includeChildrenOfParkedFlows = true;
-
-  res.sourceLocations = values.fundingSourceLocations;
-  res.sourceOrganizations = values.fundingSourceOrganizations;
-
-  res.destinationOrganizations = values.fundingDestinationOrganizations;
-  res.destinationPlans =
-    plans ??
-    (values.fundingDestinationPlan
-      ? [values.fundingDestinationPlan]
-      : undefined);
-
-  return res;
+  return {
+    includeChildrenOfParkedFlows: true,
+    sourceLocations: fundingSourceLocations,
+    sourceOrganizations: fundingSourceOrganizations,
+    destinationOrganizations: fundingDestinationOrganizations,
+    destinationPlans,
+  };
 };
 
 export const queryParamsFlowFilter = async (
@@ -857,6 +855,7 @@ const compareFlowForms = (
   incomingFlow: FlowFormType
 ): Partial<FlowFormType> => {
   const result: Partial<FlowFormType> = {};
+
   const isDifferentFormObjectValue = (
     currentValue: FormObjectValue | null,
     incomingValue: FormObjectValue | null
