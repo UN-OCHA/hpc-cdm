@@ -10,7 +10,6 @@ import {
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import env, { Environment } from '../environments/environment';
 import { LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
 import PageMeta from './components/page-meta';

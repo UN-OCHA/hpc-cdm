@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 import { BaseStyling, C, styled, dataLoader, dialogs } from '@unocha/hpc-ui';
 
