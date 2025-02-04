@@ -18,15 +18,17 @@ export type FlowVersion = NonNullable<flows.FlowREST['versions']>[number];
 
 type ComparisonMode = 'addition' | 'deletion' | 'modification' | 'noop';
 type FlowCompareFlowObject = flows.CompareFlowsResult['flowA']['flowObjects'];
-type FlowCompareFlowObjectReduced = {
+type FlowCompareReduced = {
   id: number;
   name: string;
-  direction: NonNullable<
-    FlowCompareFlowObject[keyof FlowCompareFlowObject]
-  >[number]['direction'];
   state: NonNullable<
     FlowCompareFlowObject[keyof FlowCompareFlowObject]
   >[number]['state'];
+};
+type FlowCompareFlowObjectReduced = FlowCompareReduced & {
+  direction: NonNullable<
+    FlowCompareFlowObject[keyof FlowCompareFlowObject]
+  >[number]['direction'];
 };
 
 const COMMON_STYLES = `
@@ -121,14 +123,14 @@ const extractNamesJoinTrim = (names: Array<{ name: string }>) =>
     .join(', ')
     .trim();
 
-const CompareFlowObjectRow = ({
+const CompareEntityRow = ({
   tableCellName,
   flowAValue,
   flowBValue,
 }: {
   tableCellName: React.ReactNode;
-  flowAValue: FlowCompareFlowObjectReduced[];
-  flowBValue: FlowCompareFlowObjectReduced[];
+  flowAValue: FlowCompareReduced[];
+  flowBValue: FlowCompareReduced[];
 }) => {
   if (!flowAValue && !flowBValue) {
     return;
@@ -316,7 +318,7 @@ const FlowCompare = ({
                             sourceFlowObjectA,
                             sourceFlowObjectB
                           ) && (
-                            <CompareFlowObjectRow
+                            <CompareEntityRow
                               tableCellName={
                                 <span>
                                   <SourceDestination>
@@ -338,7 +340,7 @@ const FlowCompare = ({
                             destinationFlowObjectA,
                             destinationFlowObjectB
                           ) && (
-                            <CompareFlowObjectRow
+                            <CompareEntityRow
                               tableCellName={
                                 <span>
                                   <SourceDestination>
@@ -368,11 +370,11 @@ const FlowCompare = ({
                 //  Categories
                 if (Array.isArray(flowAValue) && Array.isArray(flowBValue)) {
                   return (
-                    <CompareRow
+                    <CompareEntityRow
                       key={key}
                       tableCellName={key}
-                      flowAValue={extractNamesJoinTrim(flowAValue)}
-                      flowBValue={extractNamesJoinTrim(flowBValue)}
+                      flowAValue={flowAValue}
+                      flowBValue={flowBValue}
                     />
                   );
                 }

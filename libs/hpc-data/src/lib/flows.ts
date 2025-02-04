@@ -721,6 +721,7 @@ const COMPARE_FLOW = t.intersection([
         id: CATEGORY.props.id,
         name: CATEGORY.props.name,
         group: CATEGORY.props.group,
+        state: STATE,
       })
     ),
     activeStatus: t.boolean,
