@@ -5,16 +5,22 @@ import { type LanguageKey, t } from '../../i18n';
 import { toast } from 'react-toastify';
 import { TOAST_CONFIG_ERROR } from './constants';
 
-const validateEarmarking = (values: FlowFormType, lang: LanguageKey) => {
+const validateEarmarking = (
+  values: FlowFormType,
+  lang: LanguageKey
+): string[] => {
   if (!values.earmarkingType) {
-    return t.t(lang, (s) => s.components.flowForm.submitValidation.earmarking);
+    return [
+      t.t(lang, (s) => s.components.flowForm.submitValidation.earmarking),
+    ];
   }
+  return [];
 };
 
 const validateReportingOrganization = (
   values: FlowFormType,
   lang: LanguageKey
-) => {
+): string[] => {
   const reportingOrganizationIds = values.reportingDetails
     .map((rD) => {
       if (rD.reportedByOrganization?.value) {
@@ -35,19 +41,22 @@ const validateReportingOrganization = (
 
   for (const reportingOrganizationId of reportingOrganizationIds) {
     if (!fundingOrganizationIds.includes(reportingOrganizationId)) {
-      return t.t(
-        lang,
-        (s) => s.components.flowForm.submitValidation.reportingOrganization
-      );
+      return [
+        t.t(
+          lang,
+          (s) => s.components.flowForm.submitValidation.reportingOrganization
+        ),
+      ];
     }
   }
+  return [];
 };
 
 const validateEmergency = async (
   values: FlowFormType,
   env: Environment,
   lang: LanguageKey
-) => {
+): Promise<string[]> => {
   const years = values.fundingDestinationUsageYears.map((usageYear) =>
     valueToInteger(usageYear.displayLabel)
   );
@@ -59,10 +68,13 @@ const validateEmergency = async (
     locations,
   });
   if (emergencies.length > 0) {
-    return t.t(lang, (s) => s.components.flowForm.submitValidation.emergency, {
-      emergency: emergencies[0].name,
-    });
+    return [
+      t.t(lang, (s) => s.components.flowForm.submitValidation.emergency, {
+        emergency: emergencies[0].name,
+      }),
+    ];
   }
+  return [];
 };
 
 const validateReportingDetails = (values: FlowFormType, lang: LanguageKey) => {
@@ -95,6 +107,31 @@ const validateReportingDetails = (values: FlowFormType, lang: LanguageKey) => {
   }
 };
 
+const validateParentFlowAmountUSD = (
+  values: FlowFormType,
+  lang: LanguageKey
+): string[] => {
+  const parentFlowAmountUSD = values.parentFlow?.amountUSD;
+  const childFlowsSumAmountUSD = values.childFlows.reduce(
+    (acc, childFlow) => acc + parseInt(childFlow.amountUSD),
+    0
+  );
+
+  if (
+    (parentFlowAmountUSD &&
+      parseInt(parentFlowAmountUSD) < parseInt(values.amountUSD)) ||
+    childFlowsSumAmountUSD > parseInt(values.amountUSD)
+  ) {
+    return [
+      t.t(
+        lang,
+        (s) => s.components.flowForm.submitValidation.parentFlowAmountUSD
+      ),
+    ];
+  }
+  return [];
+};
+
 export const validateFlowForWarnings = async (
   values: FlowFormType,
   env: Environment,
@@ -106,17 +143,16 @@ export const validateFlowForWarnings = async (
     return false;
   }
 
-  const warnings: (string | undefined)[] = [
-    validateEarmarking(values, lang),
-    validateReportingOrganization(values, lang),
-    await validateEmergency(values, env, lang),
+  const warnings: string[] = [
+    ...validateEarmarking(values, lang),
+    ...validateReportingOrganization(values, lang),
+    ...validateParentFlowAmountUSD(values, lang),
+    ...(await validateEmergency(values, env, lang)),
   ];
 
   for (const warning of warnings) {
-    if (warning) {
-      if (!window.confirm(warning)) {
-        return false;
-      }
+    if (!window.confirm(warning)) {
+      return false;
     }
   }
 

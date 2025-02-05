@@ -164,6 +164,7 @@
       },
       "submitValidation": {
         "dataConsistency": "The selected {entity}: [{selected}] do not match the possible expected {entity}: [{expected}]",
+        "parentFlowAmountUSD": "The amount USD of the child flow is greater than the amount USD of the parent flow. Do you want to proceed?",
         "submitButton": {
           "reactivate": {
             "button": "Reactivate"

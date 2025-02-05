@@ -164,6 +164,7 @@
       },
       "submitValidation": {
         "dataConsistency": "الـ {entity} المحددة: {selected} لا تتطابق مع الـ {entity} المتوقعة: {expected}",
+        "parentFlowAmountUSD": "مقدار الدولار الأمريكي في تدفق الطفل أكبر من مقدار الدولار الأمريكي في تدفق الوالد. هل ترغب في المتابعة؟",
         "submitButton": {
           "reactivate": {
             "button": "إعادة تنشيط"

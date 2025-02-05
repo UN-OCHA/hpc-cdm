@@ -164,6 +164,7 @@
       },
       "submitValidation": {
         "dataConsistency": "所选的{entity}：{selected} 与可能的预期 {entity}：{expected} 不匹配",
+        "parentFlowAmountUSD": "子流的美元金额大于父流的美元金额。你想继续吗？",
         "submitButton": {
           "reactivate": {
             "button": "重新激活"

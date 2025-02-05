@@ -164,6 +164,7 @@
       },
       "submitValidation": {
         "dataConsistency": "Le/La(s) {entity} sélectionnée : {selected} ne correspond pas à le/la(s) {entity} attendue possible : {expected}",
+        "parentFlowAmountUSD": "Le montant en USD du flux enfant est supérieur au montant en USD du flux parent. Voulez-vous continuer ?",
         "submitButton": {
           "reactivate": {
             "button": "Réactiver"

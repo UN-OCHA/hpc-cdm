@@ -164,6 +164,7 @@
       },
       "submitValidation": {
         "dataConsistency": "La/Lo(s) {entity} seleccionada: {selected} no coincide con la/lo(s) {entity} esperada posible: {expected}",
+        "parentFlowAmountUSD": "La cantidad en USD del flujo hijo es mayor que la cantidad en USD del flujo padre. ¿Desea continuar?",
         "submitButton": {
           "reactivate": {
             "button": "Reactivar"
