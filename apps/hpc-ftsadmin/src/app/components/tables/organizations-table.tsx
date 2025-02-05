@@ -497,12 +497,11 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                   </TopRowContainer>
                 </ChipDiv>
 
-                <Box sx={{ overflowX: 'auto', transform: 'rotateX(180deg)' }}>
+                <Box sx={{ overflowX: 'auto' }}>
                   <TableContainer
                     sx={{
                       width: '100%',
                       display: 'table',
-                      transform: 'rotateX(180deg)',
                       tableLayout: 'fixed',
                       lineHeight: '1.35',
                       fontSize: '1.32rem',
