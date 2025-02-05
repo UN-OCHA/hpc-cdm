@@ -525,6 +525,7 @@ const KeywordTable = (props: KeywordTableProps) => {
                             setShouldOpenSettings(false);
                           }
                         }}
+                        setOpenSettings={setOpenSettings}
                         elevation={6}
                         sx={{
                           width: '400px',

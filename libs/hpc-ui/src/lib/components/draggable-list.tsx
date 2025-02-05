@@ -15,6 +15,7 @@ export interface DraggableListProps {
   queryValues: DraggableListItemProps[];
   buttonText: string;
   onClick: (elements: DraggableListItemProps[]) => unknown;
+  setOpenSettings?: React.Dispatch<React.SetStateAction<boolean>>;
   sx?: React.CSSProperties;
   innerRef?: React.ForwardedRef<HTMLDivElement>;
   elevation?: number;
@@ -120,6 +121,7 @@ const DraggableList = ({
   queryValues,
   buttonText,
   onClick,
+  setOpenSettings,
   sx,
   innerRef,
   elevation,
@@ -160,7 +162,12 @@ const DraggableList = ({
       </DragDropContext>
       <SaveButtonWrapper>
         <ButtonSubmit
-          onClick={() => onClick(values)}
+          onClick={() => {
+            onClick(values);
+            if (setOpenSettings) {
+              setOpenSettings(false);
+            }
+          }}
           color="primary"
           text={buttonText}
         />

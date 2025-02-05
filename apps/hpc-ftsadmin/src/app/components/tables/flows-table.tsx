@@ -855,6 +855,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                           });
                         }
                       }}
+                      setOpenSettings={setOpenSettings}
                       elevation={6}
                       sx={{
                         width: '400px',

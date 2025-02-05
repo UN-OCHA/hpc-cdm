@@ -464,6 +464,7 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                               });
                             }
                           }}
+                          setOpenSettings={setOpenSettings}
                           elevation={6}
                           sx={{
                             width: '400px',
