@@ -251,7 +251,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       data-test="flows-table-id"
                     >
                       <Link to={paths.flow(row.id, row.versionID)}>
-                        {row.id} v{row.versionID}
+                        {row.id}v{row.versionID}
                       </Link>
                     </TableCell>
                   );
