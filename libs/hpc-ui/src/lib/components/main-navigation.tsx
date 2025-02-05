@@ -48,14 +48,12 @@ interface Props {
   className?: string;
 }
 
-const HEADER_HEIGHT_PX = 60;
-const BORDER_BOTTOM_WIDTH = '3px';
-
 const Nav = styled.nav`
-  border-bottom: ${BORDER_BOTTOM_WIDTH} solid ${(p) => p.theme.colors.dividers};
+  border-bottom: ${(p) => p.theme.sizing.mainNavigation.borderBottom}px solid
+    ${(p) => p.theme.colors.dividers};
 
   > div {
-    height: ${HEADER_HEIGHT_PX}px;
+    height: ${(p) => p.theme.sizing.mainNavigation.height}px;
 
     > .${CLS.HEADER} {
       display: flex;
@@ -118,7 +116,7 @@ const Nav = styled.nav`
       margin: 0;
       padding: 0;
       display: flex;
-      margin-bottom: -${BORDER_BOTTOM_WIDTH};
+      margin-bottom: -${(p) => p.theme.sizing.mainNavigation.borderBottom}px;
       list-style: none;
       border-right: 1px solid ${(p) => p.theme.colors.dividers};
 
@@ -129,10 +127,10 @@ const Nav = styled.nav`
           display: flex;
           align-items: center;
           justify-content: center;
-          height: ${HEADER_HEIGHT_PX}px;
+          height: ${(p) => p.theme.sizing.mainNavigation.height}px;
           padding: 0 21px;
-          border-bottom: ${BORDER_BOTTOM_WIDTH} solid
-            ${(p) => p.theme.colors.dividers};
+          border-bottom: ${(p) => p.theme.sizing.mainNavigation.borderBottom}px
+            solid ${(p) => p.theme.colors.dividers};
           color: ${(p) => p.theme.colors.text};
           font-weight: bold;
           text-transform: uppercase;

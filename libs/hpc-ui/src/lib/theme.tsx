@@ -43,6 +43,19 @@ const COLOR_PALETTE = {
   },
 };
 
+const MAIN_NAVIGATION_HEIGHT_PX = 60;
+const MAIN_NAVIGATION_BORDER_BOTTOM_PX = 3;
+
+const HEADER_MIN_HEIGHT_PX = 35;
+/**
+ * In dev environments, there is an extra header of 40px
+ */
+const TOTAL_HEADER_HEIGHT = `${
+  MAIN_NAVIGATION_HEIGHT_PX +
+  MAIN_NAVIGATION_BORDER_BOTTOM_PX +
+  HEADER_MIN_HEIGHT_PX
+}px`;
+
 export const THEME = {
   colors: {
     pallete: COLOR_PALETTE,
@@ -78,6 +91,14 @@ export const THEME = {
      * (this excludes the height of any top and bottom borders)
      */
     singleLineBlockItemHeightPx: 49,
+    header: {
+      minHeight: HEADER_MIN_HEIGHT_PX,
+    },
+    mainNavigation: {
+      height: MAIN_NAVIGATION_HEIGHT_PX,
+      borderBottom: MAIN_NAVIGATION_BORDER_BOTTOM_PX,
+    },
+    totalHeaderHeight: TOTAL_HEADER_HEIGHT,
   },
   animations: {
     fast: '0.2s ease-out',

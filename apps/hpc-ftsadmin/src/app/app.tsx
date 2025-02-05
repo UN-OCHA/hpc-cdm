@@ -45,7 +45,6 @@ const Main = styled.main`
 
 const LoggedInContainer = styled.div`
   width: 100%;
-  margin-bottom: ${(p) => p.theme.marginPx.lg * 2}px;
 `;
 
 const TitlePrimary = styled.div`

@@ -6,7 +6,7 @@ import {
   Paper,
   Popper,
 } from '@mui/material';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { type i18n, type Session } from '@unocha/hpc-core';
 
@@ -116,7 +116,7 @@ const Header = (props: Props) => {
 
 export default styled(Header)`
   background: ${(p) => p.theme.colors.primary.normal};
-  min-height: 35px;
+  min-height: ${(p) => p.theme.sizing.header.minHeight}px;
 
   .${CLS.LOGO} {
     width: 23px;

@@ -18,6 +18,7 @@ interface Props {
 type OrganizationRouteParams = { id: string };
 const Container = tw.div`
   flex
+  mb-16
 `;
 const LandingContainer = tw.div`
   w-full

@@ -1,4 +1,4 @@
-import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
+import { C, CLASSES, combineClasses, styled } from '@unocha/hpc-ui';
 import { useCallback, useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
@@ -21,8 +21,14 @@ interface Props {
 const Container = tw.div`
   flex
 `;
-const LandingContainer = tw.div`
-  w-full
+const LandingContainer = styled.div`
+  height: calc(100vh - ${(p) => p.theme.sizing.totalHeaderHeight});
+  ${tw`
+    w-full
+    overflow-x-clip
+    flex
+    flex-col
+  `}
 `;
 export default (props: Props) => {
   const [query, setQuery] = useQueryParams({

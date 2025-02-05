@@ -902,7 +902,7 @@ export default function FlowsTable(props: FlowsTableProps) {
               </TableContainer>
             </Box>
             <TablePagination
-              sx={{ display: 'block' }}
+              sx={tw`shrink-0`}
               data-test="flows-table-pagination"
               rowsPerPageOptions={rowsPerPageOptions}
               component="div"

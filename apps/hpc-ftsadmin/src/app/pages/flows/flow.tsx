@@ -32,6 +32,7 @@ type FlowRestPending = Omit<flows.GetFlowResult, 'activeVersion'> & {
 const PaddingContainer = tw.div`
   xl:px-12
   px-6
+  mb-16
 `;
 
 const UpdatedCreatedBy = tw.h4`

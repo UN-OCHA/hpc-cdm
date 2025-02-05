@@ -41,17 +41,19 @@ const FlexDiv = tw.div`
   justify-between
   items-center
 `;
-const StyledDrawer = tw(Drawer)`
-  sticky
-  top-0
-  z-0
-  overflow-y-visible
-  h-screen
-  [&>div]:relative
-  [&>div]:border-y-0
-  [&>div]:border-s-0
-  [&>div]:border-e
-  [&>div]:w-full
+const StyledDrawer = styled(Drawer)`
+  height: calc(100vh - ${(p) => p.theme.sizing.totalHeaderHeight});
+  ${tw`
+    sticky
+    top-0
+    z-0
+    overflow-y-visible
+    [&>div]:relative
+    [&>div]:border-y-0
+    [&>div]:border-s-0
+    [&>div]:border-e
+    [&>div]:w-full
+  `}
 `;
 const Dragger = tw.div`
   cursor-col-resize
