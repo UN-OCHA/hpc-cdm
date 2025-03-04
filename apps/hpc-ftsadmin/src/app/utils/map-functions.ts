@@ -2,14 +2,27 @@ import {
   type fileAssetEntities,
   type flows,
   type organizations,
-  type util,
+  util,
 } from '@unocha/hpc-data';
 import dayjs from 'dayjs';
+import { isRight } from 'fp-ts/lib/Either';
 import { type LanguageKey } from '../../i18n';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
 
 export const valueToInteger = (value: string | number) => {
+  const decodedValue = util.INTEGER_FROM_STRING.decode(value);
+  if (isRight(decodedValue)) {
+    return decodedValue.right;
+  }
   return typeof value === 'number' ? Math.round(value) : parseInt(value);
+};
+
+export const valueToFloat = (value: string | number) => {
+  const decodedValue = util.NUMBER_FROM_STRING.decode(value);
+  if (isRight(decodedValue)) {
+    return decodedValue.right;
+  }
+  return typeof value === 'number' ? value : parseFloat(value);
 };
 
 export const currencyToInteger = (value: string | number) => {
@@ -53,7 +66,7 @@ export const flowToFlowLinkProps = (
     destinationLocation: flow.locations.filter(
       (loc) => loc.flowObject.refDirection === 'destination'
     )[0]?.name,
-    amountUSD: flow.amountUSD,
+    amountUSD: flow.amountUSD.toString(),
     flowDate: dayjs(flow.flowDate),
     projectName: flow.projects.filter(
       (proj) => proj.flowObject.refDirection === 'destination'

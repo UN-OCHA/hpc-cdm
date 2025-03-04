@@ -1,89 +1,71 @@
 import * as t from 'io-ts';
-import { ABORT_SIGNAL } from './util';
-import { LOCATION_WITHOUT_CHILDREN } from './locations';
+import { ABORT_SIGNAL, DATE_FROM_STRING, optional } from './util';
+import { LOCATION_WITH_CHILDREN } from './locations';
+import { CATEGORY_GROUP_TYPE, CATEGORY_WITH_CATEGORY_REF } from './categories';
 
-const ORGANIZATION_CATEGORY = t.type({
+export const ORGANIZATION_MODEL = t.type({
   id: t.number,
   name: t.string,
-  description: t.union([t.string, t.null]),
-  parentID: t.union([t.number, t.null]),
-  code: t.union([t.string, t.null]),
-  group: t.string,
-  includeTotals: t.union([t.boolean, t.null]),
-  createdAt: t.string,
-  updatedAt: t.string,
-  categoryRef: t.type({
-    objectID: t.number,
-    versionID: t.number,
-    objectType: t.string,
-    categoryID: t.number,
-    createdAt: t.string,
-    updatedAt: t.string,
-  }),
+  abbreviation: t.string,
+  active: t.boolean,
+  verified: t.boolean,
+  collectiveInd: t.boolean,
+  createdAt: DATE_FROM_STRING,
+  updatedAt: DATE_FROM_STRING,
+  nativeName: optional(t.string),
+  url: optional(t.string),
+  parentID: optional(t.number),
+  comments: optional(t.string),
+  notes: optional(t.string),
+  newOrganizationId: optional(t.number),
+  deletedAt: optional(DATE_FROM_STRING),
 });
-export type OrganizationCategory = t.TypeOf<typeof ORGANIZATION_CATEGORY>;
-const ORGANIZATION_BUILDER = t.intersection([
-  t.type({
-    id: t.number,
-    name: t.string,
-    nativeName: t.union([t.string, t.null]),
-    abbreviation: t.string,
-    url: t.union([t.string, t.null]),
-    parentID: t.union([t.number, t.null]),
-    comments: t.union([t.string, t.null]),
-    verified: t.boolean,
-    notes: t.union([t.string, t.null]),
-    active: t.boolean,
-    collectiveInd: t.boolean,
-    newOrganizationId: t.union([t.number, t.null]),
-    createdAt: t.string,
-    updatedAt: t.string,
-    deletedAt: t.union([t.string, t.null]),
-  }),
-  t.partial({
-    categories: t.array(ORGANIZATION_CATEGORY),
-    locations: t.array(LOCATION_WITHOUT_CHILDREN),
-  }),
-]);
 
-export const ORGANIZATION = t.intersection([
-  ORGANIZATION_BUILDER,
-  t.partial({
-    parent: t.union([
-      t.intersection([
-        ORGANIZATION_BUILDER,
-        t.partial({ parent: t.union([ORGANIZATION_BUILDER, t.null]) }),
-      ]),
-      t.null,
-    ]),
-  }),
-]);
-export type Organization = t.TypeOf<typeof ORGANIZATION>;
+export type OrganizationCategory = t.TypeOf<typeof CATEGORY_WITH_CATEGORY_REF>;
+
+export type Organization = t.TypeOf<typeof ORGANIZATION_MODEL> &
+  Partial<{
+    categories: Array<t.TypeOf<typeof CATEGORY_WITH_CATEGORY_REF>>;
+    locations: Array<t.TypeOf<typeof LOCATION_WITH_CHILDREN>>;
+    parent: Organization | null;
+  }>;
+export const ORGANIZATION: t.Type<Organization> = t.recursion(
+  'ORGANIZATION',
+  (self) =>
+    t.intersection([
+      ORGANIZATION_MODEL,
+      t.partial({
+        categories: t.array(CATEGORY_WITH_CATEGORY_REF),
+        locations: t.array(LOCATION_WITH_CHILDREN),
+        parent: optional(self),
+      }),
+    ])
+);
 
 const UPDATED_CREATED_BY = t.type({
   participantName: t.string,
-  date: t.string,
+  date: DATE_FROM_STRING,
   endpointId: t.number,
 });
 export type UpdatedCreatedBy = t.TypeOf<typeof UPDATED_CREATED_BY>;
 const SEARCH_ORGANIZATION = t.type({
-  id: t.number,
-  name: t.string,
-  nativeName: t.union([t.string, t.null]),
-  abbreviation: t.string,
-  active: t.boolean,
+  id: ORGANIZATION_MODEL.props.id,
+  name: ORGANIZATION_MODEL.props.name,
+  nativeName: ORGANIZATION_MODEL.props.nativeName,
+  abbreviation: ORGANIZATION_MODEL.props.abbreviation,
+  active: ORGANIZATION_MODEL.props.active,
   categories: t.array(
     t.type({
       name: t.string,
-      group: t.string,
-      parentID: t.union([t.number, t.null]),
+      group: CATEGORY_GROUP_TYPE,
+      parentID: optional(t.number),
     })
   ),
   locations: t.array(
     t.type({
       id: t.number,
       name: t.string,
-      parentID: t.union([t.number, t.null]),
+      parentID: optional(t.number),
     })
   ),
   create: t.array(UPDATED_CREATED_BY),
@@ -199,21 +181,21 @@ export const UPDATE_ORGANIZATION_PARAMS = t.intersection([
   }),
   t.partial({
     name: t.string,
-    nativeName: t.union([t.string, t.null]),
     abbreviation: t.string,
-    url: t.union([t.string, t.null]),
-    parentID: t.union([t.number, t.null]),
-    comments: t.union([t.string, t.null]),
     verified: t.boolean,
-    notes: t.union([t.string, t.null]),
     active: t.boolean,
     collectiveInd: t.boolean,
-    newOrganizationId: t.union([t.number, t.null]),
-    createdAt: t.string,
-    updatedAt: t.string,
-    deletedAt: t.union([t.string, t.null]),
+    createdAt: DATE_FROM_STRING,
+    updatedAt: DATE_FROM_STRING,
     categories: t.array(t.number),
     locations: t.array(t.number),
+    nativeName: optional(t.string),
+    url: optional(t.string),
+    parentID: optional(t.number),
+    comments: optional(t.string),
+    notes: optional(t.string),
+    newOrganizationId: optional(t.number),
+    deletedAt: optional(DATE_FROM_STRING),
   }),
 ]);
 export type UpdateOrganizationParams = t.TypeOf<

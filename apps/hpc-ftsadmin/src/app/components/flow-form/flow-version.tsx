@@ -50,7 +50,7 @@ const FlowVersions = ({
   flow,
   inactiveReasons,
 }: {
-  flow: flows.FlowREST;
+  flow: flows.GetFlowResult;
   inactiveReasons: categories.Category[];
 }) => {
   const { lang } = getContext();

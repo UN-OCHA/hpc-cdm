@@ -44,18 +44,18 @@ export const downloadExcel = async (
 
           case 'amountUSD':
             tableRow[displayLabel] =
-              parseInt(flow.amountUSD) > 0
+              flow.amountUSD > 0
                 ? new Intl.NumberFormat(lang, {
                     style: 'currency',
                     currency: 'USD',
                     maximumFractionDigits: 0,
-                  }).format(parseInt(flow.amountUSD))
+                  }).format(flow.amountUSD)
                 : flow.origAmount && flow.origCurrency
                 ? new Intl.NumberFormat(lang, {
                     style: 'currency',
                     currency: flow.origCurrency,
                     maximumFractionDigits: 0,
-                  }).format(parseInt(flow.origAmount))
+                  }).format(flow.origAmount)
                 : EMPTY_CELL;
             break;
 

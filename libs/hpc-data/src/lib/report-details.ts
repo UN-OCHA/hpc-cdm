@@ -1,16 +1,22 @@
 import * as t from 'io-ts';
+import { DATE_FROM_STRING, optional } from './util';
 
-export const SOURCE = t.union([t.literal('Primary'), t.literal('Secondary')]);
+const SOURCE = t.keyof({
+  Primary: null,
+  Secondary: null,
+});
 
 export const REPORT_DETAIL = t.type({
   id: t.number,
   flowID: t.number,
-  versionID: t.number,
-  contactInfo: t.union([t.string, t.null]),
   source: SOURCE,
-  date: t.union([t.string, t.null]),
-  sourceID: t.union([t.string, t.null]),
-  refCode: t.union([t.string, t.null]),
   verified: t.boolean,
-  organizationID: t.union([t.number, t.null]),
+  versionID: t.number,
+  createdAt: DATE_FROM_STRING,
+  updatedAt: DATE_FROM_STRING,
+  contactInfo: optional(t.string),
+  date: optional(DATE_FROM_STRING),
+  organizationID: optional(t.number),
+  refCode: optional(t.string),
+  sourceID: optional(t.string),
 });

@@ -1,6 +1,7 @@
 import {
   FormObjectValue,
   categories,
+  flowObjects,
   flows,
   reportFiles,
 } from '@unocha/hpc-data';
@@ -13,6 +14,7 @@ import {
   currencyToInteger,
   fileAssetEntityToFileUploadResult,
   flowToFlowLinkProps,
+  valueToFloat,
   valueToInteger,
 } from './map-functions';
 import {
@@ -77,6 +79,11 @@ export type FlowFormTypeSerialized = Omit<
 };
 
 export type RefDirection = 'source' | 'destination';
+
+type CreateFlowObject = Pick<
+  flowObjects.FlowObject,
+  'objectID' | 'objectType' | 'behavior' | 'refDirection'
+>;
 
 const TRANSFERRED_CHIP_COLOR = THEME.colors.pallete.blue.light;
 const INFERRED_CHIP_COLOR = THEME.colors.pallete.orange.variant1;
@@ -148,11 +155,11 @@ const createFlowObject = (
   direction: string,
   lowerCaseSingularObject: FlowObjectTypes,
   value: FormObjectValue
-): flows.FlowObject => {
+): CreateFlowObject => {
   const flowObject = {
     objectID: valueToInteger(value.value),
     objectType: lowerCaseSingularObject,
-    behaviour: null,
+    behavior: null,
   };
   if (direction === 'fundingSource') {
     return {
@@ -169,7 +176,7 @@ const createFlowObject = (
 const extractDirectionObject = (
   key: keyof FlowFormType,
   values: FlowFormTypeValidated
-): flows.FlowObject[] => {
+): CreateFlowObject[] => {
   const match = key.match(
     /^(fundingSource|fundingDestination)(Locations|Emergencies|GlobalClusters|Organizations|AnonymizedOrganizations|Plan|Project|UsageYears|FieldClusters)$/
   );
@@ -233,11 +240,9 @@ const reportingDetailPropsToReportDetails = (
         contactInfo: reportDetail.reporterContactInfo,
         source: reportDetail.reportSource,
         date: reportDetail.dateReported
-          ? reportDetail.dateReported.toISOString()
+          ? reportDetail.dateReported.toDate()
           : null,
-        sourceID: reportDetail.sourceSystemRecordId
-          ? valueToInteger(reportDetail.sourceSystemRecordId)
-          : null,
+        sourceID: reportDetail.sourceSystemRecordId,
         refCode: reportDetail.sourceSystemRecordId
           ? reportDetail.reporterReferenceCode
           : null,
@@ -335,11 +340,11 @@ export const parseFlowForm = (
     budgetYear: valueToInteger(donorBudgetYear),
     categories,
     children: values.childFlows.map((childFlow) => ({ childID: childFlow.id })),
-    decisionDate: decisionDate?.toISOString() ?? null,
+    decisionDate: decisionDate?.toDate() ?? null,
     description,
-    exchangeRate,
-    firstReportedDate: firstReported.toISOString(),
-    flowDate: flowDate.toISOString(),
+    exchangeRate: exchangeRate ? valueToFloat(exchangeRate) : null,
+    firstReportedDate: firstReported.toDate(),
+    flowDate: flowDate.toDate(),
     flowObjects,
     isCancellation: null, //  TODO
     isErrorCorrection:
@@ -629,10 +634,12 @@ const reportDetailsToReportingDetailProps = (
 ): ReportingDetailProps[] => {
   return reportDetails.map((reportDetail) => ({
     reportSource: reportDetail.source,
-    reportedByOrganization: {
-      displayLabel: reportDetail.organization.name,
-      value: reportDetail.organization.id,
-    },
+    reportedByOrganization: reportDetail.organization
+      ? {
+          displayLabel: reportDetail.organization.name,
+          value: reportDetail.organization.id,
+        }
+      : null,
     reportChannel: {
       displayLabel: reportDetail.categories[0]?.name,
       value: reportDetail.categories[0]?.id,
@@ -680,10 +687,11 @@ export const parseToFlowForm = (
     ...INITIAL_FORM_VALUES,
     ...categoriesToFlowForm(flow),
     ...flowObjectToFormObjectValue(flow, FUNDING_KEYS, parents?.[0]),
-    amountUSD,
+    amountUSD: `${amountUSD}`,
     flowDescription: description ?? '',
-    amountOriginalCurrency:
-      origAmount ?? INITIAL_FORM_VALUES['amountOriginalCurrency'],
+    amountOriginalCurrency: `${
+      origAmount ?? INITIAL_FORM_VALUES['amountOriginalCurrency']
+    }`,
     currency: origCurrency
       ? { value: origCurrency, displayLabel: origCurrency }
       : INITIAL_FORM_VALUES['currency'],
@@ -694,7 +702,8 @@ export const parseToFlowForm = (
     firstReported: firstReportedDate
       ? dayjs(firstReportedDate)
       : INITIAL_FORM_VALUES['firstReported'],
-    exchangeRate: exchangeRate ?? INITIAL_FORM_VALUES['exchangeRate'],
+    exchangeRate:
+      exchangeRate?.toString() ?? INITIAL_FORM_VALUES['exchangeRate'],
     flowDate: flowDate ? dayjs(flowDate) : INITIAL_FORM_VALUES['flowDate'],
     isInactive: !activeStatus,
     isNewMoney,

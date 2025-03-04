@@ -1,49 +1,61 @@
 import * as t from 'io-ts';
-import type { AbortSignalType } from './util';
+import { DATE_FROM_STRING, optional, type AbortSignalType } from './util';
+import { CATEGORY_REF } from './category-refs';
 
-const CATEGORY_GROUP = t.keyof({
-  flowType: t.null,
-  keywords: t.null,
-  contributionType: t.null,
-  contributionStatus: t.null,
-  sectorIASC: t.null,
-  inactiveReason: t.null,
-  regions: t.null,
-  emergencyType: t.null,
-  planType: t.null,
-  organizationType: t.null,
-  planCosting: t.null,
-  reportChannel: t.null,
-  beneficiaryGroup: t.null,
-  genderMarker: t.null,
-  method: t.null,
-  customLocation: t.null,
-  projectPriority: t.null,
-  projectGrouping1: t.null,
-  projectGrouping2: t.null,
-  subsetOfPlan: t.null,
-  pendingStatus: t.null,
-  flowStatus: t.null,
-  responseType: t.null,
-  planIndicated: t.null,
-  earmarkingType: t.null,
-  organizationLevel: t.null,
+export const CATEGORY_GROUP_TYPE = t.keyof({
+  beneficiaryGroup: null,
+  contributionStatus: null,
+  contributionType: null,
+  customLocation: null,
+  earmarkingType: null,
+  emergencyType: null,
+  flowStatus: null,
+  flowType: null,
+  genderMarker: null,
+  inactiveReason: null,
+  keywords: null,
+  method: null,
+  organizationLevel: null,
+  organizationType: null,
+  pendingStatus: null,
+  planClusterType: null,
+  planCosting: null,
+  planIndicated: null,
+  planLanguage: null,
+  planType: null,
+  projectGrouping1: null,
+  projectGrouping2: null,
+  projectPriority: null,
+  regions: null,
+  reportChannel: null,
+  responseType: null,
+  sectorIASC: null,
+  subsetOfPlan: null,
 });
 
-export type CategoryGroup = t.TypeOf<typeof CATEGORY_GROUP>;
+export type CategoryGroup = t.TypeOf<typeof CATEGORY_GROUP_TYPE>;
 export const CATEGORY = t.type({
   id: t.number,
   name: t.string,
-  description: t.union([t.string, t.null]),
-  parentID: t.union([t.number, t.null]),
-  code: t.union([t.string, t.null]),
-  group: CATEGORY_GROUP,
-  includeTotals: t.union([t.boolean, t.null]),
-  createdAt: t.string,
-  updatedAt: t.string,
+  group: CATEGORY_GROUP_TYPE,
+  createdAt: DATE_FROM_STRING,
+  updatedAt: DATE_FROM_STRING,
+  description: optional(t.string),
+  parentID: optional(t.number),
+  code: optional(t.string),
+  includeTotals: optional(t.boolean),
 });
 
 export type Category = t.TypeOf<typeof CATEGORY>;
+
+export const CATEGORY_WITH_CATEGORY_REF = t.type({
+  ...CATEGORY.props,
+  categoryRef: CATEGORY_REF,
+});
+
+export type CategoryWithCategoryRef = t.TypeOf<
+  typeof CATEGORY_WITH_CATEGORY_REF
+>;
 
 export const KEYWORD = t.type({
   ...CATEGORY.props,
@@ -55,7 +67,7 @@ export type Keyword = t.TypeOf<typeof KEYWORD>;
 const STATUS_OK = t.type({ status: t.keyof({ ok: 'ok' }) });
 
 export const GET_CATEGORIES_PARAMS = t.type({
-  query: CATEGORY_GROUP,
+  query: CATEGORY_GROUP_TYPE,
 });
 
 export type GetCategoriesParams = t.TypeOf<typeof GET_CATEGORIES_PARAMS>;

@@ -1,97 +1,115 @@
 import * as t from 'io-ts';
 
+import { CATEGORY, CATEGORY_WITH_CATEGORY_REF } from './categories';
+import { CATEGORY_REF } from './category-refs';
+import { EMERGENCY } from './emergencies';
+import { ENTITY_PROTOTYPE_REF_CODE } from './entity-prototypes';
+import { EXTERNAL_DATA } from './external-data';
+import { EXTERNAL_REFERENCE } from './external-references';
+import { FLOW_LINK } from './flow-links';
+import { FLOW_OBJECT, FLOW_OBJECT_REF_DIRECTION } from './flow-objects';
+import { GLOBAL_CLUSTER } from './global-clusters';
+import {
+  GOVERNING_ENTITY,
+  GOVERNING_ENTITY_VERSION,
+} from './governing-entities';
+import { LEGACY } from './legacy';
+import { LOCATION } from './locations';
+import { ORGANIZATION_MODEL } from './organizations';
+import { PLAN_ENTITY } from './plan-entities';
+import { PLAN_ENTITY_VERSION } from './plan-entity-versions';
+import { PLAN_VERSION } from './plan-versions';
+import { PLAN } from './plans';
+import { PROJECT_VERSION } from './project-versions';
+import { PROJECT, PROJECT_PDF } from './projects';
+import { REPORT_DETAIL } from './report-details';
+import { CREATE_FILE, REPORT_FILE_WITH_ENTITY } from './report-files';
+import { USAGE_YEAR } from './usageYears';
 import {
   DATE_FROM_STRING,
   INTEGER_FROM_STRING,
   NUMBER_FROM_STRING,
+  optional,
   POSITIVE_INTEGER_FROM_STRING,
 } from './util';
-import { ORGANIZATION } from './organizations';
-import { CATEGORY } from './categories';
-import { PDF } from './projects';
-import { LOCATION_WITHOUT_CHILDREN } from './locations';
-import { REPORT_DETAIL, SOURCE } from './report-details';
-import { CREATE_FILE, REPORT_FILE_WITH_ENTITY } from './report-files';
 
-const DIRECTION = t.union([t.literal('source'), t.literal('destination')]);
-
-export const FLOW_LIST = t.keyof({
-  pending: null,
-  all: null,
-  search: null,
+export const FLOW = t.type({
+  id: t.number,
+  amountUSD: INTEGER_FROM_STRING,
+  versionID: t.number,
+  activeStatus: t.boolean,
+  restricted: t.boolean,
+  newMoney: t.boolean,
+  createdAt: DATE_FROM_STRING,
+  updatedAt: DATE_FROM_STRING,
+  deletedAt: optional(DATE_FROM_STRING),
+  flowDate: optional(DATE_FROM_STRING),
+  decisionDate: optional(DATE_FROM_STRING),
+  firstReportedDate: optional(DATE_FROM_STRING),
+  budgetYear: optional(t.string),
+  origAmount: optional(INTEGER_FROM_STRING),
+  origCurrency: optional(t.string),
+  exchangeRate: optional(NUMBER_FROM_STRING),
+  description: optional(t.string),
+  notes: optional(t.string),
+  versionStartDate: optional(DATE_FROM_STRING),
+  versionEndDate: optional(DATE_FROM_STRING),
 });
-
-export type FlowList = t.TypeOf<typeof FLOW_LIST>;
-
-export const FLOW_OBJECT = t.intersection([
-  t.type({
-    objectID: t.number,
-    refDirection: DIRECTION,
-    objectType: t.string,
-  }),
-  t.partial({
-    flowID: t.number,
-    versionID: t.number,
-    behavior: t.union([t.string, t.null]),
-    objectDetail: t.union([t.string, t.null]),
-    createdAt: t.string,
-    updatedAt: t.string,
-  }),
-]);
-
-export type FlowObject = t.TypeOf<typeof FLOW_OBJECT>;
-
-const FLOW_CATEGORY_REST = t.intersection([
-  t.type({
-    name: t.string,
-    group: t.string,
-  }),
-  t.partial({
-    id: t.number,
-    createdAt: t.string,
-    updatedAt: t.string,
-    description: t.union([t.string, t.null]),
-    parentID: t.union([t.number, t.null]),
-    code: t.union([t.string, t.null]),
-    includeTotals: t.union([t.boolean, t.null]),
-    categoryRef: t.type({
-      objectID: t.number,
-      versionID: t.number,
-      objectType: t.string,
-      categoryID: t.number,
-      createdAt: t.string,
-      updatedAt: t.string,
-    }),
-  }),
-]);
-export type FlowCategory = t.TypeOf<typeof FLOW_CATEGORY_REST>;
+const {
+  id,
+  versionID,
+  activeStatus,
+  amountUSD,
+  budgetYear,
+  decisionDate,
+  description,
+  exchangeRate,
+  firstReportedDate,
+  flowDate,
+  newMoney,
+  notes,
+  origAmount,
+  origCurrency,
+  restricted,
+  versionEndDate,
+  versionStartDate,
+  createdAt,
+  updatedAt,
+  deletedAt,
+} = {
+  ...FLOW.props,
+};
+export type Flow = t.TypeOf<typeof FLOW>;
 
 const CREATED_BY_OR_LAST_UPDATED_BY = t.type({
-  name: t.string,
+  /* TODO: IN db participant name could be null, but there are no null.
+   * We should migrate to non-nullable
+   */
+  name: optional(t.string),
 });
 
 const FLOW_AUTOCOMPLETE_PROJECT = t.type({
   id: t.number,
-  code: t.union([t.string, t.null]),
+  code: optional(t.string),
   currentPublishedVersionId: t.number,
-  creatorParticipantId: t.union([t.number, t.null]),
+  creatorParticipantId: optional(t.number),
   latestVersionId: t.number,
-  implementationStatus: t.union([t.string, t.null]),
+  implementationStatus: optional(t.string),
   flowObject: t.type({
-    refDirection: DIRECTION,
+    refDirection: FLOW_OBJECT_REF_DIRECTION,
   }),
-  pdf: t.union([PDF, t.null]),
+  pdf: optional(PROJECT_PDF),
   projectVersions: t.array(
     t.type({
       name: t.string,
     })
   ),
-  sourceProjectId: t.union([t.number, t.null]),
+  sourceProjectId: optional(t.number),
   visible: t.boolean,
 });
 
 const FLOW_AUTOCOMPLETE_FLOW_OBJECT = t.type({
-  refDirection: DIRECTION,
+  refDirection: FLOW_OBJECT_REF_DIRECTION,
 });
 
 const FLOW_AUTOCOMPLETE_DEFAULT_OBJECT = t.type({
@@ -101,7 +119,7 @@ const FLOW_AUTOCOMPLETE_DEFAULT_OBJECT = t.type({
 });
 
 const FLOW_AUTOCOMPLETE_LOCATION = t.type({
-  ...LOCATION_WITHOUT_CHILDREN.props,
+  ...LOCATION.props,
   flowObject: FLOW_AUTOCOMPLETE_FLOW_OBJECT,
 });
 
@@ -132,35 +150,9 @@ const FLOW_AUTOCOMPLETE_GOVERNING_ENTITY = t.type({
   }),
 });
 
-const PARENT_CHILDREN_FLOW = t.type({
-  childID: t.number,
-  createdAt: DATE_FROM_STRING,
-  depth: t.number,
-  parentID: t.number,
-  updatedAt: DATE_FROM_STRING,
-});
-
-const FLOW_REST_REPORT_DETAIL = t.intersection([
-  REPORT_DETAIL,
+const FLOW_AUTOCOMPLETE = t.intersection([
+  FLOW,
   t.type({
-    categories: t.array(CATEGORY),
-    organization: ORGANIZATION,
-    reportFiles: t.array(REPORT_FILE_WITH_ENTITY),
-  }),
-]);
-
-const FLOW_REST_WITHOUT_PARENTS_CHILDREN = t.intersection([
-  t.type({
-    id: t.number,
-    versionID: t.number,
-    amountUSD: t.string,
-    flowDate: t.union([t.string, t.null]), //  Some Pending Flows are saved with null flowDate
-    decisionDate: t.union([t.string, t.null]),
-    firstReportedDate: t.union([t.string, t.null]), //  firstReportedDate is nullable in some old flows
-    activeStatus: t.boolean,
-    restricted: t.boolean,
-    newMoney: t.boolean,
-    description: t.union([t.string, t.null]), //  Some Pending Flows are saved with null description
     categories: t.array(CATEGORY),
     plans: t.array(FLOW_AUTOCOMPLETE_PLAN),
     organizations: t.array(FLOW_AUTOCOMPLETE_ORGANIZATION),
@@ -172,135 +164,141 @@ const FLOW_REST_WITHOUT_PARENTS_CHILDREN = t.intersection([
     governingEntities: t.array(FLOW_AUTOCOMPLETE_GOVERNING_ENTITY),
     clusters: t.array(FLOW_AUTOCOMPLETE_GOVERNING_ENTITY),
     planEntities: t.array(t.unknown),
-    versionStartDate: t.union([t.string, t.null]), //  versionStartDate is nullable in some old flows,
-    createdAt: t.string,
-    updatedAt: t.string,
   }),
   t.partial({
-    notes: t.union([t.string, t.null]),
-    budgetYear: t.union([t.string, t.null]),
-    origAmount: t.union([t.string, t.null]),
-    origCurrency: t.union([t.string, t.null]),
-    exchangeRate: t.union([t.string, t.null]),
-    versionEndDate: t.union([t.string, t.null]),
-    deletedAt: t.union([t.string, t.null]),
-    lastUpdatedBy: t.union([CREATED_BY_OR_LAST_UPDATED_BY, t.null]),
-    createdBy: t.union([CREATED_BY_OR_LAST_UPDATED_BY, t.null]),
-    legacy: t.union([
-      t.type({
-        createdAt: t.string,
-        legacyID: t.number,
-        objectID: t.number,
-        objectType: t.string,
-        updatedAt: t.string,
-      }),
-      t.null,
-    ]),
+    lastUpdatedBy: optional(CREATED_BY_OR_LAST_UPDATED_BY),
+    createdBy: optional(CREATED_BY_OR_LAST_UPDATED_BY),
+    legacy: optional(LEGACY),
   }),
 ]);
 
-const FLOW_REST_VERSION = t.type({
-  id: t.number,
-  versionID: t.number,
-  activeStatus: t.boolean,
-  createdAt: t.string,
-  updatedAt: t.string,
-  deletedAt: t.union([t.string, t.null]),
+export const GET_FLOW_PARAMS = t.intersection([
+  t.type({ id: POSITIVE_INTEGER_FROM_STRING }),
+  t.partial({
+    versionID: POSITIVE_INTEGER_FROM_STRING,
+    shouldIncludeAllVersionsReportDetails: t.boolean,
+  }),
+]);
+type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
+
+const GET_FLOW_REPORT_DETAIL = t.type({
+  ...REPORT_DETAIL.props,
   categories: t.array(
     t.type({
-      versionID: t.number,
-      categoryID: t.number,
+      ...CATEGORY.props,
+      categoryRef: CATEGORY_REF,
+    })
+  ),
+  reportFiles: t.array(REPORT_FILE_WITH_ENTITY),
+  organization: optional(ORGANIZATION_MODEL),
+});
+
+const getFlowEntityFlowObject = <T extends t.Props>(ENTITY: t.TypeC<T>) =>
+  t.type({ ...ENTITY.props, flowObject: FLOW_OBJECT });
+
+const getFlowEntityWithVersionFlowObject = <
+  T extends t.Props,
+  K extends t.Props,
+  L extends 'planVersion' | 'planEntityVersion',
+>(
+  entity: t.TypeC<T>,
+  entityVersion: t.TypeC<K>,
+  entityVersionName: L
+) =>
+  t.type({
+    ...getFlowEntityFlowObject(entity).props,
+    [entityVersionName]: entityVersion,
+  }) as t.TypeC<
+    T & { flowObject: typeof FLOW_OBJECT } & {
+      [key in L]: t.TypeC<K>;
+    }
+  >;
+
+const GET_FLOW_ORGANIZATION = t.type({
+  ...getFlowEntityFlowObject(ORGANIZATION_MODEL).props,
+  categories: t.array(
+    t.type({
+      id: CATEGORY.props.id,
+      name: CATEGORY.props.name,
+      group: CATEGORY.props.group,
     })
   ),
 });
 
-const FLOW_IMPORT_INFORMATION = t.type({ key: t.string, valueId: t.number });
-const FLOW_REST_EXTERNAL_REFERENCE = t.type({
-  id: t.number,
-  systemID: t.string,
-  flowID: t.number,
-  externalRecordID: t.string,
-  externalRecordDate: t.string,
-  versionID: t.number,
-  createdAt: t.string,
-  updatedAt: t.string,
-  importInformation: t.union([
-    t.partial({
-      inferred: t.array(FLOW_IMPORT_INFORMATION),
-      transferred: t.array(FLOW_IMPORT_INFORMATION),
-    }),
-    t.null,
-  ]),
+const GET_FLOW_PROJECT = t.type({
+  ...getFlowEntityFlowObject(PROJECT).props,
+  projectVersions: t.array(PROJECT_VERSION),
+  visible: t.boolean,
 });
 
-const FLOW_REST_EXTERNAL_DATA = t.type({
-  id: t.number,
-  systemID: t.string,
-  flowID: t.number,
-  externalRefID: t.union([t.string, t.null]),
-  externalRefDate: t.union([t.string, t.null]),
-  versionID: t.number,
-  createdAt: t.string,
-  updatedAt: t.string,
-  data: t.string,
-  matched: t.boolean,
-  refDirection: DIRECTION,
-  objectType: t.string,
+const GET_FLOW_GOVERNING_ENTITY = t.type({
+  ...getFlowEntityFlowObject(GOVERNING_ENTITY).props,
+  governingEntityVersion: t.type({
+    ...GOVERNING_ENTITY_VERSION.props,
+    clusterNumber: t.string,
+  }),
+  entityType: optional(ENTITY_PROTOTYPE_REF_CODE),
 });
 
-const CREATED_UPDATED_BY = t.type({
-  name: t.string,
-});
-export type FlowREST = t.TypeOf<typeof FLOW_REST_WITHOUT_PARENTS_CHILDREN> & {
-  anonymizedOrganizations: Array<t.TypeOf<typeof ORGANIZATION>>;
-  flowObjects: Array<t.TypeOf<typeof FLOW_OBJECT>>;
-  children: Array<t.TypeOf<typeof PARENT_CHILDREN_FLOW>>;
-  parents: Array<t.TypeOf<typeof PARENT_CHILDREN_FLOW>>;
-  categories: Array<t.TypeOf<typeof CATEGORY>>;
-  reportDetails: Array<t.TypeOf<typeof FLOW_REST_REPORT_DETAIL>>;
-  externalReferences: Array<t.TypeOf<typeof FLOW_REST_EXTERNAL_REFERENCE>>;
-  externalData: Array<t.TypeOf<typeof FLOW_REST_EXTERNAL_DATA>>;
-  versions?: Array<t.TypeOf<typeof FLOW_REST_VERSION>>;
-  activeVersion?: FlowREST;
-  createdBy?: t.TypeOf<typeof CREATED_UPDATED_BY> | null;
-  lastUpdatedBy?: t.TypeOf<typeof CREATED_UPDATED_BY> | null;
-};
-
-const FLOW_REST: t.Type<FlowREST> = t.recursion('FLOW_REST', () =>
-  t.intersection([
-    FLOW_REST_WITHOUT_PARENTS_CHILDREN,
+const GET_FLOW_VERSION = t.type({
+  id,
+  versionID,
+  activeStatus,
+  createdAt,
+  updatedAt,
+  deletedAt,
+  categories: t.array(
     t.type({
-      anonymizedOrganizations: t.array(ORGANIZATION),
-      flowObjects: t.array(FLOW_OBJECT),
-      children: t.array(PARENT_CHILDREN_FLOW),
-      parents: t.array(PARENT_CHILDREN_FLOW),
-      reportDetails: t.array(FLOW_REST_REPORT_DETAIL),
-      externalReferences: t.array(FLOW_REST_EXTERNAL_REFERENCE),
-      externalData: t.array(FLOW_REST_EXTERNAL_DATA),
-    }),
-    t.partial({
-      versions: t.array(FLOW_REST_VERSION),
-      activeVersion: FLOW_REST,
-      createdBy: t.union([CREATED_UPDATED_BY, t.null]),
-      lastUpdatedBy: t.union([CREATED_UPDATED_BY, t.null]),
-    }),
-  ])
-);
-
-export const GET_FLOW_PARAMS = t.type({
-  id: POSITIVE_INTEGER_FROM_STRING,
+      versionID,
+      categoryID: CATEGORY_REF.props.categoryID,
+    })
+  ),
 });
 
-export type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
-
-const GET_FLOW_VERSION_PARAMS = t.type({
-  id: POSITIVE_INTEGER_FROM_STRING,
-  versionID: POSITIVE_INTEGER_FROM_STRING,
+export const GET_FLOW_RESULT = t.type({
+  ...FLOW.props,
+  categories: t.array(CATEGORY),
+  flowObjects: t.array(FLOW_OBJECT),
+  children: t.array(FLOW_LINK),
+  /**
+   * @deprecated
+   * Use `parent` instead, as it's correctly typed
+   */
+  parents: t.array(FLOW_LINK),
+  // TODO: Remove undefined when rewritten endpoint is added
+  parent: t.union([optional(FLOW_LINK), t.undefined]),
+  externalReferences: t.array(EXTERNAL_REFERENCE),
+  externalData: t.array(EXTERNAL_DATA),
+  reportDetails: t.array(GET_FLOW_REPORT_DETAIL),
+  anonymizedOrganizations: t.array(ORGANIZATION_MODEL),
+  /**
+   * @deprecated
+   * Use `governingEntities` instead, as cluster is a duplication
+   * to support legacy use
+   */
+  clusters: t.array(GET_FLOW_GOVERNING_ENTITY),
+  emergencies: t.array(getFlowEntityFlowObject(EMERGENCY)),
+  globalClusters: t.array(getFlowEntityFlowObject(GLOBAL_CLUSTER)),
+  governingEntities: t.array(GET_FLOW_GOVERNING_ENTITY),
+  locations: t.array(getFlowEntityFlowObject(LOCATION)),
+  plans: t.array(
+    getFlowEntityWithVersionFlowObject(PLAN, PLAN_VERSION, 'planVersion')
+  ),
+  planEntities: t.array(
+    getFlowEntityWithVersionFlowObject(
+      PLAN_ENTITY,
+      PLAN_ENTITY_VERSION,
+      'planEntityVersion'
+    )
+  ),
+  projects: t.array(GET_FLOW_PROJECT),
+  organizations: t.array(GET_FLOW_ORGANIZATION),
+  usageYears: t.array(getFlowEntityFlowObject(USAGE_YEAR)),
+  versions: t.array(GET_FLOW_VERSION),
+  legacy: optional(LEGACY),
+  createdBy: optional(CREATED_BY_OR_LAST_UPDATED_BY),
+  lastUpdatedBy: optional(CREATED_BY_OR_LAST_UPDATED_BY),
 });
-
-export type GetFlowVersionParams = t.TypeOf<typeof GET_FLOW_VERSION_PARAMS>;
-
-export const GET_FLOW_RESULT = FLOW_REST;
 
 export type GetFlowResult = t.TypeOf<typeof GET_FLOW_RESULT>;
 
@@ -331,58 +329,67 @@ const PARENT_TYPE = t.intersection([
   t.partial({
     Parent: t.type({
       parentID: t.union([t.number, t.string]),
-      origCurrency: t.union([t.string, t.null]),
+      origCurrency: optional(t.string),
     }),
-    origCurrency: t.union([t.string, t.null]),
+    origCurrency: optional(t.string),
     childID: t.number,
     parents: t.array(PARENT),
     id: t.number,
   }),
 ]);
 
+const {
+  id: _reportDetailId,
+  versionID: _reportDetailVersionID,
+  flowID: _reportDetailFlowID,
+  updatedAt: _reportDetailUpdatedAt,
+  createdAt: _reportDetailCreatedAt,
+  ...reportDetailProps
+} = REPORT_DETAIL.props;
 const CREATE_FLOW_REPORT_DETAIL = t.type({
-  contactInfo: t.union([t.string, t.null]),
-  source: SOURCE,
-  date: t.union([t.string, t.null]),
-  sourceID: t.union([t.number, t.null]),
-  refCode: t.union([t.string, t.null]),
-  verified: t.boolean,
-  organizationID: t.union([t.number, t.null]),
+  ...reportDetailProps,
   categories: t.array(t.number),
   newlyAdded: t.boolean,
   reportFiles: t.array(CREATE_FILE),
 });
 
+const { objectID, objectType, behavior, refDirection } = FLOW_OBJECT.props;
+const CREATE_FLOW_OBJECT = t.type({
+  objectID,
+  objectType,
+  behavior,
+  refDirection,
+});
 const CREATE_FLOW = t.intersection([
   t.type({
-    activeStatus: t.boolean,
-    amountUSD: NUMBER_FROM_STRING,
+    activeStatus,
+    amountUSD,
     categories: t.array(t.number),
     children: t.array(CHILDREN_TYPE),
-    decisionDate: t.union([t.string, t.null]),
+    decisionDate,
     description: t.string,
-    firstReportedDate: t.string,
-    flowDate: t.string,
-    flowObjects: t.array(FLOW_OBJECT),
-    isCancellation: t.union([t.boolean, t.null]),
+    firstReportedDate: DATE_FROM_STRING,
+    flowDate: DATE_FROM_STRING,
+    flowObjects: t.array(CREATE_FLOW_OBJECT),
+    isCancellation: optional(t.boolean),
     newCategories: t.array(t.number),
-    newMoney: t.boolean,
-    origCurrency: t.union([t.string, t.null]),
+    newMoney,
+    origCurrency,
     parents: t.array(PARENT_TYPE),
     reportDetails: t.array(CREATE_FLOW_REPORT_DETAIL),
-    restricted: t.boolean,
+    restricted,
   }),
   t.partial({
-    notes: t.string,
+    notes,
     pendingStatus: t.union([t.boolean, t.array(t.string)]),
-    cancelled: t.union([t.boolean, t.null]),
+    cancelled: optional(t.boolean),
     childMethod: t.union([t.string, CHILD_METHOD_TYPE]),
     planEntities: t.union([t.boolean, t.array(t.string)]),
     planIndicated: t.union([t.boolean, t.array(t.string)]),
-    isApprovedFlowVersion: t.union([t.boolean, t.null]),
-    isErrorCorrection: t.union([t.boolean, t.null]),
+    isApprovedFlowVersion: optional(t.boolean),
+    isErrorCorrection: optional(t.boolean),
     inactiveReason: t.array(FLOW_FORM_FIELD),
-    rejected: t.union([t.boolean, t.null]),
+    rejected: optional(t.boolean),
     versions: t.array(
       t.type({
         id: t.number,
@@ -393,20 +400,34 @@ const CREATE_FLOW = t.intersection([
       })
     ),
     budgetYear: t.number,
-    origAmount: t.union([NUMBER_FROM_STRING, t.null]),
-    exchangeRate: t.union([t.string, t.null]),
-    versionStartDate: t.union([t.string, t.null]),
-    versionEndDate: t.union([t.string, t.null]),
+    origAmount,
+    exchangeRate,
+    versionStartDate,
+    versionEndDate,
   }),
 ]);
 
-const CREATE_FLOW_PARAMS = t.type({
+export const CREATE_FLOW_PARAMS = t.type({
   flow: CREATE_FLOW,
 });
 
 export type CreateFlowParams = t.TypeOf<typeof CREATE_FLOW_PARAMS>;
 
-const UPDATE_FLOW_PARAMS = t.type({
+const {
+  lastUpdatedBy: _lastUpdatedBy,
+  createdBy: _createdBy,
+  versions: _versions,
+  legacy: _legacy,
+  ...otherGetFlowProps
+} = GET_FLOW_RESULT.props;
+
+export const CREATE_FLOW_RESULT = t.type({
+  ...otherGetFlowProps,
+});
+
+type CreateFlowResult = t.TypeOf<typeof CREATE_FLOW_RESULT>;
+
+export const UPDATE_FLOW_PARAMS = t.type({
   flow: t.intersection([
     CREATE_FLOW,
     t.type({
@@ -423,12 +444,12 @@ export type UpdateFlowParams = t.TypeOf<typeof UPDATE_FLOW_PARAMS>;
 const FLOW_LOCATION = t.type({
   id: t.number,
   name: t.string,
-  direction: DIRECTION,
+  direction: FLOW_OBJECT_REF_DIRECTION,
 });
 
 const FLOW_ORGANIZATION = t.type({
   id: t.number,
-  direction: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
+  direction: t.union([FLOW_OBJECT_REF_DIRECTION, t.null, t.undefined]), // Accepts string or null/undefined
   name: t.string,
   abbreviation: t.string,
 });
@@ -436,21 +457,13 @@ const FLOW_ORGANIZATION = t.type({
 export type FlowOrganization = t.TypeOf<typeof FLOW_ORGANIZATION>;
 const FLOW_USAGE_YEAR = t.type({
   year: t.string,
-  direction: DIRECTION,
-});
-
-const FLOW_EXTERNAL_REFERENCE = t.type({
-  systemID: t.string,
-  flowID: t.number,
-  externalRecordID: t.string,
-  versionID: t.number,
-  updatedAt: t.string,
+  direction: FLOW_OBJECT_REF_DIRECTION,
 });
 
 const FLOW_REPORT_DETAIL = t.intersection([
   REPORT_DETAIL,
   t.partial({
-    channel: t.union([t.string, t.null]),
+    channel: optional(t.string),
   }),
 ]);
 
@@ -459,78 +472,48 @@ const FLOW_PARKED_PARENT_SOURCE = t.type({
   orgName: t.array(t.string),
 });
 
-const FLOW_CATEGORY_REF = t.type({
-  objectID: t.number,
-  versionID: t.number,
-  objectType: t.string,
-  categoryID: t.number,
-  updatedAt: t.string,
-});
-
-const FLOW_CATEGORY = t.intersection([
-  t.type({
-    id: t.number,
-    name: t.string,
-    group: t.string,
-    categoryRef: FLOW_CATEGORY_REF,
-  }),
-  t.partial({
-    createdAt: t.string,
-    updatedAt: t.string,
-    description: t.string,
-    parentID: t.union([t.number, t.null]),
-    code: t.union([t.string, t.null]),
-    includeTotals: t.union([t.boolean, t.null]),
-  }),
-]);
-
 const FLOW_PLAN = t.type({
   id: t.number,
   name: t.string,
-  direction: DIRECTION,
+  direction: FLOW_OBJECT_REF_DIRECTION,
+});
+const { deletedAt: _deletedAt, ...V4_FLOW_PROPS } = FLOW.props;
+const {
+  id: _externalReferenceId,
+  importInformation: _externalImportInformation,
+  ...V4_EXTERNAL_REFERENCES_PROPS
+} = EXTERNAL_REFERENCE.props;
+export const FLOW_V4 = t.type({
+  ...V4_FLOW_PROPS,
+  externalReferences: t.array(t.type(V4_EXTERNAL_REFERENCES_PROPS)),
+  reportDetails: t.array(FLOW_REPORT_DETAIL),
+  locations: t.array(FLOW_LOCATION),
+  organizations: t.array(FLOW_ORGANIZATION),
+  destinationOrganizations: t.array(FLOW_ORGANIZATION),
+  sourceOrganizations: t.array(FLOW_ORGANIZATION),
+  plans: t.array(FLOW_PLAN),
+  usageYears: t.array(FLOW_USAGE_YEAR),
+  childIDs: t.array(t.number),
+  parentIDs: t.array(t.number),
+  categories: optional(t.array(CATEGORY_WITH_CATEGORY_REF)),
+  parkedParentSource: optional(FLOW_PARKED_PARENT_SOURCE),
 });
 
-export const FLOW = t.intersection([
-  t.type({
-    id: t.number,
-    versionID: t.number,
-    amountUSD: t.string,
-    updatedAt: t.string,
-    activeStatus: t.boolean,
-    restricted: t.boolean,
-    externalReferences: t.array(FLOW_EXTERNAL_REFERENCE),
-    reportDetails: t.array(FLOW_REPORT_DETAIL),
-    newMoney: t.union([t.boolean, t.null]),
-    decisionDate: t.union([t.string, t.null]),
-    flowDate: t.union([t.string, t.null]),
-    exchangeRate: t.union([t.string, t.null]),
-    parkedParentSource: t.union([FLOW_PARKED_PARENT_SOURCE, t.null]),
-  }),
-  t.partial({
-    description: t.string,
-    budgetYear: t.string,
-    locations: t.union([t.array(FLOW_LOCATION), t.null]),
-    categories: t.union([t.array(FLOW_CATEGORY), t.null]),
-    organizations: t.union([t.array(FLOW_ORGANIZATION), t.null]),
-    destinationOrganizations: t.union([t.array(FLOW_ORGANIZATION), t.null]),
-    sourceOrganizations: t.union([t.array(FLOW_ORGANIZATION), t.null]),
-    plans: t.union([t.array(FLOW_PLAN), t.null]),
-    usageYears: t.union([t.array(FLOW_USAGE_YEAR), t.null]),
-    childIDs: t.union([t.array(t.number), t.null]),
-    parentIDs: t.union([t.array(t.number), t.null]),
-    origAmount: t.union([t.string, t.null]),
-    origCurrency: t.union([t.string, t.null]),
-  }),
-]);
+export const GET_FLOW_V4_PARAMS = t.type({
+  id: t.number,
+});
 
-const FLOW_RESULT = t.array(FLOW);
-export type Flow = t.TypeOf<typeof FLOW>;
-export type FlowResult = t.TypeOf<typeof FLOW_RESULT>;
+type GetFlowV4Params = t.TypeOf<typeof GET_FLOW_V4_PARAMS>;
+
+export const GET_FLOW_V4_RESULT = t.array(FLOW_V4);
+export type FlowV4 = t.TypeOf<typeof FLOW_V4>;
+
+type GetFlowV4Result = t.TypeOf<typeof GET_FLOW_V4_RESULT>;
 
 export const SEARCH_FLOWS_RESULT = t.type({
   searchFlows: t.type({
     total: t.number,
-    flows: FLOW_RESULT,
+    flows: GET_FLOW_V4_RESULT,
     hasNextPage: t.boolean,
     hasPreviousPage: t.boolean,
     pageSize: t.number,
@@ -552,7 +535,7 @@ const FLOW_FILTERS = t.partial({
     t.union([
       t.type({
         objectID: t.number,
-        direction: DIRECTION,
+        direction: FLOW_OBJECT_REF_DIRECTION,
         objectType: t.string,
       }),
       t.partial({ inclusive: t.boolean }),
@@ -561,7 +544,7 @@ const FLOW_FILTERS = t.partial({
   commitment: t.boolean,
   carryover: t.boolean,
   paid: t.boolean,
-  status: t.union([t.literal('updated'), t.literal('new')]),
+  status: t.keyof({ updated: null, new: null }),
   pledge: t.boolean,
   parked: t.boolean,
   pass_through: t.boolean,
@@ -620,7 +603,7 @@ export type BulkRejectPendingFlowsResults = t.TypeOf<
 
 export const SEARCH_FLOWS_BATCHES_RESULT = t.type({
   searchFlowsBatches: t.type({
-    flows: FLOW_RESULT,
+    flows: GET_FLOW_V4_RESULT,
   }),
 });
 export type SearchFlowsBatchesResult = t.TypeOf<
@@ -634,9 +617,7 @@ export type GetFlowsAutocompleteParams = t.TypeOf<
   typeof GET_FLOWS_AUTOCOMPLETE_PARAMS
 >;
 
-export const GET_FLOWS_AUTOCOMPLETE_RESULT = t.array(
-  FLOW_REST_WITHOUT_PARENTS_CHILDREN
-);
+export const GET_FLOWS_AUTOCOMPLETE_RESULT = t.array(FLOW_AUTOCOMPLETE);
 
 export type GetFlowsAutocompleteResult = t.TypeOf<
   typeof GET_FLOWS_AUTOCOMPLETE_RESULT
@@ -670,7 +651,7 @@ const STATE = t.keyof({
 const COMPARE_FLOW_OBJECT = t.type({
   id: t.number,
   name: t.string,
-  direction: DIRECTION,
+  direction: FLOW_OBJECT_REF_DIRECTION,
   state: STATE,
 });
 export type State = t.TypeOf<typeof STATE>;
@@ -683,7 +664,7 @@ const COMPARE_FLOW = t.intersection([
       plans: t.array(
         t.intersection([
           COMPARE_FLOW_OBJECT,
-          t.type({ shortName: t.union([t.string, t.null]), code: t.string }),
+          t.type({ shortName: optional(t.string), code: t.string }),
         ])
       ),
       projects: t.array(
@@ -705,7 +686,7 @@ const COMPARE_FLOW = t.intersection([
         t.type({
           id: t.number,
           year: INTEGER_FROM_STRING,
-          direction: DIRECTION,
+          direction: FLOW_OBJECT_REF_DIRECTION,
           state: STATE,
         })
       ),
@@ -724,18 +705,18 @@ const COMPARE_FLOW = t.intersection([
         state: STATE,
       })
     ),
-    activeStatus: t.boolean,
-    restricted: t.boolean,
-    amountUSD: INTEGER_FROM_STRING,
-    origAmount: t.union([INTEGER_FROM_STRING, t.null]),
-    exchangeRate: t.union([NUMBER_FROM_STRING, t.null]),
-    origCurrency: t.union([t.string, t.null]),
-    budgetYear: t.union([INTEGER_FROM_STRING, t.null]),
-    description: t.string,
-    notes: t.string,
-    flowDate: DATE_FROM_STRING,
-    decisionDate: DATE_FROM_STRING,
-    firstReportedDate: t.union([DATE_FROM_STRING, t.null]),
+    activeStatus,
+    restricted,
+    amountUSD,
+    origAmount,
+    exchangeRate,
+    origCurrency,
+    budgetYear,
+    description,
+    notes,
+    flowDate,
+    decisionDate,
+    firstReportedDate,
   }),
 ]);
 
@@ -747,9 +728,8 @@ export const COMPARE_FLOWS_RESULT = t.type({
 export type CompareFlowsResult = t.TypeOf<typeof COMPARE_FLOWS_RESULT>;
 
 export interface Model {
-  getFlowREST(params: GetFlowParams): Promise<GetFlowResult>;
-  getFlowVersionREST(params: GetFlowVersionParams): Promise<GetFlowResult>;
   getFlow(params: GetFlowParams): Promise<GetFlowResult>;
+  getFlowV4(params: GetFlowV4Params): Promise<GetFlowV4Result>;
   searchFlows(params: SearchFlowsParams): Promise<SearchFlowsResult>;
   bulkRejectPendingFlows(
     params: BulkRejectPendingFlowsParams
@@ -757,7 +737,7 @@ export interface Model {
   getFlowsDownloadXLSX(
     params: SearchFlowsParams
   ): Promise<SearchFlowsBatchesResult>;
-  createFlow(params: CreateFlowParams): Promise<GetFlowResult>;
+  createFlow(params: CreateFlowParams): Promise<CreateFlowResult>;
   updateFlow(params: UpdateFlowParams): Promise<GetFlowResult>;
   deleteFlow(params: DeleteFlowParams): Promise<DeleteFlowResult>;
   getAutocompleteFlows(

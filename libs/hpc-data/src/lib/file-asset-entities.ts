@@ -1,22 +1,23 @@
 import * as t from 'io-ts';
+import { DATE_FROM_STRING, optional } from './util';
 
-const COLLECTION = t.union([
-  t.literal('fts'),
-  t.literal('projects'),
-  t.literal('reports'),
-  t.literal('rpm'),
-]);
+const COLLECTION = t.keyof({
+  fts: null,
+  projects: null,
+  reports: null,
+  rpm: null,
+});
 
 type FileAssetCollection = t.TypeOf<typeof COLLECTION>;
 
 const COMMON_PROPERTIES = {
   id: t.number,
   originalname: t.string,
-  size: t.union([t.number, t.null]),
   mimetype: t.string,
   collection: COLLECTION,
-  createdAt: t.string,
-  updatedAt: t.string,
+  createdAt: DATE_FROM_STRING,
+  updatedAt: DATE_FROM_STRING,
+  size: optional(t.number),
 } as const;
 
 export const FILE_ASSET_ENTITY = t.type({
@@ -26,13 +27,7 @@ export const FILE_ASSET_ENTITY = t.type({
 });
 
 export const FILE_ASSET_UPLOAD = t.type({
-  id: t.number,
-  originalname: t.string,
-  size: t.union([t.number, t.null]),
-  mimetype: t.string,
-  collection: COLLECTION,
-  createdAt: t.string,
-  updatedAt: t.string,
+  ...COMMON_PROPERTIES,
   self: t.string,
   file: t.string,
   name: t.string,

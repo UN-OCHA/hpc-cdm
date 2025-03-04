@@ -35,6 +35,13 @@ export const recursiveIntersection = (codecs: t.Mixed[]): t.Mixed => {
   return recursiveIntersection([intersected, ...rest]);
 };
 
+/**
+ * Utility function used to shorten nullable fields
+ */
+export const optional = <T extends t.Mixed, K extends t.Mixed[]>(
+  ...type: [T, ...K]
+) => t.union([t.null, ...type]);
+
 const INTEGER_REGEX = /^[0-9]+$/;
 const CURRENCY_INTEGER_REGEX = /^[0-9]+(,[0-9]+)*$/;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;

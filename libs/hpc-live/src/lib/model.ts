@@ -9,12 +9,15 @@ import { util } from '@unocha/hpc-core';
 import {
   access,
   categories,
+  currencies,
   util as dataUtil,
   emergencies,
   errors,
+  fileAssetEntities,
   flows,
   forms,
   globalClusters,
+  governingEntities,
   locations,
   type Model,
   operations,
@@ -24,9 +27,6 @@ import {
   reportingWindows,
   systems,
   usageYears,
-  currencies,
-  fileAssetEntities,
-  governingEntities,
 } from '@unocha/hpc-data';
 import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
@@ -251,6 +251,13 @@ export class LiveModel implements Model {
     flowDate
     newMoney
     decisionDate
+    budgetYear
+    createdAt
+    description
+    firstReportedDate
+    notes
+    versionStartDate
+    versionEndDate
     categories {
       id
       name
@@ -267,6 +274,7 @@ export class LiveModel implements Model {
         objectType
         categoryID
         updatedAt
+        createdAt
       }
     }
 
@@ -445,7 +453,11 @@ export class LiveModel implements Model {
         return decode.right;
       }
       const report = PathReporter.report(decode);
-      console.error('Received unexpected result from server', report, jsonError);
+      console.error(
+        'Received unexpected result from server',
+        report,
+        jsonError
+      );
       throw new ModelError('Received unexpected result from server', jsonError);
     } else {
       const json = (await res.json()) as {
@@ -722,12 +734,7 @@ export class LiveModel implements Model {
   }
   get flows(): flows.Model {
     return {
-      getFlowREST: (params) =>
-        this.call({
-          pathname: `/v2/flow/${params.id}`,
-          resultType: flows.GET_FLOW_RESULT,
-        }),
-      getFlow: (params) => {
+      getFlowV4: (params) => {
         const query = gql`
           query Flow{
                     flow(id: ${params}) {
@@ -756,11 +763,14 @@ export class LiveModel implements Model {
                     }
                 }
         `;
-        return this.callGraphQL({ query, resultType: flows.GET_FLOW_RESULT });
+        return this.callGraphQL({
+          query,
+          resultType: flows.GET_FLOW_V4_RESULT,
+        });
       },
-      getFlowVersionREST: (params) =>
+      getFlow: ({ id, versionID }) =>
         this.call({
-          pathname: `/v1/flow/${params.id}/version/${params.versionID}`,
+          pathname: `/v1/flow/${id}${versionID ? `/version/${versionID}` : ''}`,
           resultType: flows.GET_FLOW_RESULT,
         }),
       getAutocompleteFlows: (params) =>
@@ -820,7 +830,7 @@ export class LiveModel implements Model {
             type: 'json',
             data: params,
           },
-          resultType: flows.GET_FLOW_RESULT,
+          resultType: flows.CREATE_FLOW_RESULT,
         }),
 
       updateFlow: (params) =>

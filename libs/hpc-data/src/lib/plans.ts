@@ -6,55 +6,32 @@ import {
   GOVERNING_ENTITY,
   GOVERNING_ENTITY_VERSION,
 } from './governing-entities';
-import { LOCATION_WITHOUT_CHILDREN } from './locations';
-import { recursiveIntersection } from './util';
+import { LOCATION } from './locations';
+import { DATE_FROM_STRING, optional, recursiveIntersection } from './util';
+import { PLAN_VERSION } from './plan-versions';
+
+const PLAN_REVISION_STATE = t.keyof({
+  none: null,
+  planDataAndProjects: null,
+  planDataOnly: null,
+  projectsOnly: null,
+});
 
 export const PLAN = t.type({
   id: t.number,
+  isReleased: t.boolean,
   restricted: t.boolean,
-  revisionState: t.union([t.string, t.null]),
-  createdAt: t.string,
-  updatedAt: t.string,
+  revisionState: optional(PLAN_REVISION_STATE),
+  releasedDate: optional(DATE_FROM_STRING),
+  createdAt: DATE_FROM_STRING,
+  updatedAt: DATE_FROM_STRING,
+});
+
+export const PLAN_AUTOCOMPLETE = t.type({
+  ...PLAN.props,
+  ...PLAN_VERSION.props,
   planVersionId: t.number,
-  planId: t.number,
-  name: t.string,
-  startDate: t.string,
-  endDate: t.string,
-  comments: t.union([t.null, t.string]),
-  isForHPCProjects: t.boolean,
-  code: t.union([t.string, t.null]),
-  customLocationCode: t.union([t.null, t.string]),
-  currentReportingPeriodId: t.union([t.null, t.number]),
-  lastPublishedReportingPeriodId: t.union([t.null, t.number]),
-  clusterSelectionType: t.union([t.null, t.string]),
-  currentVersion: t.boolean,
-  latestVersion: t.boolean,
-  latestTaggedVersion: t.boolean,
-  versionTags: t.union([t.array(t.string), t.null]),
 });
-
-export const PLAN_VERSION = t.type({
-  id: t.number,
-  planId: t.number,
-  name: t.string,
-  startDate: t.string,
-  endDate: t.string,
-  comments: t.union([t.string, t.null]),
-  isForHPCProjects: t.boolean,
-  code: t.union([t.string, t.null]),
-  customLocationCode: t.union([t.string, t.null]),
-  currentReportingPeriodId: t.union([t.number, t.null]),
-  currentVersion: t.boolean,
-  latestVersion: t.boolean,
-  latestTaggedVersion: t.boolean,
-  createdAt: t.string,
-  updatedAt: t.string,
-  lastPublishedReportingPeriodId: t.union([t.number, t.null]),
-  clusterSelectionType: t.union([t.string, t.null]),
-  visibilityPreferences: t.unknown,
-});
-
-export type Plan = t.TypeOf<typeof PLAN>;
 
 export const GET_PLANS_AUTOCOMPLETE_PARAMS = t.type({
   query: t.string,
@@ -63,7 +40,7 @@ export type GetPlansAutocompleteParams = t.TypeOf<
   typeof GET_PLANS_AUTOCOMPLETE_PARAMS
 >;
 
-export const GET_PLANS_AUTOCOMPLETE_RESULT = t.array(PLAN);
+export const GET_PLANS_AUTOCOMPLETE_RESULT = t.array(PLAN_AUTOCOMPLETE);
 export type GetPlansAutocompleteResult = t.TypeOf<
   typeof GET_PLANS_AUTOCOMPLETE_RESULT
 >;
@@ -73,7 +50,7 @@ const GET_PLAN_MAP = {
     planVersion: PLAN_VERSION,
   }),
   locations: t.type({
-    locations: t.array(LOCATION_WITHOUT_CHILDREN),
+    locations: t.array(LOCATION),
   }),
   governingEntities: t.type({
     governingEntities: t.array(
@@ -100,14 +77,14 @@ const GET_PLAN_MAP = {
   }),
 };
 
-const GET_PLAN_SCOPE = t.union([
-  t.literal('categories'),
-  t.literal('emergencies'),
-  t.literal('governingEntities'),
-  t.literal('locations'),
-  t.literal('years'),
-  t.literal('planVersion'),
-]);
+const GET_PLAN_SCOPE = t.keyof({
+  categories: null,
+  emergencies: null,
+  governingEntities: null,
+  locations: null,
+  years: null,
+  planVersion: null,
+});
 
 export type GetPlanScope = t.TypeOf<typeof GET_PLAN_SCOPE>;
 
@@ -154,7 +131,7 @@ export const GET_AUTOCOMPLETE_PLANS_BY_ID_RESULT = t.array(
   t.type({
     id: t.number,
     restricted: t.boolean,
-    revisionState: t.union([t.string, t.null]),
+    revisionState: optional(t.string),
   })
 );
 

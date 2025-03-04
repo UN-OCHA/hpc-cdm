@@ -141,17 +141,17 @@ const FORM = t.type(
   'FORM'
 );
 
-const FLOW = flows.FLOW;
+const FLOW = flows.FLOW_V4;
 const CATEGORY = categories.CATEGORY;
 const CURRENCY = currencies.CURRENCY;
 const KEYWORD = categories.KEYWORD;
 const EMERGENCY = emergencies.EMERGENCY;
 const GLOBAL_CLUSTER = globalClusters.GLOBAL_CLUSTER;
 const GOVERNING_ENTITY = governingEntities.GOVERNING_ENTITY;
-const LOCATION = locations.LOCATION;
+const LOCATION = locations.LOCATION_WITH_CHILDREN;
 const ORGANIZATION = organizations.ORGANIZATION;
-const PLAN = plans.PLAN;
-const PROJECT = projects.PROJECT;
+const PLAN = plans.PLAN_AUTOCOMPLETE;
+const PROJECT = projects.PROJECT_AUTOCOMPLETE;
 const USAGE_YEAR = usageYears.USAGE_YEAR;
 
 export const DUMMY_DATA = t.type(

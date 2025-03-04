@@ -14,7 +14,7 @@ import { C, dataLoader } from '@unocha/hpc-ui';
 import { getContext } from '../../context';
 import { t } from '../../../i18n';
 
-export type FlowVersion = NonNullable<flows.FlowREST['versions']>[number];
+export type FlowVersion = NonNullable<flows.GetFlowResult['versions']>[number];
 
 type ComparisonMode = 'addition' | 'deletion' | 'modification' | 'noop';
 type FlowCompareFlowObject = flows.CompareFlowsResult['flowA']['flowObjects'];

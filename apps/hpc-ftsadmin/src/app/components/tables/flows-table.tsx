@@ -148,7 +148,7 @@ export default function FlowsTable(props: FlowsTableProps) {
 
   const renderReportDetail = (
     org: flows.FlowOrganization,
-    row: flows.Flow,
+    row: flows.FlowV4,
     lang: LanguageKey
   ) => {
     const rd = row.reportDetails?.filter((rd) => rd.organizationID === org.id);
@@ -190,7 +190,7 @@ export default function FlowsTable(props: FlowsTableProps) {
       : [];
     const handleCheckboxChange = (
       event: React.ChangeEvent<HTMLInputElement>,
-      row: flows.Flow
+      row: flows.FlowV4
     ) => {
       const isChecked = event.target.checked;
       if (isChecked) {
@@ -298,18 +298,18 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-amount-usd"
                     >
-                      {parseInt(row.amountUSD) > 0
+                      {row.amountUSD > 0
                         ? new Intl.NumberFormat(lang, {
                             style: 'currency',
                             currency: 'USD',
                             maximumFractionDigits: 0,
-                          }).format(parseInt(row.amountUSD))
+                          }).format(row.amountUSD)
                         : row.origAmount && row.origCurrency
                         ? new Intl.NumberFormat(lang, {
                             style: 'currency',
                             currency: row.origCurrency,
                             maximumFractionDigits: 0,
-                          }).format(parseInt(row.origAmount))
+                          }).format(row.origAmount)
                         : '--'}
                     </TableCell>
                   );

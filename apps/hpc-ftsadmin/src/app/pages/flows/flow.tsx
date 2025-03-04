@@ -25,7 +25,7 @@ type FlowRouteParams = {
   version?: string;
 };
 
-type FlowRestPending = Omit<flows.GetFlowResult, 'activeVersion'> & {
+type PendingFlow = Omit<flows.GetFlowResult, 'activeVersion'> & {
   activeVersion: flows.GetFlowResult;
 };
 
@@ -70,7 +70,7 @@ export default () => {
 
   const { id: idString, version } = useParams<FlowRouteParams>();
 
-  const isPending = (flow: flows.GetFlowResult): flow is FlowRestPending =>
+  const isPending = (flow: flows.GetFlowResult): flow is PendingFlow =>
     flow.categories.some((c) => c.name === 'Pending review');
   const isInactive = (flow: flows.GetFlowResult) =>
     !flow.activeStatus ||
@@ -82,10 +82,7 @@ export default () => {
 
   if (id) {
     const getFlow = (version?: number) => {
-      if (version) {
-        return env.model.flows.getFlowVersionREST({ id, versionID: version });
-      }
-      return env.model.flows.getFlowREST({ id });
+      return env.model.flows.getFlow({ id, versionID: version });
     };
 
     const [state, load] = useDataLoader([id, version], async () => {
@@ -112,12 +109,12 @@ export default () => {
       const [parents, children] = await Promise.all([
         Promise.all(
           flow.parents.map((parent) =>
-            env.model.flows.getFlowREST({ id: parent.parentID })
+            env.model.flows.getFlow({ id: parent.parentID })
           )
         ),
         Promise.all(
           flow.children.map((child) =>
-            env.model.flows.getFlowREST({ id: child.childID })
+            env.model.flows.getFlow({ id: child.childID })
           )
         ),
       ]);

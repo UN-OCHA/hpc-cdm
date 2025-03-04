@@ -557,10 +557,7 @@ export class Dummy {
         ),
         getEmergencies: dummyEndpoint(
           'emergencies.getEmergencies',
-          async ({
-            years,
-            locations,
-          }: emergencies.GetEmergenciesParams): Promise<emergencies.GetEmergenciesResult> => {
+          async (_props: emergencies.GetEmergenciesParams): Promise<emergencies.GetEmergenciesResult> => {
             return this.data.emergencies;
           }
         ),
@@ -574,14 +571,14 @@ export class Dummy {
             //  TODO: Properly add mocked data
             return {
               collection: 'fts',
-              createdAt: new Date().toISOString(),
+              createdAt: new Date(),
               name: 'test.pdf',
               id: Date.now(),
               mimetype: 'application/pdf',
               originalname: 'test.pdf',
               file: 'test.pdf',
               size: 12_302,
-              updatedAt: new Date().toISOString(),
+              updatedAt: new Date(),
               self: 'https://test.com',
             };
           }
@@ -597,16 +594,10 @@ export class Dummy {
         ),
       },
       flows: {
-        getFlowREST: dummyEndpoint('flows.getFlowREST', async () => {
+        getFlow: dummyEndpoint('flows.getFlow', async () => {
           throw new errors.NotFoundError();
         }),
-        getFlowVersionREST: dummyEndpoint(
-          'flows.getFlowVersionREST',
-          async () => {
-            throw new errors.NotFoundError();
-          }
-        ),
-        getFlow: dummyEndpoint('flows.getFlow', async () => {
+        getFlowV4: dummyEndpoint('flows.getFlowV4', async () => {
           throw new errors.NotFoundError();
         }),
         getAutocompleteFlows: dummyEndpoint(
@@ -675,9 +666,10 @@ export class Dummy {
                       id: 87,
                       name: 'Rejected',
                       parentID: null,
+                      description: '',
                       group: 'inactiveReason',
-                      createdAt: '2017-01-13T14:20:34.337Z',
-                      updatedAt: '2017-01-13T14:20:34.337Z',
+                      createdAt: new Date('2017-01-13T14:20:34.337Z'),
+                      updatedAt: new Date('2017-01-13T14:20:34.337Z'),
                       code: null,
                       includeTotals: null,
                       categoryRef: {
@@ -685,7 +677,8 @@ export class Dummy {
                         versionID: flow.versionID,
                         objectType: 'flow',
                         categoryID: 87,
-                        updatedAt: new Date().toISOString(),
+                        updatedAt: new Date(),
+                        createdAt: new Date(),
                       },
                     },
                   ],
@@ -721,26 +714,23 @@ export class Dummy {
               id,
               versionID: 1,
               activeStatus,
-              amountUSD: amountUSD.toString(),
+              amountUSD,
               decisionDate,
-              exchangeRate: exchangeRate ? exchangeRate.toString() : null,
-              updatedAt: new Date().toISOString(),
+              exchangeRate: exchangeRate ?? null,
+              updatedAt: new Date(),
               flowDate,
               newMoney,
               restricted,
-              externalReferences: [],
-              parkedParentSource: { organization: [], orgName: [] },
-              reportDetails: [],
             } as const;
 
-            this.data.flows.push(flow as unknown as flows.Flow);
+            this.data.flows.push(flow as unknown as flows.FlowV4);
 
             const participant = { name: 'Me' };
             const res: flows.GetFlowResult = {
               ...flow,
-              firstReportedDate: '',
-              versionStartDate: '',
-              createdAt: '',
+              firstReportedDate: null,
+              versionStartDate: null,
+              createdAt: new Date(),
               createdBy: participant,
               description: '',
               lastUpdatedBy: participant,
@@ -764,7 +754,7 @@ export class Dummy {
               versions: [],
               externalReferences: [],
               externalData: [],
-            };
+            } as any;
             return res;
           }
         ),
@@ -802,9 +792,9 @@ export class Dummy {
             const participant = { name: 'Me' };
             const res: flows.GetFlowResult = {
               ...flow,
-              firstReportedDate: '',
-              versionStartDate: '',
-              createdAt: '',
+              firstReportedDate: null,
+              versionStartDate: null,
+              createdAt: new Date(),
               createdBy: participant,
               description: '',
               lastUpdatedBy: participant,
@@ -828,7 +818,7 @@ export class Dummy {
               versions: [],
               externalReferences: [],
               externalData: [],
-            };
+            } as any;
             return res;
           }
         ),
@@ -1037,7 +1027,7 @@ export class Dummy {
             organization,
           }: organizations.CreateOrganizationParams): Promise<organizations.CreateOrganizationResult> => {
             const id = Date.now();
-            const date = new Date().toISOString();
+            const date = new Date();
             const organizationWithID: organizations.Organization = {
               ...organization,
               id,
@@ -1081,7 +1071,7 @@ export class Dummy {
           async (
             organization: organizations.UpdateOrganizationParams
           ): Promise<organizations.UpdateOrganizationResult> => {
-            const date = new Date().toISOString();
+            const date = new Date();
             const organizationIndex = this.data.organizations.findIndex(
               (dataOrganization) => dataOrganization.id === organization.id
             );
@@ -1172,8 +1162,8 @@ export class Dummy {
               active: true,
               collectiveInd: false,
               newOrganizationId: null,
-              createdAt: '2017-10-29T20:45:26.233Z',
-              updatedAt: '2019-05-14T12:19:16.995Z',
+              createdAt: new Date('2017-10-29T20:45:26.233Z'),
+              updatedAt: new Date('2019-05-14T12:19:16.995Z'),
               deletedAt: null,
             };
           }

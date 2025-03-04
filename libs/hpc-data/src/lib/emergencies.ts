@@ -1,16 +1,17 @@
 import * as t from 'io-ts';
+import { DATE_FROM_STRING, optional } from './util';
 
 export const EMERGENCY = t.type({
   id: t.number,
   name: t.string,
-  description: t.union([t.string, t.null]),
-  date: t.string,
-  glideId: t.union([t.string, t.null]),
-  levelThree: t.union([t.boolean, t.null]),
+  date: DATE_FROM_STRING,
   active: t.boolean,
   restricted: t.boolean,
-  createdAt: t.string,
-  updatedAt: t.string,
+  createdAt: DATE_FROM_STRING,
+  updatedAt: DATE_FROM_STRING,
+  description: optional(t.string),
+  glideId: optional(t.string),
+  levelThree: optional(t.boolean),
 });
 
 export type Emergency = t.TypeOf<typeof EMERGENCY>;
