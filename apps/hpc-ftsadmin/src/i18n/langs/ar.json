@@ -206,7 +206,9 @@
       }
     },
     "flowLink": {
-      "unlink": "إلغاء الربط"
+      "unlink": "إلغاء الربط",
+      "parentFlow": "التدفق الرئيسي",
+      "childFlows": "التدفقات الفرعية"
     },
     "flowSearch": {
       "title": "البحث عن تدفقات",

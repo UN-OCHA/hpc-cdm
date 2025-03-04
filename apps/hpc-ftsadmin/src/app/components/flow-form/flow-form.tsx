@@ -45,7 +45,7 @@ import validateForm from '../../utils/form-validation';
 import { Link, useBeforeUnload, useBlocker, useNavigate } from 'react-router';
 import * as paths from '../../paths';
 import FlowLink, { FlowLinkProps } from './flow-link';
-import FlowSearch from './flow-search';
+import FlowSearch, { OVERRIDING_FLOW_KEYS } from './flow-search';
 import FlowLinkWarning from './flow-link-warning';
 import {
   currencyToInteger,
@@ -475,6 +475,18 @@ export const FlowForm = (props: FlowFormProps) => {
     method:
       method.find((v) => v.displayLabel === 'Traditional aid') ??
       INITIAL_FORM_VALUES['method'],
+  };
+
+  const getChildFlowsAmountUSDDiff = (values: FlowFormType) => {
+    const { amountUSD, childFlows } = values;
+    if (!amountUSD) {
+      return null;
+    }
+    const amountUSDDifference = integerToCurrency(
+      currencyToInteger(amountUSD) -
+        childFlows.reduce((acc, cur) => acc + valueToInteger(cur.amountUSD), 0)
+    );
+    return `US$${amountUSDDifference}`;
   };
 
   const isValid = async (
@@ -989,16 +1001,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         link={{ ...values.parentFlow }}
                       />
                       <FormGroupReadOnly
-                        fields={[
-                          'fundingSourceOrganizations',
-                          'fundingSourceUsageYears',
-                          'fundingSourceLocations',
-                          'fundingSourceGlobalClusters',
-                          'fundingSourcePlan',
-                          'fundingSourceFieldClusters',
-                          'fundingSourceEmergencies',
-                          'fundingSourceProject',
-                        ]}
+                        fields={OVERRIDING_FLOW_KEYS}
                         values={values}
                       />
                     </>
@@ -1025,9 +1028,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         }}
                         disabled={isDisabled}
                         pendingValues={
-                          !values.parentFlow
-                            ? pendingValues?.fundingSourceOrganizations
-                            : undefined
+                          pendingValues?.fundingSourceOrganizations
                         }
                         isMulti
                       />
@@ -1051,11 +1052,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         }
                         isAutocompleteAPI={false}
                         disabled={isDisabled}
-                        pendingValues={
-                          !values.parentFlow
-                            ? pendingValues?.fundingSourceUsageYears
-                            : undefined
-                        }
+                        pendingValues={pendingValues?.fundingSourceUsageYears}
                         firstViewCondition={usageYearFirstViewCondition}
                         isMulti
                         required
@@ -1070,11 +1067,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         fnPromise={(query) => fnLocations(query, env)}
                         setPendingValuesHandled={setPendingValuesHandled}
                         disabled={isDisabled}
-                        pendingValues={
-                          !values.parentFlow
-                            ? pendingValues?.fundingSourceLocations
-                            : undefined
-                        }
+                        pendingValues={pendingValues?.fundingSourceLocations}
                         isMulti
                       />
                       <AsyncAutocompleteSelectReview
@@ -1099,9 +1092,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         isAutocompleteAPI={false}
                         disabled={isDisabled}
                         pendingValues={
-                          !values.parentFlow
-                            ? pendingValues?.fundingSourceGlobalClusters
-                            : undefined
+                          pendingValues?.fundingSourceGlobalClusters
                         }
                         isMulti
                       />
@@ -1123,11 +1114,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           });
                         }}
                         disabled={isDisabled}
-                        pendingValues={
-                          !values.parentFlow
-                            ? pendingValues?.fundingSourcePlan
-                            : undefined
-                        }
+                        pendingValues={pendingValues?.fundingSourcePlan}
                       />
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourceFieldClusters"
@@ -1162,9 +1149,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         }
                         isAutocompleteAPI={false}
                         pendingValues={
-                          !values.parentFlow
-                            ? pendingValues?.fundingSourceFieldClusters
-                            : undefined
+                          pendingValues?.fundingSourceFieldClusters
                         }
                         isMulti
                         observedValue={values.fundingSourcePlan?.value.toString()}
@@ -1180,11 +1165,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         fnPromise={(query) => fnEmergencies(query, env)}
                         setPendingValuesHandled={setPendingValuesHandled}
                         disabled={isDisabled}
-                        pendingValues={
-                          !values.parentFlow
-                            ? pendingValues?.fundingSourceEmergencies
-                            : undefined
-                        }
+                        pendingValues={pendingValues?.fundingSourceEmergencies}
                         isMulti
                       />
                       <AsyncAutocompleteSelectReview
@@ -1206,11 +1187,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           });
                         }}
                         disabled={isDisabled}
-                        pendingValues={
-                          !values.parentFlow
-                            ? pendingValues?.fundingSourceProject
-                            : undefined
-                        }
+                        pendingValues={pendingValues?.fundingSourceProject}
                       />
                     </>
                   )}
@@ -1270,11 +1247,9 @@ export const FlowForm = (props: FlowFormProps) => {
                       }
                       fnPromise={(query) => fnOrganizations(query, env)}
                       setPendingValuesHandled={setPendingValuesHandled}
-                      disabled={isDisabled || !!values.parentFlow}
+                      disabled={isDisabled}
                       pendingValues={
-                        !values.parentFlow
-                          ? pendingValues?.fundingDestinationAnonymizedOrganizations
-                          : undefined
+                        pendingValues?.fundingDestinationAnonymizedOrganizations
                       }
                       isMulti
                     />
@@ -1735,7 +1710,9 @@ export const FlowForm = (props: FlowFormProps) => {
               >
                 {values.parentFlow && (
                   <Box sx={tw`my-4`}>
-                    <h3>Parent Flow</h3>
+                    <h3>
+                      {t.t(lang, (s) => s.components.flowLink.parentFlow)}
+                    </h3>
                     <FlowLink
                       flowLink={values.parentFlow}
                       fieldName="parentFlow"
@@ -1745,7 +1722,9 @@ export const FlowForm = (props: FlowFormProps) => {
 
                 {values.childFlows.length > 0 && (
                   <Box sx={tw`mb-4`}>
-                    <h3>Child Flows</h3>
+                    <h3>
+                      {t.t(lang, (s) => s.components.flowLink.childFlows)}
+                    </h3>
                     <Box sx={tw`flex flex-col gap-y-4 my-4`}>
                       {values.childFlows.map((childFlow) => (
                         <div key={childFlow.id}>
@@ -1757,19 +1736,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       ))}
                     </Box>
                     <Box sx={tw`text-end font-bold`}>
-                      <span>
-                        {values.amountUSD
-                          ? 'US$' +
-                            integerToCurrency(
-                              currencyToInteger(values.amountUSD) -
-                                values.childFlows.reduce(
-                                  (acc, cur) =>
-                                    acc + valueToInteger(cur.amountUSD),
-                                  0
-                                )
-                            )
-                          : undefined}
-                      </span>
+                      <span>{getChildFlowsAmountUSDDiff(values)}</span>
                     </Box>
                   </Box>
                 )}

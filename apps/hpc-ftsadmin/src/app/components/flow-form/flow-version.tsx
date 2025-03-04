@@ -14,7 +14,7 @@ import { PENDING_REVIEW } from '../../utils/constants';
 import FlowCompare, { type FlowVersion } from './flow-compare';
 import InfoAlert from '../info-alert';
 
-type FlowVersionSelection = [FlowVersion | undefined, FlowVersion | undefined];
+type FlowVersionSelection = [FlowVersion | null, FlowVersion | null];
 
 const SPAN_STYLES = `
   px-2
@@ -37,7 +37,6 @@ const PendingReviewSpan = tw.span`
 const MarginEndLink = tw(Link)`
   me-2
 `;
-
 const TableRowClick = tw(TableRow)`
   transition-all
   hover:shadow-md
@@ -56,12 +55,12 @@ const FlowVersions = ({
   const { lang } = getContext();
 
   const [selectedVersions, setSelectedVersions] =
-    useState<FlowVersionSelection>([undefined, undefined]);
+    useState<FlowVersionSelection>([null, null]);
 
   const hasFlowsSelected = (
     selection: FlowVersionSelection
   ): selection is [FlowVersion, FlowVersion] =>
-    selection.every((flowVersion) => flowVersion !== undefined);
+    selection.every((flowVersion) => flowVersion !== null);
 
   const pendingReviewCategory = inactiveReasons.find(
     (category) => category.name === PENDING_REVIEW
@@ -75,22 +74,22 @@ const FlowVersions = ({
 
       if (checkedRowIndex !== -1) {
         const prevSelectedRowsClone = structuredClone(prev);
-        prevSelectedRowsClone[checkedRowIndex] = undefined;
+        prevSelectedRowsClone[checkedRowIndex] = null;
         if (checkedRowIndex === 0) {
           prevSelectedRowsClone[0] = prevSelectedRowsClone[1];
-          prevSelectedRowsClone[1] = undefined;
+          prevSelectedRowsClone[1] = null;
         }
         return prevSelectedRowsClone;
       }
 
-      if (prev.every((selectedVersion) => selectedVersion !== undefined)) {
+      if (prev.every((selectedVersion) => selectedVersion !== null)) {
         const prevSelectedRowsClone = structuredClone(prev);
         prevSelectedRowsClone[1] = flowVersion;
         return prevSelectedRowsClone;
       }
 
       if (!prev[0]) {
-        return [flowVersion, undefined];
+        return [flowVersion, null];
       }
       const flowB = prev[1] ?? flowVersion;
 

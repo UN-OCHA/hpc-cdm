@@ -206,7 +206,9 @@
       }
     },
     "flowLink": {
-      "unlink": "取消关联"
+      "unlink": "取消关联",
+      "parentFlow": "父流",
+      "childFlows": "子流"
     },
     "flowSearch": {
       "title": "搜索资金流",

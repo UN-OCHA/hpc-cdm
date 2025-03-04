@@ -841,7 +841,7 @@ export class LiveModel implements Model {
             type: 'json',
             data: params,
           },
-          resultType: flows.GET_FLOW_RESULT,
+          resultType: flows.CREATE_FLOW_RESULT,
         }),
       deleteFlow: ({ flowId, versionID }) =>
         this.call({

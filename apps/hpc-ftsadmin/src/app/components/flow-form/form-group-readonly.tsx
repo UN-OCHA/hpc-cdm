@@ -21,7 +21,7 @@ type Field = keyof Pick<
 >;
 
 type FormGroupReadOnlyProps = {
-  fields: Field[];
+  fields: readonly Field[];
   values: FlowFormType;
 };
 

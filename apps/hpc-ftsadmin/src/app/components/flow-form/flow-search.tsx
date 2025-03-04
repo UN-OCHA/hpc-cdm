@@ -46,6 +46,34 @@ const StyledDiv = tw.div`
   self-center
 `;
 
+export const OVERRIDING_FLOW_KEYS = [
+  'fundingSourceOrganizations',
+  'fundingSourceLocations',
+  'fundingSourceEmergencies',
+  'fundingSourceGlobalClusters',
+  'fundingSourcePlan',
+  'fundingSourceProject',
+  'fundingSourceUsageYears',
+  'fundingSourceFieldClusters',
+] as const;
+
+const removeOptionsFn: AsyncAutocompleteSelectProps['removeOptionsFn'] = (
+  response,
+  removeOptions
+) => {
+  if (!removeOptions) {
+    return response;
+  }
+  const res = response.filter(
+    (responseObject) =>
+      !removeOptions.some(
+        (removeOption) =>
+          responseObject.displayLabel === removeOption.displayLabel
+      )
+  );
+  return res;
+};
+
 const FlowSearch = (props: FlowSearchProps) => {
   const { name, text, startIcon, currentFlow } = props;
 
@@ -54,9 +82,7 @@ const FlowSearch = (props: FlowSearchProps) => {
 
   const [flow, setFlow] = useState<FormObjectValue | null>(null);
   const [open, setOpen] = useState(false);
-  const [flows, setFlows] = useState<
-    flows.GetFlowsAutocompleteResult | undefined
-  >();
+  const [flows, setFlows] = useState<flows.GetFlowsAutocompleteResult>();
   const { setFieldValue, values } = useFormikContext<FlowFormType>();
 
   const removeOptions = [
@@ -66,23 +92,6 @@ const FlowSearch = (props: FlowSearchProps) => {
       : []),
     ...(currentFlow ? [flowToFormObjectValue(currentFlow)] : []),
   ];
-
-  const removeOptionsFn: AsyncAutocompleteSelectProps['removeOptionsFn'] = (
-    response,
-    removeOptions
-  ) => {
-    if (!removeOptions) {
-      return response;
-    }
-    const res = response.filter(
-      (responseObject) =>
-        !removeOptions.some(
-          (removeOption) =>
-            responseObject.displayLabel === removeOption.displayLabel
-        )
-    );
-    return res;
-  };
 
   const handleSubmit = () => {
     if (flow) {
@@ -101,16 +110,6 @@ const FlowSearch = (props: FlowSearchProps) => {
         if (!overridingFlow) {
           return;
         }
-        const OVERRIDING_FLOW_KEYS = [
-          'fundingSourceOrganizations',
-          'fundingSourceLocations',
-          'fundingSourceEmergencies',
-          'fundingSourceGlobalClusters',
-          'fundingSourcePlan',
-          'fundingSourceProject',
-          'fundingSourceUsageYears',
-          'fundingSourceFieldClusters',
-        ] as const;
         const MAP_KEYS_TO_FIELDS: Record<
           (typeof OVERRIDING_FLOW_KEYS)[number],
           FormObjectValue[] | FormObjectValue | null

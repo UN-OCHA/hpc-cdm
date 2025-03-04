@@ -206,6 +206,8 @@
       }
     },
     "flowLink": {
+      "parentFlow": "Parent Flow",
+      "childFlows": "Child Flows",
       "unlink": "Unlink"
     },
     "flowSearch": {

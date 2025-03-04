@@ -57,6 +57,17 @@ export const PROJECT_AUTOCOMPLETE = t.type({
   visible: t.boolean,
 });
 
+const GET_PROJECT_PROJECT_VERSION_LOCATION = t.type({
+  id: LOCATION.props.id,
+  iso3: LOCATION.props.iso3,
+  name: LOCATION.props.name,
+  adminLevel: LOCATION.props.adminLevel,
+  pcode: LOCATION.props.pcode,
+  latitude: LOCATION.props.latitude,
+  longitude: LOCATION.props.longitude,
+  parentId: LOCATION.props.parentId,
+});
+
 const GET_PROJECT_PROJECT_VERSION = t.type({
   ...PROJECT_VERSION.props,
   categories: t.array(
@@ -68,7 +79,7 @@ const GET_PROJECT_PROJECT_VERSION = t.type({
     })
   ),
   organizations: t.array(ORGANIZATION),
-  locations: t.array(LOCATION),
+  locations: t.array(GET_PROJECT_PROJECT_VERSION_LOCATION),
   globalClusters: t.array(GLOBAL_CLUSTER),
   plans: t.array(t.type({ id: t.number, planVersion: PLAN_VERSION })),
 });

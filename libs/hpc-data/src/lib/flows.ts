@@ -421,8 +421,12 @@ const {
   ...otherGetFlowProps
 } = GET_FLOW_RESULT.props;
 
+const { categories: _categories, ...createFlowOrganizationProps } =
+  GET_FLOW_ORGANIZATION.props;
 export const CREATE_FLOW_RESULT = t.type({
   ...otherGetFlowProps,
+  // `organizations` on create flow doesn't contain `categories`
+  organizations: t.array(t.type(createFlowOrganizationProps)),
 });
 
 type CreateFlowResult = t.TypeOf<typeof CREATE_FLOW_RESULT>;
@@ -738,7 +742,7 @@ export interface Model {
     params: SearchFlowsParams
   ): Promise<SearchFlowsBatchesResult>;
   createFlow(params: CreateFlowParams): Promise<CreateFlowResult>;
-  updateFlow(params: UpdateFlowParams): Promise<GetFlowResult>;
+  updateFlow(params: UpdateFlowParams): Promise<CreateFlowResult>;
   deleteFlow(params: DeleteFlowParams): Promise<DeleteFlowResult>;
   getAutocompleteFlows(
     params: GetFlowsAutocompleteParams

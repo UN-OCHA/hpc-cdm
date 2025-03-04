@@ -206,7 +206,9 @@
       }
     },
     "flowLink": {
-      "unlink": "Desvincular"
+      "unlink": "Desvincular",
+      "parentFlow": "Flujo Principal",
+      "childFlows": "Flujos Hijos"
     },
     "flowSearch": {
       "title": "Buscar flujos",
