@@ -3,6 +3,7 @@
   "version": "1.13.1",
   "license": "Apache-2.0",
   "scripts": {
+    "reinstall": "rm -rf node_modules && npm install",
     "remove-unneeded-deps": "node tools/remove-unneeded-deps.mjs",
     "nx": "nx",
     "start": "nx serve",
