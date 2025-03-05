@@ -1,5 +1,5 @@
 import { Box, Modal } from '@mui/material';
-import { C } from '@unocha/hpc-ui';
+import { C, styled } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import { fnCategories, fnOrganizations } from '../utils/fn-promises';
 import { getContext, getEnv } from '../context';
@@ -47,6 +47,12 @@ const StyledForm = tw(Form)`
 
 const StyledDiv = tw.div`
   self-center
+`;
+
+const EndIcon = styled(EastIcon)`
+  [dir='rtl'] & {
+    transform: rotate(180deg);
+  }
 `;
 
 const isKeywordValues = (
@@ -311,7 +317,7 @@ const MergeModal = (props: MergeModalProps) => {
                       isAutocompleteAPI={isOrganizationType}
                       required
                     />
-                    <EastIcon /> {/** TODO: Support rtl languages */}
+                    <EndIcon />
                     <C.AsyncAutocompleteSelect
                       fnPromise={
                         isOrganizationType
