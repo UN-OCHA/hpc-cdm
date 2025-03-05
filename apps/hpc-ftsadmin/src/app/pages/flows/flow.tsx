@@ -252,7 +252,7 @@ export default () => {
           );
           return (
             <PaddingContainer>
-              <C.PageTitle>
+              <C.PageTitle data-test="add-flow-title">
                 {t.t(lang, (s) => s.routes.flow.title, {
                   id,
                   versionID: flow.versionID,

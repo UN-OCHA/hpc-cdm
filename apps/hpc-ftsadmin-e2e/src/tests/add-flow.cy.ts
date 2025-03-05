@@ -127,7 +127,8 @@ describe('hpc-ftsadmin add-flow', () => {
 
     cy.typedGet('add-flow-create-button').click();
 
-    cy.typedGet('add-flow-copy-button').click();
+    //  Due to toast appearing on top, we have to force
+    cy.typedGet('add-flow-copy-button').click({ force: true });
 
     cy.typedGet('add-flow-title').should('contain', 'Copy');
 
