@@ -14,10 +14,7 @@ import FlowsTable, {
 import { AppContext } from '../../context';
 import { FLOW_PARAMS_CODEC } from '../../utils/codecs';
 import { TOAST_CONFIG } from '../../utils/constants';
-import {
-  DEFAULT_FLOW_TABLE_HEADERS,
-  encodeTableHeaders,
-} from '../../utils/table-headers';
+import { encodeTableHeaders } from '../../utils/table-headers';
 import useQueryParams from '../../utils/useQueryParams';
 
 interface Props {
@@ -60,7 +57,6 @@ export default (props: Props) => {
   });
 
   const flowsTableProps: FlowsTableProps = {
-    headers: DEFAULT_FLOW_TABLE_HEADERS,
     rowsPerPageOptions,
     initialValues: FLOWS_FILTER_INITIAL_VALUES,
     query,

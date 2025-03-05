@@ -41,7 +41,7 @@ export interface AddEditOrganizationValues {
   organizationLevel?: util.FormObjectValue; // Number[] we need array of IDs
   parent?: util.FormObjectValue;
   collectiveInd?: boolean;
-  comments?: string; // "comments" makes reference what in the UI it's called "Organization Description" (Not my decision)
+  comments?: string; // "comments" makes reference what in the UI it's called "Organization Description"
 }
 export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   name: '',
@@ -51,7 +51,7 @@ export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   url: '',
   active: true,
   verified: true,
-  notes: '', // "notes" makes reference what in the UI it's called "Comments" (Not my decision)
+  notes: '', // "notes" makes reference what in the UI it's called "Comments"
   organizationTypes: [],
   organizationLevel: { displayLabel: '', value: '' }, // Number[] we need array of IDs
   parent: { displayLabel: '', value: '' },
@@ -77,17 +77,16 @@ const InfoText = tw.p`
 `;
 
 const parseFormValues = (values: AddEditOrganizationValues) => {
-  const locations: number[] = [];
-  if (values.locations) {
-    for (const loc of values.locations) {
-      locations.push(valueToInteger(loc.value));
-      if (loc.parent) {
-        locations.push(valueToInteger(loc.parent.value));
-      }
-    }
-  }
-  const parsedLocations =
-    locations.length > 0 ? [...new Set(locations)] : undefined;
+  const locations = values.locations
+    ?.flatMap((loc) => [
+      valueToInteger(loc.value),
+      loc.parent?.value ? valueToInteger(loc.parent.value) : undefined,
+    ])
+    .filter((locID) => locID !== undefined);
+
+  const parsedLocations = locations?.length
+    ? [...new Set(locations)]
+    : undefined;
   const categories = values.organizationTypes.map((org) =>
     valueToInteger(org.value)
   );
@@ -102,8 +101,8 @@ const formToUpdate = (
   id: number
 ): organizations.UpdateOrganizationParams => {
   const res: organizations.UpdateOrganizationParams = {
-    ...values,
     id,
+    ...values,
     ...parseFormValues(values),
   };
   return res;

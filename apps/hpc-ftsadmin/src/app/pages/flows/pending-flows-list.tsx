@@ -46,7 +46,6 @@ export default (props: Props) => {
   });
 
   const pendingFlowsTableProps: FlowsTableProps = {
-    headers: DEFAULT_FLOW_TABLE_HEADERS,
     initialValues: PENDING_FLOWS_FILTER_INITIAL_VALUES,
     rowsPerPageOptions: [10, 25, 50, 100],
     query,

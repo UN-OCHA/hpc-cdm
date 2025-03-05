@@ -22,7 +22,10 @@ import { type LanguageKey, t } from '../../../i18n';
 import { type Strings } from '../../../i18n/iface';
 import { AppContext, getEnv } from '../../context';
 import * as paths from '../../paths';
-import { parseUpdatedCreatedBy } from '../../utils/map-functions';
+import {
+  parseUpdatedCreatedBy,
+  valueToInteger,
+} from '../../utils/map-functions';
 import {
   decodeFilters,
   encodeFilters,
@@ -37,7 +40,6 @@ import {
   isCompatibleTableHeaderType,
   isTableHeadersPropsOrganization,
   type OrganizationHeaderID,
-  type TableHeadersProps,
 } from '../../utils/table-headers';
 import { type OrganizationFilterValues } from '../filters/filter-organization-table';
 import InfoAlert from '../info-alert';
@@ -59,25 +61,24 @@ const ButtonWrapper = tw.div`
   me-4
 `;
 export interface OrganizationTableProps {
-  headers: Array<TableHeadersProps<OrganizationHeaderID>>;
   initialValues: OrganizationFilterValues;
-  rowsPerPageOption: number[];
+  rowsPerPageOptions: number[];
   query: OrganizationQuery;
   setQuery: SetQuery<OrganizationQuery>;
   abortSignal: AbortSignal;
 }
 
-const OrganizationTable = (props: OrganizationTableProps) => {
+export default function OrganizationTable(props: OrganizationTableProps) {
+  const { initialValues, rowsPerPageOptions, abortSignal } = props;
   const env = getEnv();
 
   const chipSpacing = { m: 0.5 };
-  const rowsPerPageOptions = props.rowsPerPageOption;
 
-  const filters = decodeFilters(props.query.filters, props.initialValues);
+  const filters = decodeFilters(props.query.filters, initialValues);
   const parsedFilters = parseFormFilters<
     keyof Strings['components']['organizationsFilter']['filters'],
     OrganizationFilterValues
-  >(filters, props.initialValues);
+  >(filters, initialValues);
 
   const [query, setQuery] = [props.query, props.setQuery];
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
@@ -90,7 +91,7 @@ const OrganizationTable = (props: OrganizationTableProps) => {
         offset: query.page * query.rowsPerPage,
         orderBy: query.orderBy,
         orderDir: query.orderDir,
-        signal: props.abortSignal,
+        signal: abortSignal,
         ...parseOrganizationFilters(parsedFilters).search,
       },
     })
@@ -102,7 +103,7 @@ const OrganizationTable = (props: OrganizationTableProps) => {
       setQuery({
         ...query,
         page: 0,
-        filters: encodeFilters(filters, props.initialValues),
+        filters: encodeFilters(filters, initialValues),
       });
     }
   };
@@ -464,7 +465,7 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                               });
                             }
                           }}
-                          setOpenSettings={setOpenSettings}
+                          setOpenSettings={setShouldOpenSettings}
                           elevation={6}
                           sx={{
                             width: '400px',
@@ -488,7 +489,7 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                       sx={{ display: 'block' }}
                       rowsPerPageOptions={rowsPerPageOptions}
                       component="div"
-                      count={parseInt(data.count)}
+                      count={valueToInteger(data.count)}
                       rowsPerPage={query.rowsPerPage}
                       page={query.page}
                       onPageChange={handleChangePage}
@@ -515,7 +516,7 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                   data-test="flows-table-pagination"
                   rowsPerPageOptions={rowsPerPageOptions}
                   component="div"
-                  count={parseInt(data.count)}
+                  count={valueToInteger(data.count)}
                   rowsPerPage={query.rowsPerPage}
                   page={query.page}
                   onPageChange={handleChangePage}
@@ -528,6 +529,4 @@ const OrganizationTable = (props: OrganizationTableProps) => {
       )}
     </AppContext.Consumer>
   );
-};
-
-export default OrganizationTable;
+}

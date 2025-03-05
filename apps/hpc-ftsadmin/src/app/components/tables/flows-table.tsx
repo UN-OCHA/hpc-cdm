@@ -43,7 +43,6 @@ import {
 } from '../../utils/parse-filters';
 import {
   type FlowHeaderID,
-  type TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
   isCompatibleTableHeaderType,
@@ -67,7 +66,6 @@ import {
 } from './table-utils';
 
 export interface FlowsTableProps {
-  headers: Array<TableHeadersProps<FlowHeaderID>>;
   initialValues: FlowsFilterValues | PendingFlowsFilterValues;
   rowsPerPageOptions: number[];
   query: FlowQuery;
@@ -76,15 +74,16 @@ export interface FlowsTableProps {
 }
 
 export default function FlowsTable(props: FlowsTableProps) {
+  const { initialValues, rowsPerPageOptions, pending } = props;
   const { env, lang } = getContext();
   const environment = env();
 
   const chipSpacing = { m: 0.5 };
-  const rowsPerPageOptions = props.rowsPerPageOptions;
-  const filters = decodeFilters(props.query.filters, props.initialValues);
-  console.log(props.query.filters);
-  const tableFilters = parseFormFilters(filters, props.initialValues);
-  const parsedFilters = parseFlowFilters(tableFilters, props.pending);
+
+  const filters = decodeFilters(props.query.filters, initialValues);
+  const tableFilters = parseFormFilters(filters, initialValues);
+  const parsedFilters = parseFlowFilters(tableFilters, pending);
+
   const [query, setQuery] = [props.query, props.setQuery];
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
   const [state, load] = useDataLoader([query], () =>
@@ -101,13 +100,14 @@ export default function FlowsTable(props: FlowsTableProps) {
   const tableHeaders = isTableHeadersPropsFlow(nonSafeTypedTableHeaders)
     ? nonSafeTypedTableHeaders
     : [];
+
   const handleChipDelete = <T extends FilterKey>(fieldName: T) => {
     if (isKey(filters, fieldName)) {
       filters[fieldName] = undefined;
       setQuery({
         ...query,
         page: 0,
-        filters: encodeFilters(filters, props.initialValues),
+        filters: encodeFilters(filters, initialValues),
       });
     }
   };
@@ -218,7 +218,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                 : undefined,
             }}
           >
-            {props.pending && (
+            {pending && (
               <TableCell
                 size="small"
                 component="th"
@@ -328,10 +328,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                                 lang,
                                 (s) => s.components.flowsTable.parkedSource
                               )}
-                              :{' '}
-                              {row.parkedParentSource.orgName.map(
-                                (orgName) => orgName
-                              )}
+                              : {row.parkedParentSource.orgName}
                             </strong>
                             <br />
                           </>
@@ -591,7 +588,7 @@ export default function FlowsTable(props: FlowsTableProps) {
       <Table size="small">
         <TableHead>
           <TableRow>
-            {props.pending && <TableCell size="small" />}
+            {pending && <TableCell size="small" />}
             {tableHeaders.map((header) => {
               if (!header.active) {
                 return null;
@@ -754,7 +751,7 @@ export default function FlowsTable(props: FlowsTableProps) {
         return true;
       }
     }
-    return props.pending;
+    return pending;
   };
 
   return (
@@ -780,7 +777,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                 chipSpacing={chipSpacing}
                 handleChipDelete={handleChipDelete}
                 tableFilters={tableFilters}
-                tableType={props.pending ? 'pendingFlowsFilter' : 'flowsFilter'}
+                tableType={pending ? 'pendingFlowsFilter' : 'flowsFilter'}
               />
               <TopRowContainer>
                 <C.AsyncIconButton
@@ -897,7 +894,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                   fontSize: '1.32rem',
                 }}
               >
-                <FormWrapper lang={lang} data={data} pending={props.pending} />
+                <FormWrapper lang={lang} data={data} pending={pending} />
               </TableContainer>
             </Box>
             <TablePagination

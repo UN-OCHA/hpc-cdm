@@ -14,10 +14,7 @@ import OrganizationTable, {
 import { AppContext, getEnv } from '../../context';
 import { ORGANIZATION_PARAMS_CODEC } from '../../utils/codecs';
 import { TOAST_CONFIG } from '../../utils/constants';
-import {
-  DEFAULT_ORGANIZATION_TABLE_HEADERS,
-  encodeTableHeaders,
-} from '../../utils/table-headers';
+import { encodeTableHeaders } from '../../utils/table-headers';
 import useQueryParams from '../../utils/useQueryParams';
 
 interface Props {
@@ -84,8 +81,7 @@ export default (props: Props) => {
   });
 
   const organizationTableProps: OrganizationTableProps = {
-    headers: DEFAULT_ORGANIZATION_TABLE_HEADERS,
-    rowsPerPageOption: rowsPerPageOptions,
+    rowsPerPageOptions,
     initialValues: ORGANIZATIONS_FILTER_INITIAL_VALUES,
     query,
     setQuery,

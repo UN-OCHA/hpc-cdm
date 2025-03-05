@@ -75,6 +75,10 @@ const ChipFilterValues = tw.div`
   px-2
   rounded-full
 `;
+
+const SPECIAL_SEPARATOR = '<||>' as const;
+const ORGANIZATION_ABBREVIATION_REGEX = /\[(.*)\]/;
+
 export const RenderChipsRow = ({
   tableFilters,
   lang,
@@ -147,7 +151,7 @@ export const RenderChipsRow = ({
         key={savedKey}
         title={
           <div style={{ textAlign: 'start', width: 'auto' }}>
-            {displayValue.split('<||>').map((filter) => (
+            {displayValue.split(SPECIAL_SEPARATOR).map((filter) => (
               <li
                 key={filter}
                 style={{
@@ -155,7 +159,9 @@ export const RenderChipsRow = ({
                   marginTop: '0',
                   marginBottom: '0',
                   listStyle:
-                    displayValue.split('<||>').length > 1 ? 'inherit' : 'none',
+                    displayValue.split(SPECIAL_SEPARATOR).length > 1
+                      ? 'inherit'
+                      : 'none',
                 }}
               >
                 {filter}
@@ -185,11 +191,11 @@ export const RenderChipsRow = ({
                   maxWidth: '1000px',
                 }}
               >
-                {displayValue.split('<||>').map((filter, index) => (
+                {displayValue.split(SPECIAL_SEPARATOR).map((filter, index) => (
                   <ChipFilterValues key={index}>
                     <EllipsisText maxWidth={400}>
-                      {/\[(.*)\]/.test(filter) // We do this in order to shorten organization names
-                        ? filter.match(/\[(.*)\]/)?.[1]
+                      {ORGANIZATION_ABBREVIATION_REGEX.test(filter) // We do this in order to shorten organization names
+                        ? filter.match(ORGANIZATION_ABBREVIATION_REGEX)?.[1]
                         : filter}
                     </EllipsisText>
                   </ChipFilterValues>

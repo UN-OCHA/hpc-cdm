@@ -73,15 +73,9 @@ function by<T>(
     const y = isNumber && isString(bProp) ? parseInt(bProp) : bProp;
 
     if (x > y) {
-      if (order === 'ASC') {
-        return 1;
-      }
-      return -1;
+      return order === 'ASC' ? 1 : -1;
     } else if (x < y) {
-      if (order === 'ASC') {
-        return -1;
-      }
-      return 1;
+      return order === 'ASC' ? -1 : 1;
     }
     return 0;
   };
@@ -525,7 +519,7 @@ const KeywordTable = (props: KeywordTableProps) => {
                             setShouldOpenSettings(false);
                           }
                         }}
-                        setOpenSettings={setOpenSettings}
+                        setOpenSettings={setShouldOpenSettings}
                         elevation={6}
                         sx={{
                           width: '400px',
