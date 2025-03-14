@@ -6,7 +6,7 @@ import tw from 'twin.macro';
 
 import { t } from '../../../i18n';
 import { getContext } from '../../context';
-import EllipsisText from '../../utils/ellipsis-text';
+import EllipsisText from '../ellipsis-text';
 
 type Field = keyof Pick<
   FlowFormType,

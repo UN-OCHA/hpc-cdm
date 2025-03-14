@@ -3,7 +3,6 @@ import { Chip, IconButton, TableRow, Tooltip } from '@mui/material';
 import { C } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
-import EllipsisText from '../../utils/ellipsis-text';
 import {
   type Filter,
   type FilterKey,
@@ -16,6 +15,7 @@ import type {
   KeywordHeaderID,
   OrganizationHeaderID,
 } from '../../utils/table-headers';
+import EllipsisText from '../ellipsis-text';
 import { FLOWS_FILTER_INITIAL_VALUES } from '../filters/filter-flows-table';
 import { ORGANIZATIONS_FILTER_INITIAL_VALUES } from '../filters/filter-organization-table';
 import { PENDING_FLOWS_FILTER_INITIAL_VALUES } from '../filters/filter-pending-flows-table';
