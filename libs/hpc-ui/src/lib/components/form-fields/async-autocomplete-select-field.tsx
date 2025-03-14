@@ -101,7 +101,7 @@ const AsyncAutocompleteSelect = ({
   placeholder,
   fnPromise,
   isMulti,
-  isAutocompleteAPI,
+  isAutocompleteAPI = true,
   required,
   allowChildrenRender,
   removeOptions,
@@ -367,7 +367,4 @@ const AsyncAutocompleteSelect = ({
   );
 };
 
-AsyncAutocompleteSelect.defaultProps = {
-  isAutocompleteAPI: true,
-};
 export default AsyncAutocompleteSelect;

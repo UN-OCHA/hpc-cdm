@@ -19,7 +19,7 @@ const NumberField = ({
   name,
   label,
   placeholder,
-  allowNegative,
+  allowNegative = false,
   required,
   disabled,
 }: NumberFieldProps) => {
@@ -76,7 +76,4 @@ const NumberField = ({
   );
 };
 
-NumberField.defaultProps = {
-  allowNegative: false,
-};
 export default NumberField;

@@ -9,7 +9,7 @@ import React from 'react';
 const CheckBox = ({
   name,
   label,
-  size,
+  size = 'medium',
   value,
   onChange,
   disabled,
@@ -54,7 +54,4 @@ const CheckBox = ({
   return <FormControlLabel {...configCheckBox} />;
 };
 
-CheckBox.defaultProps = {
-  size: 'medium',
-};
 export default CheckBox;

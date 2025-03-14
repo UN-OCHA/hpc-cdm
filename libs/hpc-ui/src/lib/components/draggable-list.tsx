@@ -176,7 +176,4 @@ const DraggableList = ({
   );
 };
 
-DraggableList.defaultProps = {
-  type: 'primary',
-};
 export default DraggableList;
