@@ -53,10 +53,12 @@ const TextFieldWrapper = ({
   controlledError,
   disabled,
 }: TextFieldWrapperProps) => {
-  const [field, meta] = useField(name);
+  const [field, meta, { setValue }] = useField(name);
   const [controlledTouched, setControlledTouched] = useState(false);
+  const [fieldValue, setFieldValue] = useState(field.value);
   const configTextField: TextFieldProps = {
     ...field,
+    value: fieldValue,
     sx: required && !field.value ? REQUIRED_BORDER_STYLE : undefined,
     label,
     id: name,
@@ -86,7 +88,10 @@ const TextFieldWrapper = ({
               onChange(e.target.value);
             },
           }
-        : {})}
+        : {
+            onChange: (e) => setFieldValue(e.target.value),
+            onBlur: () => setValue(fieldValue),
+          })}
       {...(initialValue !== undefined ? { value: initialValue } : {})}
     />
   );
