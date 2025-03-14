@@ -9,6 +9,7 @@ import {
   usageYears,
   locations,
   governingEntities,
+  organizations,
 } from '@unocha/hpc-data';
 import { Form, Formik, FormikHelpers } from 'formik';
 import {
@@ -170,6 +171,14 @@ type ConsistencyErrorReasons = {
       refDirection: RefDirection;
       options: Array<{ name: string } & governingEntities.GoverningEntity>;
     } & governingEntities.GoverningEntity
+  >;
+  organizations: Array<
+    {
+      refDirection: RefDirection;
+      options: Array<
+        Pick<organizations.Organization, 'id' | 'name' | 'abbreviation'>
+      >;
+    } & organizations.Organization
   >;
 };
 type ConsistencyErrorReasonMap = {
@@ -525,6 +534,7 @@ export const FlowForm = (props: FlowFormProps) => {
       'usageYears',
       'locations',
       'governingEntities',
+      'organizations',
     ];
     return KEYS.some((key) => key === reason.type);
   };
@@ -561,39 +571,68 @@ export const FlowForm = (props: FlowFormProps) => {
     );
   };
   const handleDataConsistencyError = (err: errors.DataConsistencyError) => {
-    const message = err.reason
-      .map((r) => {
-        let messageReason = '';
-        if (!isDataConsistencyErrorMap(r)) {
-          return messageReason;
-        }
-        const { type, values } = r;
-        messageReason += t.t(
-          lang,
-          (s) => s.components.flowForm.submitValidation.dataConsistency,
-          {
-            entity: type,
-            selected: values
-              .map((v) => (isUsageYearValues(v, type) ? v.year : v.name))
-              .join(', '),
-            expected: [
-              ...new Set(
-                values.flatMap((v) =>
-                  isUsageYearValues(v, type)
-                    ? v.options.map((o) => `${o}`)
-                    : v.options.map((o) => o.name)
-                )
-              ),
-            ].join(', '),
-          }
-        );
+    const message = err.reason.map((r) => {
+      let messageReason = '';
+      if (!isDataConsistencyErrorMap(r)) {
         return messageReason;
-      })
-      .join(' | ');
+      }
+      const { type, values } = r;
+      messageReason += t.t(
+        lang,
+        (s) => s.components.flowForm.submitValidation.dataConsistency,
+        {
+          entity: type,
+          selected: values
+            .map((v) => (isUsageYearValues(v, type) ? v.year : v.name))
+            .join(', '),
+          expected: [
+            ...new Set(
+              values.flatMap((v) =>
+                isUsageYearValues(v, type)
+                  ? v.options.map((o) => `${o}`)
+                  : v.options.map((o) => o.name)
+              )
+            ),
+          ].join(', '),
+        }
+      );
+      return messageReason;
+    });
 
     return message;
   };
+  function isCustomError(err: unknown): err is { json: { message: string } } {
+    const errorHasJson = err && typeof err === 'object' && 'json' in err;
+    if (!errorHasJson) {
+      return false;
+    }
+    const json = err.json;
+    const jsonHasMessage =
+      json && typeof json === 'object' && 'message' in json;
 
+    if (!jsonHasMessage) {
+      return false;
+    }
+
+    return 'message' in json && typeof json.message === 'string';
+  }
+  const handleSubmitError = (err: Error) => {
+    if (errors.isDataConsistencyError(err)) {
+      for (const reason of handleDataConsistencyError(err)) {
+        toast.error(reason, TOAST_CONFIG_ERROR);
+      }
+    } else {
+      toast.error(
+        isCustomError(err)
+          ? err.json.message
+          : t.t(
+              lang,
+              (s) => s.components.flowForm.submitValidation.unknownError
+            ),
+        TOAST_CONFIG_ERROR
+      );
+    }
+  };
   const handleSubmit = async (
     values: FlowFormTypeValidated,
     isSaved?: boolean
@@ -642,18 +681,7 @@ export const FlowForm = (props: FlowFormProps) => {
           navigate(paths.flow(updatedFlow.id, updatedFlow.versionID));
         })
         .catch((err) => {
-          const errorMessage = err.json?.message;
-          toast.error(
-            errors.isDataConsistencyError(err)
-              ? handleDataConsistencyError(err)
-              : typeof errorMessage === 'string'
-              ? errorMessage
-              : t.t(
-                  lang,
-                  (s) => s.components.flowForm.submitValidation.unknownError
-                ),
-            TOAST_CONFIG_ERROR
-          );
+          handleSubmitError(err);
         })
         .finally(() => setSubmitLoading(false));
     } else {
@@ -672,18 +700,7 @@ export const FlowForm = (props: FlowFormProps) => {
           });
         })
         .catch((err) => {
-          const errorMessage = err.json?.message;
-          toast.error(
-            errors.isDataConsistencyError(err)
-              ? handleDataConsistencyError(err)
-              : typeof errorMessage === 'string'
-              ? errorMessage
-              : t.t(
-                  lang,
-                  (s) => s.components.flowForm.submitValidation.unknownError
-                ),
-            TOAST_CONFIG_ERROR
-          );
+          handleSubmitError(err);
         })
         .finally(() => setSubmitLoading(false));
     }
@@ -758,12 +775,9 @@ export const FlowForm = (props: FlowFormProps) => {
         });
       })
       .catch((err) => {
-        console.error(err);
-        // TODO: Verify err.json.message is a possible error
-        const errorMessage = err.json?.message;
         toast.error(
-          typeof errorMessage === 'string'
-            ? errorMessage
+          isCustomError(err)
+            ? err.json.message
             : t.t(
                 lang,
                 (s) => s.components.flowForm.submitValidation.unknownError
@@ -832,10 +846,9 @@ export const FlowForm = (props: FlowFormProps) => {
         load();
       })
       .catch((err) => {
-        const errorMessage = err.json?.message;
         toast.error(
-          typeof errorMessage === 'string'
-            ? errorMessage
+          isCustomError(err)
+            ? err.json.message
             : t.t(
                 lang,
                 (s) => s.components.flowForm.submitValidation.unknownError
