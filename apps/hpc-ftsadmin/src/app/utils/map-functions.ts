@@ -60,17 +60,17 @@ export const flowToFlowLinkProps = (
     id: flow.id,
     versionID: flow.versionID,
     description: flow.description ?? '',
-    destinationOrganization: flow.organizations.filter(
+    destinationOrganization: flow.organizations.find(
       (org) => org.flowObject.refDirection === 'destination'
-    )[0]?.name,
-    destinationLocation: flow.locations.filter(
+    )?.name,
+    destinationLocation: flow.locations.find(
       (loc) => loc.flowObject.refDirection === 'destination'
-    )[0]?.name,
+    )?.name,
     amountUSD: flow.amountUSD.toString(),
     flowDate: dayjs(flow.flowDate),
-    projectName: flow.projects.filter(
-      (proj) => proj.flowObject.refDirection === 'destination'
-    )[0]?.projectVersions[0]?.name,
+    projectName: flow.projects
+      .find((proj) => proj.flowObject.refDirection === 'destination')
+      ?.projectVersions.at(0)?.name,
     earmarking: flow.categories.find((cat) => cat.group === 'earmarkingType'),
   };
 };

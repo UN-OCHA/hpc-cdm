@@ -1729,6 +1729,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     <FlowLink
                       flowLink={values.parentFlow}
                       fieldName="parentFlow"
+                      disabled={isDisabled}
                     />
                   </Box>
                 )}
@@ -1744,6 +1745,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           <FlowLink
                             flowLink={childFlow}
                             fieldName="childFlows"
+                            disabled={isDisabled}
                           />
                         </div>
                       ))}
@@ -1795,7 +1797,7 @@ export const FlowForm = (props: FlowFormProps) => {
               ) : (
                 <ReportingDetail index={0} disabled={isDisabled} />
               )}
-              {!isDeleted && (
+              {!isDeleted && !isDisabled && (
                 <AddReportingDetailButton
                   startIcon={MdAdd}
                   text={t.t(

@@ -708,7 +708,7 @@ export const parseToFlowForm = (
     isInactive: !activeStatus,
     isNewMoney,
     notes: notes ?? INITIAL_FORM_VALUES['notes'],
-    parentFlow: parents?.[0] ? flowToFlowLinkProps(parents[0]) : null,
+    parentFlow: parents?.at(0) ? flowToFlowLinkProps(parents[0]) : null,
     reportingDetails: reportDetailsToReportingDetailProps(reportDetails),
     restricted,
   };

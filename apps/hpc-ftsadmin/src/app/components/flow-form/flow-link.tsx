@@ -1,35 +1,49 @@
-import { Box } from '@mui/material';
-import * as paths from '../../paths';
-import { Link } from 'react-router';
-import tw from 'twin.macro';
-import { Dayjs } from 'dayjs';
-import { integerToCurrency, valueToInteger } from '../../utils/map-functions';
+import { type categories } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
-import { FlowFormType } from './flow-form';
+import { type Dayjs } from 'dayjs';
 import { useFormikContext } from 'formik';
 import { MdRemove } from 'react-icons/md';
+import { Link } from 'react-router';
+import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import { getContext } from '../../context';
-import { categories } from '@unocha/hpc-data';
+import * as paths from '../../paths';
+import { integerToCurrency, valueToInteger } from '../../utils/map-functions';
+import { type FlowFormType } from './flow-form';
 
 export type FlowLinkProps = {
   id: number;
   versionID: number;
   description: string;
-  destinationOrganization: string;
-  destinationLocation: string;
   amountUSD: string;
   flowDate: Dayjs | null;
-  projectName: string;
+  destinationOrganization?: string;
+  destinationLocation?: string;
+  projectName?: string;
   earmarking?: categories.Category;
 };
+
+const FlowLinkContainer = tw.div`
+  flex
+  gap-x-8
+  justify-between
+  items-center
+  rounded-[4px]
+  border
+  border-solid
+  border-unocha-panel-border 
+  bg-unocha-panel-bg
+  p-4
+`;
 
 const FlowLink = ({
   flowLink,
   fieldName,
+  disabled,
 }: {
   flowLink: FlowLinkProps;
   fieldName: 'parentFlow' | 'childFlows';
+  disabled?: boolean;
 }) => {
   const { lang } = getContext();
   const { setFieldValue, values } = useFormikContext<FlowFormType>();
@@ -37,14 +51,26 @@ const FlowLink = ({
     id,
     versionID,
     description,
+    amountUSD,
     destinationOrganization,
     destinationLocation,
-    amountUSD,
     flowDate,
     projectName,
   } = flowLink;
 
   const SEPARATOR = ' | ';
+
+  const flowLinkDescription = [
+    destinationOrganization,
+    projectName,
+    destinationLocation,
+    flowDate?.format('YYYY'),
+  ]
+    .filter((text) => text !== undefined)
+    .join(SEPARATOR);
+
+  const flowLinkDate = flowDate?.format() ?? null;
+
   const handleUnlink = () => {
     const value = values[fieldName];
     if (!value || !Array.isArray(value)) {
@@ -57,29 +83,23 @@ const FlowLink = ({
     }
   };
   return (
-    <Box
-      sx={tw`flex gap-x-8 bg-unocha-panel-bg rounded-[4px] border border-solid border-unocha-panel-border p-4 items-center justify-between`}
-    >
+    <FlowLinkContainer>
       <Link to={paths.flow(id, versionID)} target="_blank">
         #{id}
       </Link>
       <span>{description}</span>
-      <span>
-        {`${
-          destinationOrganization ? destinationOrganization + SEPARATOR : ''
-        }${projectName ? projectName + SEPARATOR : ''}${
-          destinationLocation ? destinationLocation + SEPARATOR : ''
-        }${flowDate?.format('YYYY')}`}
-      </span>
-      <span>{flowDate?.format()}</span>
+      <span>{flowLinkDescription}</span>
+      <span>{flowLinkDate}</span>
       <span>US${integerToCurrency(valueToInteger(amountUSD))}</span>
-      <C.Button
-        color="secondary"
-        text={t.t(lang, (s) => s.components.flowLink.unlink)}
-        onClick={() => handleUnlink()}
-        startIcon={MdRemove}
-      />
-    </Box>
+      {!disabled && (
+        <C.Button
+          color="secondary"
+          text={t.t(lang, (s) => s.components.flowLink.unlink)}
+          onClick={() => handleUnlink()}
+          startIcon={MdRemove}
+        />
+      )}
+    </FlowLinkContainer>
   );
 };
 
