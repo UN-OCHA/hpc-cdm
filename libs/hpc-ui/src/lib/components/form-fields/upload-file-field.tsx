@@ -1,14 +1,14 @@
-import { styled } from '@mui/material/styles';
-import tw from 'twin.macro';
+import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
-import { Button, ButtonProps } from '../button';
-import { Box } from '@mui/material';
-import { useRef, useState } from 'react';
-import { FormObjectValue } from '@unocha/hpc-data';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
+import { Box } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { type FormObjectValue } from '@unocha/hpc-data';
+import { useRef, useState } from 'react';
+import tw from 'twin.macro';
 import AsyncIconButton from '../async-icon-button';
+import { Button, type ButtonProps } from '../button';
 
 type UploadFileProps = {
   name: string;
@@ -21,7 +21,7 @@ type UploadFileProps = {
 };
 
 /**
- * This styles come from:
+ * These styles come from:
  * https://mui.com/material-ui/react-button/#file-upload
  */
 const VisuallyHiddenInput = styled('input')({
@@ -35,6 +35,19 @@ const VisuallyHiddenInput = styled('input')({
   whiteSpace: 'nowrap',
   width: 1,
 });
+
+const FileViewContainer = tw.div`
+  flex
+  gap-x-10
+  justify-around
+  items-center
+  p-4
+  my-4
+  border
+  border-solid
+  border-unocha-panel-border
+  rounded-[4px]
+`;
 
 const OverflowSpan = tw.span`
   break-all
@@ -54,11 +67,9 @@ const UploadFile = ({
   const [loading, setLoading] = useState(false);
 
   return (
-    <Box>
+    <div>
       {!file ? (
-        disabled ? (
-          <></>
-        ) : (
+        !disabled && (
           <Button
             {...buttonConfig}
             onClick={() => {
@@ -68,33 +79,32 @@ const UploadFile = ({
           />
         )
       ) : (
-        <Box
-          sx={tw`flex gap-x-10 justify-around p-4 my-4 border border-solid border-unocha-panel-border rounded-[4px] items-center`}
-        >
+        <FileViewContainer>
           <Box sx={tw`flex gap-x-2 items-center overflow-hidden`}>
             <FilePresentIcon color={'primary'} />
             <OverflowSpan>{file.displayLabel}</OverflowSpan>
           </Box>
-          {!disabled && (
-            <div>
-              <AsyncIconButton
-                fnPromise={onDelete}
-                IconComponent={DeleteIcon}
-              />
-              <AsyncIconButton
-                fnPromise={onDownload}
-                IconComponent={FileDownloadIcon}
-              />
-
-              <AsyncIconButton
-                fnPromise={async () => {
-                  onDelete().then(() => inputFile.current?.click());
-                }}
-                IconComponent={ChangeCircleIcon}
-              />
-            </div>
-          )}
-        </Box>
+          <div>
+            {!disabled && (
+              <>
+                <AsyncIconButton
+                  fnPromise={onDelete}
+                  IconComponent={DeleteIcon}
+                />
+                <AsyncIconButton
+                  fnPromise={async () => {
+                    onDelete().then(() => inputFile.current?.click());
+                  }}
+                  IconComponent={ChangeCircleIcon}
+                />
+              </>
+            )}
+            <AsyncIconButton
+              fnPromise={onDownload}
+              IconComponent={FileDownloadIcon}
+            />
+          </div>
+        </FileViewContainer>
       )}
       <VisuallyHiddenInput
         type="file"
@@ -105,7 +115,7 @@ const UploadFile = ({
         }}
         ref={inputFile}
       />
-    </Box>
+    </div>
   );
 };
 
