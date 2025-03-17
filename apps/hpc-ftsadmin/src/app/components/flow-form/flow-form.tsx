@@ -1,29 +1,45 @@
-import { getContext } from '../../context';
-import * as io from 'io-ts';
+import {
+  Box,
+  Grow,
+  Paper,
+  Snackbar,
+  SxProps,
+  Theme,
+  useTheme,
+} from '@mui/material';
 import {
   type FormObjectValue,
-  util as codecs,
-  flows,
   categories,
+  util as codecs,
   errors,
-  usageYears,
-  locations,
+  flows,
   governingEntities,
+  locations,
   organizations,
+  usageYears,
 } from '@unocha/hpc-data';
+import { C } from '@unocha/hpc-ui';
+import type { Dayjs } from 'dayjs';
 import { Form, Formik, FormikHelpers } from 'formik';
-import {
-  CTP,
-  RefDirection,
-  isMethodOption,
-  parseFlowForm,
-  pendingValuesFlowForm,
-  queryParamsFlowFilter,
-  serializeFlowForm,
-} from '../../utils/parse-flow-form';
-import { Box, Grow, Paper, Snackbar, SxProps, Theme } from '@mui/material';
+import * as io from 'io-ts';
+import React, { useState } from 'react';
+import { FaTrashAlt, FaUserSecret } from 'react-icons/fa';
+import { MdAdd, MdClose, MdOutlineSearch } from 'react-icons/md';
+import { Link, useBeforeUnload, useBlocker, useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 import tw from 'twin.macro';
-import AsyncAutocompleteSelectReview from './inputs/async-autocomplete-pending-review';
+import { LanguageKey, t } from '../../../i18n';
+import { getContext } from '../../context';
+import * as paths from '../../paths';
+import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
+import {
+  autofillFieldClusters,
+  autofillGlobalClusters,
+  autofillOrganizations,
+  autofillPlan,
+  autofillProject,
+  autofillUsageYears,
+} from '../../utils/fn-autofills';
 import {
   fnCategories,
   fnCurrencies,
@@ -37,50 +53,41 @@ import {
   fnUsageYears,
   usageYearFirstViewCondition,
 } from '../../utils/fn-promises';
-import { C } from '@unocha/hpc-ui';
-import NumberFieldReview from './inputs/number-field-pending-review';
-import TextFieldReview from './inputs/text-field-pending-review';
-import { MdAdd, MdClose, MdOutlineSearch } from 'react-icons/md';
-import { FaTrashAlt } from 'react-icons/fa';
+import {
+  validateFlowForWarnings,
+  validateFlowIsUnlinked,
+} from '../../utils/fn-validations';
 import validateForm from '../../utils/form-validation';
-import { Link, useBeforeUnload, useBlocker, useNavigate } from 'react-router';
-import * as paths from '../../paths';
-import FlowLink, { FlowLinkProps } from './flow-link';
-import FlowSearch, { OVERRIDING_FLOW_KEYS } from './flow-search';
-import FlowLinkWarning from './flow-link-warning';
 import {
   currencyToInteger,
   integerToCurrency,
   valueToInteger,
 } from '../../utils/map-functions';
+import {
+  CTP,
+  RefDirection,
+  isMethodOption,
+  parseFlowForm,
+  pendingValuesFlowForm,
+  queryParamsFlowFilter,
+  serializeFlowForm,
+} from '../../utils/parse-flow-form';
 import ReportingDetail, {
   REPORTING_DETAIL_INITIAL_VALUES,
   ReportingDetailProps,
   validateReportingDetailsRequiredField,
   validateReportingDetailsURLFormat,
 } from '../reporting-detail';
-import type { Dayjs } from 'dayjs';
-import {
-  autofillFieldClusters,
-  autofillGlobalClusters,
-  autofillOrganizations,
-  autofillPlan,
-  autofillProject,
-  autofillUsageYears,
-} from '../../utils/fn-autofills';
-import {
-  validateFlowForWarnings,
-  validateFlowIsUnlinked,
-} from '../../utils/fn-validations';
-import React, { useState } from 'react';
-import DatePickerReview from './inputs/date-picker-pending-review';
-import AutocompleteSelectReview from './inputs/autocomplete-pending-review';
-import { LanguageKey, t } from '../../../i18n';
-import { FaUserSecret } from 'react-icons/fa';
-import FormGroupReadOnly from './form-group-readonly';
+import FlowLink, { FlowLinkProps } from './flow-link';
+import FlowLinkWarning from './flow-link-warning';
+import FlowSearch, { OVERRIDING_FLOW_KEYS } from './flow-search';
 import FlowVersions from './flow-version';
-import { toast } from 'react-toastify';
-import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
+import FormGroupReadOnly from './form-group-readonly';
+import AsyncAutocompleteSelectReview from './inputs/async-autocomplete-pending-review';
+import AutocompleteSelectReview from './inputs/autocomplete-pending-review';
+import DatePickerReview from './inputs/date-picker-pending-review';
+import NumberFieldReview from './inputs/number-field-pending-review';
+import TextFieldReview from './inputs/text-field-pending-review';
 
 type FlowFormProps = {
   load: () => void;
@@ -438,7 +445,7 @@ export const FlowForm = (props: FlowFormProps) => {
   const { env: getEnv, lang } = getContext();
   const env = getEnv();
   const navigate = useNavigate();
-
+  const dir = useTheme().direction;
   const {
     load,
     initialValues,
@@ -1825,7 +1832,10 @@ export const FlowForm = (props: FlowFormProps) => {
             {!isDeleted && (
               <Snackbar
                 open
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                anchorOrigin={{
+                  horizontal: dir === 'ltr' ? 'right' : 'left',
+                  vertical: 'bottom',
+                }}
                 sx={tw`rounded-[4px] bg-unocha-primary`}
                 TransitionComponent={Grow}
               >
