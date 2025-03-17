@@ -29,7 +29,7 @@ import {
   usageYearsOptions,
 } from './fn-promises';
 import { ReportingDetailProps } from '../components/reporting-detail';
-import dayjs from 'dayjs';
+import dayjs from '../../libs/dayjs';
 import { FlowLinkProps } from '../components/flow-form/flow-link';
 import {
   FLOWS_FILTER_INITIAL_VALUES,

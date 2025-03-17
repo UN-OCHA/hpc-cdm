@@ -4,9 +4,9 @@ import {
   type organizations,
   util,
 } from '@unocha/hpc-data';
-import dayjs from 'dayjs';
 import { isRight } from 'fp-ts/lib/Either';
 import { type LanguageKey } from '../../i18n';
+import dayjs from '../../libs/dayjs';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
 
 export const valueToInteger = (value: string | number) => {

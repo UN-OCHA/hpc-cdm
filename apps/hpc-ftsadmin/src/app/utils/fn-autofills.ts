@@ -10,7 +10,7 @@ import {
   usageYearsOptions,
 } from './fn-promises';
 import { THEME } from '@unocha/hpc-ui';
-import dayjs from 'dayjs';
+import dayjs from '../../libs/dayjs';
 
 type FundingObjectKeys =
   | 'fundingSourceLocations'

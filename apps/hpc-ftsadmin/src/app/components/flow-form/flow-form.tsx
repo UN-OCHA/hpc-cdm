@@ -710,12 +710,15 @@ export const FlowForm = (props: FlowFormProps) => {
     setFieldValue: FormikHelpers<FlowFormType>['setFieldValue'],
     values: FlowFormType
   ) => {
-    // Create a deep copy of the reportingDetails array
-    const newReportingDetails = values.reportingDetails.map((reportingDetail) =>
-      // Only update if dateReported is null/undefined
-      !reportingDetail.dateReported
-        ? { ...reportingDetail, dateReported: newValue }
-        : reportingDetail
+    if (newValue !== null && !newValue.isValid()) {
+      setFieldValue('firstReported', newValue);
+      return;
+    }
+    const newReportingDetails = values.reportingDetails.map(
+      (reportingDetail) =>
+        !reportingDetail.dateReported
+          ? { ...reportingDetail, dateReported: newValue }
+          : reportingDetail
     );
 
     // Update both reportingDetails and firstReported fields in Formik's state
@@ -1538,28 +1541,29 @@ export const FlowForm = (props: FlowFormProps) => {
                     />
                     <Box sx={tw`flex gap-4`}>
                       <DatePickerReview
+                        sx={tw`flex-grow`}
                         label={t.t(
                           lang,
                           (s) => s.components.flowForm.fields.firstReported
                         )}
                         fieldName="firstReported"
-                        onChange={(value) =>
-                          handleChangeFirstReported(
-                            value,
-                            setFieldValue,
-                            values
-                          )
-                        }
+                        controlledField={{
+                          value: values.firstReported,
+                          onChange: (value) =>
+                            handleChangeFirstReported(
+                              value,
+                              setFieldValue,
+                              values
+                            ),
+                        }}
                         setPendingValuesHandled={setPendingValuesHandled}
                         disabled={isDisabled}
                         pendingValues={pendingValues?.firstReported}
-                        todayText={t.t(
-                          lang,
-                          (s) => s.components.datePicker.today
-                        )}
+                        lang={lang}
                         required
                       />
                       <DatePickerReview
+                        sx={tw`flex-grow`}
                         label={t.t(
                           lang,
                           (s) => s.components.flowForm.fields.decisionDate
@@ -1568,10 +1572,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         setPendingValuesHandled={setPendingValuesHandled}
                         disabled={isDisabled}
                         pendingValues={pendingValues?.decisionDate}
-                        todayText={t.t(
-                          lang,
-                          (s) => s.components.datePicker.today
-                        )}
+                        lang={lang}
                       />
                     </Box>
                     <NumberFieldReview
@@ -1621,10 +1622,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       setPendingValuesHandled={setPendingValuesHandled}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.flowDate}
-                      todayText={t.t(
-                        lang,
-                        (s) => s.components.datePicker.today
-                      )}
+                      lang={lang}
                       required
                     />
                     <AutocompleteSelectReview

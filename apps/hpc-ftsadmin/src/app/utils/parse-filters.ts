@@ -6,6 +6,7 @@ import {
 } from '@unocha/hpc-data';
 import { type Dayjs } from 'dayjs';
 import { type Strings } from '../../i18n/iface';
+import dayjs from '../../libs/dayjs';
 import { type FlowsFilterValues } from '../components/filters/filter-flows-table';
 import { type OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { type PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
@@ -125,10 +126,20 @@ const filterValueIsFlowStatusType = (
 };
 
 const parseInInitialValues = <T extends Filters>(
-  filters: T,
+  filters: Record<keyof T, any>,
   initialValues: T
 ) => {
   for (const key in initialValues) {
+    //  `dayjs` object gets stringified to its .toString(), so we need
+    //  to convert it back to a dayjs object
+    const isInitialValueDayJS =
+      (initialValues[key] === null || dayjs.isDayjs(initialValues[key])) &&
+      typeof filters[key] === 'string';
+
+    if (isInitialValueDayJS) {
+      filters[key] = dayjs(filters[key]);
+      continue;
+    }
     filters[key] = filters[key] ?? initialValues[key];
   }
   return filters;
@@ -194,7 +205,7 @@ const FLOW_OBJECT_TYPES = [
 export type FlowObjectTypes = (typeof FLOW_OBJECT_TYPES)[number];
 
 export function isFlowObjectTypes(value: string): value is FlowObjectTypes {
-  return FLOW_OBJECT_TYPES.some((flowObjectType) => flowObjectType === value);
+  return new Set<string>(FLOW_OBJECT_TYPES).has(value);
 }
 export const extractDirectionObject = (
   inputString: FilterKey

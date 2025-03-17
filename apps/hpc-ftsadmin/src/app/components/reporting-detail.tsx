@@ -338,10 +338,12 @@ const ReportingDetail = ({
               lang,
               (s) => s.components.reportingDetail.dateReported.label
             )}
-            initialValue={dateReported}
-            onChange={(value) => handleChange('dateReported', value)}
+            controlledField={{
+              value: dateReported,
+              onChange: (value) => handleChange('dateReported', value),
+            }}
             disabled={disabled}
-            todayText={t.t(lang, (s) => s.components.datePicker.today)}
+            lang={lang}
           />
           <C.TextFieldWrapper
             name="reporterReferenceCode"

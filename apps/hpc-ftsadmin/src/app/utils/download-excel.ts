@@ -1,9 +1,9 @@
-import { Workbook } from 'exceljs';
-import { flows } from '@unocha/hpc-data';
-import { FlowHeaderID, TableHeadersProps } from './table-headers';
-import { LanguageKey, t } from '../../i18n';
-import dayjs from 'dayjs';
 import { util } from '@unocha/hpc-core';
+import { type flows } from '@unocha/hpc-data';
+import { Workbook } from 'exceljs';
+import { type LanguageKey, t } from '../../i18n';
+import dayjs from '../../libs/dayjs';
+import { type FlowHeaderID, type TableHeadersProps } from './table-headers';
 
 const EMPTY_CELL = '--';
 
@@ -18,7 +18,7 @@ export const downloadExcel = async (
   const workbook = new Workbook();
   const worksheet = workbook.addWorksheet('Sheet1');
 
-  const headers: string[] = tableHeaders
+  const headers = tableHeaders
     .filter((header) => header.active)
     .map((header) =>
       t.t(lang, (s) => s.components.flowsTable.headers[header.label])

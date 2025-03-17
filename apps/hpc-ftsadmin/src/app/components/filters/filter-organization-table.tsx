@@ -116,110 +116,115 @@ export const FilterOrganizationsTable = (props: Props) => {
         }
         onSubmit={handleSubmit}
       >
-        {({ resetForm }) => (
-          <Form>
-            <StyledDiv>
-              <C.ButtonSubmit
-                color="primary"
-                text={t.t(
-                  lang,
-                  (s) => s.components.organizationsFilter.button.primary
-                )}
-              />
-              <C.Button
-                color="neutral"
-                onClick={() => handleResetForm(resetForm)}
-                text={t.t(
-                  lang,
-                  (s) => s.components.organizationsFilter.button.secondary
-                )}
-              />
-            </StyledDiv>
-            <C.Section
-              title={t.t(
-                lang,
-                (s) =>
-                  s.components.organizationsFilter.headers.organizationDetails
-              )}
-            >
-              <C.TextFieldWrapper
-                name="organization"
-                label={t.t(
-                  lang,
-                  (s) => s.components.organizationsFilter.filters.organization
-                )}
-              />
-              <C.AsyncAutocompleteSelect
-                label={t.t(
+        {({ resetForm, values }) => {
+          console.log(values);
+          return (
+            <Form>
+              <StyledDiv>
+                <C.ButtonSubmit
+                  color="primary"
+                  text={t.t(
+                    lang,
+                    (s) => s.components.organizationsFilter.button.primary
+                  )}
+                />
+                <C.Button
+                  color="neutral"
+                  onClick={() => handleResetForm(resetForm)}
+                  text={t.t(
+                    lang,
+                    (s) => s.components.organizationsFilter.button.secondary
+                  )}
+                />
+              </StyledDiv>
+              <C.Section
+                title={t.t(
                   lang,
                   (s) =>
-                    s.components.organizationsFilter.filters.organizationType
+                    s.components.organizationsFilter.headers.organizationDetails
                 )}
-                name="organizationType"
-                fnPromise={() => fnCategories('organizationType', environment)}
-                isAutocompleteAPI={false}
-              />
-              <C.AsyncAutocompleteSelect
-                label={t.t(
-                  lang,
-                  (s) =>
-                    s.components.organizationsFilter.filters.parentOrganization
-                )}
-                name="parentOrganization"
-                fnPromise={(query) => fnOrganizations(query, environment)}
-                isAutocompleteAPI
-              />
-              <C.AsyncAutocompleteSelect
-                label={t.t(
-                  lang,
-                  (s) => s.components.organizationsFilter.filters.locations
-                )}
-                name="locations"
-                fnPromise={(query) => fnLocations(query, environment)}
-                isAutocompleteAPI
-                allowChildrenRender
-              />
-              <C.DatePicker
-                name="date"
-                lang={lang}
-                label={t.t(
-                  lang,
-                  (s) => s.components.organizationsFilter.filters.date
-                )}
-                todayText={t.t(lang, (s) => s.components.datePicker.today)}
-              />
-              <C.AutocompleteSelect
-                name="status"
-                label={t.t(
-                  lang,
-                  (s) => s.components.organizationsFilter.filters.status
-                )}
-                options={[
-                  { displayLabel: 'Active', value: 'active' },
-                  { displayLabel: 'Inactive', value: 'inactive' },
-                  { displayLabel: 'Both', value: 'both' },
-                ]}
-              />
-            </C.Section>
-            <StyledDiv>
-              <C.ButtonSubmit
-                color="primary"
-                text={t.t(
-                  lang,
-                  (s) => s.components.organizationsFilter.button.primary
-                )}
-              />
-              <C.Button
-                color="neutral"
-                onClick={() => handleResetForm(resetForm)}
-                text={t.t(
-                  lang,
-                  (s) => s.components.organizationsFilter.button.secondary
-                )}
-              />
-            </StyledDiv>
-          </Form>
-        )}
+              >
+                <C.TextFieldWrapper
+                  name="organization"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.organizationsFilter.filters.organization
+                  )}
+                />
+                <C.AsyncAutocompleteSelect
+                  label={t.t(
+                    lang,
+                    (s) =>
+                      s.components.organizationsFilter.filters.organizationType
+                  )}
+                  name="organizationType"
+                  fnPromise={() =>
+                    fnCategories('organizationType', environment)
+                  }
+                  isAutocompleteAPI={false}
+                />
+                <C.AsyncAutocompleteSelect
+                  label={t.t(
+                    lang,
+                    (s) =>
+                      s.components.organizationsFilter.filters
+                        .parentOrganization
+                  )}
+                  name="parentOrganization"
+                  fnPromise={(query) => fnOrganizations(query, environment)}
+                  isAutocompleteAPI
+                />
+                <C.AsyncAutocompleteSelect
+                  label={t.t(
+                    lang,
+                    (s) => s.components.organizationsFilter.filters.locations
+                  )}
+                  name="locations"
+                  fnPromise={(query) => fnLocations(query, environment)}
+                  isAutocompleteAPI
+                  allowChildrenRender
+                />
+                <C.DatePicker
+                  name="date"
+                  lang={lang}
+                  label={t.t(
+                    lang,
+                    (s) => s.components.organizationsFilter.filters.date
+                  )}
+                />
+                <C.AutocompleteSelect
+                  name="status"
+                  label={t.t(
+                    lang,
+                    (s) => s.components.organizationsFilter.filters.status
+                  )}
+                  options={[
+                    { displayLabel: 'Active', value: 'active' },
+                    { displayLabel: 'Inactive', value: 'inactive' },
+                    { displayLabel: 'Both', value: 'both' },
+                  ]}
+                />
+              </C.Section>
+              <StyledDiv>
+                <C.ButtonSubmit
+                  color="primary"
+                  text={t.t(
+                    lang,
+                    (s) => s.components.organizationsFilter.button.primary
+                  )}
+                />
+                <C.Button
+                  color="neutral"
+                  onClick={() => handleResetForm(resetForm)}
+                  text={t.t(
+                    lang,
+                    (s) => s.components.organizationsFilter.button.secondary
+                  )}
+                />
+              </StyledDiv>
+            </Form>
+          );
+        }}
       </Formik>
     </C.SearchFilter>
   );
