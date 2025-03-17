@@ -1580,7 +1580,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         (s) => s.components.flowForm.fields.donorBudgetYear
                       )}
                       fieldName="donorBudgetYear"
-                      type="number"
+                      type="integer"
                       placeholder="YYYY"
                       setPendingValuesHandled={setPendingValuesHandled}
                       disabled={isDisabled}

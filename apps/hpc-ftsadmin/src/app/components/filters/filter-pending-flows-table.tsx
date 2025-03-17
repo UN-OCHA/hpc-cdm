@@ -144,7 +144,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                   (s) => s.components.pendingFlowsFilter.filters.reporterRefCode
                 )}
                 name="reporterRefCode"
-                type="number"
+                type="integer"
               />
             </C.Section>
             <C.Section

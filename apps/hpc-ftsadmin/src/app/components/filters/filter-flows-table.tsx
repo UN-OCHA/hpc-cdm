@@ -269,7 +269,7 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.legacyID
                   )}
                   name="legacyID"
-                  type="number"
+                  type="integer"
                 />
               </C.Section>
             </C.Section>

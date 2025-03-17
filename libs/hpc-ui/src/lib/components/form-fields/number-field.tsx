@@ -1,23 +1,23 @@
 import InputAdornment from '@mui/material/InputAdornment';
 import { useField } from 'formik';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { type NumberFormatValues, NumericFormat } from 'react-number-format';
 import { REQUIRED_BORDER_STYLE } from '../../util';
 import { StyledTextField } from './text-field';
 
 export interface NumberFieldProps {
-  type: 'number' | 'currency' | 'float' | 'unknownCurrency';
   name: string;
   label: string;
+  type?: 'integer' | 'currency' | 'float' | 'unknownCurrency';
   placeholder?: string;
   required?: boolean;
   allowNegative?: boolean;
   disabled?: boolean;
 }
 const NumberField = ({
-  type,
   name,
   label,
+  type = 'integer',
   placeholder,
   allowNegative = false,
   required,
@@ -34,21 +34,14 @@ const NumberField = ({
     textFieldErrors.helperText = meta.error;
   }
 
-  useEffect(() => {
-    const delay = 300;
-    const debounceTimer = setTimeout(() => {
-      setValue(inputValue);
-    }, delay);
-
-    return () => {
-      clearTimeout(debounceTimer);
-    };
-  }, [inputValue, field.name, setValue]);
-
   return (
     <NumericFormat
       {...fieldWithNoOnChange}
       {...textFieldErrors}
+      onBlur={(e) => {
+        fieldWithNoOnChange.onBlur(e);
+        setValue(inputValue);
+      }}
       sx={required && !field.value ? REQUIRED_BORDER_STYLE : undefined}
       name={name}
       label={label}
@@ -61,7 +54,7 @@ const NumberField = ({
       disabled={disabled}
       required={required}
       size="small"
-      decimalScale={type === 'number' ? 0 : 4} // 0 means no decimals
+      decimalScale={type === 'float' ? 4 : 0} // 0 means no decimals
       allowNegative={allowNegative}
       customInput={StyledTextField}
       InputProps={{
