@@ -1,14 +1,14 @@
-import { FormObjectValue, fileAssetEntities } from '@unocha/hpc-data';
-import { FlowFormType, FormGroup } from './flow-form/flow-form';
-import { fnCategories, fnOrganizations } from '../utils/fn-promises';
-import { getContext } from '../context';
-import tw from 'twin.macro';
-import { useFormikContext } from 'formik';
 import { Box } from '@mui/material';
-import { Dayjs } from 'dayjs';
+import { type FormObjectValue, fileAssetEntities } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
+import { type Dayjs } from 'dayjs';
+import { useFormikContext } from 'formik';
 import { MdUploadFile } from 'react-icons/md';
-import { LanguageKey, t } from '../../i18n';
+import tw from 'twin.macro';
+import { type LanguageKey, t } from '../../i18n';
+import { getContext } from '../context';
+import { fnCategories, fnOrganizations } from '../utils/fn-promises';
+import { type FlowFormType, FormGroup } from './flow-form/flow-form';
 
 export type ReportingDetailProps = {
   reportSource: 'Primary' | 'Secondary';
@@ -311,7 +311,12 @@ const ReportingDetail = ({
               lang,
               (s) => s.components.reportingDetail.sourceSystemRecordId.label
             )}
-            initialValue={sourceSystemRecordId}
+            controlledField={{
+              // This is a readonly field
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+              onChange: () => {},
+              value: sourceSystemRecordId,
+            }}
             disabled={true}
           />
         </div>
@@ -344,8 +349,10 @@ const ReportingDetail = ({
               lang,
               (s) => s.components.reportingDetail.reporterReferenceCode.label
             )}
-            initialValue={reporterReferenceCode}
-            onChange={(value) => handleChange('reporterReferenceCode', value)}
+            controlledField={{
+              value: reporterReferenceCode,
+              onChange: (value) => handleChange('reporterReferenceCode', value),
+            }}
             disabled={disabled}
           />
           <C.TextFieldWrapper
@@ -356,8 +363,10 @@ const ReportingDetail = ({
             )}
             textarea
             minRows={2}
-            initialValue={reporterContactInfo}
-            onChange={(value) => handleChange('reporterContactInfo', value)}
+            controlledField={{
+              value: reporterContactInfo,
+              onChange: (value) => handleChange('reporterContactInfo', value),
+            }}
             disabled={disabled}
           />
         </div>
@@ -379,9 +388,11 @@ const ReportingDetail = ({
               lang,
               (s) => s.components.reportingDetail.reportFileTitle.label
             )}
-            initialValue={reportFileTitle}
-            onChange={(value) => {
-              handleChange('reportFileTitle', value);
+            controlledField={{
+              value: reportFileTitle,
+              onChange: (value) => {
+                handleChange('reportFileTitle', value);
+              },
             }}
             disabled={disabled}
           />
@@ -421,8 +432,10 @@ const ReportingDetail = ({
               lang,
               (s) => s.components.reportingDetail.reportURLTitle.label
             )}
-            initialValue={reportURLTitle}
-            onChange={(value) => handleChange('reportURLTitle', value)}
+            controlledField={{
+              value: reportURLTitle,
+              onChange: (value) => handleChange('reportURLTitle', value),
+            }}
             disabled={disabled}
           />
           <C.TextFieldWrapper
@@ -432,13 +445,15 @@ const ReportingDetail = ({
               lang,
               (s) => s.components.reportingDetail.url.label
             )}
-            initialValue={url}
-            onChange={(value) => handleChange('url', value)}
+            controlledField={{
+              value: url,
+              onChange: (value) => handleChange('url', value),
+              error: validateReportingDetailsURLFormat(
+                values.reportingDetails[index].url,
+                lang
+              ),
+            }}
             disabled={disabled}
-            controlledError={validateReportingDetailsURLFormat(
-              values.reportingDetails[index].url,
-              lang
-            )}
           />
         </Box>
       </Box>

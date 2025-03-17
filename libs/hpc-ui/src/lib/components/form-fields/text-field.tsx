@@ -1,8 +1,8 @@
 import { TextField, type TextFieldProps } from '@mui/material';
 import { useField } from 'formik';
+import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import { REQUIRED_BORDER_STYLE } from '../../util';
-import { useState } from 'react';
 
 export const StyledTextField = tw(TextField)`
   min-w-[10rem]
@@ -21,24 +21,15 @@ export interface TextFieldWrapperProps {
   minRows?: number;
   required?: boolean;
   /**
-   *  If `onChange()` is passed, it will replace Formik's
-   *  `onChange()` prop
-   */
-  onChange?: (...args: unknown[]) => unknown;
-  /**
    *  **Warning:**
    *  This prop is used only if we are not using
-   *  `Formik`, if you are using `Formik`, you don't need
-   *  to pass this prop. This is for controlled fields
+   *  `Formik`. This is for controlled fields
    */
-  initialValue?: string;
-  /**
-   *  **Warning:**
-   *  This prop is used only if we are not using
-   *  `Formik`, if you are using `Formik`, you don't need
-   *  to pass this prop. This is for controlled fields
-   */
-  controlledError?: string;
+  controlledField?: {
+    onChange: (...args: unknown[]) => unknown;
+    value: string;
+    error?: string;
+  };
   disabled?: boolean;
 }
 const TextFieldWrapper = ({
@@ -48,51 +39,62 @@ const TextFieldWrapper = ({
   textarea,
   minRows,
   required,
-  onChange,
-  initialValue,
-  controlledError,
+  controlledField,
   disabled,
 }: TextFieldWrapperProps) => {
   const [field, meta, { setValue }] = useField(name);
   const [controlledTouched, setControlledTouched] = useState(false);
-  const [fieldValue, setFieldValue] = useState(field.value);
+  const [fieldValue, setFieldValue] = useState(
+    controlledField?.value ?? field.value
+  );
   const configTextField: TextFieldProps = {
     ...field,
     value: fieldValue,
-    sx: required && !field.value ? REQUIRED_BORDER_STYLE : undefined,
+    sx: required && !fieldValue ? REQUIRED_BORDER_STYLE : undefined,
     label,
     id: name,
     disabled,
     multiline: textarea,
     minRows,
-    onBlur: () => setControlledTouched(true),
     maxRows: 5,
     required,
     placeholder,
     size: 'small',
     type: 'text',
   };
+
+  /*
+   * Added if value is changed by another user action
+   * i.e. Clear all form fields with a button click
+   */
+  useEffect(() => {
+    if (!controlledField) {
+      setFieldValue(field.value);
+    } else {
+      setFieldValue(controlledField.value);
+    }
+  }, [field.value, controlledField]);
+
   if (
     (meta.touched && meta.error) ||
-    (controlledTouched && !!controlledError)
+    (controlledTouched && !!controlledField?.error)
   ) {
     configTextField.error = true;
-    configTextField.helperText = meta.error ?? controlledError;
+    configTextField.helperText = meta.error ?? controlledField?.error;
   }
   return (
     <StyledTextField
       {...configTextField}
-      {...(onChange
-        ? {
-            onChange: (e) => {
-              onChange(e.target.value);
-            },
-          }
-        : {
-            onChange: (e) => setFieldValue(e.target.value),
-            onBlur: () => setValue(fieldValue),
-          })}
-      {...(initialValue !== undefined ? { value: initialValue } : {})}
+      onChange={(e) => setFieldValue(e.target.value)}
+      onBlur={(e) => {
+        if (controlledField) {
+          controlledField.onChange(fieldValue);
+          setControlledTouched(true);
+        } else {
+          field.onBlur(e);
+          setValue(fieldValue);
+        }
+      }}
     />
   );
 };
