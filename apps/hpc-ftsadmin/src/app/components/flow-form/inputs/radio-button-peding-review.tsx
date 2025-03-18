@@ -1,16 +1,17 @@
+import { Box, type SxProps, type Theme } from '@mui/material';
 import { C, type RadioButtonFieldProps } from '@unocha/hpc-ui';
 import ReviewPendingValues, {
   type ReviewPendingValuesProps,
 } from './review-pending-values';
-import { Box, SxProps, Theme } from '@mui/material';
 
-type RadioButtonFieldReviewProps = { sx?: SxProps<Theme> } & Omit<
-  RadioButtonFieldProps,
-  'name'
-> &
+type RadioButtonFieldReviewProps<T extends string> = {
+  sx?: SxProps<Theme>;
+} & Omit<RadioButtonFieldProps<T>, 'name'> &
   Omit<ReviewPendingValuesProps, 'componentType'>;
 
-const RadioButtonFieldReview = (props: RadioButtonFieldReviewProps) => {
+const RadioButtonFieldReview = <T extends string>(
+  props: RadioButtonFieldReviewProps<T>
+) => {
   const {
     fieldName,
     pendingValues,

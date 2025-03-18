@@ -95,7 +95,8 @@ export type AsyncAutocompleteSelectProps = AsyncAutocompleteSelectExportProps;
 export type TextFieldWrapperProps = TextFieldWrapperExportProps;
 export type AutocompleteSelectProps = AutocompleteSelectExportProps;
 export type NumberFieldProps = NumberFieldExportProps;
-export type RadioButtonFieldProps = RadioButtonFieldExportProps;
+export type RadioButtonFieldProps<T extends string> =
+  RadioButtonFieldExportProps<T>;
 export type DatePickerProps = DatePickerExportProps;
 
 export { COMPONENTS as C, ICONS };

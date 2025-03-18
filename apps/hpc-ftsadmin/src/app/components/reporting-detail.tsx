@@ -227,14 +227,11 @@ const ReportingDetail = ({
               (s) => s.components.reportingDetail.reportSource.label
             )}
             options={reportSourceOptions()}
-            value={
-              reportSource ?? REPORTING_DETAIL_INITIAL_VALUES['reportSource']
-            }
-            onChange={(value) =>
-              handleChangeReportSource(
-                value as ReportingDetailProps['reportSource']
-              )
-            }
+            controlledField={{
+              value:
+                reportSource ?? REPORTING_DETAIL_INITIAL_VALUES['reportSource'],
+              onChange: (value) => handleChangeReportSource(value),
+            }}
             disabled={disabled}
           />
           <C.AsyncAutocompleteSelect
@@ -328,8 +325,10 @@ const ReportingDetail = ({
               (s) => s.components.reportingDetail.verified.label
             )}
             options={verifiedOptions()}
-            value={verified}
-            onChange={(value) => handleChange('verified', value)}
+            controlledField={{
+              value: verified,
+              onChange: (value) => handleChange('verified', value),
+            }}
             disabled={disabled}
           />
           <C.DatePicker

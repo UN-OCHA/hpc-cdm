@@ -5,48 +5,59 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import { FormObjectValue } from '@unocha/hpc-data';
-import { useFormikContext } from 'formik';
+import { type FormObjectValue } from '@unocha/hpc-data';
+import { useField } from 'formik';
 
-export type RadioButtonFieldProps = {
+export type RadioButtonFieldProps<T extends string> = {
   name: string;
   label: string;
   options: FormObjectValue[];
-  value: string;
-  onChange?: (value: string) => void;
+  /**
+   *  **Warning:**
+   *  This prop is used only if we are not using
+   *  `Formik`. This is for controlled fields
+   */
+  controlledField?: {
+    value: T;
+    onChange: (value: T) => void;
+  };
   disabled?: boolean;
 };
 
-const RadioButtonField = ({
+const RadioButtonField = <T extends string>({
   name,
   label,
   options,
-  value,
-  onChange,
+  controlledField,
   disabled,
-}: RadioButtonFieldProps) => {
-  const { setFieldValue } = useFormikContext();
+}: RadioButtonFieldProps<T>) => {
+  const [field, , { setValue }] = useField(name);
 
   const handleChange = (
     _event: React.ChangeEvent<HTMLInputElement>,
     value: string
   ) => {
-    if (onChange) {
-      onChange(value);
+    if (controlledField) {
+      controlledField.onChange(value as T);
     } else {
-      setFieldValue(name, value);
+      setValue(value);
     }
   };
   return (
     <FormControl>
       <FormLabel>{label}</FormLabel>
-      <RadioGroup name={name} value={value} onChange={handleChange} row>
-        {options.map((option) => (
+      <RadioGroup
+        name={name}
+        value={controlledField ? controlledField.value : field.value}
+        onChange={handleChange}
+        row
+      >
+        {options.map(({ value, displayLabel }) => (
           <FormControlLabel
-            key={option.value}
-            value={option.value}
+            key={value}
+            value={value}
             control={<Radio />}
-            label={option.displayLabel}
+            label={displayLabel}
             disabled={disabled}
           />
         ))}
