@@ -1,20 +1,20 @@
-import { Box, Modal } from '@mui/material';
-import { C, styled } from '@unocha/hpc-ui';
-import tw from 'twin.macro';
-import { fnCategories, fnOrganizations } from '../utils/fn-promises';
-import { getContext, getEnv } from '../context';
 import EastIcon from '@mui/icons-material/East';
-import React from 'react';
+import { Box, Modal } from '@mui/material';
+import { type FormObjectValue, util as codecs, errors } from '@unocha/hpc-data';
+import { C, styled } from '@unocha/hpc-ui';
 import { Form, Formik } from 'formik';
-import * as paths from '../paths';
 import * as io from 'io-ts';
-import { FormObjectValue, util as codecs, errors } from '@unocha/hpc-data';
+import React from 'react';
+import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
+import tw from 'twin.macro';
+import { LanguageKey, t } from '../../i18n';
+import { getContext, getEnv } from '../context';
+import * as paths from '../paths';
+import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
+import { fnCategories, fnOrganizations } from '../utils/fn-promises';
 import validateForm from '../utils/form-validation';
 import { valueToInteger } from '../utils/map-functions';
-import { useNavigate } from 'react-router';
-import { LanguageKey, t } from '../../i18n';
-import { toast } from 'react-toastify';
-import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
 
 type MergeModalProps = {
   type: 'organization' | 'keyword';
@@ -39,6 +39,15 @@ const ModalContainer = tw.div`
   shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]
   w-[60vw]
   rounded-[4px]
+`;
+
+const MergeContainer = tw.div`
+  p-6
+  rounded-[4px]
+  border-unocha-panel-border
+  border-solid
+  basis-1/2
+  grow-0
 `;
 
 const StyledForm = tw(Form)`
@@ -296,53 +305,60 @@ const MergeModal = (props: MergeModalProps) => {
                     )}
                   </h2>
                   <Box sx={tw`flex items-center gap-x-4`}>
-                    <C.AsyncAutocompleteSelect
-                      fnPromise={
-                        isOrganizationType
-                          ? (query) => fnOrganizations(query, env)
-                          : (_) => fnCategories('keywords', env)
-                      }
-                      name="mergingEntities"
-                      label={parseEntityString(
-                        t.t(lang, (s) => s.components.mergeModal.mergingEntity),
-                        type,
-                        lang
-                      )}
-                      isMulti={isOrganizationType}
-                      removeOptions={
-                        values.receivingEntity
-                          ? [values.receivingEntity]
-                          : undefined
-                      }
-                      isAutocompleteAPI={isOrganizationType}
-                      required
-                    />
+                    <MergeContainer>
+                      <C.AsyncAutocompleteSelect
+                        fnPromise={
+                          isOrganizationType
+                            ? (query) => fnOrganizations(query, env)
+                            : (_) => fnCategories('keywords', env)
+                        }
+                        name="mergingEntities"
+                        label={parseEntityString(
+                          t.t(
+                            lang,
+                            (s) => s.components.mergeModal.mergingEntity
+                          ),
+                          type,
+                          lang
+                        )}
+                        isMulti={isOrganizationType}
+                        removeOptions={
+                          values.receivingEntity
+                            ? [values.receivingEntity]
+                            : undefined
+                        }
+                        isAutocompleteAPI={isOrganizationType}
+                        required
+                      />
+                    </MergeContainer>
                     <EndIcon />
-                    <C.AsyncAutocompleteSelect
-                      fnPromise={
-                        isOrganizationType
-                          ? (query) => fnOrganizations(query, env)
-                          : (_) => fnCategories('keywords', env)
-                      }
-                      name="receivingEntity"
-                      label={parseEntityString(
-                        t.t(
-                          lang,
-                          (s) => s.components.mergeModal.receivingEntity
-                        ),
-                        type,
-                        lang
-                      )}
-                      isAutocompleteAPI={isOrganizationType}
-                      removeOptions={
-                        isOrganizationValues(values)
-                          ? values.mergingEntities
-                          : values.mergingEntities !== null
-                          ? [values.mergingEntities]
-                          : undefined
-                      }
-                      required
-                    />
+                    <MergeContainer>
+                      <C.AsyncAutocompleteSelect
+                        fnPromise={
+                          isOrganizationType
+                            ? (query) => fnOrganizations(query, env)
+                            : (_) => fnCategories('keywords', env)
+                        }
+                        name="receivingEntity"
+                        label={parseEntityString(
+                          t.t(
+                            lang,
+                            (s) => s.components.mergeModal.receivingEntity
+                          ),
+                          type,
+                          lang
+                        )}
+                        isAutocompleteAPI={isOrganizationType}
+                        removeOptions={
+                          isOrganizationValues(values)
+                            ? values.mergingEntities
+                            : values.mergingEntities !== null
+                            ? [values.mergingEntities]
+                            : undefined
+                        }
+                        required
+                      />
+                    </MergeContainer>
                   </Box>
                   <Box sx={tw`text-end mt-4`}>
                     <C.ButtonSubmit
@@ -354,7 +370,6 @@ const MergeModal = (props: MergeModalProps) => {
                     />
                   </Box>
                 </Box>
-
                 <Box sx={!isFirstStep ? tw`w-full` : tw`hidden`}>
                   <ConfirmationText lang={lang} {...confirmValues} />
                   <Box sx={tw`flex justify-end gap-x-4`}>
