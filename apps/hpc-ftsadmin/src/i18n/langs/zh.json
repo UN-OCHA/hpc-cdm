@@ -72,7 +72,8 @@
       "unknownInactiveReasons": "未知的未激活原因",
       "legacyID": "遗留贡献 ID: {id}",
       "copyOfFlow": "资金流副本",
-      "addFLow": "添加资金流"
+      "addFLow": "添加资金流",
+      "activeFlowLinkText": "当前活动流是："
     },
     "flowAmountButton": {
       "amountOriginalCurrency": "计算原始金额",

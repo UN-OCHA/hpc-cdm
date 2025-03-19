@@ -30,7 +30,7 @@ import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
 import dayjs from '../../../libs/dayjs';
 import { getContext } from '../../context';
-import * as paths from '../../paths';
+import paths from '../../paths';
 import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
 import { downloadExcel } from '../../utils/download-excel';
 import {
@@ -851,7 +851,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                           });
                         }
                       }}
-                      setOpenSettings={setOpenSettings}
+                      setOpenSettings={setShouldOpenSettings}
                       elevation={6}
                       sx={{
                         width: '400px',

@@ -21,7 +21,7 @@ import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
 import { type Strings } from '../../../i18n/iface';
 import { AppContext, getEnv } from '../../context';
-import * as paths from '../../paths';
+import paths from '../../paths';
 import {
   parseUpdatedCreatedBy,
   valueToInteger,

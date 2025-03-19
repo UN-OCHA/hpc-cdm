@@ -1,7 +1,7 @@
 import tw from 'twin.macro';
 import GppMaybeIcon from '@mui/icons-material/GppMaybe';
 import { Link } from 'react-router';
-import * as paths from '../../paths';
+import paths from '../../paths';
 
 const WarningContainer = tw.div`
   border border-solid

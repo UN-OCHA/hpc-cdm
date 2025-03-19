@@ -17,7 +17,7 @@ import PageMeta from './components/page-meta';
 import { AppContext, contextFromEnv } from './context';
 import { Z_INDEX } from './layout';
 import PageNotLoggedIn from './pages/not-logged-in';
-import * as paths from './paths';
+import paths from './paths';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
   const warning = env.getDevHeaderWarning(lang);

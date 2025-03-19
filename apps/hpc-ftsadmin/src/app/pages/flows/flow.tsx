@@ -1,7 +1,7 @@
 import { C, useDataLoader } from '@unocha/hpc-ui';
 import { FlowForm } from '../../components/flow-form/flow-form';
 import { Link, useLocation, useParams } from 'react-router';
-import { AppContext, getEnv } from '../../context';
+import { AppContext, getContext, getEnv } from '../../context';
 import { t } from '../../../i18n';
 import tw from 'twin.macro';
 import {
@@ -19,6 +19,7 @@ import {
 import { toast } from 'react-toastify';
 import { TOAST_CONFIG } from '../../utils/constants';
 import { useEffect } from 'react';
+import paths from '../../paths';
 
 type FlowRouteParams = {
   id: string;
@@ -51,6 +52,22 @@ const LegacyId = tw.span`
 `;
 
 const DEFAULT_USERNAME = 'FTS User';
+
+const FlowActiveVersionPath = ({ flow }: { flow: flows.GetFlowResult }) => {
+  const lang = getContext().lang;
+  const activeFlow = flow.versions.find((f) => f.activeStatus === true);
+  if (!activeFlow) {
+    return null;
+  }
+  return (
+    <InactiveReason>
+      {t.t(lang, (s) => s.components.flow.activeFlowLinkText)}
+      <Link
+        to={paths.flow(activeFlow.id, activeFlow.versionID)}
+      >{`${activeFlow.id}v${activeFlow.versionID}`}</Link>
+    </InactiveReason>
+  );
+};
 
 export default () => {
   const historyState:
@@ -160,20 +177,23 @@ export default () => {
                   })}
                 </UpdatedCreatedBy>
                 {isInactive(flow) && (
-                  <InactiveReason>
-                    {flow.deletedAt
-                      ? t.t(lang, (s) => s.components.flow.deleted)
-                      : t.t(lang, (s) => s.components.flow.inactiveReason, {
-                          reason:
-                            flow.categories.find(
-                              (c) => c.group === 'inactiveReason'
-                            )?.name ??
-                            t.t(
-                              lang,
-                              (s) => s.components.flow.unknownInactiveReasons
-                            ),
-                        })}
-                  </InactiveReason>
+                  <>
+                    <InactiveReason>
+                      {flow.deletedAt
+                        ? t.t(lang, (s) => s.components.flow.deleted)
+                        : t.t(lang, (s) => s.components.flow.inactiveReason, {
+                            reason:
+                              flow.categories.find(
+                                (c) => c.group === 'inactiveReason'
+                              )?.name ??
+                              t.t(
+                                lang,
+                                (s) => s.components.flow.unknownInactiveReasons
+                              ),
+                          })}
+                    </InactiveReason>
+                    <FlowActiveVersionPath flow={flow} />
+                  </>
                 )}
                 {flow.legacy?.legacyID && (
                   <LegacyId>

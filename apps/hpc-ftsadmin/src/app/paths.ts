@@ -81,3 +81,18 @@ export const addOrganization = () => replacePlaceholders(ADD_ORGANIZATION, {});
  * `/keywords`
  */
 export const keywords = () => replacePlaceholders(KEYWORDS, {});
+
+export default {
+  home,
+  splat,
+  flows,
+  addFlow,
+  flow,
+  flowRoot,
+  pendingFlows,
+  organizations,
+  organization,
+  organizationRoot,
+  addOrganization,
+  keywords,
+};

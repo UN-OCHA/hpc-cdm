@@ -6,7 +6,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { categories, flows } from '@unocha/hpc-data';
 import dayjs from '../../../libs/dayjs';
 
-import * as paths from '../../paths';
+import paths from '../../paths';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import { getContext } from '../../context';

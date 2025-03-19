@@ -72,7 +72,8 @@
       "unknownInactiveReasons": "Raisons inactives inconnues",
       "legacyID": "ID de contribution hérité : {id}",
       "copyOfFlow": "Copie du flux",
-      "addFLow": "Ajouter un flux"
+      "addFLow": "Ajouter un flux",
+      "activeFlowLinkText": "Le flux actif actuel est : "
     },
     "flowAmountButton": {
       "amountOriginalCurrency": "Calculer le montant d'origine",

@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import { useNavigate } from 'react-router';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
-import * as paths from '../paths';
+import paths from '../paths';
 import {
   fnCategories,
   fnLocations,

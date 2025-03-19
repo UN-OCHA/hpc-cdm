@@ -11,7 +11,7 @@ import PageKeywordsList from './app/pages/keywords/keyword-list';
 import PageNotFound from './app/pages/not-found';
 import PageOrganization from './app/pages/organizations/organization';
 import PageOrganizationsList from './app/pages/organizations/organization-list';
-import * as paths from './app/paths';
+import paths from './app/paths';
 
 import { RouteParamsValidator } from './app/components/route-params-validator';
 

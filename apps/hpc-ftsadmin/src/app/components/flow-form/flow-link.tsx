@@ -7,7 +7,7 @@ import { Link } from 'react-router';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import { getContext } from '../../context';
-import * as paths from '../../paths';
+import paths from '../../paths';
 import { integerToCurrency, valueToInteger } from '../../utils/map-functions';
 import { type FlowFormType } from './flow-form';
 

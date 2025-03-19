@@ -72,7 +72,8 @@
       "unknownInactiveReasons": "أسباب غير معروفة لعدم النشاط",
       "legacyID": "معرف المساهمة القديم: {id}",
       "copyOfFlow": "نسخة من التدفق",
-      "addFLow": "إضافة تدفق"
+      "addFLow": "إضافة تدفق",
+      "activeFlowLinkText": "التدفق النشط الحالي هو: "
     },
     "flowAmountButton": {
       "amountOriginalCurrency": "حساب القيمة بالعملة الأصلية",
