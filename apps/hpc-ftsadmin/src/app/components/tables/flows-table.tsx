@@ -45,8 +45,8 @@ import {
   type FlowHeaderID,
   decodeTableHeaders,
   encodeTableHeaders,
+  getDraggableTableHeaders,
   isCompatibleTableHeaderType,
-  isTableHeadersPropsFlow,
 } from '../../utils/table-headers';
 import {
   FLOWS_FILTER_INITIAL_VALUES,
@@ -96,10 +96,11 @@ export default function FlowsTable(props: FlowsTableProps) {
     })
   );
 
-  const nonSafeTypedTableHeaders = decodeTableHeaders(query.tableHeaders, lang);
-  const tableHeaders = isTableHeadersPropsFlow(nonSafeTypedTableHeaders)
-    ? nonSafeTypedTableHeaders
-    : [];
+  const tableHeaders = decodeTableHeaders({
+    queryParam: query.tableHeaders,
+    lang,
+    table: 'flows',
+  });
 
   const handleChipDelete = <T extends FilterKey>(fieldName: T) => {
     if (isKey(filters, fieldName)) {
@@ -181,13 +182,11 @@ export default function FlowsTable(props: FlowsTableProps) {
     const [selectedRows, setSelectedRows] = useState<
       Array<{ id: number; versionID: number }>
     >([]);
-    const nonSafeTypedTableHeaders = decodeTableHeaders(
-      query.tableHeaders,
-      lang
-    );
-    const tableHeaders = isTableHeadersPropsFlow(nonSafeTypedTableHeaders)
-      ? nonSafeTypedTableHeaders
-      : [];
+    const tableHeaders = decodeTableHeaders({
+      queryParam: query.tableHeaders,
+      lang,
+      table: 'flows',
+    });
     const handleCheckboxChange = (
       event: React.ChangeEvent<HTMLInputElement>,
       row: flows.FlowV4
@@ -832,13 +831,13 @@ export default function FlowsTable(props: FlowsTableProps) {
                         lang,
                         (s) => s.components.flowsTable.tableSettings.save
                       )}
-                      queryValues={decodeTableHeaders(
-                        query.tableHeaders,
+                      queryValues={getDraggableTableHeaders({
+                        queryParam: query.tableHeaders,
                         lang,
-                        'flows',
+                        table: 'flows',
                         query,
-                        setQuery
-                      )}
+                        setQuery,
+                      })}
                       onClick={(element) => {
                         if (isCompatibleTableHeaderType(element)) {
                           setQuery({

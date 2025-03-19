@@ -37,8 +37,8 @@ import {
 import {
   decodeTableHeaders,
   encodeTableHeaders,
+  getDraggableTableHeaders,
   isCompatibleTableHeaderType,
-  isTableHeadersPropsOrganization,
   type OrganizationHeaderID,
 } from '../../utils/table-headers';
 import { type OrganizationFilterValues } from '../filters/filter-organization-table';
@@ -148,16 +148,11 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     lang: LanguageKey;
     data: organizations.SearchOrganizationResult;
   }) => {
-    const nonSafeTypedTableHeaders = decodeTableHeaders(
-      query.tableHeaders,
+    const tableHeaders = decodeTableHeaders({
+      queryParam: query.tableHeaders,
       lang,
-      'organizations'
-    );
-    const tableHeaders = isTableHeadersPropsOrganization(
-      nonSafeTypedTableHeaders
-    )
-      ? nonSafeTypedTableHeaders
-      : [];
+      table: 'organizations',
+    });
     return (
       <>
         {data.organizations.map((row) => (
@@ -297,16 +292,11 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     lang: LanguageKey;
     data: organizations.SearchOrganizationResult;
   }) => {
-    const nonSafeTypedTableHeaders = decodeTableHeaders(
-      query.tableHeaders,
+    const tableHeaders = decodeTableHeaders({
+      queryParam: query.tableHeaders,
       lang,
-      'organizations'
-    );
-    const tableHeaders = isTableHeadersPropsOrganization(
-      nonSafeTypedTableHeaders
-    )
-      ? nonSafeTypedTableHeaders
-      : [];
+      table: 'organizations',
+    });
     return (
       <Table size="small">
         <TableHead>
@@ -445,13 +435,13 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                             (s) =>
                               s.components.organizationTable.tableSettings.save
                           )}
-                          queryValues={decodeTableHeaders(
-                            query.tableHeaders,
+                          queryValues={getDraggableTableHeaders({
+                            queryParam: query.tableHeaders,
                             lang,
-                            'organizations',
+                            table: 'organizations',
                             query,
-                            setQuery
-                          )}
+                            setQuery,
+                          })}
                           onClick={(element) => {
                             if (isCompatibleTableHeaderType(element)) {
                               setQuery({

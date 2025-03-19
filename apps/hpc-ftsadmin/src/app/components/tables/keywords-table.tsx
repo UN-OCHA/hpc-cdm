@@ -26,8 +26,8 @@ import { AppContext, getEnv } from '../../context';
 import {
   decodeTableHeaders,
   encodeTableHeaders,
+  getDraggableTableHeaders,
   isCompatibleTableHeaderType,
-  isTableHeadersPropsKeyword,
   type KeywordHeaderID,
   type TableHeadersProps,
 } from '../../utils/table-headers';
@@ -49,7 +49,7 @@ import InfoAlert from '../info-alert';
 import MergeModal from '../merge-modal';
 
 export interface KeywordTableProps {
-  headers: Array<TableHeadersProps<KeywordHeaderID>>;
+  headers: Array<TableHeadersProps<'keywords'>>;
   query: KeywordQuery;
   setQuery: SetQuery<KeywordQuery>;
   abortSignal: AbortSignal;
@@ -284,14 +284,11 @@ const KeywordTable = (props: KeywordTableProps) => {
     lang: LanguageKey;
     data: categories.GetKeywordsResult;
   }) => {
-    const nonSafeTypedTableHeaders = decodeTableHeaders(
-      query.tableHeaders,
+    const tableHeaders = decodeTableHeaders({
+      queryParam: query.tableHeaders,
       lang,
-      'keywords'
-    );
-    const tableHeaders = isTableHeadersPropsKeyword(nonSafeTypedTableHeaders)
-      ? nonSafeTypedTableHeaders
-      : [];
+      table: 'keywords',
+    });
     return (
       <>
         {data
@@ -375,14 +372,11 @@ const KeywordTable = (props: KeywordTableProps) => {
     lang: LanguageKey;
     data: categories.GetKeywordsResult;
   }) => {
-    const nonSafeTypedTableHeaders = decodeTableHeaders(
-      query.tableHeaders,
+    const tableHeaders = decodeTableHeaders({
+      queryParam: query.tableHeaders,
       lang,
-      'keywords'
-    );
-    const tableHeaders = isTableHeadersPropsKeyword(nonSafeTypedTableHeaders)
-      ? nonSafeTypedTableHeaders
-      : [];
+      table: 'keywords',
+    });
     return (
       <Table size="small">
         <TableHead>
@@ -498,13 +492,13 @@ const KeywordTable = (props: KeywordTableProps) => {
                           (s) =>
                             s.components.organizationTable.tableSettings.save
                         )}
-                        queryValues={decodeTableHeaders(
-                          query.tableHeaders,
+                        queryValues={getDraggableTableHeaders({
+                          queryParam: query.tableHeaders,
                           lang,
-                          'keywords',
+                          table: 'keywords',
                           query,
-                          setQuery
-                        )}
+                          setQuery,
+                        })}
                         onClick={(element) => {
                           if (isCompatibleTableHeaderType(element)) {
                             setQuery({

@@ -3,14 +3,14 @@ import { type flows } from '@unocha/hpc-data';
 import { Workbook } from 'exceljs';
 import { type LanguageKey, t } from '../../i18n';
 import dayjs from '../../libs/dayjs';
-import { type FlowHeaderID, type TableHeadersProps } from './table-headers';
+import { type TableHeadersProps } from './table-headers';
 
 const EMPTY_CELL = '--';
 
 export const downloadExcel = async (
   data: flows.SearchFlowsBatchesResult,
   lang: LanguageKey,
-  tableHeaders: Array<TableHeadersProps<FlowHeaderID>>,
+  tableHeaders: Array<TableHeadersProps<'flows'>>,
   fileName: string
 ): Promise<void> => {
   const flows = data.searchFlowsBatches.flows;
