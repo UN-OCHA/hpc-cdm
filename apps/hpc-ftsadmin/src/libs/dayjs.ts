@@ -18,7 +18,7 @@ import 'dayjs/locale/zh';
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
 
-const FTS_DEFAULT_FORMAT = 'DD/MM/YYYY';
+export const FTS_DEFAULT_FORMAT = 'DD/MM/YYYY';
 
 // Extend the Dayjs class with the new format function
 dayjs.extend((_, DayjsClass) => {

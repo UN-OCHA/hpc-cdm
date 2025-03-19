@@ -1,25 +1,25 @@
-import { C, useDataLoader } from '@unocha/hpc-ui';
-import { FlowForm } from '../../components/flow-form/flow-form';
-import { Link, useLocation, useParams } from 'react-router';
-import { AppContext, getContext, getEnv } from '../../context';
-import { t } from '../../../i18n';
-import tw from 'twin.macro';
-import {
-  type FlowFormTypeSerialized,
-  parseToFlowForm,
-  deserializeFlowForm,
-} from '../../utils/parse-flow-form';
 import { flows } from '@unocha/hpc-data';
-import dayjs from '../../../libs/dayjs';
+import { C, useDataLoader } from '@unocha/hpc-ui';
+import { useEffect } from 'react';
+import { Link, useLocation, useParams } from 'react-router';
+import { toast } from 'react-toastify';
+import tw from 'twin.macro';
+import { t } from '../../../i18n';
+import dayjs, { FTS_DEFAULT_FORMAT } from '../../../libs/dayjs';
+import { FlowForm } from '../../components/flow-form/flow-form';
+import { AppContext, getContext, getEnv } from '../../context';
+import paths from '../../paths';
+import { TOAST_CONFIG } from '../../utils/constants';
 import {
   fnCategories,
   fnFlowStatusId,
   fnFlowTypeId,
 } from '../../utils/fn-promises';
-import { toast } from 'react-toastify';
-import { TOAST_CONFIG } from '../../utils/constants';
-import { useEffect } from 'react';
-import paths from '../../paths';
+import {
+  deserializeFlowForm,
+  type FlowFormTypeSerialized,
+  parseToFlowForm,
+} from '../../utils/parse-flow-form';
 
 type FlowRouteParams = {
   id: string;
@@ -79,6 +79,7 @@ export default () => {
       }
     | undefined = useLocation().state;
 
+  const UPDATE_CREATE_DATE_FORMAT = `${FTS_DEFAULT_FORMAT} - HH:mm:ss` as const;
   useEffect(() => {
     if (historyState?.successMessage) {
       toast.success(historyState.successMessage, TOAST_CONFIG);
@@ -166,13 +167,17 @@ export default () => {
                 <C.PageTitle>{`Flow ${flow.id}v${flow.versionID}`}</C.PageTitle>
                 <UpdatedCreatedBy>
                   {t.t(lang, (s) => s.components.flow.updatedBy, {
-                    date: dayjs(flow.updatedAt).format(),
+                    date: dayjs(flow.updatedAt).format(
+                      UPDATE_CREATE_DATE_FORMAT
+                    ),
                     user: flow.lastUpdatedBy?.name ?? DEFAULT_USERNAME,
                   })}
                 </UpdatedCreatedBy>
                 <UpdatedCreatedBy>
                   {t.t(lang, (s) => s.components.flow.createdBy, {
-                    date: dayjs(flow.createdAt).format(),
+                    date: dayjs(flow.createdAt).format(
+                      UPDATE_CREATE_DATE_FORMAT
+                    ),
                     user: flow.createdBy?.name ?? DEFAULT_USERNAME,
                   })}
                 </UpdatedCreatedBy>
