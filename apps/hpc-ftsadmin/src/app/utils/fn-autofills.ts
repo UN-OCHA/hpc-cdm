@@ -1,16 +1,20 @@
-import { FormObjectValue, projects, usageYears } from '@unocha/hpc-data';
-import { FlowFormType } from '../components/flow-form/flow-form';
-import { FormikHelpers } from 'formik';
-import { Environment } from '../../environments/interface';
-import { valueToInteger } from './map-functions';
+import {
+  type FormObjectValue,
+  type projects,
+  type usageYears,
+} from '@unocha/hpc-data';
+import { THEME } from '@unocha/hpc-ui';
+import { type FormikHelpers } from 'formik';
+import { type Environment } from '../../environments/interface';
+import dayjs from '../../libs/dayjs';
+import { type FlowFormType } from '../components/flow-form/flow-form';
 import {
   governingEntitiesOptions,
   locationsOptions,
   organizationsOptions,
   usageYearsOptions,
 } from './fn-promises';
-import { THEME } from '@unocha/hpc-ui';
-import dayjs from '../../libs/dayjs';
+import { valueToInteger } from './map-functions';
 
 type FundingObjectKeys =
   | 'fundingSourceLocations'
@@ -230,18 +234,19 @@ export const autofillProject = async ({
     id: valueToInteger(newValue.value),
   });
 
-  let usageYears: usageYears.GetUsageYearsResult | undefined;
+  const usageYears: usageYears.GetUsageYearsResult = [];
   if (project.projectVersion.endDate && project.projectVersion.startDate) {
     const endYear = dayjs(project.projectVersion.endDate).year();
     const startYear = dayjs(project.projectVersion.startDate).year();
 
     const yearDifference = endYear - startYear;
     if (!yearDifference) {
-      usageYears = await env.model.usageYears.getAutocompleteUsageYears({
-        query: `${endYear}`,
-      });
+      usageYears.push(
+        ...(await env.model.usageYears.getAutocompleteUsageYears({
+          query: `${endYear}`,
+        }))
+      );
     } else {
-      usageYears = [];
       for (let year = startYear; year <= endYear; year++) {
         const fetchedYear =
           await env.model.usageYears.getAutocompleteUsageYears({
@@ -250,15 +255,14 @@ export const autofillProject = async ({
         usageYears.push(...fetchedYear);
       }
     }
-
-    usageYears = await env.model.usageYears.getAutocompleteUsageYears({
-      query: `${dayjs(project.projectVersion.endDate).year()}`,
-    });
   }
-  const projectEarmarking = project.projectVersion.categories.find(
-    (category) => category.group === 'earmarkingType'
-  );
-  const projectPlan = project.projectVersion.plans[0];
+  const earmarked = (
+    await env.model.categories.getCategories({
+      query: 'earmarkingType',
+    })
+  ).find(({ name }) => name === 'Earmarked');
+
+  const projectPlan = project.projectVersion.plans.at(0);
   let projectLocations = project.projectVersion.locations;
   const projectOrganizations = project.projectVersion.organizations;
   const projectGlobalClusters = project.projectVersion.globalClusters;
@@ -299,11 +303,11 @@ export const autofillProject = async ({
     );
   }
 
-  if (fieldName.includes('Destination') && projectEarmarking) {
+  if (fieldName.includes('Destination') && earmarked) {
     setFieldValue('earmarkingType', {
-      value: projectEarmarking.id,
-      displayLabel: projectEarmarking.name,
-    });
+      value: earmarked.id,
+      displayLabel: earmarked.name,
+    } satisfies FormObjectValue);
   }
 
   if (projectLocations && projectLocations.length > 0) {
@@ -316,7 +320,7 @@ export const autofillProject = async ({
     );
   }
 
-  if (usageYears && usageYears.length > 0) {
+  if (usageYears.length > 0) {
     helperSetFieldValue(
       fieldName,
       'UsageYears',

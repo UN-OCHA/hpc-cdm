@@ -20,6 +20,8 @@ Do we infer all 6, or infer blank, or fail to infer anything and leave whatever 
 | Source AND Dest  | None | Plan  | Country (Admin 0 AND Location) | Add  | Countries of Plan object (single or multiple) |
 | Source AND Dest  | None | Plan  | Emergency  | Add  | Emergency of Plan object (single) |
 | Source AND Dest  | None | Plan  | Plan of Project  | Add  | Plan of Project (single) |
+| Source AND Dest  | None | Project  | Plan  | Add  | plan P such that P IN ProjectVersionPlans |
+| Source AND Dest  | None | Project  | Organization  | Add  | All organizations O such that O IN ProjectVersionLocations |
 | Source AND Dest  | None | Project  | Usage Year  | Add  | All years Y such that (Y >=ProjectStartYear AND Y <=ProjectEndYear) AND Y IN PlanFTSyears (single or multiple) |
 | Source AND Dest  | None | Project  | Country (Admin 0 AND Location) | Add  | All countries C such that C IN ProjectCountries AND C IN PlanCountries (single or multiple) |
 | Source AND Dest  | None  | Project  | Field Cluster  | Add  | Field clusters of project (single or multiple) |
