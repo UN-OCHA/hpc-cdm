@@ -1842,14 +1842,16 @@ export const FlowForm = (props: FlowFormProps) => {
                 <Box
                   sx={tw`px-10 py-3 flex gap-x-4 items-center transition-all`}
                 >
-                  <span style={{ color: '#fff' }}>
-                    {t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.submitValidation.submitButton
-                          .submit.label[`${isValid}`]
-                    )}
-                  </span>
+                  {(!isInactive || isPending) && (
+                    <span style={{ color: '#fff' }}>
+                      {t.t(
+                        lang,
+                        (s) =>
+                          s.components.flowForm.submitValidation.submitButton
+                            .submit.label[`${isValid}`]
+                      )}
+                    </span>
+                  )}
                   {isValid && !isInactive && (
                     <C.ButtonSubmit
                       color="primary_light"
