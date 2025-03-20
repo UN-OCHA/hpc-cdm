@@ -373,7 +373,7 @@ const ReportingDetail = ({
         </div>
       </Box>
       <Box
-        sx={tw`flex gap-x-10 justify-around p-4 my-4 border border-solid border-unocha-panel-border rounded-[4px] flex-grow-0`}
+        sx={tw`flex gap-x-10 justify-around p-4 my-4 border border-solid border-unocha-panel-border rounded-sm flex-grow-0`}
       >
         <Box sx={tw`basis-1/2 max-w-[50%]`}>
           <span>

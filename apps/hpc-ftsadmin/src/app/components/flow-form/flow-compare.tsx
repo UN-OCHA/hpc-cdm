@@ -33,7 +33,7 @@ type FlowCompareFlowObjectReduced = FlowCompareReduced & {
 
 const COMMON_STYLES = `
   p-2
-  rounded-[4px]
+  rounded-sm
 `;
 const Addition = tw.span`
   bg-unocha-pallete-green-light

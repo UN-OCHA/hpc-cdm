@@ -38,12 +38,12 @@ const ModalContainer = tw.div`
   bg-white
   shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]
   w-[60vw]
-  rounded-[4px]
+  rounded-sm
 `;
 
 const MergeContainer = tw.div`
   p-6
-  rounded-[4px]
+  rounded-sm
   border-unocha-panel-border
   border-solid
   basis-1/2

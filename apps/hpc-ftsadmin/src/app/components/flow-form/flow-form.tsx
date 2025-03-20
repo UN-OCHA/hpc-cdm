@@ -1836,7 +1836,7 @@ export const FlowForm = (props: FlowFormProps) => {
                   horizontal: dir === 'ltr' ? 'right' : 'left',
                   vertical: 'bottom',
                 }}
-                sx={tw`rounded-[4px] bg-unocha-primary`}
+                sx={tw`rounded-sm bg-unocha-primary`}
                 TransitionComponent={Grow}
               >
                 <Box

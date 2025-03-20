@@ -80,7 +80,7 @@ export const THEME = {
     lg: 30,
   },
   sizing: {
-    borderRadiusSm: '3px',
+    borderRadiusSm: '4px',
     borderRadiusMd: '6px',
     containerWidthPx: 1240,
     fontSizeSm: '0.8rem',

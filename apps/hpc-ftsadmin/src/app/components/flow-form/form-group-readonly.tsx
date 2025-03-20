@@ -31,7 +31,7 @@ const Label = tw.label`
 const Blank = tw.span`
   bg-unocha-warning
   px-2
-  rounded-[4px]
+  rounded-sm
 `;
 
 const isEmpty = (

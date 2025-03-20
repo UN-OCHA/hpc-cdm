@@ -7,7 +7,7 @@ const WarningContainer = tw.div`
   border border-solid
   border-yellow-600
   flex
-  rounded-[4px]
+  rounded-sm
   text-gray-900
   bg-yellow-100
   bg-opacity-50

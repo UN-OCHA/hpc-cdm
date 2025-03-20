@@ -22,7 +22,7 @@ const SPAN_STYLES = `
   mx-2
   border
   border-solid
-  rounded-[4px]
+  rounded-sm
 `;
 const LatestSpan = tw.span`
   ${SPAN_STYLES}

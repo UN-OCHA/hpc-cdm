@@ -28,7 +28,7 @@ const FlowLinkContainer = tw.div`
   gap-x-8
   justify-between
   items-center
-  rounded-[4px]
+  rounded-sm
   border
   border-solid
   border-unocha-panel-border 

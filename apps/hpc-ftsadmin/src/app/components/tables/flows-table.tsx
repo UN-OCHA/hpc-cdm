@@ -702,8 +702,8 @@ export default function FlowsTable(props: FlowsTableProps) {
                 <Snackbar
                   open={values.flows.length > 0}
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                  sx={tw`rounded-[4px] bg-unocha-primary`}
-                  ContentProps={{ sx: tw`rounded-[4px] bg-unocha-primary` }}
+                  sx={tw`rounded-sm bg-unocha-primary`}
+                  ContentProps={{ sx: tw`rounded-sm bg-unocha-primary` }}
                   message={t.t(
                     lang,
                     (s) => s.components.flowsTable.rejectPendingFlows.message

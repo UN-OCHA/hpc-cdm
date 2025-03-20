@@ -46,7 +46,7 @@ const FileViewContainer = tw.div`
   border
   border-solid
   border-unocha-panel-border
-  rounded-[4px]
+  rounded-sm
 `;
 
 const OverflowSpan = tw.span`
