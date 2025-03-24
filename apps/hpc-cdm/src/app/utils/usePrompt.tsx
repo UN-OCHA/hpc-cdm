@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect } from 'react';
-import { UNSAFE_NavigationContext as NavigationContext } from 'react-router-dom';
+import { UNSAFE_NavigationContext as NavigationContext } from 'react-router';
 
 function useConfirmExit(confirmExit: () => boolean, when = true) {
   const { navigator } = useContext(NavigationContext);

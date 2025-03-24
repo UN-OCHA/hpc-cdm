@@ -1,7 +1,7 @@
-import { PartialLanguage } from '../iface';
+import { Language } from '../iface';
 import strings from './ar.json';
 
-const LANGUAGE: PartialLanguage = {
+const LANGUAGE: Language = {
   meta: {
     name: 'عربى',
     direction: 'rtl',

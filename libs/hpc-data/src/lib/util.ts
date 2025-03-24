@@ -1,4 +1,7 @@
 import * as t from 'io-ts';
+import { Dayjs, isDayjs } from 'dayjs';
+
+export type FormObjectValue = { displayLabel: string; value: string | number };
 
 export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(
   data: t.Type<D>,
@@ -27,6 +30,49 @@ export const INTEGER_FROM_STRING = new t.Type<number, number>(
 );
 
 /**
+ * Accepts either an integer, or a string of an integer, serializes to a number.
+ */
+export const POSITIVE_INTEGER_FROM_STRING = new t.Type<number, number>(
+  'POSITIVE_INTEGER_FROM_STRING',
+  t.number.is,
+  (v, c) => {
+    if (typeof v === 'number') {
+      return Number.isInteger(v) && v >= 0 ? t.success(v) : t.failure(v, c);
+    } else if (typeof v === 'string') {
+      return INTEGER_REGEX.test(v) ? t.success(parseInt(v)) : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
+ * Accepts either an integer, or a string of an integer, that is contained in
+ * `integerOptions`. serializes to a number.
+ */
+export const validInteger = (integerOptions: readonly number[]) =>
+  new t.Type<number, number>(
+    'VALID_INTEGER',
+    t.number.is,
+    (v, c) => {
+      if (typeof v === 'number') {
+        return Number.isInteger(v) && integerOptions.some((row) => row === v)
+          ? t.success(v)
+          : t.failure(v, c);
+      } else if (typeof v === 'string') {
+        return /^\d+$/.test(v) &&
+          integerOptions.some((row) => row === parseInt(v))
+          ? t.success(parseInt(v))
+          : t.failure(v, c);
+      } else {
+        return t.failure(v, c);
+      }
+    },
+    t.identity
+  );
+
+/**
  * Accepts either a number, or a string of a number, serializes to a number type.
  */
 export const NUMBER_FROM_STRING = new t.Type<number, number>(
@@ -48,6 +94,76 @@ export const NUMBER_FROM_STRING = new t.Type<number, number>(
 );
 
 /**
+ * Accepts either a positive number, or a string of a positive number,
+ * serializes to a number type.
+ */
+export const POSITIVE_NUMBER_FROM_STRING = new t.Type<number, number>(
+  'POSITIVE_NUMBER_FROM_STRING',
+  t.number.is,
+  (v, c) => {
+    if (typeof v === 'number') {
+      return v >= 0 ? t.success(v) : t.failure(v, c);
+    } else if (typeof v === 'string') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return !isNaN(v as any) && !isNaN(parseFloat(v)) && parseFloat(v) >= 0
+        ? t.success(parseFloat(v))
+        : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
+ * Accepts an empty string, serializes to a string type.
+ */
+export const EMPTY_STRING = new t.Type<string, string>(
+  'EMPTY_STRING',
+  t.string.is,
+  (v, c) => {
+    if (typeof v === 'string') {
+      return v === '' ? t.success(v) : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
+ * Accepts any string except an empty string, serializes to a string type.
+ */
+export const NON_EMPTY_STRING = new t.Type<string, string>(
+  'NON_EMPTY_STRING',
+  t.string.is,
+  (v, c) => {
+    if (typeof v === 'string') {
+      return v !== '' ? t.success(v) : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
+ * Accepts any array except an empty array, serializes to an array type.
+ */
+export const NON_EMPTY_ARRAY = new t.Type<Array<unknown>, Array<unknown>>(
+  'NON_EMPTY_ARRAY',
+  t.array(t.unknown).is,
+  (v, c) => {
+    if (Array.isArray(v)) {
+      return v.length > 0 ? t.success(v) : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
  * Accepts either an integer array, or a string of comma separated integers.
  */
 export const INTEGER_ARRAY_FROM_STRING = new t.Type<number[], number[]>(
@@ -59,9 +175,32 @@ export const INTEGER_ARRAY_FROM_STRING = new t.Type<number[], number[]>(
         ? t.success(v)
         : t.failure(v, c);
     } else if (typeof v === 'string') {
-      const nums = v.split(',');
+      const nums = v.split(',').filter((n) => n.trim() !== '');
       return nums.every((n) => INTEGER_REGEX.test(n))
         ? t.success(nums.map((n) => parseInt(n)))
+        : t.failure(v, c);
+    } else {
+      return t.failure(v, c);
+    }
+  },
+  t.identity
+);
+
+/**
+ * Accepts either an string array, or a string of comma separated strings.
+ */
+export const STRING_ARRAY_FROM_STRING = new t.Type<string[], string[]>(
+  'STRING_ARRAY_FROM_STRING',
+  t.array(t.string).is,
+  (v, c) => {
+    if (Array.isArray(v)) {
+      return v.every((val) => typeof val === 'string')
+        ? t.success(v)
+        : t.failure(v, c);
+    } else if (typeof v === 'string') {
+      const strings = v.split(',').filter((s) => s.trim() !== '');
+      return strings.every((s) => typeof s === 'string')
+        ? t.success(strings)
         : t.failure(v, c);
     } else {
       return t.failure(v, c);
@@ -166,8 +305,8 @@ export const ARRAY_BUFFER = new t.Type<ArrayBuffer, ArrayBuffer>(
  * Takes date string and verifies that
  * it is a valid date in YYYY-MM-DD format
  */
-const isDateValid = (date: string) => {
-  if (!ISO_DATE.test(date)) {
+const isDateValid = (date: string | undefined) => {
+  if (!date || !ISO_DATE.test(date)) {
     return false;
   }
 
@@ -228,6 +367,43 @@ export const DATE_FROM_STRING = new t.Type(
       return t.failure(v, c);
     }
 
+    return t.failure(v, c);
+  },
+  t.identity
+);
+
+const isFormObjectValue = (v: unknown): v is FormObjectValue =>
+  typeof v === 'object' &&
+  !Array.isArray(v) &&
+  v !== null &&
+  Object.keys(v).includes('displayLabel') &&
+  Object.keys(v).includes('value');
+
+/**
+ * Accepts a FormObjectValue.
+ */
+export const FORM_OBJECT_VALUE = new t.Type<FormObjectValue, FormObjectValue>(
+  'FORM_OBJECT_VALUE',
+  isFormObjectValue,
+  (v, c) => {
+    if (isFormObjectValue(v)) {
+      return t.success(v);
+    }
+    return t.failure(v, c);
+  },
+  t.identity
+);
+
+export const VALID_DAYJS_DATE = new t.Type<Dayjs, Dayjs>(
+  'VALID_DAYJS_DATE',
+  (u): u is Dayjs => u instanceof Dayjs,
+  (v, c) => {
+    if (isDayjs(v)) {
+      if (isDateValid(v.toISOString().split('T').at(0))) {
+        return t.success(v);
+      }
+      return t.failure(v, c);
+    }
     return t.failure(v, c);
   },
   t.identity

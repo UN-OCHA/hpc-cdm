@@ -48,14 +48,6 @@
         "style": "styled-components"
       }
     },
-    "@nx/express": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    },
     "@nx/node": {
       "application": {
         "linter": "eslint"

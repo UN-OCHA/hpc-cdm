@@ -55,6 +55,262 @@ export const INITIAL_DATA: DummyData = {
     },
   ],
   currentUser: null,
+  flows: [
+    {
+      id: 1,
+      versionID: 1,
+      amountUSD: '20200000',
+      updatedAt: '2022-02-17T16:15:44.590Z',
+      origAmount: null,
+      origCurrency: null,
+      activeStatus: true,
+      restricted: false,
+      childIDs: [2, 3],
+      parentIDs: null,
+      categories: [
+        {
+          name: 'Paid',
+          group: 'flowStatus',
+        },
+        {
+          name: 'Financial',
+          group: 'contributionType',
+        },
+        {
+          name: 'Traditional aid',
+          group: 'method',
+        },
+        {
+          name: 'Parked',
+          group: 'flowType',
+        },
+        {
+          name: 'Earmarked',
+          group: 'earmarkingType',
+        },
+        {
+          name: 'USAID/BHA',
+          group: 'keywords',
+        },
+        {
+          name: 'West Bank and Gaza',
+          group: 'keywords',
+        },
+      ],
+      organizations: [
+        {
+          objectID: 1,
+          refDirection: 'destination',
+          name: 'World Food Programme',
+        },
+        {
+          objectID: 2933,
+          refDirection: 'source',
+          name: 'United States of America, Government of',
+        },
+      ],
+      plans: [],
+      locations: [
+        {
+          name: 'Occupied Palestinian territory',
+        },
+      ],
+      usageYears: [
+        {
+          year: '2021',
+          refDirection: 'destination',
+        },
+        {
+          year: '2021',
+          refDirection: 'source',
+        },
+      ],
+      reportDetails: [
+        {
+          id: 1,
+          refCode:
+            '10042194\tNo\t72029421IO00001\tUSA-C-02015-01\tPS01.01.011.URT1',
+          organizationID: 1,
+          source: 'Primary',
+          sourceID: null,
+          date: '2022-02-01T00:00:00.000Z',
+          channel: 'Email',
+        },
+      ],
+    },
+    {
+      id: 2,
+      versionID: 1,
+      amountUSD: '6685723',
+      updatedAt: '2022-02-15T16:15:44.482Z',
+      origAmount: null,
+      origCurrency: null,
+      activeStatus: true,
+      restricted: false,
+      childIDs: null,
+      parentIDs: [1],
+      categories: [
+        {
+          name: 'Paid',
+          group: 'flowStatus',
+        },
+        {
+          name: 'Financial',
+          group: 'contributionType',
+        },
+        {
+          name: 'Standard',
+          group: 'flowType',
+        },
+        {
+          name: 'Traditional aid',
+          group: 'method',
+        },
+        {
+          name: 'Earmarked',
+          group: 'earmarkingType',
+        },
+        {
+          name: 'USAID/BHA',
+          group: 'keywords',
+        },
+        {
+          name: 'West Bank and Gaza',
+          group: 'keywords',
+        },
+      ],
+      organizations: [
+        {
+          objectID: 1,
+          refDirection: 'destination',
+          name: 'World Food Programme',
+        },
+        {
+          objectID: 1,
+          refDirection: 'source',
+          name: 'World Food Programme',
+        },
+      ],
+      plans: [
+        {
+          name: 'Occupied Palestinian territory 2021',
+        },
+      ],
+      locations: [
+        {
+          name: 'Occupied Palestinian territory',
+        },
+      ],
+      usageYears: [
+        {
+          year: '2021',
+          refDirection: 'destination',
+        },
+        {
+          year: '2021',
+          refDirection: 'source',
+        },
+      ],
+      reportDetails: [
+        {
+          id: 2,
+          refCode:
+            '10042194\tNo\t72029421IO00001\tUSA-C-02015-01\tPS01.01.011.URT1',
+          organizationID: 1,
+          source: 'Primary',
+          sourceID: null,
+          date: '2022-02-01T00:00:00.000Z',
+          channel: 'Email',
+        },
+      ],
+    },
+    {
+      id: 3,
+      versionID: 1,
+      amountUSD: '13514277',
+      updatedAt: '2022-02-16T16:14:31.838Z',
+      origAmount: null,
+      origCurrency: null,
+      activeStatus: true,
+      restricted: false,
+      childIDs: null,
+      parentIDs: [1],
+      categories: [
+        {
+          name: 'Paid',
+          group: 'flowStatus',
+        },
+        {
+          name: 'Financial',
+          group: 'contributionType',
+        },
+        {
+          name: 'Standard',
+          group: 'flowType',
+        },
+        {
+          name: 'Traditional aid',
+          group: 'method',
+        },
+        {
+          name: 'Earmarked',
+          group: 'earmarkingType',
+        },
+        {
+          name: 'USAID/BHA',
+          group: 'keywords',
+        },
+        {
+          name: 'West Bank and Gaza',
+          group: 'keywords',
+        },
+      ],
+      organizations: [
+        {
+          objectID: 1,
+          refDirection: 'destination',
+          name: 'World Food Programme',
+        },
+        {
+          objectID: 1,
+          refDirection: 'source',
+          name: 'World Food Programme',
+        },
+      ],
+      plans: [
+        {
+          name: 'Occupied Palestinian territory 2021',
+        },
+      ],
+      locations: [
+        {
+          name: 'Occupied Palestinian territory',
+        },
+      ],
+      usageYears: [
+        {
+          year: '2021',
+          refDirection: 'destination',
+        },
+        {
+          year: '2021',
+          refDirection: 'source',
+        },
+      ],
+      reportDetails: [
+        {
+          id: 3,
+          refCode:
+            '10042194\tNo\t72029421IO00001\tUSA-C-02015-01\tPS01.01.011.URT1',
+          organizationID: 1,
+          source: 'Primary',
+          sourceID: null,
+          date: '2022-02-01T00:00:00.000Z',
+          channel: 'Email',
+        },
+      ],
+    },
+  ],
   operations: [
     {
       id: 0,
