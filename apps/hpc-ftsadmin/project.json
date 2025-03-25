@@ -20,7 +20,7 @@
           "apps/hpc-ftsadmin/src/favicon.ico",
           "apps/hpc-ftsadmin/src/assets"
         ],
-        "styles": [],
+        "styles": ["node_modules/tailwindcss/tailwind.css"],
         "scripts": [],
         "webpackConfig": "apps/hpc-ftsadmin/webpack.config.js",
         "isolatedConfig": true

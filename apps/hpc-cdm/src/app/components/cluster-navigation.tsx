@@ -6,7 +6,7 @@ import { operations } from '@unocha/hpc-data';
 
 import * as paths from '../paths';
 import { AppContext } from '../context';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 
 interface Props {
   operation: operations.DetailedOperation;

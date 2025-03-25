@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { reportingWindows, errors } from '@unocha/hpc-data';
 import { styled } from '@unocha/hpc-ui';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import dayjs from '../../../libraries/dayjs';
 
@@ -232,7 +232,7 @@ export const EnketoEditableForm = (props: Props) => {
                 lang,
                 (s) => s.routes.operations.forms.status.idle
               );
-              toast.success(msg, { position: toast.POSITION.TOP_RIGHT });
+              toast.success(msg, { position: 'top-right' });
               if (redirect) {
                 if (finalized) {
                   alert(
@@ -268,7 +268,7 @@ export const EnketoEditableForm = (props: Props) => {
                   .t(lang, (s) => s.routes.operations.forms.errors.conflict)
                   .replace('{timeAgo}', timeAgo.fromNow())
                   .replace('{person}', err.otherUser);
-                toast.error(msg, { position: toast.POSITION.TOP_RIGHT });
+                toast.error(msg, { position: 'top-right' });
               } else {
                 setStatus({
                   type: 'error',
@@ -279,7 +279,7 @@ export const EnketoEditableForm = (props: Props) => {
                   (s) => s.routes.operations.forms.status.error
                 );
                 toast.error(`${msg} ${err.message || err.toString()}`, {
-                  position: toast.POSITION.TOP_RIGHT,
+                  position: 'top-right',
                 });
               }
             });

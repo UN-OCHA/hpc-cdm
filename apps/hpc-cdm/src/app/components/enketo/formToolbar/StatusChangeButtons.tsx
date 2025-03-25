@@ -2,7 +2,7 @@ import React, { useContext, Dispatch, SetStateAction } from 'react';
 
 import { styled, C } from '@unocha/hpc-ui';
 import { reportingWindows } from '@unocha/hpc-data';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { AppContext, getEnv } from '../../../context';
 import { t } from '../../../../i18n';
 import { FormStatus } from '../types';

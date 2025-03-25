@@ -8,16 +8,13 @@ import {
   ThemeProvider,
 } from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import env, { Environment } from '../environments/environment';
 import { LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
 import PageMeta from './components/page-meta';
 import { AppContext, contextFromEnv } from './context';
 import { Z_INDEX } from './layout';
-import PageFlowsList from './pages/flows-list';
-import PageNotFound from './pages/not-found';
 import PageNotLoggedIn from './pages/not-logged-in';
 import * as paths from './paths';
 
@@ -91,10 +88,7 @@ export const App = () => {
         loader={loadEnv}
         strings={{
           ...t.get(lang, (s) => s.components.loader),
-          notFound: {
-            ...t.get(lang, (s) => s.components.notFound),
-            ...t.get(lang, (s) => s.routes.operations.notFound),
-          },
+          notFound: t.get(lang, (s) => s.components.notFound),
         }}
       >
         {(context) => {
@@ -125,6 +119,18 @@ export const App = () => {
                           {
                             label: t.t(lang, (s) => s.navigation.flows),
                             path: paths.flows(),
+                          },
+                          {
+                            label: t.t(lang, (s) => s.navigation.pendingFlows),
+                            path: paths.pendingFlows(),
+                          },
+                          {
+                            label: t.t(lang, (s) => s.navigation.organizations),
+                            path: paths.organizations(),
+                          },
+                          {
+                            label: t.t(lang, (s) => s.navigation.keywords),
+                            path: paths.keywords(),
                           },
                         ]}
                         className={CLASSES.CONTAINER.FLUID}
@@ -166,17 +172,7 @@ export const App = () => {
                             : []),
                         ]}
                       />
-                      <Routes>
-                        <Route
-                          path={paths.home()}
-                          element={<Navigate to={paths.flows()} />}
-                        />
-                        <Route
-                          path={paths.flows()}
-                          element={<PageFlowsList />}
-                        />
-                        <Route element={<PageNotFound />} />
-                      </Routes>
+                      <Outlet />
                     </LoggedInContainer>
                   ) : (
                     <>

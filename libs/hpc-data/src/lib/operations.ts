@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
 
 import { REPORTING_WINDOW } from './reporting-windows';
-import { resultWithPermissions, INTEGER_FROM_STRING } from './util';
+import { resultWithPermissions, POSITIVE_INTEGER_FROM_STRING } from './util';
 
 export const OPERATION = t.type({
   id: t.number,
@@ -50,7 +50,7 @@ export const GET_OPERATIONS_RESULT = resultWithPermissions(
 export type GetOperationsResult = t.TypeOf<typeof GET_OPERATIONS_RESULT>;
 
 export const GET_OPERATION_PARAMS = t.type({
-  id: INTEGER_FROM_STRING,
+  id: POSITIVE_INTEGER_FROM_STRING,
 });
 
 export type GetOperationParams = t.TypeOf<typeof GET_OPERATION_PARAMS>;
@@ -62,7 +62,7 @@ export const GET_OPERATION_RESULT = t.type({
 export type GetOperationResult = t.TypeOf<typeof GET_OPERATION_RESULT>;
 
 export const GET_CLUSTERS_PARAMS = t.type({
-  operationId: INTEGER_FROM_STRING,
+  operationId: POSITIVE_INTEGER_FROM_STRING,
 });
 
 export type GetClustersParams = t.TypeOf<typeof GET_CLUSTERS_PARAMS>;
