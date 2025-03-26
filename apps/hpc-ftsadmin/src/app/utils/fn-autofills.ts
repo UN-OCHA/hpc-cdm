@@ -367,8 +367,9 @@ export const autofillPlan = async ({
     return;
   }
 
+  const planId = valueToInteger(newValue.value);
   const { years, locations, emergencies } = await env.model.plans.getPlan({
-    id: valueToInteger(newValue.value),
+    id: planId,
     scopes: ['years', 'locations', 'emergencies'],
   });
 
@@ -393,6 +394,28 @@ export const autofillPlan = async ({
       setFieldValue,
       values,
       emergencies
+    );
+  }
+
+  const globalClusters = values[`funding${direction}GlobalClusters`].map(
+    ({ value }) => valueToInteger(value)
+  );
+  if (globalClusters.length) {
+    const fieldClusters = (
+      await env.model.governingEntities.getGoverningEntitiesByPlanId({
+        planId,
+        excludeAttachments: true,
+      })
+    ).filter((fC) =>
+      fC.globalClusterIds.some((id) => globalClusters.includes(id))
+    );
+
+    helperSetFieldValue(
+      fieldName,
+      'FieldClusters',
+      setFieldValue,
+      values,
+      fieldClusters
     );
   }
 };
