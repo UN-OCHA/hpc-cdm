@@ -187,13 +187,17 @@ export const autofillOrganizations = async ({
   const hasGovernmentsType = org.categories?.some(
     (cat) => cat.name === 'Governments'
   );
+  const hasMultilateralOrganizationsType = org.categories?.some(
+    (cat) => (cat.name = 'Multilateral Organizations')
+  );
+
   if (
     org.categories?.some((cat) => cat.name === 'Pooled Funds') ||
     !hasGovernmentsType
   ) {
     setFieldValue('isNewMoney', false);
   }
-  if (hasGovernmentsType) {
+  if (hasGovernmentsType || hasMultilateralOrganizationsType) {
     setFieldValue('isNewMoney', true);
   }
 

@@ -31,5 +31,5 @@ Do we infer all 6, or infer blank, or fail to infer anything and leave whatever 
 | Dest only        | None  | Project  | Earmarked  | Replace  | Set to "Earmarked" |
 | Source AND Dest  | None  | Field Cluster  | Global Sector   | Add  | All global sectors linked to the field cluster of the plan (single or multiple) |
 | Source AND Dest  | Plan is not blank  | Global Sector  | Field Cluster  | Add  | All field clusters of the chosen plan linked to the global sector (single or multiple) |
-| Flow Properties  | None  | Source Org  | New Money Flag  | Replace  | If OrgType[SourceOrg]=Governments, else if OrgType[SourceOrg]=Pooled Funds then Clear Flag, else Clear Flag| Cleared flag is enforced, set flag is not |
+| Flow Properties  | None  | Source Org  | New Money Flag  | Replace  | If OrgType[SourceOrg]=Governments | Multilateral Organizations, else if OrgType[SourceOrg]=Pooled Funds then Clear Flag, else Clear Flag| Cleared flag is enforced, set flag is not |
 | Source ONLY      | None  | Source Org  | Source Country (Admin 0 AND Location) | Add  | If OrgType[SourceOrg]=Governments, set Country of Source Org object |
