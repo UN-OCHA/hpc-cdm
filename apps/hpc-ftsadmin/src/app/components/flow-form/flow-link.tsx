@@ -1,4 +1,4 @@
-import { type categories } from '@unocha/hpc-data';
+import { type FormObjectValue, type categories } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { type Dayjs } from 'dayjs';
 import { useFormikContext } from 'formik';
@@ -17,6 +17,9 @@ export type FlowLinkProps = {
   description: string;
   amountUSD: string;
   flowDate: Dayjs | null;
+  amountOriginalCurrency: string | null;
+  currency: string | null;
+  exchangeRate: string | null;
   destinationOrganization?: string;
   destinationLocation?: string;
   projectName?: string;
@@ -52,6 +55,8 @@ const FlowLink = ({
     versionID,
     description,
     amountUSD,
+    amountOriginalCurrency,
+    currency,
     destinationOrganization,
     destinationLocation,
     flowDate,
@@ -91,6 +96,12 @@ const FlowLink = ({
       <span>{flowLinkDescription}</span>
       <span>{flowLinkDate}</span>
       <span>US${integerToCurrency(valueToInteger(amountUSD))}</span>
+      {amountOriginalCurrency && currency && (
+        <span>
+          {currency}
+          {integerToCurrency(valueToInteger(amountOriginalCurrency))}
+        </span>
+      )}
       {!disabled && (
         <C.Button
           color="secondary"

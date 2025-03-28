@@ -67,6 +67,9 @@ export const flowToFlowLinkProps = (
       (loc) => loc.flowObject.refDirection === 'destination'
     )?.name,
     amountUSD: flow.amountUSD.toString(),
+    amountOriginalCurrency: flow.origAmount ? flow.origAmount.toString() : null,
+    currency: flow.origCurrency,
+    exchangeRate: flow.exchangeRate ? flow.exchangeRate.toString() : null,
     flowDate: dayjs(flow.flowDate),
     projectName: flow.projects
       .find((proj) => proj.flowObject.refDirection === 'destination')

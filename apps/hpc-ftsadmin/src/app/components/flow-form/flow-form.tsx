@@ -509,6 +509,37 @@ export const FlowForm = (props: FlowFormProps) => {
     values: FlowFormTypeValidated,
     validateIfFlow?: boolean
   ) => {
+    const { amountOriginalCurrency, currency, exchangeRate, parentFlow } =
+      values;
+    const isOriginalCurrencyNotFilled =
+      (amountOriginalCurrency || currency || exchangeRate) &&
+      (!amountOriginalCurrency || !currency || !exchangeRate);
+
+    if (isOriginalCurrencyNotFilled) {
+      toast.error(
+        t.t(
+          lang,
+          (s) => s.components.flowForm.submitValidation.originalAmountNotFilled
+        ),
+        TOAST_CONFIG_ERROR
+      );
+      return false;
+    }
+    const isOriginalCurrencyDifferentToParent =
+      parentFlow?.currency !== values.currency?.displayLabel;
+
+    if (isOriginalCurrencyDifferentToParent) {
+      toast.error(
+        t.t(
+          lang,
+          (s) =>
+            s.components.flowForm.submitValidation
+              .originalAmountIsDifferentToParent
+        ),
+        TOAST_CONFIG_ERROR
+      );
+      return false;
+    }
     if (validateIfFlow && !flow) {
       return false;
     }

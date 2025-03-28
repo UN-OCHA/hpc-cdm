@@ -199,6 +199,8 @@
         "emergency": "此资金流在所选年份和地点至少有一个可用的紧急情况，如 {emergency}，您仍要保存吗？",
         "pendingValues": "请处理所有待处理的值",
         "reportingOrganization": "您的资金流报告详情中的组织与来源或目的地组织不匹配。您确定这是正确的吗？",
+        "originalAmountIsDifferentToParent": "此流程的外币必须与其停放的父流程相同",
+        "originalAmountNotFilled": "请选择一种货币和大于0的数量",
         "unknownError": "创建/更新资金流时发生意外错误"
       },
       "warning": {

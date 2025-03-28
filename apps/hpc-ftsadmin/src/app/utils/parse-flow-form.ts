@@ -354,7 +354,9 @@ export const parseFlowForm = (
     newCategories: [], //  TODO
     newMoney,
     notes,
-    origAmount: currencyToInteger(amountOriginalCurrency),
+    origAmount: amountOriginalCurrency
+      ? currencyToInteger(amountOriginalCurrency)
+      : null,
     origCurrency: currency?.value.toString() ?? null,
     parents: values.parentFlow ? [{ parentID: values.parentFlow.id }] : [],
     reportDetails: reportingDetailPropsToReportDetails(
