@@ -586,6 +586,9 @@
     "flows": {
       "title": "Search funding flows"
     },
+    "flow": {
+      "title": "Flow {id}v{versionID}"
+    },
     "keywords": {
       "title": "Manage Keywords"
     },

@@ -585,6 +585,9 @@
     "flows": {
       "title": "Buscar flujos de financiamiento"
     },
+    "flow": {
+      "title": "Flujo {id}v{versionID}"
+    },
     "keywords": {
       "title": "Gestionar Palabras Clave"
     },

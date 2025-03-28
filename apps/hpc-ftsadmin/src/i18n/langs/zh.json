@@ -588,6 +588,9 @@
     "flows": {
       "title": "搜索资金流"
     },
+    "flow": {
+      "title": "流程 {id}v{versionID}"
+    },
     "keywords": {
       "title": "管理关键词"
     },
