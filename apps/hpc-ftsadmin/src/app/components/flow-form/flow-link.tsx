@@ -1,4 +1,4 @@
-import { type FormObjectValue, type categories } from '@unocha/hpc-data';
+import { type categories } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { type Dayjs } from 'dayjs';
 import { useFormikContext } from 'formik';
@@ -65,16 +65,17 @@ const FlowLink = ({
 
   const SEPARATOR = ' | ';
 
+  const flowDateVerified = flowDate?.isValid() ? flowDate : null;
   const flowLinkDescription = [
     destinationOrganization,
     projectName,
     destinationLocation,
-    flowDate?.format('YYYY'),
+    flowDateVerified?.format('YYYY'),
   ]
-    .filter((text) => text !== undefined)
+    .filter((text) => text !== undefined && text !== null)
     .join(SEPARATOR);
 
-  const flowLinkDate = flowDate?.format() ?? null;
+  const flowLinkDate = flowDateVerified ? flowDateVerified.format() : null;
 
   const handleUnlink = () => {
     const value = values[fieldName];

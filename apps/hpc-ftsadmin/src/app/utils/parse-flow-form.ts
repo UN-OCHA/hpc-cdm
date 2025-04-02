@@ -747,14 +747,16 @@ export const serializeFlowForm = (
     parentFlow: parentFlow
       ? {
           ...parentFlow,
-          flowDate: parentFlow.flowDate
+          flowDate: parentFlow.flowDate?.isValid()
             ? parentFlow.flowDate.toISOString()
             : null,
         }
       : null,
     childFlows: values.childFlows.map((childFlow) => ({
       ...childFlow,
-      flowDate: childFlow.flowDate ? childFlow.flowDate.toISOString() : null,
+      flowDate: childFlow.flowDate?.isValid()
+        ? childFlow.flowDate.toISOString()
+        : null,
     })),
     reportingDetails: reportingDetails.map((reportingDetail) => ({
       ...reportingDetail,
