@@ -271,8 +271,7 @@ export const validateFlow = async ({
     return false;
   }
   const isOriginalCurrencyDifferentToParent =
-    parentFlow?.currency !== values.currency?.displayLabel;
-
+    parentFlow && parentFlow.currency !== values.currency?.displayLabel;
   if (isOriginalCurrencyDifferentToParent) {
     toast.error(
       t.t(
