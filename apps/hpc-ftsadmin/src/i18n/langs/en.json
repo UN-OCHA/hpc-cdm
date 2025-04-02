@@ -198,6 +198,7 @@
         "earmarking": "Earmarking value is blank, do you still want to save?",
         "emergency": "This flow has at least one emergency available for the selected year(s) and location(s), like {emergency} do you still want to save",
         "pendingValues": "Please handle all pending values",
+        "planLocation": "No {entity} linked to {plan} was added. Please add least one of the following locations: [{locations}]",
         "reportingOrganization": "Your flow's Report Detail organization doesn't match the source or destination organization. Are you sure this is right?",
         "originalAmountIsDifferentToParent": "This flow's foreign currency must be the same as it's parked parent flow",
         "originalAmountNotFilled": "Please select a currency and a quantity bigger than 0",

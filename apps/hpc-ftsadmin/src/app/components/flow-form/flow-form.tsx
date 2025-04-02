@@ -54,7 +54,7 @@ import {
   usageYearFirstViewCondition,
 } from '../../utils/fn-promises';
 import {
-  validateFlowForWarnings,
+  validateFlow,
   validateFlowIsUnlinked,
 } from '../../utils/fn-validations';
 import validateForm from '../../utils/form-validation';
@@ -505,61 +505,6 @@ export const FlowForm = (props: FlowFormProps) => {
     return `US$${amountUSDDifference}`;
   };
 
-  const isValid = async (
-    values: FlowFormTypeValidated,
-    validateIfFlow?: boolean
-  ) => {
-    const { amountOriginalCurrency, currency, exchangeRate, parentFlow } =
-      values;
-    const isOriginalCurrencyNotFilled =
-      (amountOriginalCurrency || currency || exchangeRate) &&
-      (!amountOriginalCurrency || !currency || !exchangeRate);
-
-    if (isOriginalCurrencyNotFilled) {
-      toast.error(
-        t.t(
-          lang,
-          (s) => s.components.flowForm.submitValidation.originalAmountNotFilled
-        ),
-        TOAST_CONFIG_ERROR
-      );
-      return false;
-    }
-    const isOriginalCurrencyDifferentToParent =
-      parentFlow?.currency !== values.currency?.displayLabel;
-
-    if (isOriginalCurrencyDifferentToParent) {
-      toast.error(
-        t.t(
-          lang,
-          (s) =>
-            s.components.flowForm.submitValidation
-              .originalAmountIsDifferentToParent
-        ),
-        TOAST_CONFIG_ERROR
-      );
-      return false;
-    }
-    if (validateIfFlow && !flow) {
-      return false;
-    }
-    if (!(await validateFlowForWarnings(values, env, lang))) {
-      return false;
-    }
-    if (
-      isPending &&
-      pendingValues &&
-      pendingValuesHandled !== Object.keys(pendingValues).length
-    ) {
-      toast.error(
-        t.t(lang, (s) => s.components.flowForm.submitValidation.pendingValues),
-        TOAST_CONFIG_ERROR
-      );
-      return false;
-    }
-    return true;
-  };
-
   const isUsageYearValues = (
     value: ConsistencyErrorReasons[keyof ConsistencyErrorReasons][number],
     type: keyof ConsistencyErrorReasons
@@ -676,8 +621,16 @@ export const FlowForm = (props: FlowFormProps) => {
     isSaved?: boolean
   ) => {
     setSubmitLoading(true);
-    const valid = await isValid(values);
-    if (!valid) {
+    const isValidFlow = await validateFlow({
+      env,
+      lang,
+      pendingValuesHandled,
+      values,
+      flow,
+      isPending,
+      pendingValues,
+    });
+    if (!isValidFlow) {
       setSubmitLoading(false);
       return;
     }

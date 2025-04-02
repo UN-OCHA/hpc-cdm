@@ -198,6 +198,7 @@
         "earmarking": "La valeur d'earmarking est vide, souhaitez-vous tout de même enregistrer ?",
         "emergency": "Ce flux a au moins une urgence disponible pour les années et les lieux sélectionnés, comme {emergency}, souhaitez-vous tout de même enregistrer ?",
         "pendingValues": "Veuillez gérer toutes les valeurs en attente",
+        "planLocation": "Aucun {entity} lié à {plan} n'a été ajouté. Veuillez ajouter au moins l'un des endroits suivants : [{locations}]",
         "reportingOrganization": "L'organisation des détails du rapport de votre flux ne correspond pas à l'organisation source ou de destination. Êtes-vous sûr que c'est correct ?",
         "originalAmountIsDifferentToParent": "La devise étrangère de ce flux doit être la même que celle de son flux parent mis en veille",
         "originalAmountNotFilled": "Veuillez sélectionner une devise et une quantité supérieure à 0",

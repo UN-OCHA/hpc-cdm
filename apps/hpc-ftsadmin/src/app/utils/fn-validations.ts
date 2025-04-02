@@ -1,9 +1,13 @@
-import type { FlowFormType } from '../components/flow-form/flow-form';
-import { valueToInteger } from './map-functions';
+import { flows, type FormObjectValue } from '@unocha/hpc-data';
+import { toast } from 'react-toastify';
 import { Environment } from '../../environments/interface';
 import { type LanguageKey, t } from '../../i18n';
-import { toast } from 'react-toastify';
+import type {
+  FlowFormType,
+  FlowFormTypeValidated,
+} from '../components/flow-form/flow-form';
 import { TOAST_CONFIG_ERROR } from './constants';
+import { valueToInteger } from './map-functions';
 
 const validateEarmarking = (
   values: FlowFormType,
@@ -132,7 +136,68 @@ const validateParentFlowAmountUSD = (
   return [];
 };
 
-export const validateFlowForWarnings = async (
+const validatePlan = async (
+  plan: FormObjectValue | null,
+  formLocations: FormObjectValue[],
+  lang: LanguageKey,
+  env: Environment,
+  direction: 'source' | 'destination'
+) => {
+  if (!plan) {
+    return [];
+  }
+  const planId = valueToInteger(plan.value);
+  const { locations, planVersion } = await env.model.plans.getPlan({
+    id: planId,
+    scopes: ['locations', 'planVersion'],
+  });
+  const locationIds = locations.map((loc) => loc.id);
+  const locationNames = locations.map((loc) => loc.name).join(', ');
+
+  const hasValidLocation = formLocations.some((loc) =>
+    locationIds.includes(valueToInteger(loc.value))
+  );
+  if (!hasValidLocation) {
+    return [
+      t.t(lang, (s) => s.components.flowForm.submitValidation.planLocation, {
+        entity: t.t(
+          lang,
+          (s) => s.components.flowsFilter.filters[`${direction}Locations`]
+        ),
+        plan: planVersion.name,
+        locations: locationNames,
+      }),
+    ];
+  }
+  return [];
+};
+const validatePlanLocation = async (
+  values: FlowFormType,
+  env: Environment,
+  lang: LanguageKey
+): Promise<string[]> => {
+  if (!values.fundingDestinationPlan && !values.fundingSourcePlan) {
+    return [];
+  }
+  return [
+    ...(await validatePlan(
+      values.fundingSourcePlan,
+      values.fundingSourceLocations,
+      lang,
+      env,
+      'source'
+    )),
+    ...(await validatePlan(
+      values.fundingDestinationPlan,
+      values.fundingDestinationLocations,
+      lang,
+      env,
+      'destination'
+    )),
+  ];
+};
+
+const validateFlowForWarnings = async (
   values: FlowFormType,
   env: Environment,
   lang: LanguageKey
@@ -140,6 +205,13 @@ export const validateFlowForWarnings = async (
   const reportingDetailWarning = validateReportingDetails(values, lang);
   if (reportingDetailWarning) {
     toast.error(reportingDetailWarning, TOAST_CONFIG_ERROR);
+    return false;
+  }
+  const planLocationValidation = await validatePlanLocation(values, env, lang);
+  if (planLocationValidation.length) {
+    for (const validation of planLocationValidation) {
+      toast.error(validation, TOAST_CONFIG_ERROR);
+    }
     return false;
   }
 
@@ -164,4 +236,69 @@ export const validateFlowIsUnlinked = (flow: FlowFormType) => {
     return true;
   }
   return false;
+};
+
+export const validateFlow = async ({
+  values,
+  lang,
+  env,
+  pendingValuesHandled,
+  flow,
+  pendingValues,
+  isPending,
+}: {
+  values: FlowFormTypeValidated;
+  lang: LanguageKey;
+  env: Environment;
+  pendingValuesHandled: number;
+  flow?: flows.GetFlowResult;
+  pendingValues?: Partial<FlowFormType> | null;
+  isPending?: boolean;
+}) => {
+  const { amountOriginalCurrency, currency, exchangeRate, parentFlow } = values;
+  const isOriginalCurrencyNotFilled =
+    (amountOriginalCurrency || currency || exchangeRate) &&
+    (!amountOriginalCurrency || !currency || !exchangeRate);
+
+  if (isOriginalCurrencyNotFilled) {
+    toast.error(
+      t.t(
+        lang,
+        (s) => s.components.flowForm.submitValidation.originalAmountNotFilled
+      ),
+      TOAST_CONFIG_ERROR
+    );
+    return false;
+  }
+  const isOriginalCurrencyDifferentToParent =
+    parentFlow?.currency !== values.currency?.displayLabel;
+
+  if (isOriginalCurrencyDifferentToParent) {
+    toast.error(
+      t.t(
+        lang,
+        (s) =>
+          s.components.flowForm.submitValidation
+            .originalAmountIsDifferentToParent
+      ),
+      TOAST_CONFIG_ERROR
+    );
+    return false;
+  }
+
+  if (!(await validateFlowForWarnings(values, env, lang))) {
+    return false;
+  }
+  if (
+    isPending &&
+    pendingValues &&
+    pendingValuesHandled !== Object.keys(pendingValues).length
+  ) {
+    toast.error(
+      t.t(lang, (s) => s.components.flowForm.submitValidation.pendingValues),
+      TOAST_CONFIG_ERROR
+    );
+    return false;
+  }
+  return true;
 };
