@@ -1447,6 +1447,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       setPendingValuesHandled={setPendingValuesHandled}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.amountUSD}
+                      allowNegative
                       required
                     />
                     <Box
@@ -1466,6 +1467,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           sx={tw`basis-4/6`}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.amountOriginalCurrency}
+                          allowNegative
                         />
                         <AsyncAutocompleteSelectReview
                           fieldName="currency"

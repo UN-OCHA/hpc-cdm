@@ -297,7 +297,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-amount-usd"
                     >
-                      {row.amountUSD > 0
+                      {row.amountUSD
                         ? new Intl.NumberFormat(lang, {
                             style: 'currency',
                             currency: 'USD',
