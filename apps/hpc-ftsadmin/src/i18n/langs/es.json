@@ -155,6 +155,11 @@
         "confirm": "¿Está seguro de que desea rechazar este flujo?",
         "categoryNotFound": "Error interno: No se pudo marcar el flujo como rechazado porque la categoría no existe"
       },
+      "remainingAmount": {
+        "excludeRestricted": "(Excluyendo los restringidos)",
+        "remainingAmount": "Monto restante:",
+        "remainingOrigAmount": "Monto restante en la moneda original:"
+      },
       "searchSimilarFlow": "Buscar flujos similares",
       "sectionTitles": {
         "sourceFlow": "Flujo de origen",
@@ -201,6 +206,7 @@
         "planLocation": "No se añadió ningún {entity} vinculado a {plan}. Por favor, añada al menos una de las siguientes ubicaciones: [{locations}]",
         "reportingOrganization": "La organización del detalle del informe de su flujo no coincide con la organización de origen o destino. ¿Está seguro de que esto es correcto?",
         "originalAmountIsDifferentToParent": "La moneda extranjera de este flujo debe ser la misma que la del flujo principal estacionado",
+        "originalAmountIsDifferentToChildren": "La moneda extranjera de los flujos secundarios debe ser la misma que en el flujo actual",
         "originalAmountNotFilled": "Por favor, seleccione una moneda y una cantidad mayor que 0",
         "unknownError": "Error inesperado al crear/actualizar el flujo"
       },

@@ -214,6 +214,11 @@ const AddReportingDetailButton = tw(C.Button)`
   justify-center
 `;
 
+const RestrictedSpan = tw.span`
+  font-normal
+  text-unocha-secondary
+`;
+
 export const INITIAL_FORM_VALUES: FlowFormType = {
   fundingSourceOrganizations: [],
   fundingSourceUsageYears: [],
@@ -493,16 +498,52 @@ export const FlowForm = (props: FlowFormProps) => {
       INITIAL_FORM_VALUES['method'],
   };
 
-  const getChildFlowsAmountUSDDiff = (values: FlowFormType) => {
+  const getChildFlowsAmountUSDDiff = (
+    values: FlowFormType,
+    shouldExcludeRestricted?: boolean
+  ) => {
     const { amountUSD, childFlows } = values;
     if (!amountUSD) {
       return null;
     }
+
+    const filteredChildFlows = shouldExcludeRestricted
+      ? childFlows.filter((childFlow) => !childFlow.restricted)
+      : childFlows;
+
     const amountUSDDifference = integerToCurrency(
       currencyToInteger(amountUSD) -
-        childFlows.reduce((acc, cur) => acc + valueToInteger(cur.amountUSD), 0)
+        filteredChildFlows.reduce(
+          (acc, cur) => acc + valueToInteger(cur.amountUSD),
+          0
+        )
     );
-    return `US$${amountUSDDifference}`;
+    return `US$ ${amountUSDDifference}`;
+  };
+
+  const getChildFlowsOriginalAmountDiff = (
+    values: FlowFormType,
+    shouldExcludeRestricted?: boolean
+  ) => {
+    const { amountOriginalCurrency, currency, childFlows } = values;
+    if (!amountOriginalCurrency || !currency) {
+      return null;
+    }
+
+    const filteredChildFlows = shouldExcludeRestricted
+      ? childFlows.filter((childFlow) => !childFlow.restricted)
+      : childFlows;
+
+    const originalAmountDifference = integerToCurrency(
+      currencyToInteger(amountOriginalCurrency) -
+        filteredChildFlows.reduce((acc, cur) => {
+          if (!cur.amountOriginalCurrency) {
+            return acc;
+          }
+          return acc + valueToInteger(cur.amountOriginalCurrency);
+        }, 0)
+    );
+    return `${currency.displayLabel} ${originalAmountDifference}`;
   };
 
   const isUsageYearValues = (
@@ -1741,8 +1782,48 @@ export const FlowForm = (props: FlowFormProps) => {
                         </div>
                       ))}
                     </Box>
-                    <Box sx={tw`text-end font-bold`}>
-                      <span>{getChildFlowsAmountUSDDiff(values)}</span>
+                    <Box sx={tw`text-end mb-6 w-fit float-end flex gap-x-12`}>
+                      <Box sx={tw`flex flex-col justify-end`}>
+                        <span />
+                        <span>
+                          {t.t(
+                            lang,
+                            (s) =>
+                              s.components.flowForm.remainingAmount
+                                .remainingAmount
+                          )}
+                        </span>
+                        {values.amountOriginalCurrency && (
+                          <span>
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.remainingAmount
+                                  .remainingOrigAmount
+                            )}
+                          </span>
+                        )}
+                      </Box>
+                      <Box sx={tw`flex flex-col justify-end font-bold`}>
+                        <span />
+                        <span>{getChildFlowsAmountUSDDiff(values)}</span>
+                        <span>{getChildFlowsOriginalAmountDiff(values)}</span>
+                      </Box>
+
+                      <Box sx={tw`flex flex-col font-bold`}>
+                        <RestrictedSpan>
+                          {t.t(
+                            lang,
+                            (s) =>
+                              s.components.flowForm.remainingAmount
+                                .excludeRestricted
+                          )}
+                        </RestrictedSpan>
+                        <span>{getChildFlowsAmountUSDDiff(values, true)}</span>
+                        <span>
+                          {getChildFlowsOriginalAmountDiff(values, true)}
+                        </span>
+                      </Box>
                     </Box>
                   </Box>
                 )}

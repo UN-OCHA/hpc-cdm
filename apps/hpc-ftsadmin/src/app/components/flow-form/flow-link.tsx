@@ -20,6 +20,7 @@ export type FlowLinkProps = {
   amountOriginalCurrency: string | null;
   currency: string | null;
   exchangeRate: string | null;
+  restricted: boolean;
   destinationOrganization?: string;
   destinationLocation?: string;
   projectName?: string;

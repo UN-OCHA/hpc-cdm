@@ -155,6 +155,11 @@
         "confirm": "Are you sure you want to reject this flow?",
         "categoryNotFound": "Internal Error: Flow could not be set as Rejected because category does not exist"
       },
+      "remainingAmount": {
+        "excludeRestricted": "(Excluding restricted)",
+        "remainingAmount": "Remaining Amount:",
+        "remainingOrigAmount": "Remaining Original Currency Amount:"
+      },
       "searchSimilarFlow": "Search similar Flows",
       "sectionTitles": {
         "sourceFlow": "Source Flow",
@@ -201,6 +206,7 @@
         "planLocation": "No {entity} linked to {plan} was added. Please add least one of the following locations: [{locations}]",
         "reportingOrganization": "Your flow's Report Detail organization doesn't match the source or destination organization. Are you sure this is right?",
         "originalAmountIsDifferentToParent": "This flow's foreign currency must be the same as it's parked parent flow",
+        "originalAmountIsDifferentToChildren": "This flow's children flows foreign currency, must be the same as in current flow",
         "originalAmountNotFilled": "Please select a currency and a quantity bigger than 0",
         "unknownError": "Unexpected error while creating/updating flow"
       },

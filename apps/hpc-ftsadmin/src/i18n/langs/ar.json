@@ -155,6 +155,11 @@
         "confirm": "هل أنت متأكد أنك تريد رفض هذا التدفق؟",
         "categoryNotFound": "خطأ داخلي: لا يمكن تعيين التدفق كرفض لأن الفئة غير موجودة"
       },
+      "remainingAmount": {
+        "excludeRestricted": "(باستثناء المقيد)",
+        "remainingAmount": "المبلغ المتبقي:",
+        "remainingOrigAmount": "المبلغ المتبقي بالعملة الأصلية:"
+      },
       "searchSimilarFlow": "البحث عن تدفقات مماثلة",
       "sectionTitles": {
         "sourceFlow": "مصدر التدفق",
@@ -201,6 +206,7 @@
         "planLocation": "لم يتم إضافة أي {entity} مرتبط بـ {plan}. الرجاء إضافة واحدة على الأقل من المواقع التالية: [{locations}]",
         "reportingOrganization": "المنظمة في تفاصيل تقرير التدفق الخاص بك لا تتطابق مع المنظمة المصدر أو الوجهة. هل أنت متأكد أن هذا صحيح؟",
         "originalAmountIsDifferentToParent": "يجب أن تكون العملة الأجنبية لهذا التدفق هي نفسها عملة التدفق الأب المتوقف",
+        "originalAmountIsDifferentToChildren": "يجب أن تكون العملة الأجنبية لتدفقات الأطفال مطابقة للعملة في التدفق الحالي",
         "originalAmountNotFilled": "يرجى اختيار عملة وكمية أكبر من 0",
         "unknownError": "حدث خطأ غير متوقع أثناء إنشاء/تحديث التدفق"
       },

@@ -155,6 +155,11 @@
         "confirm": "Êtes-vous sûr de vouloir rejeter ce flux ?",
         "categoryNotFound": "Erreur interne : Le flux n'a pas pu être défini comme rejeté car la catégorie n'existe pas"
       },
+      "remainingAmount": {
+        "excludeRestricted": "(Excluant les restrictions)",
+        "remainingAmount": "Montant restant :",
+        "remainingOrigAmount": "Montant restant dans la devise d'origine :"
+      },
       "searchSimilarFlow": "Rechercher des flux similaires",
       "sectionTitles": {
         "sourceFlow": "Flux source",
@@ -201,6 +206,7 @@
         "planLocation": "Aucun {entity} lié à {plan} n'a été ajouté. Veuillez ajouter au moins l'un des endroits suivants : [{locations}]",
         "reportingOrganization": "L'organisation des détails du rapport de votre flux ne correspond pas à l'organisation source ou de destination. Êtes-vous sûr que c'est correct ?",
         "originalAmountIsDifferentToParent": "La devise étrangère de ce flux doit être la même que celle de son flux parent mis en veille",
+        "originalAmountIsDifferentToChildren": "La devise étrangère des flux enfants doit être la même que celle du flux actuel",
         "originalAmountNotFilled": "Veuillez sélectionner une devise et une quantité supérieure à 0",
         "unknownError": "Erreur inattendue lors de la création/mise à jour du flux"
       },

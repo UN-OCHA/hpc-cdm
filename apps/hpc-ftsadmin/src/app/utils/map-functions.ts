@@ -75,6 +75,7 @@ export const flowToFlowLinkProps = (
       .find((proj) => proj.flowObject.refDirection === 'destination')
       ?.projectVersions.at(0)?.name,
     earmarking: flow.categories.find((cat) => cat.group === 'earmarkingType'),
+    restricted: flow.restricted,
   };
 };
 

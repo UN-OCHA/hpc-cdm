@@ -255,7 +255,13 @@ export const validateFlow = async ({
   pendingValues?: Partial<FlowFormType> | null;
   isPending?: boolean;
 }) => {
-  const { amountOriginalCurrency, currency, exchangeRate, parentFlow } = values;
+  const {
+    amountOriginalCurrency,
+    currency,
+    exchangeRate,
+    parentFlow,
+    childFlows,
+  } = values;
   const isOriginalCurrencyNotFilled =
     (amountOriginalCurrency || currency || exchangeRate) &&
     (!amountOriginalCurrency || !currency || !exchangeRate);
@@ -271,7 +277,16 @@ export const validateFlow = async ({
     return false;
   }
   const isOriginalCurrencyDifferentToParent =
-    parentFlow && parentFlow.currency !== values.currency?.displayLabel;
+    parentFlow &&
+    parentFlow.currency !== (values.currency?.displayLabel ?? null);
+
+  const isOriginalCurrencyDifferentToChildren =
+    childFlows.length &&
+    childFlows?.some(
+      (childFlow) =>
+        childFlow.currency !== (values.currency?.displayLabel ?? null)
+    );
+
   if (isOriginalCurrencyDifferentToParent) {
     toast.error(
       t.t(
@@ -279,6 +294,18 @@ export const validateFlow = async ({
         (s) =>
           s.components.flowForm.submitValidation
             .originalAmountIsDifferentToParent
+      ),
+      TOAST_CONFIG_ERROR
+    );
+    return false;
+  }
+  if (isOriginalCurrencyDifferentToChildren) {
+    toast.error(
+      t.t(
+        lang,
+        (s) =>
+          s.components.flowForm.submitValidation
+            .originalAmountIsDifferentToChildren
       ),
       TOAST_CONFIG_ERROR
     );
