@@ -16,7 +16,6 @@ export const GLOBAL_CLUSTER = t.type({
   updatedAt: DATE_FROM_STRING,
   hrinfoId: optional(t.number),
   homepage: optional(t.string),
-  defaultIconId: optional(t.string),
   parentId: optional(t.number),
   displayFTSSummariesFromYear: optional(t.number),
 });
