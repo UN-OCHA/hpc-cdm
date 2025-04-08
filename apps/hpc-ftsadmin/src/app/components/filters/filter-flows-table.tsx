@@ -47,6 +47,7 @@ export interface FlowsFilterValues {
   sourceGlobalClusters?: util.FormObjectValue[];
   sourceEmergencies?: util.FormObjectValue[];
   destinationOrganizations?: util.FormObjectValue[];
+  destinationAnonymizedOrganizations?: util.FormObjectValue[];
   destinationLocations?: util.FormObjectValue[];
   destinationUsageYears?: util.FormObjectValue[];
   destinationProjects?: util.FormObjectValue[];
@@ -74,6 +75,7 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   sourceGlobalClusters: [],
   sourceEmergencies: [],
   destinationOrganizations: [],
+  destinationAnonymizedOrganizations: [],
   destinationLocations: [],
   destinationUsageYears: [],
   destinationProjects: [],
@@ -365,6 +367,17 @@ export const FilterFlowsTable = (props: Props) => {
                     s.components.flowsFilter.filters.destinationOrganizations
                 )}
                 name="destinationOrganizations"
+                fnPromise={(query) => fnOrganizations(query, environment)}
+                isMulti
+              />
+              <C.AsyncAutocompleteSelect
+                label={t.t(
+                  lang,
+                  (s) =>
+                    s.components.flowsFilter.filters
+                      .destinationAnonymizedOrganizations
+                )}
+                name="destinationAnonymizedOrganizations"
                 fnPromise={(query) => fnOrganizations(query, environment)}
                 isMulti
               />

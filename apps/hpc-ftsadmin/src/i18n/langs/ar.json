@@ -316,6 +316,7 @@
         "sourceGlobalClusters": "المجموعات العالمية المصدرة",
         "sourceEmergencies": "الحالات الطارئة المصدرة",
         "destinationOrganizations": "المنظمة(ات) الوجهة",
+        "destinationAnonymizedOrganizations": "المنظمة(ات) المجهولة الوجهة",
         "destinationLocations": "البلدان الوجهة",
         "destinationUsageYears": "سنوات الاستخدام الوجهة",
         "destinationProjects": "المشروعات الوجهة",

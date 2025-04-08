@@ -315,6 +315,7 @@
         "sourceGlobalClusters": "全球集群（源）",
         "sourceEmergencies": "紧急情况（源）",
         "destinationOrganizations": "组织（目标）",
+        "destinationAnonymizedOrganizations": "目标匿名组织",
         "destinationLocations": "国家（目标）",
         "destinationUsageYears": "使用年份（目标）",
         "destinationProjects": "项目（目标）",

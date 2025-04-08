@@ -318,6 +318,7 @@
         "sourceGlobalClusters": "Source Global Cluster(s)",
         "sourceEmergencies": "Source Emergency(ies)",
         "destinationOrganizations": "Destination Organization(s)",
+        "destinationAnonymizedOrganizations": "Destination Anonymized Organization(s)",
         "destinationLocations": "Destination Country(ies)",
         "destinationUsageYears": "Destination Usage Year(s)",
         "destinationProjects": "Destination Project(s)",

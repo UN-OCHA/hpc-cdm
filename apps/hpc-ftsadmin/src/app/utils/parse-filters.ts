@@ -214,7 +214,7 @@ export const extractDirectionObject = (
   object: FlowObjectTypes;
 } | null => {
   const match = inputString.match(
-    /^(source|destination)(Locations|Emergencies|GlobalClusters|Organizations|Plans|Projects|UsageYears)$/
+    /^(source|destination)(Locations|Emergencies|GlobalClusters|Organizations|AnonymizedOrganizations|Plans|Projects|UsageYears)$/
   );
 
   if (match) {
@@ -309,6 +309,7 @@ export const parseFlowFilters = (
         case 'destinationEmergencies':
         case 'destinationGlobalClusters':
         case 'destinationOrganizations':
+        case 'destinationAnonymizedOrganizations':
         case 'destinationPlans':
         case 'destinationProjects':
         case 'destinationUsageYears':

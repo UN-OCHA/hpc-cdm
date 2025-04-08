@@ -315,6 +315,7 @@
         "sourceGlobalClusters": "Regroupement(s) mondial(aux) source(s)",
         "sourceEmergencies": "Urgence(s) source(s)",
         "destinationOrganizations": "Organisation(s) de destination",
+        "destinationAnonymizedOrganizations": "Organisation(s) anonymisée(s) de destination",
         "destinationLocations": "Pays(s) de destination",
         "destinationUsageYears": "Année(s) d'utilisation de la destination",
         "destinationProjects": "Projet(s) de destination",
