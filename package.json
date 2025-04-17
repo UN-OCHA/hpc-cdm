@@ -30,7 +30,7 @@
     "prepare": "husky install"
   },
   "engines": {
-    "node": ">=20.19.0",
+    "node": ">=20.19.0 || >=22.14.0",
     "npm": ">=9.5.1 || >=10.2.2"
   },
   "lint-staged": {
