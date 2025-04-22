@@ -576,13 +576,19 @@
       }
     },
     "upload": {
-      "buttonText": "Upload"
+      "buttonText": "Upload",
+      "error": {
+        "invalidExtension": "The file selected is not .xlsx or .xls. Please choose a file with the correct format",
+        "unknown": "There has been an unknown error uploading the file"
+      },
+      "success": "File \"{fileName}\" has been successfully uploaded"
     }
   },
   "navigation": {
     "addFlow": "Add Flow",
     "flows": "Flows",
     "keywords": "Keywords",
+    "uploadXLSX": "Upload XLSX",
     "pendingFlows": "Pending Flows",
     "organizations": "Organizations",
     "rpm": "Response Planning Module",
@@ -599,6 +605,9 @@
     },
     "keywords": {
       "title": "Manage Keywords"
+    },
+    "uploadXLSX": {
+      "title": "Upload XLSX/XLS file"
     },
     "pendingFlows": {
       "title": "Search pending flows"

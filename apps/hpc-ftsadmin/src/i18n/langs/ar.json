@@ -576,13 +576,19 @@
       }
     },
     "upload": {
-      "buttonText": "تحميل"
+      "buttonText": "تحميل",
+      "error": {
+        "invalidExtension": "الملف المحدد ليس .xlsx أو .xls. يرجى اختيار ملف بالتنسيق الصحيح",
+        "unknown": "حدث خطأ غير معروف أثناء تحميل الملف"
+      },
+      "success": "تم تحميل الملف \"{fileName}\" بنجاح"
     }
   },
   "navigation": {
     "addFlow": "إضافة تدفق",
     "flows": "التدفقات",
     "keywords": "الكلمات الرئيسية",
+    "uploadXLSX": "تحميل XLSX",
     "pendingFlows": "التدفقات المعلقة",
     "organizations": "المنظمات",
     "rpm": "وحدة تخطيط الاستجابة",
@@ -599,6 +605,9 @@
     },
     "keywords": {
       "title": "إدارة الكلمات الرئيسية"
+    },
+    "uploadXLSX": {
+      "title": "تحميل ملف XLSX/XLS"
     },
     "pendingFlows": {
       "title": "البحث في التدفقات المعلقة"

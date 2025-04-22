@@ -11,6 +11,7 @@ import PageKeywordsList from './app/pages/keywords/keyword-list';
 import PageNotFound from './app/pages/not-found';
 import PageOrganization from './app/pages/organizations/organization';
 import PageOrganizationsList from './app/pages/organizations/organization-list';
+import PageUploadXLSX from './app/pages/upload-xlsx/upload-xlsx';
 import paths from './app/paths';
 
 import { RouteParamsValidator } from './app/components/route-params-validator';
@@ -51,6 +52,7 @@ const router = createBrowserRouter([
       },
       { path: paths.addOrganization(), element: <PageOrganization /> },
       { path: paths.keywords(), element: <PageKeywordsList /> },
+      { path: paths.uploadXLSX(), element: <PageUploadXLSX /> },
       { path: paths.splat(), element: <PageNotFound /> },
     ],
   },

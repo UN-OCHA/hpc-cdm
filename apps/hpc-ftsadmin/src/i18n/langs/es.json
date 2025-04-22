@@ -575,13 +575,19 @@
       }
     },
     "upload": {
-      "buttonText": "Subir"
+      "buttonText": "Subir",
+      "error": {
+        "invalidExtension": "El archivo seleccionado no es .xlsx ni .xls. Por favor, elija un archivo con el formato correcto",
+        "unknown": "Ha habido un error desconocido al cargar el archivo"
+      },
+      "success": "El archivo \"{fileName}\" se ha cargado con éxito"
     }
   },
   "navigation": {
     "addFlow": "Agregar Flujo",
     "flows": "Flujos",
     "keywords": "Palabras Clave",
+    "uploadXLSX": "Subir XLSX",
     "pendingFlows": "Flujos Pendientes",
     "organizations": "Organizaciones",
     "rpm": "Módulo de Planificación de Respuesta",
@@ -598,6 +604,9 @@
     },
     "keywords": {
       "title": "Gestionar Palabras Clave"
+    },
+    "uploadXLSX": {
+      "title": "Subir archivo XLSX/XLS"
     },
     "pendingFlows": {
       "title": "Buscar flujos pendientes"

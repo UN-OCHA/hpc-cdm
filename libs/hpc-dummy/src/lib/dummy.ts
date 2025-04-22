@@ -592,6 +592,9 @@ export class Dummy {
             throw new errors.NotFoundError();
           }
         ),
+        uploadXLSX: dummyEndpoint('fileAssetEntities.uploadXLSX', async () => {
+          throw new errors.NotFoundError();
+        }),
       },
       flows: {
         getFlow: dummyEndpoint('flows.getFlow', async () => {

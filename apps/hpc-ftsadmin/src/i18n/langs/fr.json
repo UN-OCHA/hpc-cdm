@@ -575,13 +575,19 @@
       }
     },
     "upload": {
-      "buttonText": "Télécharger"
+      "buttonText": "Télécharger",
+      "error": {
+        "invalidExtension": "Le fichier sélectionné n'est pas .xlsx ni .xls. Veuillez choisir un fichier au format correct",
+        "unknown": "Il y a eu une erreur inconnue lors du téléchargement du fichier"
+      },
+      "success": "Le fichier «{fileName}» a été téléchargé avec succès"
     }
   },
   "navigation": {
     "addFlow": "Ajouter un Flux",
     "flows": "Flux",
     "keywords": "Mots-clés",
+    "uploadXLSX": "Télécharger XLSX",
     "pendingFlows": "Flux en attente",
     "organizations": "Organisations",
     "rpm": "Module de planification des interventions",
@@ -598,6 +604,9 @@
     },
     "keywords": {
       "title": "Gérer les Mots-Clés"
+    },
+    "uploadXLSX": {
+      "title": "Télécharger le fichier XLSX/XLS"
     },
     "pendingFlows": {
       "title": "Recherche de flux en attente"

@@ -730,6 +730,20 @@ export class LiveModel implements Model {
           resultType: fileAssetEntities.BLOB_TYPE,
           isDownload: true,
         }),
+      uploadXLSX: (file) => {
+        const data = new FormData();
+        data.append('xls', file);
+
+        return this.call({
+          pathname: '/v2/flow/excel',
+          method: 'POST',
+          resultType: t.unknown,
+          body: {
+            type: 'form-data',
+            data,
+          },
+        });
+      },
     };
   }
   get flows(): flows.Model {

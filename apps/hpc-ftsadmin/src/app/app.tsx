@@ -145,6 +145,10 @@ export const App = () => {
                             path: paths.keywords(),
                           },
                           {
+                            label: t.t(lang, (s) => s.navigation.uploadXLSX),
+                            path: paths.uploadXLSX(),
+                          },
+                          {
                             label: t.t(lang, (s) => s.navigation.addFlow),
                             path: paths.addFlow(),
                             icon: MdAdd,

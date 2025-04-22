@@ -14,9 +14,16 @@ type UploadFileProps = {
   name: string;
   buttonConfig: Omit<ButtonProps, 'onClick'>;
   onUpload: (file?: File) => Promise<unknown>;
-  onDelete: () => Promise<unknown>;
-  onDownload: () => Promise<unknown>;
+  onDelete?: (
+    setSavedFile: React.Dispatch<React.SetStateAction<File | undefined>>
+  ) => Promise<unknown>;
+  onDownload?: () => Promise<unknown>;
   file?: FormObjectValue;
+  confirmUpload?: {
+    validation: (file?: File, ...args: unknown[]) => unknown;
+    onSuccess: (fileName: string | null) => unknown;
+    onError: (err: unknown) => unknown;
+  };
   disabled?: boolean;
 };
 
@@ -49,6 +56,12 @@ const FileViewContainer = tw.div`
   rounded-sm
 `;
 
+const ButtonsContainer = tw.div`
+  flex
+  flex-col
+  items-center
+`;
+
 const OverflowSpan = tw.span`
   break-all
   overflow-hidden
@@ -61,14 +74,23 @@ const UploadFile = ({
   onDelete,
   onDownload,
   file,
+  confirmUpload,
   disabled,
 }: UploadFileProps) => {
   const inputFile = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
+  const [savedFile, setSavedFile] = useState<File>();
 
+  const fileName = file ? file.displayLabel : savedFile ? savedFile.name : null;
+
+  const resetFileField = () => {
+    if (inputFile.current?.value) {
+      inputFile.current.value = '';
+    }
+  };
   return (
     <div>
-      {!file ? (
+      {!file && !savedFile ? (
         !disabled && (
           <Button
             {...buttonConfig}
@@ -82,36 +104,80 @@ const UploadFile = ({
         <FileViewContainer>
           <Box sx={tw`flex gap-x-2 items-center overflow-hidden`}>
             <FilePresentIcon color={'primary'} />
-            <OverflowSpan>{file.displayLabel}</OverflowSpan>
+            <OverflowSpan>{fileName}</OverflowSpan>
           </Box>
-          <div>
+          <ButtonsContainer>
             {!disabled && (
               <>
-                <AsyncIconButton
-                  fnPromise={onDelete}
-                  IconComponent={DeleteIcon}
-                />
-                <AsyncIconButton
-                  fnPromise={async () => {
-                    onDelete().then(() => inputFile.current?.click());
-                  }}
-                  IconComponent={ChangeCircleIcon}
-                />
+                {confirmUpload && (
+                  <Button
+                    color="primary"
+                    onClick={async () => {
+                      const { onError, onSuccess } = confirmUpload;
+                      setLoading(true);
+                      try {
+                        await onUpload(savedFile);
+                        onSuccess(fileName);
+                        setSavedFile(undefined);
+                        resetFileField();
+                      } catch (err) {
+                        onError(err);
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    text="Upload"
+                  />
+                )}
+                {onDelete && (
+                  <>
+                    <AsyncIconButton
+                      fnPromise={async () => {
+                        await onDelete(setSavedFile);
+                        resetFileField();
+                      }}
+                      IconComponent={DeleteIcon}
+                    />
+                    <AsyncIconButton
+                      fnPromise={async () => {
+                        if (confirmUpload) {
+                          inputFile.current?.click();
+                          return;
+                        }
+                        onDelete(setSavedFile).then(
+                          () => inputFile.current?.click()
+                        );
+                      }}
+                      IconComponent={ChangeCircleIcon}
+                    />
+                  </>
+                )}
               </>
             )}
-            <AsyncIconButton
-              fnPromise={onDownload}
-              IconComponent={FileDownloadIcon}
-            />
-          </div>
+            {onDownload && (
+              <AsyncIconButton
+                fnPromise={onDownload}
+                IconComponent={FileDownloadIcon}
+              />
+            )}
+          </ButtonsContainer>
         </FileViewContainer>
       )}
       <VisuallyHiddenInput
         type="file"
         name={name}
         onChange={(event) => {
+          const newFile = event.target.files?.[0];
+          if (confirmUpload) {
+            const { validation } = confirmUpload;
+            if (!validation(newFile)) {
+              return;
+            }
+            setSavedFile(newFile);
+            return;
+          }
           setLoading(true);
-          onUpload(event.target.files?.[0]).then(() => setLoading(false));
+          onUpload(newFile).then(() => setLoading(false));
         }}
         ref={inputFile}
       />

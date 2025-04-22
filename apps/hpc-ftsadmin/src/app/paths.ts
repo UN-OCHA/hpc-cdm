@@ -9,6 +9,7 @@ const ORGANIZATIONS = '/organizations';
 const ORGANIZATION = `${ORGANIZATIONS}/:id`;
 const ADD_ORGANIZATION = `${ORGANIZATIONS}/add`;
 const KEYWORDS = '/keywords';
+const UPLOAD_XLSX = '/upload-xlsx';
 
 const replacePlaceholders = (
   path: string,
@@ -82,6 +83,11 @@ export const addOrganization = () => replacePlaceholders(ADD_ORGANIZATION, {});
  */
 export const keywords = () => replacePlaceholders(KEYWORDS, {});
 
+/**
+ * `/upload-xlsx`
+ */
+export const uploadXLSX = () => replacePlaceholders(UPLOAD_XLSX, {});
+
 export default {
   home,
   splat,
@@ -95,4 +101,5 @@ export default {
   organizationRoot,
   addOrganization,
   keywords,
+  uploadXLSX,
 };

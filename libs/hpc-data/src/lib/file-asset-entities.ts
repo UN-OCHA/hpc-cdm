@@ -50,4 +50,5 @@ export interface Model {
   fileUpload(file: FormData): Promise<FileUploadResult>;
   fileDelete(id: number, collection: FileAssetCollection): Promise<null>;
   fileDownload(id: number, collection: FileAssetCollection): Promise<BlobType>;
+  uploadXLSX(file: File): Promise<unknown>;
 }

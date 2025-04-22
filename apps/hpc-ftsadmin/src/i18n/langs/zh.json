@@ -578,13 +578,19 @@
       }
     },
     "upload": {
-      "buttonText": "上传"
+      "buttonText": "上传",
+      "error": {
+        "invalidExtension": "所选文件不是 .xlsx 或 .xls。请选择一个正确格式的文件",
+        "unknown": "上传文件时发生未知错误"
+      },
+      "success": "文件 \"{fileName}\" 已成功上传"
     }
   },
   "navigation": {
     "addFlow": "添加流",
     "flows": "资金流",
     "keywords": "关键词",
+    "uploadXLSX": "上传XLSX",
     "pendingFlows": "待处理的资金流",
     "organizations": "组织",
     "rpm": "响应规划模块",
@@ -601,6 +607,9 @@
     },
     "keywords": {
       "title": "管理关键词"
+    },
+    "uploadXLSX": {
+      "title": "上传XLSX/XLS文件"
     },
     "pendingFlows": {
       "title": "搜索待处理流程"
