@@ -240,7 +240,7 @@ export const INITIAL_FORM_VALUES: FlowFormType = {
   fundingDestinationProject: null,
   fundingDestinationPlan: null,
 
-  isNewMoney: true,
+  isNewMoney: false,
   amountUSD: '',
   amountOriginalCurrency: '',
   currency: null,

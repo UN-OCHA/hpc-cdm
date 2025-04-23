@@ -184,7 +184,7 @@ export const autofillOrganizations = async ({
     (cat) => cat.name === 'Governments'
   );
   const hasMultilateralOrganizationsType = organization.categories?.some(
-    (cat) => (cat.name = 'Multilateral Organizations')
+    (cat) => cat.name === 'Multilateral Organizations'
   );
 
   if (
