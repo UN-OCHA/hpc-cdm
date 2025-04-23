@@ -5,6 +5,7 @@ import { DATE_FROM_STRING, optional } from './util';
 const EXTERNAL_DATA_SYSTEM_ID = t.keyof({
   CERF: null,
   EDRIS: null,
+  Excel: null,
   IATI: null,
   OCT: null,
   'OCT-CERF': null,
