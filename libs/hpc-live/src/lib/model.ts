@@ -693,6 +693,13 @@ export class LiveModel implements Model {
           resultType: emergencies.GET_EMERGENCIES_RESULT,
         });
       },
+      getEmergency: ({ id }) => {
+        return this.call({
+          pathname: `/v1/emergency/${id}`,
+          method: 'GET',
+          resultType: emergencies.GET_EMERGENCY_RESULT,
+        });
+      },
     };
   }
   get systems(): systems.Model {

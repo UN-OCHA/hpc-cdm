@@ -561,6 +561,20 @@ export class Dummy {
             return this.data.emergencies;
           }
         ),
+        getEmergency: dummyEndpoint(
+          'emergencies.getEmergency',
+          async ({
+            id,
+          }: emergencies.GetEmergencyParams): Promise<emergencies.GetEmergencyResult> => {
+            const emergency = this.data.emergencies.find(
+              (emergency) => emergency.id === id
+            );
+            if (!emergency) {
+              throw new errors.NotFoundError();
+            }
+            return { ...emergency, locations: [], categories: [] };
+          }
+        ),
       },
       fileAssetEntities: {
         fileUpload: dummyEndpoint(

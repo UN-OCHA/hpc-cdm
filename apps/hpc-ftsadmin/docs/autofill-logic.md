@@ -20,6 +20,7 @@ Do we infer all 6, or infer blank, or fail to infer anything and leave whatever 
 | Source AND Dest  | None | Plan  | Country (Admin 0 AND Location) | Add  | Countries of Plan object (single or multiple) |
 | Source AND Dest  | None | Plan  | Emergency  | Add  | Emergency of Plan object (single) |
 | Source AND Dest  | None | Plan  | Plan of Project  | Add  | Plan of Project (single) |
+| Source AND Dest  | None | Emergencies  | Country (Admin 0 AND Location)  | Add  | Countries of Emergency object (ONLY single) |
 | Source AND Dest  | Global Cluster is not blank | Plan  | Field Cluster  | Add  | Field Cluster of the Plan and Global Clusters selected |
 | Source AND Dest  | None | Project  | Plan  | Add  | plan P such that P IN ProjectVersionPlans |
 | Source AND Dest  | None | Project  | Organization  | Add  | All organizations O such that O IN ProjectVersionLocations |

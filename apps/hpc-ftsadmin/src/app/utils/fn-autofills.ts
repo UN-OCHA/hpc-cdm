@@ -180,19 +180,15 @@ export const autofillOrganizations = async ({
     id: valueToInteger(lastOrganization.value),
   });
 
-  const org = await env.model.organizations.getOrganization({
-    id: valueToInteger(lastOrganization.value),
-  });
-
-  const hasGovernmentsType = org.categories?.some(
+  const hasGovernmentsType = organization.categories?.some(
     (cat) => cat.name === 'Governments'
   );
-  const hasMultilateralOrganizationsType = org.categories?.some(
+  const hasMultilateralOrganizationsType = organization.categories?.some(
     (cat) => (cat.name = 'Multilateral Organizations')
   );
 
   if (
-    org.categories?.some((cat) => cat.name === 'Pooled Funds') ||
+    organization.categories?.some((cat) => cat.name === 'Pooled Funds') ||
     !hasGovernmentsType
   ) {
     setFieldValue('isNewMoney', false);
@@ -548,4 +544,38 @@ export const autofillUsageYears = async ({
       value: multiyear.id,
     } satisfies FormObjectValue,
   ]);
+};
+
+export const autofillEmergencies = async ({
+  fieldName,
+  setFieldValue,
+  values,
+  env,
+  newValue,
+}: AutofillProps) => {
+  setFieldValue(fieldName, newValue);
+
+  //  Emergencies field is multi select
+  if (!newValue || typeof newValue === 'string' || !Array.isArray(newValue)) {
+    return;
+  }
+  const lastEmergency = newValue.at(-1);
+
+  if (!lastEmergency || typeof lastEmergency === 'string') {
+    return;
+  }
+  const emergency = await env.model.emergencies.getEmergency({
+    id: valueToInteger(lastEmergency.value),
+  });
+
+  //  Only autofill if there is one location associated
+  if (emergency.locations.length === 1) {
+    helperSetFieldValue(
+      fieldName,
+      'Locations',
+      setFieldValue,
+      values,
+      emergency.locations
+    );
+  }
 };

@@ -33,6 +33,7 @@ import { getContext } from '../../context';
 import paths from '../../paths';
 import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
 import {
+  autofillEmergencies,
   autofillFieldClusters,
   autofillGlobalClusters,
   autofillOrganizations,
@@ -1212,6 +1213,15 @@ export const FlowForm = (props: FlowFormProps) => {
                         )}
                         fnPromise={(query) => fnEmergencies(query, env)}
                         setPendingValuesHandled={setPendingValuesHandled}
+                        onChange={(newValue) => {
+                          autofillEmergencies({
+                            fieldName: 'fundingSourceEmergencies',
+                            setFieldValue,
+                            values,
+                            env,
+                            newValue,
+                          });
+                        }}
                         disabled={isDisabled}
                         pendingValues={pendingValues?.fundingSourceEmergencies}
                         isMulti
@@ -1434,6 +1444,15 @@ export const FlowForm = (props: FlowFormProps) => {
                     )}
                     fnPromise={(query) => fnEmergencies(query, env)}
                     setPendingValuesHandled={setPendingValuesHandled}
+                    onChange={(newValue) => {
+                      autofillEmergencies({
+                        fieldName: 'fundingDestinationEmergencies',
+                        setFieldValue,
+                        values,
+                        env,
+                        newValue,
+                      });
+                    }}
                     disabled={isDisabled}
                     pendingValues={pendingValues?.fundingDestinationEmergencies}
                     isMulti
