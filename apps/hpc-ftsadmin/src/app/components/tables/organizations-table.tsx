@@ -7,7 +7,6 @@ import {
   TableCell,
   TableContainer,
   TableFooter,
-  TableHead,
   TablePagination,
   TableRow,
   TableSortLabel,
@@ -50,6 +49,7 @@ import {
   type OrganizationQuery,
   RenderChipsRow,
   type SetQuery,
+  StickyTableHead,
   StyledLoader,
   TableHeaderButton,
   TableRowClick,
@@ -299,7 +299,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     });
     return (
       <Table size="small">
-        <TableHead>
+        <StickyTableHead>
           <TableRow>
             {tableHeaders.map((header) => {
               if (!header.active) {
@@ -354,7 +354,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
               );
             })}
           </TableRow>
-        </TableHead>
+        </StickyTableHead>
         <TableBody>
           <TableRowsComponent lang={lang} data={data} />
         </TableBody>

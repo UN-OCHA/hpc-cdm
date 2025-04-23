@@ -12,7 +12,6 @@ import {
   TableCell,
   TableContainer,
   TableFooter,
-  TableHead,
   TablePagination,
   TableRow,
   TableSortLabel,
@@ -60,6 +59,7 @@ import {
   type FlowQuery,
   RenderChipsRow,
   type SetQuery,
+  StickyTableHead,
   StyledLoader,
   TableHeaderButton,
   TopRowContainer,
@@ -588,7 +588,7 @@ export default function FlowsTable(props: FlowsTableProps) {
   }) => {
     return (
       <Table size="small">
-        <TableHead>
+        <StickyTableHead>
           <TableRow>
             {pending && <TableCell size="small" />}
             {tableHeaders.map((header) => {
@@ -639,7 +639,7 @@ export default function FlowsTable(props: FlowsTableProps) {
               );
             })}
           </TableRow>
-        </TableHead>
+        </StickyTableHead>
         <TableBody>
           <TableRowsComponent lang={lang} data={data} />
         </TableBody>

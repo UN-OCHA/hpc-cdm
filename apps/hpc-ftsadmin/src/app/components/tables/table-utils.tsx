@@ -1,5 +1,5 @@
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
-import { Chip, IconButton, TableRow, Tooltip } from '@mui/material';
+import { Chip, IconButton, TableHead, TableRow, Tooltip } from '@mui/material';
 import { C } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
@@ -56,6 +56,14 @@ export const TopRowContainer = tw.div`
   flex
   justify-end
 `;
+
+export const StickyTableHead = tw(TableHead)`
+  sticky
+  top-0
+  z-10
+  bg-white
+`;
+
 export const TableHeaderButton = tw(IconButton)`
   h-min
   self-center

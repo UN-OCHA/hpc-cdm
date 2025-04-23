@@ -12,7 +12,6 @@ import {
   TableCell,
   TableContainer,
   TableFooter,
-  TableHead,
   TableRow,
   TableSortLabel,
   Tooltip,
@@ -37,6 +36,7 @@ import {
   ChipDiv,
   type KeywordQuery,
   type SetQuery,
+  StickyTableHead,
   StyledLoader,
   TableHeaderButton,
   TopRowContainer,
@@ -379,7 +379,7 @@ const KeywordTable = (props: KeywordTableProps) => {
     });
     return (
       <Table size="small">
-        <TableHead>
+        <StickyTableHead>
           <TableRow>
             {tableHeaders.map((header) => {
               if (!header.active) {
@@ -432,7 +432,7 @@ const KeywordTable = (props: KeywordTableProps) => {
               );
             })}
           </TableRow>
-        </TableHead>
+        </StickyTableHead>
         <TableBody>
           <TableRowsComponent lang={lang} data={data} />
         </TableBody>
