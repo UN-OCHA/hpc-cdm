@@ -249,7 +249,10 @@ export default function FlowsTable(props: FlowsTableProps) {
                       scope="row"
                       data-test="flows-table-id"
                     >
-                      <Link to={paths.flow(row.id, row.versionID)}>
+                      <Link
+                        to={paths.flow(row.id, row.versionID)}
+                        target="_blank"
+                      >
                         {row.id}v{row.versionID}
                       </Link>
                     </TableCell>
