@@ -22,8 +22,7 @@
         ],
         "styles": ["node_modules/tailwindcss/tailwind.css"],
         "scripts": [],
-        "webpackConfig": "apps/hpc-ftsadmin/webpack.config.js",
-        "isolatedConfig": true
+        "webpackConfig": "apps/hpc-ftsadmin/webpack.config.js"
       },
       "configurations": {
         "dev-live": {
