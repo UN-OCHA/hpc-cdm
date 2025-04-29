@@ -24,7 +24,7 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import * as io from 'io-ts';
 import React, { useState } from 'react';
 import { FaTrashAlt, FaUserSecret } from 'react-icons/fa';
-import { MdAdd, MdClose, MdOutlineSearch } from 'react-icons/md';
+import { MdAdd, MdCheck, MdClose, MdOutlineSearch } from 'react-icons/md';
 import { Link, useBeforeUnload, useBlocker, useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import tw from 'twin.macro';
@@ -471,9 +471,9 @@ export const FlowForm = (props: FlowFormProps) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [pendingValuesHandled, setPendingValuesHandled] = useState(0);
 
-  const pendingValues = isPending
-    ? pendingValuesFlowForm(initialValues, flow)
-    : undefined;
+  const [pendingValues, setPendingValues] = useState(
+    isPending ? pendingValuesFlowForm(initialValues, flow) : undefined
+  );
 
   const isDisabled = isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
@@ -894,6 +894,14 @@ export const FlowForm = (props: FlowFormProps) => {
       })
       .finally(() => setRejectLoading(false));
   };
+  const handleApproveAll = (values: FlowFormType) => {
+    // TODO
+  };
+
+  const handleRejectAll = (values: FlowFormType) => {
+    setPendingValues(null);
+    setPendingValuesHandled(0);
+  };
 
   const handleFundingDestinationOrganizations = (
     newValue:
@@ -973,61 +981,85 @@ export const FlowForm = (props: FlowFormProps) => {
               />
             )}
             {initialValues && flow && !isDeleted && (
-              <Box sx={tw`flex gap-x-6 items-center`}>
-                <C.CheckBox
-                  name="isErrorCorrection"
-                  label={t.t(
-                    lang,
-                    (s) => s.components.flowForm.fields.isErrorCorrection
-                  )}
-                />
-                <C.CheckBox
-                  name="isInactive"
-                  label={t.t(
-                    lang,
-                    (s) => s.components.flowForm.fields.isInactive
-                  )}
-                  disabled={isDisabled}
-                />
-                <Link
-                  to={paths.addFlow()}
-                  state={{
-                    flowFormCopyValues: serializeFlowForm(values),
-                    flowFormCopyValuesName: `${flow?.id}v${flow?.versionID}`,
-                    flowFormCopyValuesPath: paths.flow(flow.id, flow.versionID),
-                  }}
-                >
-                  {t.t(lang, (s) => s.components.flowForm.copyFlow)}
-                </Link>
-                <C.Button
-                  color="primary"
-                  onClick={() => {
-                    handleSearchSimilarFlows(initialValues);
-                  }}
-                  text={t.t(
-                    lang,
-                    (s) => s.components.flowForm.searchSimilarFlow
-                  )}
-                  startIcon={MdOutlineSearch}
-                />
-                <C.Button
-                  color="secondary"
-                  onClick={() => handleDeleteFlow(values)}
-                  text={t.t(lang, (s) => s.components.flowForm.deleteFlow)}
-                  displayLoading={deleteLoading}
-                  startIcon={FaTrashAlt}
-                />
-                {isPending && (
+              <Box sx={tw`flex justify-between`}>
+                <Box sx={tw`flex gap-x-6 items-center`}>
+                  <C.CheckBox
+                    name="isErrorCorrection"
+                    label={t.t(
+                      lang,
+                      (s) => s.components.flowForm.fields.isErrorCorrection
+                    )}
+                  />
+                  <C.CheckBox
+                    name="isInactive"
+                    label={t.t(
+                      lang,
+                      (s) => s.components.flowForm.fields.isInactive
+                    )}
+                    disabled={isDisabled}
+                  />
+                  <Link
+                    to={paths.addFlow()}
+                    state={{
+                      flowFormCopyValues: serializeFlowForm(values),
+                      flowFormCopyValuesName: `${flow?.id}v${flow?.versionID}`,
+                      flowFormCopyValuesPath: paths.flow(
+                        flow.id,
+                        flow.versionID
+                      ),
+                    }}
+                  >
+                    {t.t(lang, (s) => s.components.flowForm.copyFlow)}
+                  </Link>
                   <C.Button
-                    color="secondary"
-                    onClick={() => handleRejectFlow(values)}
+                    color="primary"
+                    onClick={() => {
+                      handleSearchSimilarFlows(initialValues);
+                    }}
                     text={t.t(
                       lang,
-                      (s) => s.components.flowForm.rejectFlow.button
+                      (s) => s.components.flowForm.searchSimilarFlow
                     )}
-                    displayLoading={rejectLoading}
-                    startIcon={MdClose}
+                    startIcon={MdOutlineSearch}
                   />
+                  <C.Button
+                    color="secondary"
+                    onClick={() => handleDeleteFlow(values)}
+                    text={t.t(lang, (s) => s.components.flowForm.deleteFlow)}
+                    displayLoading={deleteLoading}
+                    startIcon={FaTrashAlt}
+                  />
+                </Box>
+                {isPending && (
+                  <Box sx={tw`flex gap-x-4 items-center justify-end`}>
+                    <C.Button
+                      color="secondary"
+                      onClick={() => handleRejectFlow(values)}
+                      text={t.t(
+                        lang,
+                        (s) => s.components.flowForm.rejectFlow.button
+                      )}
+                      displayLoading={rejectLoading}
+                      startIcon={MdClose}
+                    />
+                    <Box
+                      sx={tw`flex bg-unocha-primary p-3 ms-4 rounded-sm gap-x-4`}
+                    >
+                      <C.Button
+                        color="primary_light"
+                        onClick={() => handleApproveAll(values)}
+                        text={'Accept remaining pending values'}
+                        startIcon={MdCheck}
+                      />
+                      <C.Button
+                        color="secondary_light"
+                        onClick={() => handleRejectAll(values)}
+                        text={'Reject remaining pending values'}
+                        displayLoading={rejectLoading}
+                        startIcon={MdClose}
+                      />
+                    </Box>
+                  </Box>
                 )}
               </Box>
             )}
