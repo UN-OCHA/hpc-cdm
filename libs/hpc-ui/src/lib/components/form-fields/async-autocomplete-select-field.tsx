@@ -184,9 +184,7 @@ const AsyncAutocompleteSelect = ({
         if (fnPromise) {
           //  Don't include trailing spaces on query
           const query =
-            input.at(-1) === ' ' && input.length > 3
-              ? input.trimEnd()
-              : input;
+            input.at(-1) === ' ' && input.length > 3 ? input.trimEnd() : input;
           response = await fnPromise({
             query,
           });
@@ -212,14 +210,6 @@ const AsyncAutocompleteSelect = ({
       isActive = false;
     };
   }, [debouncedInputValue, isOpen]);
-
-  useEffect(() => {
-    if (!isOpen && isAutocompleteAPI) {
-      setOptions([]);
-      setData([]);
-      setIsFetch(false);
-    }
-  }, [isOpen, isAutocompleteAPI, fnPromise]);
 
   useEffect(() => {
     setOptions([]);
@@ -275,6 +265,7 @@ const AsyncAutocompleteSelect = ({
     onInputChange: (_, newInputValue) => {
       setInputValue(newInputValue);
     },
+    clearOnBlur: false,
     loading: isLoading,
     renderOption: (props, option) => {
       if (allowChildrenRender && option.parent) {
