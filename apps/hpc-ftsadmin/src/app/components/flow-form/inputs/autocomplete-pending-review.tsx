@@ -23,13 +23,13 @@ const AutocompleteSelectReview = (props: AutocompleteSelectReviewProps) => {
   };
   return (
     <div>
-      <ReviewPendingValues
-        {...reviewPendingValuesProps}
-        componentType="Autocomplete"
-      />
       <C.AutocompleteSelect
         {...asyncAutocompleteSelectProps}
         name={fieldName}
+      />
+      <ReviewPendingValues
+        {...reviewPendingValuesProps}
+        componentType="Autocomplete"
       />
     </div>
   );

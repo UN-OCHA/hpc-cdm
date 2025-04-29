@@ -27,8 +27,8 @@ const DatePickerReview = (props: DatePickerReviewProps) => {
   };
   return (
     <Box sx={props.sx}>
-      <ReviewPendingValues {...reviewPendingValuesProps} componentType="Date" />
       <C.DatePicker {...datePickerProps} name={fieldName} />
+      <ReviewPendingValues {...reviewPendingValuesProps} componentType="Date" />
     </Box>
   );
 };

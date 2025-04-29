@@ -27,8 +27,8 @@ const NumberFieldReview = (props: NumberFieldReviewProps) => {
   };
   return (
     <Box sx={props.sx}>
-      <ReviewPendingValues {...reviewPendingValuesProps} componentType="Text" />
       <C.NumberField {...numberFieldProps} name={fieldName} />
+      <ReviewPendingValues {...reviewPendingValuesProps} componentType="Text" />
     </Box>
   );
 };

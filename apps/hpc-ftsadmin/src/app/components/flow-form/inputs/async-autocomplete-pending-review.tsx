@@ -29,13 +29,13 @@ const AsyncAutocompleteSelectReview = (
   };
   return (
     <Box sx={props.sx}>
-      <ReviewPendingValues
-        {...reviewPendingValuesProps}
-        componentType={props.isMulti ? 'MultiAutocomplete' : 'Autocomplete'}
-      />
       <C.AsyncAutocompleteSelect
         {...asyncAutocompleteSelectProps}
         name={fieldName}
+      />
+      <ReviewPendingValues
+        {...reviewPendingValuesProps}
+        componentType={props.isMulti ? 'MultiAutocomplete' : 'Autocomplete'}
       />
     </Box>
   );

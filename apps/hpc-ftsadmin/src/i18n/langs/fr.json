@@ -53,7 +53,7 @@
     },
     "reviewPendingValues": {
       "unmatched": "Non correspondants",
-      "label": "Valeurs entrantes :",
+      "label": "Changement : Nouvelle Valeur",
       "button": {
         "accept": "Accepter",
         "reject": "Rejeter",

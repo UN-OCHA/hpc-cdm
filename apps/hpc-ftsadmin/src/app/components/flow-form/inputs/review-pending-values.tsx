@@ -30,11 +30,11 @@ export type ReviewPendingValuesProps = {
 
 const BluePaper = tw(Paper)`
   bg-unocha-primary
-  p-6
-  mt-4
+  p-4
+  mb-4
 `;
 const ChipContainer = tw.div`
-  my-6
+  my-4
 `;
 const HeaderContainer = tw.div`
   flex
@@ -114,12 +114,46 @@ const ReviewPendingValues = ({
 
   return (
     <BluePaper elevation={3}>
-      <HeaderContainer>
-        <WarningIcon color="warning" />
-        <span style={{ color: '#fff' }}>
-          {t.t(lang, (s) => s.components.reviewPendingValues.label)}
-        </span>
-      </HeaderContainer>
+      <Box sx={tw`flex justify-between`}>
+        <HeaderContainer>
+          <WarningIcon color="warning" />
+          <span style={{ color: '#fff' }}>
+            {t.t(lang, (s) => s.components.reviewPendingValues.label)}
+          </span>
+        </HeaderContainer>
+        {!isUnmatched ? (
+          <Box sx={tw`flex gap-x-4`}>
+            <C.Button
+              text={t.t(
+                lang,
+                (s) => s.components.reviewPendingValues.button.accept
+              )}
+              onClick={handleAccept}
+              color="primary_light"
+            />
+            <C.Button
+              text={t.t(
+                lang,
+                (s) => s.components.reviewPendingValues.button.reject
+              )}
+              onClick={handleClick}
+              color="secondary_light"
+            />
+          </Box>
+        ) : (
+          <Box sx={tw`flex`}>
+            <C.Button
+              text={t.t(
+                lang,
+                (s) => s.components.reviewPendingValues.button.confirm
+              )}
+              onClick={handleClick}
+              color="neutral_light"
+            />
+          </Box>
+        )}
+      </Box>
+
       <ChipContainer>
         {isFormObjectValueArray(pendingValues) &&
           pendingValues.map((pendingValue) => (
@@ -152,37 +186,6 @@ const ReviewPendingValues = ({
         )}
         {isBlank(pendingValues) && <p style={{ color: '#fff' }}>[blank]</p>}
       </ChipContainer>
-      {!isUnmatched ? (
-        <Box sx={tw`flex gap-x-4 justify-end`}>
-          <C.Button
-            text={t.t(
-              lang,
-              (s) => s.components.reviewPendingValues.button.accept
-            )}
-            onClick={handleAccept}
-            color="primary_light"
-          />
-          <C.Button
-            text={t.t(
-              lang,
-              (s) => s.components.reviewPendingValues.button.reject
-            )}
-            onClick={handleClick}
-            color="secondary_light"
-          />
-        </Box>
-      ) : (
-        <Box sx={tw`flex justify-end`}>
-          <C.Button
-            text={t.t(
-              lang,
-              (s) => s.components.reviewPendingValues.button.confirm
-            )}
-            onClick={handleClick}
-            color="neutral_light"
-          />
-        </Box>
-      )}
     </BluePaper>
   );
 };

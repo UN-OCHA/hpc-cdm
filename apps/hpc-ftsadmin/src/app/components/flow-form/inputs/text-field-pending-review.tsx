@@ -23,8 +23,8 @@ const TextFieldReview = (props: TextFieldReviewProps) => {
   };
   return (
     <div>
-      <ReviewPendingValues {...reviewPendingValuesProps} componentType="Text" />
       <C.TextFieldWrapper {...textFieldProps} name={fieldName} />
+      <ReviewPendingValues {...reviewPendingValuesProps} componentType="Text" />
     </div>
   );
 };

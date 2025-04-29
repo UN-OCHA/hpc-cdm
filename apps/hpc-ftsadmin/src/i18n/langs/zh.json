@@ -53,7 +53,7 @@
     },
     "reviewPendingValues": {
       "unmatched": "不匹配",
-      "label": "传入值：",
+      "label": "更改：新值",
       "button": {
         "accept": "接受",
         "reject": "拒绝",

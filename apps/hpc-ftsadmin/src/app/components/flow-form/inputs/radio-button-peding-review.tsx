@@ -28,11 +28,11 @@ const RadioButtonFieldReview = <T extends string>(
   };
   return (
     <Box sx={props.sx}>
+      <C.RadioButtonField {...radioButtonFieldProps} name={fieldName} />
       <ReviewPendingValues
         {...reviewPendingValuesProps}
         componentType="Radio"
       />
-      <C.RadioButtonField {...radioButtonFieldProps} name={fieldName} />
     </Box>
   );
 };

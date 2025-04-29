@@ -53,7 +53,7 @@
     },
     "reviewPendingValues": {
       "unmatched": "Unmatched",
-      "label": "Incoming values:",
+      "label": "Change: New Value",
       "button": {
         "accept": "Accept",
         "reject": "Reject",
