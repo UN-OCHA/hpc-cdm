@@ -169,6 +169,7 @@
         "flowVersion": "资金流版本"
       },
       "submitValidation": {
+        "acceptAllPendingChanges": "接受所有更改",
         "dataConsistency": "所选的{entity}：{selected} 与可能的预期 {entity}：{expected} 不匹配",
         "parentFlowAmountUSD": "子流的美元金额大于父流的美元金额。你想继续吗？",
         "submitButton": {
@@ -204,6 +205,7 @@
         "emergency": "此资金流在所选年份和地点至少有一个可用的紧急情况，如 {emergency}，您仍要保存吗？",
         "pendingValues": "请处理所有待处理的值",
         "planLocation": "未添加任何与{plan}相关联的{entity}。请至少添加以下位置中的一个: [{locations}]",
+        "rejectAllPendingChanges": "拒绝剩余更改",
         "reportingOrganization": "您的资金流报告详情中的组织与来源或目的地组织不匹配。您确定这是正确的吗？",
         "originalAmountIsDifferentToParent": "此流程的外币必须与其停放的父流程相同",
         "originalAmountIsDifferentToChildren": "子流程的外币必须与当前流程保持一致",

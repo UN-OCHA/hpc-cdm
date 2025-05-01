@@ -169,6 +169,7 @@
         "flowVersion": "Versions de flux"
       },
       "submitValidation": {
+        "acceptAllPendingChanges": "Accepter toutes les modifications",
         "dataConsistency": "Le/La(s) {entity} sélectionnée : {selected} ne correspond pas à le/la(s) {entity} attendue possible : {expected}",
         "parentFlowAmountUSD": "Le montant en USD du flux enfant est supérieur au montant en USD du flux parent. Voulez-vous continuer ?",
         "submitButton": {
@@ -204,6 +205,7 @@
         "emergency": "Ce flux a au moins une urgence disponible pour les années et les lieux sélectionnés, comme {emergency}, souhaitez-vous tout de même enregistrer ?",
         "pendingValues": "Veuillez gérer toutes les valeurs en attente",
         "planLocation": "Aucun {entity} lié à {plan} n'a été ajouté. Veuillez ajouter au moins l'un des endroits suivants : [{locations}]",
+        "rejectAllPendingChanges": "Rejeter les modifications restantes",
         "reportingOrganization": "L'organisation des détails du rapport de votre flux ne correspond pas à l'organisation source ou de destination. Êtes-vous sûr que c'est correct ?",
         "originalAmountIsDifferentToParent": "La devise étrangère de ce flux doit être la même que celle de son flux parent mis en veille",
         "originalAmountIsDifferentToChildren": "La devise étrangère des flux enfants doit être la même que celle du flux actuel",

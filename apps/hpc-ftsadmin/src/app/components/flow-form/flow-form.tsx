@@ -469,6 +469,8 @@ export const FlowForm = (props: FlowFormProps) => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [rejectLoading, setRejectLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [shouldAcceptAllPendingChanges, setShouldAcceptAllPendingChanges] =
+    useState(false);
   const [pendingValuesHandled, setPendingValuesHandled] = useState(0);
 
   const [pendingValues, setPendingValues] = useState(
@@ -668,7 +670,6 @@ export const FlowForm = (props: FlowFormProps) => {
       lang,
       pendingValuesHandled,
       values,
-      flow,
       isPending,
       pendingValues,
     });
@@ -677,7 +678,7 @@ export const FlowForm = (props: FlowFormProps) => {
       return;
     }
     if (flow?.id) {
-      if (values.isInactive && !validateFlowIsUnlinked(values)) {
+      if (!isPending && values.isInactive && !validateFlowIsUnlinked(values)) {
         toast.error(
           t.t(
             lang,
@@ -707,7 +708,7 @@ export const FlowForm = (props: FlowFormProps) => {
             ),
             TOAST_CONFIG
           );
-          if (values.isErrorCorrection) {
+          if (values.isErrorCorrection || isPending) {
             load();
             return;
           }
@@ -894,11 +895,11 @@ export const FlowForm = (props: FlowFormProps) => {
       })
       .finally(() => setRejectLoading(false));
   };
-  const handleApproveAll = (values: FlowFormType) => {
-    // TODO
+  const handleApproveAll = () => {
+    setShouldAcceptAllPendingChanges(true);
   };
 
-  const handleRejectAll = (values: FlowFormType) => {
+  const handleRejectAll = () => {
     setPendingValues(null);
     setPendingValuesHandled(0);
   };
@@ -1047,14 +1048,24 @@ export const FlowForm = (props: FlowFormProps) => {
                     >
                       <C.Button
                         color="primary_light"
-                        onClick={() => handleApproveAll(values)}
-                        text={'Accept remaining pending values'}
+                        onClick={handleApproveAll}
+                        text={t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.submitValidation
+                              .acceptAllPendingChanges
+                        )}
                         startIcon={MdCheck}
                       />
                       <C.Button
                         color="secondary_light"
-                        onClick={() => handleRejectAll(values)}
-                        text={'Reject remaining pending values'}
+                        onClick={handleRejectAll}
+                        text={t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.submitValidation
+                              .rejectAllPendingChanges
+                        )}
                         displayLoading={rejectLoading}
                         startIcon={MdClose}
                       />
@@ -1111,6 +1122,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         pendingValues={
                           pendingValues?.fundingSourceOrganizations
                         }
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
                         isMulti
                       />
                       <AsyncAutocompleteSelectReview
@@ -1135,6 +1147,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         disabled={isDisabled}
                         pendingValues={pendingValues?.fundingSourceUsageYears}
                         firstViewCondition={usageYearFirstViewCondition}
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
                         isMulti
                         required
                       />
@@ -1149,6 +1162,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         setPendingValuesHandled={setPendingValuesHandled}
                         disabled={isDisabled}
                         pendingValues={pendingValues?.fundingSourceLocations}
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
                         isMulti
                       />
                       <AsyncAutocompleteSelectReview
@@ -1175,6 +1189,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         pendingValues={
                           pendingValues?.fundingSourceGlobalClusters
                         }
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
                         isMulti
                       />
                       <AsyncAutocompleteSelectReview
@@ -1196,6 +1211,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         }}
                         disabled={isDisabled}
                         pendingValues={pendingValues?.fundingSourcePlan}
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
                       />
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourceFieldClusters"
@@ -1232,8 +1248,9 @@ export const FlowForm = (props: FlowFormProps) => {
                         pendingValues={
                           pendingValues?.fundingSourceFieldClusters
                         }
-                        isMulti
                         observedValue={values.fundingSourcePlan?.value.toString()}
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
+                        isMulti
                       />
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourceEmergencies"
@@ -1256,6 +1273,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         }}
                         disabled={isDisabled}
                         pendingValues={pendingValues?.fundingSourceEmergencies}
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
                         isMulti
                       />
                       <AsyncAutocompleteSelectReview
@@ -1278,6 +1296,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         }}
                         disabled={isDisabled}
                         pendingValues={pendingValues?.fundingSourceProject}
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
                       />
                     </>
                   )}
@@ -1317,6 +1336,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     pendingValues={
                       pendingValues?.fundingDestinationOrganizations
                     }
+                    shouldAcceptChange={shouldAcceptAllPendingChanges}
                     isMulti
                   />
                   {values.fundingDestinationOrganizations.some(
@@ -1341,6 +1361,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       pendingValues={
                         pendingValues?.fundingDestinationAnonymizedOrganizations
                       }
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                       isMulti
                     />
                   )}
@@ -1367,6 +1388,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     disabled={isDisabled}
                     pendingValues={pendingValues?.fundingDestinationUsageYears}
                     firstViewCondition={usageYearFirstViewCondition}
+                    shouldAcceptChange={shouldAcceptAllPendingChanges}
                     isMulti
                     required
                   />
@@ -1381,6 +1403,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     setPendingValuesHandled={setPendingValuesHandled}
                     disabled={isDisabled}
                     pendingValues={pendingValues?.fundingDestinationLocations}
+                    shouldAcceptChange={shouldAcceptAllPendingChanges}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -1407,6 +1430,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     pendingValues={
                       pendingValues?.fundingDestinationGlobalClusters
                     }
+                    shouldAcceptChange={shouldAcceptAllPendingChanges}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -1427,6 +1451,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       });
                     }}
                     disabled={isDisabled}
+                    shouldAcceptChange={shouldAcceptAllPendingChanges}
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationFieldClusters"
@@ -1465,6 +1490,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     }
                     isMulti
                     observedValue={values.fundingDestinationPlan?.value.toString()}
+                    shouldAcceptChange={shouldAcceptAllPendingChanges}
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationEmergencies"
@@ -1487,6 +1513,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     }}
                     disabled={isDisabled}
                     pendingValues={pendingValues?.fundingDestinationEmergencies}
+                    shouldAcceptChange={shouldAcceptAllPendingChanges}
                     isMulti
                   />
                   <AsyncAutocompleteSelectReview
@@ -1509,6 +1536,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     }}
                     disabled={isDisabled}
                     pendingValues={pendingValues?.fundingDestinationProject}
+                    shouldAcceptChange={shouldAcceptAllPendingChanges}
                   />
                 </FormGroup>
               </Box>
@@ -1539,6 +1567,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       setPendingValuesHandled={setPendingValuesHandled}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.amountUSD}
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                       allowNegative
                       required
                     />
@@ -1559,6 +1588,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           sx={tw`basis-4/6`}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.amountOriginalCurrency}
+                          shouldAcceptChange={shouldAcceptAllPendingChanges}
                           allowNegative
                         />
                         <AsyncAutocompleteSelectReview
@@ -1573,6 +1603,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           sx={tw`basis-2/6`}
                           disabled={isDisabled}
                           pendingValues={pendingValues?.currency}
+                          shouldAcceptChange={shouldAcceptAllPendingChanges}
                         />
                       </Box>
                       <NumberFieldReview
@@ -1585,6 +1616,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         setPendingValuesHandled={setPendingValuesHandled}
                         disabled={isDisabled}
                         pendingValues={pendingValues?.exchangeRate}
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
                       />
                       <UNTreasuryLinkComponent
                         href="https://treasury.un.org/operationalrates/OperationalRates.php"
@@ -1623,6 +1655,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       minRows={2}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.flowDescription}
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                     />
                     <Box sx={tw`flex gap-4`}>
                       <DatePickerReview
@@ -1645,6 +1678,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         disabled={isDisabled}
                         pendingValues={pendingValues?.firstReported}
                         lang={lang}
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
                         required
                       />
                       <DatePickerReview
@@ -1658,6 +1692,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         disabled={isDisabled}
                         pendingValues={pendingValues?.decisionDate}
                         lang={lang}
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
                       />
                     </Box>
                     <NumberFieldReview
@@ -1671,6 +1706,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       setPendingValuesHandled={setPendingValuesHandled}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.donorBudgetYear}
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                     />
                   </div>
                   <div>
@@ -1684,6 +1720,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       setPendingValuesHandled={setPendingValuesHandled}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.flowType}
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                       required
                     />
                     <AutocompleteSelectReview
@@ -1696,6 +1733,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       setPendingValuesHandled={setPendingValuesHandled}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.flowStatus}
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                       required
                     />
                     <DatePickerReview
@@ -1708,6 +1746,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       disabled={isDisabled}
                       pendingValues={pendingValues?.flowDate}
                       lang={lang}
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                       required
                     />
                     <AutocompleteSelectReview
@@ -1720,6 +1759,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       setPendingValuesHandled={setPendingValuesHandled}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.contributionType}
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                     />
                     <AutocompleteSelectReview
                       fieldName="earmarkingType"
@@ -1731,6 +1771,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       setPendingValuesHandled={setPendingValuesHandled}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.earmarkingType}
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                     />
                     <AutocompleteSelectReview
                       fieldName="method"
@@ -1745,6 +1786,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       onChange={(newValue) =>
                         handleMethod(newValue, setFieldValue)
                       }
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                       required
                     />
                     {values.method?.displayLabel === CTP && (
@@ -1758,6 +1800,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         setPendingValuesHandled={setPendingValuesHandled}
                         disabled={isDisabled}
                         pendingValues={pendingValues?.childMethod}
+                        shouldAcceptChange={shouldAcceptAllPendingChanges}
                       />
                     )}
 
@@ -1772,6 +1815,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       isAutocompleteAPI={false}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.keywords}
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                       isMulti
                     />
                     <AsyncAutocompleteSelectReview
@@ -1785,6 +1829,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       isAutocompleteAPI={false}
                       disabled={isDisabled}
                       pendingValues={pendingValues?.beneficiaryGroup}
+                      shouldAcceptChange={shouldAcceptAllPendingChanges}
                     />
                   </div>
                 </Box>
@@ -1796,6 +1841,7 @@ export const FlowForm = (props: FlowFormProps) => {
                   minRows={3}
                   disabled={isDisabled}
                   pendingValues={pendingValues?.notes}
+                  shouldAcceptChange={shouldAcceptAllPendingChanges}
                 />
               </FormGroup>
               <FormGroup

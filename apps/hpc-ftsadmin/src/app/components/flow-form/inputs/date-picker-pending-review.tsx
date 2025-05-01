@@ -16,6 +16,7 @@ const DatePickerReview = (props: DatePickerReviewProps) => {
     pendingValues,
     onClick,
     setPendingValuesHandled,
+    shouldAcceptChange,
     ...datePickerProps
   } = props;
 
@@ -24,6 +25,7 @@ const DatePickerReview = (props: DatePickerReviewProps) => {
     pendingValues,
     setPendingValuesHandled,
     onClick,
+    shouldAcceptChange,
   };
   return (
     <Box sx={props.sx}>

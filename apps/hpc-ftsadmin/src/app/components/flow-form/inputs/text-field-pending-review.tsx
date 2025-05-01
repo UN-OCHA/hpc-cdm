@@ -12,6 +12,7 @@ const TextFieldReview = (props: TextFieldReviewProps) => {
     pendingValues,
     setPendingValuesHandled,
     onClick,
+    shouldAcceptChange,
     ...textFieldProps
   } = props;
 
@@ -20,6 +21,7 @@ const TextFieldReview = (props: TextFieldReviewProps) => {
     pendingValues,
     setPendingValuesHandled,
     onClick,
+    shouldAcceptChange,
   };
   return (
     <div>

@@ -169,6 +169,7 @@
         "flowVersion": "Versiones de flujo"
       },
       "submitValidation": {
+        "acceptAllPendingChanges": "Aceptar todos los cambios",
         "dataConsistency": "La/Lo(s) {entity} seleccionada: {selected} no coincide con la/lo(s) {entity} esperada posible: {expected}",
         "parentFlowAmountUSD": "La cantidad en USD del flujo hijo es mayor que la cantidad en USD del flujo padre. ¿Desea continuar?",
         "submitButton": {
@@ -204,6 +205,7 @@
         "emergency": "Este flujo tiene al menos una emergencia disponible para los años y ubicaciones seleccionados, como {emergency}, ¿aún desea guardar?",
         "pendingValues": "Por favor gestione todos los valores pendientes",
         "planLocation": "No se añadió ningún {entity} vinculado a {plan}. Por favor, añada al menos una de las siguientes ubicaciones: [{locations}]",
+        "rejectAllPendingChanges": "Rechazar los cambios restantes",
         "reportingOrganization": "La organización del detalle del informe de su flujo no coincide con la organización de origen o destino. ¿Está seguro de que esto es correcto?",
         "originalAmountIsDifferentToParent": "La moneda extranjera de este flujo debe ser la misma que la del flujo principal estacionado",
         "originalAmountIsDifferentToChildren": "La moneda extranjera de los flujos secundarios debe ser la misma que en el flujo actual",

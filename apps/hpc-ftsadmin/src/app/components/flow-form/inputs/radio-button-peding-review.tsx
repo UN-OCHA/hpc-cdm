@@ -17,6 +17,7 @@ const RadioButtonFieldReview = <T extends string>(
     pendingValues,
     onClick,
     setPendingValuesHandled,
+    shouldAcceptChange,
     ...radioButtonFieldProps
   } = props;
 
@@ -25,6 +26,7 @@ const RadioButtonFieldReview = <T extends string>(
     pendingValues,
     setPendingValuesHandled,
     onClick,
+    shouldAcceptChange,
   };
   return (
     <Box sx={props.sx}>

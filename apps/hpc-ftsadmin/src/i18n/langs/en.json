@@ -169,6 +169,7 @@
         "flowVersion": "Flow Versions"
       },
       "submitValidation": {
+        "acceptAllPendingChanges": "Accept All Changes",
         "dataConsistency": "The selected {entity}: [{selected}] do not match the possible expected {entity}: [{expected}]",
         "parentFlowAmountUSD": "The amount USD of the child flow is greater than the amount USD of the parent flow. Do you want to proceed?",
         "submitButton": {
@@ -204,6 +205,7 @@
         "emergency": "This flow has at least one emergency available for the selected year(s) and location(s), like {emergency} do you still want to save",
         "pendingValues": "Please handle all pending values",
         "planLocation": "No {entity} linked to {plan} was added. Please add least one of the following locations: [{locations}]",
+        "rejectAllPendingChanges": "Reject Remaining Changes",
         "reportingOrganization": "Your flow's Report Detail organization doesn't match the source or destination organization. Are you sure this is right?",
         "originalAmountIsDifferentToParent": "This flow's foreign currency must be the same as it's parked parent flow",
         "originalAmountIsDifferentToChildren": "This flow's children flows foreign currency, must be the same as in current flow",

@@ -1,7 +1,7 @@
 import { Box, Chip, Paper, Tooltip } from '@mui/material';
 import { FormObjectValue } from '@unocha/hpc-data';
 import { C, THEME } from '@unocha/hpc-ui';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import WarningIcon from '@mui/icons-material/Warning';
 import { t } from '../../../../i18n';
@@ -26,6 +26,7 @@ export type ReviewPendingValuesProps = {
   pendingValues?: Dayjs | string | FormObjectValue | FormObjectValue[] | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClick?: (...args: any[]) => unknown;
+  shouldAcceptChange?: boolean;
 };
 
 const BluePaper = tw(Paper)`
@@ -80,13 +81,11 @@ const ReviewPendingValues = ({
   pendingValues,
   setPendingValuesHandled,
   onClick,
+  shouldAcceptChange,
 }: ReviewPendingValuesProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const lang = getContext().lang;
   const { setFieldValue } = useFormikContext();
-  if (!isVisible || pendingValues === undefined) {
-    return;
-  }
 
   const MAP_COMPONENT_TYPE_TO_IS_TYPE: Record<InputFieldsTypes, boolean> = {
     MultiAutocomplete:
@@ -111,6 +110,21 @@ const ReviewPendingValues = ({
       handleClick();
     }
   };
+
+  useEffect(() => {
+    if (!shouldAcceptChange) {
+      return;
+    }
+    if (isUnmatched && pendingValues !== undefined) {
+      handleClick();
+      return;
+    }
+    handleAccept();
+  }, [shouldAcceptChange]);
+
+  if (!isVisible || pendingValues === undefined) {
+    return;
+  }
 
   return (
     <BluePaper elevation={3}>

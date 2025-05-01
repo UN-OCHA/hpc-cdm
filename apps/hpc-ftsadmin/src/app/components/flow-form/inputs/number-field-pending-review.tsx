@@ -16,6 +16,7 @@ const NumberFieldReview = (props: NumberFieldReviewProps) => {
     pendingValues,
     setPendingValuesHandled,
     onClick,
+    shouldAcceptChange,
     ...numberFieldProps
   } = props;
 
@@ -24,6 +25,7 @@ const NumberFieldReview = (props: NumberFieldReviewProps) => {
     pendingValues,
     setPendingValuesHandled,
     onClick,
+    shouldAcceptChange,
   };
   return (
     <Box sx={props.sx}>

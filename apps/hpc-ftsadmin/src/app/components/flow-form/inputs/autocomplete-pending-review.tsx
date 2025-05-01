@@ -12,6 +12,7 @@ const AutocompleteSelectReview = (props: AutocompleteSelectReviewProps) => {
     pendingValues,
     setPendingValuesHandled,
     onClick,
+    shouldAcceptChange,
     ...asyncAutocompleteSelectProps
   } = props;
 
@@ -20,6 +21,7 @@ const AutocompleteSelectReview = (props: AutocompleteSelectReviewProps) => {
     pendingValues,
     setPendingValuesHandled,
     onClick,
+    shouldAcceptChange,
   };
   return (
     <div>

@@ -243,7 +243,6 @@ export const validateFlow = async ({
   lang,
   env,
   pendingValuesHandled,
-  flow,
   pendingValues,
   isPending,
 }: {
@@ -251,7 +250,6 @@ export const validateFlow = async ({
   lang: LanguageKey;
   env: Environment;
   pendingValuesHandled: number;
-  flow?: flows.GetFlowResult;
   pendingValues?: Partial<FlowFormType> | null;
   isPending?: boolean;
 }) => {
@@ -317,8 +315,9 @@ export const validateFlow = async ({
   }
   if (
     isPending &&
-    pendingValues &&
-    pendingValuesHandled !== Object.keys(pendingValues).length
+    (pendingValues === null ||
+      (pendingValues !== undefined &&
+        pendingValuesHandled !== Object.keys(pendingValues).length))
   ) {
     toast.error(
       t.t(lang, (s) => s.components.flowForm.submitValidation.pendingValues),

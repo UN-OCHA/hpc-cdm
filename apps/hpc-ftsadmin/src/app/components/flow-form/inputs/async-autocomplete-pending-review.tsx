@@ -18,6 +18,7 @@ const AsyncAutocompleteSelectReview = (
     pendingValues,
     onClick,
     setPendingValuesHandled,
+    shouldAcceptChange,
     ...asyncAutocompleteSelectProps
   } = props;
 
@@ -26,6 +27,7 @@ const AsyncAutocompleteSelectReview = (
     pendingValues,
     setPendingValuesHandled,
     onClick,
+    shouldAcceptChange,
   };
   return (
     <Box sx={props.sx}>
