@@ -1,6 +1,6 @@
 {
   "name": "unocha",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "license": "Apache-2.0",
   "scripts": {
     "remove-unneeded-deps": "node tools/remove-unneeded-deps.js",
@@ -30,8 +30,8 @@
     "prepare": "husky install"
   },
   "engines": {
-    "node": ">=18.18.2 || >=20.9.0",
-    "npm": ">=9.5.1 || >=10.2.2"
+    "node": ">=20.19.0 || >=22.14.0",
+    "npm": ">=9.6.5 || >=10.9.0 || >=11.3.0"
   },
   "lint-staged": {
     "*.{js,ts,tsx,md,json}": [
@@ -63,7 +63,7 @@
     "@types/jest": "29.5.14",
     "@types/jquery": "^3.5.1",
     "@types/lodash": "^4.14.158",
-    "@types/node": "20.8.10",
+    "@types/node": "22.15.3",
     "@types/react": "18.3.1",
     "@types/react-beautiful-dnd": "13.1.8",
     "@types/react-dom": "18.3.0",
@@ -117,7 +117,7 @@
     "ts-jest": "29.1.0",
     "ts-node": "10.9.1",
     "twin.macro": "3.4.1",
-    "typescript": "5.2.2"
+    "typescript": "5.8.3"
   },
   "babelMacros": {
     "twin": {
