@@ -300,7 +300,6 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "تضمين أطفال التدفق المتطابق",
-        "restricted": "مقيد",
         "flowID": "معرف التدفق",
         "amountUSD": "المبلغ بالدولار الأمريكي",
         "keywords": "الكلمات الرئيسية",

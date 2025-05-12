@@ -393,16 +393,6 @@ export const parseFlowFilters = (
           }
           break;
         }
-        case 'restricted': {
-          const restricted = filters.restricted?.value;
-          if (!restricted) {
-            break;
-          }
-          if (filterValueIsBoolean(restricted)) {
-            res.flowFilters.restricted = restricted;
-          }
-          break;
-        }
         case 'includeChildrenOfParkedFlows': {
           const value = filters.includeChildrenOfParkedFlows?.value;
           if (!value) {

@@ -299,7 +299,6 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "Incluir hijos de flujos estacionados coincidentes",
-        "restricted": "Restringido",
         "flowID": "ID del Flujo",
         "amountUSD": "Monto en USD",
         "keywords": "Palabras Clave",

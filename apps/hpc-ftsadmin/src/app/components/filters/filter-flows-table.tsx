@@ -55,7 +55,6 @@ export interface FlowsFilterValues {
   destinationGlobalClusters?: util.FormObjectValue[];
   destinationEmergencies?: util.FormObjectValue[];
   includeChildrenOfParkedFlows?: boolean;
-  restricted?: boolean;
 }
 export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   flowID: [],
@@ -83,7 +82,6 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   destinationGlobalClusters: [],
   destinationEmergencies: [],
   includeChildrenOfParkedFlows: true,
-  restricted: false,
 };
 
 const FORM_VALIDATION = io.type({
@@ -165,14 +163,6 @@ export const FilterFlowsTable = (props: Props) => {
                 )}
               />
             </StyledDiv>
-            <C.Switch
-              name="restricted"
-              label={t.t(
-                lang,
-                (s) => s.components.flowsFilter.filters.restricted
-              )}
-              color="error"
-            />
             <C.Section
               title={t.t(
                 lang,

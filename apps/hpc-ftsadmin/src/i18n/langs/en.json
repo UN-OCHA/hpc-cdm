@@ -302,7 +302,6 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "Include children of matching parked flows",
-        "restricted": "Restricted",
         "flowID": "Flow ID",
         "amountUSD": "Amount USD",
         "keywords": "Keywords",

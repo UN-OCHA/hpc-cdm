@@ -299,7 +299,6 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "包括匹配的停车流的子项",
-        "restricted": "受限",
         "flowID": "资金流ID",
         "amountUSD": "金额（美元）",
         "keywords": "关键词",

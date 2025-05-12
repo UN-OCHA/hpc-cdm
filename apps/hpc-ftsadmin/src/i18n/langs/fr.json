@@ -299,7 +299,6 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "Inclure les enfants des flux de stationnement correspondants",
-        "restricted": "Restreint",
         "flowID": "ID du flux",
         "amountUSD": "Montant en USD",
         "keywords": "Mots-clés",
