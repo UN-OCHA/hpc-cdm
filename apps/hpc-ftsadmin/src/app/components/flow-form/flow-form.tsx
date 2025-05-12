@@ -664,6 +664,7 @@ export const FlowForm = (props: FlowFormProps) => {
     values: FlowFormTypeValidated,
     isSaved?: boolean
   ) => {
+    toast.dismiss();
     setSubmitLoading(true);
     const isValidFlow = await validateFlow({
       env,
@@ -773,6 +774,7 @@ export const FlowForm = (props: FlowFormProps) => {
   };
 
   const handleDeleteFlow = async (values: FlowFormType) => {
+    toast.dismiss();
     setDeleteLoading(true);
     if (
       !window.confirm(
@@ -826,6 +828,7 @@ export const FlowForm = (props: FlowFormProps) => {
   };
 
   const handleRejectFlow = async (values: FlowFormType) => {
+    toast.dismiss();
     setRejectLoading(true);
     if (!flow) {
       setRejectLoading(false);
