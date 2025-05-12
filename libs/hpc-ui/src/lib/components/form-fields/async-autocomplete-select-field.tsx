@@ -262,8 +262,10 @@ const AsyncAutocompleteSelect = ({
         setFieldValue(name, newValue);
       }
     },
-    onInputChange: (_, newInputValue) => {
-      setInputValue(newInputValue);
+    onInputChange: (_, newInputValue, reason) => {
+      if (reason !== 'reset') {
+        setInputValue(newInputValue);
+      }
     },
     clearOnBlur: false,
     loading: isLoading,
