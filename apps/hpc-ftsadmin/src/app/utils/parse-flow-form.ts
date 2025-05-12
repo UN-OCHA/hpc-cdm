@@ -65,8 +65,8 @@ export type FlowFormTypeSerialized = Omit<
   | 'firstReported'
   | 'reportingDetails'
   | 'parentFlow'
+  // When copying a flow, `childFlows`, `amountUSD` and `amountOriginalCurrency` are not included
   | 'childFlows'
-  // When copying a flow, the amountUSD and amountOriginalCurrency are not included
   | 'amountUSD'
   | 'amountOriginalCurrency'
 > & {
@@ -75,7 +75,6 @@ export type FlowFormTypeSerialized = Omit<
   firstReported: string | null;
   reportingDetails: ReportingDetailPropsSerialized[];
   parentFlow: FlowLinkPropsSerialized | null;
-  childFlows: FlowLinkPropsSerialized[];
 };
 
 export type RefDirection = 'source' | 'destination';
@@ -734,6 +733,7 @@ export const serializeFlowForm = (
     parentFlow,
     amountUSD: _amountUSD,
     amountOriginalCurrency: _amountOriginalCurrency,
+    childFlows: _childFlows,
     ...restValues
   } = values;
 
@@ -752,12 +752,6 @@ export const serializeFlowForm = (
             : null,
         }
       : null,
-    childFlows: values.childFlows.map((childFlow) => ({
-      ...childFlow,
-      flowDate: childFlow.flowDate?.isValid()
-        ? childFlow.flowDate.toISOString()
-        : null,
-    })),
     reportingDetails: reportingDetails.map((reportingDetail) => ({
       ...reportingDetail,
       dateReported: reportingDetail.dateReported?.isValid()
@@ -789,10 +783,7 @@ export const deserializeFlowForm = (
     parentFlow: parentFlow
       ? { ...parentFlow, flowDate: dayjs(parentFlow.flowDate) }
       : null,
-    childFlows: values.childFlows.map((childFlow) => ({
-      ...childFlow,
-      flowDate: dayjs(childFlow.flowDate),
-    })),
+    childFlows: [],
     reportingDetails: reportingDetails.map((reportingDetail) => ({
       ...reportingDetail,
       dateReported: reportingDetail.dateReported
