@@ -138,13 +138,12 @@ export const FilterPendingFlowsTable = (props: Props) => {
                 }}
                 isAutocompleteAPI={false}
               />
-              <C.NumberField
+              <C.TextFieldWrapper
                 label={t.t(
                   lang,
                   (s) => s.components.pendingFlowsFilter.filters.reporterRefCode
                 )}
                 name="reporterRefCode"
-                type="integer"
               />
             </C.Section>
             <C.Section
