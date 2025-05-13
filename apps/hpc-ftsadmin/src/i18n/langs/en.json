@@ -335,7 +335,7 @@
         "filters": "Filters"
       }
     },
-    "keywordTable": {
+    "keywordsTable": {
       "headers": {
         "id": "ID",
         "name": "Name",
@@ -446,7 +446,7 @@
         "filters": "Filters"
       }
     },
-    "organizationTable": {
+    "organizationsTable": {
       "headers": {
         "id": "ID",
         "name": "Organization",

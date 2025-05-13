@@ -70,11 +70,11 @@ export interface FlowsTableProps {
   rowsPerPageOptions: number[];
   query: FlowQuery;
   setQuery: SetQuery<FlowQuery>;
-  pending?: boolean;
+  isPending?: boolean;
 }
 
 export default function FlowsTable(props: FlowsTableProps) {
-  const { initialValues, rowsPerPageOptions, pending } = props;
+  const { initialValues, rowsPerPageOptions, isPending } = props;
   const { env, lang } = getContext();
   const environment = env();
 
@@ -82,7 +82,7 @@ export default function FlowsTable(props: FlowsTableProps) {
 
   const filters = decodeFilters(props.query.filters, initialValues);
   const tableFilters = parseFormFilters(filters, initialValues);
-  const parsedFilters = parseFlowFilters(tableFilters, pending);
+  const parsedFilters = parseFlowFilters(tableFilters, isPending);
 
   const [query, setQuery] = [props.query, props.setQuery];
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
@@ -186,6 +186,7 @@ export default function FlowsTable(props: FlowsTableProps) {
       queryParam: query.tableHeaders,
       lang,
       table: 'flows',
+      isPending,
     });
     const handleCheckboxChange = (
       event: React.ChangeEvent<HTMLInputElement>,
@@ -217,7 +218,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                 : undefined,
             }}
           >
-            {pending && (
+            {isPending && (
               <TableCell
                 size="small"
                 component="th"
@@ -257,7 +258,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       </Link>
                     </TableCell>
                   );
-                case 'flow.versionID':
+                case 'status':
                   return (
                     <TableCell
                       key={`${row.id}v${row.versionID}_flow.versionID`}
@@ -590,7 +591,7 @@ export default function FlowsTable(props: FlowsTableProps) {
       <Table size="small">
         <StickyTableHead>
           <TableRow>
-            {pending && <TableCell size="small" />}
+            {isPending && <TableCell size="small" />}
             {tableHeaders.map((header) => {
               if (!header.active) {
                 return null;
@@ -753,7 +754,7 @@ export default function FlowsTable(props: FlowsTableProps) {
         return true;
       }
     }
-    return pending;
+    return isPending;
   };
 
   return (
@@ -779,7 +780,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                 chipSpacing={chipSpacing}
                 handleChipDelete={handleChipDelete}
                 tableFilters={tableFilters}
-                tableType={pending ? 'pendingFlowsFilter' : 'flowsFilter'}
+                tableType={isPending ? 'pendingFlowsFilter' : 'flowsFilter'}
               />
               <TopRowContainer>
                 <C.AsyncIconButton
@@ -845,12 +846,13 @@ export default function FlowsTable(props: FlowsTableProps) {
                         if (isCompatibleTableHeaderType(element)) {
                           setQuery({
                             ...query,
-                            tableHeaders: encodeTableHeaders(
-                              element,
-                              'flows',
+                            tableHeaders: encodeTableHeaders({
+                              headers: element,
+                              table: 'flows',
                               query,
-                              setQuery
-                            ),
+                              setQuery,
+                              isPending,
+                            }),
                           });
                         }
                       }}
@@ -896,7 +898,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                   fontSize: '1.32rem',
                 }}
               >
-                <FormWrapper lang={lang} data={data} pending={pending} />
+                <FormWrapper lang={lang} data={data} pending={isPending} />
               </TableContainer>
             </Box>
             <TablePagination

@@ -28,7 +28,6 @@ import {
   getDraggableTableHeaders,
   isCompatibleTableHeaderType,
   type KeywordHeaderID,
-  type TableHeadersProps,
 } from '../../utils/table-headers';
 
 import tw from 'twin.macro';
@@ -49,7 +48,6 @@ import InfoAlert from '../info-alert';
 import MergeModal from '../merge-modal';
 
 export interface KeywordTableProps {
-  headers: Array<TableHeadersProps<'keywords'>>;
   query: KeywordQuery;
   setQuery: SetQuery<KeywordQuery>;
   abortSignal: AbortSignal;
@@ -90,9 +88,9 @@ const parseError = (
     lang,
     (s) => {
       if (error !== 'conflict') {
-        return s.components.keywordTable.errors[error];
+        return s.components.keywordsTable.errors[error];
       }
-      return s.components.keywordTable.errors.unknown;
+      return s.components.keywordsTable.errors.unknown;
     },
     error === 'duplicate' && errorValue
       ? { keywordName: errorValue }
@@ -154,7 +152,7 @@ const EditableRow = ({
         <>
           {row.name}
           <Tooltip
-            title={t.t(lang, (s) => s.components.keywordTable.labels.edit)}
+            title={t.t(lang, (s) => s.components.keywordsTable.labels.edit)}
           >
             <IconButton size="small" onClick={() => setEdit(true)}>
               <EditIcon sx={keywordIconSize} />
@@ -177,7 +175,7 @@ const EditableRow = ({
               .updateKeyword(modifiedKeyword)
               .then(() => {
                 toast.success(
-                  t.t(lang, (s) => s.components.keywordTable.success.update),
+                  t.t(lang, (s) => s.components.keywordsTable.success.update),
                   TOAST_CONFIG
                 );
                 setEntityEdited(!entityEdited);
@@ -201,23 +199,23 @@ const EditableRow = ({
                 name="keyword"
                 label={t.t(
                   lang,
-                  (s) => s.components.keywordTable.labels.newName
+                  (s) => s.components.keywordsTable.labels.newName
                 )}
               />
               <C.Switch
                 name="public"
                 label={t.t(
                   lang,
-                  (s) => s.components.keywordTable.labels.public
+                  (s) => s.components.keywordsTable.labels.public
                 )}
               />
             </FieldsWrapper>
             <C.ButtonSubmit
               color="primary"
-              text={t.t(lang, (s) => s.components.keywordTable.labels.save)}
+              text={t.t(lang, (s) => s.components.keywordsTable.labels.save)}
             />
             <Tooltip
-              title={t.t(lang, (s) => s.components.keywordTable.labels.cancel)}
+              title={t.t(lang, (s) => s.components.keywordsTable.labels.cancel)}
             >
               <IconButton size="small" onClick={() => setEdit(false)}>
                 <CancelIcon sx={keywordIconSize} />
@@ -233,12 +231,12 @@ const EditableRow = ({
           })
         }
         IconComponent={DeleteIcon}
-        confirmModal={t.get(lang, (s) => s.components.keywordTable.modal)}
-        tooltipText={t.t(lang, (s) => s.components.keywordTable.labels.delete)}
+        confirmModal={t.get(lang, (s) => s.components.keywordsTable.modal)}
+        tooltipText={t.t(lang, (s) => s.components.keywordsTable.labels.delete)}
         iconSx={keywordIconSize}
         onSuccess={() => {
           toast.success(
-            t.t(lang, (s) => s.components.keywordTable.success.delete),
+            t.t(lang, (s) => s.components.keywordsTable.success.delete),
             TOAST_CONFIG
           );
           if (load) {
@@ -413,19 +411,19 @@ const KeywordTable = (props: KeywordTableProps) => {
                       <span className={CLASSES.VISUALLY_HIDDEN}>
                         {t.t(
                           lang,
-                          (s) => s.components.organizationTable.sortBy
+                          (s) => s.components.organizationsTable.sortBy
                         )}
                         <br />
                       </span>
                       {t.t(
                         lang,
-                        (s) => s.components.keywordTable.headers[header.label]
+                        (s) => s.components.keywordsTable.headers[header.label]
                       )}
                     </TableSortLabel>
                   ) : (
                     t.t(
                       lang,
-                      (s) => s.components.keywordTable.headers[header.label]
+                      (s) => s.components.keywordsTable.headers[header.label]
                     )
                   )}
                 </TableCell>
@@ -450,7 +448,7 @@ const KeywordTable = (props: KeywordTableProps) => {
             ...t.get(lang, (s) => s.components.loader),
             notFound: {
               ...t.get(lang, (s) => s.components.notFound),
-              ...t.get(lang, (s) => s.components.organizationTable.notFound),
+              ...t.get(lang, (s) => s.components.organizationsTable.notFound),
             },
           }}
         >
@@ -485,12 +483,12 @@ const KeywordTable = (props: KeywordTableProps) => {
                         title={t.t(
                           lang,
                           (s) =>
-                            s.components.organizationTable.tableSettings.title
+                            s.components.organizationsTable.tableSettings.title
                         )}
                         buttonText={t.t(
                           lang,
                           (s) =>
-                            s.components.organizationTable.tableSettings.save
+                            s.components.organizationsTable.tableSettings.save
                         )}
                         queryValues={getDraggableTableHeaders({
                           queryParam: query.tableHeaders,
@@ -503,12 +501,12 @@ const KeywordTable = (props: KeywordTableProps) => {
                           if (isCompatibleTableHeaderType(element)) {
                             setQuery({
                               ...query,
-                              tableHeaders: encodeTableHeaders(
-                                element,
-                                'keywords',
+                              tableHeaders: encodeTableHeaders({
+                                headers: element,
+                                table: 'keywords',
                                 query,
-                                setQuery
-                              ),
+                                setQuery,
+                              }),
                             });
                             setShouldOpenSettings(false);
                           }

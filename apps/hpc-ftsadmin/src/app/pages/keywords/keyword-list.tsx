@@ -8,10 +8,7 @@ import KeywordTable, {
 } from '../../components/tables/keywords-table';
 import { AppContext } from '../../context';
 import { KEYWORD_PARAMS_CODEC } from '../../utils/codecs';
-import {
-  DEFAULT_KEYWORD_TABLE_HEADERS,
-  encodeTableHeaders,
-} from '../../utils/table-headers';
+import { encodeTableHeaders } from '../../utils/table-headers';
 import useQueryParams from '../../utils/useQueryParams';
 
 interface Props {
@@ -36,7 +33,7 @@ export default (props: Props) => {
     initialValues: {
       orderBy: 'keyword.name',
       orderDir: 'ASC',
-      tableHeaders: encodeTableHeaders([], 'keywords'),
+      tableHeaders: encodeTableHeaders({ headers: [], table: 'keywords' }),
     },
   });
 
@@ -65,7 +62,6 @@ export default (props: Props) => {
   }, []);
 
   const keywordTableProps: KeywordTableProps = {
-    headers: DEFAULT_KEYWORD_TABLE_HEADERS,
     query,
     setQuery,
     abortSignal: abortController.signal,

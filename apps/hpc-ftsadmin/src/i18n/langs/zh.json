@@ -338,7 +338,7 @@
         "filters": "筛选器"
       }
     },
-    "keywordTable": {
+    "keywordsTable": {
       "headers": {
         "id": "ID",
         "name": "名称",
@@ -448,7 +448,7 @@
         "filters": "筛选器"
       }
     },
-    "organizationTable": {
+    "organizationsTable": {
       "headers": {
         "id": "ID",
         "name": "组织",

@@ -3,10 +3,12 @@ import { type Strings } from '../../i18n/iface';
 import type { Query, SetQuery } from '../components/tables/table-utils';
 import { type FilterKey } from './parse-filters';
 
-/** Declare which tables there can be */
+/**
+ * Declare which tables there can be
+ */
 export type TableType = 'flows' | 'organizations' | 'keywords';
 
-/**
+/*
  * The nomenclature to define these IDs is to write it like:
  * name of the DB table, and after the dot, the property.
  * If it's not a DB field, just write down the name.
@@ -14,7 +16,7 @@ export type TableType = 'flows' | 'organizations' | 'keywords';
 
 export type FlowHeaderID =
   | 'flow.id'
-  | 'flow.versionID'
+  | 'status'
   | 'flow.updatedAt'
   | 'flow.exchangeRate'
   | 'flow.flowDate'
@@ -54,11 +56,11 @@ type MapTableTypeToHeaderType = {
   };
   organizations: {
     headerId: OrganizationHeaderID;
-    label: keyof Strings['components']['organizationTable']['headers'];
+    label: keyof Strings['components']['organizationsTable']['headers'];
   };
   keywords: {
     headerId: KeywordHeaderID;
-    label: keyof Strings['components']['keywordTable']['headers'];
+    label: keyof Strings['components']['keywordsTable']['headers'];
   };
 };
 export interface TableHeadersProps<T extends TableType> {
@@ -82,6 +84,19 @@ type DecodeTableHeadersProps<T extends Query, K extends TableType> = {
   table: K;
   query?: T;
   setQuery?: SetQuery<T>;
+  isPending?: boolean;
+};
+type EncodeTableHeadersProps<T extends Query, K extends TableType> = {
+  headers: HeaderType[];
+  table: K;
+  query?: T;
+  setQuery?: SetQuery<T>;
+  isPending?: boolean;
+};
+
+type TableHeaderConfig<T extends TableType> = {
+  defaultHeaders: Array<TableHeadersProps<T>>;
+  possibleHeaders: Record<number, TableHeadersProps<T>>;
 };
 
 /*
@@ -89,7 +104,7 @@ type DecodeTableHeadersProps<T extends Query, K extends TableType> = {
  * we want to add more fields than the default ones displayed
  */
 
-export const POSSIBLE_FLOW_HEADER_VALUES: Record<
+const POSSIBLE_FLOW_TABLE_HEADERS: Record<
   number,
   TableHeadersProps<'flows'>
 > = {
@@ -101,92 +116,98 @@ export const POSSIBLE_FLOW_HEADER_VALUES: Record<
   },
   2: {
     id: 2,
+    identifierID: 'status',
+    sortable: true,
+    label: 'status',
+  },
+  3: {
+    id: 3,
     identifierID: 'flow.updatedAt',
     sortable: true,
     label: 'updatedCreated',
   },
-  3: {
-    id: 3,
+  4: {
+    id: 4,
     identifierID: 'externalReference.systemID',
     sortable: true,
     label: 'dataProvider',
   },
-  4: {
-    id: 4,
+  5: {
+    id: 5,
     identifierID: 'flow.amountUSD',
     sortable: true,
     label: 'amountUSD',
   },
-  5: {
-    id: 5,
+  6: {
+    id: 6,
     identifierID: 'organization.source.name',
     sortable: true,
     label: 'sourceOrganization',
   },
-  6: {
-    id: 6,
+  7: {
+    id: 7,
     identifierID: 'organization.destination.name',
     sortable: true,
     label: 'destinationOrganization',
   },
-  7: {
-    id: 7,
+  8: {
+    id: 8,
     identifierID: 'planVersion.destination.name',
     sortable: true,
     label: 'destinationPlan',
   },
-  8: {
-    id: 8,
+  9: {
+    id: 9,
     identifierID: 'location.destination.name',
     sortable: true,
     label: 'destinationCountry',
   },
-  9: {
-    id: 9,
+  10: {
+    id: 10,
     identifierID: 'usageYear.destination.year',
     sortable: true,
     label: 'destinationYear',
   },
-  10: { id: 10, identifierID: 'details', label: 'details' },
-  11: {
-    id: 11,
+  11: { id: 11, identifierID: 'details', label: 'details' },
+  12: {
+    id: 12,
     identifierID: 'flow.exchangeRate',
     label: 'exchangeRate',
     sortable: true,
   },
-  12: {
-    id: 12,
+  13: {
+    id: 13,
     identifierID: 'flow.newMoney',
     label: 'newMoney',
     sortable: true,
   },
-  13: {
-    id: 13,
+  14: {
+    id: 14,
     identifierID: 'flow.decisionDate',
     label: 'decisionDate',
     sortable: true,
   },
-  14: {
-    id: 14,
+  15: {
+    id: 15,
     identifierID: 'flow.flowDate',
     label: 'flowDate',
     sortable: true,
   },
-  15: {
-    id: 15,
+  16: {
+    id: 16,
     identifierID: 'reportDetail.sourceID',
     label: 'sourceID',
     sortable: false,
   },
-  16: {
-    id: 16,
+  17: {
+    id: 17,
     identifierID: 'reportDetail.reporterRefCode',
     label: 'reporterRefCode',
     sortable: false,
   },
 };
 
-export const POSSIBLE_ORGANIZATION_VALUES: Record<
+const POSSIBLE_ORGANIZATION_TABLE_HEADERS: Record<
   number,
   TableHeadersProps<'organizations'>
 > = {
@@ -240,7 +261,7 @@ export const POSSIBLE_ORGANIZATION_VALUES: Record<
   },
 };
 
-export const POSSIBLE_KEYWORD_VALUES: Record<
+const POSSIBLE_KEYWORD_TABLE_HEADERS: Record<
   number,
   TableHeadersProps<'keywords'>
 > = {
@@ -260,62 +281,75 @@ export const POSSIBLE_KEYWORD_VALUES: Record<
   },
 };
 
-// When adding more new field to POSSIBLE consts that are not default, modify as needed
+/**
+ *  When adding more new field to POSSIBLE consts that are not default.
+ */
+const FLOW_ACTIVE_HEADERS_UNTIL_ID = 11;
+export const DEFAULT_FLOW_TABLE_HEADERS: Array<TableHeadersProps<'flows'>> =
+  Object.entries(POSSIBLE_FLOW_TABLE_HEADERS).map(([index, header]) => {
+    const i = parseInt(index);
+    // Should only be default active in pending flows page
+    if (header.identifierID === 'status') {
+      return {
+        ...header,
+        active: false,
+      };
+    }
+    return {
+      ...header,
+      active: i <= FLOW_ACTIVE_HEADERS_UNTIL_ID,
+    };
+  });
 
-export const DEFAULT_FLOW_TABLE_HEADERS: Array<TableHeadersProps<'flows'>> = [];
-for (const [index, header] of Object.entries(POSSIBLE_FLOW_HEADER_VALUES)) {
-  const i = parseInt(index);
-  if (i <= 10) {
-    DEFAULT_FLOW_TABLE_HEADERS.push({
-      ...header,
-      active: true,
-    });
-  } else {
-    DEFAULT_FLOW_TABLE_HEADERS.push({
-      ...header,
-      active: false,
-    });
-  }
-}
 export const DEFAULT_ORGANIZATION_TABLE_HEADERS: Array<
   TableHeadersProps<'organizations'>
-> = [];
-for (const [, header] of Object.entries(POSSIBLE_ORGANIZATION_VALUES)) {
-  DEFAULT_ORGANIZATION_TABLE_HEADERS.push(header);
-}
+> = Object.values(POSSIBLE_ORGANIZATION_TABLE_HEADERS).map(
+  (header) =>
+    ({ ...header, active: true }) satisfies TableHeadersProps<'organizations'>
+);
+
 export const DEFAULT_KEYWORD_TABLE_HEADERS: Array<
   TableHeadersProps<'keywords'>
-> = [];
-for (const [, header] of Object.entries(POSSIBLE_KEYWORD_VALUES)) {
-  DEFAULT_KEYWORD_TABLE_HEADERS.push(header);
-}
+> = Object.values(POSSIBLE_KEYWORD_TABLE_HEADERS).map(
+  (header) =>
+    ({ ...header, active: true }) satisfies TableHeadersProps<'keywords'>
+);
+
+const TABLE_TO_TABLE_HEADERS: {
+  [K in TableType]: TableHeaderConfig<K>;
+} = {
+  flows: {
+    defaultHeaders: DEFAULT_FLOW_TABLE_HEADERS,
+    possibleHeaders: POSSIBLE_FLOW_TABLE_HEADERS,
+  },
+  keywords: {
+    defaultHeaders: DEFAULT_KEYWORD_TABLE_HEADERS,
+    possibleHeaders: POSSIBLE_KEYWORD_TABLE_HEADERS,
+  },
+  organizations: {
+    defaultHeaders: DEFAULT_ORGANIZATION_TABLE_HEADERS,
+    possibleHeaders: POSSIBLE_ORGANIZATION_TABLE_HEADERS,
+  },
+};
 
 /**
  * Sets up the default values
  */
-const defaultEncodeTableHeaders = (table: TableType) => {
+const defaultEncodeTableHeaders = <T extends TableType>(
+  table: T,
+  isPending?: boolean
+) => {
+  const defaultHeaders = TABLE_TO_TABLE_HEADERS[table].defaultHeaders;
+
   let res = '';
-  if (table === 'flows') {
-    DEFAULT_FLOW_TABLE_HEADERS.map(
-      (header, index) =>
-        (res += `${header.active ? header.id : -header.id}${
-          DEFAULT_FLOW_TABLE_HEADERS.length - 1 !== index ? '_' : ''
-        }`)
-    );
-  } else if (table === 'keywords') {
-    DEFAULT_KEYWORD_TABLE_HEADERS.map(
-      (header, index) =>
-        (res += `${header.id}${
-          DEFAULT_KEYWORD_TABLE_HEADERS.length - 1 !== index ? '_' : ''
-        }`)
-    );
-  } else {
-    DEFAULT_ORGANIZATION_TABLE_HEADERS.map(
-      (header, index) =>
-        (res += `${header.id}${
-          DEFAULT_ORGANIZATION_TABLE_HEADERS.length - 1 !== index ? '_' : ''
-        }`)
-    );
+  for (const [index, header] of defaultHeaders.entries()) {
+    if (isPending && header.identifierID === 'status') {
+      res += `${header.id}${defaultHeaders.length - 1 !== index ? '_' : ''}`;
+      continue;
+    }
+    res += `${header.active ? header.id : -header.id}${
+      defaultHeaders.length - 1 !== index ? '_' : ''
+    }`;
   }
   return res;
 };
@@ -324,14 +358,15 @@ const defaultEncodeTableHeaders = (table: TableType) => {
  * Encodes the query param to obtain a string suitable for the URL,
  * use it alongside `decodeTableHeaders()`
  */
-export const encodeTableHeaders = <T extends Query>(
-  headers: HeaderType[],
-  table: TableType = 'flows',
-  query?: T,
-  setQuery?: SetQuery<T>
-): string => {
+export const encodeTableHeaders = <T extends Query, K extends TableType>({
+  headers,
+  table,
+  isPending,
+  query,
+  setQuery,
+}: EncodeTableHeadersProps<T, K>): string => {
   if (headers.length === 0) {
-    return defaultEncodeTableHeaders(table);
+    return defaultEncodeTableHeaders(table, isPending);
   }
   try {
     return headers
@@ -357,53 +392,35 @@ export const encodeTableHeaders = <T extends Query>(
  */
 const defaultDecodeTableHeaders = <T extends TableType>(
   lang: LanguageKey,
-  table: T
+  table: T,
+  isPending?: boolean
 ): Array<TableHeadersProps<T>> => {
-  if (table === 'flows') {
-    return DEFAULT_FLOW_TABLE_HEADERS.map((header) => ({
-      id: header.id,
-      label: header.label,
-      active: header.active,
-      displayLabel: t.t(
-        lang,
-        (s) =>
-          s.components.flowsTable.headers[
-            POSSIBLE_FLOW_HEADER_VALUES[header.id].label
-          ]
-      ),
-      identifierID: header.identifierID,
-      sortable: header.sortable,
-    }));
-  } else if (table === 'keywords') {
-    return DEFAULT_KEYWORD_TABLE_HEADERS.map((header) => ({
-      id: header.id,
-      label: header.label,
-      displayLabel: t.t(
-        lang,
-        (s) =>
-          s.components.keywordTable.headers[
-            POSSIBLE_KEYWORD_VALUES[header.id].label
-          ]
-      ),
-      active: true,
-      identifierID: header.identifierID,
-      sortable: header.sortable,
-    }));
-  }
-  return DEFAULT_ORGANIZATION_TABLE_HEADERS.map((header) => ({
-    id: header.id,
-    label: header.label,
-    displayLabel: t.t(
-      lang,
-      (s) =>
-        s.components.organizationTable.headers[
-          POSSIBLE_ORGANIZATION_VALUES[header.id].label
-        ]
-    ),
-    active: true,
-    identifierID: header.identifierID,
-    sortable: header.sortable,
-  }));
+  const { possibleHeaders, defaultHeaders } = TABLE_TO_TABLE_HEADERS[table];
+  const parsedDefaultHeaders = isPending
+    ? defaultHeaders.map((header) => {
+        if (header.identifierID === 'status') {
+          return { ...header, active: true };
+        }
+        return header;
+      })
+    : defaultHeaders;
+  const headerName = `${table}Table` as const;
+  return parsedDefaultHeaders.map(
+    ({ id, label, active, identifierID, sortable }) => ({
+      id,
+      label,
+      active,
+      displayLabel: t.t(lang, (s) => {
+        const labels = s.components[headerName].headers as Record<
+          MapTableTypeToHeaderType[T]['label'],
+          string
+        >;
+        return labels[possibleHeaders[id].label];
+      }),
+      identifierID,
+      sortable,
+    })
+  );
 };
 /**
  * Decodes the query param to obtain an ordered list of table headers
@@ -414,37 +431,32 @@ export const decodeTableHeaders = <T extends Query, K extends TableType>({
   table,
   query,
   setQuery,
+  isPending,
 }: DecodeTableHeadersProps<T, K>): Array<TableHeadersProps<K>> => {
   if (queryParam.trim() === '') {
-    return defaultDecodeTableHeaders(lang, table);
+    return defaultDecodeTableHeaders(lang, table, isPending);
   }
   try {
-    return queryParam.split('_').map((x) => {
-      const possibleValues =
-        table === 'flows'
-          ? POSSIBLE_FLOW_HEADER_VALUES[Math.abs(parseInt(x))]
-          : table === 'keywords'
-          ? POSSIBLE_KEYWORD_VALUES[Math.abs(parseInt(x))]
-          : POSSIBLE_ORGANIZATION_VALUES[Math.abs(parseInt(x))];
+    return queryParam.split('_').map((tableIDWithSymbol) => {
+      const tableID = Math.abs(parseInt(tableIDWithSymbol));
+      const possibleHeaders = TABLE_TO_TABLE_HEADERS[table].possibleHeaders;
+      const tableName = `${table}Table` as const;
+
+      const { label, identifierID, sortable } = possibleHeaders[tableID];
+
       return {
-        id: Math.abs(parseInt(x)),
-        label: possibleValues.label,
-        displayLabel: t.t(lang, (s) =>
-          table === 'flows'
-            ? s.components.flowsTable.headers[
-                POSSIBLE_FLOW_HEADER_VALUES[Math.abs(parseInt(x))].label
-              ]
-            : table === 'keywords'
-            ? s.components.keywordTable.headers[
-                POSSIBLE_KEYWORD_VALUES[Math.abs(parseInt(x))].label
-              ]
-            : s.components.organizationTable.headers[
-                POSSIBLE_ORGANIZATION_VALUES[Math.abs(parseInt(x))].label
-              ]
-        ),
-        active: parseInt(x) > 0,
-        identifierID: possibleValues.identifierID,
-        sortable: possibleValues.sortable,
+        id: tableID,
+        label,
+        displayLabel: t.t(lang, (s) => {
+          const labels = s.components[tableName].headers as Record<
+            MapTableTypeToHeaderType[K]['label'],
+            string
+          >;
+          return labels[label];
+        }),
+        active: parseInt(tableIDWithSymbol) > 0,
+        identifierID,
+        sortable,
       };
     });
   } catch (error) {
@@ -457,11 +469,6 @@ export const decodeTableHeaders = <T extends Query, K extends TableType>({
   }
 };
 
-const MAP_TABLE_TYPE_TO_STRINGS_HEADER = {
-  flows: 'flowsTable',
-  organizations: 'organizationTable',
-  keywords: 'keywordTable',
-} as const;
 /**
  *  Parses `label` to its translated value
  */
@@ -470,8 +477,7 @@ export const getDraggableTableHeaders = <T extends Query, K extends TableType>(
 ) => {
   const decodedTableHeaders = decodeTableHeaders(decodeTableHeadersProps);
   return decodedTableHeaders.map((decodedTableHeader) => {
-    const tableName =
-      MAP_TABLE_TYPE_TO_STRINGS_HEADER[decodeTableHeadersProps.table];
+    const tableName = `${decodeTableHeadersProps.table}Table` as const;
     const tableLabel = decodedTableHeader.label;
 
     return {

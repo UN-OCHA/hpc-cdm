@@ -333,21 +333,21 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                       <span className={CLASSES.VISUALLY_HIDDEN}>
                         {t.t(
                           lang,
-                          (s) => s.components.organizationTable.sortBy
+                          (s) => s.components.organizationsTable.sortBy
                         )}
                         <br />
                       </span>
                       {t.t(
                         lang,
                         (s) =>
-                          s.components.organizationTable.headers[header.label]
+                          s.components.organizationsTable.headers[header.label]
                       )}
                     </TableSortLabel>
                   ) : (
                     t.t(
                       lang,
                       (s) =>
-                        s.components.organizationTable.headers[header.label]
+                        s.components.organizationsTable.headers[header.label]
                     )
                   )}
                 </TableCell>
@@ -372,7 +372,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
             ...t.get(lang, (s) => s.components.loader),
             notFound: {
               ...t.get(lang, (s) => s.components.notFound),
-              ...t.get(lang, (s) => s.components.organizationTable.notFound),
+              ...t.get(lang, (s) => s.components.organizationsTable.notFound),
             },
           }}
         >
@@ -396,7 +396,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                         to={paths.addOrganization()}
                         text={t.t(
                           lang,
-                          (s) => s.components.organizationTable.addOrganization
+                          (s) => s.components.organizationsTable.addOrganization
                         )}
                         color="neutral"
                       />
@@ -428,12 +428,13 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                           title={t.t(
                             lang,
                             (s) =>
-                              s.components.organizationTable.tableSettings.title
+                              s.components.organizationsTable.tableSettings
+                                .title
                           )}
                           buttonText={t.t(
                             lang,
                             (s) =>
-                              s.components.organizationTable.tableSettings.save
+                              s.components.organizationsTable.tableSettings.save
                           )}
                           queryValues={getDraggableTableHeaders({
                             queryParam: query.tableHeaders,
@@ -446,12 +447,12 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                             if (isCompatibleTableHeaderType(element)) {
                               setQuery({
                                 ...query,
-                                tableHeaders: encodeTableHeaders(
-                                  element,
-                                  'organizations',
+                                tableHeaders: encodeTableHeaders({
+                                  headers: element,
+                                  table: 'organizations',
                                   query,
-                                  setQuery
-                                ),
+                                  setQuery,
+                                }),
                               });
                             }
                           }}

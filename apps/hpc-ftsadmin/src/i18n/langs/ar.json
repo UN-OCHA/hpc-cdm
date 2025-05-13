@@ -336,7 +336,7 @@
         "filters": "المرشحات"
       }
     },
-    "keywordTable": {
+    "keywordsTable": {
       "headers": {
         "id": "المعرف",
         "name": "الاسم",
@@ -446,7 +446,7 @@
         "filters": "المرشحات"
       }
     },
-    "organizationTable": {
+    "organizationsTable": {
       "headers": {
         "id": "المعرف",
         "name": "المنظمة",

@@ -76,7 +76,7 @@ export default (props: Props) => {
       orderBy: 'organization.name',
       orderDir: 'ASC',
       filters: JSON.stringify({}),
-      tableHeaders: encodeTableHeaders([], 'organizations'),
+      tableHeaders: encodeTableHeaders({ headers: [], table: 'organizations' }),
     },
   });
 

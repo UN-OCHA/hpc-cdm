@@ -52,7 +52,7 @@ export default (props: Props) => {
       orderBy: 'flow.updatedAt',
       orderDir: 'DESC',
       filters: JSON.stringify({}),
-      tableHeaders: encodeTableHeaders([]), // Default value of table headers
+      tableHeaders: encodeTableHeaders({ headers: [], table: 'flows' }), // Default value of table headers
     },
   });
 

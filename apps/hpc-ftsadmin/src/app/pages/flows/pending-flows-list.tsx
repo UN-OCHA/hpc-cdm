@@ -10,10 +10,7 @@ import FlowsTable, {
 } from '../../components/tables/flows-table';
 import { AppContext } from '../../context';
 import { FLOW_PARAMS_CODEC } from '../../utils/codecs';
-import {
-  DEFAULT_FLOW_TABLE_HEADERS,
-  encodeTableHeaders,
-} from '../../utils/table-headers';
+import { encodeTableHeaders } from '../../utils/table-headers';
 import useQueryParams from '../../utils/useQueryParams';
 
 interface Props {
@@ -41,7 +38,11 @@ export default (props: Props) => {
       orderBy: 'flow.updatedAt',
       orderDir: 'DESC',
       filters: JSON.stringify({}),
-      tableHeaders: encodeTableHeaders([]), // Default value of table headers
+      tableHeaders: encodeTableHeaders({
+        headers: [],
+        table: 'flows',
+        isPending: true,
+      }), // Default value of table headers
     },
   });
 
@@ -50,7 +51,7 @@ export default (props: Props) => {
     rowsPerPageOptions: [10, 25, 50, 100],
     query,
     setQuery,
-    pending: true,
+    isPending: true,
   };
 
   return (
