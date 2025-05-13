@@ -61,12 +61,21 @@ const validateEmergency = async (
   env: Environment,
   lang: LanguageKey
 ): Promise<string[]> => {
+  if (values.fundingDestinationEmergencies.length > 0) {
+    return [];
+  }
+
   const years = values.fundingDestinationUsageYears.map((usageYear) =>
     valueToInteger(usageYear.displayLabel)
   );
   const locations = values.fundingDestinationLocations.map((location) =>
     valueToInteger(location.value)
   );
+
+  if (!years.length || !locations.length) {
+    return [];
+  }
+
   const emergencies = await env.model.emergencies.getEmergencies({
     years,
     locations,
