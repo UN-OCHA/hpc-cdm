@@ -80,13 +80,15 @@ export default function FlowsTable(props: FlowsTableProps) {
 
   const chipSpacing = { m: 0.5 };
 
-  const filters = decodeFilters(props.query.filters, initialValues);
+  const [query, setQuery] = [props.query, props.setQuery];
+
+  const filters = decodeFilters(query.filters, initialValues);
   const tableFilters = parseFormFilters(filters, initialValues);
   const parsedFilters = parseFlowFilters(tableFilters, isPending);
 
-  const [query, setQuery] = [props.query, props.setQuery];
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
-  const [state, load] = useDataLoader([query], () =>
+  const { tableHeaders: queryTableHeaders, ...observableQueryParams } = query;
+  const [state, load] = useDataLoader([observableQueryParams], () =>
     environment.model.flows.searchFlows({
       limit: query.rowsPerPage,
       page: query.page,
@@ -97,7 +99,7 @@ export default function FlowsTable(props: FlowsTableProps) {
   );
 
   const tableHeaders = decodeTableHeaders({
-    queryParam: query.tableHeaders,
+    queryParam: queryTableHeaders,
     lang,
     table: 'flows',
   });
@@ -183,7 +185,7 @@ export default function FlowsTable(props: FlowsTableProps) {
       Array<{ id: number; versionID: number }>
     >([]);
     const tableHeaders = decodeTableHeaders({
-      queryParam: query.tableHeaders,
+      queryParam: queryTableHeaders,
       lang,
       table: 'flows',
       isPending,
@@ -836,7 +838,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                         (s) => s.components.flowsTable.tableSettings.save
                       )}
                       queryValues={getDraggableTableHeaders({
-                        queryParam: query.tableHeaders,
+                        queryParam: queryTableHeaders,
                         lang,
                         table: 'flows',
                         query,

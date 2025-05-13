@@ -74,17 +74,19 @@ export default function OrganizationTable(props: OrganizationTableProps) {
 
   const chipSpacing = { m: 0.5 };
 
-  const filters = decodeFilters(props.query.filters, initialValues);
+  const [query, setQuery] = [props.query, props.setQuery];
+  const filters = decodeFilters(query.filters, initialValues);
   const parsedFilters = parseFormFilters<
     keyof Strings['components']['organizationsFilter']['filters'],
     OrganizationFilterValues
   >(filters, initialValues);
 
-  const [query, setQuery] = [props.query, props.setQuery];
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
   const navigate = useNavigate();
 
-  const [state, load] = useDataLoader([query], () =>
+  const { tableHeaders: queryTableHeaders, ...observableQueryParams } = query;
+
+  const [state, load] = useDataLoader([observableQueryParams], () =>
     env.model.organizations.searchOrganizations({
       search: {
         limit: query.rowsPerPage,
@@ -149,7 +151,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     data: organizations.SearchOrganizationResult;
   }) => {
     const tableHeaders = decodeTableHeaders({
-      queryParam: query.tableHeaders,
+      queryParam: queryTableHeaders,
       lang,
       table: 'organizations',
     });
@@ -293,7 +295,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     data: organizations.SearchOrganizationResult;
   }) => {
     const tableHeaders = decodeTableHeaders({
-      queryParam: query.tableHeaders,
+      queryParam: queryTableHeaders,
       lang,
       table: 'organizations',
     });
@@ -437,7 +439,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                               s.components.organizationsTable.tableSettings.save
                           )}
                           queryValues={getDraggableTableHeaders({
-                            queryParam: query.tableHeaders,
+                            queryParam: queryTableHeaders,
                             lang,
                             table: 'organizations',
                             query,
