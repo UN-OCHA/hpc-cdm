@@ -253,6 +253,32 @@ export const fnCategories = async (
   return defaultOptions(response);
 };
 
+export const fnOrganizationType = async (env: Environment) => {
+  const response = (
+    await env.model.categories.getCategories({
+      query: 'organizationType',
+    })
+  )
+    .map((organizationType, _, organizationTypes) => {
+      if (organizationType.parentID) {
+        const parent = organizationTypes.find(
+          (orgType) => orgType.id === organizationType.parentID
+        );
+        if (!parent) {
+          return organizationType;
+        }
+        return {
+          ...organizationType,
+          name: `${parent.name}: ${organizationType.name}`,
+        };
+      }
+      return organizationType;
+    })
+    .filter((organizationType) => organizationType.parentID !== null)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  return defaultOptions(response);
+};
+
 export const fnCurrencies = async (env: Environment) => {
   const response = await env.model.currencies.getCurrencies();
   return currenciesOptions(response);

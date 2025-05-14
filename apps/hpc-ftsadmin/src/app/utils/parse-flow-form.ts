@@ -1,15 +1,31 @@
 import {
-  FormObjectValue,
-  categories,
-  flowObjects,
-  flows,
-  reportFiles,
+  type categories,
+  type flowObjects,
+  type flows,
+  type reportFiles,
+  type util,
 } from '@unocha/hpc-data';
+import { THEME } from '@unocha/hpc-ui';
+import { type Environment } from '../../environments/interface';
+import dayjs from '../../libs/dayjs';
+import {
+  FLOWS_FILTER_INITIAL_VALUES,
+  type FlowsFilterValues,
+} from '../components/filters/filter-flows-table';
 import {
   INITIAL_FORM_VALUES,
   type FlowFormType,
   type FlowFormTypeValidated,
 } from '../components/flow-form/flow-form';
+import { type FlowLinkProps } from '../components/flow-form/flow-link';
+import { type ReportingDetailProps } from '../components/reporting-detail';
+import { PENDING_REVIEW } from './constants';
+import {
+  defaultOptions,
+  locationsOptions,
+  organizationsOptions,
+  usageYearsOptions,
+} from './fn-promises';
 import {
   currencyToInteger,
   fileAssetEntityToFileUploadResult,
@@ -18,26 +34,10 @@ import {
   valueToInteger,
 } from './map-functions';
 import {
-  FlowObjectTypes,
   encodeFilters,
   isFlowObjectTypes,
+  type FlowObjectTypes,
 } from './parse-filters';
-import {
-  defaultOptions,
-  locationsOptions,
-  organizationsOptions,
-  usageYearsOptions,
-} from './fn-promises';
-import { ReportingDetailProps } from '../components/reporting-detail';
-import dayjs from '../../libs/dayjs';
-import { FlowLinkProps } from '../components/flow-form/flow-link';
-import {
-  FLOWS_FILTER_INITIAL_VALUES,
-  FlowsFilterValues,
-} from '../components/filters/filter-flows-table';
-import { Environment } from '../../environments/interface';
-import { THEME } from '@unocha/hpc-ui';
-import { PENDING_REVIEW } from './constants';
 
 type EntityName =
   | 'location'
@@ -109,7 +109,7 @@ const FUNDING_KEYS = [
 type FlowFormFlowObjectKey = (typeof FUNDING_KEYS)[number];
 
 export const CTP = 'Cash transfer programming (CTP)' as const;
-export const isMethodOption = (value: FormObjectValue) =>
+export const isMethodOption = (value: util.FormObjectValue) =>
   value.displayLabel === 'Traditional aid' || value.displayLabel === CTP;
 
 const categoryIds = (categories: Array<{ value: number | string } | null>) => {
@@ -137,14 +137,18 @@ const getFundingValues = (
   return res;
 };
 
-export const isFormObjectValue = (value: unknown): value is FormObjectValue =>
+export const isFormObjectValue = (
+  value: unknown
+): value is util.FormObjectValue =>
   typeof value === 'object' &&
   !Array.isArray(value) &&
   value !== null &&
   Object.keys(value).includes('displayLabel') &&
   Object.keys(value).includes('value');
 
-const isArrayFormObjectValue = (value: unknown): value is FormObjectValue[] => {
+const isArrayFormObjectValue = (
+  value: unknown
+): value is util.FormObjectValue[] => {
   return (
     Array.isArray(value) && (isFormObjectValue(value[0]) || value.length === 0)
   );
@@ -153,7 +157,7 @@ const isArrayFormObjectValue = (value: unknown): value is FormObjectValue[] => {
 const createFlowObject = (
   direction: string,
   lowerCaseSingularObject: FlowObjectTypes,
-  value: FormObjectValue
+  value: util.FormObjectValue
 ): CreateFlowObject => {
   const flowObject = {
     objectID: valueToInteger(value.value),
@@ -263,7 +267,7 @@ const reportingDetailPropsToReportDetails = (
 export const parseFlowForm = (
   values: FlowFormTypeValidated,
   inactiveReasons: categories.GetCategoriesResult,
-  flowTypes: FormObjectValue[],
+  flowTypes: util.FormObjectValue[],
   initialValues?: FlowFormType,
   isPending?: { isApproved?: boolean; isSaved?: boolean }
 ): flows.CreateFlowParams => {
@@ -284,7 +288,7 @@ export const parseFlowForm = (
     flowDate,
     flowStatus,
     flowType: unprocessedFlowType,
-    isNewMoney: newMoney,
+    isNewMoney,
     isErrorCorrection,
     isInactive,
     keywords,
@@ -351,7 +355,7 @@ export const parseFlowForm = (
     isApprovedFlowVersion: isPending?.isApproved || isPending?.isSaved,
     inactiveReason,
     newCategories: [], //  TODO
-    newMoney,
+    newMoney:isNewMoney,
     notes,
     origAmount: amountOriginalCurrency
       ? currencyToInteger(amountOriginalCurrency)
@@ -388,7 +392,10 @@ const categoriesToFlowForm = (values: flows.GetFlowResult) => {
         [group]: [...(acc.keywords ?? []), { displayLabel: name, value: id }],
       };
     } else if (isCategoryGroupKeyFlowForm(group)) {
-      const parsedValue: FormObjectValue = { displayLabel: name, value: id };
+      const parsedValue: util.FormObjectValue = {
+        displayLabel: name,
+        value: id,
+      };
       if (group === 'method' && !isMethodOption(parsedValue)) {
         return { ...acc, childMethod: parsedValue };
       }
@@ -625,7 +632,8 @@ const flowObjectToFormObjectValue = (
 
   const res = {} as FlowFormType;
   for (const key of keys) {
-    res[key] = MAP_KEYS_TO_FIELDS[key] as FormObjectValue[] & FormObjectValue;
+    res[key] = MAP_KEYS_TO_FIELDS[key] as util.FormObjectValue[] &
+      util.FormObjectValue;
   }
   return res;
 };
@@ -809,7 +817,7 @@ const flowFormToFlowsFilterValues = async (
         })
         .then((plans) =>
           plans.map(
-            (plan): FormObjectValue => ({
+            (plan): util.FormObjectValue => ({
               displayLabel: `Plan ID: ${plan.id}`,
               value: plan.id,
             })
@@ -861,8 +869,8 @@ const compareFlowForms = (
   const result: Partial<FlowFormType> = {};
 
   const isDifferentFormObjectValue = (
-    currentValue: FormObjectValue | null,
-    incomingValue: FormObjectValue | null
+    currentValue: util.FormObjectValue | null,
+    incomingValue: util.FormObjectValue | null
   ) => {
     if ((!currentValue && incomingValue) || (currentValue && !incomingValue))
       return true;

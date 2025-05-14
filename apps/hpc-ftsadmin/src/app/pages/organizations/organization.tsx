@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useLocation, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import tw from 'twin.macro';
+import { type Environment } from '../../../environments/interface';
 import { t } from '../../../i18n';
 import OrganizationForm, {
   type AddEditOrganizationValues,
@@ -11,11 +12,16 @@ import OrganizationForm, {
 import PageMeta from '../../components/page-meta';
 import { AppContext, getEnv } from '../../context';
 import { TOAST_CONFIG } from '../../utils/constants';
+import { fnOrganizationType } from '../../utils/fn-promises';
 
 interface Props {
   className?: string;
 }
+
 type OrganizationRouteParams = { id: string };
+
+type OrganizationCategories = 'type' | 'subType' | 'level';
+
 const Container = tw.div`
   flex
   mb-16
@@ -36,55 +42,33 @@ const InfoText = tw.p`
   text-unocha-textLight
 `;
 
-type OrganizationCategories = 'type' | 'subType' | 'level';
 const orgCategoryTo = (
   categories: organizations.OrganizationCategory[] | undefined,
   type: OrganizationCategories
-): util.FormObjectValue[] => {
-  const res: util.FormObjectValue[] = [];
-  if (!categories) {
-    return res;
-  }
-  switch (type) {
-    case 'type': {
-      res.push(
-        ...categories
-          .filter(
-            (cat) => cat.group === 'organizationType' && cat.parentID === null
-          )
-          .map((cat) => ({ displayLabel: cat.name, value: cat.id }))
-      );
+): util.FormObjectValue | null => {
+  const categoryGroup =
+    type === 'level' ? 'organizationLevel' : 'organizationType';
+  const checkParentID = (parentID: number | null) => {
+    return type === 'subType' ? parentID !== null : parentID === null;
+  };
 
-      break;
-    }
-    case 'subType': {
-      res.push(
-        ...categories
-          .filter(
-            (cat) => cat.group === 'organizationType' && cat.parentID !== null
-          )
-          .map((cat) => ({ displayLabel: cat.name, value: cat.id }))
-      );
-
-      break;
-    }
-    case 'level': {
-      res.push(
-        ...categories
-          .filter(
-            (cat) => cat.group === 'organizationLevel' && cat.parentID === null
-          )
-          .map((cat) => ({ displayLabel: cat.name, value: cat.id }))
-      );
-      break;
-    }
+  const organizationCategory = categories?.find((cat) => {
+    return cat.group === categoryGroup && checkParentID(cat.parentID);
+  });
+  if (!organizationCategory) {
+    return null;
   }
-  return res;
+
+  return {
+    displayLabel: organizationCategory.name,
+    value: organizationCategory.id,
+  } satisfies util.FormObjectValue;
 };
 
-const parseOrganizationToInitialValue = (
-  org: organizations.GetOrganizationResult
-): AddEditOrganizationValues => {
+const parseOrganizationToInitialValue = async (
+  org: organizations.GetOrganizationResult,
+  env: Environment
+): Promise<AddEditOrganizationValues> => {
   const {
     name,
     abbreviation,
@@ -108,46 +92,69 @@ const parseOrganizationToInitialValue = (
     active,
     verified,
     collectiveInd,
-    organizationTypes: [],
+    organizationTypes: null,
+    nativeName: nativeName ?? undefined,
+    url: url ?? undefined,
+    notes: notes ?? undefined,
+    comments: comments ?? undefined,
+    parent: parent
+      ? ({
+          displayLabel: parent.name,
+          value: parent.id,
+        } satisfies util.FormObjectValue)
+      : undefined,
+    organizationLevel: orgCategoryTo(categories, 'level'),
   };
-  res.nativeName = nativeName ?? undefined;
-  res.url = url ?? undefined;
-  res.notes = notes ?? undefined;
-  res.comments = comments ?? undefined;
+
   if (locations) {
-    const preLocations: util.FormObjectValue[] = locations.map((location) => ({
-      displayLabel: location.name,
-      value: location.id,
-    }));
-    const locationsWithParent: util.FormObjectValue[] = preLocations.map(
-      (preLocation, index) => {
+    res.locations = locations
+      .map(
+        (location) =>
+          ({
+            displayLabel: location.name,
+            value: location.id,
+          }) satisfies util.FormObjectValue
+      )
+      .map((preLocation, index, preLocations) => {
         const locationParentID = locations[index].parentId;
-        if (locationParentID) {
-          const parent = preLocations.find((a) => a.value === locationParentID);
-          if (parent) {
-            return {
-              ...preLocation,
-              parent: {
-                displayLabel: parent.displayLabel,
-                value: parent.value,
-              },
-            };
-          }
+
+        if (!locationParentID) {
+          return preLocation;
         }
-        return preLocation;
-      }
-    );
-    res.locations = locationsWithParent;
+
+        const parent = preLocations.find((a) => a.value === locationParentID);
+
+        if (!parent) {
+          return preLocation;
+        }
+
+        return {
+          ...preLocation,
+          parent: {
+            displayLabel: parent.displayLabel,
+            value: parent.value,
+          } satisfies util.FormObjectValue,
+        };
+      });
   }
-  res.parent = parent
-    ? { displayLabel: parent.name, value: parent.id }
-    : undefined;
-  res.organizationLevel = orgCategoryTo(categories, 'level').at(0);
-  res.organizationTypes = [
-    ...orgCategoryTo(categories, 'type'),
-    ...orgCategoryTo(categories, 'subType'),
-  ];
+
+  const organizationSubType = orgCategoryTo(categories, 'subType');
+  const organizationType = (await fnOrganizationType(env)).find(
+    (orgType) => orgType.value === organizationSubType?.value
+  );
+  res.organizationTypes = organizationType ?? null;
+
   return res;
+};
+
+const getOrganizationData = async (
+  id: number,
+  env: Environment
+): Promise<
+  [organizations.GetOrganizationResult, AddEditOrganizationValues]
+> => {
+  const org = await env.model.organizations.getOrganization({ id });
+  return [org, await parseOrganizationToInitialValue(org, env)];
 };
 
 export default (props: Props) => {
@@ -163,9 +170,7 @@ export default (props: Props) => {
     }
   }, [locationState?.successMessage]);
 
-  const [state, load] = useDataLoader([id], () =>
-    env.model.organizations.getOrganization({ id })
-  );
+  const [state, load] = useDataLoader([id], () => getOrganizationData(id, env));
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -186,7 +191,7 @@ export default (props: Props) => {
                     },
                   }}
                 >
-                  {(data) => (
+                  {([data, initialValues]) => (
                     <PaddingContainer>
                       <C.PageTitle>{data.name}</C.PageTitle>
                       <InfoText>
@@ -196,7 +201,7 @@ export default (props: Props) => {
                         )}
                       </InfoText>
                       <OrganizationForm
-                        initialValues={parseOrganizationToInitialValue(data)}
+                        initialValues={initialValues}
                         id={id}
                         load={load}
                       />

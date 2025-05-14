@@ -1,4 +1,4 @@
-import { Form, Formik } from 'formik';
+import { Form, Formik, type FormikHelpers } from 'formik';
 import tw from 'twin.macro';
 
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -7,18 +7,19 @@ import { C } from '@unocha/hpc-ui';
 import * as io from 'io-ts';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
 import paths from '../paths';
+import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
 import {
-  fnCategories,
   fnLocations,
   fnOrganizations,
+  fnOrganizationType,
 } from '../utils/fn-promises';
 import validateForm from '../utils/form-validation';
 import { valueToInteger } from '../utils/map-functions';
-import { toast } from 'react-toastify';
-import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
+import { isFormObjectValue } from '../utils/parse-flow-form';
 interface Props {
   id?: number;
   load?: () => void;
@@ -32,14 +33,14 @@ export interface AddEditOrganizationValues {
   name: string;
   abbreviation: string;
   nativeName?: string;
-  locations?: util.FormObjectValue[]; // Number[] we need array of IDs
+  locations?: util.FormObjectValue[]; // number[] we need array of IDs
   url?: string;
   active?: boolean;
   verified?: boolean;
-  notes?: string; // "notes" makes reference what in the UI it's called "Comments" (Not my decision)
-  organizationTypes: util.FormObjectValue[];
-  organizationLevel?: util.FormObjectValue; // Number[] we need array of IDs
-  parent?: util.FormObjectValue;
+  notes?: string; // "notes" makes reference what in the UI it's called "Comments"
+  organizationTypes: util.FormObjectValue | null;
+  organizationLevel?: util.FormObjectValue | null; // number[] we need array of IDs
+  parent?: util.FormObjectValue | null;
   collectiveInd?: boolean;
   comments?: string; // "comments" makes reference what in the UI it's called "Organization Description"
 }
@@ -52,9 +53,9 @@ export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   active: true,
   verified: true,
   notes: '', // "notes" makes reference what in the UI it's called "Comments"
-  organizationTypes: [],
-  organizationLevel: { displayLabel: '', value: '' }, // Number[] we need array of IDs
-  parent: { displayLabel: '', value: '' },
+  organizationTypes: null,
+  organizationLevel: null, // number[] we need array of IDs
+  parent: null,
   collectiveInd: false,
   comments: '',
 };
@@ -87,9 +88,9 @@ const parseFormValues = (values: AddEditOrganizationValues) => {
   const parsedLocations = locations?.length
     ? [...new Set(locations)]
     : undefined;
-  const categories = values.organizationTypes.map((org) =>
-    valueToInteger(org.value)
-  );
+  const categories = values.organizationTypes?.value
+    ? [valueToInteger(values.organizationTypes.value)]
+    : [];
   const parentID = values.parent?.value
     ? valueToInteger(values.parent.value)
     : undefined;
@@ -129,7 +130,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
   const FORM_VALIDATION = io.type({
     name: util.NON_EMPTY_STRING,
     abbreviation: util.NON_EMPTY_STRING,
-    organizationTypes: util.NON_EMPTY_ARRAY,
+    organizationTypes: util.NON_NULL_VALUE,
   });
 
   const VALIDATION_ERROR_MESSAGES: Record<
@@ -148,6 +149,51 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
       lang,
       (s) => s.components.organizationUpdateCreate.formErrors.organizationType
     ),
+  };
+
+  const handleChangeOrganizationType = async ({
+    setFieldValue,
+    newValue,
+  }: {
+    setFieldValue: FormikHelpers<AddEditOrganizationValues>['setFieldValue'];
+    newValue:
+      | NonNullable<string | util.FormObjectValue>
+      | Array<string | util.FormObjectValue>
+      | null;
+  }) => {
+    setFieldValue('organizationTypes', newValue);
+
+    if (!newValue || !isFormObjectValue(newValue)) {
+      setFieldValue('organizationLevel', null);
+      return;
+    }
+
+    const organizationLevelCategories =
+      await environment.model.categories.getCategories({
+        query: 'organizationLevel',
+      });
+    const organizationTypes = await environment.model.categories.getCategories({
+      query: 'organizationType',
+    });
+
+    const organizationType = organizationTypes.find(
+      (orgType) => orgType.id === valueToInteger(newValue.value)
+    );
+    const organizationLevelChild = organizationLevelCategories.find(
+      (orgLevel) => orgLevel.name === organizationType?.name
+    );
+    const organizationLevel = organizationLevelCategories.find(
+      (orgLevel) => orgLevel.id === organizationLevelChild?.parentID
+    );
+    if (!organizationLevel) {
+      setFieldValue('organizationLevel', null);
+      return;
+    }
+
+    setFieldValue('organizationLevel', {
+      displayLabel: organizationLevel.name,
+      value: organizationLevel.id,
+    } satisfies util.FormObjectValue);
   };
 
   const errorHandling = (err: Error) => {
@@ -218,7 +264,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
         validateForm(values, FORM_VALIDATION, VALIDATION_ERROR_MESSAGES)
       }
     >
-      {({ initialValues }) => (
+      {({ initialValues, setFieldValue }) => (
         <Form>
           <C.TextFieldWrapper
             label={t.t(
@@ -297,9 +343,11 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
                 s.components.organizationUpdateCreate.fields.organizationTypes
             )}
             name="organizationTypes"
-            fnPromise={() => fnCategories('organizationType', environment)}
+            fnPromise={() => fnOrganizationType(environment)}
+            onChange={async (newValue) =>
+              await handleChangeOrganizationType({ setFieldValue, newValue })
+            }
             isAutocompleteAPI={false}
-            isMulti
             required
           />
           <InfoText>
