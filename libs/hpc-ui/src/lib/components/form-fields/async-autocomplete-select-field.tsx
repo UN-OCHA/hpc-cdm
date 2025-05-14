@@ -16,13 +16,14 @@ const FlexDiv = tw.div`ms-8 border-l border-l-slate-400 border-solid border-y-0 
 const StyledLI = tw.li`w-full max-h-min`;
 const ChildrenOption = ({
   children,
-  ...otherProps
+  key,
 }: {
   children: React.ReactNode;
+  key: string | number;
 }) => {
   return (
     <FlexDiv>
-      <StyledLI {...otherProps}>{children}</StyledLI>
+      <StyledLI key={key}>{children}</StyledLI>
     </FlexDiv>
   );
 };
@@ -290,6 +291,7 @@ const AsyncAutocompleteSelect = ({
           ...getTagProps({ index }),
           sx: option.chipColor ? { bgcolor: option.chipColor } : {},
         };
+        const { key, ...chipOtionsWithoutKey } = chipOptions;
         return (
           <Tooltip
             title={
@@ -299,7 +301,7 @@ const AsyncAutocompleteSelect = ({
             }
             key={`${name}-${option.value}`}
           >
-            <Chip {...chipOptions} />
+            <Chip key={key} {...chipOtionsWithoutKey} />
           </Tooltip>
         );
       }),
