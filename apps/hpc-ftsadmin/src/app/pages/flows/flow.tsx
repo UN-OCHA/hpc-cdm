@@ -1,4 +1,4 @@
-import { flows } from '@unocha/hpc-data';
+import { categories, flows } from '@unocha/hpc-data';
 import { C, useDataLoader } from '@unocha/hpc-ui';
 import { useEffect } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
@@ -54,19 +54,58 @@ const LegacyId = tw.span`
 
 const DEFAULT_USERNAME = 'FTS User';
 
-const FlowActiveVersionPath = ({ flow }: { flow: flows.GetFlowResult }) => {
+const FlowActiveVersionPath = ({
+  flow,
+  categories,
+  isInactive,
+}: {
+  flow: flows.GetFlowResult;
+  categories: categories.Category[];
+  isInactive: boolean;
+}) => {
   const lang = getContext().lang;
+  const pendingReview = categories.find((cat) => cat.name === 'Pending review');
   const activeFlow = flow.versions.find((f) => f.activeStatus === true);
-  if (!activeFlow) {
+  const pendingFlow = flow.versions.find((f) =>
+    f.categories.some((cat) => cat.categoryID === pendingReview?.id)
+  );
+
+  const currentFlowIsPendingFlow =
+    flow.id === pendingFlow?.id && flow.versionID === pendingFlow?.versionID;
+
+  if (pendingFlow && !currentFlowIsPendingFlow) {
+    return (
+      <InactiveReason>
+        {t.t(lang, (s) => s.components.flow.hasPendingFlowLinkText)}
+        <Link
+          to={paths.flow(pendingFlow.id, pendingFlow.versionID)}
+        >{`${pendingFlow.id}v${pendingFlow.versionID}`}</Link>
+      </InactiveReason>
+    );
+  }
+
+  if (!activeFlow || !isInactive) {
     return null;
   }
   return (
-    <InactiveReason>
-      {t.t(lang, (s) => s.components.flow.activeFlowLinkText)}
-      <Link
-        to={paths.flow(activeFlow.id, activeFlow.versionID)}
-      >{`${activeFlow.id}v${activeFlow.versionID}`}</Link>
-    </InactiveReason>
+    <>
+      <InactiveReason>
+        {flow.deletedAt
+          ? t.t(lang, (s) => s.components.flow.deleted)
+          : t.t(lang, (s) => s.components.flow.inactiveReason, {
+              reason:
+                flow.categories.find((c) => c.group === 'inactiveReason')
+                  ?.name ??
+                t.t(lang, (s) => s.components.flow.unknownInactiveReasons),
+            })}
+      </InactiveReason>
+      <InactiveReason>
+        {t.t(lang, (s) => s.components.flow.activeFlowLinkText)}
+        <Link
+          to={paths.flow(activeFlow.id, activeFlow.versionID)}
+        >{`${activeFlow.id}v${activeFlow.versionID}`}</Link>
+      </InactiveReason>
+    </>
   );
 };
 
@@ -89,9 +128,9 @@ export default () => {
 
   const { id: idString, version } = useParams<FlowRouteParams>();
 
-  const isPending = (flow: flows.GetFlowResult): flow is PendingFlow =>
+  const isPendingFlow = (flow: flows.GetFlowResult): flow is PendingFlow =>
     flow.categories.some((c) => c.name === 'Pending review');
-  const isInactive = (flow: flows.GetFlowResult) =>
+  const isInactiveFlow = (flow: flows.GetFlowResult) =>
     !flow.activeStatus ||
     flow.categories.some((c) => c.group === 'inactiveReason');
 
@@ -103,7 +142,6 @@ export default () => {
     const getFlow = (version?: number) => {
       return env.model.flows.getFlow({ id, versionID: version });
     };
-
     const [state, load] = useDataLoader([id, version], async () => {
       const [
         flow,
@@ -163,88 +201,79 @@ export default () => {
               },
             }}
           >
-            {({ flow, parents, children, ...otherFlowFormProps }) => (
-              <>
-                <PageMeta
-                  title={[
-                    t.t(lang, (s) => s.routes.flow.title, {
-                      id,
-                      versionID: flow.versionID,
-                    }),
-                  ]}
-                />
-                <PaddingContainer>
-                  <C.PageTitle>
-                    {t.t(lang, (s) => s.routes.flow.title, {
-                      id,
-                      versionID: flow.versionID,
-                    })}
-                  </C.PageTitle>
-                  <UpdatedCreatedBy>
-                    {t.t(lang, (s) => s.components.flow.updatedBy, {
-                      date: dayjs(flow.updatedAt).format(
-                        UPDATE_CREATE_DATE_FORMAT
-                      ),
-                      user: flow.lastUpdatedBy?.name ?? DEFAULT_USERNAME,
-                    })}
-                  </UpdatedCreatedBy>
-                  <UpdatedCreatedBy>
-                    {t.t(lang, (s) => s.components.flow.createdBy, {
-                      date: dayjs(flow.createdAt).format(
-                        UPDATE_CREATE_DATE_FORMAT
-                      ),
-                      user: flow.createdBy?.name ?? DEFAULT_USERNAME,
-                    })}
-                  </UpdatedCreatedBy>
-                  {isInactive(flow) && (
-                    <>
-                      <InactiveReason>
-                        {flow.deletedAt
-                          ? t.t(lang, (s) => s.components.flow.deleted)
-                          : t.t(lang, (s) => s.components.flow.inactiveReason, {
-                              reason:
-                                flow.categories.find(
-                                  (c) => c.group === 'inactiveReason'
-                                )?.name ??
-                                t.t(
-                                  lang,
-                                  (s) =>
-                                    s.components.flow.unknownInactiveReasons
-                                ),
-                            })}
-                      </InactiveReason>
-                      <FlowActiveVersionPath flow={flow} />
-                    </>
-                  )}
-                  {flow.legacy?.legacyID && (
-                    <LegacyId>
-                      {t.t(lang, (s) => s.components.flow.legacyID, {
-                        id: flow.legacy.legacyID,
-                      })}
-                    </LegacyId>
-                  )}
-                  <FlowForm
-                    initialValues={
-                      isPending(flow)
-                        ? parseToFlowForm(
-                            {
-                              ...(flow.activeVersion ?? flow),
-                              reportDetails: flow.reportDetails,
-                            },
-                            parents,
-                            children
-                          )
-                        : parseToFlowForm(flow, parents, children)
-                    }
-                    flow={flow}
-                    load={load}
-                    isPending={isPending(flow)}
-                    isInactive={isInactive(flow)}
-                    {...otherFlowFormProps}
+            {({ flow, parents, children, ...otherFlowFormProps }) => {
+              const isPending = isPendingFlow(flow);
+              const isInactive = isInactiveFlow(flow);
+              return (
+                <>
+                  <PageMeta
+                    title={[
+                      t.t(lang, (s) => s.routes.flow.title, {
+                        id,
+                        versionID: flow.versionID,
+                      }),
+                    ]}
                   />
-                </PaddingContainer>
-              </>
-            )}
+                  <PaddingContainer>
+                    <C.PageTitle>
+                      {t.t(lang, (s) => s.routes.flow.title, {
+                        id,
+                        versionID: flow.versionID,
+                      })}
+                    </C.PageTitle>
+                    <UpdatedCreatedBy>
+                      {t.t(lang, (s) => s.components.flow.updatedBy, {
+                        date: dayjs(flow.updatedAt).format(
+                          UPDATE_CREATE_DATE_FORMAT
+                        ),
+                        user: flow.lastUpdatedBy?.name ?? DEFAULT_USERNAME,
+                      })}
+                    </UpdatedCreatedBy>
+                    <UpdatedCreatedBy>
+                      {t.t(lang, (s) => s.components.flow.createdBy, {
+                        date: dayjs(flow.createdAt).format(
+                          UPDATE_CREATE_DATE_FORMAT
+                        ),
+                        user: flow.createdBy?.name ?? DEFAULT_USERNAME,
+                      })}
+                    </UpdatedCreatedBy>
+
+                    <FlowActiveVersionPath
+                      flow={flow}
+                      categories={otherFlowFormProps.inactiveReasons}
+                      isInactive={isInactive}
+                    />
+
+                    {flow.legacy?.legacyID && (
+                      <LegacyId>
+                        {t.t(lang, (s) => s.components.flow.legacyID, {
+                          id: flow.legacy.legacyID,
+                        })}
+                      </LegacyId>
+                    )}
+                    <FlowForm
+                      initialValues={
+                        isPending
+                          ? parseToFlowForm(
+                              {
+                                ...(flow.activeVersion ?? flow),
+                                reportDetails: flow.reportDetails,
+                              },
+                              parents,
+                              children
+                            )
+                          : parseToFlowForm(flow, parents, children)
+                      }
+                      flow={flow}
+                      load={load}
+                      isPending={isPending}
+                      isInactive={isInactive}
+                      {...otherFlowFormProps}
+                    />
+                  </PaddingContainer>
+                </>
+              );
+            }}
           </C.Loader>
         )}
       </AppContext.Consumer>

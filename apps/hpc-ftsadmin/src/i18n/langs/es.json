@@ -73,7 +73,8 @@
       "legacyID": "ID de contribución heredado: {id}",
       "copyOfFlow": "Copia del flujo",
       "addFLow": "Añadir flujo",
-      "activeFlowLinkText": "El flujo activo actual es: "
+      "activeFlowLinkText": "El flujo activo actual es: ",
+      "hasPendingFlowLinkText": "Hay una actualización pendiente para este flujo. Revisar pendiente "
     },
     "flowAmountButton": {
       "amountOriginalCurrency": "Calcular el monto original",

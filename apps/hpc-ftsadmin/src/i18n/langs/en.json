@@ -73,7 +73,8 @@
       "legacyID": "Legacy contribution ID: {id}",
       "copyOfFlow": "Copy of Flow",
       "addFLow": "Add Flow",
-      "activeFlowLinkText": "The current active flow is: "
+      "activeFlowLinkText": "The current active flow is: ",
+      "hasPendingFlowLinkText": "There is a pending update to this flow. Review pending "
     },
     "flowAmountButton": {
       "amountOriginalCurrency": "Calculate the original amount",

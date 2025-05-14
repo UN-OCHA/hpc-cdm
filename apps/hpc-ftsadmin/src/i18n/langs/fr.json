@@ -73,7 +73,8 @@
       "legacyID": "ID de contribution hérité : {id}",
       "copyOfFlow": "Copie du flux",
       "addFLow": "Ajouter un flux",
-      "activeFlowLinkText": "Le flux actif actuel est : "
+      "activeFlowLinkText": "Le flux actif actuel est : ",
+      "hasPendingFlowLinkText": "Il y a une mise à jour est en attente pour ce flux. Examiner en attente "
     },
     "flowAmountButton": {
       "amountOriginalCurrency": "Calculer le montant d'origine",

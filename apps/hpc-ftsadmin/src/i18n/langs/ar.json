@@ -73,7 +73,8 @@
       "legacyID": "معرف المساهمة القديم: {id}",
       "copyOfFlow": "نسخة من التدفق",
       "addFLow": "إضافة تدفق",
-      "activeFlowLinkText": "التدفق النشط الحالي هو: "
+      "activeFlowLinkText": "التدفق النشط الحالي هو: ",
+      "hasPendingFlowLinkText": "هناك تحديث معلق لهذا التدفق. راجع التحديث المعلق"
     },
     "flowAmountButton": {
       "amountOriginalCurrency": "حساب القيمة بالعملة الأصلية",
