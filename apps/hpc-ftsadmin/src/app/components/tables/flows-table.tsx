@@ -460,6 +460,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                           label={[
                             t.t(lang, (s) => s.components.flowsTable.inactive),
                           ]}
+                          color="secondary"
                           size="small"
                         />
                       )}
