@@ -61,6 +61,13 @@ const TextFieldWrapper = ({
     placeholder,
     size: 'small',
     type: 'text',
+    inputProps: {
+      sx: textarea
+        ? {
+            ...tw`resize-y max-h-[500px]`,
+          }
+        : {},
+    },
   };
 
   /*
