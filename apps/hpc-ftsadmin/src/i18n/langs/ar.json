@@ -223,6 +223,12 @@
       "parentFlow": "التدفق الرئيسي",
       "childFlows": "التدفقات الفرعية"
     },
+    "flowPreviousReportingDetails": {
+      "title": "تفاصيل التقارير السابقة",
+      "header": {
+        "version": "الإصدار"
+      }
+    },
     "flowSearch": {
       "title": "البحث عن تدفقات",
       "flowId": "أدخل معرف التدفق:",

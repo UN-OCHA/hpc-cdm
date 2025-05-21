@@ -89,6 +89,7 @@ import AutocompleteSelectReview from './inputs/autocomplete-pending-review';
 import DatePickerReview from './inputs/date-picker-pending-review';
 import NumberFieldReview from './inputs/number-field-pending-review';
 import TextFieldReview from './inputs/text-field-pending-review';
+import FlowPreviousReportingDetails from './flow-previous-reporting-details';
 
 type FlowFormProps = {
   load: () => void;
@@ -1952,6 +1953,16 @@ export const FlowForm = (props: FlowFormProps) => {
                   </Box>
                 )}
               </FormGroup>
+              {flow && flow.versions.length > 1 && (
+                <FormGroup
+                  title={t.t(
+                    lang,
+                    (s) => s.components.flowPreviousReportingDetails.title
+                  )}
+                >
+                  <FlowPreviousReportingDetails flow={flow} />
+                </FormGroup>
+              )}
               {values.reportingDetails.length > 0 ? (
                 values.reportingDetails.map((_, index) => (
                   <React.Fragment key={index}>

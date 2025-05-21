@@ -223,6 +223,12 @@
       "childFlows": "Child Flows",
       "unlink": "Unlink"
     },
+    "flowPreviousReportingDetails": {
+      "title": "Previous Reporting Details",
+      "header": {
+        "version": "Version"
+      }
+    },
     "flowSearch": {
       "title": "Search flows",
       "flowId": "Introduce Flow ID:",

@@ -223,6 +223,12 @@
       "parentFlow": "Flujo Principal",
       "childFlows": "Flujos Hijos"
     },
+    "flowPreviousReportingDetails": {
+      "title": "Detalles de Informes Anteriores",
+      "header": {
+        "version": "Versión"
+      }
+    },
     "flowSearch": {
       "title": "Buscar flujos",
       "flowId": "Introduzca el ID del flujo:",

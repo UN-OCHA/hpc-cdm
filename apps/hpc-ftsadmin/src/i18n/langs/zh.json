@@ -223,6 +223,12 @@
       "parentFlow": "父流",
       "childFlows": "子流"
     },
+    "flowPreviousReportingDetails": {
+      "title": "以前的报告详情",
+      "header": {
+        "version": "版本"
+      }
+    },
     "flowSearch": {
       "title": "搜索资金流",
       "flowId": "输入资金流 ID:",
