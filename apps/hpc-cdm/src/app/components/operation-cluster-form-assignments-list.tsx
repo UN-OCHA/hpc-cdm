@@ -46,7 +46,7 @@ const OperationClusterFormAssignmentsList = (props: Props) => {
             const forms =
               data.clusterAssignments.find(
                 (ca) => ca.clusterId === cluster.id
-              )?.forms || [];
+              )?.forms ?? [];
             return forms.length === 0 ? (
               <C.ErrorMessage
                 icon={MdCheckCircle}

@@ -83,8 +83,7 @@ const MultiTextField = ({
       if (options.length > 1) {
         setFieldValue(
           field.name,
-          field.value
-            .concat(options)
+          [...field.value, ...options]
             .map((x) => x.trim())
             .filter(Boolean)
         );

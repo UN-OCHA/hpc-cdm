@@ -93,7 +93,7 @@ export class LiveBrowserClient {
       } 
         const info = await res.json();
         return () => ({
-          name: info.name || 'unknown',
+          name: info.name ?? 'unknown',
         });
       
     
@@ -105,7 +105,7 @@ export class LiveBrowserClient {
     await userManager
       .signinRedirectCallback()
       .then((user) => {
-        const redirectTo = user.state || document.location.pathname;
+        const redirectTo = user.state ?? document.location.pathname;
         if (history.replaceState) {
           history.replaceState(null, document.title, redirectTo);
           // TODO: interact directly with React Router history to get it to reload

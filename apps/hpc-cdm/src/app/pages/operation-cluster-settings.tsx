@@ -35,7 +35,7 @@ const PageOperationClusterSettings = (props: Props) => {
           <ClusterNavigation
             operation={operation}
             cluster={cluster}
-            showSettingsButton
+            shouldShowSettingsButton
           />
           <C.SidebarNavigation
             menu={[

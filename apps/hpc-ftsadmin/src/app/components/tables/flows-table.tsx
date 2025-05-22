@@ -71,15 +71,15 @@ export interface FlowsTableProps {
   pending?: boolean;
 }
 
-export default function FlowsTable(props: FlowsTableProps) {
+const FlowsTable = (props: FlowsTableProps) => {
   const env = getEnv();
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
   const filters = decodeFilters(props.query.filters, props.initialValues);
   const tableFilters = parseFormFilters(filters, props.initialValues);
   const [query, setQuery] = [props.query, props.setQuery];
-  const [openSettings, setOpenSettings] = useState(false);
-  const [tableInfoDisplay, setTableInfoDisplay] = useState(
+  const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
+  const [shouldDisplayTableInfo, setShouldDisplayTableInfo] = useState(
     util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
 
@@ -124,9 +124,9 @@ export default function FlowsTable(props: FlowsTableProps) {
   };
 
   const handleSort = (newSort: FlowHeaderID) => {
-    const changeDir = newSort === query.orderBy;
+    const shouldChangeDir = newSort === query.orderBy;
 
-    if (changeDir) {
+    if (shouldChangeDir) {
       setQuery({
         ...query,
         orderDir: query.orderDir === 'ASC' ? 'DESC' : 'ASC',
@@ -146,8 +146,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     lang: LanguageKey
   ) => {
     const rd =
-      row.reportDetails &&
-      row.reportDetails.filter((rd) => rd.organizationID === org.id);
+      row.reportDetails?.filter((rd) => rd.organizationID === org.id);
     return (
       rd &&
       rd.length > 0 &&
@@ -287,7 +286,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-external-reference"
                     >
-                      {row.externalReferences?.at(0)?.systemID || '--'}
+                      {row.externalReferences?.at(0)?.systemID ?? '--'}
                     </TableCell>
                   );
                 case 'flow.amountUSD':
@@ -757,13 +756,13 @@ export default function FlowsTable(props: FlowsTableProps) {
 
                     <TableHeaderButton
                       size="small"
-                      onClick={() => setOpenSettings(!openSettings)}
+                      onClick={() => setShouldOpenSettings(!shouldOpenSettings)}
                     >
                       <SettingsIcon />
                     </TableHeaderButton>
                     <Modal
-                      open={openSettings}
-                      onClose={() => setOpenSettings(!openSettings)}
+                      open={shouldOpenSettings}
+                      onClose={() => setShouldOpenSettings(!shouldOpenSettings)}
                       sx={tw`flex items-center justify-center`}
                     >
                       <Box sx={tw`max-h-[70vh] overflow-y-scroll rounded-xl`}>
@@ -806,11 +805,11 @@ export default function FlowsTable(props: FlowsTableProps) {
                               severity="info"
                               onClose={() =>
                                 handleTableSettingsInfoClose(
-                                  setTableInfoDisplay
+                                  setShouldDisplayTableInfo
                                 )
                               }
                               sx={{
-                                display: tableInfoDisplay ? 'flex' : 'none',
+                                display: shouldDisplayTableInfo ? 'flex' : 'none',
                                 ...tw`mx-8 mt-4`,
                               }}
                             >
@@ -873,3 +872,6 @@ export default function FlowsTable(props: FlowsTableProps) {
     </AppContext.Consumer>
   );
 }
+
+export default FlowsTable
+

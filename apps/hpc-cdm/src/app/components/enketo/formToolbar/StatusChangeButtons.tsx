@@ -8,7 +8,6 @@ import { t } from '../../../../i18n';
 import { type FormStatus } from '../types';
 
 interface Props {
-  loading: boolean;
   assignment: reportingWindows.GetAssignmentResult;
   setStatus: Dispatch<SetStateAction<FormStatus>>;
 }
@@ -34,7 +33,7 @@ const StatusChangeButtons = (props: Props) => {
       .catch((error) => {
         setStatus({
           type: 'error',
-          message: error.message || error.toString(),
+          message: error.message ?? error.toString(),
         });
       });
   };

@@ -11,7 +11,7 @@ type ErrorAlertProps<T> = {
   error?: string;
 };
 const ErrorAlert = <T,>({ setError, error }: ErrorAlertProps<T>) => {
-  function GrowTransition(props: GrowProps) {
+  const GrowTransition = (props: GrowProps) => {
     return <Grow {...props} />;
   }
 

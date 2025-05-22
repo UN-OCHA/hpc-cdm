@@ -40,7 +40,7 @@ const ValidationOnSubmitModal = (props: Props) => {
         <C.Button
           onClick={closeInvalidSubmissionMessage}
           color="primary"
-          autoFocus
+          shouldAutoFocus
         >
           <span>
             {t.t(lang, (s) => s.routes.operations.forms.invalidData.okay)}

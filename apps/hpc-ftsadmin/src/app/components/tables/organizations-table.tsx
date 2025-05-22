@@ -64,12 +64,12 @@ export interface OrganizationTableProps {
   setQuery: SetQuery<OrganizationQuery>;
 }
 
-export default function OrganizationTable(props: OrganizationTableProps) {
+const OrganizationTable = (props: OrganizationTableProps) => {
   const env = getEnv();
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
   const filters = decodeFilters(props.query.filters, props.initialValues);
-  const [tableInfoDisplay, setTableInfoDisplay] = useState(
+  const [shouldDisplayTableInfo, setShouldDisplayTableInfo] = useState(
     util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
   const parsedFilters = parseFormFilters<
@@ -77,7 +77,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     OrganizationFilterValues
   >(filters, props.initialValues);
   const [query, setQuery] = [props.query, props.setQuery];
-  const [openSettings, setOpenSettings] = useState(false);
+  const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
   const navigate = useNavigate();
   const state = dataLoader([query], () =>
     env.model.organizations.searchOrganizations({
@@ -119,9 +119,9 @@ export default function OrganizationTable(props: OrganizationTableProps) {
   };
 
   const handleSort = (newSort: OrganizationHeaderID) => {
-    const changeDir = newSort === query.orderBy;
+    const shouldChangeDir = newSort === query.orderBy;
 
-    if (changeDir) {
+    if (shouldChangeDir) {
       setQuery({
         ...query,
         orderDir: query.orderDir === 'ASC' ? 'DESC' : 'ASC',
@@ -398,13 +398,13 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                   />
                   <TableHeaderButton
                     size="small"
-                    onClick={() => setOpenSettings(!openSettings)}
+                    onClick={() => setShouldOpenSettings(!shouldOpenSettings)}
                   >
                     <SettingsIcon />
                   </TableHeaderButton>
                   <Modal
-                    open={openSettings}
-                    onClose={() => setOpenSettings(!openSettings)}
+                    open={shouldOpenSettings}
+                    onClose={() => setShouldOpenSettings(!shouldOpenSettings)}
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
@@ -458,10 +458,10 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                           <Alert
                             severity="info"
                             onClose={() =>
-                              handleTableSettingsInfoClose(setTableInfoDisplay)
+                              handleTableSettingsInfoClose(setShouldDisplayTableInfo)
                             }
                             sx={{
-                              display: tableInfoDisplay ? 'flex' : 'none',
+                              display: shouldDisplayTableInfo ? 'flex' : 'none',
                               ...tw`mx-8 mt-4`,
                             }}
                           >
@@ -520,3 +520,5 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     </AppContext.Consumer>
   );
 }
+
+export default OrganizationTable

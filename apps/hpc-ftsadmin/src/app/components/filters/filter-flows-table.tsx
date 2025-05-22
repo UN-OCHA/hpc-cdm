@@ -100,7 +100,7 @@ export const FilterFlowsTable = (props: Props) => {
 
   const { lang, env } = useContext(AppContext);
   const environment = env();
-  const [infoAlertDisplay, setInfoAlertDisplay] = useState(
+  const [shouldDisplayInfoAlert, setShouldDisplayInfoAlert] = useState(
     util.getLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', true)
   );
 
@@ -110,7 +110,7 @@ export const FilterFlowsTable = (props: Props) => {
   );
   const handleInfoAlertClose = () => {
     util.setLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', false);
-    setInfoAlertDisplay(false);
+    setShouldDisplayInfoAlert(false);
   };
 
   const handleSubmit = (values: FlowsFilterValues) => {
@@ -189,7 +189,7 @@ export const FilterFlowsTable = (props: Props) => {
                 severity="info"
                 onClose={handleInfoAlertClose}
                 sx={{
-                  display: infoAlertDisplay ? 'flex' : 'none',
+                  display: shouldDisplayInfoAlert ? 'flex' : 'none',
                   ...tw`mt-4`,
                 }}
               >

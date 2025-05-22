@@ -23,7 +23,7 @@ interface Props {
   className?: string;
   label: string;
   loadingLabel: string;
-  showCheckboxes?: boolean;
+  shouldShowCheckboxes?: boolean;
   options: Array<{
     label: string;
     key: string;
@@ -82,10 +82,10 @@ type InternalState = 'idle' | 'loading' | 'error';
  * selects a new option, and display a loading indicator.
  */
 export const ActionableDropdown = (props: Props) => {
-  const { className, label, loadingLabel, showCheckboxes, options, onSelect } =
+  const { className, label, loadingLabel, shouldShowCheckboxes, options, onSelect } =
     props;
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [state, setState] = useState<InternalState>('idle');
 
   return (
@@ -93,7 +93,7 @@ export const ActionableDropdown = (props: Props) => {
       <button
         ref={buttonRef}
         className={CLS.BUTTON}
-        onClick={() => setOpen(true)}
+        onClick={() => setIsOpen(true)}
       >
         {state === 'loading' ? (
           <>
@@ -106,14 +106,14 @@ export const ActionableDropdown = (props: Props) => {
             <span>{label}</span>
             <Caret
               className={CLS.CARET}
-              direction={open ? 'up' : 'down'}
+              direction={isOpen ? 'up' : 'down'}
               size={12}
             />
           </>
         )}
       </button>
       <Popper
-        open={open}
+        open={isOpen}
         anchorEl={buttonRef.current}
         role={undefined}
         transition
@@ -122,13 +122,13 @@ export const ActionableDropdown = (props: Props) => {
         {({ TransitionProps }) => (
           <Grow {...TransitionProps}>
             <Paper>
-              <ClickAwayListener onClickAway={() => setOpen(false)}>
-                <MenuList autoFocusItem={open}>
+              <ClickAwayListener onClickAway={() => setIsOpen(false)}>
+                <MenuList autoFocusItem={isOpen}>
                   {options.map((item) => (
                     <MenuItem
                       key={item.key}
                       onClick={() => {
-                        setOpen(false);
+                        setIsOpen(false);
                         setState('loading');
                         onSelect(item.key)
                           .then(() => setState('idle'))
@@ -139,7 +139,7 @@ export const ActionableDropdown = (props: Props) => {
                       }}
                     >
                       <MenuItemContents>
-                        {showCheckboxes &&
+                        {shouldShowCheckboxes &&
                           (item.selected ? (
                             <MdCheckBox />
                           ) : (

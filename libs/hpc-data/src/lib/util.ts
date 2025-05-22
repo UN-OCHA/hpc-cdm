@@ -62,7 +62,7 @@ export const validInteger = (integerOptions: readonly number[]) =>
           : t.failure(v, c);
       } else if (typeof v === 'string') {
         return /^\d+$/.test(v) &&
-          integerOptions.some((row) => row === parseInt(v))
+          integerOptions.includes(parseInt(v))
           ? t.success(parseInt(v))
           : t.failure(v, c);
       } 
@@ -278,7 +278,7 @@ export const BLOB = new t.Type<Blob, Blob>(
   t.identity
 );
 
-export const BUFFER = new t.Type<Buffer, Buffer, any>(
+export const BUFFER = new t.Type<Buffer, Buffer, unknown>(
   'Buffer',
   (v): v is Buffer => v instanceof Buffer,
   (v, c) => (v instanceof Buffer ? t.success(v) : t.failure(v, c)),

@@ -72,13 +72,13 @@ const DraggableListItem = ({
   item: DraggableListItemProps;
   index: number;
 }) => {
-  const [active, setActive] = useState(item.active);
+  const [isActive, setIsActive] = useState(item.active);
   return (
     <Draggable
       draggableId={item.id.toString()}
       index={index}
       key={item.id}
-      isDragDisabled={!active}
+      isDragDisabled={!isActive}
     >
       {(provided) => (
         <DraggableListItemContainer
@@ -87,15 +87,15 @@ const DraggableListItem = ({
           ref={provided.innerRef}
         >
           <DragIconContainer>
-            <DragIndicatorIcon color={active ? 'primary' : 'disabled'} />
+            <DragIndicatorIcon color={isActive ? 'primary' : 'disabled'} />
             <TextContainer>{item.label}</TextContainer>
           </DragIconContainer>
           <Switch
             color="primary"
             size="small"
-            checked={active}
+            checked={isActive}
             onClick={() => {
-              setActive(!active);
+              setIsActive(!isActive);
               item.active = !item.active;
             }}
           />

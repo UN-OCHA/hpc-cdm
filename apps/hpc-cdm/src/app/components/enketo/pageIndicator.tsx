@@ -21,7 +21,7 @@ const PageIndicator = ({ pageInfo }: Props) => {
     pageInfo && (
       <Container>
         {t.t(lang, (s) => s.routes.operations.forms.pageIndicator, {
-          page: (pageInfo.currentPage || 0) + 1,
+          page: (pageInfo.currentPage ?? 0) + 1,
           count: pageInfo.totalPages,
         })}
       </Container>

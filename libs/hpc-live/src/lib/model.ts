@@ -330,9 +330,9 @@ export class LiveModel implements Model {
 
   public constructor(config: Config) {
     this.config = config;
-    this.URL = config.interfaces?.URL || URL;
-    this.fetch = config.interfaces?.fetch || fetch.bind(globalThis);
-    this.sha256Hash = config.interfaces?.sha256Hash || util.hashFileInBrowser;
+    this.URL = config.interfaces?.URL ?? URL;
+    this.fetch = config.interfaces?.fetch ?? fetch.bind(globalThis);
+    this.sha256Hash = config.interfaces?.sha256Hash ?? util.hashFileInBrowser;
   }
 
   private baseFetchInit = ({
@@ -354,7 +354,7 @@ export class LiveModel implements Model {
       }
     }
     const init: RequestInit = {
-      method: method || 'GET',
+      method: method ?? 'GET',
       headers: this.config.hidToken
         ? {
             Authorization: `Bearer ${this.config.hidToken}`,
@@ -859,7 +859,8 @@ export class LiveModel implements Model {
         const { assignmentId: aId } = params;
 
         if (reportingWindows.UPDATE_ASSIGNMENT_PARAMS_STATE_CHANGE.is(params)) {
-          const [type, finalized] = params.state.split(':');
+          const { state } = params
+          const [type, finalized] = state.split(':');
 
           const result = await this.call({
             method: 'PUT',
@@ -876,9 +877,10 @@ export class LiveModel implements Model {
             resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
           });
           return handleAssignmentResult(result);
-        } 
+        }
+        const { form } = params
           const files = await Promise.all(
-            params.form.files.map(async (f) => ({
+            form.files.map(async (f) => ({
               name: f.name,
               data: f.data,
               fileHash: await this.sha256Hash(f.data),
@@ -891,7 +893,7 @@ export class LiveModel implements Model {
             fileCache.set(file.fileHash, Promise.resolve(file.data));
           }
 
-          if (files && files.length) {
+          if (files?.length) {
             const newFiles = await this.checkFormAssignmentFiles(aId, files);
             if (newFiles) {
               await this.uploadFormAssignmentFiles(aId, newFiles);
@@ -901,10 +903,10 @@ export class LiveModel implements Model {
           const data = {
             ...params,
             form: {
-              id: params.form.id,
-              version: params.form.version,
-              data: params.form.data,
-              finalized: params.form.finalized,
+              id: form.id,
+              version:form.version,
+              data: form.data,
+              finalized: form.finalized,
               files: files.map((f) => ({
                 name: f.name,
                 data: { fileHash: f.fileHash },

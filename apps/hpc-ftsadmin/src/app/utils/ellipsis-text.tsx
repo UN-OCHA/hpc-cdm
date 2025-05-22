@@ -9,7 +9,7 @@ const EllipsisText = ({
 }) => {
   const parsedMaxWidth =
     typeof maxWidth === 'number'
-      ? maxWidth - (iconWidth ? iconWidth : 0)
+      ? maxWidth - (iconWidth ?? 0)
       : maxWidth;
   return (
     <div

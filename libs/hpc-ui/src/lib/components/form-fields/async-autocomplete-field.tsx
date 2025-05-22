@@ -34,18 +34,18 @@ const AsyncAutocompleteSelect = ({
   isAutocompleteAPI,
   required,
 }: AsyncAutocompleteSelectProps) => {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const { setFieldValue } = useFormikContext<FormObjectValue[]>();
   const [field, meta] = useField<FormObjectValue[]>(name);
   const [options, setOptions] = useState<FormObjectValue[]>([]);
   const [data, setData] = useState<FormObjectValue[]>([]);
   const [isFetch, setIsFetch] = useState(false);
-  const loading =
-    open && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
+  const isLoading =
+    isOpen && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
 
   useEffect(() => {
-    let active = true;
+    let isActive = true;
     if (isAutocompleteAPI && (inputValue === '' || inputValue.length < 3)) {
       setOptions([]);
       setData([]);
@@ -60,7 +60,7 @@ const AsyncAutocompleteSelect = ({
       );
     }
 
-    if (!loading) {
+    if (!isLoading) {
       return;
     }
     (async () => {
@@ -70,7 +70,7 @@ const AsyncAutocompleteSelect = ({
         });
         setData(response);
         console.log(response);
-        if (active) {
+        if (isActive) {
           setOptions(response);
         }
         setIsFetch(true);
@@ -80,17 +80,17 @@ const AsyncAutocompleteSelect = ({
     })();
 
     return () => {
-      active = false;
+      isActive = false;
     };
-  }, [open, inputValue]);
+  }, [isOpen, inputValue]);
 
   useEffect(() => {
-    if (!open && isAutocompleteAPI) {
+    if (!isOpen && isAutocompleteAPI) {
       setOptions([]);
       setData([]);
       setIsFetch(false);
     }
-  }, [open, isAutocompleteAPI]);
+  }, [isOpen, isAutocompleteAPI]);
 
   const configAutocomplete: AutocompleteProps<
     FormObjectValue,
@@ -101,12 +101,12 @@ const AsyncAutocompleteSelect = ({
     ...field,
     multiple: isMulti,
     onOpen: () => {
-      setOpen(true);
+      setIsOpen(true);
     },
     onClose: () => {
-      setOpen(false);
+      setIsOpen(false);
     },
-    open,
+    open: isOpen,
     isOptionEqualToValue: (option, value) => option.value === value.value,
     options,
     getOptionLabel: (op) => (typeof op === 'string' ? op : op.displayLabel),
@@ -120,7 +120,7 @@ const AsyncAutocompleteSelect = ({
     onInputChange: (_, newInputValue) => {
       setInputValue(newInputValue);
     },
-    loading,
+    loading: isLoading,
     renderOption: (props, option) => {
       return (
         <li {...props} key={option.value}>
@@ -138,7 +138,7 @@ const AsyncAutocompleteSelect = ({
           ...params.InputProps,
           endAdornment: (
             <>
-              {loading ? <CircularProgress color="inherit" size={20} /> : null}
+              {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
               {params.InputProps.endAdornment}
             </>
           ),

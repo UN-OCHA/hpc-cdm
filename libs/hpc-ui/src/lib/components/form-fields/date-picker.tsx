@@ -29,17 +29,17 @@ const DatePicker = ({
   enableButton?: boolean;
 }) => {
   const [field, , helpers] = useField(name);
-  const [cleared, setCleared] = useState(false);
+  const [isCleared, setIsCleared] = useState(false);
 
   useEffect(() => {
-    if (cleared) {
+    if (isCleared) {
       const timeout = setTimeout(() => {
-        setCleared(false);
+        setIsCleared(false);
       }, 1000);
 
       return () => clearTimeout(timeout);
     }
-  }, [cleared]);
+  }, [isCleared]);
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={lang}>
       <StyledDatePicker>
@@ -72,7 +72,7 @@ const DatePicker = ({
             ),
           }}
           slotProps={{
-            field: { clearable: true, onClear: () => setCleared(true) },
+            field: { clearable: true, onClear: () => setIsCleared(true) },
           }}
         />
         {enableButton && (

@@ -15,8 +15,8 @@ export const getBestReportingWindow = (
     throw new Error(`getBestReportingWindow called with 0 reporting windows`);
   }
   return (
-    ws.find((w) => w.state === 'open') ||
-    ws.find((w) => w.state === 'pending') ||
+    ws.find((w) => w.state === 'open') ??
+    ws.find((w) => w.state === 'pending') ??
     ws[0]
   );
 };

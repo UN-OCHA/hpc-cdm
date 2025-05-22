@@ -117,7 +117,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
   const environment = env();
   const navigate = useNavigate();
   const type: 'update' | 'create' = id ? 'update' : 'create';
-  const [error, setError] =
+  const [formError, setFormError] =
     useState<
       keyof Strings['components']['organizationUpdateCreate']['errors']
     >();
@@ -132,12 +132,12 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
       await environment.model.organizations
         .updateOrganization(formToUpdate(values, id))
         .finally(load)
-        .catch((error_) => {
-          if (errors.isDuplicateError(error_)) {
-            setErrorValue(error_.value);
-            setError(error_.code);
+        .catch((error) => {
+          if (errors.isDuplicateError(error)) {
+            setErrorValue(error.value);
+            setFormError(error.code);
           } else {
-            setError('unknown');
+            setFormError('unknown');
           }
         });
     } else {
@@ -146,12 +146,12 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
         .then((org) => {
           navigate(paths.organization(org.id));
         })
-        .catch((error_) => {
-          if (errors.isDuplicateError(error_)) {
-            setErrorValue(error_.value);
-            setError(error_.code);
+        .catch((error) => {
+          if (errors.isDuplicateError(error)) {
+            setErrorValue(error.value);
+            setFormError(error.code);
           } else {
-            setError('unknown');
+            setFormError('unknown');
           }
         });
     }
@@ -167,12 +167,12 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
         <Form>
           <C.ErrorAlert
             setError={
-              setError as React.Dispatch<
+              setFormError as React.Dispatch<
                 React.SetStateAction<string | undefined>
               >
             }
             error={parseError(
-              error,
+              formError,
               'organizationUpdateCreate',
               lang,
               errorValue
@@ -363,7 +363,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
             )}
             <AlignButton>
               <C.ButtonSubmit
-                color={error ? 'secondary' : 'primary'}
+                color={formError ? 'secondary' : 'primary'}
                 text={t.t(
                   lang,
                   (s) => s.components.organizationUpdateCreate[type]

@@ -234,16 +234,16 @@ const EditableRow = ({
   );
 };
 
-export default function KeywordTable(props: KeywordTableProps) {
+const KeywordTable = (props: KeywordTableProps) => {
   const env = getEnv();
 
   const [query, setQuery] = [props.query, props.setQuery];
-  const [openSettings, setOpenSettings] = useState(false);
-  const [entityEdited, setEntityEdited] = useState(false);
-  const state = dataLoader([entityEdited], () =>
+  const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
+  const [isEntityEdited, setIsEntityEdited] = useState(false);
+  const state = dataLoader([isEntityEdited], () =>
     env.model.categories.getKeywords()
   );
-  const [tableInfoDisplay, setTableInfoDisplay] = useState(
+  const [shouldDisplayTableInfo, setShouldDisplayTableInfo] = useState(
     util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
   const [error, setError] = useState<{
@@ -252,9 +252,9 @@ export default function KeywordTable(props: KeywordTableProps) {
   }>();
 
   const handleSort = (newSort: KeywordHeaderID) => {
-    const changeDir = newSort === query.orderBy;
+    const shouldChangeDir = newSort === query.orderBy;
 
-    if (changeDir) {
+    if (shouldChangeDir) {
       setQuery({
         ...query,
         orderDir: query.orderDir === 'ASC' ? 'DESC' : 'ASC',
@@ -324,8 +324,8 @@ export default function KeywordTable(props: KeywordTableProps) {
                         <EditableRow
                           lang={lang}
                           row={row}
-                          entityEdited={entityEdited}
-                          setEntityEdited={setEntityEdited}
+                          entityEdited={isEntityEdited}
+                          setEntityEdited={setIsEntityEdited}
                         />
                       </TableCell>
                     );
@@ -466,13 +466,13 @@ export default function KeywordTable(props: KeywordTableProps) {
                 <TopRowContainer>
                   <TableHeaderButton
                     size="small"
-                    onClick={() => setOpenSettings(!openSettings)}
+                    onClick={() => setShouldOpenSettings(!shouldOpenSettings)}
                   >
                     <SettingsIcon />
                   </TableHeaderButton>
                   <Modal
-                    open={openSettings}
-                    onClose={() => setOpenSettings(!openSettings)}
+                    open={shouldOpenSettings}
+                    onClose={() => setShouldOpenSettings(!shouldOpenSettings)}
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
@@ -515,7 +515,7 @@ export default function KeywordTable(props: KeywordTableProps) {
                                 setQuery
                               ),
                             });
-                            setOpenSettings(false);
+                            setShouldOpenSettings(false);
                           }
                         }}
                         elevation={6}
@@ -527,10 +527,10 @@ export default function KeywordTable(props: KeywordTableProps) {
                           <Alert
                             severity="info"
                             onClose={() =>
-                              handleTableSettingsInfoClose(setTableInfoDisplay)
+                              handleTableSettingsInfoClose(setShouldDisplayTableInfo)
                             }
                             sx={{
-                              display: tableInfoDisplay ? 'flex' : 'none',
+                              display: shouldDisplayTableInfo ? 'flex' : 'none',
                               ...tw`mx-8 mt-4`,
                             }}
                           >
@@ -567,3 +567,5 @@ export default function KeywordTable(props: KeywordTableProps) {
     </AppContext.Consumer>
   );
 }
+
+export default KeywordTable

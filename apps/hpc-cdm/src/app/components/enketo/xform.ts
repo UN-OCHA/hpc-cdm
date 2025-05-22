@@ -31,22 +31,22 @@ export default class XForm {
     }
   ) {
     this.loading = true;
-    const { onDataUpdate, onPageFlip } = opts || {};
+    const { onDataUpdate, onPageFlip } = opts ?? {};
     this.files = files;
 
-    fileManager.getFileUrl = async (subject) => {
+    fileManager.getFileUrl = (subject) => {
       if (!subject) {
-        return;
+        return Promise.resolve(undefined)
       }
       if (typeof subject === 'string') {
         const file = files.filter((f) => f.name === subject);
         if (file.length > 0) {
-          return globalThis.URL.createObjectURL(file[0].data);
+          return Promise.resolve(globalThis.URL.createObjectURL(file[0].data));
         } 
           throw new Error(`Unable to find file with the name ${subject}`);
         
       }
-      return globalThis.URL.createObjectURL(subject);
+      return Promise.resolve(globalThis.URL.createObjectURL(subject));
     };
 
     $('.container').replaceWith(html);
@@ -82,7 +82,7 @@ export default class XForm {
       formElement,
       {
         modelStr,
-        instanceStr: content ? content : undefined,
+        instanceStr: content ?? undefined,
         external: undefined,
       },
       {
@@ -93,8 +93,9 @@ export default class XForm {
   }
 
   private changeLanguage(languages: string[], selectedLanguage?: string) {
+
     const _selectedLanguage =
-      selectedLanguage || $('#form-languages').data('default-lang');
+      selectedLanguage ?? $('#form-languages').data('default-lang');
     // Set the value for the dropdown
     $('#form-languages').val(_selectedLanguage);
     // Activate the correct language in the form
@@ -136,13 +137,13 @@ export default class XForm {
     }
   }
 
-  async init(editable: boolean): Promise<void> {
+  init(editable: boolean): Promise<void> {
     return new Promise((resolve) => {
       const t0 = performance.now();
       const errors = this.form.init();
       const t1 = performance.now();
       console.log(`Form initialization time: ${  t1 - t0  } millis`);
-      if (errors && errors.length) {
+      if (errors?.length) {
         console.error('Form Errors', JSON.stringify(errors));
       }
 
@@ -168,29 +169,30 @@ export default class XForm {
       );
 
       const formLanguages: string[] = this.form.languages;
-      const newLanguagesExistForForm = formLanguages.some(
+      const doesNewLanguagesExistForForm = formLanguages.some(
         (language) => !appLanguages[language as LanguageKey]
       );
       console.log('formLanguages:', formLanguages);
       const selectedLanguage = LANGUAGE_CHOICE.getLanguage();
-      const selectedLanguageIsSupported = formLanguages.includes(
+      const isSelectedLanguageSupported = formLanguages.includes(
         selectedLanguage
       );
 
       this.showOrHideLanguageUI(
-        newLanguagesExistForForm,
-        selectedLanguageIsSupported,
+        doesNewLanguagesExistForForm,
+        isSelectedLanguageSupported,
         formLanguages,
         selectedLanguage
       );
 
       LANGUAGE_CHOICE.addListener((lang) => {
-        const _selectedLanguageIsSupported = formLanguages.includes(
+
+        const isSelectedLanguageSupported = formLanguages.includes(
           lang
         );
         this.showOrHideLanguageUI(
-          newLanguagesExistForForm,
-          _selectedLanguageIsSupported,
+          doesNewLanguagesExistForForm,
+          isSelectedLanguageSupported,
           formLanguages,
           lang
         );

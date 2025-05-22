@@ -18,12 +18,12 @@ interface Props {
 }
 
 const PageOperationForms = (props: Props) => {
-  const { operation } = props;
+  const { operation, className } = props;
   // Get the single reporting window we will be displaying for now
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <div className={combineClasses(props.className)}>
+        <div className={combineClasses(className)}>
           <PageMeta
             title={[t.t(lang, (s) => s.navigation.forms), operation.name]}
           />

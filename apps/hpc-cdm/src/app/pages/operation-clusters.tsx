@@ -22,7 +22,7 @@ interface Props {
 }
 
 const PageOperationClusters = (props: Props) => {
-  const { operation } = props;
+  const { operation, className } = props;
 
   const loader = dataLoader(
     [
@@ -36,7 +36,7 @@ const PageOperationClusters = (props: Props) => {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <div className={props.className}>
+        <div className={className}>
           <C.Loader
             loader={loader}
             strings={{

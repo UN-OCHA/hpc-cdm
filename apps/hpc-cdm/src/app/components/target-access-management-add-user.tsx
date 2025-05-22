@@ -18,8 +18,8 @@ import { getContext } from '../context';
 
 interface Props {
   target: access.AccessTarget;
-  open: boolean;
-  setOpen: (open: boolean) => void;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
   updateLoadedData: (data: access.GetTargetAccessResult) => void;
   roles: string[];
 }
@@ -52,7 +52,7 @@ type SubmissionState =
     };
 
 export const TargetAccessManagementAddUser = (props: Props) => {
-  const { open, setOpen, roles, target, updateLoadedData } = props;
+  const { isOpen, setIsOpen, roles, target, updateLoadedData } = props;
   const { lang, env } = getContext();
 
   const [emailInputValue, setEmailInputValue] = useState<string>('');
@@ -70,7 +70,9 @@ export const TargetAccessManagementAddUser = (props: Props) => {
     );
 
   const submit = async (event?: React.FormEvent<HTMLFormElement>) => {
-    event && event.preventDefault();
+    if(event) {
+      event.preventDefault()
+    }
     if (emailInputValue === '') {
       setSubmissionState({
         type: 'userError',
@@ -105,7 +107,7 @@ export const TargetAccessManagementAddUser = (props: Props) => {
         } 
           setSubmissionState({
             type: 'unknownError',
-            error: error.message || error.toString(),
+            error: error.message ?? error.toString(),
           });
           throw error;
         
@@ -114,7 +116,7 @@ export const TargetAccessManagementAddUser = (props: Props) => {
       setSubmissionState({
         type: 'idle',
       });
-      setOpen(false);
+      setIsOpen(false);
       updateLoadedData(data);
     }
   };
@@ -130,7 +132,7 @@ export const TargetAccessManagementAddUser = (props: Props) => {
   };
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
       <DialogTitle>
         {t.t(lang, (s) => s.components.accessControl.addPerson)}
       </DialogTitle>

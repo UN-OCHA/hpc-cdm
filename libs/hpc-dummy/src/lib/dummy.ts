@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { type Session } from '@unocha/hpc-core';
 import {
@@ -205,7 +206,7 @@ export class Dummy {
       assignee = {
         type: 'operationCluster',
         clusterId,
-        clusterName: cluster?.name,
+        clusterName: cluster?.name ?? '',
       };
     } else {
       assignee = assignment.assignee;
@@ -341,7 +342,7 @@ export class Dummy {
                 (a) =>
                   a.grantee.id === this.data.currentUser &&
                   a.target.type === 'global'
-              )?.roles || false;
+              )?.roles ?? false;
             console.log(roles);
             return {
               permissions: {
@@ -450,33 +451,31 @@ export class Dummy {
                   actor: this.data.currentUser,
                 });
               }
+            // Not added yet, add user
+            } else if (existingUser) {
+              const grantee = {
+                type: 'user',
+                id: existingUser.id,
+              } as const;
+              this.data.access.active.push({
+                target,
+                grantee,
+                roles,
+              });
+              this.data.access.auditLog.push({
+                target,
+                grantee,
+                roles,
+                date: Date.now(),
+                actor: this.data.currentUser,
+              });
             } else {
-              // Not added yet, add user
-              if (existingUser) {
-                const grantee = {
-                  type: 'user',
-                  id: existingUser.id,
-                } as const;
-                this.data.access.active.push({
-                  target,
-                  grantee,
-                  roles,
-                });
-                this.data.access.auditLog.push({
-                  target,
-                  grantee,
-                  roles,
-                  date: Date.now(),
-                  actor: this.data.currentUser,
-                });
-              } else {
-                this.data.access.invites.push({
-                  target,
-                  email,
-                  roles,
-                  lastModifiedBy: this.data.currentUser,
-                });
-              }
+              this.data.access.invites.push({
+                target,
+                email,
+                roles,
+                lastModifiedBy: this.data.currentUser,
+              });
             }
             this.store();
             return this.getAccessForTarget(target);
@@ -2043,7 +2042,7 @@ export class Dummy {
             }
             const {
               assignmentId,
-              form: { id, data, files, finalized },
+              form: { id, data, files, finalized:isFinalized },
               previousVersion,
             } = params;
 
@@ -2060,9 +2059,9 @@ export class Dummy {
                     (u) => u.id === this.data.currentUser
                   );
                   a.version++;
-                  a.state = finalized ? 'raw:finalized' : 'raw:entered';
+                  a.state = isFinalized ? 'raw:finalized' : 'raw:entered';
                   a.lastUpdatedAt = Date.now();
-                  a.lastUpdatedBy = u?.user.name || 'Unknown';
+                  a.lastUpdatedBy = u?.user.name ?? 'Unknown';
                   a.currentData = data;
                   a.currentFiles = await Promise.all(
                     files.map(async (f) => ({

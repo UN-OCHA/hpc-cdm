@@ -163,7 +163,7 @@ export const Dialogs = () => {
               )}
               {d.dismiss && (
                 <DialogActions>
-                  <Button onClick={dismiss} color="primary" autoFocus>
+                  <Button onClick={dismiss} color="primary" shouldAutoFocus>
                     <span>{d.dismiss.dismissButton}</span>
                   </Button>
                 </DialogActions>
@@ -204,13 +204,14 @@ export const Dialogs = () => {
                 <Button onClick={cancel} color="primary">
                   <span>{d.buttonCancel}</span>
                 </Button>
-                <Button onClick={confirm} color="primary" autoFocus>
+                <Button onClick={confirm} color="primary" shouldAutoFocus>
                   <span>{d.buttonConfirm}</span>
                 </Button>
               </DialogActions>
             </Dialog>
           );
         }
+        return null
       })}
     </>
   );

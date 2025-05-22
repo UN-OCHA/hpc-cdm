@@ -20,7 +20,7 @@ export const ActionableIconButton = (props: ActionableIconButtonProps) => {
   const [internalState, setInternalState] =
     useState<ActionableButtonState>('idle');
 
-  const effectiveState = state || internalState;
+  const effectiveState = state ?? internalState;
 
   const buttonProps = {
     color,
@@ -37,7 +37,7 @@ export const ActionableIconButton = (props: ActionableIconButtonProps) => {
   };
 
   return effectiveState === 'loading' ? (
-    <Button {...buttonProps} active>
+    <Button {...buttonProps} isActive>
       <CircularProgress size={16} color="inherit" />
     </Button>
   ) : (
@@ -72,7 +72,7 @@ export const ActionableButton = (props: ActionableButtonProps) => {
   const [internalState, setInternalState] =
     useState<ActionableButtonState>('idle');
 
-  const effectiveState = state || internalState;
+  const effectiveState = state ?? internalState;
 
   const buttonProps = {
     color,
@@ -89,7 +89,7 @@ export const ActionableButton = (props: ActionableButtonProps) => {
   };
 
   return effectiveState === 'loading' ? (
-    <Button {...buttonProps} active text={loadingLabel}>
+    <Button {...buttonProps} isActive text={loadingLabel}>
       <CircularProgress size={16} color="inherit" />
     </Button>
   ) : (

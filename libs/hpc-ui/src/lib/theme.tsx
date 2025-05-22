@@ -132,7 +132,7 @@ export const ThemeProvider = (props: {
   children: JSX.Element | JSX.Element[];
   language?: keyof typeof localeMapper;
 }) => {
-  const { language } = props;
+  const { language, children } = props;
   const muiTheme = useMemo(() => {
     return createTheme(
       language && language === 'ar' ? MUI_THEME_RTL : MUI_THEME,
@@ -140,5 +140,5 @@ export const ThemeProvider = (props: {
     );
   }, [language]);
 
-  return <MUIThemeProvider theme={muiTheme}>{props.children}</MUIThemeProvider>;
+  return <MUIThemeProvider theme={muiTheme}>{children}</MUIThemeProvider>;
 };

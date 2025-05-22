@@ -38,7 +38,7 @@ const StyledDiv = styled.div`
   padding: ${(p) => p.theme.marginPx.md}px;
 `;
 
-export default function Loader<T>(props: Props<T>) {
+ const Loader= <T,>(props: Props<T>) => {
   const { children, className, loader, strings, customLoadingElement } = props;
   return loader.type === 'success' ? (
     children(loader.data, { updateLoadedData: loader.update })
@@ -52,12 +52,12 @@ export default function Loader<T>(props: Props<T>) {
     </StyledDiv>
   ) : loader.type === 'not-found' ? (
     <NotFound strings={strings.notFound} />
-  ) : customLoadingElement ? (
-    customLoadingElement
-  ) : (
+  ) : customLoadingElement ?? (
     <StyledDiv className={className}>
       <h3>{strings.loading}</h3>
       <CircularProgress />
     </StyledDiv>
   );
 }
+
+export default Loader

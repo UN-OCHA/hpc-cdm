@@ -45,14 +45,14 @@ interface Props {
   /**
    * If true, add a caret icon
    */
-  displayCaret?: boolean;
+  shouldDisplayCaret?: boolean;
   /**
    * If true, set the styling of this button to "active",
    * similar visually to hover of focus styling.
    */
-  active?: boolean;
-  condensed?: boolean;
-  autoFocus?: boolean;
+  isActive?: boolean;
+  isCondensed?: boolean;
+  shouldAutoFocus?: boolean;
 }
 
 const BaseButton = (props: Props) => {
@@ -63,27 +63,27 @@ const BaseButton = (props: Props) => {
     text,
     startIcon: StartIcon,
     endIcon: EndIcon,
-    displayCaret,
-    active,
-    condensed,
-    autoFocus,
+    shouldDisplayCaret,
+    isActive,
+    isCondensed,
+    shouldAutoFocus,
   } = props;
 
-  const [focused, setFocused] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const ref = useRef<HTMLButtonElement | HTMLElement>(null);
 
   useEffect(() => {
-    if (!focused && autoFocus && ref.current) {
+    if (!isFocused && shouldAutoFocus && ref.current) {
       ref.current.focus();
-      setFocused(true);
+      setIsFocused(true);
     }
-  }, [focused, autoFocus, ref.current]);
+  }, [isFocused, shouldAutoFocus, ref.current]);
 
   const className = combineClasses(
     props.className,
     COLOR_CLS[color],
-    active && CLS.ACTIVE,
-    condensed && CLS.CONDENSED
+    isActive && CLS.ACTIVE,
+    isCondensed && CLS.CONDENSED
   );
 
   const contents = (
@@ -92,7 +92,7 @@ const BaseButton = (props: Props) => {
       {text && <span>{text}</span>}
       {children && <span>{children}</span>}
       {EndIcon && <EndIcon size={16} />}
-      {displayCaret && <Caret direction="end" size={16} />}
+      {shouldDisplayCaret && <Caret direction="end" size={16} />}
     </>
   );
 

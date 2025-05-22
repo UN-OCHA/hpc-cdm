@@ -7,7 +7,7 @@ const FLOW_REF_DIRECTION = t.keyof({
   destination: null,
 });
 
-const FLOW_LIST = t.keyof({
+export const FLOW_LIST = t.keyof({
   pending: null,
   all: null,
   search: null,
@@ -15,7 +15,7 @@ const FLOW_LIST = t.keyof({
 
 export type FlowList = t.TypeOf<typeof FLOW_LIST>;
 
-const FLOW_OBJECT = t.intersection([
+export const FLOW_OBJECT = t.intersection([
   t.type({
     objectID: t.number,
     refDirection: FLOW_REF_DIRECTION,
@@ -33,7 +33,7 @@ const FLOW_OBJECT = t.intersection([
 
 export type FlowObject = t.TypeOf<typeof FLOW_OBJECT>;
 
-const FLOW_CATEGORY = t.intersection([
+export const FLOW_CATEGORY = t.intersection([
   t.type({
     name: t.string,
     group: t.string,

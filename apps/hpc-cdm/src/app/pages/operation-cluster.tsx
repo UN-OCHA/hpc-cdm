@@ -23,7 +23,7 @@ type OperationClusterRouteParams = {
 };
 
 const PageOperationCluster = (props: Props) => {
-  const { operation, clusters } = props;
+  const { operation, clusters, className } = props;
 
   const { clusterId: clusterIdString } =
     useParams<OperationClusterRouteParams>();
@@ -35,12 +35,12 @@ const PageOperationCluster = (props: Props) => {
   }
   const cluster = clusterWithMatchingId[0];
 
-  const displaySettings = cluster.permissions.canModifyAccess;
+  const shouldDisplaySettings = cluster.permissions.canModifyAccess;
 
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <div className={props.className}>
+        <div className={className}>
           <PageMeta title={[cluster.name, operation.name]} />
           <Routes>
             <Route
@@ -53,7 +53,7 @@ const PageOperationCluster = (props: Props) => {
                 <PageOperationClusterForms {...{ operation, cluster }} />
               }
             />
-            {displaySettings && (
+            {shouldDisplaySettings && (
               <Route
                 path={paths.settingsRoot()}
                 element={

@@ -278,29 +278,29 @@ const defaultEncodeTableHeaders = (table: TableType) => {
   if (table === 'flows') {
     DEFAULT_FLOW_TABLE_HEADERS.map(
       (header, index) =>
-        (res = res.concat(
+        (res += 
           `${header.active ? header.id : -header.id}${
             DEFAULT_FLOW_TABLE_HEADERS.length - 1 !== index ? '_' : ''
           }`
-        ))
+        )
     );
   } else if (table === 'keywords') {
     DEFAULT_KEYWORD_TABLE_HEADERS.map(
       (header, index) =>
-        (res = res.concat(
+        (res +=
           `${header.id}${
             DEFAULT_KEYWORD_TABLE_HEADERS.length - 1 !== index ? '_' : ''
           }`
-        ))
+        )
     );
   } else {
     DEFAULT_ORGANIZATION_TABLE_HEADERS.map(
       (header, index) =>
-        (res = res.concat(
+        (res += 
           `${header.id}${
             DEFAULT_ORGANIZATION_TABLE_HEADERS.length - 1 !== index ? '_' : ''
           }`
-        ))
+        )
     );
   }
   return res;
@@ -323,11 +323,11 @@ export const encodeTableHeaders = <T extends Query>(
     let res = '';
     headers.map(
       (header, index) =>
-        (res = res.concat(
+        (res +=
           `${!header.active ? '-' : ''}${header.id}${
             headers.length - 1 !== index ? '_' : ''
           }`
-        ))
+        )
     );
     return res;
   } catch (error) {
@@ -455,11 +455,11 @@ export const isTableHeadersPropsFlow = (
     TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
   >
 ): headers is Array<TableHeadersProps<FlowHeaderID>> => {
-  const possibleIdentifierIDs: string[] = Object.values(
+  const possibleIdentifierIDs = new Set<string>(Object.values(
     POSSIBLE_FLOW_HEADER_VALUES
-  ).map((header) => header.identifierID);
+  ).map((header) => header.identifierID));
   for (const header of headers) {
-    if (!possibleIdentifierIDs.includes(header.identifierID)) {
+    if (!possibleIdentifierIDs.has(header.identifierID)) {
       return false;
     }
   }
@@ -471,11 +471,11 @@ export const isTableHeadersPropsOrganization = (
     TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
   >
 ): headers is Array<TableHeadersProps<OrganizationHeaderID>> => {
-  const possibleIdentifierIDs: string[] = Object.values(
+  const possibleIdentifierIDs = new Set<string>(Object.values(
     POSSIBLE_ORGANIZATION_VALUES
-  ).map((header) => header.identifierID);
+  ).map((header) => header.identifierID));
   for (const header of headers) {
-    if (!possibleIdentifierIDs.includes(header.identifierID)) {
+    if (!possibleIdentifierIDs.has(header.identifierID)) {
       return false;
     }
   }
@@ -487,11 +487,11 @@ export const isTableHeadersPropsKeyword = (
     TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
   >
 ): headers is Array<TableHeadersProps<KeywordHeaderID>> => {
-  const possibleIdentifierIDs: string[] = Object.values(
+  const possibleIdentifierIDs= new Set<string>(Object.values(
     POSSIBLE_KEYWORD_VALUES
-  ).map((header) => header.identifierID);
+  ).map((header) => header.identifierID));
   for (const header of headers) {
-    if (!possibleIdentifierIDs.includes(header.identifierID)) {
+    if (!possibleIdentifierIDs.has(header.identifierID)) {
       return false;
     }
   }

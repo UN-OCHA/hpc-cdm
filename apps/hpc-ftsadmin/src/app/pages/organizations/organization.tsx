@@ -84,13 +84,16 @@ const parseOrganizationToInitialValue = (
     abbreviation,
     nativeName,
     url,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     active,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     verified,
     notes,
     categories,
     locations,
     parent,
     comments,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     collectiveInd,
   } = org;
   const res: AddEditOrganizationValues = {

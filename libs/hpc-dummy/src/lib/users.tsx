@@ -25,7 +25,7 @@ export class Users {
 
   public login = () => {
     for (const l of this.listeners) {
-      if (l.loginRequested) l.loginRequested();
+      if (l.loginRequested) {l.loginRequested();}
     }
   };
 
@@ -33,7 +33,7 @@ export class Users {
     this.users = users;
 
     for (const l of this.listeners) {
-      if (l.usersUpdated) l.usersUpdated(users);
+      if (l.usersUpdated) {l.usersUpdated(users);}
     }
   };
 
@@ -49,13 +49,13 @@ export class Users {
 
   public loginAsUser(user: User) {
     for (const l of this.listeners) {
-      if (l.loginAsUser) l.loginAsUser(user);
+      if (l.loginAsUser) {l.loginAsUser(user);}
     }
   }
 
   public attach() {
     const container = document.createElement('div');
-    document.body.appendChild(container);
+    document.body.append(container);
     ReactDOM.render(
       <ThemeProvider>
         <UserPicker users={this} />
@@ -72,11 +72,11 @@ interface Props {
 const UserPicker = (props: Props) => {
   const { users } = props;
 
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [usersList, setUsersList] = useState(users.getUsers());
 
   const listener: Listener = {
-    loginRequested: () => setOpen(true),
+    loginRequested: () => setIsOpen(true),
     usersUpdated: (users) => setUsersList(users),
   };
 
@@ -87,7 +87,7 @@ const UserPicker = (props: Props) => {
   }, []);
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
       <DialogTitle>Select a user</DialogTitle>
       <List>
         {usersList.map((user) => (

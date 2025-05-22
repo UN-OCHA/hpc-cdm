@@ -14,18 +14,18 @@ import { t } from '../../../../i18n';
 
 interface Props {
   nextPage: () => void;
-  showValidationConfirmation: boolean;
+  shouldShowValidationConfirmation: boolean;
   closeValidationMessage: () => void;
 }
 
 const ValidationOnNavigationModal = (props: Props) => {
   const { lang } = useContext(AppContext);
-  const { nextPage, showValidationConfirmation, closeValidationMessage } =
+  const { nextPage, shouldShowValidationConfirmation, closeValidationMessage } =
     props;
 
   return (
     <Dialog
-      open={showValidationConfirmation}
+      open={shouldShowValidationConfirmation}
       onClose={closeValidationMessage}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
@@ -42,7 +42,7 @@ const ValidationOnNavigationModal = (props: Props) => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <C.Button onClick={closeValidationMessage} color="primary" autoFocus>
+        <C.Button onClick={closeValidationMessage} color="primary" shouldAutoFocus>
           <span>
             {t.t(lang, (s) => s.routes.operations.forms.invalidData.fixNow)}
           </span>

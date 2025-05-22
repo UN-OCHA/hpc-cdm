@@ -26,7 +26,7 @@ type PageOperationClusterFormAssignmentsRouteParams = {
 };
 
 const PageOperationClusterFormAssignments = (props: Props) => {
-  const { operation, cluster } = props;
+  const { operation, cluster, className } = props;
 
   const { windowId: windowIdString } =
     useParams<PageOperationClusterFormAssignmentsRouteParams>();
@@ -43,7 +43,7 @@ const PageOperationClusterFormAssignments = (props: Props) => {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <div className={props.className}>
+        <div className={className}>
           <Routes>
             <Route
               path={paths.home()}
@@ -52,7 +52,7 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                   <ClusterNavigation
                     operation={operation}
                     cluster={cluster}
-                    showSettingsButton
+                    shouldShowSettingsButton
                   />
                   <C.SidebarNavigation
                     menu={prepareReportingWindowsAsSidebarNavigation(

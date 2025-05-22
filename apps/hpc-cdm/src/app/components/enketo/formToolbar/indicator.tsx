@@ -9,9 +9,9 @@ import { type reportingWindows } from '@unocha/hpc-data';
 import { type FormStatus } from '../types';
 
 interface Props {
-  loading: boolean;
-  editable: boolean;
-  formTouched: boolean;
+  isLoading: boolean;
+  isEditable: boolean;
+  isFormTouched: boolean;
   formStatus: FormStatus;
   reportingWindow: reportingWindows.ReportingWindow;
   assignmentState: reportingWindows.AssignmentState;
@@ -78,24 +78,24 @@ const Indicator = (props: Props) => {
     reportingWindow,
     lastUpdatedAt,
     lastUpdatedBy,
-    loading,
+    isLoading,
     assignmentState,
-    editable,
-    formTouched,
+    isEditable,
+    isFormTouched,
   } = props;
 
-  const surveySubmitted =
+  const isSurveySubmitted =
     assignmentState !== 'not-entered' && assignmentState !== 'raw:entered';
 
   const stateString = t.t(
     lang,
     (s) =>
       s.routes.operations.forms.editability[
-        surveySubmitted && editable
+        isSurveySubmitted && isEditable
           ? 'submittedEditable'
-          : surveySubmitted && !editable
+          : isSurveySubmitted && !isEditable
           ? 'submittedNonEditable'
-          : !surveySubmitted && editable
+          : !isSurveySubmitted && isEditable
           ? 'notSubmittedEditable'
           : reportingWindow.state === 'pending'
           ? 'reportingWindowPending'
@@ -123,7 +123,7 @@ const Indicator = (props: Props) => {
       }
     >
       <StatusLabel>
-        {loading ? (
+        {isLoading ? (
           <>
             <span>
               {t.t(lang, (s) => s.routes.operations.forms.status.init)}
@@ -132,12 +132,12 @@ const Indicator = (props: Props) => {
           </>
         ) : (
           <>
-            {editable ? <MdLockOpen size={20} /> : <MdLock size={20} />}
+            {isEditable ? <MdLockOpen size={20} /> : <MdLock size={20} />}
             <span>{stateString}</span>
-            {editable && (
+            {isEditable && (
               <span>
                 {formStatus.type === 'idle' ? (
-                  formTouched ? (
+                  isFormTouched ? (
                     <UnsavedChanges>
                       {t.t(
                         lang,

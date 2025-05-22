@@ -11,7 +11,7 @@ import { useLocation } from 'react-router';
 interface Props {
   operation: operations.DetailedOperation;
   cluster: operations.OperationCluster;
-  showSettingsButton?: boolean;
+  shouldShowSettingsButton?: boolean;
   breadcrumbs?: Array<{
     label: string;
     to: string;
@@ -21,7 +21,7 @@ interface Props {
 const ClusterNavigation = (props: Props) => {
   const loc = useLocation();
 
-  const { breadcrumbs, operation, cluster, showSettingsButton } = props;
+  const { breadcrumbs, operation, cluster, shouldShowSettingsButton } = props;
   const { lang } = useContext(AppContext);
 
   const settingsPath = paths.operationClusterSettings({
@@ -29,8 +29,8 @@ const ClusterNavigation = (props: Props) => {
     clusterId: cluster.id,
   });
 
-  const displaySettings =
-    showSettingsButton && cluster.permissions.canModifyAccess;
+  const shouldDisplaySettings =
+    shouldShowSettingsButton && cluster.permissions.canModifyAccess;
 
   return (
     <C.TertiaryNavigation
@@ -42,15 +42,15 @@ const ClusterNavigation = (props: Props) => {
             clusterId: cluster.id,
           }),
         },
-        ...(breadcrumbs || []),
+        ...(breadcrumbs ?? []),
       ]}
       actions={
-        displaySettings ? (
+        shouldDisplaySettings ? (
           <C.ButtonLink
             color="neutral"
             text={t.t(lang, (s) => s.routes.operations.clusters.settings)}
             to={settingsPath}
-            active={loc.pathname.startsWith(settingsPath)}
+            isActive={loc.pathname.startsWith(settingsPath)}
             startIcon={ICONS.Gear}
           />
         ) : undefined

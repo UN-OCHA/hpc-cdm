@@ -20,7 +20,7 @@ interface Props<LanguageKey extends string> {
 }
 
 interface State<LanguageKey> {
-  open: boolean;
+  isOpen: boolean;
   lang: LanguageKey;
 }
 
@@ -33,7 +33,7 @@ class LanguagePicker<LanguageKey extends string> extends React.Component<
   public constructor(props: Props<LanguageKey>) {
     super(props);
     this.state = {
-      open: false,
+      isOpen: false,
       lang: props.choice.getLanguage(),
     };
   }
@@ -52,19 +52,19 @@ class LanguagePicker<LanguageKey extends string> extends React.Component<
 
   public render = () => {
     const { choice } = this.props;
-    const { open, lang } = this.state;
+    const { isOpen, lang } = this.state;
     return (
       <>
         <HeaderButton
           ref={(ref) => (this.menuAnchor = ref)}
-          onClick={() => this.setState({ open: true })}
+          onClick={() => this.setState({ isOpen: true })}
         >
           <MdLanguage size={18} />
           <span>{lang.toLocaleUpperCase()}</span>
-          <Caret direction={open ? 'up' : 'down'} />
+          <Caret direction={isOpen ? 'up' : 'down'} />
         </HeaderButton>
         <Popper
-          open={open}
+          open={isOpen}
           anchorEl={this.menuAnchor}
           role={undefined}
           transition
@@ -74,14 +74,14 @@ class LanguagePicker<LanguageKey extends string> extends React.Component<
             <Grow {...TransitionProps}>
               <Paper>
                 <ClickAwayListener
-                  onClickAway={() => this.setState({ open: false })}
+                  onClickAway={() => this.setState({ isOpen: false })}
                 >
-                  <MenuList autoFocusItem={open}>
+                  <MenuList autoFocusItem={isOpen}>
                     {choice.getLanguages().map(({ key, name }) => (
                       <MenuItem
                         key={key}
                         onClick={() => {
-                          this.setState({ open: false });
+                          this.setState({ isOpen: false });
                           choice.setLanguage(key);
                         }}
                         selected={key === lang}

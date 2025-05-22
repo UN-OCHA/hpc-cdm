@@ -37,8 +37,8 @@ const PageOperation = () => {
             }}
           >
             {({ data: operation }) => {
-              const displaySettings = operation.permissions.canModifyAccess;
-              const displayClusters =
+              const shouldDisplaySettings = operation.permissions.canModifyAccess;
+              const shouldDisplayClusters =
                 operation.permissions.canModifyClusterAccessAndPermissions;
 
               return (
@@ -60,11 +60,11 @@ const PageOperation = () => {
                         label: t.t(lang, (s) => s.navigation.forms),
                         path: paths.operationForms(id),
                       },
-                      displayClusters && {
+                      shouldDisplayClusters && {
                         label: t.t(lang, (s) => s.navigation.clusters),
                         path: paths.operationClusters(id),
                       },
-                      displaySettings && {
+                      shouldDisplaySettings && {
                         label: t.t(lang, (s) => s.navigation.settings),
                         path: paths.operationSettings(id),
                       },
@@ -80,13 +80,13 @@ const PageOperation = () => {
                         path={paths.formsRoot()}
                         element={<OperationForms operation={operation} />}
                       />
-                      {displayClusters && (
+                      {shouldDisplayClusters && (
                         <Route
                           path={paths.operationClustersRoot()}
                           element={<OperationClusters operation={operation} />}
                         />
                       )}
-                      {displaySettings && (
+                      {shouldDisplaySettings && (
                         <Route
                           path={paths.settingsRoot()}
                           element={<OperationSettings operation={operation} />}

@@ -152,7 +152,7 @@ const Nav = styled.nav`
 `;
 
 export default (props: Props) => {
-  const { tabs, externalLinks, appTitle, homeLink } = props;
+  const { tabs, externalLinks, appTitle, homeLink, className } = props;
 
   const loc = useLocation();
   const tabElements = tabs && (
@@ -161,13 +161,11 @@ export default (props: Props) => {
         if (!tab) {
           return null;
         }
-        const selected =
-          tab.selected === undefined
-            ? loc.pathname === tab.path ||
-              loc.pathname.startsWith(`${tab.path  }/`)
-            : tab.selected;
+        const isSelected =
+          tab.selected ?? (loc.pathname === tab.path ||
+              loc.pathname.startsWith(`${tab.path  }/`));
         return (
-          <li key={i} className={selected ? CLS.SELECTED : ''}>
+          <li key={i} className={isSelected ? CLS.SELECTED : ''}>
             <Link to={tab.path}>
               <span>{tab.label}</span>
             </Link>
@@ -198,7 +196,7 @@ export default (props: Props) => {
         className={combineClasses(
           CLASSES.CONTAINER.CENTERED,
           CLASSES.FLEX.CONTAINER,
-          props.className
+          className
         )}
       >
         <div className={CLS.HEADER}>

@@ -10,49 +10,49 @@ import dayjs from '../../../../libraries/dayjs';
 import StatusChangeButtons from './StatusChangeButtons';
 
 interface Props {
-  loading: boolean;
-  editable: boolean;
+  isLoading: boolean;
+  isEditable: boolean;
   reportingWindow: reportingWindows.ReportingWindow;
-  setShowAssignedUsers: Dispatch<SetStateAction<boolean>>;
+  setShouldShowAssignedUsers: Dispatch<SetStateAction<boolean>>;
   assignment: reportingWindows.GetAssignmentResult;
-  formTouched: boolean;
-  formStatus: FormStatus;
+  isFormTouched: boolean;
+  status: FormStatus;
   setStatus: Dispatch<SetStateAction<FormStatus>>;
 }
 
 const FormToolbar = ({
-  loading,
-  editable,
+  isLoading,
+  isEditable,
   reportingWindow,
-  setShowAssignedUsers,
+  setShouldShowAssignedUsers,
   assignment,
-  formTouched,
-  formStatus,
+  isFormTouched,
+  status,
   setStatus,
 }: Props) => {
   const { lang } = useContext(AppContext);
   const { state: assignmentState } = assignment;
 
-  const changeStatusButtonsProps = { loading, assignment, setStatus, editable };
+  const changeStatusButtonsProps = { assignment, setStatus };
 
   const lastUpdatedAt = dayjs(
-    formStatus.type === 'conflict'
-      ? formStatus.timestamp
+    status.type === 'conflict'
+      ? status.timestamp
       : assignment.lastUpdatedAt
   )
     .locale(lang)
     .fromNow();
   const lastUpdatedBy =
-    formStatus.type === 'conflict'
-      ? formStatus.otherPerson
+    status.type === 'conflict'
+      ? status.otherPerson
       : assignment.lastUpdatedBy;
 
   const indicatorProps = {
-    loading,
-    editable,
+    isLoading,
+    isEditable,
     reportingWindow,
-    formTouched,
-    formStatus,
+    isFormTouched,
+    formStatus: status,
     assignmentState,
     lastUpdatedAt,
     lastUpdatedBy,
@@ -60,12 +60,12 @@ const FormToolbar = ({
 
   return (
     <C.Toolbar>
-      {!loading && formStatus.type !== 'saving' && (
+      {!isLoading && status.type !== 'saving' && (
         <StatusChangeButtons {...changeStatusButtonsProps} />
       )}
       <div className={CLASSES.FLEX.GROW} />
-      {!loading && (
-        <AssignedUsersButton setShowAssignedUsers={setShowAssignedUsers} />
+      {!isLoading && (
+        <AssignedUsersButton setShowAssignedUsers={setShouldShowAssignedUsers} />
       )}
       {<Indicator {...indicatorProps} />}
     </C.Toolbar>
