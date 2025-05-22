@@ -3,7 +3,7 @@ import {
   type AutocompleteProps,
   CircularProgress,
 } from '@mui/material';
-import { type FormObjectValue } from '@unocha/hpc-data';
+import { type util } from '@unocha/hpc-data';
 import { useField, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
@@ -18,7 +18,7 @@ type AsyncAutocompleteSelectProps = {
   name: string;
   label: string;
   placeholder?: string;
-  fnPromise: ({ query }: { query: string }) => Promise<FormObjectValue[]>;
+  fnPromise: ({ query }: { query: string }) => Promise<util.FormObjectValue[]>;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
   error?: (metaError: string) => string | undefined;
@@ -36,10 +36,10 @@ const AsyncAutocompleteSelect = ({
 }: AsyncAutocompleteSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const { setFieldValue } = useFormikContext<FormObjectValue[]>();
-  const [field, meta] = useField<FormObjectValue[]>(name);
-  const [options, setOptions] = useState<FormObjectValue[]>([]);
-  const [data, setData] = useState<FormObjectValue[]>([]);
+  const { setFieldValue } = useFormikContext<util.FormObjectValue[]>();
+  const [field, meta] = useField<util.FormObjectValue[]>(name);
+  const [options, setOptions] = useState<util.FormObjectValue[]>([]);
+  const [data, setData] = useState<util.FormObjectValue[]>([]);
   const [isFetch, setIsFetch] = useState(false);
   const isLoading =
     isOpen && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
@@ -93,7 +93,7 @@ const AsyncAutocompleteSelect = ({
   }, [isOpen, isAutocompleteAPI]);
 
   const configAutocomplete: AutocompleteProps<
-    FormObjectValue,
+    util.FormObjectValue,
     boolean,
     boolean,
     boolean

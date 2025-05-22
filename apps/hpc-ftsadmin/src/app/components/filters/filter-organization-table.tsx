@@ -1,7 +1,7 @@
 import { Form, Formik, type FormikState } from 'formik';
 import tw from 'twin.macro';
 
-import { util as codecs, type FormObjectValue } from '@unocha/hpc-data';
+import { util } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { type Dayjs } from 'dayjs';
 import * as io from 'io-ts';
@@ -23,9 +23,9 @@ interface Props {
 }
 export interface OrganizationFilterValues {
   organization?: string;
-  organizationType?: FormObjectValue | null;
-  parentOrganization?: FormObjectValue | null;
-  locations?: FormObjectValue | null;
+  organizationType?: util.FormObjectValue | null;
+  parentOrganization?: util.FormObjectValue | null;
+  locations?: util.FormObjectValue | null;
   date?: Dayjs | null;
   status?: string;
 }
@@ -53,7 +53,7 @@ export const FilterOrganizationsTable = (props: Props) => {
   );
 
   const FORM_VALIDATION = io.partial({
-    date: io.union([codecs.VALID_DAYJS_DATE, io.null]),
+    date: io.union([util.VALID_DAYJS_DATE, io.null]),
   });
 
   const handleSubmit = (values: OrganizationFilterValues) => {

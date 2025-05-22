@@ -1,7 +1,7 @@
 import { Form, Formik, type FormikState } from 'formik';
 import tw from 'twin.macro';
 
-import { type FormObjectValue } from '@unocha/hpc-data';
+import { type util } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { useContext } from 'react';
 import { t } from '../../../i18n';
@@ -19,14 +19,14 @@ interface Props {
   handleAbortController: () => void;
 }
 export interface PendingFlowsFilterValues {
-  status?: FormObjectValue | null;
-  dataProvider?: FormObjectValue | null;
+  status?: util.FormObjectValue | null;
+  dataProvider?: util.FormObjectValue | null;
   reporterRefCode?: string;
-  sourceOrganizations?: FormObjectValue[];
-  sourceCountries?: FormObjectValue[];
-  destinationOrganizations?: FormObjectValue[];
-  destinationCountries?: FormObjectValue[];
-  destinationUsageYears?: FormObjectValue[];
+  sourceOrganizations?: util.FormObjectValue[];
+  sourceCountries?: util.FormObjectValue[];
+  destinationOrganizations?: util.FormObjectValue[];
+  destinationCountries?: util.FormObjectValue[];
+  destinationUsageYears?: util.FormObjectValue[];
   includeChildrenOfParkedFlows?: boolean;
 }
 

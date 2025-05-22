@@ -2,12 +2,7 @@ import { Form, Formik } from 'formik';
 import tw from 'twin.macro';
 
 import DeleteIcon from '@mui/icons-material/Delete';
-import {
-  util as codecs,
-  errors,
-  type FormObjectValue,
-  type organizations,
-} from '@unocha/hpc-data';
+import { errors, util, type organizations } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import * as io from 'io-ts';
 import { useContext, useState } from 'react';
@@ -36,14 +31,14 @@ export interface AddEditOrganizationValues {
   name: string;
   abbreviation: string;
   nativeName?: string;
-  locations?: FormObjectValue[]; // Number[] we need array of IDs
+  locations?: util.FormObjectValue[]; // Number[] we need array of IDs
   url?: string;
   active?: boolean;
   verified?: boolean;
   notes?: string; // "notes" makes reference what in the UI it's called "Comments" (Not my decision)
-  organizationTypes: FormObjectValue[];
-  organizationLevel?: FormObjectValue; // Number[] we need array of IDs
-  parent?: FormObjectValue;
+  organizationTypes: util.FormObjectValue[];
+  organizationLevel?: util.FormObjectValue; // Number[] we need array of IDs
+  parent?: util.FormObjectValue;
   collectiveInd?: boolean;
   comments?: string; // "comments" makes reference what in the UI it's called "Organization Description" (Not my decision)
 }
@@ -126,9 +121,9 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
     >();
   const [errorValue, setErrorValue] = useState('');
   const FORM_VALIDATION = io.partial({
-    name: codecs.NON_EMPTY_STRING,
-    abbreviation: codecs.NON_EMPTY_STRING,
-    organizationTypes: codecs.NON_EMPTY_ARRAY,
+    name: util.NON_EMPTY_STRING,
+    abbreviation: util.NON_EMPTY_STRING,
+    organizationTypes: util.NON_EMPTY_ARRAY,
   });
   const handleSubmit = async (values: AddEditOrganizationValues) => {
     if (id && load) {

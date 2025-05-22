@@ -4,8 +4,8 @@ import { useContext, useState } from 'react';
 import tw from 'twin.macro';
 
 import { Alert } from '@mui/material';
-import { util } from '@unocha/hpc-core';
-import { util as codecs, type FormObjectValue } from '@unocha/hpc-data';
+import { util as helper } from '@unocha/hpc-core';
+import { util } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { t } from '../../../i18n';
 import { AppContext } from '../../context';
@@ -32,27 +32,27 @@ interface Props {
 export interface FlowsFilterValues {
   flowID?: string[];
   amountUSD?: string;
-  keywords?: FormObjectValue[];
-  flowStatus?: FormObjectValue | null;
-  flowType?: FormObjectValue | null;
+  keywords?: util.FormObjectValue[];
+  flowStatus?: util.FormObjectValue | null;
+  flowType?: util.FormObjectValue | null;
   flowActiveStatus?: string;
   reporterRefCode?: string;
   sourceSystemID?: string;
   legacyID?: string;
-  sourceOrganizations?: FormObjectValue[];
-  sourceLocations?: FormObjectValue[];
-  sourceUsageYears?: FormObjectValue[];
-  sourceProjects?: FormObjectValue[];
-  sourcePlans?: FormObjectValue[];
-  sourceGlobalClusters?: FormObjectValue[];
-  sourceEmergencies?: FormObjectValue[];
-  destinationOrganizations?: FormObjectValue[];
-  destinationLocations?: FormObjectValue[];
-  destinationUsageYears?: FormObjectValue[];
-  destinationProjects?: FormObjectValue[];
-  destinationPlans?: FormObjectValue[];
-  destinationGlobalClusters?: FormObjectValue[];
-  destinationEmergencies?: FormObjectValue[];
+  sourceOrganizations?: util.FormObjectValue[];
+  sourceLocations?: util.FormObjectValue[];
+  sourceUsageYears?: util.FormObjectValue[];
+  sourceProjects?: util.FormObjectValue[];
+  sourcePlans?: util.FormObjectValue[];
+  sourceGlobalClusters?: util.FormObjectValue[];
+  sourceEmergencies?: util.FormObjectValue[];
+  destinationOrganizations?: util.FormObjectValue[];
+  destinationLocations?: util.FormObjectValue[];
+  destinationUsageYears?: util.FormObjectValue[];
+  destinationProjects?: util.FormObjectValue[];
+  destinationPlans?: util.FormObjectValue[];
+  destinationGlobalClusters?: util.FormObjectValue[];
+  destinationEmergencies?: util.FormObjectValue[];
   includeChildrenOfParkedFlows?: boolean;
   restricted?: boolean;
 }
@@ -85,7 +85,7 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
 };
 
 const FORM_VALIDATION = io.partial({
-  flowID: io.array(codecs.POSITIVE_INTEGER_FROM_STRING),
+  flowID: io.array(util.POSITIVE_INTEGER_FROM_STRING),
 });
 
 const StyledDiv = tw.div`
@@ -101,7 +101,7 @@ export const FilterFlowsTable = (props: Props) => {
   const { lang, env } = useContext(AppContext);
   const environment = env();
   const [shouldDisplayInfoAlert, setShouldDisplayInfoAlert] = useState(
-    util.getLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', true)
+    helper.getLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', true)
   );
 
   const queryFilters = decodeFilters(
@@ -109,7 +109,10 @@ export const FilterFlowsTable = (props: Props) => {
     FLOWS_FILTER_INITIAL_VALUES
   );
   const handleInfoAlertClose = () => {
-    util.setLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', false);
+    helper.setLocalStorageItem<LocalStorageSchema>(
+      'filterCommaSeparate',
+      false
+    );
     setShouldDisplayInfoAlert(false);
   };
 
@@ -239,14 +242,16 @@ export const FilterFlowsTable = (props: Props) => {
                       await environment.model.categories.getCategories({
                         query: 'flowStatus',
                       });
-                    return response.map((responseValue): FormObjectValue => {
-                      return {
-                        displayLabel: responseValue.name,
-                        value: responseValue.name
-                          .toLowerCase()
-                          .replace(' ', '_'),
-                      };
-                    });
+                    return response.map(
+                      (responseValue): util.FormObjectValue => {
+                        return {
+                          displayLabel: responseValue.name,
+                          value: responseValue.name
+                            .toLowerCase()
+                            .replace(' ', '_'),
+                        };
+                      }
+                    );
                   }}
                   isAutocompleteAPI={false}
                 />

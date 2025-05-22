@@ -1,4 +1,4 @@
-import { type FormObjectValue, type organizations } from '@unocha/hpc-data';
+import { type organizations, type util } from '@unocha/hpc-data';
 import { C, CLASSES, combineClasses, useDataLoader } from '@unocha/hpc-ui';
 import { useParams } from 'react-router';
 import tw from 'twin.macro';
@@ -36,8 +36,8 @@ type OrganizationCategories = 'type' | 'subType' | 'level';
 const orgCategoryTo = (
   categories: organizations.OrganizationCategory[] | undefined,
   type: OrganizationCategories
-): FormObjectValue[] => {
-  const res: FormObjectValue[] = [];
+): util.FormObjectValue[] => {
+  const res: util.FormObjectValue[] = [];
   if (!categories) {
     return res;
   }

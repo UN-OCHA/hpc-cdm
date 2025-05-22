@@ -1,8 +1,8 @@
 import {
   type categories,
   type flows,
-  type FormObjectValue,
   type organizations,
+  type util,
 } from '@unocha/hpc-data';
 import { type Dayjs } from 'dayjs';
 import { type Strings } from '../../i18n/iface';
@@ -34,9 +34,9 @@ export type FilterValues =
   | string
   | string[]
   | boolean
-  | FormObjectValue
+  | util.FormObjectValue
   | null
-  | FormObjectValue[]
+  | util.FormObjectValue[]
   | Dayjs;
 
 export type Filter<T extends FilterKeys> = {
@@ -73,7 +73,7 @@ const filterValueIsBoolean = (value: FilterValues): value is boolean => {
 
 const filterValueIsFormObjectValue = (
   value: FilterValues
-): value is FormObjectValue => {
+): value is util.FormObjectValue => {
   return (
     typeof value === 'object' &&
     !Array.isArray(value) &&
@@ -85,7 +85,7 @@ const filterValueIsFormObjectValue = (
 
 const filterValueIsArrayFormObjectValue = (
   value: FilterValues
-): value is FormObjectValue[] => {
+): value is util.FormObjectValue[] => {
   return Array.isArray(value) && typeof value[0] !== 'string';
 };
 
