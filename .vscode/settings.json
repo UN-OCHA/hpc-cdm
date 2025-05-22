@@ -1,4 +1,0 @@
-{
-  //  TODO: Remove this setting when upgrading ESLint to v9.0.0 or higher
-  "eslint.useFlatConfig": false
-}
