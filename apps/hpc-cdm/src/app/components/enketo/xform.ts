@@ -2,7 +2,7 @@ import { Form } from 'enketo-core';
 import fileManager from 'enketo-core/src/js/file-manager';
 import $ from 'jquery';
 
-import { LANGUAGE_CHOICE, LanguageKey } from '../../../i18n';
+import { LANGUAGE_CHOICE, type LanguageKey } from '../../../i18n';
 
 export interface FormFile {
   name: string;
@@ -36,17 +36,17 @@ export default class XForm {
 
     fileManager.getFileUrl = async (subject) => {
       if (!subject) {
-        return undefined;
+        return;
       }
       if (typeof subject === 'string') {
         const file = files.filter((f) => f.name === subject);
         if (file.length > 0) {
-          return window.URL.createObjectURL(file[0].data);
-        } else {
+          return globalThis.URL.createObjectURL(file[0].data);
+        } 
           throw new Error(`Unable to find file with the name ${subject}`);
-        }
+        
       }
-      return window.URL.createObjectURL(subject);
+      return globalThis.URL.createObjectURL(subject);
     };
 
     $('.container').replaceWith(html);
@@ -95,12 +95,12 @@ export default class XForm {
   private changeLanguage(languages: string[], selectedLanguage?: string) {
     const _selectedLanguage =
       selectedLanguage || $('#form-languages').data('default-lang');
-    // set the value for the dropdown
+    // Set the value for the dropdown
     $('#form-languages').val(_selectedLanguage);
-    // activate the correct language in the form
-    languages.forEach((lang) => {
+    // Activate the correct language in the form
+    for (const lang of languages) {
       $(`span[lang="${lang}"]`).removeClass('active');
-    });
+    }
     $(`span[lang="${_selectedLanguage}"]`).addClass('active');
   }
 
@@ -118,7 +118,7 @@ export default class XForm {
     formLanguages: string[],
     selectedLanguage: string
   ) {
-    // need to show drop down only if form is available in languages not available in the app or if selected language isn't supported
+    // Need to show drop down only if form is available in languages not available in the app or if selected language isn't supported
     if (
       (newLanguagesExistForForm || !selectedLanguageIsSupported) &&
       formLanguages.length > 1
@@ -141,7 +141,7 @@ export default class XForm {
       const t0 = performance.now();
       const errors = this.form.init();
       const t1 = performance.now();
-      console.log('Form initialization time: ' + (t1 - t0) + ' millis');
+      console.log(`Form initialization time: ${  t1 - t0  } millis`);
       if (errors && errors.length) {
         console.error('Form Errors', JSON.stringify(errors));
       }
@@ -171,10 +171,10 @@ export default class XForm {
       const newLanguagesExistForForm = formLanguages.some(
         (language) => !appLanguages[language as LanguageKey]
       );
-      console.log('formLanguages: ', formLanguages);
+      console.log('formLanguages:', formLanguages);
       const selectedLanguage = LANGUAGE_CHOICE.getLanguage();
-      const selectedLanguageIsSupported = formLanguages.some(
-        (language) => language === selectedLanguage
+      const selectedLanguageIsSupported = formLanguages.includes(
+        selectedLanguage
       );
 
       this.showOrHideLanguageUI(
@@ -185,8 +185,8 @@ export default class XForm {
       );
 
       LANGUAGE_CHOICE.addListener((lang) => {
-        const _selectedLanguageIsSupported = formLanguages.some(
-          (language) => language === lang
+        const _selectedLanguageIsSupported = formLanguages.includes(
+          lang
         );
         this.showOrHideLanguageUI(
           newLanguagesExistForForm,

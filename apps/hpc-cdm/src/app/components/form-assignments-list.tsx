@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { C, styled } from '@unocha/hpc-ui';
-import { reportingWindows } from '@unocha/hpc-data';
+import { type reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
 import { t } from '../../i18n';
@@ -54,11 +54,11 @@ const FormAssignmentsList = (props: Props) => {
 
               if (formCmp !== 0) {
                 return formCmp;
-              } else {
+              } 
                 const c1 = (a1.cluster?.name || '').toLowerCase();
                 const c2 = (a2.cluster?.name || '').toLowerCase();
                 return c1.localeCompare(c2);
-              }
+              
             })
             .map((a) => {
               const submitted = [

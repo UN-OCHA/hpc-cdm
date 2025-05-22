@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import { t } from '../../i18n';
 import { C, ICONS } from '@unocha/hpc-ui';
-import { operations } from '@unocha/hpc-data';
+import { type operations } from '@unocha/hpc-data';
 
 import * as paths from '../paths';
 import { AppContext } from '../context';

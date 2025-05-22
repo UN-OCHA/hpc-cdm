@@ -8,8 +8,8 @@ import {
   Grow,
 } from '@mui/material';
 
-import { Session } from '@unocha/hpc-core';
-import { i18n } from '@unocha/hpc-core';
+import { type Session } from '@unocha/hpc-core';
+import { type i18n } from '@unocha/hpc-core';
 
 import { CLASSES, combineClasses } from '../classes';
 import UNOCHA from '../assets/logos/unocha';
@@ -87,14 +87,14 @@ const Header = (props: Props) => {
           </Popper>
         </>
       );
-    } else {
+    } 
       return (
         <HeaderButton onClick={session.logIn}>
           <User />
           <span>{strings.login}</span>
         </HeaderButton>
       );
-    }
+    
   };
 
   return (

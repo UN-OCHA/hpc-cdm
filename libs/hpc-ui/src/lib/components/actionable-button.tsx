@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { IconType } from 'react-icons/lib';
+import { type IconType } from 'react-icons/lib';
 import { CircularProgress } from '@mui/material';
 import { MdWarning } from 'react-icons/md';
 
-import { Button, ButtonColor } from './button';
+import { Button, type ButtonColor } from './button';
 
 export type ActionableButtonState = 'idle' | 'loading' | 'error';
 
@@ -28,8 +28,8 @@ export const ActionableIconButton = (props: ActionableIconButtonProps) => {
       setInternalState('loading');
       onClick()
         .then(() => setInternalState('idle'))
-        .catch((err) => {
-          console.error(err);
+        .catch((error) => {
+          console.error(error);
           setInternalState('error');
         });
     },
@@ -80,8 +80,8 @@ export const ActionableButton = (props: ActionableButtonProps) => {
       setInternalState('loading');
       onClick()
         .then(() => setInternalState('idle'))
-        .catch((err) => {
-          console.error(err);
+        .catch((error) => {
+          console.error(error);
           setInternalState('error');
         });
     },

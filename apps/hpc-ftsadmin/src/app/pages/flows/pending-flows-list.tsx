@@ -11,7 +11,7 @@ import {
   encodeTableHeaders,
 } from '../../utils/table-headers';
 import FlowsTable, {
-  FlowsTableProps,
+  type FlowsTableProps,
 } from '../../components/tables/flows-table';
 import { useCallback, useEffect, useRef } from 'react';
 import useQueryParams from '../../utils/useQueryParams';

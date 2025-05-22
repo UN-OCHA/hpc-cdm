@@ -15,11 +15,11 @@ import {
   TableSortLabel,
   Tooltip,
 } from '@mui/material';
-import { flows } from '@unocha/hpc-data';
+import { type flows } from '@unocha/hpc-data';
 import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
 import { MdInfoOutline } from 'react-icons/md';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { LanguageKey, t } from '../../../i18n';
+import { type LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
 import tw from 'twin.macro';
 import React, { useState } from 'react';
@@ -29,13 +29,13 @@ import {
   parseFormFilters,
   parseFlowFilters,
   isKey,
-  FilterKeys,
+  type FilterKeys,
 } from '../../utils/parse-filters';
 import { Form, Formik } from 'formik';
-import { PendingFlowsFilterValues } from '../filters/filter-pending-flows-table';
+import { type PendingFlowsFilterValues } from '../filters/filter-pending-flows-table';
 import {
-  FlowHeaderID,
-  TableHeadersProps,
+  type FlowHeaderID,
+  type TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
   isCompatibleTableHeaderType,
@@ -57,12 +57,12 @@ import {
 } from './table-utils';
 import { useNavigate } from 'react-router';
 import * as paths from '../../paths';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
+import { type LocalStorageSchema } from '../../utils/local-storage-type';
 import { util } from '@unocha/hpc-core';
-import { FlowsFilterValues } from '../filters/filter-flows-table';
+import { type FlowsFilterValues } from '../filters/filter-flows-table';
 
 export interface FlowsTableProps {
-  headers: TableHeadersProps<FlowHeaderID>[];
+  headers: Array<TableHeadersProps<FlowHeaderID>>;
   initialValues: FlowsFilterValues | PendingFlowsFilterValues;
   rowsPerPageOption: number[];
   query: FlowQuery;
@@ -178,7 +178,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     data: flows.SearchFlowsResult;
   }) => {
     const [selectedRows, setSelectedRows] = useState<
-      { id: number; versionID: number }[]
+      Array<{ id: number; versionID: number }>
     >([]);
     const nonSafeTypedTableHeaders = decodeTableHeaders(
       query.tableHeaders,
@@ -199,13 +199,13 @@ export default function FlowsTable(props: FlowsTableProps) {
         ];
         setSelectedRows(addedRow);
         return addedRow;
-      } else {
+      } 
         const filteredRows = selectedRows.filter(
           (selectedRow) => selectedRow.id !== row.id
         );
         setSelectedRows(filteredRows);
         return filteredRows;
-      }
+      
     };
     return (
       <>
@@ -335,10 +335,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                             <br />
                           </>
                         )}
-                      {row.organizations &&
-                        row.organizations
-                          .filter((org) => org.direction === 'source')
-                          .map((org, index) => (
+                      {row.organizations?.filter((org) => org.direction === 'source').map((org, index) => (
                             <>
                               <Tooltip
                                 title={org.name}
@@ -361,10 +358,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-destination-organization"
                     >
-                      {row.organizations &&
-                        row.organizations
-                          .filter((org) => org.direction === 'destination')
-                          .map((org, index) => (
+                      {row.organizations?.filter((org) => org.direction === 'destination').map((org, index) => (
                             <>
                               <Tooltip
                                 title={org.name}
@@ -416,11 +410,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-years"
                     >
-                      {row.usageYears &&
-                        row.usageYears
-                          .filter((year) => year.direction === 'destination')
-                          .map((year) => year.year)
-                          .join(', ')}
+                      {row.usageYears?.filter((year) => year.direction === 'destination').map((year) => year.year).join(', ')}
                     </TableCell>
                   );
                 case 'details':
@@ -430,10 +420,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-details"
                     >
-                      {row.categories &&
-                        row.categories
-                          .filter((cat) => cat.group === 'flowStatus')
-                          .map((cat, index) => (
+                      {row.categories?.filter((cat) => cat.group === 'flowStatus').map((cat, index) => (
                             <Chip
                               key={`category_${row.id}_${index}`}
                               sx={chipSpacing}
@@ -539,7 +526,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                         .map((rd) => rd.sourceID)
                         .filter(util.isDefined)
                     );
-                    const uniqueSourceIDsArray = Array.from(uniqueSourceIDs);
+                    const uniqueSourceIDsArray = [...uniqueSourceIDs];
                     rd = uniqueSourceIDsArray.join(', ');
                     rd = rd.length > 0 ? rd : '--';
                   }
@@ -562,7 +549,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                         .map((rd) => rd.refCode)
                         .filter(util.isDefined)
                     );
-                    const uniqueRefCodesArray = Array.from(uniqueSourceIDs);
+                    const uniqueRefCodesArray = [...uniqueSourceIDs];
                     rd = uniqueRefCodesArray.join(', ');
                     rd = rd.length > 0 ? rd : '--';
                   }
@@ -672,14 +659,14 @@ export default function FlowsTable(props: FlowsTableProps) {
   }) => {
     if (pending) {
       const PENDING_FLOWS_INITIAL_VALUES: {
-        flows: { id: number; versionID: number }[];
+        flows: Array<{ id: number; versionID: number }>;
       } = {
         flows: [],
       };
       const handleSubmit = (values: {
-        flows: { id: number; versionID: number }[];
+        flows: Array<{ id: number; versionID: number }>;
       }) => {
-        if (values.flows.length === 0) return;
+        if (values.flows.length === 0) {return;}
         env.model.flows.bulkRejectPendingFlows(values).finally(load);
       };
       return (

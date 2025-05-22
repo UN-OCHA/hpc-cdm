@@ -8,7 +8,7 @@ import {
   encodeTableHeaders,
 } from '../../utils/table-headers';
 import OrganizationTable, {
-  OrganizationTableProps,
+  type OrganizationTableProps,
 } from '../../components/tables/organizations-table';
 import FilterOrganizationsTable, {
   ORGANIZATIONS_FILTER_INITIAL_VALUES,
@@ -45,8 +45,8 @@ export default (props: Props) => {
     headers: DEFAULT_ORGANIZATION_TABLE_HEADERS,
     rowsPerPageOption: rowsPerPageOptions,
     initialValues: ORGANIZATIONS_FILTER_INITIAL_VALUES,
-    query: query,
-    setQuery: setQuery,
+    query,
+    setQuery,
   };
 
   const env = getEnv();

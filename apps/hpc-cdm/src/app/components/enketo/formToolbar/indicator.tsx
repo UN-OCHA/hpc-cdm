@@ -5,8 +5,8 @@ import { MdWarning, MdLock, MdLockOpen } from 'react-icons/md';
 import { AppContext } from '../../../context';
 
 import { t } from '../../../../i18n';
-import { reportingWindows } from '@unocha/hpc-data';
-import { FormStatus } from '../types';
+import { type reportingWindows } from '@unocha/hpc-data';
+import { type FormStatus } from '../types';
 
 interface Props {
   loading: boolean;

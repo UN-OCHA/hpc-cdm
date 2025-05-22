@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useContext } from 'react';
+import React, { type Dispatch, type SetStateAction, useContext } from 'react';
 import { styled, C } from '@unocha/hpc-ui';
 import { AppContext } from '../../../context';
 

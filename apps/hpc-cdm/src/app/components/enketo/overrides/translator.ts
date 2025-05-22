@@ -18,9 +18,9 @@ export const enketoTranslate = (
       );
       if (typeof override === 'string') {
         return override;
-      } else {
+      } 
         return originalTranslate(key, options);
-      }
+      
     },
     options
   );

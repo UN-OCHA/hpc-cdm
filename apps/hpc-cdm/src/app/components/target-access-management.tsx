@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MdClear, MdAdd } from 'react-icons/md';
 
 import { C, dataLoader, styled } from '@unocha/hpc-ui';
-import { access } from '@unocha/hpc-data';
+import { type access } from '@unocha/hpc-data';
 
 import dayjs from '../../libraries/dayjs';
 
@@ -93,15 +93,15 @@ export const TargetAccessManagement = (props: Props) => {
                           options={roles.map((role) => ({
                             key: role,
                             label: getRoleName(role),
-                            selected: item.roles.indexOf(role) >= 0,
+                            selected: item.roles.includes(role),
                           }))}
                           onSelect={async (role) => {
                             const roles =
-                              item.roles.indexOf(role) >= 0
+                              item.roles.includes(role)
                                 ? item.roles.filter((r) => r !== role)
                                 : [...item.roles, role];
                             if (
-                              window.confirm(
+                              globalThis.confirm(
                                 t
                                   .t(
                                     lang,
@@ -132,7 +132,7 @@ export const TargetAccessManagement = (props: Props) => {
                           )}
                           onClick={async () => {
                             if (
-                              window.confirm(
+                              globalThis.confirm(
                                 t
                                   .t(
                                     lang,
@@ -191,15 +191,15 @@ export const TargetAccessManagement = (props: Props) => {
                           options={roles.map((role) => ({
                             key: role,
                             label: getRoleName(role),
-                            selected: item.roles.indexOf(role) >= 0,
+                            selected: item.roles.includes(role),
                           }))}
                           onSelect={async (role) => {
                             const roles =
-                              item.roles.indexOf(role) >= 0
+                              item.roles.includes(role)
                                 ? item.roles.filter((r) => r !== role)
                                 : [...item.roles, role];
                             if (
-                              window.confirm(
+                              globalThis.confirm(
                                 t
                                   .t(
                                     lang,
@@ -232,7 +232,7 @@ export const TargetAccessManagement = (props: Props) => {
                           )}
                           onClick={async () => {
                             if (
-                              window.confirm(
+                              globalThis.confirm(
                                 t
                                   .t(
                                     lang,

@@ -4,7 +4,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CheckIcon from '@mui/icons-material/Check';
 import tw from 'twin.macro';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { IconButton, Modal, SvgIconProps, Tooltip } from '@mui/material';
+import { IconButton, Modal, type SvgIconProps, Tooltip } from '@mui/material';
 import { Button } from './button';
 import { useNavigate } from 'react-router';
 
@@ -81,8 +81,8 @@ const AsyncIconButton = ({
         if (redirectAfterFetch) {
           navigate(redirectAfterFetch);
         }
-      } catch (err) {
-        console.error(err);
+      } catch (error_) {
+        console.error(error_);
         setError(true);
         setLoading(false);
       }

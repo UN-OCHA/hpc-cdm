@@ -1,6 +1,6 @@
 import { config } from '@unocha/hpc-core';
 import { LiveBrowserClient } from '@unocha/hpc-live';
-import { Environment } from './interface';
+import { type Environment } from './interface';
 import { t } from '../i18n';
 
 const parseConfig = async (res: Response) => {
@@ -8,11 +8,11 @@ const parseConfig = async (res: Response) => {
     const c = await res.json();
     if (config.CONFIG.is(c)) {
       return c;
-    } else {
+    } 
       throw new Error('Invalid config');
-    }
+    
   } else {
-    throw Error(`Unable to get config (${res.status}): ${res.statusText}`);
+    throw new Error(`Unable to get config (${res.status}): ${res.statusText}`);
   }
 };
 

@@ -10,7 +10,7 @@ import {
 
 import Caret from '../assets/icons/caret';
 import { MdLanguage } from 'react-icons/md';
-import { i18n } from '@unocha/hpc-core';
+import { type i18n } from '@unocha/hpc-core';
 
 import HeaderButton from './header-button';
 

@@ -13,7 +13,7 @@ import PageNotFound from './app/pages/not-found';
 import PageOperationsList from './app/pages/operations-list';
 import PageOperation from './app/pages/operation';
 
-const rootElement = document.getElementById('root');
+const rootElement = document.querySelector('#root');
 if (!rootElement) {
   throw new Error('Failed to find the root element');
 }

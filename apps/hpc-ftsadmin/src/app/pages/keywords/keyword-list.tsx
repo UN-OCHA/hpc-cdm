@@ -8,7 +8,7 @@ import {
   encodeTableHeaders,
 } from '../../utils/table-headers';
 import KeywordTable, {
-  KeywordTableProps,
+  type KeywordTableProps,
 } from '../../components/tables/keywords-table';
 import useQueryParams from '../../utils/useQueryParams';
 import { KEYWORD_PARAMS_CODEC } from '../../utils/codecs';

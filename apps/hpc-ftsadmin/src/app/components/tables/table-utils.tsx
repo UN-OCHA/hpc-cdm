@@ -1,12 +1,12 @@
 import tw from 'twin.macro';
-import { LanguageKey, t } from '../../../i18n';
-import { FilterKeys, Filter, isKey } from '../../utils/parse-filters';
+import { type LanguageKey, t } from '../../../i18n';
+import { type FilterKeys, type Filter, isKey } from '../../utils/parse-filters';
 import EllipsisText from '../../utils/ellipsis-text';
 import { Chip, IconButton, TableRow, Tooltip } from '@mui/material';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import { C } from '@unocha/hpc-ui';
 import { util } from '@unocha/hpc-core';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
+import { type LocalStorageSchema } from '../../utils/local-storage-type';
 import type {
   FlowHeaderID,
   KeywordHeaderID,
@@ -85,12 +85,12 @@ export const RenderChipsRow = ({
   tableType: 'organizationsFilter' | 'flowsFilter' | 'pendingFlowsFilter';
   chipSpacing?: { m: number };
 }) => {
-  const chipList: Array<JSX.Element> = [];
+  const chipList: JSX.Element[] = [];
   let key: keyof typeof tableFilters;
   for (key in tableFilters) {
     const savedKey = key;
     const val = tableFilters[savedKey];
-    if (!val) return;
+    if (!val) {return;}
     const { displayValue } = val;
     chipList.push(
       <Tooltip

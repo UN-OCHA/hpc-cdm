@@ -12,33 +12,33 @@ import {
   TableRow,
   TableSortLabel,
 } from '@mui/material';
-import { organizations } from '@unocha/hpc-data';
+import { type organizations } from '@unocha/hpc-data';
 import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { LanguageKey, t } from '../../../i18n';
+import { type LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
 import React, { useState } from 'react';
 import DownloadIcon from '@mui/icons-material/Download';
 import {
   decodeFilters,
   encodeFilters,
-  FilterKeys,
+  type FilterKeys,
   isKey,
   parseFormFilters,
   parseOrganizationFilters,
 } from '../../utils/parse-filters';
 import {
-  OrganizationHeaderID,
-  TableHeadersProps,
+  type OrganizationHeaderID,
+  type TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
   isCompatibleTableHeaderType,
   isTableHeadersPropsOrganization,
 } from '../../utils/table-headers';
-import { Strings } from '../../../i18n/iface';
+import { type Strings } from '../../../i18n/iface';
 import { downloadExcel } from '../../utils/download-excel';
 import { parseUpdatedCreatedBy } from '../../utils/map-functions';
-import { OrganizationFilterValues } from '../filters/filter-organization-table';
+import { type OrganizationFilterValues } from '../filters/filter-organization-table';
 import {
   ChipDiv,
   type OrganizationQuery,
@@ -53,11 +53,11 @@ import {
 import { Link, useNavigate } from 'react-router';
 import * as paths from '../../paths';
 import { util } from '@unocha/hpc-core';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
+import { type LocalStorageSchema } from '../../utils/local-storage-type';
 import tw from 'twin.macro';
 
 export interface OrganizationTableProps {
-  headers: TableHeadersProps<OrganizationHeaderID>[];
+  headers: Array<TableHeadersProps<OrganizationHeaderID>>;
   initialValues: OrganizationFilterValues;
   rowsPerPageOption: number[];
   query: OrganizationQuery;

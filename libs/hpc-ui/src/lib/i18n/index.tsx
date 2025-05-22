@@ -44,8 +44,7 @@ const parseString = (lang: string, str: string): ParsedTranslation => {
     parsed.push({
       type: 'format',
       format: new IntlMessageFormat(before, lang),
-    });
-    parsed.push({
+    }, {
       type: 'placeholder',
       name,
     });

@@ -2,9 +2,9 @@ import {
   DragDropContext,
   Droppable,
   Draggable,
-  DropResult,
+  type DropResult,
 } from 'react-beautiful-dnd';
-import React, { ReactNode, useState } from 'react';
+import React, { type ReactNode, useState } from 'react';
 import { Paper, Switch, Typography } from '@mui/material';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import tw from 'twin.macro';
@@ -109,7 +109,7 @@ const reorder = (
   startIndex: number,
   endIndex: number
 ): DraggableListItemProps[] => {
-  const result = Array.from(list);
+  const result = [...list];
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
 

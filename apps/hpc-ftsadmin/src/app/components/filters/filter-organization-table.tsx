@@ -1,12 +1,12 @@
-import { Form, Formik, FormikState } from 'formik';
+import { Form, Formik, type FormikState } from 'formik';
 import tw from 'twin.macro';
 
 import { C } from '@unocha/hpc-ui';
-import { util as codecs, FormObjectValue } from '@unocha/hpc-data';
-import { Environment } from '../../../environments/interface';
+import { util as codecs, type FormObjectValue } from '@unocha/hpc-data';
+import { type Environment } from '../../../environments/interface';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
-import { LanguageKey, t } from '../../../i18n';
-import { Dayjs } from 'dayjs';
+import { type LanguageKey, t } from '../../../i18n';
+import { type Dayjs } from 'dayjs';
 import type { OrganizationQuery, SetQuery } from '../tables/table-utils';
 import * as io from 'io-ts';
 import validateForm from '../../utils/form-validation';

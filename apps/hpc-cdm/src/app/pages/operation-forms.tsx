@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 
 import { C, combineClasses, styled } from '@unocha/hpc-ui';
-import { operations } from '@unocha/hpc-data';
+import { type operations } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
 import { t } from '../../i18n';

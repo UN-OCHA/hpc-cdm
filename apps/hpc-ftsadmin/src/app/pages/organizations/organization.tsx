@@ -5,9 +5,9 @@ import { AppContext, getEnv } from '../../context';
 import tw from 'twin.macro';
 import { useParams } from 'react-router';
 import OrganizationForm, {
-  AddEditOrganizationValues,
+  type AddEditOrganizationValues,
 } from '../../components/organization-form';
-import { organizations, FormObjectValue } from '@unocha/hpc-data';
+import { type organizations, type FormObjectValue } from '@unocha/hpc-data';
 
 interface Props {
   className?: string;
@@ -34,11 +34,11 @@ const InfoText = tw.p`
 
 type OrganizationCategories = 'type' | 'subType' | 'level';
 const orgCategoryTo = (
-  categories: Array<organizations.OrganizationCategory> | undefined,
+  categories: organizations.OrganizationCategory[] | undefined,
   type: OrganizationCategories
-): Array<FormObjectValue> => {
-  const res: Array<FormObjectValue> = [];
-  if (!categories) return res;
+): FormObjectValue[] => {
+  const res: FormObjectValue[] = [];
+  if (!categories) {return res;}
   switch (type) {
     case 'type': {
       res.push(

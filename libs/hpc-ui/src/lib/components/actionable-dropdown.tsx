@@ -132,8 +132,8 @@ export const ActionableDropdown = (props: Props) => {
                         setState('loading');
                         onSelect(item.key)
                           .then(() => setState('idle'))
-                          .catch((err) => {
-                            console.error(err);
+                          .catch((error) => {
+                            console.error(error);
                             setState('error');
                           });
                       }}

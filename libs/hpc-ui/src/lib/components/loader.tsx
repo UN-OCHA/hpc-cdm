@@ -1,8 +1,8 @@
-import React, { ReactElement } from 'react';
+import React, { type ReactElement } from 'react';
 import { CircularProgress } from '@mui/material';
 
 import { Button } from './button';
-import { DataLoaderState } from '../util';
+import { type DataLoaderState } from '../util';
 import { styled } from '../theme';
 
 import NotFound from './not-found';

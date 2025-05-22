@@ -3,7 +3,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { util } from '@unocha/hpc-core';
 import {
-  Model,
+  type Model,
   forms,
   flows,
   locations,
@@ -331,7 +331,7 @@ export class LiveModel implements Model {
   public constructor(config: Config) {
     this.config = config;
     this.URL = config.interfaces?.URL || URL;
-    this.fetch = config.interfaces?.fetch || fetch.bind(window);
+    this.fetch = config.interfaces?.fetch || fetch.bind(globalThis);
     this.sha256Hash = config.interfaces?.sha256Hash || util.hashFileInBrowser;
   }
 
@@ -407,11 +407,11 @@ export class LiveModel implements Model {
       const decode = resultType.decode(json.data);
       if (isRight(decode)) {
         return decode.right;
-      } else {
+      } 
         const report = PathReporter.report(decode);
         console.error('Received unexpected result from server', report, json);
         throw new ModelError('Received unexpected result from server', json);
-      }
+      
     } else {
       const json = (await res.json()) as {
         timestamp: Date;
@@ -433,7 +433,7 @@ export class LiveModel implements Model {
         throw new errors.UserError(json.message);
       } else if (
         json?.code === 'BadRequestError' &&
-        json.details?.code === '23505' && // error code for duplicate primary key
+        json.details?.code === '23505' && // Error code for duplicate primary key
         json.details.detail &&
         json.details.table
       ) {
@@ -464,16 +464,16 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v2/access/self`,
           resultType: access.GET_OWN_ACCESS_RESULT,
-        }).catch((err) => {
+        }).catch((error) => {
           if (
-            ((err as ModelError)?.json as { code: string })?.code ===
+            ((error as ModelError)?.json as { code: string })?.code ===
             'ForbiddenError'
           ) {
             // If a 403 error occurred with this endpoint,
             // the auth token has probably expired, so clear storage and refresh
             this.config.clearSessionStorage();
           }
-          throw err;
+          throw error;
         }),
       getTargetAccess: (params) =>
         this.call({
@@ -639,7 +639,7 @@ export class LiveModel implements Model {
           body: {
             type: 'json',
             data: {
-              query: query,
+              query,
             },
           },
           signal: params.signal,
@@ -668,7 +668,7 @@ export class LiveModel implements Model {
           body: {
             type: 'json',
             data: {
-              query: query,
+              query,
             },
           },
           signal: params.signal,
@@ -876,7 +876,7 @@ export class LiveModel implements Model {
             resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
           });
           return handleAssignmentResult(result);
-        } else {
+        } 
           const files = await Promise.all(
             params.form.files.map(async (f) => ({
               name: f.name,
@@ -921,7 +921,7 @@ export class LiveModel implements Model {
             resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
           });
           return handleAssignmentResult(result);
-        }
+        
       },
     };
   }

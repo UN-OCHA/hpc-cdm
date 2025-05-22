@@ -13,11 +13,11 @@ import {
   TableSortLabel,
   Tooltip,
 } from '@mui/material';
-import { categories } from '@unocha/hpc-data';
+import { type categories } from '@unocha/hpc-data';
 import { errors } from '@unocha/hpc-data';
 import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { LanguageKey, t } from '../../../i18n';
+import { type LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
 import React, { createContext, useContext, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,8 +27,8 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import * as paths from '../../paths';
 
 import {
-  KeywordHeaderID,
-  TableHeadersProps,
+  type KeywordHeaderID,
+  type TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
   isCompatibleTableHeaderType,
@@ -48,12 +48,12 @@ import tw from 'twin.macro';
 
 import { Form, Formik } from 'formik';
 import { util } from '@unocha/hpc-core';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
-import { Strings } from '../../../i18n/iface';
+import { type LocalStorageSchema } from '../../utils/local-storage-type';
+import { type Strings } from '../../../i18n/iface';
 import { parseError } from '../../utils/map-functions';
 
 export interface KeywordTableProps {
-  headers: TableHeadersProps<KeywordHeaderID>[];
+  headers: Array<TableHeadersProps<KeywordHeaderID>>;
   query: KeywordQuery;
   setQuery: SetQuery<KeywordQuery>;
 }
@@ -78,15 +78,15 @@ function by<T>(
     if (x > y) {
       if (order === 'ASC') {
         return 1;
-      } else {
+      } 
         return -1;
-      }
+      
     } else if (x < y) {
       if (order === 'ASC') {
         return -1;
-      } else {
+      } 
         return 1;
-      }
+      
     }
     return 0;
   };
@@ -97,9 +97,9 @@ function typeQuery(value: string): keyof categories.Keyword {
     return 'id';
   } else if (value === 'keyword.relatedFlows') {
     return 'refCount';
-  } else {
+  } 
     return 'name';
-  }
+  
 }
 
 const IconContainer = tw.div`
@@ -175,16 +175,14 @@ const EditableRow = ({
               .then(() => {
                 setEntityEdited(!entityEdited);
               })
-              .catch((err) => {
-                if (errors.isDuplicateError(err)) {
+              .catch((error) => {
+                if (errors.isDuplicateError(error)) {
                   if (setError) {
-                    setError({ code: err.code, value: err.value });
+                    setError({ code: error.code, value: error.value });
                   }
-                } else {
-                  if (setError) {
+                } else if (setError) {
                     setError({ code: 'unknown', value: 'unknown' });
                   }
-                }
               });
             setEdit(false);
           }}
@@ -454,7 +452,7 @@ export default function KeywordTable(props: KeywordTableProps) {
           }}
         >
           {(data) => (
-            <KeywordTableContext.Provider value={{ setError: setError }}>
+            <KeywordTableContext.Provider value={{ setError }}>
               <C.ErrorAlert
                 setError={setError}
                 error={parseError(

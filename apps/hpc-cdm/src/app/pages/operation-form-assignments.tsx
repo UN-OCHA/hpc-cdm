@@ -3,7 +3,7 @@ import { Route, Routes, useParams } from 'react-router';
 
 import { t } from '../../i18n';
 import { C, styled } from '@unocha/hpc-ui';
-import { operations } from '@unocha/hpc-data';
+import { type operations } from '@unocha/hpc-data';
 
 import { AppContext } from '../context';
 import * as paths from '../paths';

@@ -6,7 +6,7 @@ import { C, styled, THEME } from '@unocha/hpc-ui';
 
 import { AppContext } from '../../../context';
 import { t } from '../../../../i18n';
-import { reportingWindows } from '@unocha/hpc-data';
+import { type reportingWindows } from '@unocha/hpc-data';
 
 interface Props {
   showAssignedUsers: boolean;

@@ -1,12 +1,12 @@
-import { categories, FormObjectValue } from '@unocha/hpc-data';
-import { Environment } from '../../environments/interface';
+import { type categories, type FormObjectValue } from '@unocha/hpc-data';
+import { type Environment } from '../../environments/interface';
 
 // Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop
 
 export const fnOrganizations = async (
   query: { query: string },
   env: Environment
-): Promise<Array<FormObjectValue>> => {
+): Promise<FormObjectValue[]> => {
   const response =
     await env.model.organizations.getAutocompleteOrganizations(query);
   return response.map((responseValue) => ({
@@ -17,7 +17,7 @@ export const fnOrganizations = async (
 
 export const fnUsageYears = async (
   env: Environment
-): Promise<Array<FormObjectValue>> => {
+): Promise<FormObjectValue[]> => {
   const response = await env.model.usageYears.getUsageYears();
   return response.map((responseValue) => ({
     displayLabel: responseValue.year,
@@ -30,7 +30,7 @@ const defaultOptions = (
     name: string;
     id: number;
   }>
-): Array<FormObjectValue> => {
+): FormObjectValue[] => {
   return response.map((responseValue) => ({
     displayLabel: responseValue.name,
     value: responseValue.id,

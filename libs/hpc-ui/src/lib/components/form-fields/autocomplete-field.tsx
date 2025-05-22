@@ -1,8 +1,8 @@
-import { Autocomplete, AutocompleteProps } from '@mui/material';
+import { Autocomplete, type AutocompleteProps } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 import tw from 'twin.macro';
 import { StyledTextField } from './text-field';
-import { FormObjectValue } from '@unocha/hpc-data';
+import { type FormObjectValue } from '@unocha/hpc-data';
 
 const StyledAutocomplete = tw(Autocomplete)`
   min-w-[10rem]
@@ -17,7 +17,7 @@ const AutocompleteSelect = ({
 }: {
   name: string;
   label: string;
-  options: Array<FormObjectValue>;
+  options: FormObjectValue[];
   readOnly?: boolean;
 }) => {
   const { setFieldValue } = useFormikContext();

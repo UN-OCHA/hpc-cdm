@@ -20,7 +20,7 @@ interface FieldConfig {
   isMulti?: boolean;
   hasAutocomplete?: boolean;
   fnPromise?: ({ query }: { query: string }) => Promise<unknown>;
-  selectFields?: { value: string | number; name: string }[];
+  selectFields?: Array<{ value: string | number; name: string }>;
 }
 
 const Container = tw.div`

@@ -35,7 +35,7 @@ const hasPrimitivesOnly = (
       typeof v === 'number' ||
       typeof v === 'symbol' ||
       v === null ||
-      typeof v === 'undefined'
+      v === undefined
   );
 
 export function useDataLoader<Data>(
@@ -64,19 +64,19 @@ export function useDataLoader<Deps extends DepsBaseType, Data>(
     setState({ type: 'loading' });
     get(...dependencies)
       .then(setData)
-      .catch((err: Error) => {
-        if (errors.isNotFoundError(err)) {
+      .catch((error: Error) => {
+        if (errors.isNotFoundError(error)) {
           setState({
             type: 'not-found',
           });
-        } else if (errors.isUserAbortError(err)) {
+        } else if (errors.isUserAbortError(error)) {
           if (state.type !== 'loading') {
             setState({ type: 'loading' });
           }
         } else {
           setState({
             type: 'error',
-            error: err.message || err.toString(),
+            error: error.message || error.toString(),
             retry,
           });
         }
@@ -153,19 +153,19 @@ export function dataLoader<Deps extends DepsBaseType, Data>(
     setState({ type: 'loading' });
     get(...dependencies)
       .then(setData)
-      .catch((err: Error) => {
-        if (errors.isNotFoundError(err)) {
+      .catch((error: Error) => {
+        if (errors.isNotFoundError(error)) {
           setState({
             type: 'not-found',
           });
-        } else if (errors.isUserAbortError(err)) {
+        } else if (errors.isUserAbortError(error)) {
           if (state.type !== 'loading') {
             setState({ type: 'loading' });
           }
         } else {
           setState({
             type: 'error',
-            error: err.message || err.toString(),
+            error: error.message || error.toString(),
             retry,
           });
         }

@@ -1,11 +1,11 @@
-import React, { Dispatch, SetStateAction, useContext } from 'react';
+import React, { type Dispatch, type SetStateAction, useContext } from 'react';
 import { C, CLASSES } from '@unocha/hpc-ui';
 import { AppContext } from '../../../context';
 
-import { reportingWindows } from '@unocha/hpc-data';
+import { type reportingWindows } from '@unocha/hpc-data';
 import AssignedUsersButton from './assignUsersButton';
 import Indicator from './indicator';
-import { FormStatus } from '../types';
+import { type FormStatus } from '../types';
 import dayjs from '../../../../libraries/dayjs';
 import StatusChangeButtons from './StatusChangeButtons';
 

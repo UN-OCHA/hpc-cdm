@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router';
 import { styled } from '../theme';
-import { IconType } from 'react-icons/lib';
+import { type IconType } from 'react-icons/lib';
 
 const CLS = {
   SELECTED: 'selected',

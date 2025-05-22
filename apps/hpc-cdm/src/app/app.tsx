@@ -4,9 +4,9 @@ import { ToastContainer } from 'react-toastify';
 
 import { BaseStyling, C, styled, dataLoader, dialogs } from '@unocha/hpc-ui';
 
-import env, { Environment } from '../environments/environment';
+import env, { type Environment } from '../environments/environment';
 import { AppContext, contextFromEnv } from './context';
-import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
+import { LANGUAGE_CHOICE, type LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
 import * as paths from './paths';
 import PageMeta from './components/page-meta';
@@ -65,8 +65,8 @@ export const App = () => {
 
   const loadEnv = dataLoader([], () =>
     env()
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
         throw new Error(t.t(lang, (s) => s.errors.unableToLoadCDM));
       })
       .then(contextFromEnv)

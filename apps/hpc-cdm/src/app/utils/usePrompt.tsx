@@ -41,7 +41,7 @@ export function usePrompt(message: string, when = true) {
   }, [message, when]);
 
   const confirmExit = useCallback(() => {
-    const confirm = window.confirm(message);
+    const confirm = globalThis.confirm(message);
     return confirm;
   }, [message]);
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { styled } from '../theme';
 import { MdWarning } from 'react-icons/md';
 
-import { IconType } from 'react-icons/lib';
+import { type IconType } from 'react-icons/lib';
 
 const CLS = {
   BUTTONS: 'buttons',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '../theme';
-import { Session } from '@unocha/hpc-core';
+import { type Session } from '@unocha/hpc-core';
 
 import User from '../assets/icons/user';
 import { Button } from '../components/button';

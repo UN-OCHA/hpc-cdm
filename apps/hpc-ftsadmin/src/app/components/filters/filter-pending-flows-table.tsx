@@ -1,8 +1,8 @@
-import { Form, Formik, FormikState } from 'formik';
+import { Form, Formik, type FormikState } from 'formik';
 import tw from 'twin.macro';
 
 import { C } from '@unocha/hpc-ui';
-import { FormObjectValue } from '@unocha/hpc-data';
+import { type FormObjectValue } from '@unocha/hpc-data';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import { t } from '../../../i18n';
 import type { FlowQuery, SetQuery } from '../tables/table-utils';
@@ -22,11 +22,11 @@ export interface PendingFlowsFilterValues {
   status?: FormObjectValue | null;
   dataProvider?: FormObjectValue | null;
   reporterRefCode?: string;
-  sourceOrganizations?: Array<FormObjectValue>;
-  sourceCountries?: Array<FormObjectValue>;
-  destinationOrganizations?: Array<FormObjectValue>;
-  destinationCountries?: Array<FormObjectValue>;
-  destinationUsageYears?: Array<FormObjectValue>;
+  sourceOrganizations?: FormObjectValue[];
+  sourceCountries?: FormObjectValue[];
+  destinationOrganizations?: FormObjectValue[];
+  destinationCountries?: FormObjectValue[];
+  destinationUsageYears?: FormObjectValue[];
   includeChildrenOfParkedFlows?: boolean;
 }
 

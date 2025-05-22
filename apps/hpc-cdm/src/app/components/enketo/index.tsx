@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { reportingWindows, errors } from '@unocha/hpc-data';
+import { type reportingWindows, errors } from '@unocha/hpc-data';
 import { styled } from '@unocha/hpc-ui';
 import { useNavigate } from 'react-router';
 
 import dayjs from '../../../libraries/dayjs';
 
-import XForm, { PageInfo } from './xform';
+import XForm, { type PageInfo } from './xform';
 import { getEnv, AppContext } from '../../context';
 import { t } from '../../../i18n';
 import usePrompt from '../../utils/usePrompt';
@@ -13,7 +13,7 @@ import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
 import PageIndicator from './pageIndicator';
 import PoweredByFooter from './powered-by-footer';
-import { FormStatus, SubmissionValidation } from './types';
+import { type FormStatus, type SubmissionValidation } from './types';
 import FormToolbar from './formToolbar';
 import ValidationOnNavigationModal from './modals/validationOnNavigationModal';
 import ValidationOnSubmitModal from './modals/validationOnSubmitModal';
@@ -83,7 +83,7 @@ export const EnketoEditableForm = (props: Props) => {
   }, [navigate]);
 
   useEffect(() => {
-    let isSubscribed = true; // to cancel form initialization
+    let isSubscribed = true; // To cancel form initialization
     const {
       task: {
         form: {
@@ -125,7 +125,7 @@ export const EnketoEditableForm = (props: Props) => {
       // depending on number of embedded locations/sublocations.
       _xform.init(editable).then(() => {
         if (isSubscribed) {
-          // user has abandoned this page
+          // User has abandoned this page
           xform.current = _xform;
           setEditable(editable);
           setUpdatedAssignment(null);
@@ -182,9 +182,9 @@ export const EnketoEditableForm = (props: Props) => {
           saveForm();
           setSubmissionValidation('invalid');
           return;
-        } else {
+        } 
           setSubmissionValidation(null);
-        }
+        
       }
 
       setStatus({ type: 'saving' });
@@ -196,7 +196,7 @@ export const EnketoEditableForm = (props: Props) => {
         const t0 = performance.now();
         const { data, files } = xform.current.getData();
         const t1 = performance.now();
-        console.log('getData time: ' + (t1 - t0) + 'ms');
+        console.log(`getData time: ${  t1 - t0  }ms`);
 
         if (lastSavedData !== data || finalized) {
           const {
@@ -250,35 +250,35 @@ export const EnketoEditableForm = (props: Props) => {
                 navigate(-1);
               }
             })
-            .catch((err) => {
-              if (errors.isConflictError(err)) {
-                const timeAgo = dayjs(err.timestamp).locale(lang);
+            .catch((error) => {
+              if (errors.isConflictError(error)) {
+                const timeAgo = dayjs(error.timestamp).locale(lang);
                 alert(
                   t
                     .t(lang, (s) => s.routes.operations.forms.errors.conflict)
                     .replace('{timeAgo}', timeAgo.fromNow())
-                    .replace('{person}', err.otherUser)
+                    .replace('{person}', error.otherUser)
                 );
                 setStatus({
                   type: 'conflict',
-                  timestamp: err.timestamp,
-                  otherPerson: err.otherUser,
+                  timestamp: error.timestamp,
+                  otherPerson: error.otherUser,
                 });
                 const msg = t
                   .t(lang, (s) => s.routes.operations.forms.errors.conflict)
                   .replace('{timeAgo}', timeAgo.fromNow())
-                  .replace('{person}', err.otherUser);
+                  .replace('{person}', error.otherUser);
                 toast.error(msg, { position: 'top-right' });
               } else {
                 setStatus({
                   type: 'error',
-                  message: err.message || err.toString(),
+                  message: error.message || error.toString(),
                 });
                 const msg = t.t(
                   lang,
                   (s) => s.routes.operations.forms.status.error
                 );
-                toast.error(`${msg} ${err.message || err.toString()}`, {
+                toast.error(`${msg} ${error.message || error.toString()}`, {
                   position: 'top-right',
                 });
               }

@@ -8,7 +8,7 @@ import {
   encodeTableHeaders,
 } from '../../utils/table-headers';
 import FlowsTable, {
-  FlowsTableProps,
+  type FlowsTableProps,
 } from '../../components/tables/flows-table';
 import FilterFlowsTable, {
   FLOWS_FILTER_INITIAL_VALUES,

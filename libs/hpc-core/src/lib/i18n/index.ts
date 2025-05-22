@@ -2,7 +2,7 @@ import IntlMessageFormat from 'intl-messageformat';
 import 'intl-list-format';
 import { mapValues } from 'lodash';
 
-import { RecursivePartial, hasKey } from '../util';
+import { type RecursivePartial, hasKey } from '../util';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Intl {
@@ -68,7 +68,7 @@ export class LanguageChoice<LanguageKey extends string> {
     if (isLanguageKey(pref)) {
       return pref;
     }
-    const supportedBrowserLanguages = window.navigator.languages
+    const supportedBrowserLanguages = globalThis.navigator.languages
       .map((l) => l.split('-')[0])
       .filter(isLanguageKey);
     if (supportedBrowserLanguages.length > 0) {
@@ -81,7 +81,7 @@ export class LanguageChoice<LanguageKey extends string> {
 
   public setLanguage = (lang: LanguageKey) => {
     this.language = lang;
-    this.listeners.forEach((l) => l(lang));
+    for (const l of this.listeners) {l(lang);}
     localStorage.setItem(STORAGE_KEY, lang);
     this.applyLanguage();
   };
@@ -147,7 +147,7 @@ export class Translations<LanguageKey extends string, Strings> {
     const str = this.get(lang, get);
     if (!params) {
       return str;
-    } else {
+    } 
       let langCache = this.formatCache.get(lang);
       if (!langCache) {
         this.formatCache.set(lang, (langCache = new Map()));
@@ -157,7 +157,7 @@ export class Translations<LanguageKey extends string, Strings> {
         langCache.set(str, (cache = new IntlMessageFormat(str, lang)));
       }
       return cache.format(params) as string;
-    }
+    
   };
 
   /**
@@ -171,10 +171,10 @@ export class Translations<LanguageKey extends string, Strings> {
     strings: string[],
     opts?: Intl.ListFormatOpts
   ) => {
-    if (window.Intl) {
+    if (globalThis.Intl) {
       return new Intl.ListFormat(lang, opts).format(strings);
-    } else {
+    } 
       return strings.join(', ');
-    }
+    
   };
 }

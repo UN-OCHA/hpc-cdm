@@ -11,7 +11,7 @@ import { C } from '@unocha/hpc-ui';
 
 import { AppContext } from '../../../context';
 import { t } from '../../../../i18n';
-import { SubmissionValidation } from '../types';
+import { type SubmissionValidation } from '../types';
 
 interface Props {
   submissionValidation: SubmissionValidation;

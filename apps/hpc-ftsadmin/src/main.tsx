@@ -14,7 +14,7 @@ import PageOrganization from './app/pages/organizations/organization';
 
 import { RouteParamsValidator } from './app/components/route-params-validator';
 
-const rootElement = document.getElementById('root');
+const rootElement = document.querySelector('#root');
 if (!rootElement) {
   throw new Error('Failed to find the root element');
 }

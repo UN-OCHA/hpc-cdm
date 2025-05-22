@@ -1,12 +1,12 @@
 import {
   Autocomplete,
-  AutocompleteProps,
+  type AutocompleteProps,
   CircularProgress,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
-import { FormObjectValue } from '@unocha/hpc-data';
+import { type FormObjectValue } from '@unocha/hpc-data';
 import { StyledTextField } from './text-field';
 
 const StyledAutocomplete = tw(Autocomplete)`
@@ -18,7 +18,7 @@ type AsyncAutocompleteSelectProps = {
   name: string;
   label: string;
   placeholder?: string;
-  fnPromise: ({ query }: { query: string }) => Promise<Array<FormObjectValue>>;
+  fnPromise: ({ query }: { query: string }) => Promise<FormObjectValue[]>;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
   error?: (metaError: string) => string | undefined;
@@ -36,10 +36,10 @@ const AsyncAutocompleteSelect = ({
 }: AsyncAutocompleteSelectProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const { setFieldValue } = useFormikContext<Array<FormObjectValue>>();
-  const [field, meta] = useField<Array<FormObjectValue>>(name);
-  const [options, setOptions] = useState<Array<FormObjectValue>>([]);
-  const [data, setData] = useState<Array<FormObjectValue>>([]);
+  const { setFieldValue } = useFormikContext<FormObjectValue[]>();
+  const [field, meta] = useField<FormObjectValue[]>(name);
+  const [options, setOptions] = useState<FormObjectValue[]>([]);
+  const [data, setData] = useState<FormObjectValue[]>([]);
   const [isFetch, setIsFetch] = useState(false);
   const loading =
     open && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
@@ -50,7 +50,7 @@ const AsyncAutocompleteSelect = ({
       setOptions([]);
       setData([]);
       setIsFetch(false);
-      return undefined;
+      return;
     }
     if (data.length > 0 && (inputValue.length >= 3 || !isAutocompleteAPI)) {
       setOptions(
@@ -61,7 +61,7 @@ const AsyncAutocompleteSelect = ({
     }
 
     if (!loading) {
-      return undefined;
+      return;
     }
     (async () => {
       try {
@@ -143,7 +143,7 @@ const AsyncAutocompleteSelect = ({
             </>
           ),
         }}
-        error={meta && meta.touched && meta.error ? true : false}
+        error={!!(meta && meta.touched && meta.error)}
         helperText={
           meta && meta.touched && meta.error
             ? error

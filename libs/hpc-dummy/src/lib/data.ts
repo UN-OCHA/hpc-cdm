@@ -1,4 +1,4 @@
-import { DummyData } from './data-types';
+import { type DummyData } from './data-types';
 
 /**
  * TODO: Something weird is going on with these json imports, it's importing
@@ -498,8 +498,7 @@ for (const op of INITIAL_DATA.operations) {
       id: 0,
     },
     roles: ['operationLead'],
-  });
-  INITIAL_DATA.access.active.push({
+  }, {
     target: {
       type: 'operation',
       targetId: op.id,

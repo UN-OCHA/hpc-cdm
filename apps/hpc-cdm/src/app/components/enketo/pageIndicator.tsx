@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { styled } from '@unocha/hpc-ui';
 
-import { PageInfo } from './xform';
+import { type PageInfo } from './xform';
 import { t } from '../../../i18n';
 import { AppContext } from '../../context';
 

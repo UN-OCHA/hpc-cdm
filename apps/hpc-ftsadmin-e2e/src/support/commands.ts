@@ -8,7 +8,7 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
-import { DummyData } from '@unocha/hpc-dummy';
+import { type DummyData } from '@unocha/hpc-dummy';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace

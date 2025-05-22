@@ -10,8 +10,8 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import { C, ActionableButtonState, styled } from '@unocha/hpc-ui';
-import { access, errors } from '@unocha/hpc-data';
+import { C, type ActionableButtonState, styled } from '@unocha/hpc-ui';
+import { type access, errors } from '@unocha/hpc-data';
 
 import { t } from '../../i18n';
 import { getContext } from '../context';
@@ -93,22 +93,22 @@ export const TargetAccessManagementAddUser = (props: Props) => {
         email: emailInputValue,
         roles: [roleInputValue],
       })
-      .catch((err) => {
-        console.log(err);
-        if (errors.isUserError(err)) {
+      .catch((error) => {
+        console.log(error);
+        if (errors.isUserError(error)) {
           setSubmissionState({
             type: 'userError',
             emailInvalid: true,
-            error: t.t(lang, (s) => s.errors.userErrors[err.key]),
+            error: t.t(lang, (s) => s.errors.userErrors[error.key]),
           });
           return null;
-        } else {
+        } 
           setSubmissionState({
             type: 'unknownError',
-            error: err.message || err.toString(),
+            error: error.message || error.toString(),
           });
-          throw err;
-        }
+          throw error;
+        
       });
     if (data) {
       setSubmissionState({

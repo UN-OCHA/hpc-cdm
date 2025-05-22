@@ -1,5 +1,5 @@
-import { organizations } from '@unocha/hpc-data';
-import { LanguageKey, t } from '../../i18n';
+import { type organizations } from '@unocha/hpc-data';
+import { type LanguageKey, t } from '../../i18n';
 import dayjs from 'dayjs';
 
 export const valueToInteger = (value: string | number) => {
@@ -7,7 +7,7 @@ export const valueToInteger = (value: string | number) => {
 };
 
 export const parseUpdatedCreatedBy = (
-  updatedCreatedBy: Array<organizations.UpdatedCreatedBy>,
+  updatedCreatedBy: organizations.UpdatedCreatedBy[],
   lang: LanguageKey
 ): string => {
   if (updatedCreatedBy.length === 0) {
@@ -27,7 +27,7 @@ export const parseError = (
   errorValue?: string
 ) => {
   if (!error) {
-    return undefined;
+    return;
   }
   const translatedError = t.t(
     lang,

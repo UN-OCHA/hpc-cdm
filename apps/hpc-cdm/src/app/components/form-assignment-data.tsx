@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import { t } from '../../i18n';
 import { C, dataLoader } from '@unocha/hpc-ui';
-import { reportingWindows } from '@unocha/hpc-data';
+import { type reportingWindows } from '@unocha/hpc-data';
 import { useParams } from 'react-router';
 
 import { AppContext, getEnv } from '../context';
@@ -49,7 +49,7 @@ const FormAssignmentData = (props: Props) => {
     >
       {(assignment) => (
         <>
-          {header && header(assignment)}
+          {header?.(assignment)}
           <EnketoEditableForm
             reportingWindow={window}
             assignment={assignment}

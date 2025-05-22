@@ -1,9 +1,9 @@
 import { MdPending, MdLock, MdPendingActions } from 'react-icons/md';
 
-import { t, LanguageKey } from '../../i18n';
+import { t, type LanguageKey } from '../../i18n';
 
-import { reportingWindows } from '@unocha/hpc-data';
-import { THEME, SidebarNavigationItem } from '@unocha/hpc-ui';
+import { type reportingWindows } from '@unocha/hpc-data';
+import { THEME, type SidebarNavigationItem } from '@unocha/hpc-ui';
 /**
  * Get the reporting window that is most likely to be useful to the current
  * user.
@@ -15,8 +15,8 @@ export const getBestReportingWindow = (
     throw new Error(`getBestReportingWindow called with 0 reporting windows`);
   }
   return (
-    ws.filter((w) => w.state === 'open')[0] ||
-    ws.filter((w) => w.state === 'pending')[0] ||
+    ws.find((w) => w.state === 'open') ||
+    ws.find((w) => w.state === 'pending') ||
     ws[0]
   );
 };

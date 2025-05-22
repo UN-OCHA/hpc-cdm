@@ -10,7 +10,7 @@ import {
 
 import { ThemeProvider } from '@unocha/hpc-ui';
 
-import { User } from './data-types';
+import { type User } from './data-types';
 
 interface Listener {
   loginRequested?: () => void;

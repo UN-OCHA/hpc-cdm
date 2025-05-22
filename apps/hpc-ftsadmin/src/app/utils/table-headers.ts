@@ -1,7 +1,7 @@
-import { LanguageKey, t } from '../../i18n';
-import { Strings } from '../../i18n/iface';
+import { type LanguageKey, t } from '../../i18n';
+import { type Strings } from '../../i18n/iface';
 import type { Query, SetQuery } from '../components/tables/table-utils';
-import { FilterKeys } from './parse-filters';
+import { type FilterKeys } from './parse-filters';
 
 /** Declare which tables there can be */
 export type TableType = 'flows' | 'organizations' | 'keywords';
@@ -245,26 +245,26 @@ export const POSSIBLE_KEYWORD_VALUES: Record<
 
 // When adding more new field to POSSIBLE consts that are not default, modify as needed
 
-export const DEFAULT_FLOW_TABLE_HEADERS: TableHeadersProps<FlowHeaderID>[] = [];
+export const DEFAULT_FLOW_TABLE_HEADERS: Array<TableHeadersProps<FlowHeaderID>> = [];
 for (const [index, header] of Object.entries(POSSIBLE_FLOW_HEADER_VALUES)) {
   const i = parseInt(index);
   if (i <= 10)
-    DEFAULT_FLOW_TABLE_HEADERS.push({
+    {DEFAULT_FLOW_TABLE_HEADERS.push({
       ...header,
       active: true,
-    });
+    });}
   else
-    DEFAULT_FLOW_TABLE_HEADERS.push({
+    {DEFAULT_FLOW_TABLE_HEADERS.push({
       ...header,
       active: false,
-    });
+    });}
 }
-export const DEFAULT_ORGANIZATION_TABLE_HEADERS: TableHeadersProps<OrganizationHeaderID>[] =
+export const DEFAULT_ORGANIZATION_TABLE_HEADERS: Array<TableHeadersProps<OrganizationHeaderID>> =
   [];
 for (const [, header] of Object.entries(POSSIBLE_ORGANIZATION_VALUES)) {
   DEFAULT_ORGANIZATION_TABLE_HEADERS.push(header);
 }
-export const DEFAULT_KEYWORD_TABLE_HEADERS: TableHeadersProps<KeywordHeaderID>[] =
+export const DEFAULT_KEYWORD_TABLE_HEADERS: Array<TableHeadersProps<KeywordHeaderID>> =
   [];
 for (const [, header] of Object.entries(POSSIBLE_KEYWORD_VALUES)) {
   DEFAULT_KEYWORD_TABLE_HEADERS.push(header);
@@ -311,7 +311,7 @@ const defaultEncodeTableHeaders = (table: TableType) => {
  * use it alongside `decodeTableHeaders()`
  */
 export const encodeTableHeaders = <T extends Query>(
-  headers: Array<HeaderType>,
+  headers: HeaderType[],
   table: TableType = 'flows',
   query?: T,
   setQuery?: SetQuery<T>
@@ -346,9 +346,9 @@ export const encodeTableHeaders = <T extends Query>(
 const defaultDecodeTableHeaders = (
   lang: LanguageKey,
   table: TableType = 'flows'
-): TableHeadersProps<
+): Array<TableHeadersProps<
   FlowHeaderID | OrganizationHeaderID | KeywordHeaderID
->[] => {
+>> => {
   if (table === 'flows') {
     return DEFAULT_FLOW_TABLE_HEADERS.map((header) => ({
       id: header.id,
@@ -379,7 +379,7 @@ const defaultDecodeTableHeaders = (
       identifierID: header.identifierID,
       sortable: header.sortable,
     }));
-  } else {
+  } 
     return DEFAULT_ORGANIZATION_TABLE_HEADERS.map((header) => ({
       id: header.id,
       label: header.label,
@@ -394,7 +394,7 @@ const defaultDecodeTableHeaders = (
       identifierID: header.identifierID,
       sortable: header.sortable,
     }));
-  }
+  
 };
 /**
  * Decodes the query param to obtain an ordered list of table headers
@@ -499,8 +499,8 @@ export const isTableHeadersPropsKeyword = (
 };
 
 export const isCompatibleTableHeaderType = (
-  element: Array<object>
-): element is Array<HeaderType> => {
+  element: object[]
+): element is HeaderType[] => {
   const keys = Object.keys(element[0]);
   return (
     keys.includes('id') && keys.includes('label') && keys.includes('active')

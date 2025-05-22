@@ -1,10 +1,10 @@
 import {
   Autocomplete,
-  AutocompleteProps,
-  AutocompleteRenderInputParams,
+  type AutocompleteProps,
+  type AutocompleteRenderInputParams,
   InputAdornment,
   TextField,
-  TextFieldProps,
+  type TextFieldProps,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
@@ -56,7 +56,7 @@ const MultiTextField = ({
               ),
             }
           : { ...params.InputProps },
-      error: meta && meta.touched && meta.error ? true : false,
+      error: !!(meta && meta.touched && meta.error),
       helperText:
         meta && meta.touched && meta.error
           ? errorMessage
@@ -86,7 +86,7 @@ const MultiTextField = ({
           field.value
             .concat(options)
             .map((x) => x.trim())
-            .filter((x) => x)
+            .filter(Boolean)
         );
       } else {
         setInputValue(newInputValue);
@@ -96,7 +96,7 @@ const MultiTextField = ({
       setFieldValue(field.name, newValue);
     },
     ChipProps: { size: 'small' },
-    inputValue: inputValue,
+    inputValue,
   };
   if (meta && meta.touched && meta.error) {
     console.error(meta.error);

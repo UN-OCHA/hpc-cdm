@@ -27,7 +27,7 @@ const PARAMS_CODEC = t.type({
 const extractIdentifierIds = <
   T extends OrganizationHeaderID | FlowHeaderID | KeywordHeaderID,
 >(
-  val: TableHeadersProps<T>[]
+  val: Array<TableHeadersProps<T>>
 ) => {
   return val.reduce(
     (acc, { identifierID: id, sortable }) => {

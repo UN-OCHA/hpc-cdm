@@ -5,11 +5,11 @@ import { C } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
 import { useContext, useState } from 'react';
-import { organizations, FormObjectValue } from '@unocha/hpc-data';
+import { type organizations, type FormObjectValue } from '@unocha/hpc-data';
 import { useNavigate } from 'react-router';
 import * as paths from '../paths';
 import { errors } from '@unocha/hpc-data';
-import { Strings } from '../../i18n/iface';
+import { type Strings } from '../../i18n/iface';
 import DeleteIcon from '@mui/icons-material/Delete';
 import * as io from 'io-ts';
 import { util as codecs } from '@unocha/hpc-data';
@@ -33,13 +33,13 @@ export interface AddEditOrganizationValues {
   name: string;
   abbreviation: string;
   nativeName?: string;
-  locations?: Array<FormObjectValue>; // number[] we need array of IDs
+  locations?: FormObjectValue[]; // Number[] we need array of IDs
   url?: string;
   active?: boolean;
   verified?: boolean;
   notes?: string; // "notes" makes reference what in the UI it's called "Comments" (Not my decision)
-  organizationTypes: Array<FormObjectValue>;
-  organizationLevel?: FormObjectValue; // number[] we need array of IDs
+  organizationTypes: FormObjectValue[];
+  organizationLevel?: FormObjectValue; // Number[] we need array of IDs
   parent?: FormObjectValue;
   collectiveInd?: boolean;
   comments?: string; // "comments" makes reference what in the UI it's called "Organization Description" (Not my decision)
@@ -48,13 +48,13 @@ export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   name: '',
   abbreviation: '',
   nativeName: '',
-  locations: [], // number[] we need array of IDs
+  locations: [], // Number[] we need array of IDs
   url: '',
   active: true,
   verified: true,
   notes: '', // "notes" makes reference what in the UI it's called "Comments" (Not my decision)
   organizationTypes: [],
-  organizationLevel: { displayLabel: '', value: '' }, // number[] we need array of IDs
+  organizationLevel: { displayLabel: '', value: '' }, // Number[] we need array of IDs
   parent: { displayLabel: '', value: '' },
   collectiveInd: false,
   comments: '',
@@ -82,7 +82,7 @@ const formToUpdate = (
 ): organizations.UpdateOrganizationParams => {
   const res: organizations.UpdateOrganizationParams = {
     ...values,
-    id: id,
+    id,
     categories: values.organizationTypes.map((org) =>
       valueToInteger(org.value)
     ),
@@ -132,10 +132,10 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
       await environment.model.organizations
         .updateOrganization(formToUpdate(values, id))
         .finally(load)
-        .catch((err) => {
-          if (errors.isDuplicateError(err)) {
-            setErrorValue(err.value);
-            setError(err.code);
+        .catch((error_) => {
+          if (errors.isDuplicateError(error_)) {
+            setErrorValue(error_.value);
+            setError(error_.code);
           } else {
             setError('unknown');
           }
@@ -146,10 +146,10 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
         .then((org) => {
           navigate(paths.organization(org.id));
         })
-        .catch((err) => {
-          if (errors.isDuplicateError(err)) {
-            setErrorValue(err.value);
-            setError(err.code);
+        .catch((error_) => {
+          if (errors.isDuplicateError(error_)) {
+            setErrorValue(error_.value);
+            setError(error_.code);
           } else {
             setError('unknown');
           }

@@ -151,7 +151,7 @@ const SecondaryNavigation = (props: Props) => {
         const selected =
           tab.selected === undefined
             ? loc.pathname === tab.path ||
-              loc.pathname.startsWith(tab.path + '/')
+              loc.pathname.startsWith(`${tab.path  }/`)
             : tab.selected;
         return (
           <Tab key={i} className={selected ? CLS.SELECTED_TAB : ''}>
