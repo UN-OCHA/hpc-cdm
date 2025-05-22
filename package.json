@@ -27,7 +27,7 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "workspace-generator": "nx workspace-generator",
-    "prepare": "husky install"
+    "prepare": "[ -d .git ] && git config blame.ignoreRevsFile .git-blame-ignore-revs; husky install"
   },
   "engines": {
     "node": ">=20.19.0 || >=22.14.0",

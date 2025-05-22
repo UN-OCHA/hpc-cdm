@@ -1,4 +1,5 @@
 # Add files here to ignore them from prettier formatting
+.git-blame-ignore-revs
 .editorconfig
 .npmrc
 LICENSE
