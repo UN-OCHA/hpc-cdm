@@ -1,12 +1,12 @@
-import React, { type Dispatch, type SetStateAction, useContext } from 'react';
 import { C, CLASSES } from '@unocha/hpc-ui';
+import React, { type Dispatch, type SetStateAction, useContext } from 'react';
 import { AppContext } from '../../../context';
 
 import { type reportingWindows } from '@unocha/hpc-data';
+import dayjs from '../../../../libraries/dayjs';
+import { type FormStatus } from '../types';
 import AssignedUsersButton from './assignUsersButton';
 import Indicator from './indicator';
-import { type FormStatus } from '../types';
-import dayjs from '../../../../libraries/dayjs';
 import StatusChangeButtons from './StatusChangeButtons';
 
 interface Props {
@@ -36,16 +36,12 @@ const FormToolbar = ({
   const changeStatusButtonsProps = { assignment, setStatus };
 
   const lastUpdatedAt = dayjs(
-    status.type === 'conflict'
-      ? status.timestamp
-      : assignment.lastUpdatedAt
+    status.type === 'conflict' ? status.timestamp : assignment.lastUpdatedAt
   )
     .locale(lang)
     .fromNow();
   const lastUpdatedBy =
-    status.type === 'conflict'
-      ? status.otherPerson
-      : assignment.lastUpdatedBy;
+    status.type === 'conflict' ? status.otherPerson : assignment.lastUpdatedBy;
 
   const indicatorProps = {
     isLoading,
@@ -65,7 +61,9 @@ const FormToolbar = ({
       )}
       <div className={CLASSES.FLEX.GROW} />
       {!isLoading && (
-        <AssignedUsersButton setShowAssignedUsers={setShouldShowAssignedUsers} />
+        <AssignedUsersButton
+          setShowAssignedUsers={setShouldShowAssignedUsers}
+        />
       )}
       {<Indicator {...indicatorProps} />}
     </C.Toolbar>

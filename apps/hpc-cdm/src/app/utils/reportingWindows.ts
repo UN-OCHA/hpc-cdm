@@ -1,4 +1,4 @@
-import { MdPending, MdLock, MdPendingActions } from 'react-icons/md';
+import { MdLock, MdPending, MdPendingActions } from 'react-icons/md';
 
 import { t, type LanguageKey } from '../../i18n';
 

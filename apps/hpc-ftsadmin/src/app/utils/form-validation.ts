@@ -1,6 +1,6 @@
-import type * as io from 'io-ts';
-import { isRight } from 'fp-ts/lib/Either';
 import { type FormikErrors } from 'formik';
+import { isRight } from 'fp-ts/lib/Either';
+import type * as io from 'io-ts';
 import { isKey } from './parse-filters';
 
 export const parseFieldError = (validationError: string, error: string) => {
@@ -20,22 +20,21 @@ const validateForm = <T extends object, K extends io.Any>(
   const result = validationSchema.decode(values);
   if (isRight(result)) {
     return {};
-  } 
-    const errors: FormikErrors<T> = {};
-    for (const value of result.left) {
-      for (const context of value.context) {
-        if (isKey(values, context.key)) {
-          const key = context.key;
-          // Did not find a better solution, but I think it is
-          // fine to let it like that for the moment
-          if (isStringUndefined(errors[key])) {
-            (errors[key] as string | undefined) = '{validationError}'; // Placeholder to change for i18n text
-          }
+  }
+  const errors: FormikErrors<T> = {};
+  for (const value of result.left) {
+    for (const context of value.context) {
+      if (isKey(values, context.key)) {
+        const key = context.key;
+        // Did not find a better solution, but I think it is
+        // fine to let it like that for the moment
+        if (isStringUndefined(errors[key])) {
+          (errors[key] as string | undefined) = '{validationError}'; // Placeholder to change for i18n text
         }
       }
     }
-    return errors;
-  
+  }
+  return errors;
 };
 
 export default validateForm;

@@ -2,15 +2,15 @@ import React, { useContext } from 'react';
 
 import {
   Dialog,
-  DialogTitle,
+  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogActions,
+  DialogTitle,
 } from '@mui/material';
 import { C } from '@unocha/hpc-ui';
 
-import { AppContext } from '../../../context';
 import { t } from '../../../../i18n';
+import { AppContext } from '../../../context';
 import { type SubmissionValidation } from '../types';
 
 interface Props {

@@ -1,5 +1,3 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import {
   Dialog,
   DialogTitle,
@@ -7,6 +5,8 @@ import {
   ListItem,
   ListItemText,
 } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 
 import { ThemeProvider } from '@unocha/hpc-ui';
 
@@ -25,7 +25,9 @@ export class Users {
 
   public login = () => {
     for (const l of this.listeners) {
-      if (l.loginRequested) {l.loginRequested();}
+      if (l.loginRequested) {
+        l.loginRequested();
+      }
     }
   };
 
@@ -33,7 +35,9 @@ export class Users {
     this.users = users;
 
     for (const l of this.listeners) {
-      if (l.usersUpdated) {l.usersUpdated(users);}
+      if (l.usersUpdated) {
+        l.usersUpdated(users);
+      }
     }
   };
 
@@ -49,7 +53,9 @@ export class Users {
 
   public loginAsUser(user: User) {
     for (const l of this.listeners) {
-      if (l.loginAsUser) {l.loginAsUser(user);}
+      if (l.loginAsUser) {
+        l.loginAsUser(user);
+      }
     }
   }
 

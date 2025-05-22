@@ -2,15 +2,15 @@ import React, { useContext } from 'react';
 
 import {
   Dialog,
-  DialogTitle,
+  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogActions,
+  DialogTitle,
 } from '@mui/material';
 import { C } from '@unocha/hpc-ui';
 
-import { AppContext } from '../../../context';
 import { t } from '../../../../i18n';
+import { AppContext } from '../../../context';
 
 interface Props {
   nextPage: () => void;
@@ -42,7 +42,11 @@ const ValidationOnNavigationModal = (props: Props) => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <C.Button onClick={closeValidationMessage} color="primary" shouldAutoFocus>
+        <C.Button
+          onClick={closeValidationMessage}
+          color="primary"
+          shouldAutoFocus
+        >
           <span>
             {t.t(lang, (s) => s.routes.operations.forms.invalidData.fixNow)}
           </span>

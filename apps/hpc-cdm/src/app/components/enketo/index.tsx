@@ -1,23 +1,23 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
 import { type reportingWindows, errors } from '@unocha/hpc-data';
 import { styled } from '@unocha/hpc-ui';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import dayjs from '../../../libraries/dayjs';
 
-import XForm, { type PageInfo } from './xform';
-import { getEnv, AppContext } from '../../context';
-import { t } from '../../../i18n';
-import usePrompt from '../../utils/usePrompt';
-import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
-import PageIndicator from './pageIndicator';
-import PoweredByFooter from './powered-by-footer';
-import { type FormStatus, type SubmissionValidation } from './types';
+import { t } from '../../../i18n';
+import { AppContext, getEnv } from '../../context';
+import usePrompt from '../../utils/usePrompt';
 import FormToolbar from './formToolbar';
+import AssignedUsersModal from './modals/assignedUsersModal';
 import ValidationOnNavigationModal from './modals/validationOnNavigationModal';
 import ValidationOnSubmitModal from './modals/validationOnSubmitModal';
-import AssignedUsersModal from './modals/assignedUsersModal';
+import PageIndicator from './pageIndicator';
+import PoweredByFooter from './powered-by-footer';
+import SubmitButton from './submit-button';
+import { type FormStatus, type SubmissionValidation } from './types';
+import XForm, { type PageInfo } from './xform';
 
 const LoadingMessage = styled.div`
   margin: 0 ${(p) => p.theme.marginPx.md};
@@ -51,8 +51,10 @@ export const EnketoEditableForm = (props: Props) => {
     useState<reportingWindows.GetAssignmentResult | null>(null);
   const [status, setStatus] = useState<FormStatus>({ type: 'idle' });
   const [isEditable, setIsEditable] = useState(true);
-  const [shouldShowValidationConfirmation, setShouldShowValidationConfirmation] =
-    useState(false);
+  const [
+    shouldShowValidationConfirmation,
+    setShouldShowValidationConfirmation,
+  ] = useState(false);
   const [shouldShowAssignedUsers, setShouldShowAssignedUsers] = useState(false);
   const [submissionValidation, setSubmissionValidation] =
     useState<SubmissionValidation>(null);
@@ -93,7 +95,7 @@ export const EnketoEditableForm = (props: Props) => {
         currentData,
         currentFiles,
       },
-      state
+      state,
     } = originalAssignment;
 
     /**
@@ -104,8 +106,7 @@ export const EnketoEditableForm = (props: Props) => {
      * state, to prevent accidental changes)
      */
     const isEditable =
-      state === 'clean:finalized' ||
-      state === 'raw:finalized'
+      state === 'clean:finalized' || state === 'raw:finalized'
         ? false
         : isOriginalAssignmentEditable;
 
@@ -185,9 +186,8 @@ export const EnketoEditableForm = (props: Props) => {
           saveForm();
           setSubmissionValidation('invalid');
           return;
-        } 
-          setSubmissionValidation(null);
-        
+        }
+        setSubmissionValidation(null);
       }
 
       setStatus({ type: 'saving' });
@@ -199,13 +199,13 @@ export const EnketoEditableForm = (props: Props) => {
         const t0 = performance.now();
         const { data, files } = xform.current.getData();
         const t1 = performance.now();
-        console.log(`getData time: ${  t1 - t0  }ms`);
+        console.log(`getData time: ${t1 - t0}ms`);
 
         if (lastSavedData !== data || finalized) {
           const {
             id,
-            task: { form ,currentData},
-            version
+            task: { form, currentData },
+            version,
           } = assignment;
 
           // Convert each file Blob to an ArrayBuffer
@@ -374,7 +374,9 @@ export const EnketoEditableForm = (props: Props) => {
             </div>
             <ValidationOnNavigationModal
               nextPage={forceNextPage}
-              shouldShowValidationConfirmation={shouldShowValidationConfirmation}
+              shouldShowValidationConfirmation={
+                shouldShowValidationConfirmation
+              }
               closeValidationMessage={() =>
                 setShouldShowValidationConfirmation(false)
               }

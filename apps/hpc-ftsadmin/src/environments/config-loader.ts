@@ -8,9 +8,8 @@ const parseConfig = async (res: Response) => {
     const c = await res.json();
     if (config.CONFIG.is(c)) {
       return c;
-    } 
-      throw new Error('Invalid config');
-    
+    }
+    throw new Error('Invalid config');
   } else {
     throw new Error(`Unable to get config (${res.status}): ${res.statusText}`);
   }

@@ -1,16 +1,16 @@
 import React from 'react';
 import { Navigate, Route, Routes, useParams } from 'react-router';
 
-import { CLASSES, C, dataLoader } from '@unocha/hpc-ui';
+import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
 import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
 
-import OperationForms from './operation-forms';
-import OperationClusters from './operation-clusters';
-import OperationSettings from './operation-settings';
 import PageMeta from '../components/page-meta';
+import OperationClusters from './operation-clusters';
+import OperationForms from './operation-forms';
+import OperationSettings from './operation-settings';
 
 type OperationRouteParams = {
   id: string;
@@ -37,7 +37,8 @@ const PageOperation = () => {
             }}
           >
             {({ data: operation }) => {
-              const shouldDisplaySettings = operation.permissions.canModifyAccess;
+              const shouldDisplaySettings =
+                operation.permissions.canModifyAccess;
               const shouldDisplayClusters =
                 operation.permissions.canModifyClusterAccessAndPermissions;
 

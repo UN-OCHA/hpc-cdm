@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
 import { styled } from '@unocha/hpc-ui';
+import React, { useContext } from 'react';
 
-import { type PageInfo } from './xform';
 import { t } from '../../../i18n';
 import { AppContext } from '../../context';
+import { type PageInfo } from './xform';
 
 interface Props {
   pageInfo: PageInfo | null;

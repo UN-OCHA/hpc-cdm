@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { CLASSES, C, combineClasses, dataLoader } from '@unocha/hpc-ui';
+import { C, CLASSES, combineClasses, dataLoader } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
+import PageMeta from '../components/page-meta';
 import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
-import PageMeta from '../components/page-meta';
 
 interface Props {
   className?: string;

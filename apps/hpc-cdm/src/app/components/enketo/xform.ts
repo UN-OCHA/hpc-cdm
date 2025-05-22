@@ -36,15 +36,14 @@ export default class XForm {
 
     fileManager.getFileUrl = (subject) => {
       if (!subject) {
-        return Promise.resolve(undefined)
+        return Promise.resolve(undefined);
       }
       if (typeof subject === 'string') {
         const file = files.filter((f) => f.name === subject);
         if (file.length > 0) {
           return Promise.resolve(globalThis.URL.createObjectURL(file[0].data));
-        } 
-          throw new Error(`Unable to find file with the name ${subject}`);
-        
+        }
+        throw new Error(`Unable to find file with the name ${subject}`);
       }
       return Promise.resolve(globalThis.URL.createObjectURL(subject));
     };
@@ -93,7 +92,6 @@ export default class XForm {
   }
 
   private changeLanguage(languages: string[], selectedLanguage?: string) {
-
     const _selectedLanguage =
       selectedLanguage ?? $('#form-languages').data('default-lang');
     // Set the value for the dropdown
@@ -142,7 +140,7 @@ export default class XForm {
       const t0 = performance.now();
       const errors = this.form.init();
       const t1 = performance.now();
-      console.log(`Form initialization time: ${  t1 - t0  } millis`);
+      console.log(`Form initialization time: ${t1 - t0} millis`);
       if (errors?.length) {
         console.error('Form Errors', JSON.stringify(errors));
       }
@@ -174,9 +172,8 @@ export default class XForm {
       );
       console.log('formLanguages:', formLanguages);
       const selectedLanguage = LANGUAGE_CHOICE.getLanguage();
-      const isSelectedLanguageSupported = formLanguages.includes(
-        selectedLanguage
-      );
+      const isSelectedLanguageSupported =
+        formLanguages.includes(selectedLanguage);
 
       this.showOrHideLanguageUI(
         doesNewLanguagesExistForForm,
@@ -186,10 +183,7 @@ export default class XForm {
       );
 
       LANGUAGE_CHOICE.addListener((lang) => {
-
-        const isSelectedLanguageSupported = formLanguages.includes(
-          lang
-        );
+        const isSelectedLanguageSupported = formLanguages.includes(lang);
         this.showOrHideLanguageUI(
           doesNewLanguagesExistForForm,
           isSelectedLanguageSupported,

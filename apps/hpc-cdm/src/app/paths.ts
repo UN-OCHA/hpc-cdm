@@ -154,7 +154,7 @@ export const operationClusterSettings = (params: {
 export const operationClusterSettingsAccess = (params: {
   operationId: number;
   clusterId: number;
-}) => replacePlaceholders(`${OPERATION_CLUSTER + SETTINGS  }/${ACCESS}`, params);
+}) => replacePlaceholders(`${OPERATION_CLUSTER + SETTINGS}/${ACCESS}`, params);
 
 export const settingsRoot: () => '/settings/*' = () => `${SETTINGS}${ROOT}`;
 
@@ -168,7 +168,7 @@ export const operationSettings = (id: number) =>
  * `/operations/:id/settings/access
  */
 export const operationSettingsAccess = (id: number) =>
-  replacePlaceholders(`${OPERATION + SETTINGS  }/${ACCESS}`, { id });
+  replacePlaceholders(`${OPERATION + SETTINGS}/${ACCESS}`, { id });
 
 export const reportingWindow: () => 'w/' = () => REPORTING_WINDOW;
 

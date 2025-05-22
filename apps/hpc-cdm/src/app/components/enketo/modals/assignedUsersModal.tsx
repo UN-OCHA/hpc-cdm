@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 
-import { Dialog, DialogContent, DialogActions } from '@mui/material';
-import { MdEmail as _MdEmail } from 'react-icons/md';
+import { Dialog, DialogActions, DialogContent } from '@mui/material';
 import { C, styled, THEME } from '@unocha/hpc-ui';
+import { MdEmail as _MdEmail } from 'react-icons/md';
 
-import { AppContext } from '../../../context';
-import { t } from '../../../../i18n';
 import { type reportingWindows } from '@unocha/hpc-data';
+import { t } from '../../../../i18n';
+import { AppContext } from '../../../context';
 
 interface Props {
   shouldShowAssignedUsers: boolean;

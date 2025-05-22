@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { CLASSES, combineClasses } from '../classes';
 import Caret from '../assets/icons/caret';
+import { CLASSES, combineClasses } from '../classes';
 import { styled } from '../theme';
 
 const CLS = {
@@ -68,8 +68,16 @@ const Actions = styled.div`
 `;
 
 const ListItem = (props: Props) => {
-  const { className, link, text, prefix, secondary, actions, isMuted, itemEnd } =
-    props;
+  const {
+    className,
+    link,
+    text,
+    prefix,
+    secondary,
+    actions,
+    isMuted,
+    itemEnd,
+  } = props;
   const contents = (
     <>
       {prefix && (

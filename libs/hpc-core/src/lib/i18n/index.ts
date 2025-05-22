@@ -1,5 +1,5 @@
-import IntlMessageFormat from 'intl-messageformat';
 import 'intl-list-format';
+import IntlMessageFormat from 'intl-messageformat';
 import { mapValues } from 'lodash';
 
 import { type RecursivePartial, hasKey } from '../util';
@@ -81,7 +81,9 @@ export class LanguageChoice<LanguageKey extends string> {
 
   public setLanguage = (lang: LanguageKey) => {
     this.language = lang;
-    for (const l of this.listeners) {l(lang);}
+    for (const l of this.listeners) {
+      l(lang);
+    }
     localStorage.setItem(STORAGE_KEY, lang);
     this.applyLanguage();
   };
@@ -147,17 +149,16 @@ export class Translations<LanguageKey extends string, Strings> {
     const str = this.get(lang, get);
     if (!params) {
       return str;
-    } 
-      let langCache = this.formatCache.get(lang);
-      if (!langCache) {
-        this.formatCache.set(lang, (langCache = new Map()));
-      }
-      let cache = langCache.get(str);
-      if (!cache) {
-        langCache.set(str, (cache = new IntlMessageFormat(str, lang)));
-      }
-      return cache.format(params) as string;
-    
+    }
+    let langCache = this.formatCache.get(lang);
+    if (!langCache) {
+      this.formatCache.set(lang, (langCache = new Map()));
+    }
+    let cache = langCache.get(str);
+    if (!cache) {
+      langCache.set(str, (cache = new IntlMessageFormat(str, lang)));
+    }
+    return cache.format(params) as string;
   };
 
   /**
@@ -173,8 +174,7 @@ export class Translations<LanguageKey extends string, Strings> {
   ) => {
     if (globalThis.Intl) {
       return new Intl.ListFormat(lang, opts).format(strings);
-    } 
-      return strings.join(', ');
-    
+    }
+    return strings.join(', ');
   };
 }

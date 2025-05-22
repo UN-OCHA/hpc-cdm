@@ -16,15 +16,17 @@ export const searchFlowsParams = (params: flows.SearchFlowsParams): string => {
       case 'flowCategoryFilters':
       case 'flowObjectFilters': {
         const filter = params[key];
-        if (filter && filter.length > 0)
-          {queryParams += `${key}: ${stringify(filter)} `;}
+        if (filter && filter.length > 0) {
+          queryParams += `${key}: ${stringify(filter)} `;
+        }
         break;
       }
       case 'nestedFlowFilters':
       case 'flowFilters': {
         const filter = params[key];
-        if (filter && JSON.stringify(filter) !== '{}')
-          {queryParams += `${key}: ${stringify(filter)} `;}
+        if (filter && JSON.stringify(filter) !== '{}') {
+          queryParams += `${key}: ${stringify(filter)} `;
+        }
         break;
       }
       default: {

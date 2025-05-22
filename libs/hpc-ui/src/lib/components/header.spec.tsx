@@ -1,9 +1,9 @@
-import React from 'react';
 import { render } from '@testing-library/react';
+import React from 'react';
 
-import Header from './header';
-import { ThemeProvider } from '../theme';
 import { i18n } from '@unocha/hpc-core';
+import { ThemeProvider } from '../theme';
+import Header from './header';
 
 const session = {
   getUser: jest.fn(),

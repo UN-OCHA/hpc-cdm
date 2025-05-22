@@ -32,7 +32,7 @@ for (let n = 0; n <= 0xff; ++n) {
  */
 export const arrayBufferToHex = (data: ArrayBuffer): string => {
   const buff = new Uint8Array(data);
-  const hexOctets = Array.from({length: buff.length});
+  const hexOctets = Array.from({ length: buff.length });
 
   for (const [i, element] of buff.entries()) {
     hexOctets[i] = BYTE_TO_HEX[element];

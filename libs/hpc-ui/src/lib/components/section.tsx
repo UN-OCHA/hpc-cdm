@@ -1,6 +1,6 @@
+import React from 'react';
 import tw from 'twin.macro';
 import Caret from '../assets/icons/caret';
-import React from 'react';
 import { styled } from '../theme';
 
 export interface SectionProps {

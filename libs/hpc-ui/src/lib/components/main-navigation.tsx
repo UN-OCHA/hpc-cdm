@@ -5,8 +5,8 @@ import {
   ListItem as MUIListItem,
   ListItemButton as MUIListItemButton,
 } from '@mui/material';
-import { CLASSES, combineClasses } from '../classes';
 import HpcLogo from '../assets/logos/hpc';
+import { CLASSES, combineClasses } from '../classes';
 import { styled } from '../theme';
 
 const CLS = {
@@ -162,8 +162,9 @@ export default (props: Props) => {
           return null;
         }
         const isSelected =
-          tab.selected ?? (loc.pathname === tab.path ||
-              loc.pathname.startsWith(`${tab.path  }/`));
+          tab.selected ??
+          (loc.pathname === tab.path ||
+            loc.pathname.startsWith(`${tab.path}/`));
         return (
           <li key={i} className={isSelected ? CLS.SELECTED : ''}>
             <Link to={tab.path}>

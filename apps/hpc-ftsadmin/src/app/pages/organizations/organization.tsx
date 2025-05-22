@@ -1,13 +1,13 @@
+import { type FormObjectValue, type organizations } from '@unocha/hpc-data';
 import { C, CLASSES, combineClasses, useDataLoader } from '@unocha/hpc-ui';
-import { t } from '../../../i18n';
-import PageMeta from '../../components/page-meta';
-import { AppContext, getEnv } from '../../context';
-import tw from 'twin.macro';
 import { useParams } from 'react-router';
+import tw from 'twin.macro';
+import { t } from '../../../i18n';
 import OrganizationForm, {
   type AddEditOrganizationValues,
 } from '../../components/organization-form';
-import { type organizations, type FormObjectValue } from '@unocha/hpc-data';
+import PageMeta from '../../components/page-meta';
+import { AppContext, getEnv } from '../../context';
 
 interface Props {
   className?: string;
@@ -38,7 +38,9 @@ const orgCategoryTo = (
   type: OrganizationCategories
 ): FormObjectValue[] => {
   const res: FormObjectValue[] = [];
-  if (!categories) {return res;}
+  if (!categories) {
+    return res;
+  }
   switch (type) {
     case 'type': {
       res.push(

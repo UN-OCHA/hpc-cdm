@@ -1,8 +1,8 @@
 import {
   UserManager,
-  type User,
-  type OidcMetadata,
   WebStorageStateStore,
+  type OidcMetadata,
+  type User,
 } from 'oidc-client';
 
 import { type config, type Session } from '@unocha/hpc-core';
@@ -79,24 +79,22 @@ export class LiveBrowserClient {
   ): Promise<Session['getUser']> => {
     if (!user) {
       return () => null;
-    } 
-      const accountUrl = new URL('/account.json', this.config.hpcAuthUrl);
-      const res = await fetch(accountUrl.href, {
-        headers: {
-          Authorization: `Bearer ${user.access_token}`,
-        },
+    }
+    const accountUrl = new URL('/account.json', this.config.hpcAuthUrl);
+    const res = await fetch(accountUrl.href, {
+      headers: {
+        Authorization: `Bearer ${user.access_token}`,
+      },
+    });
+    if (!res.ok) {
+      return () => ({
+        name: 'unknown',
       });
-      if (!res.ok) {
-        return () => ({
-          name: 'unknown',
-        });
-      } 
-        const info = await res.json();
-        return () => ({
-          name: info.name ?? 'unknown',
-        });
-      
-    
+    }
+    const info = await res.json();
+    return () => ({
+      name: info.name ?? 'unknown',
+    });
   };
 
   public init = async () => {
@@ -149,16 +147,15 @@ export class LiveBrowserClient {
         }),
       };
       return result;
-    } 
-      const result = {
-        session,
-        model: new LiveModel({
-          baseUrl: this.config.hpcApiUrl,
-          hidToken: null,
-          clearSessionStorage: this.clearSessionStorage,
-        }),
-      };
-      return result;
-    
+    }
+    const result = {
+      session,
+      model: new LiveModel({
+        baseUrl: this.config.hpcApiUrl,
+        hidToken: null,
+        clearSessionStorage: this.clearSessionStorage,
+      }),
+    };
+    return result;
   };
 }

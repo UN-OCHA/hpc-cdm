@@ -1,3 +1,8 @@
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckIcon from '@mui/icons-material/Check';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   Alert,
   Box,
@@ -13,17 +18,11 @@ import {
   TableSortLabel,
   Tooltip,
 } from '@mui/material';
-import { type categories } from '@unocha/hpc-data';
-import { errors } from '@unocha/hpc-data';
+import { type categories, errors } from '@unocha/hpc-data';
 import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
-import SettingsIcon from '@mui/icons-material/Settings';
+import React, { createContext, useContext, useState } from 'react';
 import { type LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
-import React, { createContext, useContext, useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CheckIcon from '@mui/icons-material/Check';
-import EditIcon from '@mui/icons-material/Edit';
-import CancelIcon from '@mui/icons-material/Cancel';
 import * as paths from '../../paths';
 
 import {
@@ -35,6 +34,7 @@ import {
   isTableHeadersPropsKeyword,
 } from '../../utils/table-headers';
 
+import tw from 'twin.macro';
 import {
   ChipDiv,
   type KeywordQuery,
@@ -44,12 +44,11 @@ import {
   TopRowContainer,
   handleTableSettingsInfoClose,
 } from './table-utils';
-import tw from 'twin.macro';
 
-import { Form, Formik } from 'formik';
 import { util } from '@unocha/hpc-core';
-import { type LocalStorageSchema } from '../../utils/local-storage-type';
+import { Form, Formik } from 'formik';
 import { type Strings } from '../../../i18n/iface';
+import { type LocalStorageSchema } from '../../utils/local-storage-type';
 import { parseError } from '../../utils/map-functions';
 
 export interface KeywordTableProps {
@@ -78,15 +77,13 @@ function by<T>(
     if (x > y) {
       if (order === 'ASC') {
         return 1;
-      } 
-        return -1;
-      
+      }
+      return -1;
     } else if (x < y) {
       if (order === 'ASC') {
         return -1;
-      } 
-        return 1;
-      
+      }
+      return 1;
     }
     return 0;
   };
@@ -97,9 +94,8 @@ function typeQuery(value: string): keyof categories.Keyword {
     return 'id';
   } else if (value === 'keyword.relatedFlows') {
     return 'refCount';
-  } 
-    return 'name';
-  
+  }
+  return 'name';
 }
 
 const IconContainer = tw.div`
@@ -181,8 +177,8 @@ const EditableRow = ({
                     setError({ code: error.code, value: error.value });
                   }
                 } else if (setError) {
-                    setError({ code: 'unknown', value: 'unknown' });
-                  }
+                  setError({ code: 'unknown', value: 'unknown' });
+                }
               });
             setEdit(false);
           }}
@@ -527,7 +523,9 @@ const KeywordTable = (props: KeywordTableProps) => {
                           <Alert
                             severity="info"
                             onClose={() =>
-                              handleTableSettingsInfoClose(setShouldDisplayTableInfo)
+                              handleTableSettingsInfoClose(
+                                setShouldDisplayTableInfo
+                              )
                             }
                             sx={{
                               display: shouldDisplayTableInfo ? 'flex' : 'none',
@@ -566,6 +564,6 @@ const KeywordTable = (props: KeywordTableProps) => {
       )}
     </AppContext.Consumer>
   );
-}
+};
 
-export default KeywordTable
+export default KeywordTable;

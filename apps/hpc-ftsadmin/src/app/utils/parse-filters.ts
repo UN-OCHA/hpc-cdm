@@ -1,14 +1,14 @@
 import {
   type categories,
   type flows,
-  type organizations,
   type FormObjectValue,
+  type organizations,
 } from '@unocha/hpc-data';
-import { type PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
-import { type Strings } from '../../i18n/iface';
-import { type OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { type Dayjs } from 'dayjs';
+import { type Strings } from '../../i18n/iface';
 import { type FlowsFilterValues } from '../components/filters/filter-flows-table';
+import { type OrganizationFilterValues } from '../components/filters/filter-organization-table';
+import { type PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
 import { valueToInteger } from './map-functions';
 
 /*
@@ -131,8 +131,9 @@ export const parseOutInitialValues = <T extends Filters>(
 ) => {
   const res = {} as T;
   for (const key in filters) {
-    if (JSON.stringify(filters[key]) !== JSON.stringify(initialValues[key]))
-      {res[key] = filters[key];}
+    if (JSON.stringify(filters[key]) !== JSON.stringify(initialValues[key])) {
+      res[key] = filters[key];
+    }
   }
   return res;
 };
@@ -198,9 +199,8 @@ export const extractDirectionObject = (
       isFlowObjectTypes(lowerCaseSingularObject)
       ? { direction, object: lowerCaseSingularObject }
       : null;
-  } 
-    return null;
-  
+  }
+  return null;
 };
 
 type FlowObjectTypes =
@@ -253,8 +253,11 @@ export const parseFormFilters = <
 };
 
 const parseActiveStatus = (activeStatus: string): boolean | undefined => {
-  if (activeStatus === 'true') {return true;}
-  else if (activeStatus === 'false') {return false;}
+  if (activeStatus === 'true') {
+    return true;
+  } else if (activeStatus === 'false') {
+    return false;
+  }
 
   return undefined;
 };
@@ -278,8 +281,9 @@ export const parseFlowFilters = (
     !res.flowObjectFilters ||
     !res.flowCategoryFilters ||
     !res.nestedFlowFilters
-  )
-    {return res;}
+  ) {
+    return res;
+  }
   for (const key in filters) {
     if (isKey(filters, key)) {
       switch (key) {
@@ -299,16 +303,20 @@ export const parseFlowFilters = (
         case 'sourceUsageYears': {
           const extractedDetails = extractDirectionObject(key);
           const value = filters[key]?.value;
-          if (extractedDetails && value && filterValueIsArrayFormObjectValue(value)) {
-              res.flowObjectFilters = [
-                ...res.flowObjectFilters,
-                ...value.map((flowObject) => ({
-                  objectID: valueToInteger(flowObject.value),
-                  direction: extractedDetails.direction,
-                  objectType: extractedDetails.object,
-                })),
-              ];
-            }
+          if (
+            extractedDetails &&
+            value &&
+            filterValueIsArrayFormObjectValue(value)
+          ) {
+            res.flowObjectFilters = [
+              ...res.flowObjectFilters,
+              ...value.map((flowObject) => ({
+                objectID: valueToInteger(flowObject.value),
+                direction: extractedDetails.direction,
+                objectType: extractedDetails.object,
+              })),
+            ];
+          }
           break;
         }
         case 'reporterRefCode':
@@ -361,7 +369,9 @@ export const parseFlowFilters = (
           }
           if (filterValueIsFormObjectValue(filterValue)) {
             const statusType = filterValue.value;
-            if (filterValueIsFlowStatusType(statusType)) {res[statusType] = true;}
+            if (filterValueIsFlowStatusType(statusType)) {
+              res[statusType] = true;
+            }
           }
           break;
         }

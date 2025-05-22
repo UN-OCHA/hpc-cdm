@@ -1,12 +1,12 @@
+import { ThemeProvider as MUIThemeProvider } from '@mui/material';
+import { arSA, enUS, esES, frFR, zhCN } from '@mui/material/locale';
+import { createTheme, type ThemeOptions } from '@mui/material/styles';
 import { useMemo } from 'react';
 import styled, {
   css,
   type ThemedCssFunction,
   type ThemedStyledInterface,
 } from 'styled-components';
-import { ThemeProvider as MUIThemeProvider } from '@mui/material';
-import { arSA, enUS, esES, frFR, zhCN } from '@mui/material/locale';
-import { createTheme, type ThemeOptions } from '@mui/material/styles';
 
 const COLOR_PALETTE = {
   red: {
@@ -118,7 +118,7 @@ export type Theme = typeof THEME;
 const themedStyled: ThemedStyledInterface<Theme> = styled;
 const themedCSS: ThemedCssFunction<Theme> = css;
 
-export { themedStyled as styled, themedCSS as css };
+export { themedCSS as css, themedStyled as styled };
 
 const localeMapper = {
   ar: arSA,

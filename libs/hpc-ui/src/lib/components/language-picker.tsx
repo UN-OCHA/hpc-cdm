@@ -1,16 +1,16 @@
-import React from 'react';
 import {
-  MenuItem,
-  Popper,
   ClickAwayListener,
+  Grow,
+  MenuItem,
   MenuList,
   Paper,
-  Grow,
+  Popper,
 } from '@mui/material';
+import React from 'react';
 
-import Caret from '../assets/icons/caret';
-import { MdLanguage } from 'react-icons/md';
 import { type i18n } from '@unocha/hpc-core';
+import { MdLanguage } from 'react-icons/md';
+import Caret from '../assets/icons/caret';
 
 import HeaderButton from './header-button';
 

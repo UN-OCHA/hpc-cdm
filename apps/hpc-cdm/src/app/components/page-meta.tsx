@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { Helmet } from 'react-helmet';
 
-import { AppContext } from '../context';
 import { t } from '../../i18n';
+import { AppContext } from '../context';
 
 interface Props {
   title?: string[];

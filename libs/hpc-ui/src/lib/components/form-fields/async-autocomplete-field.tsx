@@ -3,10 +3,10 @@ import {
   type AutocompleteProps,
   CircularProgress,
 } from '@mui/material';
+import { type FormObjectValue } from '@unocha/hpc-data';
 import { useField, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
-import { type FormObjectValue } from '@unocha/hpc-data';
 import { StyledTextField } from './text-field';
 
 const StyledAutocomplete = tw(Autocomplete)`
@@ -138,7 +138,9 @@ const AsyncAutocompleteSelect = ({
           ...params.InputProps,
           endAdornment: (
             <>
-              {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+              {isLoading ? (
+                <CircularProgress color="inherit" size={20} />
+              ) : null}
               {params.InputProps.endAdornment}
             </>
           ),

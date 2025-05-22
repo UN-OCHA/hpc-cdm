@@ -4,13 +4,13 @@ import { RouterProvider } from 'react-router/dom';
 
 import App from './app/app';
 
-import * as paths from './app/paths';
 import PageFlowsList from './app/pages/flows/flows-list';
+import PagePendingFlowsList from './app/pages/flows/pending-flows-list';
 import PageKeywordsList from './app/pages/keywords/keyword-list';
 import PageNotFound from './app/pages/not-found';
-import PagePendingFlowsList from './app/pages/flows/pending-flows-list';
-import PageOrganizationsList from './app/pages/organizations/organization-list';
 import PageOrganization from './app/pages/organizations/organization';
+import PageOrganizationsList from './app/pages/organizations/organization-list';
+import * as paths from './app/paths';
 
 import { RouteParamsValidator } from './app/components/route-params-validator';
 

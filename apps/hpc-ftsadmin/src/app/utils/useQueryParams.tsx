@@ -1,6 +1,6 @@
+import { isRight } from 'fp-ts/lib/Either';
 import type t from 'io-ts';
 import { useSearchParams } from 'react-router';
-import { isRight } from 'fp-ts/lib/Either';
 
 type Props<T> = {
   codec: t.Type<T>;

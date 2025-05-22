@@ -1,3 +1,5 @@
+import DownloadIcon from '@mui/icons-material/Download';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   Alert,
   Box,
@@ -15,24 +17,27 @@ import {
   TableSortLabel,
   Tooltip,
 } from '@mui/material';
+import { util } from '@unocha/hpc-core';
 import { type flows } from '@unocha/hpc-data';
 import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
+import { Form, Formik } from 'formik';
+import React, { useState } from 'react';
 import { MdInfoOutline } from 'react-icons/md';
-import SettingsIcon from '@mui/icons-material/Settings';
+import { useNavigate } from 'react-router';
+import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
-import tw from 'twin.macro';
-import React, { useState } from 'react';
+import * as paths from '../../paths';
+import { downloadExcel } from '../../utils/download-excel';
+import { type LocalStorageSchema } from '../../utils/local-storage-type';
 import {
+  type FilterKeys,
   decodeFilters,
   encodeFilters,
-  parseFormFilters,
-  parseFlowFilters,
   isKey,
-  type FilterKeys,
+  parseFlowFilters,
+  parseFormFilters,
 } from '../../utils/parse-filters';
-import { Form, Formik } from 'formik';
-import { type PendingFlowsFilterValues } from '../filters/filter-pending-flows-table';
 import {
   type FlowHeaderID,
   type TableHeadersProps,
@@ -41,25 +46,20 @@ import {
   isCompatibleTableHeaderType,
   isTableHeadersPropsFlow,
 } from '../../utils/table-headers';
-import { downloadExcel } from '../../utils/download-excel';
-import DownloadIcon from '@mui/icons-material/Download';
+import { type FlowsFilterValues } from '../filters/filter-flows-table';
+import { type PendingFlowsFilterValues } from '../filters/filter-pending-flows-table';
 import {
   ChipDiv,
   type FlowQuery,
-  type SetQuery,
   RejectPendingFlowsButton,
   RenderChipsRow,
+  type SetQuery,
   StyledLoader,
   TableHeaderButton,
   TableRowClick,
   TopRowContainer,
   handleTableSettingsInfoClose,
 } from './table-utils';
-import { useNavigate } from 'react-router';
-import * as paths from '../../paths';
-import { type LocalStorageSchema } from '../../utils/local-storage-type';
-import { util } from '@unocha/hpc-core';
-import { type FlowsFilterValues } from '../filters/filter-flows-table';
 
 export interface FlowsTableProps {
   headers: Array<TableHeadersProps<FlowHeaderID>>;
@@ -145,8 +145,7 @@ const FlowsTable = (props: FlowsTableProps) => {
     row: flows.Flow,
     lang: LanguageKey
   ) => {
-    const rd =
-      row.reportDetails?.filter((rd) => rd.organizationID === org.id);
+    const rd = row.reportDetails?.filter((rd) => rd.organizationID === org.id);
     return (
       rd &&
       rd.length > 0 &&
@@ -198,13 +197,12 @@ const FlowsTable = (props: FlowsTableProps) => {
         ];
         setSelectedRows(addedRow);
         return addedRow;
-      } 
-        const filteredRows = selectedRows.filter(
-          (selectedRow) => selectedRow.id !== row.id
-        );
-        setSelectedRows(filteredRows);
-        return filteredRows;
-      
+      }
+      const filteredRows = selectedRows.filter(
+        (selectedRow) => selectedRow.id !== row.id
+      );
+      setSelectedRows(filteredRows);
+      return filteredRows;
     };
     return (
       <>
@@ -334,20 +332,22 @@ const FlowsTable = (props: FlowsTableProps) => {
                             <br />
                           </>
                         )}
-                      {row.organizations?.filter((org) => org.direction === 'source').map((org, index) => (
-                            <>
-                              <Tooltip
-                                title={org.name}
-                                placement="top"
-                                followCursor={true}
-                              >
-                                <span key={`source_${row.id}_${index}`}>
-                                  {org.abbreviation}
-                                </span>
-                              </Tooltip>
-                              {renderReportDetail(org, row, lang)}
-                            </>
-                          ))}
+                      {row.organizations
+                        ?.filter((org) => org.direction === 'source')
+                        .map((org, index) => (
+                          <>
+                            <Tooltip
+                              title={org.name}
+                              placement="top"
+                              followCursor={true}
+                            >
+                              <span key={`source_${row.id}_${index}`}>
+                                {org.abbreviation}
+                              </span>
+                            </Tooltip>
+                            {renderReportDetail(org, row, lang)}
+                          </>
+                        ))}
                     </TableCell>
                   );
                 case 'organization.destination.name':
@@ -357,20 +357,22 @@ const FlowsTable = (props: FlowsTableProps) => {
                       size="small"
                       data-test="flows-table-destination-organization"
                     >
-                      {row.organizations?.filter((org) => org.direction === 'destination').map((org, index) => (
-                            <>
-                              <Tooltip
-                                title={org.name}
-                                placement="top"
-                                followCursor={true}
-                              >
-                                <span key={`destination_${row.id}_${index}`}>
-                                  {org.abbreviation}
-                                </span>
-                              </Tooltip>
-                              {renderReportDetail(org, row, lang)}
-                            </>
-                          ))}
+                      {row.organizations
+                        ?.filter((org) => org.direction === 'destination')
+                        .map((org, index) => (
+                          <>
+                            <Tooltip
+                              title={org.name}
+                              placement="top"
+                              followCursor={true}
+                            >
+                              <span key={`destination_${row.id}_${index}`}>
+                                {org.abbreviation}
+                              </span>
+                            </Tooltip>
+                            {renderReportDetail(org, row, lang)}
+                          </>
+                        ))}
                     </TableCell>
                   );
                 case 'planVersion.destination.name':
@@ -409,7 +411,10 @@ const FlowsTable = (props: FlowsTableProps) => {
                       size="small"
                       data-test="flows-table-years"
                     >
-                      {row.usageYears?.filter((year) => year.direction === 'destination').map((year) => year.year).join(', ')}
+                      {row.usageYears
+                        ?.filter((year) => year.direction === 'destination')
+                        .map((year) => year.year)
+                        .join(', ')}
                     </TableCell>
                   );
                 case 'details':
@@ -419,14 +424,16 @@ const FlowsTable = (props: FlowsTableProps) => {
                       size="small"
                       data-test="flows-table-details"
                     >
-                      {row.categories?.filter((cat) => cat.group === 'flowStatus').map((cat, index) => (
-                            <Chip
-                              key={`category_${row.id}_${index}`}
-                              sx={chipSpacing}
-                              label={cat.name.toLowerCase()}
-                              size="small"
-                            />
-                          ))}
+                      {row.categories
+                        ?.filter((cat) => cat.group === 'flowStatus')
+                        .map((cat, index) => (
+                          <Chip
+                            key={`category_${row.id}_${index}`}
+                            sx={chipSpacing}
+                            label={cat.name.toLowerCase()}
+                            size="small"
+                          />
+                        ))}
                       {row.restricted && (
                         <Chip
                           label={[
@@ -665,7 +672,9 @@ const FlowsTable = (props: FlowsTableProps) => {
       const handleSubmit = (values: {
         flows: Array<{ id: number; versionID: number }>;
       }) => {
-        if (values.flows.length === 0) {return;}
+        if (values.flows.length === 0) {
+          return;
+        }
         env.model.flows.bulkRejectPendingFlows(values).finally(load);
       };
       return (
@@ -809,7 +818,9 @@ const FlowsTable = (props: FlowsTableProps) => {
                                 )
                               }
                               sx={{
-                                display: shouldDisplayTableInfo ? 'flex' : 'none',
+                                display: shouldDisplayTableInfo
+                                  ? 'flex'
+                                  : 'none',
                                 ...tw`mx-8 mt-4`,
                               }}
                             >
@@ -871,7 +882,6 @@ const FlowsTable = (props: FlowsTableProps) => {
       )}
     </AppContext.Consumer>
   );
-}
+};
 
-export default FlowsTable
-
+export default FlowsTable;

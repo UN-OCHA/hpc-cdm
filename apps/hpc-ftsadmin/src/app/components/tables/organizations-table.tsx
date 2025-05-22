@@ -1,3 +1,5 @@
+import DownloadIcon from '@mui/icons-material/Download';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   Alert,
   Box,
@@ -12,17 +14,23 @@ import {
   TableRow,
   TableSortLabel,
 } from '@mui/material';
+import { util } from '@unocha/hpc-core';
 import { type organizations } from '@unocha/hpc-data';
 import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
-import SettingsIcon from '@mui/icons-material/Settings';
-import { type LanguageKey, t } from '../../../i18n';
-import { AppContext, getEnv } from '../../context';
 import React, { useState } from 'react';
-import DownloadIcon from '@mui/icons-material/Download';
+import { Link, useNavigate } from 'react-router';
+import tw from 'twin.macro';
+import { type LanguageKey, t } from '../../../i18n';
+import { type Strings } from '../../../i18n/iface';
+import { AppContext, getEnv } from '../../context';
+import * as paths from '../../paths';
+import { downloadExcel } from '../../utils/download-excel';
+import { type LocalStorageSchema } from '../../utils/local-storage-type';
+import { parseUpdatedCreatedBy } from '../../utils/map-functions';
 import {
+  type FilterKeys,
   decodeFilters,
   encodeFilters,
-  type FilterKeys,
   isKey,
   parseFormFilters,
   parseOrganizationFilters,
@@ -35,26 +43,18 @@ import {
   isCompatibleTableHeaderType,
   isTableHeadersPropsOrganization,
 } from '../../utils/table-headers';
-import { type Strings } from '../../../i18n/iface';
-import { downloadExcel } from '../../utils/download-excel';
-import { parseUpdatedCreatedBy } from '../../utils/map-functions';
 import { type OrganizationFilterValues } from '../filters/filter-organization-table';
 import {
   ChipDiv,
   type OrganizationQuery,
-  type SetQuery,
   RenderChipsRow,
+  type SetQuery,
   StyledLoader,
   TableHeaderButton,
   TableRowClick,
   TopRowContainer,
   handleTableSettingsInfoClose,
 } from './table-utils';
-import { Link, useNavigate } from 'react-router';
-import * as paths from '../../paths';
-import { util } from '@unocha/hpc-core';
-import { type LocalStorageSchema } from '../../utils/local-storage-type';
-import tw from 'twin.macro';
 
 export interface OrganizationTableProps {
   headers: Array<TableHeadersProps<OrganizationHeaderID>>;
@@ -458,7 +458,9 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                           <Alert
                             severity="info"
                             onClose={() =>
-                              handleTableSettingsInfoClose(setShouldDisplayTableInfo)
+                              handleTableSettingsInfoClose(
+                                setShouldDisplayTableInfo
+                              )
                             }
                             sx={{
                               display: shouldDisplayTableInfo ? 'flex' : 'none',
@@ -519,6 +521,6 @@ const OrganizationTable = (props: OrganizationTableProps) => {
       )}
     </AppContext.Consumer>
   );
-}
+};
 
-export default OrganizationTable
+export default OrganizationTable;

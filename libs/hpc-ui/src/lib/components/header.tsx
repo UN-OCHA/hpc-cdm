@@ -1,23 +1,22 @@
-import React, { useState, useRef } from 'react';
 import {
-  MenuItem,
-  Popper,
   ClickAwayListener,
+  Grow,
+  MenuItem,
   MenuList,
   Paper,
-  Grow,
+  Popper,
 } from '@mui/material';
+import React, { useRef, useState } from 'react';
 
-import { type Session } from '@unocha/hpc-core';
-import { type i18n } from '@unocha/hpc-core';
+import { type i18n, type Session } from '@unocha/hpc-core';
 
-import { CLASSES, combineClasses } from '../classes';
-import UNOCHA from '../assets/logos/unocha';
 import Caret from '../assets/icons/caret';
-import HeaderButton from './header-button';
+import User from '../assets/icons/user';
+import UNOCHA from '../assets/logos/unocha';
+import { CLASSES, combineClasses } from '../classes';
 import LanguagePicker from '../components/language-picker';
 import { styled } from '../theme';
-import User from '../assets/icons/user';
+import HeaderButton from './header-button';
 
 const CLS = {
   LOGO: 'logo',
@@ -66,7 +65,9 @@ const Header = (props: Props) => {
             {({ TransitionProps }) => (
               <Grow {...TransitionProps}>
                 <Paper>
-                  <ClickAwayListener onClickAway={() => setIsUserMenuOpen(false)}>
+                  <ClickAwayListener
+                    onClickAway={() => setIsUserMenuOpen(false)}
+                  >
                     <MenuList autoFocusItem={isUserMenuOpen}>
                       {userMenu.map((item, i) => (
                         <MenuItem
@@ -87,14 +88,13 @@ const Header = (props: Props) => {
           </Popper>
         </>
       );
-    } 
-      return (
-        <HeaderButton onClick={session.logIn}>
-          <User />
-          <span>{strings.login}</span>
-        </HeaderButton>
-      );
-    
+    }
+    return (
+      <HeaderButton onClick={session.logIn}>
+        <User />
+        <span>{strings.login}</span>
+      </HeaderButton>
+    );
   };
 
   return (

@@ -1,5 +1,5 @@
-import React from 'react';
 import IntlMessageFormat from 'intl-messageformat';
+import React from 'react';
 
 import { i18n } from '@unocha/hpc-core';
 
@@ -41,13 +41,16 @@ const parseString = (lang: string, str: string): ParsedTranslation => {
     // Set the next string to match to the remainder of the text after
     // the placeholder.
     next = e[3];
-    parsed.push({
-      type: 'format',
-      format: new IntlMessageFormat(before, lang),
-    }, {
-      type: 'placeholder',
-      name,
-    });
+    parsed.push(
+      {
+        type: 'format',
+        format: new IntlMessageFormat(before, lang),
+      },
+      {
+        type: 'placeholder',
+        name,
+      }
+    );
   }
   // Add remainder of string to parsed
   parsed.push({

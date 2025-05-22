@@ -1,25 +1,30 @@
 /* eslint-disable require-await */
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { type Session } from '@unocha/hpc-core';
 import {
   type Model,
   type access,
-  type operations,
-  reportingWindows,
-  errors,
-  type organizations,
-  type locations,
   type categories,
   type emergencies,
+  errors,
+  type globalClusters,
+  type locations,
+  type operations,
+  type organizations,
   type plans,
   type projects,
-  type globalClusters,
+  reportingWindows,
   type usageYears,
 } from '@unocha/hpc-data';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import isEqual from 'lodash/isEqual';
 
-import { type Assignment, DummyData, DUMMY_DATA, type User } from './data-types';
 import { INITIAL_DATA } from './data';
+import {
+  type Assignment,
+  DUMMY_DATA,
+  DummyData,
+  type User,
+} from './data-types';
 import { Users } from './users';
 
 const uriToBlob = (uri: string) => fetch(uri).then((res) => res.blob());
@@ -154,9 +159,8 @@ export class Dummy {
     const forms = this.data.forms.filter((f) => f.id === formId);
     if (forms.length === 1) {
       return forms[0];
-    } 
-      throw new Error(`Unexpected result when getting forms for ID:${  formId}`);
-    
+    }
+    throw new Error(`Unexpected result when getting forms for ID:${formId}`);
   }
 
   private async getAssignmentResult(
@@ -192,9 +196,8 @@ export class Dummy {
           ),
         };
         return r;
-      } 
-        throw new Error('Unknown type');
-      
+      }
+      throw new Error('Unknown type');
     };
 
     let assignee: reportingWindows.GetAssignmentResult['assignee'];
@@ -250,10 +253,7 @@ export class Dummy {
 
     for (const a of userAccess) {
       for (const option of options) {
-        if (
-          isEqual(a.target, option.target) &&
-          a.roles.includes(option.role)
-        ) {
+        if (isEqual(a.target, option.target) && a.roles.includes(option.role)) {
           return true;
         }
       }
@@ -286,9 +286,8 @@ export class Dummy {
           name: u.user.name,
           email: u.email,
         };
-      } 
-        throw new Error('Unexpected access grantee type');
-      
+      }
+      throw new Error('Unexpected access grantee type');
     };
 
     const getAllowedRoles = (target: access.AccessTarget) => {
@@ -298,9 +297,8 @@ export class Dummy {
         return ['operationLead', 'testRole1', 'testRole2'];
       } else if (target.type === 'operationCluster') {
         return ['clusterLead'];
-      } 
-        throw new Error('Unexpected access target type');
-      
+      }
+      throw new Error('Unexpected access target type');
     };
 
     return {
@@ -451,7 +449,7 @@ export class Dummy {
                   actor: this.data.currentUser,
                 });
               }
-            // Not added yet, add user
+              // Not added yet, add user
             } else if (existingUser) {
               const grantee = {
                 type: 'user',
@@ -1325,8 +1323,8 @@ export class Dummy {
               const r: operations.GetOperationResult = {
                 data: {
                   ...op[0],
-                  reportingWindows: this.data.reportingWindows.filter(
-                    (w) => w.associations.operations.includes(id)
+                  reportingWindows: this.data.reportingWindows.filter((w) =>
+                    w.associations.operations.includes(id)
                   ),
                   permissions: {
                     canModifyAccess: this.userHasAccess([
@@ -2042,7 +2040,7 @@ export class Dummy {
             }
             const {
               assignmentId,
-              form: { id, data, files, finalized:isFinalized },
+              form: { id, data, files, finalized: isFinalized },
               previousVersion,
             } = params;
 

@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,8 +9,9 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import { C, type ActionableButtonState, styled } from '@unocha/hpc-ui';
 import { type access, errors } from '@unocha/hpc-data';
+import { type ActionableButtonState, C, styled } from '@unocha/hpc-ui';
+import React, { useState } from 'react';
 
 import { t } from '../../i18n';
 import { getContext } from '../context';
@@ -70,8 +70,8 @@ export const TargetAccessManagementAddUser = (props: Props) => {
     );
 
   const submit = async (event?: React.FormEvent<HTMLFormElement>) => {
-    if(event) {
-      event.preventDefault()
+    if (event) {
+      event.preventDefault();
     }
     if (emailInputValue === '') {
       setSubmissionState({
@@ -104,13 +104,12 @@ export const TargetAccessManagementAddUser = (props: Props) => {
             error: t.t(lang, (s) => s.errors.userErrors[error.key]),
           });
           return null;
-        } 
-          setSubmissionState({
-            type: 'unknownError',
-            error: error.message ?? error.toString(),
-          });
-          throw error;
-        
+        }
+        setSubmissionState({
+          type: 'unknownError',
+          error: error.message ?? error.toString(),
+        });
+        throw error;
       });
     if (data) {
       setSubmissionState({

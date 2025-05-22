@@ -245,27 +245,32 @@ export const POSSIBLE_KEYWORD_VALUES: Record<
 
 // When adding more new field to POSSIBLE consts that are not default, modify as needed
 
-export const DEFAULT_FLOW_TABLE_HEADERS: Array<TableHeadersProps<FlowHeaderID>> = [];
+export const DEFAULT_FLOW_TABLE_HEADERS: Array<
+  TableHeadersProps<FlowHeaderID>
+> = [];
 for (const [index, header] of Object.entries(POSSIBLE_FLOW_HEADER_VALUES)) {
   const i = parseInt(index);
-  if (i <= 10)
-    {DEFAULT_FLOW_TABLE_HEADERS.push({
+  if (i <= 10) {
+    DEFAULT_FLOW_TABLE_HEADERS.push({
       ...header,
       active: true,
-    });}
-  else
-    {DEFAULT_FLOW_TABLE_HEADERS.push({
+    });
+  } else {
+    DEFAULT_FLOW_TABLE_HEADERS.push({
       ...header,
       active: false,
-    });}
+    });
+  }
 }
-export const DEFAULT_ORGANIZATION_TABLE_HEADERS: Array<TableHeadersProps<OrganizationHeaderID>> =
-  [];
+export const DEFAULT_ORGANIZATION_TABLE_HEADERS: Array<
+  TableHeadersProps<OrganizationHeaderID>
+> = [];
 for (const [, header] of Object.entries(POSSIBLE_ORGANIZATION_VALUES)) {
   DEFAULT_ORGANIZATION_TABLE_HEADERS.push(header);
 }
-export const DEFAULT_KEYWORD_TABLE_HEADERS: Array<TableHeadersProps<KeywordHeaderID>> =
-  [];
+export const DEFAULT_KEYWORD_TABLE_HEADERS: Array<
+  TableHeadersProps<KeywordHeaderID>
+> = [];
 for (const [, header] of Object.entries(POSSIBLE_KEYWORD_VALUES)) {
   DEFAULT_KEYWORD_TABLE_HEADERS.push(header);
 }
@@ -278,29 +283,23 @@ const defaultEncodeTableHeaders = (table: TableType) => {
   if (table === 'flows') {
     DEFAULT_FLOW_TABLE_HEADERS.map(
       (header, index) =>
-        (res += 
-          `${header.active ? header.id : -header.id}${
-            DEFAULT_FLOW_TABLE_HEADERS.length - 1 !== index ? '_' : ''
-          }`
-        )
+        (res += `${header.active ? header.id : -header.id}${
+          DEFAULT_FLOW_TABLE_HEADERS.length - 1 !== index ? '_' : ''
+        }`)
     );
   } else if (table === 'keywords') {
     DEFAULT_KEYWORD_TABLE_HEADERS.map(
       (header, index) =>
-        (res +=
-          `${header.id}${
-            DEFAULT_KEYWORD_TABLE_HEADERS.length - 1 !== index ? '_' : ''
-          }`
-        )
+        (res += `${header.id}${
+          DEFAULT_KEYWORD_TABLE_HEADERS.length - 1 !== index ? '_' : ''
+        }`)
     );
   } else {
     DEFAULT_ORGANIZATION_TABLE_HEADERS.map(
       (header, index) =>
-        (res += 
-          `${header.id}${
-            DEFAULT_ORGANIZATION_TABLE_HEADERS.length - 1 !== index ? '_' : ''
-          }`
-        )
+        (res += `${header.id}${
+          DEFAULT_ORGANIZATION_TABLE_HEADERS.length - 1 !== index ? '_' : ''
+        }`)
     );
   }
   return res;
@@ -323,11 +322,9 @@ export const encodeTableHeaders = <T extends Query>(
     let res = '';
     headers.map(
       (header, index) =>
-        (res +=
-          `${!header.active ? '-' : ''}${header.id}${
-            headers.length - 1 !== index ? '_' : ''
-          }`
-        )
+        (res += `${!header.active ? '-' : ''}${header.id}${
+          headers.length - 1 !== index ? '_' : ''
+        }`)
     );
     return res;
   } catch (error) {
@@ -346,9 +343,9 @@ export const encodeTableHeaders = <T extends Query>(
 const defaultDecodeTableHeaders = (
   lang: LanguageKey,
   table: TableType = 'flows'
-): Array<TableHeadersProps<
-  FlowHeaderID | OrganizationHeaderID | KeywordHeaderID
->> => {
+): Array<
+  TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
+> => {
   if (table === 'flows') {
     return DEFAULT_FLOW_TABLE_HEADERS.map((header) => ({
       id: header.id,
@@ -379,22 +376,21 @@ const defaultDecodeTableHeaders = (
       identifierID: header.identifierID,
       sortable: header.sortable,
     }));
-  } 
-    return DEFAULT_ORGANIZATION_TABLE_HEADERS.map((header) => ({
-      id: header.id,
-      label: header.label,
-      displayLabel: t.t(
-        lang,
-        (s) =>
-          s.components.organizationTable.headers[
-            POSSIBLE_ORGANIZATION_VALUES[header.id].label
-          ]
-      ),
-      active: true,
-      identifierID: header.identifierID,
-      sortable: header.sortable,
-    }));
-  
+  }
+  return DEFAULT_ORGANIZATION_TABLE_HEADERS.map((header) => ({
+    id: header.id,
+    label: header.label,
+    displayLabel: t.t(
+      lang,
+      (s) =>
+        s.components.organizationTable.headers[
+          POSSIBLE_ORGANIZATION_VALUES[header.id].label
+        ]
+    ),
+    active: true,
+    identifierID: header.identifierID,
+    sortable: header.sortable,
+  }));
 };
 /**
  * Decodes the query param to obtain an ordered list of table headers
@@ -455,9 +451,11 @@ export const isTableHeadersPropsFlow = (
     TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
   >
 ): headers is Array<TableHeadersProps<FlowHeaderID>> => {
-  const possibleIdentifierIDs = new Set<string>(Object.values(
-    POSSIBLE_FLOW_HEADER_VALUES
-  ).map((header) => header.identifierID));
+  const possibleIdentifierIDs = new Set<string>(
+    Object.values(POSSIBLE_FLOW_HEADER_VALUES).map(
+      (header) => header.identifierID
+    )
+  );
   for (const header of headers) {
     if (!possibleIdentifierIDs.has(header.identifierID)) {
       return false;
@@ -471,9 +469,11 @@ export const isTableHeadersPropsOrganization = (
     TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
   >
 ): headers is Array<TableHeadersProps<OrganizationHeaderID>> => {
-  const possibleIdentifierIDs = new Set<string>(Object.values(
-    POSSIBLE_ORGANIZATION_VALUES
-  ).map((header) => header.identifierID));
+  const possibleIdentifierIDs = new Set<string>(
+    Object.values(POSSIBLE_ORGANIZATION_VALUES).map(
+      (header) => header.identifierID
+    )
+  );
   for (const header of headers) {
     if (!possibleIdentifierIDs.has(header.identifierID)) {
       return false;
@@ -487,9 +487,9 @@ export const isTableHeadersPropsKeyword = (
     TableHeadersProps<FlowHeaderID | OrganizationHeaderID | KeywordHeaderID>
   >
 ): headers is Array<TableHeadersProps<KeywordHeaderID>> => {
-  const possibleIdentifierIDs= new Set<string>(Object.values(
-    POSSIBLE_KEYWORD_VALUES
-  ).map((header) => header.identifierID));
+  const possibleIdentifierIDs = new Set<string>(
+    Object.values(POSSIBLE_KEYWORD_VALUES).map((header) => header.identifierID)
+  );
   for (const header of headers) {
     if (!possibleIdentifierIDs.has(header.identifierID)) {
       return false;

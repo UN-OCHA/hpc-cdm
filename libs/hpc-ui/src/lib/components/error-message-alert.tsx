@@ -13,7 +13,7 @@ type ErrorAlertProps<T> = {
 const ErrorAlert = <T,>({ setError, error }: ErrorAlertProps<T>) => {
   const GrowTransition = (props: GrowProps) => {
     return <Grow {...props} />;
-  }
+  };
 
   const handleClose = (_: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {

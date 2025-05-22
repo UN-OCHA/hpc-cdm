@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
-import { FormControlLabel, Checkbox } from '@mui/material';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import { styled } from '@unocha/hpc-ui';
-import { AppContext } from '../../context';
+import React, { useContext, useState } from 'react';
 import { t } from '../../../i18n';
+import { AppContext } from '../../context';
 
 const SubmitPanel = styled.div`
   border: 1px solid ${(p) => p.theme.colors.text};

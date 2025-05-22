@@ -4,8 +4,8 @@
 import { type Session } from '@unocha/hpc-core';
 import { type Model } from '@unocha/hpc-data';
 import { Dummy } from '@unocha/hpc-dummy';
-import { type Environment } from './interface';
 import { t } from '../i18n';
+import { type Environment } from './interface';
 
 export type { Environment };
 

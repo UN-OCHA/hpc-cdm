@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 
-import { t } from '../../i18n';
-import { C, ICONS } from '@unocha/hpc-ui';
 import { type operations } from '@unocha/hpc-data';
+import { C, ICONS } from '@unocha/hpc-ui';
+import { t } from '../../i18n';
 
-import * as paths from '../paths';
-import { AppContext } from '../context';
 import { useLocation } from 'react-router';
+import { AppContext } from '../context';
+import * as paths from '../paths';
 
 interface Props {
   operation: operations.DetailedOperation;

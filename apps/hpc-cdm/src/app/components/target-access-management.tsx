@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { MdClear, MdAdd } from 'react-icons/md';
+import { MdAdd, MdClear } from 'react-icons/md';
 
-import { C, dataLoader, styled } from '@unocha/hpc-ui';
 import { type access } from '@unocha/hpc-data';
+import { C, dataLoader, styled } from '@unocha/hpc-ui';
 
 import dayjs from '../../libraries/dayjs';
 
@@ -96,10 +96,9 @@ export const TargetAccessManagement = (props: Props) => {
                             selected: item.roles.includes(role),
                           }))}
                           onSelect={async (role) => {
-                            const roles =
-                              item.roles.includes(role)
-                                ? item.roles.filter((r) => r !== role)
-                                : [...item.roles, role];
+                            const roles = item.roles.includes(role)
+                              ? item.roles.filter((r) => r !== role)
+                              : [...item.roles, role];
                             if (
                               globalThis.confirm(
                                 t
@@ -194,10 +193,9 @@ export const TargetAccessManagement = (props: Props) => {
                             selected: item.roles.includes(role),
                           }))}
                           onSelect={async (role) => {
-                            const roles =
-                              item.roles.includes(role)
-                                ? item.roles.filter((r) => r !== role)
-                                : [...item.roles, role];
+                            const roles = item.roles.includes(role)
+                              ? item.roles.filter((r) => r !== role)
+                              : [...item.roles, role];
                             if (
                               globalThis.confirm(
                                 t

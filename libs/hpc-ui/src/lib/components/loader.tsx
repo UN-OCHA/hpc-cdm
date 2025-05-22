@@ -1,9 +1,9 @@
-import React, { type ReactElement } from 'react';
 import { CircularProgress } from '@mui/material';
+import React, { type ReactElement } from 'react';
 
-import { Button } from './button';
-import { type DataLoaderState } from '../util';
 import { styled } from '../theme';
+import { type DataLoaderState } from '../util';
+import { Button } from './button';
 
 import NotFound from './not-found';
 
@@ -38,7 +38,7 @@ const StyledDiv = styled.div`
   padding: ${(p) => p.theme.marginPx.md}px;
 `;
 
- const Loader= <T,>(props: Props<T>) => {
+const Loader = <T,>(props: Props<T>) => {
   const { children, className, loader, strings, customLoadingElement } = props;
   return loader.type === 'success' ? (
     children(loader.data, { updateLoadedData: loader.update })
@@ -52,12 +52,14 @@ const StyledDiv = styled.div`
     </StyledDiv>
   ) : loader.type === 'not-found' ? (
     <NotFound strings={strings.notFound} />
-  ) : customLoadingElement ?? (
-    <StyledDiv className={className}>
-      <h3>{strings.loading}</h3>
-      <CircularProgress />
-    </StyledDiv>
+  ) : (
+    customLoadingElement ?? (
+      <StyledDiv className={className}>
+        <h3>{strings.loading}</h3>
+        <CircularProgress />
+      </StyledDiv>
+    )
   );
-}
+};
 
-export default Loader
+export default Loader;

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
 import {
   Dialog,
-  DialogTitle,
+  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogActions,
+  DialogTitle,
 } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { Button } from './button';
 
 type HPCDialog =
@@ -211,7 +211,7 @@ export const Dialogs = () => {
             </Dialog>
           );
         }
-        return null
+        return null;
       })}
     </>
   );

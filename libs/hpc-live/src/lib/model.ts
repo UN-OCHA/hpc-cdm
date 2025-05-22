@@ -1,26 +1,26 @@
-import * as t from 'io-ts';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { util } from '@unocha/hpc-core';
 import {
   type Model,
-  forms,
-  flows,
-  locations,
-  organizations,
-  operations,
-  reportingWindows,
   access,
-  errors,
-  util as dataUtil,
   categories,
+  util as dataUtil,
+  emergencies,
+  errors,
+  flows,
+  forms,
+  globalClusters,
+  locations,
+  operations,
+  organizations,
   plans,
   projects,
-  emergencies,
+  reportingWindows,
   systems,
-  globalClusters,
   usageYears,
 } from '@unocha/hpc-data';
+import { isRight } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { searchFlowsParams } from './utils';
 interface URLInterface {
   new (url: string): {
@@ -407,11 +407,10 @@ export class LiveModel implements Model {
       const decode = resultType.decode(json.data);
       if (isRight(decode)) {
         return decode.right;
-      } 
-        const report = PathReporter.report(decode);
-        console.error('Received unexpected result from server', report, json);
-        throw new ModelError('Received unexpected result from server', json);
-      
+      }
+      const report = PathReporter.report(decode);
+      console.error('Received unexpected result from server', report, json);
+      throw new ModelError('Received unexpected result from server', json);
     } else {
       const json = (await res.json()) as {
         timestamp: Date;
@@ -859,7 +858,7 @@ export class LiveModel implements Model {
         const { assignmentId: aId } = params;
 
         if (reportingWindows.UPDATE_ASSIGNMENT_PARAMS_STATE_CHANGE.is(params)) {
-          const { state } = params
+          const { state } = params;
           const [type, finalized] = state.split(':');
 
           const result = await this.call({
@@ -878,52 +877,51 @@ export class LiveModel implements Model {
           });
           return handleAssignmentResult(result);
         }
-        const { form } = params
-          const files = await Promise.all(
-            form.files.map(async (f) => ({
+        const { form } = params;
+        const files = await Promise.all(
+          form.files.map(async (f) => ({
+            name: f.name,
+            data: f.data,
+            fileHash: await this.sha256Hash(f.data),
+          }))
+        );
+
+        keepOnlyGivenFiles(files.map((f) => f.fileHash));
+
+        for (const file of files) {
+          fileCache.set(file.fileHash, Promise.resolve(file.data));
+        }
+
+        if (files?.length) {
+          const newFiles = await this.checkFormAssignmentFiles(aId, files);
+          if (newFiles) {
+            await this.uploadFormAssignmentFiles(aId, newFiles);
+          }
+        }
+
+        const data = {
+          ...params,
+          form: {
+            id: form.id,
+            version: form.version,
+            data: form.data,
+            finalized: form.finalized,
+            files: files.map((f) => ({
               name: f.name,
-              data: f.data,
-              fileHash: await this.sha256Hash(f.data),
-            }))
-          );
-
-          keepOnlyGivenFiles(files.map((f) => f.fileHash));
-
-          for (const file of files) {
-            fileCache.set(file.fileHash, Promise.resolve(file.data));
-          }
-
-          if (files?.length) {
-            const newFiles = await this.checkFormAssignmentFiles(aId, files);
-            if (newFiles) {
-              await this.uploadFormAssignmentFiles(aId, newFiles);
-            }
-          }
-
-          const data = {
-            ...params,
-            form: {
-              id: form.id,
-              version:form.version,
-              data: form.data,
-              finalized: form.finalized,
-              files: files.map((f) => ({
-                name: f.name,
-                data: { fileHash: f.fileHash },
-              })),
-            },
-          };
-          const result = await this.call({
-            method: 'PUT',
-            body: {
-              type: 'json',
-              data,
-            },
-            pathname: `/v2/reportingwindows/assignments/${aId}`,
-            resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
-          });
-          return handleAssignmentResult(result);
-        
+              data: { fileHash: f.fileHash },
+            })),
+          },
+        };
+        const result = await this.call({
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data,
+          },
+          pathname: `/v2/reportingwindows/assignments/${aId}`,
+          resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
+        });
+        return handleAssignmentResult(result);
       },
     };
   }
