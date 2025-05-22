@@ -1,8 +1,19 @@
 # Add files here to ignore them from prettier formatting
+.editorconfig
+.npmrc
+LICENSE
 
+*.conf
+*.png
+*.woff
+
+/.husky/_/
 /dist
 /coverage
 
 /.nx/cache
-
 /.nx/workspace-data
+
+**/.gitkeep
+**/.browserslistrc
+**/favicon.ico
