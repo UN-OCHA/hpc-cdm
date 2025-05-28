@@ -688,7 +688,6 @@ export class Dummy {
                       createdAt: new Date('2017-01-13T14:20:34.337Z'),
                       updatedAt: new Date('2017-01-13T14:20:34.337Z'),
                       code: null,
-                      includeTotals: null,
                       categoryRef: {
                         objectID: flow.id,
                         versionID: flow.versionID,

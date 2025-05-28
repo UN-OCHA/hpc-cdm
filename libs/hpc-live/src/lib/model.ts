@@ -267,7 +267,6 @@ export class LiveModel implements Model {
       description
       parentID
       code
-      includeTotals
       categoryRef {
         objectID
         versionID

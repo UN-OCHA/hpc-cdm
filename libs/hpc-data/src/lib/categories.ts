@@ -43,7 +43,6 @@ export const CATEGORY = t.type({
   description: optional(t.string),
   parentID: optional(t.number),
   code: optional(t.string),
-  includeTotals: optional(t.boolean),
 });
 
 export type Category = t.TypeOf<typeof CATEGORY>;

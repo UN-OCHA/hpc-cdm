@@ -65,7 +65,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2015-11-12T23:03:39.887Z'),
       updatedAt: new Date('2015-11-12T23:03:39.887Z'),
       code: null,
-      includeTotals: null,
     },
 
     {
@@ -77,7 +76,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2016-07-18T16:12:02.201Z'),
       updatedAt: new Date('2016-07-18T16:12:02.201Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 9,
@@ -88,7 +86,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2015-12-23T00:18:00.009Z'),
       updatedAt: new Date('2015-12-23T00:18:00.009Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 13,
@@ -99,7 +96,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2016-07-18T16:12:02.221Z'),
       updatedAt: new Date('2016-07-18T16:12:02.221Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 14,
@@ -110,7 +106,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2016-07-18T16:12:02.236Z'),
       updatedAt: new Date('2016-07-18T16:12:02.236Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 45,
@@ -121,7 +116,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2016-12-13T12:35:42.929Z'),
       updatedAt: new Date('2016-12-13T12:35:42.929Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 87,
@@ -132,7 +126,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T14:20:34.337Z'),
       updatedAt: new Date('2017-01-13T14:20:34.337Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 47,
@@ -143,7 +136,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T14:20:32.002Z'),
       updatedAt: new Date('2017-01-13T14:20:32.002Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 48,
@@ -154,7 +146,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T14:20:32.042Z'),
       updatedAt: new Date('2017-01-13T14:20:32.042Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 46,
@@ -165,7 +156,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T14:20:31.933Z'),
       updatedAt: new Date('2017-01-13T14:20:31.933Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 49,
@@ -176,7 +166,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13 15:20:32.131Z'),
       updatedAt: new Date('2017-01-13:15:20:32.131Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 50,
@@ -187,7 +176,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13 15:20:32.131Z'),
       updatedAt: new Date('2017-01-13:15:20:32.131Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1802,
@@ -198,7 +186,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:12.799Z'),
       updatedAt: new Date('2022-12-15T15:17:12.799Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1803,
@@ -209,7 +196,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:12.838Z'),
       updatedAt: new Date('2022-12-15T15:17:12.838Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1804,
@@ -220,7 +206,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:12.844Z'),
       updatedAt: new Date('2022-12-15T15:17:12.844Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1805,
@@ -231,7 +216,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:12.855Z'),
       updatedAt: new Date('2022-12-15T15:17:12.855Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 118,
@@ -242,7 +226,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.367Z'),
       updatedAt: new Date('2022-12-15T15:17:12.866Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 119,
@@ -253,7 +236,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.405Z'),
       updatedAt: new Date('2022-12-15T15:17:12.870Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 117,
@@ -265,7 +247,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.325Z'),
       updatedAt: new Date('2022-12-15T15:17:12.873Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 116,
@@ -276,7 +257,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.282Z'),
       updatedAt: new Date('2022-12-15T15:17:12.882Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 121,
@@ -287,7 +267,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.481Z'),
       updatedAt: new Date('2022-12-15T15:17:12.887Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 132,
@@ -298,7 +277,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.738Z'),
       updatedAt: new Date('2022-12-15T15:17:12.892Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1806,
@@ -309,7 +287,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:12.895Z'),
       updatedAt: new Date('2022-12-15T15:17:12.895Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1401,
@@ -320,7 +297,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-12-09T00:03:39.666Z'),
       updatedAt: new Date('2022-12-15T15:17:13.182Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1807,
@@ -331,7 +307,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:13.185Z'),
       updatedAt: new Date('2022-12-15T15:17:13.185Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1808,
@@ -342,7 +317,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:13.208Z'),
       updatedAt: new Date('2022-12-15T15:17:13.208Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1809,
@@ -353,7 +327,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:14.951Z'),
       updatedAt: new Date('2022-12-15T15:17:14.951Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1810,
@@ -364,7 +337,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:15.037Z'),
       updatedAt: new Date('2022-12-15T15:17:15.037Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1811,
@@ -375,7 +347,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:25.729Z'),
       updatedAt: new Date('2022-12-15T15:17:25.729Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1812,
@@ -386,7 +357,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:27.728Z'),
       updatedAt: new Date('2022-12-15T15:17:27.728Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1813,
@@ -397,7 +367,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:27.743Z'),
       updatedAt: new Date('2022-12-15T15:17:27.743Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1814,
@@ -408,7 +377,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:28.035Z'),
       updatedAt: new Date('2022-12-15T15:17:28.035Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1815,
@@ -419,7 +387,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:28.158Z'),
       updatedAt: new Date('2022-12-15T15:17:28.158Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1816,
@@ -430,7 +397,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:28.167Z'),
       updatedAt: new Date('2022-12-15T15:17:28.167Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1405,
@@ -441,7 +407,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-12-09T00:03:39.666Z'),
       updatedAt: new Date('2022-12-15T15:17:28.176Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1817,
@@ -452,7 +417,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:28.179Z'),
       updatedAt: new Date('2022-12-15T15:17:28.179Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1818,
@@ -463,7 +427,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:28.203Z'),
       updatedAt: new Date('2022-12-15T15:17:28.203Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1819,
@@ -474,7 +437,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:28.212Z'),
       updatedAt: new Date('2022-12-15T15:17:28.212Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1820,
@@ -485,7 +447,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:28.220Z'),
       updatedAt: new Date('2022-12-15T15:17:28.220Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1821,
@@ -496,7 +457,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:28.228Z'),
       updatedAt: new Date('2022-12-15T15:17:28.228Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1822,
@@ -507,7 +467,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:28.230Z'),
       updatedAt: new Date('2022-12-15T15:17:28.230Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1823,
@@ -518,7 +477,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:28.232Z'),
       updatedAt: new Date('2022-12-15T15:17:28.232Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1824,
@@ -529,7 +487,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2022-12-15T15:17:28.234Z'),
       updatedAt: new Date('2022-12-15T15:17:28.234Z'),
       code: null,
-      includeTotals: null,
     },
 
     {
@@ -541,7 +498,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-03-06T23:11:38.995Z'),
       updatedAt: new Date('2017-03-06T23:11:38.995Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 133,
@@ -552,7 +508,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.759Z'),
       updatedAt: new Date('2017-01-13T22:18:02.759Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 136,
@@ -563,7 +518,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.824Z'),
       updatedAt: new Date('2017-01-13T22:18:02.824Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 137,
@@ -574,7 +528,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.844Z'),
       updatedAt: new Date('2017-01-13T22:18:02.844Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 139,
@@ -585,7 +538,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.886Z'),
       updatedAt: new Date('2017-01-13T22:18:02.886Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 142,
@@ -596,7 +548,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.943Z'),
       updatedAt: new Date('2017-01-13T22:18:02.943Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 144,
@@ -607,7 +558,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.980Z'),
       updatedAt: new Date('2017-01-13T22:18:02.980Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 147,
@@ -618,7 +568,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:03.047Z'),
       updatedAt: new Date('2017-01-13T22:18:03.047Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 149,
@@ -629,7 +578,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:03.084Z'),
       updatedAt: new Date('2017-01-13T22:18:03.084Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 138,
@@ -640,7 +588,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.866Z'),
       updatedAt: new Date('2017-01-13T22:18:02.866Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 140,
@@ -651,7 +598,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.905Z'),
       updatedAt: new Date('2017-01-13T22:18:02.905Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 141,
@@ -662,7 +608,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.922Z'),
       updatedAt: new Date('2017-01-13T22:18:02.922Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 143,
@@ -673,7 +618,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.960Z'),
       updatedAt: new Date('2017-01-13T22:18:02.960Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 145,
@@ -684,7 +628,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:02.999Z'),
       updatedAt: new Date('2017-01-13T22:18:02.999Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 146,
@@ -695,7 +638,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:03.027Z'),
       updatedAt: new Date('2017-01-13T22:18:03.027Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 148,
@@ -706,7 +648,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:03.066Z'),
       updatedAt: new Date('2017-01-13T22:18:03.066Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 156,
@@ -717,7 +658,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:03.323Z'),
       updatedAt: new Date('2017-01-13T22:18:03.323Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 159,
@@ -728,7 +668,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:03.397Z'),
       updatedAt: new Date('2017-01-13T22:18:03.397Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 160,
@@ -739,7 +678,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-13T22:18:03.415Z'),
       updatedAt: new Date('2017-01-13T22:18:03.415Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1252,
@@ -750,7 +688,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2017-01-14T15:29:06.232Z'),
       updatedAt: new Date('2017-01-14T15:29:06.232Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1500,
@@ -761,7 +698,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2019-01-21T22:46:10.496Z'),
       updatedAt: new Date('2019-01-21T22:46:10.496Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1501,
@@ -772,7 +708,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2019-01-21T22:46:10.498Z'),
       updatedAt: new Date('2019-01-21T22:46:10.498Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1502,
@@ -783,7 +718,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2019-01-21T22:46:10.499Z'),
       updatedAt: new Date('2019-01-21T22:46:10.499Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1503,
@@ -794,7 +728,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2019-01-21T22:46:10.501Z'),
       updatedAt: new Date('2019-01-21T22:46:10.501Z'),
       code: null,
-      includeTotals: null,
     },
     {
       id: 1600,
@@ -805,7 +738,6 @@ export const INITIAL_DATA: DummyData = {
       createdAt: new Date('2019-04-08T17:36:25.587Z'),
       updatedAt: new Date('2019-04-08T17:36:25.587Z'),
       code: null,
-      includeTotals: null,
     },
   ],
   currencies: [
@@ -984,7 +916,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316064,
             versionID: 1,
@@ -1003,7 +934,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316064,
             versionID: 1,
@@ -1022,7 +952,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316064,
             versionID: 1,
@@ -1041,7 +970,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316064,
             versionID: 1,
@@ -1060,7 +988,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: 157,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316064,
             versionID: 1,
@@ -1079,7 +1006,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316064,
             versionID: 1,
@@ -1098,7 +1024,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316064,
             versionID: 1,
@@ -1237,7 +1162,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 305776,
             versionID: 3,
@@ -1256,7 +1180,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 305776,
             versionID: 3,
@@ -1275,7 +1198,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 305776,
             versionID: 3,
@@ -1294,7 +1216,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 305776,
             versionID: 3,
@@ -1313,7 +1234,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 305776,
             versionID: 3,
@@ -1332,7 +1252,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 305776,
             versionID: 3,
@@ -1505,7 +1424,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316063,
             versionID: 1,
@@ -1524,7 +1442,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316063,
             versionID: 1,
@@ -1543,7 +1460,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316063,
             versionID: 1,
@@ -1562,7 +1478,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316063,
             versionID: 1,
@@ -1581,7 +1496,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: 157,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316063,
             versionID: 1,
@@ -1600,7 +1514,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316063,
             versionID: 1,
@@ -1619,7 +1532,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 316063,
             versionID: 1,
@@ -1758,7 +1670,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 284430,
             versionID: 1,
@@ -1777,7 +1688,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 284430,
             versionID: 1,
@@ -1796,7 +1706,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 284430,
             versionID: 1,
@@ -1815,7 +1724,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 284430,
             versionID: 1,
@@ -1834,7 +1742,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: 157,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 284430,
             versionID: 1,
@@ -1853,7 +1760,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 284430,
             versionID: 1,
@@ -1872,7 +1778,6 @@ export const INITIAL_DATA: DummyData = {
           description: '',
           parentID: null,
           code: '',
-          includeTotals: false,
           categoryRef: {
             objectID: 284430,
             versionID: 1,
@@ -2239,7 +2144,6 @@ export const INITIAL_DATA: DummyData = {
       parentID: null,
       code: null,
       group: 'keywords',
-      includeTotals: null,
       createdAt: new Date('2017-01-14T02:49:28.386Z'),
       updatedAt: new Date('2017-01-14T02:49:28.386Z'),
       refCount: '2',
@@ -2251,7 +2155,6 @@ export const INITIAL_DATA: DummyData = {
       parentID: null,
       code: null,
       group: 'flowType',
-      includeTotals: null,
       createdAt: new Date('2017-01-13T22:18:02.844Z'),
       updatedAt: new Date('2017-01-13T22:18:02.844Z'),
       refCount: '5',
@@ -2356,7 +2259,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: null,
           group: 'organizationType',
-          includeTotals: null,
           createdAt: new Date('2017-01-13T22:18:02.367Z'),
           updatedAt: new Date('2022-12-15T15:17:12.866Z'),
           categoryRef: {
@@ -2375,7 +2277,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: 1802,
           code: null,
           group: 'organizationLevel',
-          includeTotals: null,
           createdAt: new Date('2022-12-15T15:17:15.037Z'),
           updatedAt: new Date('2022-12-15T15:17:15.037Z'),
           categoryRef: {
@@ -2394,7 +2295,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: null,
           group: 'organizationLevel',
-          includeTotals: null,
           createdAt: new Date('2022-12-15T15:17:12.799Z'),
           updatedAt: new Date('2022-12-15T15:17:12.799Z'),
           categoryRef: {
@@ -2413,7 +2313,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: 118,
           code: null,
           group: 'organizationType',
-          includeTotals: null,
           createdAt: new Date('2017-01-13T22:18:02.688Z'),
           updatedAt: new Date('2022-12-15T15:17:15.025Z'),
           categoryRef: {
@@ -2452,7 +2351,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: null,
           group: 'organizationType',
-          includeTotals: null,
           createdAt: new Date('2017-01-13T22:18:02.367Z'),
           updatedAt: new Date('2022-12-15T15:17:12.866Z'),
           categoryRef: {
@@ -2471,7 +2369,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: 118,
           code: null,
           group: 'organizationType',
-          includeTotals: null,
           createdAt: new Date('2017-01-13T22:18:02.688Z'),
           updatedAt: new Date('2022-12-15T15:17:15.025Z'),
           categoryRef: {
@@ -2490,7 +2387,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: null,
           group: 'organizationLevel',
-          includeTotals: null,
           createdAt: new Date('2022-12-15T15:17:12.799Z'),
           updatedAt: new Date('2022-12-15T15:17:12.799Z'),
           categoryRef: {
@@ -2509,7 +2405,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: 1802,
           code: null,
           group: 'organizationLevel',
-          includeTotals: null,
           createdAt: new Date('2022-12-15T15:17:15.037Z'),
           updatedAt: new Date('2022-12-15T15:17:15.037Z'),
           categoryRef: {
@@ -2567,7 +2462,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: null,
           group: 'organizationType',
-          includeTotals: null,
           createdAt: new Date('2017-01-13T22:18:02.367Z'),
           updatedAt: new Date('2022-12-15T15:17:12.866Z'),
           categoryRef: {
@@ -2586,7 +2480,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: 118,
           code: null,
           group: 'organizationType',
-          includeTotals: null,
           createdAt: new Date('2017-01-13T22:18:02.688Z'),
           updatedAt: new Date('2022-12-15T15:17:15.025Z'),
           categoryRef: {
@@ -2605,7 +2498,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: null,
           group: 'organizationLevel',
-          includeTotals: null,
           createdAt: new Date('2022-12-15T15:17:12.799Z'),
           updatedAt: new Date('2022-12-15T15:17:12.799Z'),
           categoryRef: {
@@ -2624,7 +2516,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: 1802,
           code: null,
           group: 'organizationLevel',
-          includeTotals: null,
           createdAt: new Date('2022-12-15T15:17:15.037Z'),
           updatedAt: new Date('2022-12-15T15:17:15.037Z'),
           categoryRef: {
@@ -2682,7 +2573,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: null,
           group: 'organizationType',
-          includeTotals: null,
           createdAt: new Date('2017-01-13T22:18:02.367Z'),
           updatedAt: new Date('2022-12-15T15:17:12.866Z'),
           categoryRef: {
@@ -2701,7 +2591,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: 118,
           code: null,
           group: 'organizationType',
-          includeTotals: null,
           createdAt: new Date('2017-01-13T22:18:02.709Z'),
           updatedAt: new Date('2022-12-15T15:17:25.706Z'),
           categoryRef: {
@@ -2720,7 +2609,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: null,
           group: 'organizationLevel',
-          includeTotals: null,
           createdAt: new Date('2022-12-15T15:17:12.799Z'),
           updatedAt: new Date('2022-12-15T15:17:12.799Z'),
           categoryRef: {
@@ -2739,7 +2627,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: 1802,
           code: null,
           group: 'organizationLevel',
-          includeTotals: null,
           createdAt: new Date('2022-12-15T15:17:25.729Z'),
           updatedAt: new Date('2022-12-15T15:17:25.729Z'),
           categoryRef: {
@@ -2796,7 +2683,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: null,
           group: 'organizationType',
-          includeTotals: null,
           createdAt: new Date('2017-01-13T22:18:02.367Z'),
           updatedAt: new Date('2022-12-15T15:17:12.866Z'),
           categoryRef: {
@@ -2815,7 +2701,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: 118,
           code: null,
           group: 'organizationType',
-          includeTotals: null,
           createdAt: new Date('2017-01-13T22:18:02.629Z'),
           updatedAt: new Date('2022-12-15T15:17:13.203Z'),
           categoryRef: {
@@ -2834,7 +2719,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: null,
           group: 'organizationLevel',
-          includeTotals: null,
           createdAt: new Date('2022-12-15T15:17:12.844Z'),
           updatedAt: new Date('2022-12-15T15:17:12.844Z'),
           categoryRef: {
@@ -2853,7 +2737,6 @@ export const INITIAL_DATA: DummyData = {
           parentID: 1804,
           code: null,
           group: 'organizationLevel',
-          includeTotals: null,
           createdAt: new Date('2022-12-15T15:17:13.208Z'),
           updatedAt: new Date('2022-12-15T15:17:13.208Z'),
           categoryRef: {
