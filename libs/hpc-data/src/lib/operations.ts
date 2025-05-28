@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
 
 import { REPORTING_WINDOW } from './reporting-windows';
-import { resultWithPermissions, POSITIVE_INTEGER_FROM_STRING } from './util';
+import { POSITIVE_INTEGER_FROM_STRING, resultWithPermissions } from './util';
 
 export const OPERATION = t.type({
   id: t.number,

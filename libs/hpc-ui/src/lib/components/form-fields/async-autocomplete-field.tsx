@@ -1,12 +1,12 @@
 import {
   Autocomplete,
-  AutocompleteProps,
+  type AutocompleteProps,
   CircularProgress,
 } from '@mui/material';
+import { type util } from '@unocha/hpc-data';
 import { useField, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
-import { FormObjectValue } from '@unocha/hpc-data';
 import { StyledTextField } from './text-field';
 
 const StyledAutocomplete = tw(Autocomplete)`
@@ -18,7 +18,7 @@ type AsyncAutocompleteSelectProps = {
   name: string;
   label: string;
   placeholder?: string;
-  fnPromise: ({ query }: { query: string }) => Promise<Array<FormObjectValue>>;
+  fnPromise: ({ query }: { query: string }) => Promise<util.FormObjectValue[]>;
   isMulti?: boolean;
   isAutocompleteAPI?: boolean;
   error?: (metaError: string) => string | undefined;
@@ -34,23 +34,23 @@ const AsyncAutocompleteSelect = ({
   isAutocompleteAPI,
   required,
 }: AsyncAutocompleteSelectProps) => {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const { setFieldValue } = useFormikContext<Array<FormObjectValue>>();
-  const [field, meta] = useField<Array<FormObjectValue>>(name);
-  const [options, setOptions] = useState<Array<FormObjectValue>>([]);
-  const [data, setData] = useState<Array<FormObjectValue>>([]);
+  const { setFieldValue } = useFormikContext<util.FormObjectValue[]>();
+  const [field, meta] = useField<util.FormObjectValue[]>(name);
+  const [options, setOptions] = useState<util.FormObjectValue[]>([]);
+  const [data, setData] = useState<util.FormObjectValue[]>([]);
   const [isFetch, setIsFetch] = useState(false);
-  const loading =
-    open && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
+  const isLoading =
+    isOpen && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
 
   useEffect(() => {
-    let active = true;
+    let isActive = true;
     if (isAutocompleteAPI && (inputValue === '' || inputValue.length < 3)) {
       setOptions([]);
       setData([]);
       setIsFetch(false);
-      return undefined;
+      return;
     }
     if (data.length > 0 && (inputValue.length >= 3 || !isAutocompleteAPI)) {
       setOptions(
@@ -60,8 +60,8 @@ const AsyncAutocompleteSelect = ({
       );
     }
 
-    if (!loading) {
-      return undefined;
+    if (!isLoading) {
+      return;
     }
     (async () => {
       try {
@@ -70,7 +70,7 @@ const AsyncAutocompleteSelect = ({
         });
         setData(response);
         console.log(response);
-        if (active) {
+        if (isActive) {
           setOptions(response);
         }
         setIsFetch(true);
@@ -80,20 +80,20 @@ const AsyncAutocompleteSelect = ({
     })();
 
     return () => {
-      active = false;
+      isActive = false;
     };
-  }, [open, inputValue]);
+  }, [isOpen, inputValue]);
 
   useEffect(() => {
-    if (!open && isAutocompleteAPI) {
+    if (!isOpen && isAutocompleteAPI) {
       setOptions([]);
       setData([]);
       setIsFetch(false);
     }
-  }, [open, isAutocompleteAPI]);
+  }, [isOpen, isAutocompleteAPI]);
 
   const configAutocomplete: AutocompleteProps<
-    FormObjectValue,
+    util.FormObjectValue,
     boolean,
     boolean,
     boolean
@@ -101,12 +101,12 @@ const AsyncAutocompleteSelect = ({
     ...field,
     multiple: isMulti,
     onOpen: () => {
-      setOpen(true);
+      setIsOpen(true);
     },
     onClose: () => {
-      setOpen(false);
+      setIsOpen(false);
     },
-    open,
+    open: isOpen,
     isOptionEqualToValue: (option, value) => option.value === value.value,
     options,
     getOptionLabel: (op) => (typeof op === 'string' ? op : op.displayLabel),
@@ -120,7 +120,7 @@ const AsyncAutocompleteSelect = ({
     onInputChange: (_, newInputValue) => {
       setInputValue(newInputValue);
     },
-    loading,
+    loading: isLoading,
     renderOption: (props, option) => {
       return (
         <li {...props} key={option.value}>
@@ -138,12 +138,14 @@ const AsyncAutocompleteSelect = ({
           ...params.InputProps,
           endAdornment: (
             <>
-              {loading ? <CircularProgress color="inherit" size={20} /> : null}
+              {isLoading ? (
+                <CircularProgress color="inherit" size={20} />
+              ) : null}
               {params.InputProps.endAdornment}
             </>
           ),
         }}
-        error={meta && meta.touched && meta.error ? true : false}
+        error={!!(meta && meta.touched && meta.error)}
         helperText={
           meta && meta.touched && meta.error
             ? error

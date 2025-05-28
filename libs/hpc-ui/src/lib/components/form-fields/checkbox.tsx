@@ -1,7 +1,7 @@
 import {
   Checkbox,
   FormControlLabel,
-  FormControlLabelProps,
+  type FormControlLabelProps,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 import React from 'react';

@@ -16,7 +16,8 @@
     "**/*.jsx",
     "**/*.ts",
     "**/*.tsx",
-    "../../tailwind.config.js"
+    "../../tailwind.config.js",
+    "postcss.config.mjs"
   ],
   "files": [
     "../../node_modules/@nx/react/typings/cssmodule.d.ts",

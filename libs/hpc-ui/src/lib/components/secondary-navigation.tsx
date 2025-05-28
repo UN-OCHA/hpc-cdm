@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router';
 
+import Caret from '../assets/icons/caret';
 import { CLASSES } from '../classes';
 import { styled } from '../theme';
-import Caret from '../assets/icons/caret';
 
 const CLS = {
   LAST_BREADCRUMB: 'last',
@@ -127,8 +127,8 @@ const SecondaryNavigation = (props: Props) => {
   const breadcrumbElements = (
     <Breadcrumbs>
       {breadcrumbs.map((link, i, links) => {
-        const last = i === links.length - 1;
-        return last ? (
+        const isLast = i === links.length - 1;
+        return isLast ? (
           <Link key={i} className={CLS.LAST_BREADCRUMB} to={link.to}>
             {link.label}
           </Link>
@@ -148,13 +148,12 @@ const SecondaryNavigation = (props: Props) => {
         if (!tab) {
           return null;
         }
-        const selected =
-          tab.selected === undefined
-            ? loc.pathname === tab.path ||
-              loc.pathname.startsWith(tab.path + '/')
-            : tab.selected;
+        const isSelected =
+          tab.selected ??
+          (loc.pathname === tab.path ||
+            loc.pathname.startsWith(`${tab.path}/`));
         return (
-          <Tab key={i} className={selected ? CLS.SELECTED_TAB : ''}>
+          <Tab key={i} className={isSelected ? CLS.SELECTED_TAB : ''}>
             <Link to={tab.path}>
               <span className={CLS.TAB_INVISIBLE_LABEL}>{tab.label}</span>
               <span className={CLS.TAB_VISIBLE_LABEL}>{tab.label}</span>

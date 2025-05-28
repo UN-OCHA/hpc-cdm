@@ -1,14 +1,14 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 
-import { CLASSES, C } from '@unocha/hpc-ui';
+import { C, CLASSES } from '@unocha/hpc-ui';
 
-import PageNotFound from '../pages/not-found';
 import { t } from '../../i18n';
-import { AppContext } from '../context';
-import * as paths from '../paths';
-import TargetAccessManagement from '../components/target-access-management';
 import PageMeta from '../components/page-meta';
+import TargetAccessManagement from '../components/target-access-management';
+import { AppContext } from '../context';
+import PageNotFound from '../pages/not-found';
+import * as paths from '../paths';
 
 const PageAdmin = () => {
   return (

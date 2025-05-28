@@ -1,6 +1,6 @@
-import * as io from 'io-ts';
+import { type FormikErrors } from 'formik';
 import { isRight } from 'fp-ts/lib/Either';
-import { FormikErrors } from 'formik';
+import type * as io from 'io-ts';
 import { isKey } from './parse-filters';
 
 export const parseFieldError = (validationError: string, error: string) => {
@@ -9,7 +9,7 @@ export const parseFieldError = (validationError: string, error: string) => {
   }
 };
 const isStringUndefined = (value: unknown): value is string | undefined =>
-  typeof value === 'string' || typeof value === 'undefined';
+  typeof value === 'string' || value === undefined;
 /**
  * Validate form fields when using io-ts as a validator. validationSchema key names must be the same as the ones supplied to values
  */
@@ -20,22 +20,21 @@ const validateForm = <T extends object, K extends io.Any>(
   const result = validationSchema.decode(values);
   if (isRight(result)) {
     return {};
-  } else {
-    const errors: FormikErrors<T> = {};
-    for (const value of result.left) {
-      for (const context of value.context) {
-        if (isKey(values, context.key)) {
-          const key = context.key;
-          // Did not find a better solution, but I think it is
-          // fine to let it like that for the moment
-          if (isStringUndefined(errors[key])) {
-            (errors[key] as string | undefined) = '{validationError}'; // Placeholder to change for i18n text
-          }
+  }
+  const errors: FormikErrors<T> = {};
+  for (const value of result.left) {
+    for (const context of value.context) {
+      if (isKey(values, context.key)) {
+        const key = context.key;
+        // Did not find a better solution, but I think it is
+        // fine to let it like that for the moment
+        if (isStringUndefined(errors[key])) {
+          (errors[key] as string | undefined) = '{validationError}'; // Placeholder to change for i18n text
         }
       }
     }
-    return errors;
   }
+  return errors;
 };
 
 export default validateForm;

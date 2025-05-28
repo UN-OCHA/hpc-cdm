@@ -61,8 +61,8 @@ const SecondaryNavigation = (props: Props) => {
   const breadcrumbElements = (
     <Breadcrumbs>
       {breadcrumbs.map((link, i, links) => {
-        const last = i === links.length - 1;
-        return last ? (
+        const isLast = i === links.length - 1;
+        return isLast ? (
           <Link key={i} className={CLS.LAST_BREADCRUMB} to={link.to}>
             {link.label}
           </Link>

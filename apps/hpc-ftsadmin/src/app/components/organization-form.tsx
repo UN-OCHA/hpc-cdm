@@ -1,24 +1,22 @@
 import { Form, Formik } from 'formik';
 import tw from 'twin.macro';
 
-import { C } from '@unocha/hpc-ui';
-import { t } from '../../i18n';
-import { AppContext } from '../context';
-import { useContext, useState } from 'react';
-import { organizations, FormObjectValue } from '@unocha/hpc-data';
-import { useNavigate } from 'react-router';
-import * as paths from '../paths';
-import { errors } from '@unocha/hpc-data';
-import { Strings } from '../../i18n/iface';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { errors, util, type organizations } from '@unocha/hpc-data';
+import { C } from '@unocha/hpc-ui';
 import * as io from 'io-ts';
-import { util as codecs } from '@unocha/hpc-data';
-import validateForm, { parseFieldError } from '../utils/form-validation';
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { t } from '../../i18n';
+import { type Strings } from '../../i18n/iface';
+import { AppContext } from '../context';
+import * as paths from '../paths';
 import {
   fnCategories,
   fnLocations,
   fnOrganizations,
 } from '../utils/fn-promises';
+import validateForm, { parseFieldError } from '../utils/form-validation';
 import { parseError, valueToInteger } from '../utils/map-functions';
 interface Props {
   id?: number;
@@ -33,14 +31,14 @@ export interface AddEditOrganizationValues {
   name: string;
   abbreviation: string;
   nativeName?: string;
-  locations?: Array<FormObjectValue>; // number[] we need array of IDs
+  locations?: util.FormObjectValue[]; // Number[] we need array of IDs
   url?: string;
   active?: boolean;
   verified?: boolean;
   notes?: string; // "notes" makes reference what in the UI it's called "Comments" (Not my decision)
-  organizationTypes: Array<FormObjectValue>;
-  organizationLevel?: FormObjectValue; // number[] we need array of IDs
-  parent?: FormObjectValue;
+  organizationTypes: util.FormObjectValue[];
+  organizationLevel?: util.FormObjectValue; // Number[] we need array of IDs
+  parent?: util.FormObjectValue;
   collectiveInd?: boolean;
   comments?: string; // "comments" makes reference what in the UI it's called "Organization Description" (Not my decision)
 }
@@ -48,13 +46,13 @@ export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   name: '',
   abbreviation: '',
   nativeName: '',
-  locations: [], // number[] we need array of IDs
+  locations: [], // Number[] we need array of IDs
   url: '',
   active: true,
   verified: true,
   notes: '', // "notes" makes reference what in the UI it's called "Comments" (Not my decision)
   organizationTypes: [],
-  organizationLevel: { displayLabel: '', value: '' }, // number[] we need array of IDs
+  organizationLevel: { displayLabel: '', value: '' }, // Number[] we need array of IDs
   parent: { displayLabel: '', value: '' },
   collectiveInd: false,
   comments: '',
@@ -82,7 +80,7 @@ const formToUpdate = (
 ): organizations.UpdateOrganizationParams => {
   const res: organizations.UpdateOrganizationParams = {
     ...values,
-    id: id,
+    id,
     categories: values.organizationTypes.map((org) =>
       valueToInteger(org.value)
     ),
@@ -117,27 +115,27 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
   const environment = env();
   const navigate = useNavigate();
   const type: 'update' | 'create' = id ? 'update' : 'create';
-  const [error, setError] =
+  const [formError, setFormError] =
     useState<
       keyof Strings['components']['organizationUpdateCreate']['errors']
     >();
   const [errorValue, setErrorValue] = useState('');
   const FORM_VALIDATION = io.partial({
-    name: codecs.NON_EMPTY_STRING,
-    abbreviation: codecs.NON_EMPTY_STRING,
-    organizationTypes: codecs.NON_EMPTY_ARRAY,
+    name: util.NON_EMPTY_STRING,
+    abbreviation: util.NON_EMPTY_STRING,
+    organizationTypes: util.NON_EMPTY_ARRAY,
   });
   const handleSubmit = async (values: AddEditOrganizationValues) => {
     if (id && load) {
       await environment.model.organizations
         .updateOrganization(formToUpdate(values, id))
         .finally(load)
-        .catch((err) => {
-          if (errors.isDuplicateError(err)) {
-            setErrorValue(err.value);
-            setError(err.code);
+        .catch((error) => {
+          if (errors.isDuplicateError(error)) {
+            setErrorValue(error.value);
+            setFormError(error.code);
           } else {
-            setError('unknown');
+            setFormError('unknown');
           }
         });
     } else {
@@ -146,12 +144,12 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
         .then((org) => {
           navigate(paths.organization(org.id));
         })
-        .catch((err) => {
-          if (errors.isDuplicateError(err)) {
-            setErrorValue(err.value);
-            setError(err.code);
+        .catch((error) => {
+          if (errors.isDuplicateError(error)) {
+            setErrorValue(error.value);
+            setFormError(error.code);
           } else {
-            setError('unknown');
+            setFormError('unknown');
           }
         });
     }
@@ -167,12 +165,12 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
         <Form>
           <C.ErrorAlert
             setError={
-              setError as React.Dispatch<
+              setFormError as React.Dispatch<
                 React.SetStateAction<string | undefined>
               >
             }
             error={parseError(
-              error,
+              formError,
               'organizationUpdateCreate',
               lang,
               errorValue
@@ -363,7 +361,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
             )}
             <AlignButton>
               <C.ButtonSubmit
-                color={error ? 'secondary' : 'primary'}
+                color={formError ? 'secondary' : 'primary'}
                 text={t.t(
                   lang,
                   (s) => s.components.organizationUpdateCreate[type]

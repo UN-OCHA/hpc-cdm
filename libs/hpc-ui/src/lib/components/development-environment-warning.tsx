@@ -1,8 +1,8 @@
 import React from 'react';
 
+import { MdWarning } from 'react-icons/md';
 import { CLASSES, combineClasses } from '../classes';
 import { styled } from '../theme';
-import { MdWarning } from 'react-icons/md';
 
 interface Props {
   className?: string;

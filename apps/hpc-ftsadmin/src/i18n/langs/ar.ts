@@ -1,4 +1,4 @@
-import { Language } from '../iface';
+import { type Language } from '../iface';
 import strings from './ar.json';
 
 const LANGUAGE: Language = {

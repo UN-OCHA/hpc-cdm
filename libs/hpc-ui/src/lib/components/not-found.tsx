@@ -19,7 +19,7 @@ const NotFound = (props: Props) => (
     buttons={
       <Button
         color="secondary"
-        onClick={() => window.history.back()}
+        onClick={() => globalThis.history.back()}
         text={props.strings.back}
       />
     }

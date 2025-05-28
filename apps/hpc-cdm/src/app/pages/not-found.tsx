@@ -2,9 +2,9 @@ import React from 'react';
 
 import { C, CLASSES, combineClasses, styled } from '@unocha/hpc-ui';
 
-import { AppContext } from '../context';
 import { t } from '../../i18n';
 import PageMeta from '../components/page-meta';
+import { AppContext } from '../context';
 
 interface Props {
   className?: string;

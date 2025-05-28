@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
 import { styled } from '@unocha/hpc-ui';
+import React, { useContext } from 'react';
 
-import { PageInfo } from './xform';
 import { t } from '../../../i18n';
 import { AppContext } from '../../context';
+import { type PageInfo } from './xform';
 
 interface Props {
   pageInfo: PageInfo | null;
@@ -21,7 +21,7 @@ const PageIndicator = ({ pageInfo }: Props) => {
     pageInfo && (
       <Container>
         {t.t(lang, (s) => s.routes.operations.forms.pageIndicator, {
-          page: (pageInfo.currentPage || 0) + 1,
+          page: (pageInfo.currentPage ?? 0) + 1,
           count: pageInfo.totalPages,
         })}
       </Container>

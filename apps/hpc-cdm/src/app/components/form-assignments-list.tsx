@@ -1,12 +1,12 @@
 import React from 'react';
 
+import { type reportingWindows } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
-import { reportingWindows } from '@unocha/hpc-data';
 
-import { AppContext } from '../context';
+import { Tooltip } from '@mui/material';
 import { t } from '../../i18n';
 import dayjs from '../../libraries/dayjs';
-import { Tooltip } from '@mui/material';
+import { AppContext } from '../context';
 
 interface Props {
   className?: string;
@@ -54,14 +54,13 @@ const FormAssignmentsList = (props: Props) => {
 
               if (formCmp !== 0) {
                 return formCmp;
-              } else {
-                const c1 = (a1.cluster?.name || '').toLowerCase();
-                const c2 = (a2.cluster?.name || '').toLowerCase();
-                return c1.localeCompare(c2);
               }
+              const c1 = (a1.cluster?.name ?? '').toLowerCase();
+              const c2 = (a2.cluster?.name ?? '').toLowerCase();
+              return c1.localeCompare(c2);
             })
             .map((a) => {
-              const submitted = [
+              const isSubmitted = [
                 'clean:entered',
                 'raw:finalized',
                 'clean:finalized',
@@ -91,12 +90,12 @@ const FormAssignmentsList = (props: Props) => {
                         </LastChanged>
                       </Tooltip>
 
-                      <Label submitted={submitted}>
+                      <Label submitted={isSubmitted}>
                         {t.get(
                           lang,
                           (s) =>
                             s.routes.operations.forms.labels[
-                              submitted ? 'submitted' : 'notSubmitted'
+                              isSubmitted ? 'submitted' : 'notSubmitted'
                             ]
                         )}
                       </Label>

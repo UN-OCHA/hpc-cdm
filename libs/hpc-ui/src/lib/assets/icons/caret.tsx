@@ -39,11 +39,9 @@ const Svg = styled.svg`
 
 const Caret = (props: Props) => {
   props = { ...props };
-  const direction = props.direction || 'down';
+  const direction = props.direction ?? 'down';
   // Set a default size if it isn't set
-  if (!props.size) {
-    props.size = 6.6;
-  }
+  props.size ??= 6.6;
   props.className = combineClasses(CLS_DIRECTION[direction], props.className);
   return (
     <Svg

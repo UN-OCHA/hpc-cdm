@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { CLASSES, combineClasses } from '../classes';
 import Caret from '../assets/icons/caret';
+import { CLASSES, combineClasses } from '../classes';
 import { styled } from '../theme';
 
 const CLS = {
@@ -31,7 +31,7 @@ interface Props {
    */
   itemEnd?: JSX.Element;
   actions?: JSX.Element | JSX.Element[];
-  muted?: boolean;
+  isMuted?: boolean;
 }
 
 const Text = styled.span`
@@ -68,8 +68,16 @@ const Actions = styled.div`
 `;
 
 const ListItem = (props: Props) => {
-  const { className, link, text, prefix, secondary, actions, muted, itemEnd } =
-    props;
+  const {
+    className,
+    link,
+    text,
+    prefix,
+    secondary,
+    actions,
+    isMuted,
+    itemEnd,
+  } = props;
   const contents = (
     <>
       {prefix && (
@@ -78,7 +86,7 @@ const ListItem = (props: Props) => {
           <PrefixDiv />
         </>
       )}
-      <Text className={(muted && CLS.MUTED) || undefined}>{text}</Text>
+      <Text className={(isMuted && CLS.MUTED) || undefined}>{text}</Text>
       {secondary && (
         <>
           <Divider />

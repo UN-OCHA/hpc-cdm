@@ -1,8 +1,8 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 
+import { type operations } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
-import { operations } from '@unocha/hpc-data';
 
 import { t } from '../../i18n';
 import { AppContext } from '../context';
@@ -20,12 +20,12 @@ interface Props {
 }
 
 const PageOperationClusterForms = (props: Props) => {
-  const { operation, cluster } = props;
+  const { operation, cluster, className } = props;
 
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <div className={props.className}>
+        <div className={className}>
           <Routes>
             <Route
               path={paths.formAssignmentsRoot()}
@@ -42,7 +42,7 @@ const PageOperationClusterForms = (props: Props) => {
                       <ClusterNavigation
                         operation={operation}
                         cluster={cluster}
-                        showSettingsButton
+                        shouldShowSettingsButton
                       />
                       <C.NotFound
                         strings={t.get(lang, (s) => s.components.notFound)}

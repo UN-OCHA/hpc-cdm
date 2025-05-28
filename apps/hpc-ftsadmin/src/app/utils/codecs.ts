@@ -1,5 +1,5 @@
-import * as t from 'io-ts';
 import { util } from '@unocha/hpc-data';
+import * as t from 'io-ts';
 import {
   DEFAULT_FLOW_TABLE_HEADERS,
   DEFAULT_KEYWORD_TABLE_HEADERS,
@@ -27,7 +27,7 @@ const PARAMS_CODEC = t.type({
 const extractIdentifierIds = <
   T extends OrganizationHeaderID | FlowHeaderID | KeywordHeaderID,
 >(
-  val: TableHeadersProps<T>[]
+  val: Array<TableHeadersProps<T>>
 ) => {
   return val.reduce(
     (acc, { identifierID: id, sortable }) => {

@@ -1,15 +1,15 @@
 import React from 'react';
 import { Route, Routes, useParams } from 'react-router';
 
-import { t } from '../../i18n';
+import { type operations } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
-import { operations } from '@unocha/hpc-data';
+import { t } from '../../i18n';
 
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
-import OperationFormAssignmentsList from '../components/operation-form-assignments-list';
 import FormAssignmentData from '../components/form-assignment-data';
+import OperationFormAssignmentsList from '../components/operation-form-assignments-list';
 import PageMeta from '../components/page-meta';
 import { RouteParamsValidator } from '../components/route-params-validator';
 import { prepareReportingWindowsAsSidebarNavigation } from '../utils/reportingWindows';

@@ -1,23 +1,23 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
-import { reportingWindows, errors } from '@unocha/hpc-data';
+import { type reportingWindows, errors } from '@unocha/hpc-data';
 import { styled } from '@unocha/hpc-ui';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import dayjs from '../../../libraries/dayjs';
 
-import XForm, { PageInfo } from './xform';
-import { getEnv, AppContext } from '../../context';
-import { t } from '../../../i18n';
-import usePrompt from '../../utils/usePrompt';
-import SubmitButton from './submit-button';
 import { toast } from 'react-toastify';
-import PageIndicator from './pageIndicator';
-import PoweredByFooter from './powered-by-footer';
-import { FormStatus, SubmissionValidation } from './types';
+import { t } from '../../../i18n';
+import { AppContext, getEnv } from '../../context';
+import usePrompt from '../../utils/usePrompt';
 import FormToolbar from './formToolbar';
+import AssignedUsersModal from './modals/assignedUsersModal';
 import ValidationOnNavigationModal from './modals/validationOnNavigationModal';
 import ValidationOnSubmitModal from './modals/validationOnSubmitModal';
-import AssignedUsersModal from './modals/assignedUsersModal';
+import PageIndicator from './pageIndicator';
+import PoweredByFooter from './powered-by-footer';
+import SubmitButton from './submit-button';
+import { type FormStatus, type SubmissionValidation } from './types';
+import XForm, { type PageInfo } from './xform';
 
 const LoadingMessage = styled.div`
   margin: 0 ${(p) => p.theme.marginPx.md};
@@ -41,27 +41,29 @@ export const EnketoEditableForm = (props: Props) => {
   const { assignment: originalAssignment, reportingWindow } = props;
   const env = getEnv();
 
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const xform = useRef<XForm | null>(null);
 
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
   const [lastSavedData, setLastSavedData] = useState<string | null>(null);
-  const [formTouched, setFormTouched] = useState(false);
+  const [isFormTouched, setIsFormTouched] = useState(false);
   const [updatedAssignment, setUpdatedAssignment] =
     useState<reportingWindows.GetAssignmentResult | null>(null);
   const [status, setStatus] = useState<FormStatus>({ type: 'idle' });
-  const [editable, setEditable] = useState(true);
-  const [showValidationConfirmation, setShowValidationConfirmation] =
-    useState(false);
-  const [showAssignedUsers, setShowAssignedUsers] = useState(false);
+  const [isEditable, setIsEditable] = useState(true);
+  const [
+    shouldShowValidationConfirmation,
+    setShouldShowValidationConfirmation,
+  ] = useState(false);
+  const [shouldShowAssignedUsers, setShouldShowAssignedUsers] = useState(false);
   const [submissionValidation, setSubmissionValidation] =
     useState<SubmissionValidation>(null);
   const navigate = useNavigate();
   const { lang } = useContext(AppContext);
 
-  const assignment = updatedAssignment || originalAssignment;
+  const assignment = updatedAssignment ?? originalAssignment;
 
-  const isFormModified = !loading && xform !== null && formTouched;
+  const isFormModified = !isLoading && xform !== null && isFormTouched;
   usePrompt(
     t.t(lang, (s) => s.routes.operations.forms.unsavedChangesPrompt),
     isFormModified
@@ -83,8 +85,9 @@ export const EnketoEditableForm = (props: Props) => {
   }, [navigate]);
 
   useEffect(() => {
-    let isSubscribed = true; // to cancel form initialization
+    let isSubscribed = true; // To cancel form initialization
     const {
+      editable: isOriginalAssignmentEditable,
       task: {
         form: {
           definition: { form, model },
@@ -92,6 +95,7 @@ export const EnketoEditableForm = (props: Props) => {
         currentData,
         currentFiles,
       },
+      state,
     } = originalAssignment;
 
     /**
@@ -101,20 +105,20 @@ export const EnketoEditableForm = (props: Props) => {
      * also want to prevent a user editing the form data if it's in a finalized
      * state, to prevent accidental changes)
      */
-    const editable =
-      originalAssignment.state === 'clean:finalized' ||
-      originalAssignment.state === 'raw:finalized'
+    const isEditable =
+      state === 'clean:finalized' || state === 'raw:finalized'
         ? false
-        : originalAssignment.editable;
+        : isOriginalAssignmentEditable;
 
     // Convert the ArrayBuffers to Blobs to use in the form
     const files = currentFiles.map((f) => ({
       name: f.name,
       data: new Blob([new Uint8Array(f.data)]),
     }));
+
     const _xform = new XForm(form, model, currentData, files, {
-      onDataUpdate: ({ xform }) => {
-        setFormTouched(true);
+      onDataUpdate: () => {
+        setIsFormTouched(true);
       },
       onPageFlip: ({ xform }) => {
         setPageInfo(xform.getPageInfo());
@@ -123,13 +127,13 @@ export const EnketoEditableForm = (props: Props) => {
     const timer = setTimeout(() => {
       // Long running process, it could take up to 20 seconds
       // depending on number of embedded locations/sublocations.
-      _xform.init(editable).then(() => {
+      _xform.init(isEditable).then(() => {
         if (isSubscribed) {
-          // user has abandoned this page
+          // User has abandoned this page
           xform.current = _xform;
-          setEditable(editable);
+          setIsEditable(isEditable);
           setUpdatedAssignment(null);
-          setLoading(false);
+          setIsLoading(false);
           setPageInfo(_xform.getPageInfo());
         }
       });
@@ -137,18 +141,18 @@ export const EnketoEditableForm = (props: Props) => {
     return () => {
       clearTimeout(timer);
       isSubscribed = false;
-      setLoading(false);
+      setIsLoading(false);
     };
   }, [originalAssignment]);
 
   const handleNext = async () => {
     if (xform.current) {
-      if (editable) {
-        const valid = await xform.current.validateCurrentPage();
-        if (valid) {
+      if (isEditable) {
+        const isValid = await xform.current.validateCurrentPage();
+        if (isValid) {
           xform.current.goToNextPage();
         } else {
-          setShowValidationConfirmation(true);
+          setShouldShowValidationConfirmation(true);
         }
       } else {
         xform.current.goToNextPage();
@@ -161,12 +165,12 @@ export const EnketoEditableForm = (props: Props) => {
   const forceNextPage = () => {
     if (xform.current) {
       xform.current.goToNextPage();
-      setShowValidationConfirmation(false);
+      setShouldShowValidationConfirmation(false);
     }
   };
 
   const saveForm = async (redirect = false, finalized = false) => {
-    if (xform.current && (formTouched || finalized)) {
+    if (xform.current && (isFormTouched || finalized)) {
       // If the user is trying to finalize (submit) the form
       // Ensure the entire form is valid
       if (finalized) {
@@ -175,16 +179,15 @@ export const EnketoEditableForm = (props: Props) => {
         // Give the browser some time to render this state change
         await new Promise((resolve) => setTimeout(resolve, 10));
 
-        const valid = await xform.current.validateEverything();
-        if (!valid) {
+        const isValid = await xform.current.validateEverything();
+        if (!isValid) {
           // If the form is invalid, we don't want to submit it
           // But we can still save it.
           saveForm();
           setSubmissionValidation('invalid');
           return;
-        } else {
-          setSubmissionValidation(null);
         }
+        setSubmissionValidation(null);
       }
 
       setStatus({ type: 'saving' });
@@ -196,11 +199,13 @@ export const EnketoEditableForm = (props: Props) => {
         const t0 = performance.now();
         const { data, files } = xform.current.getData();
         const t1 = performance.now();
-        console.log('getData time: ' + (t1 - t0) + 'ms');
+        console.log(`getData time: ${t1 - t0}ms`);
 
         if (lastSavedData !== data || finalized) {
           const {
-            task: { form },
+            id,
+            task: { form, currentData },
+            version,
           } = assignment;
 
           // Convert each file Blob to an ArrayBuffer
@@ -213,8 +218,8 @@ export const EnketoEditableForm = (props: Props) => {
 
           return env.model.reportingWindows
             .updateAssignment({
-              assignmentId: assignment.id,
-              previousVersion: assignment.version,
+              assignmentId: id,
+              previousVersion: version,
               form: {
                 id: form.id,
                 version: form.version,
@@ -224,9 +229,9 @@ export const EnketoEditableForm = (props: Props) => {
               },
             })
             .then((assignment) => {
-              setLastSavedData(assignment.task.currentData);
+              setLastSavedData(currentData);
               setUpdatedAssignment(assignment);
-              setFormTouched(false);
+              setIsFormTouched(false);
               setStatus({ type: 'idle' });
               const msg = t.t(
                 lang,
@@ -250,35 +255,35 @@ export const EnketoEditableForm = (props: Props) => {
                 navigate(-1);
               }
             })
-            .catch((err) => {
-              if (errors.isConflictError(err)) {
-                const timeAgo = dayjs(err.timestamp).locale(lang);
+            .catch((error) => {
+              if (errors.isConflictError(error)) {
+                const timeAgo = dayjs(error.timestamp).locale(lang);
                 alert(
                   t
                     .t(lang, (s) => s.routes.operations.forms.errors.conflict)
                     .replace('{timeAgo}', timeAgo.fromNow())
-                    .replace('{person}', err.otherUser)
+                    .replace('{person}', error.otherUser)
                 );
                 setStatus({
                   type: 'conflict',
-                  timestamp: err.timestamp,
-                  otherPerson: err.otherUser,
+                  timestamp: error.timestamp,
+                  otherPerson: error.otherUser,
                 });
                 const msg = t
                   .t(lang, (s) => s.routes.operations.forms.errors.conflict)
                   .replace('{timeAgo}', timeAgo.fromNow())
-                  .replace('{person}', err.otherUser);
+                  .replace('{person}', error.otherUser);
                 toast.error(msg, { position: 'top-right' });
               } else {
                 setStatus({
                   type: 'error',
-                  message: err.message || err.toString(),
+                  message: error.message ?? error.toString(),
                 });
                 const msg = t.t(
                   lang,
                   (s) => s.routes.operations.forms.status.error
                 );
-                toast.error(`${msg} ${err.message || err.toString()}`, {
+                toast.error(`${msg} ${error.message ?? error.toString()}`, {
                   position: 'top-right',
                 });
               }
@@ -304,19 +309,19 @@ export const EnketoEditableForm = (props: Props) => {
   };
 
   const formToolBarProps = {
-    loading,
-    editable,
+    isLoading,
+    isEditable,
     reportingWindow,
     assignment,
-    setShowAssignedUsers,
-    formTouched,
-    formStatus: status,
+    setShouldShowAssignedUsers,
+    isFormTouched,
+    status,
     setStatus,
   };
   return (
     <div>
       <FormToolbar {...formToolBarProps} />
-      {loading && (
+      {isLoading && (
         <LoadingMessage>
           <h3>{t.t(lang, (s) => s.routes.operations.forms.loading.title)}</h3>
           <p>{t.t(lang, (s) => s.routes.operations.forms.loading.info)}</p>
@@ -324,7 +329,7 @@ export const EnketoEditableForm = (props: Props) => {
       )}
       <div className="enketo" id="form" onClick={captureLinkClicks}>
         <PageIndicator pageInfo={pageInfo} />
-        <div className="main" style={{ display: loading ? 'none' : 'block' }}>
+        <div className="main" style={{ display: isLoading ? 'none' : 'block' }}>
           <div className="container pages"></div>
           <section className="form-footer end">
             <div className="form-footer__content">
@@ -333,7 +338,7 @@ export const EnketoEditableForm = (props: Props) => {
                 <button className="btn btn-default previous-page disabled">
                   {t.t(lang, (s) => s.routes.operations.forms.nav.prev)}
                 </button>
-                {editable && (
+                {isEditable && (
                   <button
                     onClick={() => saveForm()}
                     className="btn btn-default"
@@ -342,7 +347,7 @@ export const EnketoEditableForm = (props: Props) => {
                     {t.t(lang, (s) => s.routes.operations.forms.nav.save)}
                   </button>
                 )}
-                {editable && pageInfo?.isLastPage && (
+                {isEditable && pageInfo?.isLastPage && (
                   <button
                     onClick={() => saveForm(true)}
                     className="btn btn-default"
@@ -359,9 +364,9 @@ export const EnketoEditableForm = (props: Props) => {
                     {t.t(lang, (s) => s.routes.operations.forms.nav.next)}
                   </button>
                 )}
-                {editable && pageInfo?.isLastPage && (
+                {isEditable && pageInfo?.isLastPage && (
                   <SubmitButton
-                    validating={submissionValidation === 'in-progress'}
+                    isValidating={submissionValidation === 'in-progress'}
                     saveForm={saveForm}
                   />
                 )}
@@ -369,9 +374,11 @@ export const EnketoEditableForm = (props: Props) => {
             </div>
             <ValidationOnNavigationModal
               nextPage={forceNextPage}
-              showValidationConfirmation={showValidationConfirmation}
+              shouldShowValidationConfirmation={
+                shouldShowValidationConfirmation
+              }
               closeValidationMessage={() =>
-                setShowValidationConfirmation(false)
+                setShouldShowValidationConfirmation(false)
               }
             />
             <ValidationOnSubmitModal
@@ -381,8 +388,8 @@ export const EnketoEditableForm = (props: Props) => {
               }
             />
             <AssignedUsersModal
-              showAssignedUsers={showAssignedUsers}
-              closeAssignedUsers={() => setShowAssignedUsers(false)}
+              shouldShowAssignedUsers={shouldShowAssignedUsers}
+              closeAssignedUsers={() => setShouldShowAssignedUsers(false)}
               assignment={assignment}
             />
             <PoweredByFooter />

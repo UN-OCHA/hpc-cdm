@@ -1,9 +1,9 @@
-// import original module declarations
+// Import original module declarations
 import 'styled-components';
-// import your custom theme
-import theme from './theme';
+// Import your custom theme
+import type theme from './theme';
 
-// extend the module declarations using custom theme type
+// Extend the module declarations using custom theme type
 
 type Theme = typeof theme;
 

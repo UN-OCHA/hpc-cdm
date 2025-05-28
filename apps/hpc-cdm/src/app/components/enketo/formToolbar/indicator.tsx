@@ -1,17 +1,17 @@
-import React, { useContext } from 'react';
+import { CircularProgress, Tooltip } from '@mui/material';
 import { styled } from '@unocha/hpc-ui';
-import { Tooltip, CircularProgress } from '@mui/material';
-import { MdWarning, MdLock, MdLockOpen } from 'react-icons/md';
+import React, { useContext } from 'react';
+import { MdLock, MdLockOpen, MdWarning } from 'react-icons/md';
 import { AppContext } from '../../../context';
 
+import { type reportingWindows } from '@unocha/hpc-data';
 import { t } from '../../../../i18n';
-import { reportingWindows } from '@unocha/hpc-data';
-import { FormStatus } from '../types';
+import { type FormStatus } from '../types';
 
 interface Props {
-  loading: boolean;
-  editable: boolean;
-  formTouched: boolean;
+  isLoading: boolean;
+  isEditable: boolean;
+  isFormTouched: boolean;
   formStatus: FormStatus;
   reportingWindow: reportingWindows.ReportingWindow;
   assignmentState: reportingWindows.AssignmentState;
@@ -78,24 +78,24 @@ const Indicator = (props: Props) => {
     reportingWindow,
     lastUpdatedAt,
     lastUpdatedBy,
-    loading,
+    isLoading,
     assignmentState,
-    editable,
-    formTouched,
+    isEditable,
+    isFormTouched,
   } = props;
 
-  const surveySubmitted =
+  const isSurveySubmitted =
     assignmentState !== 'not-entered' && assignmentState !== 'raw:entered';
 
   const stateString = t.t(
     lang,
     (s) =>
       s.routes.operations.forms.editability[
-        surveySubmitted && editable
+        isSurveySubmitted && isEditable
           ? 'submittedEditable'
-          : surveySubmitted && !editable
+          : isSurveySubmitted && !isEditable
           ? 'submittedNonEditable'
-          : !surveySubmitted && editable
+          : !isSurveySubmitted && isEditable
           ? 'notSubmittedEditable'
           : reportingWindow.state === 'pending'
           ? 'reportingWindowPending'
@@ -123,7 +123,7 @@ const Indicator = (props: Props) => {
       }
     >
       <StatusLabel>
-        {loading ? (
+        {isLoading ? (
           <>
             <span>
               {t.t(lang, (s) => s.routes.operations.forms.status.init)}
@@ -132,12 +132,12 @@ const Indicator = (props: Props) => {
           </>
         ) : (
           <>
-            {editable ? <MdLockOpen size={20} /> : <MdLock size={20} />}
+            {isEditable ? <MdLockOpen size={20} /> : <MdLock size={20} />}
             <span>{stateString}</span>
-            {editable && (
+            {isEditable && (
               <span>
                 {formStatus.type === 'idle' ? (
-                  formTouched ? (
+                  isFormTouched ? (
                     <UnsavedChanges>
                       {t.t(
                         lang,

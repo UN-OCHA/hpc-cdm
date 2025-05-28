@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconBaseProps } from 'react-icons/lib';
+import { type IconBaseProps } from 'react-icons/lib';
 
 const Gear = (props: IconBaseProps) => {
   props = { ...props };

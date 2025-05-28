@@ -1,5 +1,5 @@
-import { i18n } from '@unocha/hpc-core';
-import * as strings from './langs/en.json';
+import { type i18n } from '@unocha/hpc-core';
+import type * as strings from './langs/en.json';
 
 export type Strings = typeof strings;
 

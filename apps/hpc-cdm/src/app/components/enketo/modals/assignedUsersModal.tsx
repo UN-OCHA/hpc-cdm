@@ -1,15 +1,15 @@
 import React, { useContext } from 'react';
 
-import { Dialog, DialogContent, DialogActions } from '@mui/material';
-import { MdEmail as _MdEmail } from 'react-icons/md';
+import { Dialog, DialogActions, DialogContent } from '@mui/material';
 import { C, styled, THEME } from '@unocha/hpc-ui';
+import { MdEmail as _MdEmail } from 'react-icons/md';
 
-import { AppContext } from '../../../context';
+import { type reportingWindows } from '@unocha/hpc-data';
 import { t } from '../../../../i18n';
-import { reportingWindows } from '@unocha/hpc-data';
+import { AppContext } from '../../../context';
 
 interface Props {
-  showAssignedUsers: boolean;
+  shouldShowAssignedUsers: boolean;
   closeAssignedUsers: () => void;
   assignment: reportingWindows.GetAssignmentResult;
 }
@@ -40,10 +40,10 @@ const MdEmail = styled(_MdEmail)`
 
 const AssignedUsersModal = (props: Props) => {
   const { lang } = useContext(AppContext);
-  const { showAssignedUsers, closeAssignedUsers, assignment } = props;
+  const { shouldShowAssignedUsers, closeAssignedUsers, assignment } = props;
   return (
     <Dialog
-      open={showAssignedUsers}
+      open={shouldShowAssignedUsers}
       onClose={closeAssignedUsers}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
@@ -56,7 +56,7 @@ const AssignedUsersModal = (props: Props) => {
         {assignment.assignedUsers.map((user, i) => (
           <UserLink key={i} href={`mailto:${user.email}`}>
             <AssignedUsersListItem key={user.email}>
-              <UserText>{user.name || user.email}</UserText>
+              <UserText>{user.name ?? user.email}</UserText>
               <MdEmail size={20} color={THEME.colors.pallete.orange.normal} />
             </AssignedUsersListItem>
           </UserLink>
@@ -64,7 +64,7 @@ const AssignedUsersModal = (props: Props) => {
       </DialogContent>
 
       <DialogActions>
-        <C.Button onClick={closeAssignedUsers} color="primary" autoFocus>
+        <C.Button onClick={closeAssignedUsers} color="primary" shouldAutoFocus>
           <span>{t.t(lang, (s) => s.routes.operations.forms.nav.close)}</span>
         </C.Button>
       </DialogActions>

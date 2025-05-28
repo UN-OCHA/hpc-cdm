@@ -1,18 +1,14 @@
-import { Form, Formik, FormikState } from 'formik';
+import { Form, Formik, type FormikState } from 'formik';
 import * as io from 'io-ts';
-import tw from 'twin.macro';
 import { useContext, useState } from 'react';
+import tw from 'twin.macro';
 
-import { C } from '@unocha/hpc-ui';
-import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
-import { t } from '../../../i18n';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
-import { util } from '@unocha/hpc-core';
 import { Alert } from '@mui/material';
-import type { FlowQuery, SetQuery } from '../tables/table-utils';
+import { util as helper } from '@unocha/hpc-core';
+import { util } from '@unocha/hpc-data';
+import { C } from '@unocha/hpc-ui';
+import { t } from '../../../i18n';
 import { AppContext } from '../../context';
-import { util as codecs, FormObjectValue } from '@unocha/hpc-data';
-import validateForm from '../../utils/form-validation';
 import {
   fnCategories,
   fnEmergencies,
@@ -23,6 +19,10 @@ import {
   fnProjects,
   fnUsageYears,
 } from '../../utils/fn-promises';
+import validateForm from '../../utils/form-validation';
+import { type LocalStorageSchema } from '../../utils/local-storage-type';
+import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
+import type { FlowQuery, SetQuery } from '../tables/table-utils';
 
 interface Props {
   query: FlowQuery;
@@ -32,27 +32,27 @@ interface Props {
 export interface FlowsFilterValues {
   flowID?: string[];
   amountUSD?: string;
-  keywords?: Array<FormObjectValue>;
-  flowStatus?: FormObjectValue | null;
-  flowType?: FormObjectValue | null;
+  keywords?: util.FormObjectValue[];
+  flowStatus?: util.FormObjectValue | null;
+  flowType?: util.FormObjectValue | null;
   flowActiveStatus?: string;
   reporterRefCode?: string;
   sourceSystemID?: string;
   legacyID?: string;
-  sourceOrganizations?: Array<FormObjectValue>;
-  sourceLocations?: Array<FormObjectValue>;
-  sourceUsageYears?: Array<FormObjectValue>;
-  sourceProjects?: Array<FormObjectValue>;
-  sourcePlans?: Array<FormObjectValue>;
-  sourceGlobalClusters?: Array<FormObjectValue>;
-  sourceEmergencies?: Array<FormObjectValue>;
-  destinationOrganizations?: Array<FormObjectValue>;
-  destinationLocations?: Array<FormObjectValue>;
-  destinationUsageYears?: Array<FormObjectValue>;
-  destinationProjects?: Array<FormObjectValue>;
-  destinationPlans?: Array<FormObjectValue>;
-  destinationGlobalClusters?: Array<FormObjectValue>;
-  destinationEmergencies?: Array<FormObjectValue>;
+  sourceOrganizations?: util.FormObjectValue[];
+  sourceLocations?: util.FormObjectValue[];
+  sourceUsageYears?: util.FormObjectValue[];
+  sourceProjects?: util.FormObjectValue[];
+  sourcePlans?: util.FormObjectValue[];
+  sourceGlobalClusters?: util.FormObjectValue[];
+  sourceEmergencies?: util.FormObjectValue[];
+  destinationOrganizations?: util.FormObjectValue[];
+  destinationLocations?: util.FormObjectValue[];
+  destinationUsageYears?: util.FormObjectValue[];
+  destinationProjects?: util.FormObjectValue[];
+  destinationPlans?: util.FormObjectValue[];
+  destinationGlobalClusters?: util.FormObjectValue[];
+  destinationEmergencies?: util.FormObjectValue[];
   includeChildrenOfParkedFlows?: boolean;
   restricted?: boolean;
 }
@@ -85,7 +85,7 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
 };
 
 const FORM_VALIDATION = io.partial({
-  flowID: io.array(codecs.POSITIVE_INTEGER_FROM_STRING),
+  flowID: io.array(util.POSITIVE_INTEGER_FROM_STRING),
 });
 
 const StyledDiv = tw.div`
@@ -100,8 +100,8 @@ export const FilterFlowsTable = (props: Props) => {
 
   const { lang, env } = useContext(AppContext);
   const environment = env();
-  const [infoAlertDisplay, setInfoAlertDisplay] = useState(
-    util.getLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', true)
+  const [shouldDisplayInfoAlert, setShouldDisplayInfoAlert] = useState(
+    helper.getLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', true)
   );
 
   const queryFilters = decodeFilters(
@@ -109,8 +109,11 @@ export const FilterFlowsTable = (props: Props) => {
     FLOWS_FILTER_INITIAL_VALUES
   );
   const handleInfoAlertClose = () => {
-    util.setLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', false);
-    setInfoAlertDisplay(false);
+    helper.setLocalStorageItem<LocalStorageSchema>(
+      'filterCommaSeparate',
+      false
+    );
+    setShouldDisplayInfoAlert(false);
   };
 
   const handleSubmit = (values: FlowsFilterValues) => {
@@ -189,7 +192,7 @@ export const FilterFlowsTable = (props: Props) => {
                 severity="info"
                 onClose={handleInfoAlertClose}
                 sx={{
-                  display: infoAlertDisplay ? 'flex' : 'none',
+                  display: shouldDisplayInfoAlert ? 'flex' : 'none',
                   ...tw`mt-4`,
                 }}
               >
@@ -239,14 +242,16 @@ export const FilterFlowsTable = (props: Props) => {
                       await environment.model.categories.getCategories({
                         query: 'flowStatus',
                       });
-                    return response.map((responseValue): FormObjectValue => {
-                      return {
-                        displayLabel: responseValue.name,
-                        value: responseValue.name
-                          .toLowerCase()
-                          .replace(' ', '_'),
-                      };
-                    });
+                    return response.map(
+                      (responseValue): util.FormObjectValue => {
+                        return {
+                          displayLabel: responseValue.name,
+                          value: responseValue.name
+                            .toLowerCase()
+                            .replace(' ', '_'),
+                        };
+                      }
+                    );
                   }}
                   isAutocompleteAPI={false}
                 />

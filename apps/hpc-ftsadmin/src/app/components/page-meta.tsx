@@ -11,7 +11,7 @@ interface Props {
 export const PageMeta = (props: Props) => {
   const { title } = props;
   const { lang } = useContext(AppContext);
-  const titleSegments = [...(title || []), t.t(lang, (s) => s.title)];
+  const titleSegments = [...(title ?? []), t.t(lang, (s) => s.title)];
 
   return <Helmet title={titleSegments.join(' - ')} />;
 };

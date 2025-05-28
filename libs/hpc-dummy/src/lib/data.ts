@@ -1,4 +1,4 @@
-import { DummyData } from './data-types';
+import { type DummyData } from './data-types';
 
 /**
  * TODO: Something weird is going on with these json imports, it's importing
@@ -488,28 +488,30 @@ export const INITIAL_DATA: DummyData = {
 
 // Add access to all things
 for (const op of INITIAL_DATA.operations) {
-  INITIAL_DATA.access.active.push({
-    target: {
-      type: 'operation',
-      targetId: op.id,
+  INITIAL_DATA.access.active.push(
+    {
+      target: {
+        type: 'operation',
+        targetId: op.id,
+      },
+      grantee: {
+        type: 'user',
+        id: 0,
+      },
+      roles: ['operationLead'],
     },
-    grantee: {
-      type: 'user',
-      id: 0,
-    },
-    roles: ['operationLead'],
-  });
-  INITIAL_DATA.access.active.push({
-    target: {
-      type: 'operation',
-      targetId: op.id,
-    },
-    grantee: {
-      type: 'user',
-      id: 1,
-    },
-    roles: ['operationLead'],
-  });
+    {
+      target: {
+        type: 'operation',
+        targetId: op.id,
+      },
+      grantee: {
+        type: 'user',
+        id: 1,
+      },
+      roles: ['operationLead'],
+    }
+  );
   INITIAL_DATA.access.invites.push({
     target: {
       type: 'operation',

@@ -1,6 +1,6 @@
-import { Session } from '@unocha/hpc-core';
-import { Model } from '@unocha/hpc-data';
-import { LanguageKey } from '../i18n';
+import { type Session } from '@unocha/hpc-core';
+import { type Model } from '@unocha/hpc-data';
+import { type LanguageKey } from '../i18n';
 
 export interface Environment {
   /**
