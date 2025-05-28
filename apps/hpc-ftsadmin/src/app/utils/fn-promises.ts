@@ -274,7 +274,10 @@ export const fnOrganizationType = async (env: Environment) => {
       }
       return organizationType;
     })
-    .filter((organizationType) => organizationType.parentID !== null)
+    .filter(
+      (organizationType) =>
+        organizationType.name === 'Other' || organizationType.parentID !== null
+    )
     .sort((a, b) => a.name.localeCompare(b.name));
   return defaultOptions(response);
 };
