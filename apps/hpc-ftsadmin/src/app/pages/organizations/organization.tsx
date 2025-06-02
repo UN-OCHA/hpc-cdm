@@ -74,24 +74,21 @@ const parseOrganizationToInitialValue = async (
     abbreviation,
     nativeName,
     url,
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    active,
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    verified,
+    active: isActive,
+    verified: isVerified,
     notes,
     categories,
     locations,
     parent,
     comments,
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    collectiveInd,
+    collectiveInd: isCollectiveInd,
   } = org;
   const res: AddEditOrganizationValues = {
     name,
     abbreviation,
-    active,
-    verified,
-    collectiveInd,
+    isActive,
+    isVerified,
+    isCollectiveInd,
     organizationTypes: null,
     nativeName: nativeName ?? undefined,
     url: url ?? undefined,

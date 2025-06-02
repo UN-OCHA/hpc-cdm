@@ -1,8 +1,4 @@
-import {
-  type FormObjectValue,
-  type projects,
-  type usageYears,
-} from '@unocha/hpc-data';
+import { type projects, type usageYears, type util } from '@unocha/hpc-data';
 import { THEME } from '@unocha/hpc-ui';
 import { type FormikHelpers } from 'formik';
 import { type Environment } from '../../environments/interface';
@@ -43,8 +39,8 @@ type AutofillProps = {
   values: FlowFormType;
   env: Environment;
   newValue?:
-    | NonNullable<string | FormObjectValue>
-    | Array<string | FormObjectValue>
+    | NonNullable<string | util.FormObjectValue>
+    | Array<string | util.FormObjectValue>
     | null;
 };
 
@@ -105,7 +101,7 @@ const helperSetFieldValue = <T extends keyof FieldValueType>(
     return;
   }
 
-  let formObjectValues: FormObjectValue[] | undefined;
+  let formObjectValues: util.FormObjectValue[] | undefined;
 
   if (isOrganizations(objectType, newUniqueValues)) {
     formObjectValues = organizationsOptions(
@@ -309,7 +305,7 @@ export const autofillProject = async ({
     setFieldValue('earmarkingType', {
       value: earmarked.id,
       displayLabel: earmarked.name,
-    } satisfies FormObjectValue);
+    } satisfies util.FormObjectValue);
   }
 
   if (projectLocations && projectLocations.length > 0) {
@@ -439,7 +435,7 @@ export const autofillFieldClusters = async ({
   if (newValue && newValue.length > 0) {
     const fieldClusters = newValue.filter(
       (fieldCluster) => typeof fieldCluster !== 'string'
-    ) as FormObjectValue[];
+    ) as util.FormObjectValue[];
 
     // Here we make sure to just take the newly added value
     // in case the user removed some of the previously
@@ -479,9 +475,9 @@ export const autofillGlobalClusters = async ({
     return;
   }
   const newGlobalClusterIds = new Set(
-    (newValue.filter((v) => typeof v !== 'string') as FormObjectValue[]).map(
-      (v) => valueToInteger(v.value)
-    )
+    (
+      newValue.filter((v) => typeof v !== 'string') as util.FormObjectValue[]
+    ).map((v) => valueToInteger(v.value))
   );
 
   const direction = fieldName.includes('Destination')
@@ -546,7 +542,7 @@ export const autofillUsageYears = async ({
     {
       displayLabel: multiyear.name,
       value: multiyear.id,
-    } satisfies FormObjectValue,
+    } satisfies util.FormObjectValue,
   ]);
 };
 

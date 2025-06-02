@@ -28,13 +28,13 @@ export type GetEmergenciesAutocompleteParams = t.TypeOf<
 export const GET_EMERGENCIES_RESULT = t.array(EMERGENCY);
 export type GetEmergenciesResult = t.TypeOf<typeof GET_EMERGENCIES_RESULT>;
 
-const GET_EMERGENCIES_PARAMS = t.partial({
+export const GET_EMERGENCIES_PARAMS = t.partial({
   years: t.array(t.number),
   locations: t.array(t.number),
 });
 export type GetEmergenciesParams = t.TypeOf<typeof GET_EMERGENCIES_PARAMS>;
 
-const GET_EMERGENCY_PARAMS = t.type({
+export const GET_EMERGENCY_PARAMS = t.type({
   id: t.number,
 });
 export type GetEmergencyParams = t.TypeOf<typeof GET_EMERGENCY_PARAMS>;

@@ -1,5 +1,5 @@
 import { Box, Modal } from '@mui/material';
-import { type FormObjectValue, type flows } from '@unocha/hpc-data';
+import { type flows, type util } from '@unocha/hpc-data';
 import { type AsyncAutocompleteSelectProps, C } from '@unocha/hpc-ui';
 import { useFormikContext } from 'formik';
 import { useState } from 'react';
@@ -80,8 +80,8 @@ const FlowSearch = (props: FlowSearchProps) => {
   const env = getEnv();
   const lang = getContext().lang;
 
-  const [flow, setFlow] = useState<FormObjectValue | null>(null);
-  const [open, setOpen] = useState(false);
+  const [flow, setFlow] = useState<util.FormObjectValue | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const [flows, setFlows] = useState<flows.GetFlowsAutocompleteResult>();
   const { setFieldValue, values } = useFormikContext<FlowFormType>();
 
@@ -112,7 +112,7 @@ const FlowSearch = (props: FlowSearchProps) => {
         }
         const MAP_KEYS_TO_FIELDS: Record<
           (typeof OVERRIDING_FLOW_KEYS)[number],
-          FormObjectValue[] | FormObjectValue | null
+          util.FormObjectValue[] | util.FormObjectValue | null
         > = {
           fundingSourceOrganizations: organizationsOptions(
             overridingFlow.organizations.filter(
@@ -169,7 +169,7 @@ const FlowSearch = (props: FlowSearchProps) => {
         setFieldValue(name, [...existingValues, flowLink]);
       }
 
-      setOpen(false);
+      setIsOpen(false);
     }
   };
 
@@ -179,14 +179,14 @@ const FlowSearch = (props: FlowSearchProps) => {
         <C.Button
           text={text}
           color="neutral"
-          onClick={() => setOpen(true)}
+          onClick={() => setIsOpen(true)}
           startIcon={startIcon}
         />
       </StyledDiv>
       <Modal
-        open={open}
+        open={isOpen}
         keepMounted={false}
-        onClose={() => setOpen(!open)}
+        onClose={() => setIsOpen(!isOpen)}
         sx={tw`flex items-center justify-center`}
       >
         <ModalContainer>

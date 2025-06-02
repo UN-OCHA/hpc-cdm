@@ -8,15 +8,14 @@ import {
   useTheme,
 } from '@mui/material';
 import {
-  type FormObjectValue,
   type categories,
-  util as codecs,
   errors,
   type flows,
   type governingEntities,
   type locations,
   type organizations,
   type usageYears,
+  util,
 } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import type { Dayjs } from 'dayjs';
@@ -94,11 +93,11 @@ import TextFieldReview from './inputs/text-field-pending-review';
 type FlowFormProps = {
   load: () => void;
   inactiveReasons: categories.GetCategoriesResult;
-  flowType: FormObjectValue[];
-  contributionType: FormObjectValue[];
-  method: FormObjectValue[];
-  flowStatus: FormObjectValue[];
-  earmarkingType: FormObjectValue[];
+  flowType: util.FormObjectValue[];
+  contributionType: util.FormObjectValue[];
+  method: util.FormObjectValue[];
+  flowStatus: util.FormObjectValue[];
+  earmarkingType: util.FormObjectValue[];
   initialValues?: FlowFormType;
   flow?: flows.GetFlowResult;
   isPending?: boolean;
@@ -106,43 +105,43 @@ type FlowFormProps = {
 };
 
 export type FlowFormType = {
-  fundingSourceOrganizations: FormObjectValue[];
-  fundingSourceUsageYears: FormObjectValue[];
-  fundingSourceLocations: FormObjectValue[];
-  fundingSourceEmergencies: FormObjectValue[];
-  fundingSourceGlobalClusters: FormObjectValue[];
-  fundingSourceFieldClusters: FormObjectValue[];
-  fundingSourceProject: FormObjectValue | null;
-  fundingSourcePlan: FormObjectValue | null;
+  fundingSourceOrganizations: util.FormObjectValue[];
+  fundingSourceUsageYears: util.FormObjectValue[];
+  fundingSourceLocations: util.FormObjectValue[];
+  fundingSourceEmergencies: util.FormObjectValue[];
+  fundingSourceGlobalClusters: util.FormObjectValue[];
+  fundingSourceFieldClusters: util.FormObjectValue[];
+  fundingSourceProject: util.FormObjectValue | null;
+  fundingSourcePlan: util.FormObjectValue | null;
 
-  fundingDestinationOrganizations: FormObjectValue[];
-  fundingDestinationAnonymizedOrganizations: FormObjectValue[];
-  fundingDestinationUsageYears: FormObjectValue[];
-  fundingDestinationLocations: FormObjectValue[];
-  fundingDestinationEmergencies: FormObjectValue[];
-  fundingDestinationGlobalClusters: FormObjectValue[];
-  fundingDestinationFieldClusters: FormObjectValue[];
-  fundingDestinationProject: FormObjectValue | null;
-  fundingDestinationPlan: FormObjectValue | null;
+  fundingDestinationOrganizations: util.FormObjectValue[];
+  fundingDestinationAnonymizedOrganizations: util.FormObjectValue[];
+  fundingDestinationUsageYears: util.FormObjectValue[];
+  fundingDestinationLocations: util.FormObjectValue[];
+  fundingDestinationEmergencies: util.FormObjectValue[];
+  fundingDestinationGlobalClusters: util.FormObjectValue[];
+  fundingDestinationFieldClusters: util.FormObjectValue[];
+  fundingDestinationProject: util.FormObjectValue | null;
+  fundingDestinationPlan: util.FormObjectValue | null;
 
   isNewMoney: boolean;
   amountUSD: string;
   amountOriginalCurrency: string;
-  currency: FormObjectValue | null;
+  currency: util.FormObjectValue | null;
   exchangeRate: string;
   flowDescription: string;
   firstReported: Dayjs | null;
   decisionDate: Dayjs | null;
   donorBudgetYear: string;
-  flowType: FormObjectValue | null;
-  flowStatus: FormObjectValue | null;
+  flowType: util.FormObjectValue | null;
+  flowStatus: util.FormObjectValue | null;
   flowDate: Dayjs | null;
-  contributionType: FormObjectValue | null;
-  earmarkingType: FormObjectValue | null;
-  method: FormObjectValue | null;
-  childMethod: FormObjectValue | null;
-  keywords: FormObjectValue[];
-  beneficiaryGroup: FormObjectValue | null;
+  contributionType: util.FormObjectValue | null;
+  earmarkingType: util.FormObjectValue | null;
+  method: util.FormObjectValue | null;
+  childMethod: util.FormObjectValue | null;
+  keywords: util.FormObjectValue[];
+  beneficiaryGroup: util.FormObjectValue | null;
   notes: string;
 
   parentFlow: FlowLinkProps | null;
@@ -150,7 +149,7 @@ export type FlowFormType = {
 
   reportingDetails: ReportingDetailProps[];
 
-  restricted: boolean;
+  isRestricted: boolean;
   isErrorCorrection: boolean;
   isInactive: boolean;
 };
@@ -266,7 +265,7 @@ export const INITIAL_FORM_VALUES: FlowFormType = {
 
   reportingDetails: [REPORTING_DETAIL_INITIAL_VALUES],
 
-  restricted: false,
+  isRestricted: false,
   isErrorCorrection: false,
   isInactive: false,
 };
@@ -289,23 +288,20 @@ export type FlowFormValidationKeys = (typeof FLOW_FORM_VALIDATION_KEYS)[number];
 const FORM_VALIDATION_SCHEMA: io.TypeC<
   Record<FlowFormValidationKeys, io.Mixed>
 > = io.type({
-  amountUSD: codecs.CURRENCY_INTEGER_GREATER_THAN_0_FROM_STRING,
+  amountUSD: util.CURRENCY_INTEGER_GREATER_THAN_0_FROM_STRING,
   amountOriginalCurrency: io.union([
-    codecs.EMPTY_STRING,
-    codecs.POSITIVE_NUMBER_FROM_STRING,
+    util.EMPTY_STRING,
+    util.POSITIVE_NUMBER_FROM_STRING,
   ]),
-  donorBudgetYear: io.union([codecs.EMPTY_STRING, codecs.YEAR_FROM_STRING]),
-  exchangeRate: io.union([
-    codecs.EMPTY_STRING,
-    codecs.POSITIVE_NUMBER_FROM_STRING,
-  ]),
-  flowType: codecs.NON_NULL_VALUE,
-  flowStatus: codecs.NON_NULL_VALUE,
-  flowDescription: codecs.NON_EMPTY_STRING,
-  firstReported: codecs.VALID_DAYJS_DATE,
-  flowDate: codecs.VALID_DAYJS_DATE,
-  fundingSourceUsageYears: codecs.NON_EMPTY_ARRAY,
-  fundingDestinationUsageYears: codecs.NON_EMPTY_ARRAY,
+  donorBudgetYear: io.union([util.EMPTY_STRING, util.YEAR_FROM_STRING]),
+  exchangeRate: io.union([util.EMPTY_STRING, util.POSITIVE_NUMBER_FROM_STRING]),
+  flowType: util.NON_NULL_VALUE,
+  flowStatus: util.NON_NULL_VALUE,
+  flowDescription: util.NON_EMPTY_STRING,
+  firstReported: util.VALID_DAYJS_DATE,
+  flowDate: util.VALID_DAYJS_DATE,
+  fundingSourceUsageYears: util.NON_EMPTY_ARRAY,
+  fundingDestinationUsageYears: util.NON_EMPTY_ARRAY,
 });
 
 const validationErrorMessages = (
@@ -469,9 +465,9 @@ export const FlowForm = (props: FlowFormProps) => {
     flowStatus,
   } = props;
 
-  const [submitLoading, setSubmitLoading] = useState(false);
-  const [rejectLoading, setRejectLoading] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  const [shouldRejectLoading, setShouldRejectLoading] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [shouldAcceptAllPendingChanges, setShouldAcceptAllPendingChanges] =
     useState(false);
   const [pendingValuesHandled, setPendingValuesHandled] = useState(0);
@@ -488,7 +484,7 @@ export const FlowForm = (props: FlowFormProps) => {
       acc[isMethodOption(value) ? 0 : 1].push(value);
       return acc;
     },
-    [[], []] as [FormObjectValue[], FormObjectValue[]]
+    [[], []] as [util.FormObjectValue[], util.FormObjectValue[]]
   );
 
   const flowInitialValues = initialValues ?? {
@@ -560,13 +556,13 @@ export const FlowForm = (props: FlowFormProps) => {
   const isDataConsistencyErrorMap = (
     reason: errors.DataConsistencyErrorReason[number]
   ): reason is ConsistencyErrorReasonMap => {
-    const KEYS: Array<keyof ConsistencyErrorReasons> = [
+    const KEYS = new Set<string>([
       'usageYears',
       'locations',
       'governingEntities',
       'organizations',
-    ];
-    return KEYS.includes(reason.type);
+    ] satisfies Array<keyof ConsistencyErrorReasons>);
+    return KEYS.has(reason.type);
   };
 
   const handleEarmarkingRestriction = (parentValues: FlowLinkProps | null) => {
@@ -586,7 +582,7 @@ export const FlowForm = (props: FlowFormProps) => {
     const isParentEarmarking = (
       earmarking: string
     ): earmarking is (typeof EARMARKING_FREEDOM)[number] =>
-      EARMARKING_FREEDOM.includes(earmarking);
+      new Set<string>(EARMARKING_FREEDOM).has(earmarking);
 
     const parentEarmarking = parentValues.earmarking.name;
     if (!isParentEarmarking(parentEarmarking)) {
@@ -594,7 +590,9 @@ export const FlowForm = (props: FlowFormProps) => {
     }
 
     const index = EARMARKING_FREEDOM.indexOf(parentEarmarking);
-    const allowedChildEarmarking = new Set(EARMARKING_FREEDOM.slice(index));
+    const allowedChildEarmarking = new Set<string>(
+      EARMARKING_FREEDOM.slice(index)
+    );
 
     return earmarkingType.filter((e) =>
       allowedChildEarmarking.has(e.displayLabel)
@@ -668,7 +666,7 @@ export const FlowForm = (props: FlowFormProps) => {
     isSaved?: boolean
   ) => {
     toast.dismiss();
-    setSubmitLoading(true);
+    setIsSubmitLoading(true);
     const isValidFlow = await validateFlow({
       env,
       lang,
@@ -678,7 +676,7 @@ export const FlowForm = (props: FlowFormProps) => {
       pendingValues,
     });
     if (!isValidFlow) {
-      setSubmitLoading(false);
+      setIsSubmitLoading(false);
       return;
     }
     if (flow?.id) {
@@ -690,7 +688,7 @@ export const FlowForm = (props: FlowFormProps) => {
           ),
           TOAST_CONFIG_ERROR
         );
-        setSubmitLoading(false);
+        setIsSubmitLoading(false);
         return;
       }
       env.model.flows
@@ -721,7 +719,7 @@ export const FlowForm = (props: FlowFormProps) => {
         .catch((error) => {
           handleSubmitError(error);
         })
-        .finally(() => setSubmitLoading(false));
+        .finally(() => setIsSubmitLoading(false));
     } else {
       env.model.flows
         .createFlow(
@@ -740,7 +738,7 @@ export const FlowForm = (props: FlowFormProps) => {
         .catch((error) => {
           handleSubmitError(error);
         })
-        .finally(() => setSubmitLoading(false));
+        .finally(() => setIsSubmitLoading(false));
     }
   };
   const handleChangeFirstReported = (
@@ -778,7 +776,7 @@ export const FlowForm = (props: FlowFormProps) => {
 
   const handleDeleteFlow = async (values: FlowFormType) => {
     toast.dismiss();
-    setDeleteLoading(true);
+    setIsDeleteLoading(true);
     if (
       !globalThis.confirm(
         t.t(
@@ -787,7 +785,7 @@ export const FlowForm = (props: FlowFormProps) => {
         )
       )
     ) {
-      setDeleteLoading(false);
+      setIsDeleteLoading(false);
       return;
     }
     if (!validateFlowIsUnlinked(values) || !flow) {
@@ -798,10 +796,10 @@ export const FlowForm = (props: FlowFormProps) => {
         ),
         TOAST_CONFIG_ERROR
       );
-      setDeleteLoading(false);
+      setIsDeleteLoading(false);
       return;
     }
-    env.model.flows
+    await env.model.flows
       .deleteFlow({
         flowId: flow.id,
         versionID: flow.versionID,
@@ -827,14 +825,14 @@ export const FlowForm = (props: FlowFormProps) => {
           TOAST_CONFIG_ERROR
         );
       })
-      .finally(() => setDeleteLoading(false));
+      .finally(() => setIsDeleteLoading(false));
   };
 
   const handleRejectFlow = async (values: FlowFormType) => {
     toast.dismiss();
-    setRejectLoading(true);
+    setShouldRejectLoading(true);
     if (!flow) {
-      setRejectLoading(false);
+      setShouldRejectLoading(false);
       return;
     }
     if (
@@ -842,7 +840,7 @@ export const FlowForm = (props: FlowFormProps) => {
         t.t(lang, (s) => s.components.flowForm.rejectFlow.confirm)
       )
     ) {
-      setRejectLoading(false);
+      setShouldRejectLoading(false);
       return;
     }
     const rejected = inactiveReasons.find(
@@ -867,7 +865,7 @@ export const FlowForm = (props: FlowFormProps) => {
       }
     ).flow;
 
-    env.model.flows
+    await env.model.flows
       .updateFlow({
         flow: {
           ...newFlow,
@@ -899,7 +897,7 @@ export const FlowForm = (props: FlowFormProps) => {
           TOAST_CONFIG_ERROR
         );
       })
-      .finally(() => setRejectLoading(false));
+      .finally(() => setShouldRejectLoading(false));
   };
   const handleApproveAll = () => {
     setShouldAcceptAllPendingChanges(true);
@@ -912,29 +910,30 @@ export const FlowForm = (props: FlowFormProps) => {
 
   const handleFundingDestinationOrganizations = (
     newValue:
-      | NonNullable<string | FormObjectValue>
-      | Array<string | FormObjectValue>
+      | NonNullable<string | util.FormObjectValue>
+      | Array<string | util.FormObjectValue>
       | null,
     setFieldValue: FormikHelpers<FlowFormType>['setFieldValue']
   ) => {
     const isFormObjectValueArray = (
-      val: Array<string | FormObjectValue>
-    ): val is FormObjectValue[] => !val.some((val) => typeof val === 'string');
+      val: Array<string | util.FormObjectValue>
+    ): val is util.FormObjectValue[] =>
+      !val.some((val) => typeof val === 'string');
 
     setFieldValue('fundingDestinationOrganizations', newValue);
     if (!Array.isArray(newValue) || !isFormObjectValueArray(newValue)) {
       return;
     }
 
-    if (!newValue.some((org) => org.confidential)) {
+    if (!newValue.some((org) => org.isConfidential)) {
       setFieldValue('fundingDestinationAnonymizedOrganizations', []);
     }
   };
 
   const handleMethod = (
     newValue:
-      | NonNullable<string | FormObjectValue>
-      | Array<string | FormObjectValue>
+      | NonNullable<string | util.FormObjectValue>
+      | Array<string | util.FormObjectValue>
       | null,
     setFieldValue: FormikHelpers<FlowFormType>['setFieldValue']
   ) => {
@@ -976,7 +975,12 @@ export const FlowForm = (props: FlowFormProps) => {
         return (
           <Form>
             <BlockNavigationOnUnsavedChanges
-              {...{ dirty, submitLoading, rejectLoading, deleteLoading }}
+              {...{
+                dirty,
+                submitLoading: isSubmitLoading,
+                rejectLoading: shouldRejectLoading,
+                deleteLoading: isDeleteLoading,
+              }}
             />
             {!isDisabled && (
               <C.CheckBox
@@ -1033,7 +1037,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     color="secondary"
                     onClick={() => handleDeleteFlow(values)}
                     text={t.t(lang, (s) => s.components.flowForm.deleteFlow)}
-                    displayLoading={deleteLoading}
+                    shouldDisplayLoading={isDeleteLoading}
                     startIcon={FaTrashAlt}
                   />
                 </Box>
@@ -1046,7 +1050,7 @@ export const FlowForm = (props: FlowFormProps) => {
                         lang,
                         (s) => s.components.flowForm.rejectFlow.button
                       )}
-                      displayLoading={rejectLoading}
+                      shouldDisplayLoading={shouldRejectLoading}
                       startIcon={MdClose}
                     />
                     <Box
@@ -1072,7 +1076,7 @@ export const FlowForm = (props: FlowFormProps) => {
                             s.components.flowForm.submitValidation
                               .rejectAllPendingChanges
                         )}
-                        displayLoading={rejectLoading}
+                        shouldDisplayLoading={shouldRejectLoading}
                         startIcon={MdClose}
                       />
                     </Box>
@@ -1233,7 +1237,7 @@ export const FlowForm = (props: FlowFormProps) => {
                                 env,
                                 valueToInteger(values.fundingSourcePlan.value)
                               )
-                            : new Promise<FormObjectValue[]>((resolve) =>
+                            : new Promise<util.FormObjectValue[]>((resolve) =>
                                 resolve([])
                               )
                         }
@@ -1248,7 +1252,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           })
                         }
                         disabled={
-                          isDisabled || values.fundingSourcePlan === null
+                          !!isDisabled || values.fundingSourcePlan === null
                         }
                         isAutocompleteAPI={false}
                         pendingValues={
@@ -1346,7 +1350,7 @@ export const FlowForm = (props: FlowFormProps) => {
                     isMulti
                   />
                   {values.fundingDestinationOrganizations.some(
-                    (org) => org.confidential
+                    (org) => org.isConfidential
                   ) && (
                     <AsyncAutocompleteSelectReview
                       fieldName="fundingDestinationAnonymizedOrganizations"
@@ -1473,7 +1477,7 @@ export const FlowForm = (props: FlowFormProps) => {
                             env,
                             valueToInteger(values.fundingDestinationPlan.value)
                           )
-                        : new Promise<FormObjectValue[]>((resolve) =>
+                        : new Promise<util.FormObjectValue[]>((resolve) =>
                             resolve([])
                           )
                     }
@@ -1488,7 +1492,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       })
                     }
                     disabled={
-                      isDisabled || values.fundingDestinationPlan === null
+                      !!isDisabled || values.fundingDestinationPlan === null
                     }
                     isAutocompleteAPI={false}
                     pendingValues={
@@ -2041,7 +2045,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           s.components.flowForm.submitValidation.submitButton
                             .submit.button
                       )}
-                      displayLoading={submitLoading}
+                      shouldDisplayLoading={isSubmitLoading}
                     />
                   )}
                   {isValid && isPending && (
@@ -2053,12 +2057,12 @@ export const FlowForm = (props: FlowFormProps) => {
                           s.components.flowForm.submitValidation.submitButton
                             .saveAndApprove.button
                       )}
-                      displayLoading={submitLoading}
+                      shouldDisplayLoading={isSubmitLoading}
                     />
                   )}
                   {isPending && (
                     <C.Button
-                      onClick={async () => {
+                      onClick={() => {
                         handleSubmit(values as FlowFormTypeValidated, true);
                       }}
                       color="primary_light"
@@ -2068,12 +2072,12 @@ export const FlowForm = (props: FlowFormProps) => {
                           s.components.flowForm.submitValidation.submitButton
                             .save.button
                       )}
-                      displayLoading={submitLoading}
+                      shouldDisplayLoading={isSubmitLoading}
                     />
                   )}
                   {isInactive && !isPending && (
                     <C.Button
-                      onClick={async () => {
+                      onClick={() => {
                         handleSubmit({
                           ...values,
                           isInactive: false,
@@ -2086,7 +2090,7 @@ export const FlowForm = (props: FlowFormProps) => {
                           s.components.flowForm.submitValidation.submitButton
                             .reactivate.button
                       )}
-                      displayLoading={submitLoading}
+                      shouldDisplayLoading={isSubmitLoading}
                     />
                   )}
                 </Box>

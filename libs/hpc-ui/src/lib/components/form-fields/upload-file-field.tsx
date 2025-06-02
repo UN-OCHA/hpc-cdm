@@ -4,7 +4,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { type FormObjectValue } from '@unocha/hpc-data';
+import { type util } from '@unocha/hpc-data';
 import { useRef, useState } from 'react';
 import tw from 'twin.macro';
 import AsyncIconButton from '../async-icon-button';
@@ -18,10 +18,10 @@ type UploadFileProps = {
     setSavedFile: React.Dispatch<React.SetStateAction<File | undefined>>
   ) => Promise<unknown>;
   onDownload?: () => Promise<unknown>;
-  file?: FormObjectValue;
+  file?: util.FormObjectValue;
   confirmUpload?: {
     validation: (file?: File, ...args: unknown[]) => unknown;
-    onSuccess: (fileName: string | null) => unknown;
+    onSuccess: (fileName: string) => unknown;
     onError: (err: unknown) => unknown;
   };
   disabled?: boolean;
@@ -78,10 +78,10 @@ const UploadFile = ({
   disabled,
 }: UploadFileProps) => {
   const inputFile = useRef<HTMLInputElement | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [savedFile, setSavedFile] = useState<File>();
 
-  const fileName = file ? file.displayLabel : savedFile ? savedFile.name : null;
+  const fileName = file ? file.displayLabel : savedFile ? savedFile.name : '';
 
   const resetFileField = () => {
     if (inputFile.current?.value) {
@@ -97,7 +97,7 @@ const UploadFile = ({
             onClick={() => {
               inputFile.current?.click();
             }}
-            displayLoading={loading}
+            shouldDisplayLoading={isLoading}
           />
         )
       ) : (
@@ -114,7 +114,7 @@ const UploadFile = ({
                     color="primary"
                     onClick={async () => {
                       const { onError, onSuccess } = confirmUpload;
-                      setLoading(true);
+                      setIsLoading(true);
                       try {
                         await onUpload(savedFile);
                         onSuccess(fileName);
@@ -123,7 +123,7 @@ const UploadFile = ({
                       } catch (error) {
                         onError(error);
                       } finally {
-                        setLoading(false);
+                        setIsLoading(false);
                       }
                     }}
                     text="Upload"
@@ -139,12 +139,12 @@ const UploadFile = ({
                       IconComponent={DeleteIcon}
                     />
                     <AsyncIconButton
-                      fnPromise={async () => {
+                      fnPromise={() => {
                         if (confirmUpload) {
                           inputFile.current?.click();
-                          return;
+                          return Promise.resolve(undefined);
                         }
-                        onDelete(setSavedFile).then(
+                        return onDelete(setSavedFile).then(
                           () => inputFile.current?.click()
                         );
                       }}
@@ -176,8 +176,8 @@ const UploadFile = ({
             setSavedFile(newFile);
             return;
           }
-          setLoading(true);
-          onUpload(newFile).then(() => setLoading(false));
+          setIsLoading(true);
+          onUpload(newFile).then(() => setIsLoading(false));
         }}
         ref={inputFile}
       />

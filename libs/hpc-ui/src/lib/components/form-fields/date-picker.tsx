@@ -72,7 +72,11 @@ const DatePicker = ({
     onChange: (date) => {
       setTouched(true);
       setIsControlledTouched(true);
-      controlledField ? controlledField.onChange(date) : setValue(date);
+      if (controlledField) {
+        controlledField.onChange(date);
+        return;
+      }
+      setValue(date);
     },
     label,
     slotProps: {

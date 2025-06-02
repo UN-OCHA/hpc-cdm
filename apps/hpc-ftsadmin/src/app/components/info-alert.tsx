@@ -9,13 +9,13 @@ type InfoAlertProps = {
   sxProps?: CSSProperties;
 };
 const InfoAlert = ({ text, localStorageKey, sxProps }: InfoAlertProps) => {
-  const [open, setOpen] = useState(
+  const [isOpen, setIsOpen] = useState(
     util.getLocalStorageItem<LocalStorageSchema>(localStorageKey, true)
   );
 
   const handleClose = () => {
     util.setLocalStorageItem<LocalStorageSchema>(localStorageKey, false);
-    setOpen(false);
+    setIsOpen(false);
   };
 
   return (
@@ -24,7 +24,7 @@ const InfoAlert = ({ text, localStorageKey, sxProps }: InfoAlertProps) => {
       onClose={handleClose}
       sx={{
         ...sxProps,
-        display: open ? 'flex' : 'none',
+        display: isOpen ? 'flex' : 'none',
       }}
     >
       {text}

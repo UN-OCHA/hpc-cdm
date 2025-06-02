@@ -174,7 +174,11 @@ const CompareRow = ({
     <TableRow>
       <TableCell10>{tableCellName}</TableCell10>
       <TableCell45>
-        {!flowAValue ? <Blank>[blank]</Blank> : flowAValue}
+        {flowAValue === '' || flowAValue === undefined ? (
+          <Blank>[blank]</Blank>
+        ) : (
+          flowAValue
+        )}
       </TableCell45>
       <TableCell45>
         {COMPARISON[comparisonMode(flowAValue, flowBValue)]({

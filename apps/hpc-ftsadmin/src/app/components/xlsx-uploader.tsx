@@ -6,10 +6,10 @@ import { t } from '../../i18n';
 import { getContext } from '../context';
 import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
 
-const VALID_FILE_EXTENSION = [
+const VALID_FILE_EXTENSION = new Set<string>([
   'application/vnd.ms-excel',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-] as const;
+]);
 
 const XLSXUploader = () => {
   const { lang, env: getEnv } = getContext();
@@ -20,7 +20,7 @@ const XLSXUploader = () => {
       return false;
     }
 
-    const isValid = VALID_FILE_EXTENSION.includes(file.type);
+    const isValid = VALID_FILE_EXTENSION.has(file.type);
 
     if (!isValid) {
       toast.error(
@@ -32,7 +32,7 @@ const XLSXUploader = () => {
     return isValid;
   };
 
-  const handleSuccess = (fileName: string | null = '') => {
+  const handleSuccess = (fileName: string = '') => {
     toast.success(
       t.t(lang, (s) => s.components.upload.success, {
         fileName,
@@ -61,8 +61,8 @@ const XLSXUploader = () => {
         startIcon: MdUploadFile,
       }}
       name="uploadXLSX"
-      onDelete={async (setSavedFile) => {
-        setSavedFile(undefined);
+      onDelete={(setSavedFile) => {
+        return Promise.resolve(setSavedFile(undefined));
       }}
       onUpload={async (file) => {
         if (!file) {

@@ -43,7 +43,7 @@ const TextFieldWrapper = ({
   disabled,
 }: TextFieldWrapperProps) => {
   const [field, meta, { setValue }] = useField(name);
-  const [controlledTouched, setControlledTouched] = useState(false);
+  const [isControlledTouched, setIsControlledTouched] = useState(false);
   const [fieldValue, setFieldValue] = useState(
     controlledField?.value ?? field.value
   );
@@ -84,7 +84,7 @@ const TextFieldWrapper = ({
 
   if (
     (meta.touched && meta.error) ||
-    (controlledTouched && !!controlledField?.error)
+    (isControlledTouched && !!controlledField?.error)
   ) {
     configTextField.error = true;
     configTextField.helperText = meta.error ?? controlledField?.error;
@@ -96,7 +96,7 @@ const TextFieldWrapper = ({
       onBlur={(e) => {
         if (controlledField) {
           controlledField.onChange(fieldValue);
-          setControlledTouched(true);
+          setIsControlledTouched(true);
         } else {
           field.onBlur(e);
           setValue(fieldValue);

@@ -1,4 +1,4 @@
-import type { FormObjectValue } from '@unocha/hpc-data';
+import type { util } from '@unocha/hpc-data';
 import type { FlowFormType } from './flow-form';
 
 import { Box, Chip, Tooltip } from '@mui/material';
@@ -35,16 +35,16 @@ const Blank = tw.span`
 `;
 
 const isEmpty = (
-  value: FormObjectValue | FormObjectValue[] | null
-): value is FormObjectValue[] | null => {
+  value: util.FormObjectValue | util.FormObjectValue[] | null
+): value is util.FormObjectValue[] | null => {
   if (Array.isArray(value)) {
     return value.length === 0;
   }
   return !value;
 };
 const isArrayWithContent = (
-  value: FormObjectValue | FormObjectValue[] | null
-): value is FormObjectValue[] => {
+  value: util.FormObjectValue | util.FormObjectValue[] | null
+): value is util.FormObjectValue[] => {
   return Array.isArray(value) && value.length > 0;
 };
 

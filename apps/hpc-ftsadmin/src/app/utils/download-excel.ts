@@ -19,7 +19,7 @@ export const downloadExcel = async (
   const worksheet = workbook.addWorksheet('Sheet1');
 
   const headers = tableHeaders
-    .filter((header) => header.active)
+    .filter((header) => header.isActive)
     .map((header) =>
       t.t(lang, (s) => s.components.flowsTable.headers[header.label])
     );
@@ -30,7 +30,7 @@ export const downloadExcel = async (
     const tableRow: { [label: string]: string | number } = {};
 
     for (const tableHeader of tableHeaders) {
-      if (tableHeader.active) {
+      if (tableHeader.isActive) {
         const label = tableHeader.label;
         const displayLabel = t.t(
           lang,
@@ -61,7 +61,7 @@ export const downloadExcel = async (
 
           case 'dataProvider':
             tableRow[displayLabel] =
-              flow.externalReferences?.at(0)?.systemID || EMPTY_CELL;
+              flow.externalReferences?.at(0)?.systemID ?? EMPTY_CELL;
             break;
 
           case 'decisionDate':
@@ -139,7 +139,7 @@ export const downloadExcel = async (
           }
 
           case 'exchangeRate':
-            tableRow[displayLabel] = flow.exchangeRate || EMPTY_CELL;
+            tableRow[displayLabel] = flow.exchangeRate ?? EMPTY_CELL;
             break;
 
           case 'flowDate':

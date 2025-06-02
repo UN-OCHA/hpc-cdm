@@ -168,7 +168,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
             }}
           >
             {tableHeaders.map((column) => {
-              if (!column.active) {
+              if (!column.isActive) {
                 return null;
               }
               switch (column.identifierID) {
@@ -264,7 +264,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                       size="small"
                       data-test="organization-table-created-by"
                     >
-                      {parseUpdatedCreatedBy(row.create, lang)}
+                      {parseUpdatedCreatedBy(row.create)}
                       {}
                     </TableCell>
                   );
@@ -275,7 +275,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                       size="small"
                       data-test="organization-table-updated-by"
                     >
-                      {parseUpdatedCreatedBy(row.update, lang)}
+                      {parseUpdatedCreatedBy(row.update)}
                     </TableCell>
                   );
                 default:
@@ -304,7 +304,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
         <StickyTableHead>
           <TableRow>
             {tableHeaders.map((header) => {
-              if (!header.active) {
+              if (!header.isActive) {
                 return null;
               }
               return (
@@ -312,13 +312,13 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                   size="small"
                   key={`${header.identifierID}_${header.label}`}
                   data-test={`header-${header.label}`}
-                  {...(header.sortable &&
+                  {...(header.isSortable &&
                     query.orderBy === header.identifierID && {
                       'aria-sort':
                         query.orderDir === 'ASC' ? 'ascending' : 'descending',
                     })}
                 >
-                  {header.sortable ? (
+                  {header.isSortable ? (
                     <TableSortLabel
                       active={query.orderBy === header.identifierID}
                       direction={

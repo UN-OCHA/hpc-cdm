@@ -126,6 +126,7 @@ const filterValueIsFlowStatusType = (
 };
 
 const parseInInitialValues = <T extends Filters>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filters: Record<keyof T, any>,
   initialValues: T
 ) => {
@@ -172,7 +173,7 @@ export const decodeFilters = <T extends Filters>(
   initialValues: T
 ): T => {
   try {
-    const res: T = parseInInitialValues<T>(
+    const res: T = parseInInitialValues(
       JSON.parse(stringFilters),
       initialValues
     );

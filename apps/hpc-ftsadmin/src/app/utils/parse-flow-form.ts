@@ -295,7 +295,8 @@ export const parseFlowForm = (
     notes: dirtyNotes,
     childFlows,
     reportingDetails,
-    restricted,
+    isRestricted,
+    parentFlow,
   } = values;
 
   const pendingReviewCategory = inactiveReasons.find(
@@ -342,7 +343,7 @@ export const parseFlowForm = (
     amountUSD: currencyToInteger(amountUSD),
     budgetYear: valueToInteger(donorBudgetYear),
     categories,
-    children: values.childFlows.map((childFlow) => ({ childID: childFlow.id })),
+    children: childFlows.map((childFlow) => ({ childID: childFlow.id })),
     decisionDate: decisionDate?.toDate() ?? null,
     description,
     exchangeRate: exchangeRate ? valueToFloat(exchangeRate) : null,
@@ -351,8 +352,8 @@ export const parseFlowForm = (
     flowObjects,
     isCancellation: null, //  TODO
     isErrorCorrection:
-      isErrorCorrection || isPending?.isApproved || isPending?.isSaved,
-    isApprovedFlowVersion: isPending?.isApproved || isPending?.isSaved,
+      isErrorCorrection || !!isPending?.isApproved || isPending?.isSaved,
+    isApprovedFlowVersion: !!isPending?.isApproved || isPending?.isSaved,
     inactiveReason,
     newCategories: [], //  TODO
     newMoney: isNewMoney,
@@ -361,12 +362,12 @@ export const parseFlowForm = (
       ? currencyToInteger(amountOriginalCurrency)
       : null,
     origCurrency: currency?.value.toString() ?? null,
-    parents: values.parentFlow ? [{ parentID: values.parentFlow.id }] : [],
+    parents: parentFlow ? [{ parentID: parentFlow.id }] : [],
     reportDetails: reportingDetailPropsToReportDetails(
       reportingDetails,
       initialValues
     ),
-    restricted,
+    restricted: isRestricted,
   };
   return { flow };
 };
@@ -678,7 +679,7 @@ export const parseToFlowForm = (
   children?: flows.GetFlowResult[]
 ): FlowFormType => {
   const {
-    activeStatus,
+    activeStatus: isActiveStatus,
     amountUSD,
     description,
     origAmount,
@@ -690,7 +691,7 @@ export const parseToFlowForm = (
     newMoney: isNewMoney,
     notes,
     reportDetails,
-    restricted,
+    restricted: isRestricted,
   } = flow;
   const flowForm: FlowFormType = {
     ...INITIAL_FORM_VALUES,
@@ -714,12 +715,12 @@ export const parseToFlowForm = (
     exchangeRate:
       exchangeRate?.toString() ?? INITIAL_FORM_VALUES['exchangeRate'],
     flowDate: flowDate ? dayjs(flowDate) : INITIAL_FORM_VALUES['flowDate'],
-    isInactive: !activeStatus,
+    isInactive: !isActiveStatus,
     isNewMoney,
     notes: notes ?? INITIAL_FORM_VALUES['notes'],
     parentFlow: parents?.at(0) ? flowToFlowLinkProps(parents[0]) : null,
     reportingDetails: reportDetailsToReportingDetailProps(reportDetails),
-    restricted,
+    isRestricted,
   };
   return flowForm;
 };
@@ -998,11 +999,11 @@ const compareFlowForms = (
       }
       // For primitive or direct comparisons
       case 'isNewMoney':
-      case 'restricted': {
-        const currentValue = currentFlow[key];
-        const incomingValue = incomingFlow[key];
-        if (currentValue !== incomingValue) {
-          result[key] = incomingValue;
+      case 'isRestricted': {
+        const isCurrentValue = currentFlow[key];
+        const isIncomingValue = incomingFlow[key];
+        if (isCurrentValue !== isIncomingValue) {
+          result[key] = isIncomingValue;
         }
         break;
       }
@@ -1027,7 +1028,7 @@ const compareFlowForms = (
 };
 
 const isFundingKey = (key: string): key is FlowFormFlowObjectKey =>
-  FUNDING_KEYS.includes(key);
+  new Set<string>(FUNDING_KEYS).has(key);
 
 export const pendingValuesFlowForm = (
   initialValues?: FlowFormType,
@@ -1056,6 +1057,8 @@ export const pendingValuesFlowForm = (
       // Even though types mismatch, when this values is passed
       // to any pending review component, it will check if types
       // mismatch and will show a warning.
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       comparedFlow[key] = eD.data as any;
     }
   }

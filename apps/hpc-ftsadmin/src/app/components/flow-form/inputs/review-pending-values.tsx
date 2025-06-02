@@ -1,6 +1,6 @@
 import WarningIcon from '@mui/icons-material/Warning';
 import { Box, Chip, Paper, Tooltip } from '@mui/material';
-import { type FormObjectValue } from '@unocha/hpc-data';
+import { type util } from '@unocha/hpc-data';
 import { C, THEME } from '@unocha/hpc-ui';
 import type { Dayjs } from 'dayjs';
 import { useFormikContext } from 'formik';
@@ -23,7 +23,12 @@ export type ReviewPendingValuesProps = {
     | keyof FlowFormType['reportingDetails'][number];
   componentType: InputFieldsTypes;
   setPendingValuesHandled: React.Dispatch<React.SetStateAction<number>>;
-  pendingValues?: Dayjs | string | FormObjectValue | FormObjectValue[] | null;
+  pendingValues?:
+    | Dayjs
+    | string
+    | util.FormObjectValue
+    | util.FormObjectValue[]
+    | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClick?: (...args: any[]) => unknown;
   shouldAcceptChange?: boolean;
@@ -45,12 +50,12 @@ const HeaderContainer = tw.div`
 
 const isFormObjectValueArray = (
   pendingValues: ReviewPendingValuesProps['pendingValues']
-): pendingValues is FormObjectValue[] =>
+): pendingValues is util.FormObjectValue[] =>
   Array.isArray(pendingValues) && pendingValues.length > 0;
 
 const isFormObjectValue = (
   pendingValues: ReviewPendingValuesProps['pendingValues']
-): pendingValues is FormObjectValue =>
+): pendingValues is util.FormObjectValue =>
   pendingValues !== null &&
   pendingValues !== undefined &&
   !Array.isArray(pendingValues) &&

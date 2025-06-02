@@ -1,4 +1,4 @@
-import { flows, type FormObjectValue } from '@unocha/hpc-data';
+import { type util } from '@unocha/hpc-data';
 import { toast } from 'react-toastify';
 import { type Environment } from '../../environments/interface';
 import { type LanguageKey, t } from '../../i18n';
@@ -146,8 +146,8 @@ const validateParentFlowAmountUSD = (
 };
 
 const validatePlan = async (
-  plan: FormObjectValue | null,
-  formLocations: FormObjectValue[],
+  plan: util.FormObjectValue | null,
+  formLocations: util.FormObjectValue[],
   lang: LanguageKey,
   env: Environment,
   direction: 'source' | 'destination'
@@ -284,14 +284,12 @@ export const validateFlow = async ({
     return false;
   }
   const isOriginalCurrencyDifferentToParent =
-    parentFlow &&
-    parentFlow.currency !== (values.currency?.displayLabel ?? null);
+    parentFlow && parentFlow.currency !== (currency?.displayLabel ?? null);
 
   const isOriginalCurrencyDifferentToChildren =
     childFlows.length &&
     childFlows?.some(
-      (childFlow) =>
-        childFlow.currency !== (values.currency?.displayLabel ?? null)
+      (childFlow) => childFlow.currency !== (currency?.displayLabel ?? null)
     );
 
   if (isOriginalCurrencyDifferentToParent) {

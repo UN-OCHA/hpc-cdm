@@ -70,10 +70,10 @@ const FlowActiveVersionPath = ({
     f.categories.some((cat) => cat.categoryID === pendingReview?.id)
   );
 
-  const currentFlowIsPendingFlow =
+  const isCurrentFlowPendingFlow =
     flow.id === pendingFlow?.id && flow.versionID === pendingFlow?.versionID;
 
-  if (pendingFlow && !currentFlowIsPendingFlow) {
+  if (pendingFlow && !isCurrentFlowPendingFlow) {
     return (
       <InactiveReason>
         {t.t(lang, (s) => s.components.flow.hasPendingFlowLinkText)}

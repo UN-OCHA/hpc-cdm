@@ -26,8 +26,8 @@ const extractIdentifierIds = <T extends TableType>(
   val: Array<TableHeadersProps<T>>
 ) => {
   return val.reduce(
-    (acc, { identifierID: id, sortable }) => {
-      if (sortable) {
+    (acc, { identifierID: id, isSortable }) => {
+      if (isSortable) {
         acc[id] = null;
       }
       return acc;

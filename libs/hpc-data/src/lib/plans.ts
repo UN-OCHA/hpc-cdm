@@ -77,7 +77,7 @@ const GET_PLAN_MAP = {
   }),
 };
 
-const GET_PLAN_SCOPE = t.keyof({
+export const GET_PLAN_SCOPE = t.keyof({
   categories: null,
   emergencies: null,
   governingEntities: null,
@@ -120,7 +120,7 @@ export const getPlanResultCodec = <T extends GetPlanScope[]>(
   return recursiveIntersection([GET_PLAN_RESULT_PART, ...codecs]);
 };
 
-const GET_AUTOCOMPLETE_PLANS_BY_ID_PARAMS = t.type({
+export const GET_AUTOCOMPLETE_PLANS_BY_ID_PARAMS = t.type({
   id: t.number,
 });
 export type GetAutocompletePlansByIdParams = t.TypeOf<

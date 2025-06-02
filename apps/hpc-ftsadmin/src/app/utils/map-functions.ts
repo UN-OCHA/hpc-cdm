@@ -5,7 +5,6 @@ import {
   util,
 } from '@unocha/hpc-data';
 import { isRight } from 'fp-ts/lib/Either';
-import { type LanguageKey } from '../../i18n';
 import dayjs from '../../libs/dayjs';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
 
@@ -40,8 +39,7 @@ export const integerToCurrency = (value: number) => {
 };
 
 export const parseUpdatedCreatedBy = (
-  updatedCreatedBy: organizations.UpdatedCreatedBy[],
-  lang: LanguageKey
+  updatedCreatedBy: organizations.UpdatedCreatedBy[]
 ): string => {
   if (updatedCreatedBy.length === 0) {
     return '--';

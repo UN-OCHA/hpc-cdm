@@ -1,6 +1,6 @@
 import EastIcon from '@mui/icons-material/East';
 import { Box, Modal } from '@mui/material';
-import { type FormObjectValue, util as codecs, errors } from '@unocha/hpc-data';
+import { errors, util } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
 import { Form, Formik } from 'formik';
 import * as io from 'io-ts';
@@ -21,12 +21,12 @@ type MergeModalProps = {
   load: () => void;
 };
 type OrganizationMergeModalValues = {
-  mergingEntities: FormObjectValue[];
-  receivingEntity: FormObjectValue | null;
+  mergingEntities: util.FormObjectValue[];
+  receivingEntity: util.FormObjectValue | null;
 };
 type KeywordMergeModalValues = {
-  mergingEntities: FormObjectValue | null;
-  receivingEntity: FormObjectValue | null;
+  mergingEntities: util.FormObjectValue | null;
+  receivingEntity: util.FormObjectValue | null;
 };
 
 const ModalContainer = tw.div`
@@ -86,8 +86,8 @@ const ConfirmationText = ({
   receivingEntity,
   lang,
 }: {
-  mergingEntities: FormObjectValue[] | (FormObjectValue | null);
-  receivingEntity: FormObjectValue | null;
+  mergingEntities: util.FormObjectValue[] | (util.FormObjectValue | null);
+  receivingEntity: util.FormObjectValue | null;
   lang: LanguageKey;
 }) => {
   if (!receivingEntity) {
@@ -128,12 +128,12 @@ const MergeModal = (props: MergeModalProps) => {
   const lang = getContext().lang;
 
   const ORGANIZATION_FORM_VALIDATION = io.type({
-    mergingEntities: codecs.NON_EMPTY_ARRAY,
-    receivingEntity: codecs.NON_NULL_VALUE,
+    mergingEntities: util.NON_EMPTY_ARRAY,
+    receivingEntity: util.NON_NULL_VALUE,
   });
   const KEYWORD_FORM_VALIDATION = io.type({
-    mergingEntities: codecs.NON_NULL_VALUE,
-    receivingEntity: codecs.NON_NULL_VALUE,
+    mergingEntities: util.NON_NULL_VALUE,
+    receivingEntity: util.NON_NULL_VALUE,
   });
 
   const VALIDATION_ERROR_MESSAGES: Record<
@@ -152,9 +152,9 @@ const MergeModal = (props: MergeModalProps) => {
 
   const isOrganizationType = type === 'organization';
 
-  const [open, setOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
   const [isFirstStep, setIsFirstStep] = React.useState(true);
-  const [loading, setLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [confirmValues, setConfirmValues] = React.useState(
     isOrganizationType ? ORGANIZATION_INITIAL_VALUES : KEYWORD_INITIAL_VALUES
   );
@@ -176,7 +176,7 @@ const MergeModal = (props: MergeModalProps) => {
       const receivingOrganizationID = valueToInteger(
         values.receivingEntity.value
       );
-      setLoading(true);
+      setIsLoading(true);
       await env.model.organizations
         .mergeOrganizations({
           fromOrganizationIds: {
@@ -215,7 +215,7 @@ const MergeModal = (props: MergeModalProps) => {
             TOAST_CONFIG_ERROR
           );
         })
-        .finally(() => setLoading(false));
+        .finally(() => setIsLoading(false));
     } else {
       if (!isKeywordValues(values)) {
         return;
@@ -223,7 +223,7 @@ const MergeModal = (props: MergeModalProps) => {
       if (!values.mergingEntities) {
         return;
       }
-      setLoading(true);
+      setIsLoading(true);
       await env.model.categories
         .mergeKeywords({
           mergingKeywordID: valueToInteger(values.mergingEntities.value),
@@ -254,7 +254,7 @@ const MergeModal = (props: MergeModalProps) => {
             TOAST_CONFIG_ERROR
           );
         })
-        .finally(() => setLoading(false));
+        .finally(() => setIsLoading(false));
     }
   };
   return (
@@ -267,13 +267,13 @@ const MergeModal = (props: MergeModalProps) => {
             lang
           )}
           color="neutral"
-          onClick={() => setOpen(true)}
+          onClick={() => setIsOpen(true)}
         />
       </StyledDiv>
       <Modal
-        open={open}
+        open={isOpen}
         keepMounted={false}
-        onClose={() => setOpen(!open)}
+        onClose={() => setIsOpen(!isOpen)}
         sx={tw`flex items-center justify-center`}
       >
         <ModalContainer>
@@ -388,7 +388,7 @@ const MergeModal = (props: MergeModalProps) => {
                         (s) => s.components.mergeModal.button.yes
                       )}
                       onClick={() => mergeEntities(confirmValues)}
-                      shouldDisplayLoading={loading}
+                      shouldDisplayLoading={isLoading}
                     />
                   </Box>
                 </Box>

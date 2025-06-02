@@ -217,7 +217,7 @@ export type DeleteOrganizationResult = t.TypeOf<
   typeof DELETE_ORGANIZATION_RESULT
 >;
 
-const MERGE_ORGANIZATIONS_PARAMS = t.type({
+export const MERGE_ORGANIZATIONS_PARAMS = t.type({
   fromOrganizationIds: t.type({
     organizationId: t.number,
     organizationsToBeMerged: t.array(UPDATE_ORGANIZATION_PARAMS),

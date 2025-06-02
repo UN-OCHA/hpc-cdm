@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable require-await */
 import { type Session } from '@unocha/hpc-core';
 import {
@@ -626,7 +627,7 @@ export class Dummy {
               return (
                 flow.description
                   ?.toLowerCase()
-                  .includes(params.query.toLowerCase()) ||
+                  .includes(params.query.toLowerCase()) ??
                 flow.id.toString().includes(params.query)
               );
             }) as any; //  TODO: Remove any
@@ -715,27 +716,27 @@ export class Dummy {
           async (params: flows.CreateFlowParams) => {
             const id = Date.now();
             const {
-              activeStatus,
+              activeStatus: isActiveStatus,
               amountUSD,
               decisionDate,
               exchangeRate,
               flowDate,
-              newMoney,
-              restricted,
+              newMoney: isNewMoney,
+              restricted: isRestricted,
             } = params.flow;
 
             // TODO: Properly mock data
             const flow = {
               id,
               versionID: 1,
-              activeStatus,
+              activeStatus: isActiveStatus,
               amountUSD,
               decisionDate,
               exchangeRate: exchangeRate ?? null,
               updatedAt: new Date(),
               flowDate,
-              newMoney,
-              restricted,
+              newMoney: isNewMoney,
+              restricted: isRestricted,
             } as const;
 
             this.data.flows.push(flow as unknown as flows.FlowV4);
@@ -781,25 +782,25 @@ export class Dummy {
             const {
               id,
               versionID,
-              activeStatus,
+              activeStatus: isActiveStatus,
               amountUSD,
               decisionDate,
               exchangeRate,
               flowDate,
-              newMoney,
-              restricted,
+              newMoney: isNewMoney,
+              restricted: isRestricted,
             } = params.flow;
             const flow = {
               id,
               versionID,
-              activeStatus,
+              activeStatus: isActiveStatus,
               amountUSD: amountUSD.toString(),
               decisionDate,
               exchangeRate: exchangeRate ? exchangeRate.toString() : null,
               updatedAt: new Date().toISOString(),
               flowDate,
-              newMoney,
-              restricted,
+              newMoney: isNewMoney,
+              restricted: isRestricted,
               externalReferences: [],
               parkedParentSource: { organization: [], orgName: [] },
               reportDetails: [],
@@ -920,7 +921,7 @@ export class Dummy {
           'governingEntities.getGoverningEntitiesByPlanId',
           async ({
             planId,
-            excludeAttachments,
+            excludeAttachments: _excludeAttachments,
           }: governingEntities.GetGoverningEntitiesByPlanIdParams): Promise<governingEntities.GetGoverningEntitiesByPlanIdResult> => {
             // TODO: Fix dummy endpoint
             const gEs = this.data.governingEntities
@@ -972,7 +973,7 @@ export class Dummy {
                   name,
                   nativeName,
                   abbreviation,
-                  active,
+                  active: isActive,
                   categories,
                   locations,
                 } = organization;
@@ -981,7 +982,7 @@ export class Dummy {
                   name,
                   nativeName,
                   abbreviation,
-                  active,
+                  active: isActive,
                   categories:
                     categories?.map((category) => {
                       const { name: categoryName, group, parentID } = category;
@@ -1280,7 +1281,7 @@ export class Dummy {
           'plans.getPlan',
           async <T extends plans.GetPlanScope[]>({
             id,
-            scopes,
+            scopes: _scopes,
           }: plans.GetPlanParams<T>): Promise<plans.GetPlanResult<T>> => {
             const plan = this.data.plans.find((plan) => plan.id === id);
             if (!plan) {
@@ -1318,7 +1319,7 @@ export class Dummy {
         getProject: dummyEndpoint(
           'projects.getProject',
           async ({
-            id,
+            id: _id,
           }: projects.GetProjectParams): Promise<projects.GetProjectResult> => {
             throw new errors.NotFoundError();
           }

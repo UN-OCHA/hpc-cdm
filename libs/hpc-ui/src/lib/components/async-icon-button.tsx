@@ -70,13 +70,12 @@ const AsyncIconButton = ({
       }, 1500);
     }
   }, [isSuccess, hasError]);
-  const handleButtonClick = async () => {
+  const handleButtonClick = () => {
     if (!isLoading) {
       setIsSuccess(false);
       setHasError(false);
       setIsLoading(true);
       setConfirmed(false);
-
       fnPromise()
         .then(() => {
           setIsSuccess(true);

@@ -239,7 +239,7 @@ export default function FlowsTable(props: FlowsTableProps) {
               </TableCell>
             )}
             {tableHeaders.map((column) => {
-              if (!column.active) {
+              if (!column.isActive) {
                 return null;
               }
               switch (column.identifierID) {
@@ -596,7 +596,7 @@ export default function FlowsTable(props: FlowsTableProps) {
           <TableRow>
             {isPending && <TableCell size="small" />}
             {tableHeaders.map((header) => {
-              if (!header.active) {
+              if (!header.isActive) {
                 return null;
               }
               return (
@@ -604,13 +604,13 @@ export default function FlowsTable(props: FlowsTableProps) {
                   size="small"
                   key={`${header.identifierID}_${header.label}`}
                   data-test={`header-${header.label}`}
-                  {...(header.sortable &&
+                  {...(header.isSortable &&
                     query.orderBy === header.identifierID && {
                       'aria-sort':
                         query.orderDir === 'ASC' ? 'ascending' : 'descending',
                     })}
                 >
-                  {header.sortable ? (
+                  {header.isSortable ? (
                     <TableSortLabel
                       active={query.orderBy === header.identifierID}
                       direction={

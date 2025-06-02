@@ -57,13 +57,14 @@ export const organizationsOptions = (
   }>
 ): util.FormObjectValue[] => {
   return response.map(
-    ({ name, abbreviation, id, chipColor, tooltip, collectiveInd }) => ({
-      displayLabel: `${name} [${abbreviation}]`,
-      value: id,
-      confidential: collectiveInd,
-      chipColor,
-      tooltip,
-    })
+    ({ name, abbreviation, id, chipColor, tooltip, collectiveInd }) =>
+      ({
+        displayLabel: `${name} [${abbreviation}]`,
+        value: id,
+        isConfidential: collectiveInd,
+        chipColor,
+        tooltip,
+      }) satisfies util.FormObjectValue
   );
 };
 

@@ -67,15 +67,15 @@ export interface TableHeadersProps<T extends TableType> {
   id: number;
   identifierID: MapTableTypeToHeaderType[T]['headerId'];
   label: MapTableTypeToHeaderType[T]['label'];
-  sortable?: boolean;
-  active?: boolean;
+  isSortable?: boolean;
+  isActive?: boolean;
   displayLabel?: string;
 }
 
 type HeaderType = {
   id: number;
   label: FilterKey;
-  active: boolean;
+  isActive: boolean;
 };
 
 type DecodeTableHeadersProps<T extends Query, K extends TableType> = {
@@ -111,61 +111,61 @@ const POSSIBLE_FLOW_TABLE_HEADERS: Record<
   1: {
     id: 1,
     identifierID: 'flow.id',
-    sortable: true,
+    isSortable: true,
     label: 'id',
   },
   2: {
     id: 2,
     identifierID: 'status',
-    sortable: true,
+    isSortable: true,
     label: 'status',
   },
   3: {
     id: 3,
     identifierID: 'flow.updatedAt',
-    sortable: true,
+    isSortable: true,
     label: 'updatedCreated',
   },
   4: {
     id: 4,
     identifierID: 'externalReference.systemID',
-    sortable: true,
+    isSortable: true,
     label: 'dataProvider',
   },
   5: {
     id: 5,
     identifierID: 'flow.amountUSD',
-    sortable: true,
+    isSortable: true,
     label: 'amountUSD',
   },
   6: {
     id: 6,
     identifierID: 'organization.source.name',
-    sortable: true,
+    isSortable: true,
     label: 'sourceOrganization',
   },
   7: {
     id: 7,
     identifierID: 'organization.destination.name',
-    sortable: true,
+    isSortable: true,
     label: 'destinationOrganization',
   },
   8: {
     id: 8,
     identifierID: 'planVersion.destination.name',
-    sortable: true,
+    isSortable: true,
     label: 'destinationPlan',
   },
   9: {
     id: 9,
     identifierID: 'location.destination.name',
-    sortable: true,
+    isSortable: true,
     label: 'destinationCountry',
   },
   10: {
     id: 10,
     identifierID: 'usageYear.destination.year',
-    sortable: true,
+    isSortable: true,
     label: 'destinationYear',
   },
   11: { id: 11, identifierID: 'details', label: 'details' },
@@ -173,37 +173,37 @@ const POSSIBLE_FLOW_TABLE_HEADERS: Record<
     id: 12,
     identifierID: 'flow.exchangeRate',
     label: 'exchangeRate',
-    sortable: true,
+    isSortable: true,
   },
   13: {
     id: 13,
     identifierID: 'flow.newMoney',
     label: 'newMoney',
-    sortable: true,
+    isSortable: true,
   },
   14: {
     id: 14,
     identifierID: 'flow.decisionDate',
     label: 'decisionDate',
-    sortable: true,
+    isSortable: true,
   },
   15: {
     id: 15,
     identifierID: 'flow.flowDate',
     label: 'flowDate',
-    sortable: true,
+    isSortable: true,
   },
   16: {
     id: 16,
     identifierID: 'reportDetail.sourceID',
     label: 'sourceID',
-    sortable: false,
+    isSortable: false,
   },
   17: {
     id: 17,
     identifierID: 'reportDetail.reporterRefCode',
     label: 'reporterRefCode',
-    sortable: false,
+    isSortable: false,
   },
 };
 
@@ -214,49 +214,49 @@ const POSSIBLE_ORGANIZATION_TABLE_HEADERS: Record<
   1: {
     id: 1,
     identifierID: 'organization.id',
-    sortable: true,
+    isSortable: true,
     label: 'id',
   },
   2: {
     id: 2,
     identifierID: 'organization.name',
-    sortable: true,
+    isSortable: true,
     label: 'name',
   },
   3: {
     id: 3,
     identifierID: 'organization.abbreviation',
-    sortable: true,
+    isSortable: true,
     label: 'abbreviation',
   },
   4: {
     id: 4,
     identifierID: 'organization.type',
-    sortable: false,
+    isSortable: false,
     label: 'type',
   },
   5: {
     id: 5,
     identifierID: 'organization.subType',
-    sortable: false,
+    isSortable: false,
     label: 'subType',
   },
   6: {
     id: 6,
     identifierID: 'organization.location',
-    sortable: false,
+    isSortable: false,
     label: 'location',
   },
   7: {
     id: 7,
     identifierID: 'organization.createdBy',
-    sortable: false,
+    isSortable: false,
     label: 'createdBy',
   },
   8: {
     id: 8,
     identifierID: 'organization.updatedBy',
-    sortable: false,
+    isSortable: false,
     label: 'updatedBy',
   },
 };
@@ -265,19 +265,19 @@ const POSSIBLE_KEYWORD_TABLE_HEADERS: Record<
   number,
   TableHeadersProps<'keywords'>
 > = {
-  1: { id: 1, identifierID: 'keyword.id', label: 'id', sortable: true },
-  2: { id: 2, identifierID: 'keyword.name', label: 'name', sortable: true },
+  1: { id: 1, identifierID: 'keyword.id', label: 'id', isSortable: true },
+  2: { id: 2, identifierID: 'keyword.name', label: 'name', isSortable: true },
   3: {
     id: 3,
     identifierID: 'keyword.relatedFlows',
     label: 'relatedFlows',
-    sortable: true,
+    isSortable: true,
   },
   4: {
     id: 4,
     identifierID: 'keyword.public',
     label: 'public',
-    sortable: false,
+    isSortable: false,
   },
 };
 
@@ -292,27 +292,27 @@ export const DEFAULT_FLOW_TABLE_HEADERS: Array<TableHeadersProps<'flows'>> =
     if (header.identifierID === 'status') {
       return {
         ...header,
-        active: false,
-      };
+        isActive: false,
+      } satisfies TableHeadersProps<'flows'>;
     }
     return {
       ...header,
-      active: i <= FLOW_ACTIVE_HEADERS_UNTIL_ID,
-    };
+      isActive: i <= FLOW_ACTIVE_HEADERS_UNTIL_ID,
+    } satisfies TableHeadersProps<'flows'>;
   });
 
 export const DEFAULT_ORGANIZATION_TABLE_HEADERS: Array<
   TableHeadersProps<'organizations'>
 > = Object.values(POSSIBLE_ORGANIZATION_TABLE_HEADERS).map(
   (header) =>
-    ({ ...header, active: true }) satisfies TableHeadersProps<'organizations'>
+    ({ ...header, isActive: true }) satisfies TableHeadersProps<'organizations'>
 );
 
 export const DEFAULT_KEYWORD_TABLE_HEADERS: Array<
   TableHeadersProps<'keywords'>
 > = Object.values(POSSIBLE_KEYWORD_TABLE_HEADERS).map(
   (header) =>
-    ({ ...header, active: true }) satisfies TableHeadersProps<'keywords'>
+    ({ ...header, isActive: true }) satisfies TableHeadersProps<'keywords'>
 );
 
 const TABLE_TO_TABLE_HEADERS: {
@@ -347,7 +347,7 @@ const defaultEncodeTableHeaders = <T extends TableType>(
       res += `${header.id}${defaultHeaders.length - 1 !== index ? '_' : ''}`;
       continue;
     }
-    res += `${header.active ? header.id : -header.id}${
+    res += `${header.isActive ? header.id : -header.id}${
       defaultHeaders.length - 1 !== index ? '_' : ''
     }`;
   }
@@ -372,7 +372,7 @@ export const encodeTableHeaders = <T extends Query, K extends TableType>({
     return headers
       .map(
         (header, index) =>
-          `${!header.active ? '-' : ''}${header.id}${
+          `${!header.isActive ? '-' : ''}${header.id}${
             headers.length - 1 !== index ? '_' : ''
           }`
       )
@@ -399,27 +399,28 @@ const defaultDecodeTableHeaders = <T extends TableType>(
   const parsedDefaultHeaders = isPending
     ? defaultHeaders.map((header) => {
         if (header.identifierID === 'status') {
-          return { ...header, active: true };
+          return { ...header, isActive: true };
         }
         return header;
       })
     : defaultHeaders;
   const headerName = `${table}Table` as const;
   return parsedDefaultHeaders.map(
-    ({ id, label, active, identifierID, sortable }) => ({
-      id,
-      label,
-      active,
-      displayLabel: t.t(lang, (s) => {
-        const labels = s.components[headerName].headers as Record<
-          MapTableTypeToHeaderType[T]['label'],
-          string
-        >;
-        return labels[possibleHeaders[id].label];
-      }),
-      identifierID,
-      sortable,
-    })
+    ({ id, label, isActive, identifierID, isSortable }) =>
+      ({
+        id,
+        label,
+        isActive,
+        displayLabel: t.t(lang, (s) => {
+          const labels = s.components[headerName].headers as Record<
+            MapTableTypeToHeaderType[T]['label'],
+            string
+          >;
+          return labels[possibleHeaders[id].label];
+        }),
+        identifierID,
+        isSortable,
+      }) satisfies TableHeadersProps<T>
   );
 };
 /**
@@ -442,7 +443,7 @@ export const decodeTableHeaders = <T extends Query, K extends TableType>({
       const possibleHeaders = TABLE_TO_TABLE_HEADERS[table].possibleHeaders;
       const tableName = `${table}Table` as const;
 
-      const { label, identifierID, sortable } = possibleHeaders[tableID];
+      const { label, identifierID, isSortable } = possibleHeaders[tableID];
 
       return {
         id: tableID,
@@ -454,10 +455,10 @@ export const decodeTableHeaders = <T extends Query, K extends TableType>({
           >;
           return labels[label];
         }),
-        active: parseInt(tableIDWithSymbol) > 0,
+        isActive: parseInt(tableIDWithSymbol) > 0,
         identifierID,
-        sortable,
-      };
+        isSortable,
+      } satisfies TableHeadersProps<K>;
     });
   } catch (error) {
     console.error(error);
@@ -494,6 +495,6 @@ export const isCompatibleTableHeaderType = (
 ): element is HeaderType[] => {
   const keys = Object.keys(element[0]);
   return (
-    keys.includes('id') && keys.includes('label') && keys.includes('active')
+    keys.includes('id') && keys.includes('label') && keys.includes('isActive')
   );
 };

@@ -5,13 +5,13 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import { type FormObjectValue } from '@unocha/hpc-data';
+import { type util } from '@unocha/hpc-data';
 import { useField } from 'formik';
 
 export type RadioButtonFieldProps<T extends string> = {
   name: string;
   label: string;
-  options: FormObjectValue[];
+  options: util.FormObjectValue[];
   /**
    *  **Warning:**
    *  This prop is used only if we are not using

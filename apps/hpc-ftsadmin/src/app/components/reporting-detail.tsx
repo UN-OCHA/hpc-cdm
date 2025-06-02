@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { type FormObjectValue, type fileAssetEntities } from '@unocha/hpc-data';
+import { type fileAssetEntities, type util } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { type Dayjs } from 'dayjs';
 import { useFormikContext } from 'formik';
@@ -12,8 +12,8 @@ import { type FlowFormType, FormGroup } from './flow-form/flow-form';
 
 export type ReportingDetailProps = {
   reportSource: 'Primary' | 'Secondary';
-  reportedByOrganization: FormObjectValue | null;
-  reportChannel: FormObjectValue | null;
+  reportedByOrganization: util.FormObjectValue | null;
+  reportChannel: util.FormObjectValue | null;
   sourceSystemRecordId: string;
   verified: string;
   dateReported: Dayjs | null;
@@ -47,7 +47,7 @@ const ReportingOrganizationSuggestion = tw.span`
 `;
 
 export const validateReportingDetailsRequiredField = (
-  value: FormObjectValue | null,
+  value: util.FormObjectValue | null,
   lang: LanguageKey
 ) =>
   !value
@@ -179,17 +179,19 @@ const ReportingDetail = ({
     const formData = new FormData();
     formData.append('data', file);
 
-    return env.model.fileAssetEntities.fileUpload(formData).then((file) => {
-      handleChange('file', file);
-      return file;
-    });
+    return await env.model.fileAssetEntities
+      .fileUpload(formData)
+      .then((file) => {
+        handleChange('file', file);
+        return file;
+      });
   };
   const handleDeleteFile = async () => {
     const fileId = file?.id;
     if (!fileId) {
       return;
     }
-    return env.model.fileAssetEntities
+    return await env.model.fileAssetEntities
       .fileDelete(fileId, 'fts')
       .then(() => handleChange('file', null));
   };
@@ -199,7 +201,7 @@ const ReportingDetail = ({
     if (!fileId) {
       return;
     }
-    return env.model.fileAssetEntities
+    return await env.model.fileAssetEntities
       .fileDownload(fileId, 'fts')
       .then((blob) => {
         const url = URL.createObjectURL(blob);

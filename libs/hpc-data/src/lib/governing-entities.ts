@@ -18,7 +18,7 @@ export const GOVERNING_ENTITY_VERSION = t.type({
 
 export type GoverningEntityVersion = t.TypeOf<typeof GOVERNING_ENTITY_VERSION>;
 
-const GET_GOVERNING_ENTITY_PARAMS = t.type({
+export const GET_GOVERNING_ENTITY_PARAMS = t.type({
   id: t.number,
 });
 

@@ -35,13 +35,13 @@ export interface AddEditOrganizationValues {
   nativeName?: string;
   locations?: util.FormObjectValue[]; // Number[] we need array of IDs
   url?: string;
-  active?: boolean;
-  verified?: boolean;
+  isActive?: boolean;
+  isVerified?: boolean;
   notes?: string; // "notes" makes reference what in the UI it's called "Comments"
   organizationTypes: util.FormObjectValue | null;
   organizationLevel?: util.FormObjectValue | null; // Number[] we need array of IDs
   parent?: util.FormObjectValue | null;
-  collectiveInd?: boolean;
+  isCollectiveInd?: boolean;
   comments?: string; // "comments" makes reference what in the UI it's called "Organization Description"
 }
 export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
@@ -50,13 +50,13 @@ export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   nativeName: '',
   locations: [], // Number[] we need array of IDs
   url: '',
-  active: true,
-  verified: true,
+  isActive: true,
+  isVerified: true,
   notes: '', // "notes" makes reference what in the UI it's called "Comments"
   organizationTypes: null,
   organizationLevel: null, // Number[] we need array of IDs
   parent: null,
-  collectiveInd: false,
+  isCollectiveInd: false,
   comments: '',
 };
 const StyledDiv = tw.div`
@@ -95,7 +95,14 @@ const parseFormValues = (values: AddEditOrganizationValues) => {
     ? valueToInteger(values.parent.value)
     : undefined;
 
-  return { categories, parentID, locations: parsedLocations };
+  return {
+    categories,
+    parentID,
+    locations: parsedLocations,
+    verified: values.isVerified,
+    active: values.isActive,
+    collectiveInd: values.isCollectiveInd,
+  };
 };
 const formToUpdate = (
   values: AddEditOrganizationValues,
@@ -315,7 +322,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               lang,
               (s) => s.components.organizationUpdateCreate.fields.active
             )}
-            name="active"
+            name="isActive"
           />
 
           <C.Switch
@@ -323,7 +330,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               lang,
               (s) => s.components.organizationUpdateCreate.fields.verified
             )}
-            name="verified"
+            name="isVerified"
           />
           <C.TextFieldWrapper
             label={t.t(
@@ -391,7 +398,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
             )}
           </InfoText>
           <C.CheckBox
-            name="collectiveInd"
+            name="isCollectiveInd"
             label={t.t(
               lang,
               (s) => s.components.organizationUpdateCreate.fields.collectiveInd
