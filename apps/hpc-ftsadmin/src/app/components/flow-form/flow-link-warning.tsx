@@ -1,6 +1,6 @@
-import tw from 'twin.macro';
 import GppMaybeIcon from '@mui/icons-material/GppMaybe';
 import { Link } from 'react-router';
+import tw from 'twin.macro';
 import paths from '../../paths';
 
 const WarningContainer = tw.div`

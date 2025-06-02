@@ -1,14 +1,14 @@
 import * as t from 'io-ts';
-import { EMERGENCY } from './emergencies';
-import { USAGE_YEAR } from './usageYears';
 import { CATEGORY } from './categories';
+import { EMERGENCY } from './emergencies';
 import {
   GOVERNING_ENTITY,
   GOVERNING_ENTITY_VERSION,
 } from './governing-entities';
 import { LOCATION } from './locations';
-import { DATE_FROM_STRING, optional, recursiveIntersection } from './util';
 import { PLAN_VERSION } from './plan-versions';
+import { USAGE_YEAR } from './usageYears';
+import { DATE_FROM_STRING, optional, recursiveIntersection } from './util';
 
 const PLAN_REVISION_STATE = t.keyof({
   none: null,

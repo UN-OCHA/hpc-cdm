@@ -81,6 +81,7 @@ import ReportingDetail, {
 } from '../reporting-detail';
 import FlowLink, { type FlowLinkProps } from './flow-link';
 import FlowLinkWarning from './flow-link-warning';
+import FlowPreviousReportingDetails from './flow-previous-reporting-details';
 import FlowSearch, { OVERRIDING_FLOW_KEYS } from './flow-search';
 import FlowVersions from './flow-version';
 import FormGroupReadOnly from './form-group-readonly';
@@ -89,7 +90,6 @@ import AutocompleteSelectReview from './inputs/autocomplete-pending-review';
 import DatePickerReview from './inputs/date-picker-pending-review';
 import NumberFieldReview from './inputs/number-field-pending-review';
 import TextFieldReview from './inputs/text-field-pending-review';
-import FlowPreviousReportingDetails from './flow-previous-reporting-details';
 
 type FlowFormProps = {
   load: () => void;
@@ -377,7 +377,9 @@ const FlowAmountButton = ({
 }) => {
   const { lang } = getContext();
 
-  if (disabled) {return;}
+  if (disabled) {
+    return;
+  }
   const amountUSDInt = currencyToInteger(amountUSD);
   const amountOriginalCurrencyInt = currencyToInteger(amountOriginalCurrency);
   const exchangeRateFloat = parseFloat(exchangeRate);

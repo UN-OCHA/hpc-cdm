@@ -2,18 +2,18 @@ import * as t from 'io-ts';
 
 import {
   access,
-  forms,
-  flows,
   categories,
   currencies,
   emergencies,
+  flows,
+  forms,
   globalClusters,
+  governingEntities,
   locations,
   organizations,
   plans,
   projects,
   usageYears,
-  governingEntities,
 } from '@unocha/hpc-data';
 /**
  * TODO: make into union of different assignee types

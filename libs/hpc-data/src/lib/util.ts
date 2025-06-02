@@ -117,12 +117,12 @@ export const CURRENCY_INTEGER_GREATER_THAN_0_FROM_STRING = new t.Type<
       return Number.isInteger(v) && v > 0 ? t.success(v) : t.failure(v, c);
     } else if (typeof v === 'string') {
       // `v.replace(/,/g, '')` is used because string currency is written as: "2,231,233"
-      return CURRENCY_INTEGER_REGEX.test(v) && parseInt(v.replaceAll(',', '')) > 0
+      return CURRENCY_INTEGER_REGEX.test(v) &&
+        parseInt(v.replaceAll(',', '')) > 0
         ? t.success(parseInt(v))
         : t.failure(v, c);
-    } 
-      return t.failure(v, c);
-    
+    }
+    return t.failure(v, c);
   },
   t.identity
 );
@@ -222,9 +222,8 @@ export const NON_NULL_VALUE = new t.Type<unknown, unknown>(
   (v, c) => {
     if (v === null) {
       return t.failure(v, c);
-    } 
-      return t.success(v);
-    
+    }
+    return t.success(v);
   },
   t.identity
 );

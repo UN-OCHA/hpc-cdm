@@ -7,6 +7,7 @@ import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import dayjs, { FTS_DEFAULT_FORMAT } from '../../../libs/dayjs';
 import { FlowForm } from '../../components/flow-form/flow-form';
+import PageMeta from '../../components/page-meta';
 import { AppContext, getContext, getEnv } from '../../context';
 import paths from '../../paths';
 import { TOAST_CONFIG } from '../../utils/constants';
@@ -20,7 +21,6 @@ import {
   type FlowFormTypeSerialized,
   parseToFlowForm,
 } from '../../utils/parse-flow-form';
-import PageMeta from '../../components/page-meta';
 
 type FlowRouteParams = {
   id: string;
@@ -278,77 +278,76 @@ export default () => {
         )}
       </AppContext.Consumer>
     );
-  } 
-    const [state, load] = useDataLoader([], async () => {
-      const [
-        inactiveReasons,
-        flowType,
-        contributionType,
-        method,
-        earmarkingType,
-        flowStatus,
-      ] = await Promise.all([
-        env.model.categories.getCategories({
-          query: 'inactiveReason',
-        }),
-        fnFlowTypeId(env),
-        fnCategories('contributionType', env),
-        fnCategories('method', env),
-        fnCategories('earmarkingType', env),
-        fnFlowStatusId(env),
-      ]);
-      return {
-        inactiveReasons,
-        flowType,
-        contributionType,
-        method,
-        earmarkingType,
-        flowStatus,
-      };
-    });
+  }
+  const [state, load] = useDataLoader([], async () => {
+    const [
+      inactiveReasons,
+      flowType,
+      contributionType,
+      method,
+      earmarkingType,
+      flowStatus,
+    ] = await Promise.all([
+      env.model.categories.getCategories({
+        query: 'inactiveReason',
+      }),
+      fnFlowTypeId(env),
+      fnCategories('contributionType', env),
+      fnCategories('method', env),
+      fnCategories('earmarkingType', env),
+      fnFlowStatusId(env),
+    ]);
+    return {
+      inactiveReasons,
+      flowType,
+      contributionType,
+      method,
+      earmarkingType,
+      flowStatus,
+    };
+  });
 
-    return (
-      <AppContext.Consumer>
-        {({ lang }) => (
-          <C.Loader
-            loader={state}
-            strings={{
-              ...t.get(lang, (s) => s.components.loader),
-              notFound: {
-                ...t.get(lang, (s) => s.components.notFound),
-              },
-            }}
-          >
-            {(flowFormProps) => (
-              <PaddingContainer>
-                <C.PageTitle>
-                  {historyState?.flowFormCopyValues &&
-                  historyState.flowFormCopyValuesPath &&
-                  historyState.flowFormCopyValuesName ? (
-                    <span>
-                      {t.t(lang, (s) => s.components.flow.copyOfFlow)}{' '}
-                      <Link to={historyState.flowFormCopyValuesPath}>
-                        {historyState.flowFormCopyValuesName}
-                      </Link>
-                    </span>
-                  ) : (
-                    t.t(lang, (s) => s.components.flow.addFLow)
-                  )}
-                </C.PageTitle>
-                <FlowForm
-                  {...flowFormProps}
-                  load={load}
-                  initialValues={
-                    historyState?.flowFormCopyValues
-                      ? deserializeFlowForm(historyState.flowFormCopyValues)
-                      : undefined
-                  }
-                />
-              </PaddingContainer>
-            )}
-          </C.Loader>
-        )}
-      </AppContext.Consumer>
-    );
-  
+  return (
+    <AppContext.Consumer>
+      {({ lang }) => (
+        <C.Loader
+          loader={state}
+          strings={{
+            ...t.get(lang, (s) => s.components.loader),
+            notFound: {
+              ...t.get(lang, (s) => s.components.notFound),
+            },
+          }}
+        >
+          {(flowFormProps) => (
+            <PaddingContainer>
+              <C.PageTitle>
+                {historyState?.flowFormCopyValues &&
+                historyState.flowFormCopyValuesPath &&
+                historyState.flowFormCopyValuesName ? (
+                  <span>
+                    {t.t(lang, (s) => s.components.flow.copyOfFlow)}{' '}
+                    <Link to={historyState.flowFormCopyValuesPath}>
+                      {historyState.flowFormCopyValuesName}
+                    </Link>
+                  </span>
+                ) : (
+                  t.t(lang, (s) => s.components.flow.addFLow)
+                )}
+              </C.PageTitle>
+              <FlowForm
+                {...flowFormProps}
+                load={load}
+                initialValues={
+                  historyState?.flowFormCopyValues
+                    ? deserializeFlowForm(historyState.flowFormCopyValues)
+                    : undefined
+                }
+              />
+            </PaddingContainer>
+          )}
+        </C.Loader>
+      )}
+    </AppContext.Consumer>
+  );
 };

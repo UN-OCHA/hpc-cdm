@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
-import { ABORT_SIGNAL, DATE_FROM_STRING, optional } from './util';
-import { LOCATION_WITH_CHILDREN } from './locations';
 import { CATEGORY_GROUP_TYPE, CATEGORY_WITH_CATEGORY_REF } from './categories';
+import { LOCATION_WITH_CHILDREN } from './locations';
+import { ABORT_SIGNAL, DATE_FROM_STRING, optional } from './util';
 
 export const ORGANIZATION_MODEL = t.type({
   id: t.number,

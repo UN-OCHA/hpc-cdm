@@ -557,7 +557,9 @@ export class Dummy {
         ),
         getEmergencies: dummyEndpoint(
           'emergencies.getEmergencies',
-          async (_props: emergencies.GetEmergenciesParams): Promise<emergencies.GetEmergenciesResult> => {
+          async (
+            _props: emergencies.GetEmergenciesParams
+          ): Promise<emergencies.GetEmergenciesResult> => {
             return this.data.emergencies;
           }
         ),
@@ -666,10 +668,7 @@ export class Dummy {
             const versionIds = new Set(flows.map((flow) => flow.versionID));
 
             this.data.flows = this.data.flows.map((flow) => {
-              if (
-                ids.has(flow.id) &&
-                versionIds.has(flow.versionID)
-              ) {
+              if (ids.has(flow.id) && versionIds.has(flow.versionID)) {
                 return {
                   ...flow,
                   categories: [

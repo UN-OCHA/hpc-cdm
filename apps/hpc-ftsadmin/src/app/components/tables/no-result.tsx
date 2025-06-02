@@ -1,7 +1,7 @@
-import tw from 'twin.macro';
-import { getContext } from '../../context';
 import PageviewOutlinedIcon from '@mui/icons-material/PageviewOutlined';
+import tw from 'twin.macro';
 import { t } from '../../../i18n';
+import { getContext } from '../../context';
 
 const Container = tw.div`
   text-center

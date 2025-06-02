@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
-import { DATE_FROM_STRING, optional, type AbortSignalType } from './util';
 import { CATEGORY_REF } from './category-refs';
+import { DATE_FROM_STRING, optional, type AbortSignalType } from './util';
 
 export const CATEGORY_GROUP_TYPE = t.keyof({
   beneficiaryGroup: null,

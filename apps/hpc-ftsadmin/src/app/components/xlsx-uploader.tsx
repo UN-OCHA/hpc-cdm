@@ -1,10 +1,10 @@
+import { isModelError } from '@unocha/hpc-live';
 import { C } from '@unocha/hpc-ui';
 import { MdUploadFile } from 'react-icons/md';
-import { getContext } from '../context';
-import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
 import { toast } from 'react-toastify';
 import { t } from '../../i18n';
-import { isModelError } from '@unocha/hpc-live';
+import { getContext } from '../context';
+import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
 
 const VALID_FILE_EXTENSION = [
   'application/vnd.ms-excel',
@@ -20,9 +20,7 @@ const XLSXUploader = () => {
       return false;
     }
 
-    const isValid = VALID_FILE_EXTENSION.includes(
-      file.type
-    );
+    const isValid = VALID_FILE_EXTENSION.includes(file.type);
 
     if (!isValid) {
       toast.error(
@@ -34,7 +32,7 @@ const XLSXUploader = () => {
     return isValid;
   };
 
-  const handleSuccess = (fileName:string | null = '') => {
+  const handleSuccess = (fileName: string | null = '') => {
     toast.success(
       t.t(lang, (s) => s.components.upload.success, {
         fileName,

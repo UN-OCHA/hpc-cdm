@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { type IconType } from 'react-icons/lib';
 import { Link } from 'react-router';
 
+import { CircularProgress } from '@mui/material';
+import Caret from '../assets/icons/caret';
 import { combineClasses } from '../classes';
 import { styled } from '../theme';
-import Caret from '../assets/icons/caret';
-import { CircularProgress } from '@mui/material';
 
 const CLS = {
   ACTIVE: 'active',

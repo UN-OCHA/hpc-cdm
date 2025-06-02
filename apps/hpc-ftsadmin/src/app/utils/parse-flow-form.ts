@@ -355,7 +355,7 @@ export const parseFlowForm = (
     isApprovedFlowVersion: isPending?.isApproved || isPending?.isSaved,
     inactiveReason,
     newCategories: [], //  TODO
-    newMoney:isNewMoney,
+    newMoney: isNewMoney,
     notes,
     origAmount: amountOriginalCurrency
       ? currencyToInteger(amountOriginalCurrency)
@@ -872,8 +872,9 @@ const compareFlowForms = (
     currentValue: util.FormObjectValue | null,
     incomingValue: util.FormObjectValue | null
   ) => {
-    if ((!currentValue && incomingValue) || (currentValue && !incomingValue))
-      {return true;}
+    if ((!currentValue && incomingValue) || (currentValue && !incomingValue)) {
+      return true;
+    }
     return currentValue?.value !== incomingValue?.value;
   };
 
@@ -881,9 +882,12 @@ const compareFlowForms = (
     currentDate: dayjs.Dayjs | null,
     incomingDate: dayjs.Dayjs | null
   ): boolean => {
-    if (currentDate === incomingDate) {return false;}
-    if ((!currentDate && incomingDate) || (currentDate && !incomingDate))
-      {return true;}
+    if (currentDate === incomingDate) {
+      return false;
+    }
+    if ((!currentDate && incomingDate) || (currentDate && !incomingDate)) {
+      return true;
+    }
     return !currentDate?.isSame(incomingDate);
   };
 
@@ -892,8 +896,12 @@ const compareFlowForms = (
     incomingArray: T[],
     comparator: (a: T, b: T) => boolean
   ) => {
-    if (currentArray.length === 0 && incomingArray.length === 0) {return false;}
-    if (currentArray.length !== incomingArray.length) {return true;}
+    if (currentArray.length === 0 && incomingArray.length === 0) {
+      return false;
+    }
+    if (currentArray.length !== incomingArray.length) {
+      return true;
+    }
 
     for (const item of currentArray) {
       if (!incomingArray.some((i) => !comparator(item, i))) {

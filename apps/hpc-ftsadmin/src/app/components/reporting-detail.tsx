@@ -310,7 +310,6 @@ const ReportingDetail = ({
             )}
             controlledField={{
               // This is a readonly field
-               
               onChange: () => {},
               value: sourceSystemRecordId,
             }}

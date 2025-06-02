@@ -291,7 +291,9 @@ export const autofillProject = async ({
       emergencies
     );
 
-    const projectGlobalClustersIds = new Set(projectGlobalClusters.map((gC) => gC.id));
+    const projectGlobalClustersIds = new Set(
+      projectGlobalClusters.map((gC) => gC.id)
+    );
     helperSetFieldValue(
       fieldName,
       'FieldClusters',
@@ -476,9 +478,11 @@ export const autofillGlobalClusters = async ({
   if (!newValue || typeof newValue === 'string' || !Array.isArray(newValue)) {
     return;
   }
-  const newGlobalClusterIds = new Set((
-    newValue.filter((v) => typeof v !== 'string') as FormObjectValue[]
-  ).map((v) => valueToInteger(v.value)));
+  const newGlobalClusterIds = new Set(
+    (newValue.filter((v) => typeof v !== 'string') as FormObjectValue[]).map(
+      (v) => valueToInteger(v.value)
+    )
+  );
 
   const direction = fieldName.includes('Destination')
     ? 'Destination'
