@@ -17,13 +17,16 @@ const StyledLI = tw.li`w-full max-h-min`;
 const ChildrenOption = ({
   children,
   key,
+  ...otherProps
 }: {
   children: React.ReactNode;
   key: string | number;
 }) => {
   return (
     <FlexDiv>
-      <StyledLI key={key}>{children}</StyledLI>
+      <StyledLI {...otherProps} key={key}>
+        {children}
+      </StyledLI>
     </FlexDiv>
   );
 };
