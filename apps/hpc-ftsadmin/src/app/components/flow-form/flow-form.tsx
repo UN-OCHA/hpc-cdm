@@ -3,24 +3,24 @@ import {
   Grow,
   Paper,
   Snackbar,
-  SxProps,
-  Theme,
+  type SxProps,
+  type Theme,
   useTheme,
 } from '@mui/material';
 import {
   type FormObjectValue,
-  categories,
+  type categories,
   util as codecs,
   errors,
-  flows,
-  governingEntities,
-  locations,
-  organizations,
-  usageYears,
+  type flows,
+  type governingEntities,
+  type locations,
+  type organizations,
+  type usageYears,
 } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import type { Dayjs } from 'dayjs';
-import { Form, Formik, FormikHelpers } from 'formik';
+import { Form, Formik, type FormikHelpers } from 'formik';
 import * as io from 'io-ts';
 import React, { useState } from 'react';
 import { FaTrashAlt, FaUserSecret } from 'react-icons/fa';
@@ -28,7 +28,7 @@ import { MdAdd, MdCheck, MdClose, MdOutlineSearch } from 'react-icons/md';
 import { Link, useBeforeUnload, useBlocker, useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import tw from 'twin.macro';
-import { LanguageKey, t } from '../../../i18n';
+import { type LanguageKey, t } from '../../../i18n';
 import { getContext } from '../../context';
 import paths from '../../paths';
 import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
@@ -66,7 +66,7 @@ import {
 } from '../../utils/map-functions';
 import {
   CTP,
-  RefDirection,
+  type RefDirection,
   isMethodOption,
   parseFlowForm,
   pendingValuesFlowForm,
@@ -75,11 +75,11 @@ import {
 } from '../../utils/parse-flow-form';
 import ReportingDetail, {
   REPORTING_DETAIL_INITIAL_VALUES,
-  ReportingDetailProps,
+  type ReportingDetailProps,
   validateReportingDetailsRequiredField,
   validateReportingDetailsURLFormat,
 } from '../reporting-detail';
-import FlowLink, { FlowLinkProps } from './flow-link';
+import FlowLink, { type FlowLinkProps } from './flow-link';
 import FlowLinkWarning from './flow-link-warning';
 import FlowSearch, { OVERRIDING_FLOW_KEYS } from './flow-search';
 import FlowVersions from './flow-version';
@@ -377,7 +377,7 @@ const FlowAmountButton = ({
 }) => {
   const { lang } = getContext();
 
-  if (disabled) return;
+  if (disabled) {return;}
   const amountUSDInt = currencyToInteger(amountUSD);
   const amountOriginalCurrencyInt = currencyToInteger(amountOriginalCurrency);
   const exchangeRateFloat = parseFloat(exchangeRate);
@@ -440,7 +440,7 @@ const BlockNavigationOnUnsavedChanges = ({
   //  User navigating away
   useBlocker(() => {
     if (dirty && !isSubmitting) {
-      return !window.confirm(message);
+      return !globalThis.confirm(message);
     }
     return false;
   });
@@ -558,13 +558,13 @@ export const FlowForm = (props: FlowFormProps) => {
   const isDataConsistencyErrorMap = (
     reason: errors.DataConsistencyErrorReason[number]
   ): reason is ConsistencyErrorReasonMap => {
-    const KEYS: (keyof ConsistencyErrorReasons)[] = [
+    const KEYS: Array<keyof ConsistencyErrorReasons> = [
       'usageYears',
       'locations',
       'governingEntities',
       'organizations',
     ];
-    return KEYS.some((key) => key === reason.type);
+    return KEYS.includes(reason.type);
   };
 
   const handleEarmarkingRestriction = (parentValues: FlowLinkProps | null) => {
@@ -584,7 +584,7 @@ export const FlowForm = (props: FlowFormProps) => {
     const isParentEarmarking = (
       earmarking: string
     ): earmarking is (typeof EARMARKING_FREEDOM)[number] =>
-      EARMARKING_FREEDOM.some((e) => e === earmarking);
+      EARMARKING_FREEDOM.includes(earmarking);
 
     const parentEarmarking = parentValues.earmarking.name;
     if (!isParentEarmarking(parentEarmarking)) {
@@ -592,10 +592,10 @@ export const FlowForm = (props: FlowFormProps) => {
     }
 
     const index = EARMARKING_FREEDOM.indexOf(parentEarmarking);
-    const allowedChildEarmarking = EARMARKING_FREEDOM.slice(index);
+    const allowedChildEarmarking = new Set(EARMARKING_FREEDOM.slice(index));
 
     return earmarkingType.filter((e) =>
-      allowedChildEarmarking.some((ae) => ae === e.displayLabel)
+      allowedChildEarmarking.has(e.displayLabel)
     );
   };
   const handleDataConsistencyError = (err: errors.DataConsistencyError) => {
@@ -716,8 +716,8 @@ export const FlowForm = (props: FlowFormProps) => {
           }
           navigate(paths.flow(updatedFlow.id, updatedFlow.versionID));
         })
-        .catch((err) => {
-          handleSubmitError(err);
+        .catch((error) => {
+          handleSubmitError(error);
         })
         .finally(() => setSubmitLoading(false));
     } else {
@@ -735,8 +735,8 @@ export const FlowForm = (props: FlowFormProps) => {
             },
           });
         })
-        .catch((err) => {
-          handleSubmitError(err);
+        .catch((error) => {
+          handleSubmitError(error);
         })
         .finally(() => setSubmitLoading(false));
     }
@@ -778,7 +778,7 @@ export const FlowForm = (props: FlowFormProps) => {
     toast.dismiss();
     setDeleteLoading(true);
     if (
-      !window.confirm(
+      !globalThis.confirm(
         t.t(
           lang,
           (s) => s.components.flowForm.submitValidation.deleteFlowWarning
@@ -814,10 +814,10 @@ export const FlowForm = (props: FlowFormProps) => {
           },
         });
       })
-      .catch((err) => {
+      .catch((error) => {
         toast.error(
-          isCustomError(err)
-            ? err.json.message
+          isCustomError(error)
+            ? error.json.message
             : t.t(
                 lang,
                 (s) => s.components.flowForm.submitValidation.unknownError
@@ -836,7 +836,7 @@ export const FlowForm = (props: FlowFormProps) => {
       return;
     }
     if (
-      !window.confirm(
+      !globalThis.confirm(
         t.t(lang, (s) => s.components.flowForm.rejectFlow.confirm)
       )
     ) {
@@ -886,10 +886,10 @@ export const FlowForm = (props: FlowFormProps) => {
         );
         load();
       })
-      .catch((err) => {
+      .catch((error) => {
         toast.error(
-          isCustomError(err)
-            ? err.json.message
+          isCustomError(error)
+            ? error.json.message
             : t.t(
                 lang,
                 (s) => s.components.flowForm.submitValidation.unknownError
@@ -911,7 +911,7 @@ export const FlowForm = (props: FlowFormProps) => {
   const handleFundingDestinationOrganizations = (
     newValue:
       | NonNullable<string | FormObjectValue>
-      | (string | FormObjectValue)[]
+      | Array<string | FormObjectValue>
       | null,
     setFieldValue: FormikHelpers<FlowFormType>['setFieldValue']
   ) => {
@@ -932,13 +932,13 @@ export const FlowForm = (props: FlowFormProps) => {
   const handleMethod = (
     newValue:
       | NonNullable<string | FormObjectValue>
-      | (string | FormObjectValue)[]
+      | Array<string | FormObjectValue>
       | null,
     setFieldValue: FormikHelpers<FlowFormType>['setFieldValue']
   ) => {
     setFieldValue('method', newValue);
 
-    //  childMethod is `FormObjectValue`
+    //  ChildMethod is `FormObjectValue`
     if (Array.isArray(newValue) || typeof newValue === 'string') {
       return;
     }

@@ -1,6 +1,6 @@
 import { flows, type FormObjectValue } from '@unocha/hpc-data';
 import { toast } from 'react-toastify';
-import { Environment } from '../../environments/interface';
+import { type Environment } from '../../environments/interface';
 import { type LanguageKey, t } from '../../i18n';
 import type {
   FlowFormType,
@@ -30,21 +30,21 @@ const validateReportingOrganization = (
       if (rD.reportedByOrganization?.value) {
         return valueToInteger(rD.reportedByOrganization?.value);
       }
-      return undefined;
+      return;
     })
     .filter((rD) => rD !== undefined) as number[];
 
-  const fundingOrganizationIds = [
+  const fundingOrganizationIds = new Set([
     ...values.fundingSourceOrganizations.map((sOrg) =>
       valueToInteger(sOrg.value)
     ),
     ...values.fundingDestinationOrganizations.map((dOrg) =>
       valueToInteger(dOrg.value)
     ),
-  ];
+  ]);
 
   for (const reportingOrganizationId of reportingOrganizationIds) {
-    if (!fundingOrganizationIds.includes(reportingOrganizationId)) {
+    if (!fundingOrganizationIds.has(reportingOrganizationId)) {
       return [
         t.t(
           lang,
@@ -160,11 +160,11 @@ const validatePlan = async (
     id: planId,
     scopes: ['locations', 'planVersion'],
   });
-  const locationIds = locations.map((loc) => loc.id);
+  const locationIds = new Set(locations.map((loc) => loc.id));
   const locationNames = locations.map((loc) => loc.name).join(', ');
 
   const hasValidLocation = formLocations.some((loc) =>
-    locationIds.includes(valueToInteger(loc.value))
+    locationIds.has(valueToInteger(loc.value))
   );
   if (!hasValidLocation) {
     return [
@@ -232,7 +232,7 @@ const validateFlowForWarnings = async (
   ];
 
   for (const warning of warnings) {
-    if (!window.confirm(warning)) {
+    if (!globalThis.confirm(warning)) {
       return false;
     }
   }

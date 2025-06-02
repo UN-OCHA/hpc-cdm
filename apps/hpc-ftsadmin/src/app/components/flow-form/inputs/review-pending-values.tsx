@@ -1,5 +1,5 @@
 import { Box, Chip, Paper, Tooltip } from '@mui/material';
-import { FormObjectValue } from '@unocha/hpc-data';
+import { type FormObjectValue } from '@unocha/hpc-data';
 import { C, THEME } from '@unocha/hpc-ui';
 import React, { useEffect, useState } from 'react';
 import tw from 'twin.macro';

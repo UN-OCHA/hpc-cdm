@@ -2,7 +2,7 @@ import { C, type AsyncAutocompleteSelectProps } from '@unocha/hpc-ui';
 import ReviewPendingValues, {
   type ReviewPendingValuesProps,
 } from './review-pending-values';
-import { Box, SxProps, Theme } from '@mui/material';
+import { Box, type SxProps, type Theme } from '@mui/material';
 
 type AsyncAutocompleteSelectReviewProps = { sx?: SxProps<Theme> } & Omit<
   AsyncAutocompleteSelectProps,

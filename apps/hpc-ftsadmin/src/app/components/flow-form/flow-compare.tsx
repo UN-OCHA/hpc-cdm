@@ -6,7 +6,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { flows } from '@unocha/hpc-data';
+import { type flows } from '@unocha/hpc-data';
 import React from 'react';
 import tw from 'twin.macro';
 import { isKey } from '../../utils/parse-filters';

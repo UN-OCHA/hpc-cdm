@@ -20,8 +20,8 @@ const XLSXUploader = () => {
       return false;
     }
 
-    const isValid = VALID_FILE_EXTENSION.some(
-      (extension) => extension === file.type
+    const isValid = VALID_FILE_EXTENSION.includes(
+      file.type
     );
 
     if (!isValid) {
@@ -34,8 +34,7 @@ const XLSXUploader = () => {
     return isValid;
   };
 
-  const handleSuccess = (name: string | null) => {
-    const fileName = name ?? '';
+  const handleSuccess = (fileName:string | null = '') => {
     toast.success(
       t.t(lang, (s) => s.components.upload.success, {
         fileName,

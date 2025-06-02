@@ -8,7 +8,7 @@ import React from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import tw from 'twin.macro';
-import { LanguageKey, t } from '../../i18n';
+import { type LanguageKey, t } from '../../i18n';
 import { getContext, getEnv } from '../context';
 import paths from '../paths';
 import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
@@ -21,7 +21,7 @@ type MergeModalProps = {
   load: () => void;
 };
 type OrganizationMergeModalValues = {
-  mergingEntities: Array<FormObjectValue>;
+  mergingEntities: FormObjectValue[];
   receivingEntity: FormObjectValue | null;
 };
 type KeywordMergeModalValues = {
@@ -86,7 +86,7 @@ const ConfirmationText = ({
   receivingEntity,
   lang,
 }: {
-  mergingEntities: Array<FormObjectValue> | (FormObjectValue | null);
+  mergingEntities: FormObjectValue[] | (FormObjectValue | null);
   receivingEntity: FormObjectValue | null;
   lang: LanguageKey;
 }) => {
@@ -199,14 +199,14 @@ const MergeModal = (props: MergeModalProps) => {
             },
           });
         })
-        .catch((err) => {
+        .catch((error) => {
           toast.error(
             parseEntityString(
               t.t(
                 lang,
                 (s) =>
                   s.components.mergeModal.error[
-                    errors.isConflictError(err) ? 'conflict' : 'unknown'
+                    errors.isConflictError(error) ? 'conflict' : 'unknown'
                   ]
               ),
               type,
@@ -238,14 +238,14 @@ const MergeModal = (props: MergeModalProps) => {
             TOAST_CONFIG
           );
         })
-        .catch((err) => {
+        .catch((error) => {
           toast.error(
             parseEntityString(
               t.t(
                 lang,
                 (s) =>
                   s.components.mergeModal.error[
-                    errors.isConflictError(err) ? 'conflict' : 'unknown'
+                    errors.isConflictError(error) ? 'conflict' : 'unknown'
                   ]
               ),
               type,

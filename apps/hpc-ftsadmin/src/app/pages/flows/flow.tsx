@@ -1,4 +1,4 @@
-import { categories, flows } from '@unocha/hpc-data';
+import { type categories, type flows } from '@unocha/hpc-data';
 import { C, useDataLoader } from '@unocha/hpc-ui';
 import { useEffect } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
@@ -278,7 +278,7 @@ export default () => {
         )}
       </AppContext.Consumer>
     );
-  } else {
+  } 
     const [state, load] = useDataLoader([], async () => {
       const [
         inactiveReasons,
@@ -350,5 +350,5 @@ export default () => {
         )}
       </AppContext.Consumer>
     );
-  }
+  
 };

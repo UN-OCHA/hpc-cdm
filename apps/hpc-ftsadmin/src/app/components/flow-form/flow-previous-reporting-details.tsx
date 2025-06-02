@@ -6,7 +6,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { flows } from '@unocha/hpc-data';
+import { type flows } from '@unocha/hpc-data';
 import { C, useDataLoader } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';

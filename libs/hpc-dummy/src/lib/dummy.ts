@@ -640,7 +640,7 @@ export class Dummy {
             let flows = this.data.flows.filter(
               (flow) => !flow.categories?.some((category) => category.id === 45)
             );
-            /** pending filter */
+            /** Pending filter */
             if (params.pending) {
               flows = this.data.flows.filter(
                 (flow) =>
@@ -649,7 +649,7 @@ export class Dummy {
             }
             const searchFlows = {
               total: flows.length,
-              flows: flows,
+              flows,
               prevPageCursor: 0,
               nextPageCursor: 0,
               hasNextPage: false,
@@ -662,13 +662,13 @@ export class Dummy {
         bulkRejectPendingFlows: dummyEndpoint(
           'flows.bulkRejectPendingFlows',
           async ({ flows }: flows.BulkRejectPendingFlowsParams) => {
-            const ids = flows.map((flow) => flow.id);
-            const versionIds = flows.map((flow) => flow.versionID);
+            const ids = new Set(flows.map((flow) => flow.id));
+            const versionIds = new Set(flows.map((flow) => flow.versionID));
 
             this.data.flows = this.data.flows.map((flow) => {
               if (
-                ids.includes(flow.id) &&
-                versionIds.includes(flow.versionID)
+                ids.has(flow.id) &&
+                versionIds.has(flow.versionID)
               ) {
                 return {
                   ...flow,

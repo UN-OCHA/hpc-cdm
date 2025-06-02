@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Box, Modal } from '@mui/material';
-import { AsyncAutocompleteSelectProps, C } from '@unocha/hpc-ui';
+import { type AsyncAutocompleteSelectProps, C } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import {
   defaultOptions,
@@ -12,11 +12,11 @@ import {
 import { getContext, getEnv } from '../../context';
 import { t } from '../../../i18n';
 import { useFormikContext } from 'formik';
-import { FormObjectValue, flows } from '@unocha/hpc-data';
+import { type FormObjectValue, type flows } from '@unocha/hpc-data';
 import { isFormObjectValue } from '../../utils/parse-flow-form';
-import { IconType } from 'react-icons/lib';
-import { FlowLinkProps } from './flow-link';
-import { FlowFormType } from './flow-form';
+import { type IconType } from 'react-icons/lib';
+import { type FlowLinkProps } from './flow-link';
+import { type FlowFormType } from './flow-form';
 import {
   flowLinkToFormObjectValue,
   flowToFormObjectValue,

@@ -3,7 +3,7 @@ import { Box, Table, TableBody, TableCell, TableRow } from '@mui/material';
 import { Link } from 'react-router';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
-import { categories, flows } from '@unocha/hpc-data';
+import { type categories, type flows } from '@unocha/hpc-data';
 import dayjs from '../../../libs/dayjs';
 
 import paths from '../../paths';

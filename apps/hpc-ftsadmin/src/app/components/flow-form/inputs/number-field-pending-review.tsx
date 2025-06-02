@@ -2,7 +2,7 @@ import { C, type NumberFieldProps } from '@unocha/hpc-ui';
 import ReviewPendingValues, {
   type ReviewPendingValuesProps,
 } from './review-pending-values';
-import { Box, SxProps, Theme } from '@mui/material';
+import { Box, type SxProps, type Theme } from '@mui/material';
 
 type NumberFieldReviewProps = { sx?: SxProps<Theme> } & Omit<
   NumberFieldProps,

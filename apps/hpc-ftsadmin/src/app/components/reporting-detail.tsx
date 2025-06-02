@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { type FormObjectValue, fileAssetEntities } from '@unocha/hpc-data';
+import { type FormObjectValue, type fileAssetEntities } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { type Dayjs } from 'dayjs';
 import { useFormikContext } from 'formik';
@@ -59,7 +59,7 @@ export const validateReportingDetailsURLFormat = (
   lang: LanguageKey
 ) => {
   if (value === '') {
-    return undefined;
+    return;
   }
   return /^https:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+$/.test(value)
     ? undefined
@@ -310,7 +310,7 @@ const ReportingDetail = ({
             )}
             controlledField={{
               // This is a readonly field
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
+               
               onChange: () => {},
               value: sourceSystemRecordId,
             }}

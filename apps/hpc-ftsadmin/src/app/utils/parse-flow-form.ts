@@ -426,7 +426,7 @@ const isInferred = (
         inf.valueId === entity.id
     );
   });
-  return inferredList.some((inf) => inf === true);
+  return inferredList.includes(true);
 };
 
 const isTransferred = (
@@ -451,7 +451,7 @@ const isTransferred = (
     );
   });
 
-  return transferredList.some((trans) => trans === true);
+  return transferredList.includes(true);
 };
 
 const inferredTransferredChipColor = (
@@ -873,7 +873,7 @@ const compareFlowForms = (
     incomingValue: util.FormObjectValue | null
   ) => {
     if ((!currentValue && incomingValue) || (currentValue && !incomingValue))
-      return true;
+      {return true;}
     return currentValue?.value !== incomingValue?.value;
   };
 
@@ -881,9 +881,9 @@ const compareFlowForms = (
     currentDate: dayjs.Dayjs | null,
     incomingDate: dayjs.Dayjs | null
   ): boolean => {
-    if (currentDate === incomingDate) return false;
+    if (currentDate === incomingDate) {return false;}
     if ((!currentDate && incomingDate) || (currentDate && !incomingDate))
-      return true;
+      {return true;}
     return !currentDate?.isSame(incomingDate);
   };
 
@@ -892,8 +892,8 @@ const compareFlowForms = (
     incomingArray: T[],
     comparator: (a: T, b: T) => boolean
   ) => {
-    if (currentArray.length === 0 && incomingArray.length === 0) return false;
-    if (currentArray.length !== incomingArray.length) return true;
+    if (currentArray.length === 0 && incomingArray.length === 0) {return false;}
+    if (currentArray.length !== incomingArray.length) {return true;}
 
     for (const item of currentArray) {
       if (!incomingArray.some((i) => !comparator(item, i))) {
@@ -1019,7 +1019,7 @@ const compareFlowForms = (
 };
 
 const isFundingKey = (key: string): key is FlowFormFlowObjectKey =>
-  FUNDING_KEYS.some((k) => k === key);
+  FUNDING_KEYS.includes(key);
 
 export const pendingValuesFlowForm = (
   initialValues?: FlowFormType,

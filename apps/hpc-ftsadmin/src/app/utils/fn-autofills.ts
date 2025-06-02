@@ -44,7 +44,7 @@ type AutofillProps = {
   env: Environment;
   newValue?:
     | NonNullable<string | FormObjectValue>
-    | (string | FormObjectValue)[]
+    | Array<string | FormObjectValue>
     | null;
 };
 
@@ -291,14 +291,14 @@ export const autofillProject = async ({
       emergencies
     );
 
-    const projectGlobalClustersIds = projectGlobalClusters.map((gC) => gC.id);
+    const projectGlobalClustersIds = new Set(projectGlobalClusters.map((gC) => gC.id));
     helperSetFieldValue(
       fieldName,
       'FieldClusters',
       setFieldValue,
       values,
       governingEntities.filter((gE) =>
-        gE.globalClusterIds.some((id) => projectGlobalClustersIds.includes(id))
+        gE.globalClusterIds.some((id) => projectGlobalClustersIds.has(id))
       )
     );
   }
@@ -429,7 +429,7 @@ export const autofillFieldClusters = async ({
 }: AutofillProps) => {
   setFieldValue(fieldName, newValue);
 
-  //  fieldClusters field is multi select
+  //  FieldClusters field is multi select
   if (!newValue || typeof newValue === 'string' || !Array.isArray(newValue)) {
     return;
   }
@@ -472,13 +472,13 @@ export const autofillGlobalClusters = async ({
 }: AutofillProps) => {
   setFieldValue(fieldName, newValue);
 
-  //  globalClusters field is multi select
+  //  GlobalClusters field is multi select
   if (!newValue || typeof newValue === 'string' || !Array.isArray(newValue)) {
     return;
   }
-  const newGlobalClusterIds = (
+  const newGlobalClusterIds = new Set((
     newValue.filter((v) => typeof v !== 'string') as FormObjectValue[]
-  ).map((v) => valueToInteger(v.value));
+  ).map((v) => valueToInteger(v.value)));
 
   const direction = fieldName.includes('Destination')
     ? 'Destination'
@@ -496,7 +496,7 @@ export const autofillGlobalClusters = async ({
     })
     .then((gEs) =>
       gEs.filter((gE) =>
-        gE.globalClusterIds.some((id) => newGlobalClusterIds.includes(id))
+        gE.globalClusterIds.some((id) => newGlobalClusterIds.has(id))
       )
     );
 
@@ -518,7 +518,7 @@ export const autofillUsageYears = async ({
 }: AutofillProps) => {
   setFieldValue(fieldName, newValue);
 
-  //  usageYears field is multi select
+  //  UsageYears field is multi select
   if (
     !newValue ||
     typeof newValue === 'string' ||

@@ -33,13 +33,13 @@ export interface AddEditOrganizationValues {
   name: string;
   abbreviation: string;
   nativeName?: string;
-  locations?: util.FormObjectValue[]; // number[] we need array of IDs
+  locations?: util.FormObjectValue[]; // Number[] we need array of IDs
   url?: string;
   active?: boolean;
   verified?: boolean;
   notes?: string; // "notes" makes reference what in the UI it's called "Comments"
   organizationTypes: util.FormObjectValue | null;
-  organizationLevel?: util.FormObjectValue | null; // number[] we need array of IDs
+  organizationLevel?: util.FormObjectValue | null; // Number[] we need array of IDs
   parent?: util.FormObjectValue | null;
   collectiveInd?: boolean;
   comments?: string; // "comments" makes reference what in the UI it's called "Organization Description"
@@ -54,7 +54,7 @@ export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   verified: true,
   notes: '', // "notes" makes reference what in the UI it's called "Comments"
   organizationTypes: null,
-  organizationLevel: null, // number[] we need array of IDs
+  organizationLevel: null, // Number[] we need array of IDs
   parent: null,
   collectiveInd: false,
   comments: '',

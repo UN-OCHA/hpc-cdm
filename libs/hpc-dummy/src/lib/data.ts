@@ -887,9 +887,9 @@ export const INITIAL_DATA: DummyData = {
   ],
   flows: [
     {
-      id: 316064,
+      id: 316_064,
       updatedAt: new Date('2025-01-16T14:26:06.985Z'),
-      amountUSD: 1772311,
+      amountUSD: 1_772_311,
       versionID: 1,
       activeStatus: true,
       restricted: false,
@@ -917,7 +917,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316064,
+            objectID: 316_064,
             versionID: 1,
             objectType: 'flow',
             categoryID: 47,
@@ -935,7 +935,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316064,
+            objectID: 316_064,
             versionID: 1,
             objectType: 'flow',
             categoryID: 50,
@@ -953,7 +953,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316064,
+            objectID: 316_064,
             versionID: 1,
             objectType: 'flow',
             categoryID: 133,
@@ -971,7 +971,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316064,
+            objectID: 316_064,
             versionID: 1,
             objectType: 'flow',
             categoryID: 156,
@@ -989,7 +989,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: 157,
           code: '',
           categoryRef: {
-            objectID: 316064,
+            objectID: 316_064,
             versionID: 1,
             objectType: 'flow',
             categoryID: 158,
@@ -1007,7 +1007,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316064,
+            objectID: 316_064,
             versionID: 1,
             objectType: 'flow',
             categoryID: 1502,
@@ -1025,7 +1025,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316064,
+            objectID: 316_064,
             versionID: 1,
             objectType: 'flow',
             categoryID: 1704,
@@ -1100,8 +1100,8 @@ export const INITIAL_DATA: DummyData = {
       externalReferences: [],
       reportDetails: [
         {
-          id: 677235,
-          flowID: 316064,
+          id: 677_235,
+          flowID: 316_064,
           versionID: 1,
           contactInfo: 'adecja@usaid.gov',
           refCode: '720BHA23IO00066',
@@ -1115,8 +1115,8 @@ export const INITIAL_DATA: DummyData = {
           sourceID: null,
         },
         {
-          id: 677236,
-          flowID: 316064,
+          id: 677_236,
+          flowID: 316_064,
           versionID: 1,
           contactInfo: 'Kimani DeShields/kwiliams@iom.int',
           refCode: null,
@@ -1133,9 +1133,9 @@ export const INITIAL_DATA: DummyData = {
       parkedParentSource: null,
     },
     {
-      id: 305776,
+      id: 305_776,
       updatedAt: new Date('2024-12-30T11:58:58.649Z'),
-      amountUSD: 550800,
+      amountUSD: 550_800,
       versionID: 3,
       activeStatus: true,
       restricted: false,
@@ -1163,7 +1163,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 305776,
+            objectID: 305_776,
             versionID: 3,
             objectType: 'flow',
             categoryID: 48,
@@ -1181,7 +1181,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 305776,
+            objectID: 305_776,
             versionID: 3,
             objectType: 'flow',
             categoryID: 50,
@@ -1199,7 +1199,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 305776,
+            objectID: 305_776,
             versionID: 3,
             objectType: 'flow',
             categoryID: 133,
@@ -1217,7 +1217,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 305776,
+            objectID: 305_776,
             versionID: 3,
             objectType: 'flow',
             categoryID: 156,
@@ -1235,7 +1235,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 305776,
+            objectID: 305_776,
             versionID: 3,
             objectType: 'flow',
             categoryID: 1500,
@@ -1253,7 +1253,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 305776,
+            objectID: 305_776,
             versionID: 3,
             objectType: 'flow',
             categoryID: 1849,
@@ -1310,7 +1310,7 @@ export const INITIAL_DATA: DummyData = {
         },
       ],
       childIDs: [],
-      parentIDs: [305774],
+      parentIDs: [305_774],
       origAmount: null,
       origCurrency: null,
       locations: [
@@ -1328,7 +1328,7 @@ export const INITIAL_DATA: DummyData = {
       externalReferences: [
         {
           systemID: 'CERF',
-          flowID: 305776,
+          flowID: 305_776,
           externalRecordID: '4973:24-RR-CEF-017:Health',
           externalRecordDate: new Date('2024-04-17T00:00:00.000Z'),
           versionID: 1,
@@ -1337,7 +1337,7 @@ export const INITIAL_DATA: DummyData = {
         },
         {
           systemID: 'CERF',
-          flowID: 305776,
+          flowID: 305_776,
           externalRecordID: '4973:24-RR-CEF-017:Health',
           externalRecordDate: new Date('2024-04-18T00:00:00.000Z'),
           versionID: 2,
@@ -1347,8 +1347,8 @@ export const INITIAL_DATA: DummyData = {
       ],
       reportDetails: [
         {
-          id: 594811,
-          flowID: 305776,
+          id: 594_811,
+          flowID: 305_776,
           versionID: 1,
           contactInfo: null,
           refCode: '24-RR-CEF-017',
@@ -1362,8 +1362,8 @@ export const INITIAL_DATA: DummyData = {
           sourceID: '4973:24-RR-CEF-017:Health',
         },
         {
-          id: 595302,
-          flowID: 305776,
+          id: 595_302,
+          flowID: 305_776,
           versionID: 2,
           contactInfo: null,
           refCode: '24-RR-CEF-017',
@@ -1377,8 +1377,8 @@ export const INITIAL_DATA: DummyData = {
           sourceID: '4973:24-RR-CEF-017:Health',
         },
         {
-          id: 669876,
-          flowID: 305776,
+          id: 669_876,
+          flowID: 305_776,
           versionID: 3,
           contactInfo: 'Olga Basurmanova\nobasurmanova@unicef.org',
           refCode: 'SM240169     24-RR-CEF-017',
@@ -1395,9 +1395,9 @@ export const INITIAL_DATA: DummyData = {
       parkedParentSource: null,
     },
     {
-      id: 316063,
+      id: 316_063,
       updatedAt: new Date('2024-07-25T14:37:46.524Z'),
-      amountUSD: 1082742,
+      amountUSD: 1_082_742,
       versionID: 1,
       activeStatus: true,
       restricted: false,
@@ -1425,7 +1425,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316063,
+            objectID: 316_063,
             versionID: 1,
             objectType: 'flow',
             categoryID: 47,
@@ -1443,7 +1443,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316063,
+            objectID: 316_063,
             versionID: 1,
             objectType: 'flow',
             categoryID: 50,
@@ -1461,7 +1461,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316063,
+            objectID: 316_063,
             versionID: 1,
             objectType: 'flow',
             categoryID: 133,
@@ -1479,7 +1479,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316063,
+            objectID: 316_063,
             versionID: 1,
             objectType: 'flow',
             categoryID: 156,
@@ -1497,7 +1497,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: 157,
           code: '',
           categoryRef: {
-            objectID: 316063,
+            objectID: 316_063,
             versionID: 1,
             objectType: 'flow',
             categoryID: 158,
@@ -1515,7 +1515,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316063,
+            objectID: 316_063,
             versionID: 1,
             objectType: 'flow',
             categoryID: 1502,
@@ -1533,7 +1533,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 316063,
+            objectID: 316_063,
             versionID: 1,
             objectType: 'flow',
             categoryID: 1704,
@@ -1608,8 +1608,8 @@ export const INITIAL_DATA: DummyData = {
       externalReferences: [],
       reportDetails: [
         {
-          id: 622266,
-          flowID: 316063,
+          id: 622_266,
+          flowID: 316_063,
           versionID: 1,
           contactInfo: 'adecja@usaid.gov',
           refCode: '720BHA23IO00066',
@@ -1623,8 +1623,8 @@ export const INITIAL_DATA: DummyData = {
           sourceID: null,
         },
         {
-          id: 622267,
-          flowID: 316063,
+          id: 622_267,
+          flowID: 316_063,
           versionID: 1,
           contactInfo: 'Kimani DeShields/kwiliams@iom.int',
           refCode: null,
@@ -1641,9 +1641,9 @@ export const INITIAL_DATA: DummyData = {
       parkedParentSource: null,
     },
     {
-      id: 284430,
+      id: 284_430,
       updatedAt: new Date('2024-07-25T14:36:43.748Z'),
-      amountUSD: 1090502,
+      amountUSD: 1_090_502,
       versionID: 1,
       activeStatus: true,
       restricted: false,
@@ -1671,7 +1671,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 284430,
+            objectID: 284_430,
             versionID: 1,
             objectType: 'flow',
             categoryID: 47,
@@ -1689,7 +1689,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 284430,
+            objectID: 284_430,
             versionID: 1,
             objectType: 'flow',
             categoryID: 50,
@@ -1707,7 +1707,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 284430,
+            objectID: 284_430,
             versionID: 1,
             objectType: 'flow',
             categoryID: 133,
@@ -1725,7 +1725,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 284430,
+            objectID: 284_430,
             versionID: 1,
             objectType: 'flow',
             categoryID: 156,
@@ -1743,7 +1743,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: 157,
           code: '',
           categoryRef: {
-            objectID: 284430,
+            objectID: 284_430,
             versionID: 1,
             objectType: 'flow',
             categoryID: 158,
@@ -1761,7 +1761,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 284430,
+            objectID: 284_430,
             versionID: 1,
             objectType: 'flow',
             categoryID: 1502,
@@ -1779,7 +1779,7 @@ export const INITIAL_DATA: DummyData = {
           parentID: null,
           code: '',
           categoryRef: {
-            objectID: 284430,
+            objectID: 284_430,
             versionID: 1,
             objectType: 'flow',
             categoryID: 1704,
@@ -1854,8 +1854,8 @@ export const INITIAL_DATA: DummyData = {
       externalReferences: [],
       reportDetails: [
         {
-          id: 622265,
-          flowID: 284430,
+          id: 622_265,
+          flowID: 284_430,
           versionID: 1,
           contactInfo: 'adecja@usaid.gov',
           refCode: '720BHA23IO00066',
@@ -1874,7 +1874,7 @@ export const INITIAL_DATA: DummyData = {
   ],
   globalClusters: [
     {
-      id: 26512,
+      id: 26_512,
       hrinfoId: null,
       type: 'custom',
       name: 'Agriculture',
@@ -1898,7 +1898,7 @@ export const INITIAL_DATA: DummyData = {
       updatedAt: new Date('2021-08-24T11:51:20.534Z'),
     },
     {
-      id: 26480,
+      id: 26_480,
       hrinfoId: null,
       type: 'custom',
       name: 'Coordination and support services',
@@ -1910,7 +1910,7 @@ export const INITIAL_DATA: DummyData = {
       updatedAt: new Date('2021-08-24T11:51:24.794Z'),
     },
     {
-      id: 26513,
+      id: 26_513,
       hrinfoId: null,
       type: 'custom',
       name: 'COVID-19',
@@ -2007,7 +2007,7 @@ export const INITIAL_DATA: DummyData = {
       updatedAt: new Date('2021-08-24T11:52:18.249Z'),
     },
     {
-      id: 26479,
+      id: 26_479,
       hrinfoId: null,
       type: 'custom',
       name: 'Multi-sector',
@@ -2031,7 +2031,7 @@ export const INITIAL_DATA: DummyData = {
       updatedAt: new Date('2021-08-24T11:52:27.907Z'),
     },
     {
-      id: 26481,
+      id: 26_481,
       hrinfoId: null,
       type: 'custom',
       name: 'Other',
@@ -2092,7 +2092,7 @@ export const INITIAL_DATA: DummyData = {
       updatedAt: new Date('2021-04-26T14:42:40.052Z'),
     },
     {
-      id: 26546,
+      id: 26_546,
       hrinfoId: null,
       type: 'aor',
       name: 'Protection - Human Trafficking & Smuggling',
@@ -2166,8 +2166,8 @@ export const INITIAL_DATA: DummyData = {
       externalId: '389',
       name: 'Spain',
       adminLevel: 0,
-      latitude: 40.309787496783,
-      longitude: -3.578125378279,
+      latitude: 40.309_787_496_783,
+      longitude: -3.578_125_378_279,
       iso3: 'ESP',
       pcode: null,
       validOn: null,
@@ -2327,7 +2327,7 @@ export const INITIAL_DATA: DummyData = {
       ],
     },
     {
-      id: 11214,
+      id: 11_214,
       name: '1001 Ideas Para Mi País',
       nativeName: null,
       abbreviation: '1001 Ideas',
@@ -2354,7 +2354,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2017-01-13T22:18:02.367Z'),
           updatedAt: new Date('2022-12-15T15:17:12.866Z'),
           categoryRef: {
-            objectID: 11214,
+            objectID: 11_214,
             versionID: 1,
             objectType: 'organization',
             categoryID: 118,
@@ -2372,7 +2372,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2017-01-13T22:18:02.688Z'),
           updatedAt: new Date('2022-12-15T15:17:15.025Z'),
           categoryRef: {
-            objectID: 11214,
+            objectID: 11_214,
             versionID: 1,
             objectType: 'organization',
             categoryID: 130,
@@ -2390,7 +2390,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2022-12-15T15:17:12.799Z'),
           updatedAt: new Date('2022-12-15T15:17:12.799Z'),
           categoryRef: {
-            objectID: 11214,
+            objectID: 11_214,
             versionID: 1,
             objectType: 'organization',
             categoryID: 1802,
@@ -2408,7 +2408,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2022-12-15T15:17:15.037Z'),
           updatedAt: new Date('2022-12-15T15:17:15.037Z'),
           categoryRef: {
-            objectID: 11214,
+            objectID: 11_214,
             versionID: 1,
             objectType: 'organization',
             categoryID: 1810,
@@ -2423,8 +2423,8 @@ export const INITIAL_DATA: DummyData = {
           externalId: '422',
           name: 'Venezuela, Bolivarian Republic of',
           adminLevel: 0,
-          latitude: 7.115201972148,
-          longitude: -66.183670771628,
+          latitude: 7.115_201_972_148,
+          longitude: -66.183_670_771_628,
           iso3: 'VEN',
           pcode: 'VE',
           validOn: null,
@@ -2438,7 +2438,7 @@ export const INITIAL_DATA: DummyData = {
       parent: null,
     },
     {
-      id: 10992,
+      id: 10_992,
       name: '100% Diversidad y Derechos',
       nativeName: null,
       abbreviation: '100% DyD',
@@ -2465,7 +2465,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2017-01-13T22:18:02.367Z'),
           updatedAt: new Date('2022-12-15T15:17:12.866Z'),
           categoryRef: {
-            objectID: 10992,
+            objectID: 10_992,
             versionID: 1,
             objectType: 'organization',
             categoryID: 118,
@@ -2483,7 +2483,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2017-01-13T22:18:02.688Z'),
           updatedAt: new Date('2022-12-15T15:17:15.025Z'),
           categoryRef: {
-            objectID: 10992,
+            objectID: 10_992,
             versionID: 1,
             objectType: 'organization',
             categoryID: 130,
@@ -2501,7 +2501,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2022-12-15T15:17:12.799Z'),
           updatedAt: new Date('2022-12-15T15:17:12.799Z'),
           categoryRef: {
-            objectID: 10992,
+            objectID: 10_992,
             versionID: 1,
             objectType: 'organization',
             categoryID: 1802,
@@ -2519,7 +2519,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2022-12-15T15:17:15.037Z'),
           updatedAt: new Date('2022-12-15T15:17:15.037Z'),
           categoryRef: {
-            objectID: 10992,
+            objectID: 10_992,
             versionID: 1,
             objectType: 'organization',
             categoryID: 1810,
@@ -2534,8 +2534,8 @@ export const INITIAL_DATA: DummyData = {
           externalId: '191',
           name: 'Argentina',
           adminLevel: 0,
-          latitude: -34.985672343326,
-          longitude: -65.122258918217,
+          latitude: -34.985_672_343_326,
+          longitude: -65.122_258_918_217,
           iso3: 'ARG',
           pcode: null,
           validOn: null,
@@ -2549,7 +2549,7 @@ export const INITIAL_DATA: DummyData = {
       parent: null,
     },
     {
-      id: 12930,
+      id: 12_930,
       name: '100% ESTRÓGENO',
       nativeName: '100% ESTROGENO',
       abbreviation: '100E',
@@ -2576,7 +2576,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2017-01-13T22:18:02.367Z'),
           updatedAt: new Date('2022-12-15T15:17:12.866Z'),
           categoryRef: {
-            objectID: 12930,
+            objectID: 12_930,
             versionID: 1,
             objectType: 'organization',
             categoryID: 118,
@@ -2594,7 +2594,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2017-01-13T22:18:02.709Z'),
           updatedAt: new Date('2022-12-15T15:17:25.706Z'),
           categoryRef: {
-            objectID: 12930,
+            objectID: 12_930,
             versionID: 1,
             objectType: 'organization',
             categoryID: 131,
@@ -2612,7 +2612,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2022-12-15T15:17:12.799Z'),
           updatedAt: new Date('2022-12-15T15:17:12.799Z'),
           categoryRef: {
-            objectID: 12930,
+            objectID: 12_930,
             versionID: 1,
             objectType: 'organization',
             categoryID: 1802,
@@ -2630,7 +2630,7 @@ export const INITIAL_DATA: DummyData = {
           createdAt: new Date('2022-12-15T15:17:25.729Z'),
           updatedAt: new Date('2022-12-15T15:17:25.729Z'),
           categoryRef: {
-            objectID: 12930,
+            objectID: 12_930,
             versionID: 1,
             objectType: 'organization',
             categoryID: 1811,
@@ -2645,8 +2645,8 @@ export const INITIAL_DATA: DummyData = {
           externalId: '422',
           name: 'Venezuela, Bolivarian Republic of',
           adminLevel: 0,
-          latitude: 7.115201972148,
-          longitude: -66.183670771628,
+          latitude: 7.115_201_972_148,
+          longitude: -66.183_670_771_628,
           iso3: 'VEN',
           pcode: 'VE',
           validOn: null,
@@ -2755,8 +2755,8 @@ export const INITIAL_DATA: DummyData = {
           externalId: '202',
           name: 'Belgium',
           adminLevel: 0,
-          latitude: 50.642060108016,
-          longitude: 4.658786235628,
+          latitude: 50.642_060_108_016,
+          longitude: 4.658_786_235_628,
           iso3: 'BEL',
           pcode: null,
           validOn: null,

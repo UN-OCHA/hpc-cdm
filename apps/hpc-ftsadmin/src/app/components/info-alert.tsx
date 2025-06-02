@@ -1,6 +1,6 @@
 import { Alert } from '@mui/material';
-import { CSSProperties, useState } from 'react';
-import { LocalStorageSchema } from '../utils/local-storage-type';
+import { type CSSProperties, useState } from 'react';
+import { type LocalStorageSchema } from '../utils/local-storage-type';
 import { util } from '@unocha/hpc-core';
 
 type InfoAlertProps = {

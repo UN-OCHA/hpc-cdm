@@ -120,8 +120,8 @@ const UploadFile = ({
                         onSuccess(fileName);
                         setSavedFile(undefined);
                         resetFileField();
-                      } catch (err) {
-                        onError(err);
+                      } catch (error) {
+                        onError(error);
                       } finally {
                         setLoading(false);
                       }
