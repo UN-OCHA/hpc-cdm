@@ -163,8 +163,8 @@
       },
       "searchSimilarFlow": "Search similar Flows",
       "sectionTitles": {
-        "sourceFlow": "Source Flow",
-        "destinationFlow": "Destination Flow",
+        "sourceFlow": "Funding Source(s)",
+        "destinationFlow": "Funding Destination(s)",
         "flowDetails": "Flow Details",
         "flowLink": "Linked Flows",
         "flowVersion": "Flow Versions"

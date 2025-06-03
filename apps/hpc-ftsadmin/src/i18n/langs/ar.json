@@ -163,8 +163,8 @@
       },
       "searchSimilarFlow": "البحث عن تدفقات مماثلة",
       "sectionTitles": {
-        "sourceFlow": "مصدر التدفق",
-        "destinationFlow": "وجهة التدفق",
+        "sourceFlow": "مصدر(مصادر) التمويل",
+        "destinationFlow": "وجهة(وجهات) التمويل",
         "flowDetails": "تفاصيل التدفق",
         "flowLink": "التدفقات المرتبطة",
         "flowVersion": "إصدارات التدفق"
