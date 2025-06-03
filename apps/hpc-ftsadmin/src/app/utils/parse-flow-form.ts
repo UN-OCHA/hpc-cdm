@@ -341,7 +341,8 @@ export const parseFlowForm = (
   const flow: flows.CreateFlowParams['flow'] = {
     activeStatus: !isInactive || !!isPending?.isApproved,
     amountUSD: currencyToInteger(amountUSD),
-    budgetYear: valueToInteger(donorBudgetYear),
+    budgetYear:
+      donorBudgetYear !== '' ? valueToInteger(donorBudgetYear) : undefined,
     categories,
     children: childFlows.map((childFlow) => ({ childID: childFlow.id })),
     decisionDate: decisionDate?.toDate() ?? null,
