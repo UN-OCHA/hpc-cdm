@@ -320,11 +320,14 @@ export const validateFlow = async ({
   if (!(await validateFlowForWarnings(values, env, lang))) {
     return false;
   }
+
+  if (isPending && pendingValues === null) {
+    return true;
+  }
   if (
     isPending &&
-    (pendingValues === null ||
-      (pendingValues !== undefined &&
-        pendingValuesHandled !== Object.keys(pendingValues).length))
+    !!pendingValues &&
+    pendingValuesHandled !== Object.keys(pendingValues).length
   ) {
     toast.error(
       t.t(lang, (s) => s.components.flowForm.submitValidation.pendingValues),
