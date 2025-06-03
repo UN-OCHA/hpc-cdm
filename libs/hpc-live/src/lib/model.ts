@@ -122,6 +122,16 @@ export const isModelError = (value: unknown): value is ModelError =>
   value instanceof Error && (value as ModelError).code === MODEL_ERROR;
 
 /**
+ * Some error messages are returned as object containing `message` key
+ * which is of `string` type
+ */
+const isObjectMessage = (value: unknown): value is { message: string } =>
+  !!value &&
+  typeof value === 'object' &&
+  'message' in value &&
+  typeof value.message === 'string';
+
+/**
  * Temporarily store the downloaded files in a map from sha to the binary data.
  *
  * We need this to ensure that we don't need to re-download files every time we
@@ -463,7 +473,7 @@ export class LiveModel implements Model {
         timestamp: Date;
         otherUser: string;
         code?: string;
-        message: errors.UserErrorKey;
+        message: errors.UserErrorKey | { message: string };
         details?: {
           code?: string;
           detail?: string;
@@ -475,7 +485,8 @@ export class LiveModel implements Model {
         throw new errors.ConflictError(json.timestamp, json.otherUser);
       } else if (
         json?.code === 'BadRequestError' &&
-        errors.USER_ERROR_KEYS.includes(json?.message)
+        !isObjectMessage(json.message) &&
+        errors.USER_ERROR_KEYS.includes(json.message)
       ) {
         throw new errors.UserError(json.message);
       } else if (
@@ -493,7 +504,11 @@ export class LiveModel implements Model {
       } else {
         const message =
           json?.code && json?.message
-            ? `${json.code}: ${json.message}`
+            ? `${json.code}: ${
+                isObjectMessage(json.message)
+                  ? json.message.message
+                  : json.message
+              }`
             : res.statusText;
         throw new ModelError(message, json);
       }
