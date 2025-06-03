@@ -329,7 +329,7 @@ export const parseFlowForm = (
     categories.push(pendingReviewCategory.id);
     inactiveReason.push(pendingReviewCategory);
   }
-  if (isInactive && cancelledCategory) {
+  if (isInactive && cancelledCategory && !isPending?.isApproved) {
     categories.push(cancelledCategory.id);
     inactiveReason.push(cancelledCategory);
   }
