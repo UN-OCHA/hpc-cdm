@@ -25,7 +25,7 @@ export interface DraggableListProps {
 export type DraggableListItemProps = {
   id: number;
   label: string;
-  active?: boolean;
+  isActive?: boolean;
 };
 
 const PaperContainer = tw(Paper)`
@@ -73,7 +73,7 @@ const DraggableListItem = ({
   item: DraggableListItemProps;
   index: number;
 }) => {
-  const [isActive, setIsActive] = useState(item.active);
+  const [isActive, setIsActive] = useState(item.isActive);
   return (
     <Draggable
       draggableId={item.id.toString()}
@@ -97,7 +97,7 @@ const DraggableListItem = ({
             checked={isActive}
             onClick={() => {
               setIsActive(!isActive);
-              item.active = !item.active;
+              item.isActive = !item.isActive;
             }}
           />
         </DraggableListItemContainer>
