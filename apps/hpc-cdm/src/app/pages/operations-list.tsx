@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { C, CLASSES, combineClasses, dataLoader } from '@unocha/hpc-ui';
+import { C, CLASSES, combineClasses, useDataLoader } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
 import PageMeta from '../components/page-meta';
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const loader = dataLoader([], getEnv().model.operations.getOperations);
+  const [loader] = useDataLoader([], getEnv().model.operations.getOperations);
 
   return (
     <AppContext.Consumer>

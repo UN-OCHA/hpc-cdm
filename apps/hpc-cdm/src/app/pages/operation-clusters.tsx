@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router';
 
 import { type operations } from '@unocha/hpc-data';
-import { C, dataLoader, styled } from '@unocha/hpc-ui';
+import { C, styled, useDataLoader } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
 import PageMeta from '../components/page-meta';
@@ -24,7 +24,7 @@ interface Props {
 const PageOperationClusters = (props: Props) => {
   const { operation, className } = props;
 
-  const loader = dataLoader(
+  const [loader] = useDataLoader(
     [
       {
         operationId: operation.id,

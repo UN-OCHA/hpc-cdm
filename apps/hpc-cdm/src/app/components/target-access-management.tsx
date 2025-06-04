@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MdAdd, MdClear } from 'react-icons/md';
 
 import { type access } from '@unocha/hpc-data';
-import { C, dataLoader, styled } from '@unocha/hpc-ui';
+import { C, styled, useDataLoader } from '@unocha/hpc-ui';
 
 import dayjs from '../../libraries/dayjs';
 
@@ -34,7 +34,7 @@ export const TargetAccessManagement = (props: Props) => {
 
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
 
-  const loader = dataLoader(
+  const [loader] = useDataLoader(
     [target.type, target.type === 'global' ? null : target.targetId],
     () => env().model.access.getTargetAccess({ target })
   );

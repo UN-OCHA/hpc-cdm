@@ -106,4 +106,4 @@ export * as dialogs from './lib/components/dialogs';
 export { Translations } from './lib/i18n';
 export { BaseStyling } from './lib/styling';
 export { css, styled, THEME, ThemeProvider, type Theme } from './lib/theme';
-export { dataLoader, useDataLoader, type DataLoaderState } from './lib/util';
+export { useDataLoader, type DataLoaderState } from './lib/util';

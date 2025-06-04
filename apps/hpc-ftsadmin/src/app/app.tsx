@@ -2,10 +2,10 @@ import {
   BaseStyling,
   C,
   CLASSES,
-  dataLoader,
   dialogs,
   styled,
   ThemeProvider,
+  useDataLoader,
 } from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
 import { MdAdd } from 'react-icons/md';
@@ -78,7 +78,7 @@ export const App = () => {
     };
   }, []);
 
-  const loadEnv = dataLoader([], () =>
+  const [loadEnv] = useDataLoader([], () =>
     env()
       .catch((error) => {
         console.error(error);

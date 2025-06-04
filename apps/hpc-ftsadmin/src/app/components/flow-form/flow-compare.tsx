@@ -7,7 +7,7 @@ import {
   TableRow,
 } from '@mui/material';
 import { type flows } from '@unocha/hpc-data';
-import { C, dataLoader } from '@unocha/hpc-ui';
+import { C, useDataLoader } from '@unocha/hpc-ui';
 import React from 'react';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
@@ -199,7 +199,7 @@ const FlowCompare = ({
   const { lang, env: getEnv } = getContext();
   const env = getEnv();
 
-  const state = dataLoader(
+  const [state] = useDataLoader(
     [
       flowVersionA.id,
       flowVersionA.versionID,

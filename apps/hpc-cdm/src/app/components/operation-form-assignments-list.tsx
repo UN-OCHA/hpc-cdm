@@ -2,7 +2,7 @@ import React from 'react';
 import { MdCheckCircle } from 'react-icons/md';
 
 import { type operations, type reportingWindows } from '@unocha/hpc-data';
-import { C, dataLoader, styled } from '@unocha/hpc-ui';
+import { C, styled, useDataLoader } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
 
 import { AppContext, getEnv } from '../context';
@@ -30,7 +30,7 @@ const OperationFormAssignmentsList = (props: Props) => {
   const { operation, window } = props;
   const env = getEnv();
 
-  const loader = dataLoader(
+  const [loader] = useDataLoader(
     [
       {
         reportingWindowId: window.id,
