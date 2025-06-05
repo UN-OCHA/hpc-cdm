@@ -147,12 +147,14 @@ const CompareEntityRow = ({
       </TableCell45>
       <TableCell45>
         <Box sx={tw`flex gap-x-2`}>
-          {flowBValue.map((fB) =>
-            COMPARISON[fB.state]({
-              flowAValue: flowAValue.find((fA) => fA.id === fB.id)?.name,
-              flowBValue: fB.name,
-            })
-          )}
+          {flowBValue.map((fB) => (
+            <React.Fragment key={fB.id}>
+              {COMPARISON[fB.state]({
+                flowAValue: flowAValue.find((fA) => fA.id === fB.id)?.name,
+                flowBValue: fB.name,
+              })}
+            </React.Fragment>
+          ))}
         </Box>
       </TableCell45>
     </TableRow>
