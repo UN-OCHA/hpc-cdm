@@ -106,19 +106,16 @@ export const validInteger = (integerOptions: readonly number[]) =>
 /**
  * Accepts either an integer, or a string of an integer, serializes to a number.
  */
-export const CURRENCY_INTEGER_GREATER_THAN_0_FROM_STRING = new t.Type<
-  number,
-  number
->(
-  'CURRENCY_INTEGER_GREATER_THAN_0_FROM_STRING',
+export const CURRENCY_INTEGER_FROM_STRING = new t.Type<number, number>(
+  'CURRENCY_INTEGER_FROM_STRING',
   t.number.is,
   (v, c) => {
     if (typeof v === 'number') {
-      return Number.isInteger(v) && v > 0 ? t.success(v) : t.failure(v, c);
+      return Number.isInteger(v) ? t.success(v) : t.failure(v, c);
     } else if (typeof v === 'string') {
       // `v.replace(/,/g, '')` is used because string currency is written as: "2,231,233"
       return CURRENCY_INTEGER_REGEX.test(v) &&
-        parseInt(v.replaceAll(',', '')) > 0
+        Number.isInteger(parseInt(v.replaceAll(',', '')))
         ? t.success(parseInt(v))
         : t.failure(v, c);
     }

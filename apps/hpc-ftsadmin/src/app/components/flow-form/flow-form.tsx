@@ -288,10 +288,10 @@ export type FlowFormValidationKeys = (typeof FLOW_FORM_VALIDATION_KEYS)[number];
 const FORM_VALIDATION_SCHEMA: io.TypeC<
   Record<FlowFormValidationKeys, io.Mixed>
 > = io.type({
-  amountUSD: util.CURRENCY_INTEGER_GREATER_THAN_0_FROM_STRING,
+  amountUSD: util.CURRENCY_INTEGER_FROM_STRING,
   amountOriginalCurrency: io.union([
     util.EMPTY_STRING,
-    util.POSITIVE_NUMBER_FROM_STRING,
+    util.CURRENCY_INTEGER_FROM_STRING,
   ]),
   donorBudgetYear: io.union([util.EMPTY_STRING, util.YEAR_FROM_STRING]),
   exchangeRate: io.union([util.EMPTY_STRING, util.POSITIVE_NUMBER_FROM_STRING]),
