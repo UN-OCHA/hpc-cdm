@@ -13,10 +13,7 @@ export type AutocompleteSelectProps = {
   disabled?: boolean;
   required?: boolean;
   onChange?: (
-    newValue:
-      | NonNullable<string | util.FormObjectValue>
-      | Array<string | util.FormObjectValue>
-      | null
+    newValue: util.FormObjectValue | util.FormObjectValue[] | null
   ) => void;
 };
 const StyledAutocomplete = tw(Autocomplete)`
@@ -41,7 +38,7 @@ const AutocompleteSelect = ({
     util.FormObjectValue,
     boolean,
     boolean,
-    boolean
+    false
   > = {
     ...field,
     disabled,

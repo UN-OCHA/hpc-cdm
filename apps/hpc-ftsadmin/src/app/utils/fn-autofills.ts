@@ -38,10 +38,7 @@ type AutofillProps = {
   setFieldValue: FormikHelpers<FlowFormType>['setFieldValue'];
   values: FlowFormType;
   env: Environment;
-  newValue?:
-    | NonNullable<string | util.FormObjectValue>
-    | Array<string | util.FormObjectValue>
-    | null;
+  newValue?: util.FormObjectValue | util.FormObjectValue[] | null;
 };
 
 type FieldValueType = {
@@ -159,17 +156,12 @@ export const autofillOrganizations = async ({
 
   //  It only applies to source Organization
   //  Organization field is multi select
-  if (
-    !fieldName.includes('Source') ||
-    !newValue ||
-    typeof newValue === 'string' ||
-    !Array.isArray(newValue)
-  ) {
+  if (!fieldName.includes('Source') || !newValue || !Array.isArray(newValue)) {
     return;
   }
 
   const lastOrganization = newValue.at(-1);
-  if (!lastOrganization || typeof lastOrganization === 'string') {
+  if (!lastOrganization) {
     return;
   }
   const organization = await env.model.organizations.getOrganization({
@@ -222,7 +214,7 @@ export const autofillProject = async ({
   setFieldValue(fieldName, newValue);
 
   //  Project field is not multi select
-  if (!newValue || typeof newValue === 'string' || Array.isArray(newValue)) {
+  if (!newValue || Array.isArray(newValue)) {
     return;
   }
 
@@ -361,7 +353,7 @@ export const autofillPlan = async ({
   // When Plan is modified or set to null, we need to clear Field Clusters
   setFieldValue(`funding${direction}FieldClusters`, []);
   //  Plan field is not multi select
-  if (!newValue || typeof newValue === 'string' || Array.isArray(newValue)) {
+  if (!newValue || Array.isArray(newValue)) {
     return;
   }
 
@@ -428,11 +420,11 @@ export const autofillFieldClusters = async ({
   setFieldValue(fieldName, newValue);
 
   //  FieldClusters field is multi select
-  if (!newValue || typeof newValue === 'string' || !Array.isArray(newValue)) {
+  if (!newValue || !Array.isArray(newValue)) {
     return;
   }
 
-  if (newValue && newValue.length > 0) {
+  if (newValue.length > 0) {
     const fieldClusters = newValue.filter(
       (fieldCluster) => typeof fieldCluster !== 'string'
     ) as util.FormObjectValue[];
@@ -471,7 +463,7 @@ export const autofillGlobalClusters = async ({
   setFieldValue(fieldName, newValue);
 
   //  GlobalClusters field is multi select
-  if (!newValue || typeof newValue === 'string' || !Array.isArray(newValue)) {
+  if (!newValue || !Array.isArray(newValue)) {
     return;
   }
   const newGlobalClusterIds = new Set(
@@ -521,7 +513,6 @@ export const autofillUsageYears = async ({
   //  UsageYears field is multi select
   if (
     !newValue ||
-    typeof newValue === 'string' ||
     !Array.isArray(newValue) ||
     newValue.length < 2 ||
     values.keywords.some((keyword) => keyword.displayLabel === 'Multiyear')
@@ -556,12 +547,12 @@ export const autofillEmergencies = async ({
   setFieldValue(fieldName, newValue);
 
   //  Emergencies field is multi select
-  if (!newValue || typeof newValue === 'string' || !Array.isArray(newValue)) {
+  if (!newValue || !Array.isArray(newValue)) {
     return;
   }
   const lastEmergency = newValue.at(-1);
 
-  if (!lastEmergency || typeof lastEmergency === 'string') {
+  if (!lastEmergency) {
     return;
   }
   const emergency = await env.model.emergencies.getEmergency({

@@ -163,10 +163,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
     newValue,
   }: {
     setFieldValue: FormikHelpers<AddEditOrganizationValues>['setFieldValue'];
-    newValue:
-      | NonNullable<string | util.FormObjectValue>
-      | Array<string | util.FormObjectValue>
-      | null;
+    newValue: util.FormObjectValue | util.FormObjectValue[] | null;
   }) => {
     setFieldValue('organizationTypes', newValue);
 

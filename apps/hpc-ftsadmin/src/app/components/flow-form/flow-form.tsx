@@ -909,10 +909,7 @@ export const FlowForm = (props: FlowFormProps) => {
   };
 
   const handleFundingDestinationOrganizations = (
-    newValue:
-      | NonNullable<string | util.FormObjectValue>
-      | Array<string | util.FormObjectValue>
-      | null,
+    newValue: util.FormObjectValue | util.FormObjectValue[] | null,
     setFieldValue: FormikHelpers<FlowFormType>['setFieldValue']
   ) => {
     const isFormObjectValueArray = (
@@ -931,10 +928,7 @@ export const FlowForm = (props: FlowFormProps) => {
   };
 
   const handleMethod = (
-    newValue:
-      | NonNullable<string | util.FormObjectValue>
-      | Array<string | util.FormObjectValue>
-      | null,
+    newValue: util.FormObjectValue | util.FormObjectValue[] | null,
     setFieldValue: FormikHelpers<FlowFormType>['setFieldValue']
   ) => {
     setFieldValue('method', newValue);

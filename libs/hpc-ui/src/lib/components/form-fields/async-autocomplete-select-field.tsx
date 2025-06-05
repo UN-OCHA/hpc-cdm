@@ -50,10 +50,7 @@ export type AsyncAutocompleteSelectProps = {
     removeOptions: util.FormObjectValue[] | undefined
   ) => util.FormObjectValue[];
   onChange?: (
-    newValue:
-      | NonNullable<string | util.FormObjectValue>
-      | Array<string | util.FormObjectValue>
-      | null
+    newValue: util.FormObjectValue | util.FormObjectValue[] | null
   ) => void;
   disabled?: boolean;
   /**
@@ -236,7 +233,7 @@ const AsyncAutocompleteSelect = ({
     util.FormObjectValue,
     boolean,
     boolean,
-    boolean
+    false
   > = {
     ...field,
     multiple: isMulti,
