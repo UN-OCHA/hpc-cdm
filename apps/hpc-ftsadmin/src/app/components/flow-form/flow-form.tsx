@@ -984,7 +984,7 @@ export const FlowForm = (props: FlowFormProps) => {
             />
             {!isDisabled && (
               <C.CheckBox
-                name="restricted"
+                name="isRestricted"
                 label={t.t(
                   lang,
                   (s) => s.components.flowForm.fields.restricted
