@@ -116,8 +116,7 @@ export const FilterOrganizationsTable = (props: Props) => {
         }
         onSubmit={handleSubmit}
       >
-        {({ resetForm, values }) => {
-          console.log(values);
+        {({ resetForm }) => {
           return (
             <Form>
               <StyledDiv>
