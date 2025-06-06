@@ -851,9 +851,7 @@ export const queryParamsFlowFilter = async (
     orderDir: 'DESC',
     page: '0',
     rowsPerPage: '50',
-    filters: JSON.stringify(
-      encodeFilters(flowsFilterValues, FLOWS_FILTER_INITIAL_VALUES)
-    ),
+    filters: encodeFilters(flowsFilterValues, FLOWS_FILTER_INITIAL_VALUES),
   };
 
   const params = new URLSearchParams(paramsObject);
