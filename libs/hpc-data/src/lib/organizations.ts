@@ -1,7 +1,12 @@
 import * as t from 'io-ts';
 import { CATEGORY_GROUP_TYPE, CATEGORY_WITH_CATEGORY_REF } from './categories';
 import { LOCATION_WITH_CHILDREN } from './locations';
-import { ABORT_SIGNAL, DATE_FROM_STRING, optional } from './util';
+import {
+  ABORT_SIGNAL,
+  DATE_FROM_STRING,
+  INTEGER_FROM_STRING,
+  optional,
+} from './util';
 
 export const ORGANIZATION_MODEL = t.type({
   id: t.number,
@@ -217,17 +222,38 @@ export type DeleteOrganizationResult = t.TypeOf<
   typeof DELETE_ORGANIZATION_RESULT
 >;
 
-export const MERGE_ORGANIZATIONS_PARAMS = t.type({
-  fromOrganizationIds: t.type({
-    organizationId: t.number,
-    organizationsToBeMerged: t.array(UPDATE_ORGANIZATION_PARAMS),
-  }),
+export const MERGE_ORGANIZATION_PARAMS = t.type({
+  id: INTEGER_FROM_STRING,
 });
-export type MergeOrganizationsParams = t.TypeOf<
-  typeof MERGE_ORGANIZATIONS_PARAMS
+type MergeOrganizationsParams = t.TypeOf<typeof MERGE_ORGANIZATION_PARAMS>;
+
+export const MERGE_ORGANIZATION_BODY = t.type({
+  organizationsToBeMerged: t.array(t.number),
+});
+type MergeOrganizationsBody = t.TypeOf<typeof MERGE_ORGANIZATION_BODY>;
+
+export const MERGE_ORGANIZATION_RESULT = t.intersection([
+  t.type({
+    id: t.number,
+    active: t.boolean,
+    collectiveInd: t.boolean,
+    verified: t.boolean,
+    name: t.string,
+    abbreviation: t.string,
+  }),
+  t.partial({
+    nativeName: t.string,
+    url: t.string,
+    parentID: t.number,
+    comments: t.string,
+    newOrganizationId: t.number,
+    notes: t.string,
+  }),
+]);
+export type MergeOrganizationResult = t.TypeOf<
+  typeof MERGE_ORGANIZATION_RESULT
 >;
 
-export type MergeOrganizationsResult = Organization;
 export interface Model {
   getAutocompleteOrganizations(
     params: GetOrganizationsAutocompleteParams
@@ -248,6 +274,7 @@ export interface Model {
     params: DeleteOrganizationParams
   ): Promise<DeleteOrganizationResult>;
   mergeOrganizations(
-    params: MergeOrganizationsParams
-  ): Promise<MergeOrganizationsResult>;
+    receivingOrganizationID: MergeOrganizationsParams['id'],
+    body: MergeOrganizationsBody
+  ): Promise<MergeOrganizationResult>;
 }

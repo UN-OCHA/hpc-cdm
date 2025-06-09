@@ -179,13 +179,10 @@ const MergeModal = (props: MergeModalProps) => {
       );
       setIsLoading(true);
       await env.model.organizations
-        .mergeOrganizations({
-          fromOrganizationIds: {
-            organizationId: receivingOrganizationID,
-            organizationsToBeMerged: values.mergingEntities.map((x) => {
-              return { id: valueToInteger(x.value) };
-            }),
-          },
+        .mergeOrganizations(receivingOrganizationID, {
+          organizationsToBeMerged: values.mergingEntities.map((x) =>
+            valueToInteger(x.value)
+          ),
         })
         .then(() => {
           navigate(paths.organization(receivingOrganizationID), {

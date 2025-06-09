@@ -1159,7 +1159,7 @@ export class Dummy {
         ),
         mergeOrganizations: dummyEndpoint(
           'organizations.mergeOrganization',
-          async (): Promise<organizations.MergeOrganizationsResult> => {
+          async (): Promise<organizations.MergeOrganizationResult> => {
             /**
              * TODO: Implement logic for mergeOrganizations
              */
@@ -1169,18 +1169,11 @@ export class Dummy {
               name: 'Association pour le Secours et le Développement',
               nativeName: '',
               abbreviation: 'ASD',
-              url: null,
-              parentID: null,
               comments:
                 'Développement coordonne ses programmes autour de 6 domaines d’activités : • Nutrition, santé, pratiques de soins • Sécurité alimentaire et moyens d’existence • Eau, assainissement et hygiène • Plaidoyer et sensibilisation • Abris • Education',
               verified: true,
-              notes: null,
               active: true,
               collectiveInd: false,
-              newOrganizationId: null,
-              createdAt: new Date('2017-10-29T20:45:26.233Z'),
-              updatedAt: new Date('2019-05-14T12:19:16.995Z'),
-              deletedAt: null,
             };
           }
         ),

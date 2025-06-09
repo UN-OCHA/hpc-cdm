@@ -995,15 +995,15 @@ export class LiveModel implements Model {
           method: 'POST',
           resultType: organizations.DELETE_ORGANIZATION_RESULT,
         }),
-      mergeOrganizations: (params) =>
+      mergeOrganizations: (receivingOrganizationID, data) =>
         this.call({
-          pathname: `/v1/organization/merge/${params.fromOrganizationIds.organizationId}`,
+          pathname: `/v1/organization/merge/${receivingOrganizationID}`,
           method: 'PUT',
           body: {
             type: 'json',
-            data: params,
+            data,
           },
-          resultType: organizations.ORGANIZATION,
+          resultType: organizations.MERGE_ORGANIZATION_RESULT,
         }),
     };
   }
