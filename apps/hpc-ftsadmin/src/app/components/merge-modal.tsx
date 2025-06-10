@@ -48,6 +48,7 @@ const MergeContainer = tw.div`
   border-solid
   basis-1/2
   grow-0
+  max-w-[50%]
 `;
 
 const StyledForm = tw(Form)`
