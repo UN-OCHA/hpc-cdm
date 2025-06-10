@@ -689,7 +689,9 @@ export class LiveModel implements Model {
     return {
       getAutocompleteEmergencies: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/emergency/${params.query}`,
+          pathname: `/v1/object/autocomplete/emergency/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: emergencies.GET_EMERGENCIES_RESULT,
         }),
       getEmergencies: ({ years, locations }) => {
@@ -810,7 +812,9 @@ export class LiveModel implements Model {
         }),
       getAutocompleteFlows: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/id/flow/${params.query}`,
+          pathname: `/v1/object/autocomplete/id/flow/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: flows.GET_FLOWS_AUTOCOMPLETE_RESULT,
         }),
       /**
@@ -932,7 +936,9 @@ export class LiveModel implements Model {
     return {
       getAutocompleteLocations: (params) =>
         this.call({
-          pathname: `/v1/location/autocomplete/${params.query}`,
+          pathname: `/v1/location/autocomplete/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: locations.GET_LOCATIONS_AUTOCOMPLETE_RESULT,
         }),
     };
@@ -941,7 +947,9 @@ export class LiveModel implements Model {
     return {
       getAutocompleteOrganizations: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/organization/${params.query}`,
+          pathname: `/v1/object/autocomplete/organization/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: organizations.GET_ORGANIZATIONS_RESULT,
         }),
       searchOrganizations: (params) =>
@@ -1023,7 +1031,9 @@ export class LiveModel implements Model {
     return {
       getAutocompletePlans: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/plan/${params.query}`,
+          pathname: `/v1/object/autocomplete/plan/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: plans.GET_PLANS_AUTOCOMPLETE_RESULT,
         }),
       getPlan: ({ id, scopes }) => {
@@ -1046,7 +1056,9 @@ export class LiveModel implements Model {
     return {
       getAutocompleteProjects: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/project/${params.query}`,
+          pathname: `/v1/object/autocomplete/project/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: projects.GET_PROJECTS_AUTOCOMPLETE_RESULT,
         }),
       getProject: ({ id }) =>
@@ -1207,7 +1219,9 @@ export class LiveModel implements Model {
         }),
       getAutocompleteUsageYears: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/usageYear/${params.query}`,
+          pathname: `/v1/object/autocomplete/usageYear/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: usageYears.GET_USAGE_YEARS_RESULT,
         }),
     };
