@@ -888,7 +888,7 @@ const compareFlowForms = (
     if ((!currentDate && incomingDate) || (currentDate && !incomingDate)) {
       return true;
     }
-    return !currentDate?.isSame(incomingDate);
+    return !currentDate?.isSame(incomingDate, 'day');
   };
 
   const isDifferentArray = <T>(
