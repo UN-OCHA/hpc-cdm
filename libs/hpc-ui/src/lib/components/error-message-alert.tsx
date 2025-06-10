@@ -1,5 +1,5 @@
 import { Alert, Snackbar } from '@mui/material';
-import Grow, { GrowProps } from '@mui/material/Grow';
+import Grow, { type GrowProps } from '@mui/material/Grow';
 import tw from 'twin.macro';
 
 const AlertWrapper = tw.div`
@@ -11,9 +11,9 @@ type ErrorAlertProps<T> = {
   error?: string;
 };
 const ErrorAlert = <T,>({ setError, error }: ErrorAlertProps<T>) => {
-  function GrowTransition(props: GrowProps) {
+  const GrowTransition = (props: GrowProps) => {
     return <Grow {...props} />;
-  }
+  };
 
   const handleClose = (_: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
@@ -24,7 +24,7 @@ const ErrorAlert = <T,>({ setError, error }: ErrorAlertProps<T>) => {
 
   return (
     <Snackbar
-      key={new Date().getTime()}
+      key={Date.now()}
       open={!!error}
       autoHideDuration={5000}
       onClose={handleClose}

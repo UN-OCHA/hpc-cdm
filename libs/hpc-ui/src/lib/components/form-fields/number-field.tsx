@@ -1,23 +1,19 @@
-import { StyledTextField } from './text-field';
-import { NumericFormat } from 'react-number-format';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useField, useFormikContext } from 'formik';
+import { NumericFormat } from 'react-number-format';
+import { StyledTextField } from './text-field';
 
 interface NumberFieldProps {
   type: 'number' | 'currency';
   name: string;
   label: string;
-  placeholder?: string;
-  required?: boolean;
   allowNegative?: boolean;
 }
 const NumberField = ({
   type,
   name,
   label,
-  placeholder,
   allowNegative,
-  required,
 }: NumberFieldProps) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<number>();

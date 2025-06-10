@@ -1,3 +1,5 @@
+import DownloadIcon from '@mui/icons-material/Download';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   Alert,
   Box,
@@ -12,64 +14,62 @@ import {
   TableRow,
   TableSortLabel,
 } from '@mui/material';
-import { organizations } from '@unocha/hpc-data';
+import { util } from '@unocha/hpc-core';
+import { type organizations } from '@unocha/hpc-data';
 import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
-import SettingsIcon from '@mui/icons-material/Settings';
-import { LanguageKey, t } from '../../../i18n';
-import { AppContext, getEnv } from '../../context';
 import React, { useState } from 'react';
-import DownloadIcon from '@mui/icons-material/Download';
+import { Link, useNavigate } from 'react-router';
+import tw from 'twin.macro';
+import { type LanguageKey, t } from '../../../i18n';
+import { type Strings } from '../../../i18n/iface';
+import { AppContext, getEnv } from '../../context';
+import * as paths from '../../paths';
+import { downloadExcel } from '../../utils/download-excel';
+import { type LocalStorageSchema } from '../../utils/local-storage-type';
+import { parseUpdatedCreatedBy } from '../../utils/map-functions';
 import {
+  type FilterKeys,
   decodeFilters,
   encodeFilters,
-  FilterKeys,
   isKey,
   parseFormFilters,
   parseOrganizationFilters,
 } from '../../utils/parse-filters';
 import {
-  OrganizationHeaderID,
-  TableHeadersProps,
+  type OrganizationHeaderID,
+  type TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
   isCompatibleTableHeaderType,
   isTableHeadersPropsOrganization,
 } from '../../utils/table-headers';
-import { Strings } from '../../../i18n/iface';
-import { downloadExcel } from '../../utils/download-excel';
-import { parseUpdatedCreatedBy } from '../../utils/map-functions';
-import { OrganizationFilterValues } from '../filters/filter-organization-table';
+import { type OrganizationFilterValues } from '../filters/filter-organization-table';
 import {
   ChipDiv,
   type OrganizationQuery,
-  type SetQuery,
   RenderChipsRow,
+  type SetQuery,
   StyledLoader,
   TableHeaderButton,
   TableRowClick,
   TopRowContainer,
   handleTableSettingsInfoClose,
 } from './table-utils';
-import { Link, useNavigate } from 'react-router';
-import * as paths from '../../paths';
-import { util } from '@unocha/hpc-core';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
-import tw from 'twin.macro';
 
 export interface OrganizationTableProps {
-  headers: TableHeadersProps<OrganizationHeaderID>[];
+  headers: Array<TableHeadersProps<OrganizationHeaderID>>;
   initialValues: OrganizationFilterValues;
   rowsPerPageOption: number[];
   query: OrganizationQuery;
   setQuery: SetQuery<OrganizationQuery>;
 }
 
-export default function OrganizationTable(props: OrganizationTableProps) {
+const OrganizationTable = (props: OrganizationTableProps) => {
   const env = getEnv();
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
   const filters = decodeFilters(props.query.filters, props.initialValues);
-  const [tableInfoDisplay, setTableInfoDisplay] = useState(
+  const [shouldDisplayTableInfo, setShouldDisplayTableInfo] = useState(
     util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
   const parsedFilters = parseFormFilters<
@@ -77,7 +77,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
     OrganizationFilterValues
   >(filters, props.initialValues);
   const [query, setQuery] = [props.query, props.setQuery];
-  const [openSettings, setOpenSettings] = useState(false);
+  const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
   const navigate = useNavigate();
   const state = dataLoader([query], () =>
     env.model.organizations.searchOrganizations({
@@ -119,9 +119,9 @@ export default function OrganizationTable(props: OrganizationTableProps) {
   };
 
   const handleSort = (newSort: OrganizationHeaderID) => {
-    const changeDir = newSort === query.orderBy;
+    const shouldChangeDir = newSort === query.orderBy;
 
-    if (changeDir) {
+    if (shouldChangeDir) {
       setQuery({
         ...query,
         orderDir: query.orderDir === 'ASC' ? 'DESC' : 'ASC',
@@ -398,13 +398,13 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                   />
                   <TableHeaderButton
                     size="small"
-                    onClick={() => setOpenSettings(!openSettings)}
+                    onClick={() => setShouldOpenSettings(!shouldOpenSettings)}
                   >
                     <SettingsIcon />
                   </TableHeaderButton>
                   <Modal
-                    open={openSettings}
-                    onClose={() => setOpenSettings(!openSettings)}
+                    open={shouldOpenSettings}
+                    onClose={() => setShouldOpenSettings(!shouldOpenSettings)}
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
@@ -458,10 +458,12 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                           <Alert
                             severity="info"
                             onClose={() =>
-                              handleTableSettingsInfoClose(setTableInfoDisplay)
+                              handleTableSettingsInfoClose(
+                                setShouldDisplayTableInfo
+                              )
                             }
                             sx={{
-                              display: tableInfoDisplay ? 'flex' : 'none',
+                              display: shouldDisplayTableInfo ? 'flex' : 'none',
                               ...tw`mx-8 mt-4`,
                             }}
                           >
@@ -519,4 +521,6 @@ export default function OrganizationTable(props: OrganizationTableProps) {
       )}
     </AppContext.Consumer>
   );
-}
+};
+
+export default OrganizationTable;

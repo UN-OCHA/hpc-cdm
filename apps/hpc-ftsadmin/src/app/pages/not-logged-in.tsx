@@ -21,7 +21,7 @@ const AUN = styled(C.AcceptableUseNotification)`
 const PageNotLoggedIn = (props: Props) => (
   <AppContext.Consumer>
     {({ lang, env }) => (
-      <Container className={CLASSES.CONTAINER.CENTERED}>
+      <Container className={`${CLASSES.CONTAINER.CENTERED} ${props.className}`}>
         <AUN
           session={env().session}
           strings={t.get(lang, (s) => s.components.acceptableUseNotification)}

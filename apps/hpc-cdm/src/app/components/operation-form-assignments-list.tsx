@@ -1,9 +1,9 @@
 import React from 'react';
 import { MdCheckCircle } from 'react-icons/md';
 
-import { t } from '../../i18n';
+import { type operations, type reportingWindows } from '@unocha/hpc-data';
 import { C, dataLoader, styled } from '@unocha/hpc-ui';
-import { operations, reportingWindows } from '@unocha/hpc-data';
+import { t } from '../../i18n';
 
 import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
@@ -63,8 +63,8 @@ const OperationFormAssignmentsList = (props: Props) => {
             for (const cluster of clusters.data) {
               clusterNames.set(cluster.id, cluster.name);
             }
-            const clusterAssignments = assignments.clusterAssignments
-              .map((cluster) =>
+            const clusterAssignments = assignments.clusterAssignments.flatMap(
+              (cluster) =>
                 cluster.forms.map((assignment) => {
                   const name = clusterNames.get(cluster.clusterId);
                   return {
@@ -72,8 +72,7 @@ const OperationFormAssignmentsList = (props: Props) => {
                     cluster: name ? { name } : undefined,
                   };
                 })
-              )
-              .reduce((acc, val) => acc.concat(val), []);
+            );
             if (
               operationAssignments.length === 0 &&
               clusterAssignments.length === 0

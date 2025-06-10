@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
-import { FormControlLabel, Checkbox } from '@mui/material';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import { styled } from '@unocha/hpc-ui';
-import { AppContext } from '../../context';
+import React, { useContext, useState } from 'react';
 import { t } from '../../../i18n';
+import { AppContext } from '../../context';
 
 const SubmitPanel = styled.div`
   border: 1px solid ${(p) => p.theme.colors.text};
@@ -16,14 +16,14 @@ const WarningText = styled.span`
 `;
 
 interface Props {
-  validating: boolean;
+  isValidating: boolean;
   saveForm: (redirect: boolean, finalized: boolean) => void;
 }
 
 const SubmitButton = (props: Props) => {
-  const { validating, saveForm } = props;
+  const { isValidating, saveForm } = props;
   const { lang } = useContext(AppContext);
-  const [confirmed, setConfirmed] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   return (
     <SubmitPanel>
@@ -40,24 +40,24 @@ const SubmitButton = (props: Props) => {
         control={
           <Checkbox
             color="primary"
-            onChange={(e) => setConfirmed(e.target.checked)}
+            onChange={(e) => setIsConfirmed(e.target.checked)}
           />
         }
         label={t.t(lang, (s) => s.routes.operations.forms.nav.submit.confirm)}
       />
       <div>
         <button
-          disabled={!confirmed || validating}
+          disabled={!isConfirmed || isValidating}
           id="submit-form"
           onClick={() => saveForm(true, true)}
           className="btn btn-primary"
         >
-          {!validating && <i className="icon icon-check" />}
+          {!isValidating && <i className="icon icon-check" />}
           {t.t(
             lang,
             (s) =>
               s.routes.operations.forms.nav.submit[
-                validating ? 'validating' : 'submit'
+                isValidating ? 'validating' : 'submit'
               ]
           )}
         </button>

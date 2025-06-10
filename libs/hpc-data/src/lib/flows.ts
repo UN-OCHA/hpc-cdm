@@ -7,7 +7,7 @@ const FLOW_REF_DIRECTION = t.keyof({
   destination: null,
 });
 
-const FLOW_LIST = t.keyof({
+export const FLOW_LIST = t.keyof({
   pending: null,
   all: null,
   search: null,
@@ -15,7 +15,7 @@ const FLOW_LIST = t.keyof({
 
 export type FlowList = t.TypeOf<typeof FLOW_LIST>;
 
-const FLOW_OBJECT = t.intersection([
+export const FLOW_OBJECT = t.intersection([
   t.type({
     objectID: t.number,
     refDirection: FLOW_REF_DIRECTION,
@@ -33,7 +33,7 @@ const FLOW_OBJECT = t.intersection([
 
 export type FlowObject = t.TypeOf<typeof FLOW_OBJECT>;
 
-const FLOW_CATEGORY = t.intersection([
+export const FLOW_CATEGORY = t.intersection([
   t.type({
     name: t.string,
     group: t.string,
@@ -152,10 +152,10 @@ const FlowReportDetail = t.type({
   verified: t.boolean,
   channel: t.union([t.string, t.null]),
   updatedAt: t.string,
-  contactInfo: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  sourceID: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  refCode: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  organizationID: t.union([t.number, t.null, t.undefined]), // accepts number or null/undefined
+  contactInfo: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
+  sourceID: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
+  refCode: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
+  organizationID: t.union([t.number, t.null, t.undefined]), // Accepts number or null/undefined
 });
 
 const FlowParkedParentSource = t.type({
@@ -175,12 +175,12 @@ const FlowCategory = t.type({
   id: t.number,
   name: t.string,
   group: t.string,
-  createdAt: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  updatedAt: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  description: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  parentID: t.union([t.number, t.null, t.undefined]), // accepts number or null/undefined
-  code: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  includeTotals: t.union([t.boolean, t.null, t.undefined]), // accepts boolean or null/undefined
+  createdAt: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
+  updatedAt: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
+  description: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
+  parentID: t.union([t.number, t.null, t.undefined]), // Accepts number or null/undefined
+  code: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
+  includeTotals: t.union([t.boolean, t.null, t.undefined]), // Accepts boolean or null/undefined
   categoryRef: FlowCategoryRef,
 });
 
@@ -203,9 +203,9 @@ const FLOW = t.type({
   plans: t.union([t.array(FlowPlan), t.null, t.undefined]),
   usageYears: t.union([t.array(FlowUsageYear), t.null, t.undefined]),
   childIDs: t.union([t.array(t.number), t.null, t.undefined]),
-  parentIDs: t.union([t.array(t.number), t.null, t.undefined]), // accepts an array of numbers or null/undefined
-  origAmount: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
-  origCurrency: t.union([t.string, t.null, t.undefined]), // accepts string or null/undefined
+  parentIDs: t.union([t.array(t.number), t.null, t.undefined]), // Accepts an array of numbers or null/undefined
+  origAmount: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
+  origCurrency: t.union([t.string, t.null, t.undefined]), // Accepts string or null/undefined
   externalReferences: t.array(FlowExternalReference),
   reportDetails: t.array(FlowReportDetail),
   parkedParentSource: t.union([FlowParkedParentSource, t.null]),

@@ -5,7 +5,7 @@ import { Environment } from './interface';
 
 export { Environment };
 
-export default async (): Promise<Environment> => {
+export default (): Promise<Environment> => {
   if (!config.isValid(env)) {
     throw new Error('Invalid config');
   }

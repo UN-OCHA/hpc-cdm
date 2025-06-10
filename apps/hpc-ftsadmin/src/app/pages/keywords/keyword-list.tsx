@@ -1,17 +1,17 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
+import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import PageMeta from '../../components/page-meta';
+import KeywordTable, {
+  type KeywordTableProps,
+} from '../../components/tables/keywords-table';
 import { AppContext } from '../../context';
-import tw from 'twin.macro';
+import { KEYWORD_PARAMS_CODEC } from '../../utils/codecs';
 import {
   DEFAULT_KEYWORD_TABLE_HEADERS,
   encodeTableHeaders,
 } from '../../utils/table-headers';
-import KeywordTable, {
-  KeywordTableProps,
-} from '../../components/tables/keywords-table';
 import useQueryParams from '../../utils/useQueryParams';
-import { KEYWORD_PARAMS_CODEC } from '../../utils/codecs';
 
 interface Props {
   className?: string;

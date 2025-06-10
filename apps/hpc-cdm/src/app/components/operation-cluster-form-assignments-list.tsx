@@ -1,9 +1,9 @@
 import React from 'react';
 import { MdCheckCircle } from 'react-icons/md';
 
+import { type operations, type reportingWindows } from '@unocha/hpc-data';
+import { C, dataLoader, styled } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
-import { C, styled, dataLoader } from '@unocha/hpc-ui';
-import { operations, reportingWindows } from '@unocha/hpc-data';
 
 import { AppContext, getEnv } from '../context';
 import * as paths from '../paths';
@@ -44,9 +44,8 @@ const OperationClusterFormAssignmentsList = (props: Props) => {
         >
           {(data) => {
             const forms =
-              data.clusterAssignments.filter(
-                (ca) => ca.clusterId === cluster.id
-              )[0]?.forms || [];
+              data.clusterAssignments.find((ca) => ca.clusterId === cluster.id)
+                ?.forms ?? [];
             return forms.length === 0 ? (
               <C.ErrorMessage
                 icon={MdCheckCircle}

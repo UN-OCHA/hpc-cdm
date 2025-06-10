@@ -2,16 +2,16 @@ import React, { useContext } from 'react';
 
 import {
   Dialog,
-  DialogTitle,
+  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogActions,
+  DialogTitle,
 } from '@mui/material';
 import { C } from '@unocha/hpc-ui';
 
-import { AppContext } from '../../../context';
 import { t } from '../../../../i18n';
-import { SubmissionValidation } from '../types';
+import { AppContext } from '../../../context';
+import { type SubmissionValidation } from '../types';
 
 interface Props {
   submissionValidation: SubmissionValidation;
@@ -40,7 +40,7 @@ const ValidationOnSubmitModal = (props: Props) => {
         <C.Button
           onClick={closeInvalidSubmissionMessage}
           color="primary"
-          autoFocus
+          shouldAutoFocus
         >
           <span>
             {t.t(lang, (s) => s.routes.operations.forms.invalidData.okay)}

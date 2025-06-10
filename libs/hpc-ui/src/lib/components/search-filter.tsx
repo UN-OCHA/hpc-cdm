@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from 'react';
-import { styled } from '../theme';
-import tw from 'twin.macro';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Drawer, IconButton, Tooltip } from '@mui/material';
+import React, { useCallback, useState } from 'react';
+import tw from 'twin.macro';
+import { styled } from '../theme';
 interface Props {
   className?: string;
   title?: string;
@@ -20,7 +20,7 @@ interface FieldConfig {
   isMulti?: boolean;
   hasAutocomplete?: boolean;
   fnPromise?: ({ query }: { query: string }) => Promise<unknown>;
-  selectFields?: { value: string | number; name: string }[];
+  selectFields?: Array<{ value: string | number; name: string }>;
 }
 
 const Container = tw.div`

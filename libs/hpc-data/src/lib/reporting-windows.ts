@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
-import { FORM_META, FORM, FORM_UPDATE_DATA, FORM_FILE } from './forms';
-import { POSITIVE_INTEGER_FROM_STRING, ARRAY_BUFFER } from './util';
+import { FORM, FORM_FILE, FORM_META, FORM_UPDATE_DATA } from './forms';
+import { ARRAY_BUFFER, POSITIVE_INTEGER_FROM_STRING } from './util';
 
 export const REPORTING_WINDOW = t.type({
   // TODO

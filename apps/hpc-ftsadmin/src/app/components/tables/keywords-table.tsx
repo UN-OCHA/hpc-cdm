@@ -1,3 +1,8 @@
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckIcon from '@mui/icons-material/Check';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   Alert,
   Box,
@@ -13,28 +18,23 @@ import {
   TableSortLabel,
   Tooltip,
 } from '@mui/material';
-import { categories } from '@unocha/hpc-data';
-import { errors } from '@unocha/hpc-data';
+import { type categories, errors } from '@unocha/hpc-data';
 import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
-import SettingsIcon from '@mui/icons-material/Settings';
-import { LanguageKey, t } from '../../../i18n';
-import { AppContext, getEnv } from '../../context';
 import React, { createContext, useContext, useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CheckIcon from '@mui/icons-material/Check';
-import EditIcon from '@mui/icons-material/Edit';
-import CancelIcon from '@mui/icons-material/Cancel';
+import { type LanguageKey, t } from '../../../i18n';
+import { AppContext, getEnv } from '../../context';
 import * as paths from '../../paths';
 
 import {
-  KeywordHeaderID,
-  TableHeadersProps,
+  type KeywordHeaderID,
+  type TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
   isCompatibleTableHeaderType,
   isTableHeadersPropsKeyword,
 } from '../../utils/table-headers';
 
+import tw from 'twin.macro';
 import {
   ChipDiv,
   type KeywordQuery,
@@ -44,16 +44,15 @@ import {
   TopRowContainer,
   handleTableSettingsInfoClose,
 } from './table-utils';
-import tw from 'twin.macro';
 
-import { Form, Formik } from 'formik';
 import { util } from '@unocha/hpc-core';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
-import { Strings } from '../../../i18n/iface';
+import { Form, Formik } from 'formik';
+import { type Strings } from '../../../i18n/iface';
+import { type LocalStorageSchema } from '../../utils/local-storage-type';
 import { parseError } from '../../utils/map-functions';
 
 export interface KeywordTableProps {
-  headers: TableHeadersProps<KeywordHeaderID>[];
+  headers: Array<TableHeadersProps<KeywordHeaderID>>;
   query: KeywordQuery;
   setQuery: SetQuery<KeywordQuery>;
 }
@@ -78,15 +77,13 @@ function by<T>(
     if (x > y) {
       if (order === 'ASC') {
         return 1;
-      } else {
-        return -1;
       }
+      return -1;
     } else if (x < y) {
       if (order === 'ASC') {
         return -1;
-      } else {
-        return 1;
       }
+      return 1;
     }
     return 0;
   };
@@ -97,9 +94,8 @@ function typeQuery(value: string): keyof categories.Keyword {
     return 'id';
   } else if (value === 'keyword.relatedFlows') {
     return 'refCount';
-  } else {
-    return 'name';
   }
+  return 'name';
 }
 
 const IconContainer = tw.div`
@@ -175,15 +171,13 @@ const EditableRow = ({
               .then(() => {
                 setEntityEdited(!entityEdited);
               })
-              .catch((err) => {
-                if (errors.isDuplicateError(err)) {
+              .catch((error) => {
+                if (errors.isDuplicateError(error)) {
                   if (setError) {
-                    setError({ code: err.code, value: err.value });
+                    setError({ code: error.code, value: error.value });
                   }
-                } else {
-                  if (setError) {
-                    setError({ code: 'unknown', value: 'unknown' });
-                  }
+                } else if (setError) {
+                  setError({ code: 'unknown', value: 'unknown' });
                 }
               });
             setEdit(false);
@@ -236,16 +230,16 @@ const EditableRow = ({
   );
 };
 
-export default function KeywordTable(props: KeywordTableProps) {
+const KeywordTable = (props: KeywordTableProps) => {
   const env = getEnv();
 
   const [query, setQuery] = [props.query, props.setQuery];
-  const [openSettings, setOpenSettings] = useState(false);
-  const [entityEdited, setEntityEdited] = useState(false);
-  const state = dataLoader([entityEdited], () =>
+  const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
+  const [isEntityEdited, setIsEntityEdited] = useState(false);
+  const state = dataLoader([isEntityEdited], () =>
     env.model.categories.getKeywords()
   );
-  const [tableInfoDisplay, setTableInfoDisplay] = useState(
+  const [shouldDisplayTableInfo, setShouldDisplayTableInfo] = useState(
     util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
   const [error, setError] = useState<{
@@ -254,9 +248,9 @@ export default function KeywordTable(props: KeywordTableProps) {
   }>();
 
   const handleSort = (newSort: KeywordHeaderID) => {
-    const changeDir = newSort === query.orderBy;
+    const shouldChangeDir = newSort === query.orderBy;
 
-    if (changeDir) {
+    if (shouldChangeDir) {
       setQuery({
         ...query,
         orderDir: query.orderDir === 'ASC' ? 'DESC' : 'ASC',
@@ -326,8 +320,8 @@ export default function KeywordTable(props: KeywordTableProps) {
                         <EditableRow
                           lang={lang}
                           row={row}
-                          entityEdited={entityEdited}
-                          setEntityEdited={setEntityEdited}
+                          entityEdited={isEntityEdited}
+                          setEntityEdited={setIsEntityEdited}
                         />
                       </TableCell>
                     );
@@ -454,7 +448,7 @@ export default function KeywordTable(props: KeywordTableProps) {
           }}
         >
           {(data) => (
-            <KeywordTableContext.Provider value={{ setError: setError }}>
+            <KeywordTableContext.Provider value={{ setError }}>
               <C.ErrorAlert
                 setError={setError}
                 error={parseError(
@@ -468,13 +462,13 @@ export default function KeywordTable(props: KeywordTableProps) {
                 <TopRowContainer>
                   <TableHeaderButton
                     size="small"
-                    onClick={() => setOpenSettings(!openSettings)}
+                    onClick={() => setShouldOpenSettings(!shouldOpenSettings)}
                   >
                     <SettingsIcon />
                   </TableHeaderButton>
                   <Modal
-                    open={openSettings}
-                    onClose={() => setOpenSettings(!openSettings)}
+                    open={shouldOpenSettings}
+                    onClose={() => setShouldOpenSettings(!shouldOpenSettings)}
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
@@ -517,7 +511,7 @@ export default function KeywordTable(props: KeywordTableProps) {
                                 setQuery
                               ),
                             });
-                            setOpenSettings(false);
+                            setShouldOpenSettings(false);
                           }
                         }}
                         elevation={6}
@@ -529,10 +523,12 @@ export default function KeywordTable(props: KeywordTableProps) {
                           <Alert
                             severity="info"
                             onClose={() =>
-                              handleTableSettingsInfoClose(setTableInfoDisplay)
+                              handleTableSettingsInfoClose(
+                                setShouldDisplayTableInfo
+                              )
                             }
                             sx={{
-                              display: tableInfoDisplay ? 'flex' : 'none',
+                              display: shouldDisplayTableInfo ? 'flex' : 'none',
                               ...tw`mx-8 mt-4`,
                             }}
                           >
@@ -568,4 +564,6 @@ export default function KeywordTable(props: KeywordTableProps) {
       )}
     </AppContext.Consumer>
   );
-}
+};
+
+export default KeywordTable;

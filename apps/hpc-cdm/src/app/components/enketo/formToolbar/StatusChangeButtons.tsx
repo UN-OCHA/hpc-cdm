@@ -1,14 +1,13 @@
-import React, { useContext, Dispatch, SetStateAction } from 'react';
+import React, { useContext, type Dispatch, type SetStateAction } from 'react';
 
-import { styled, C } from '@unocha/hpc-ui';
-import { reportingWindows } from '@unocha/hpc-data';
+import { type reportingWindows } from '@unocha/hpc-data';
+import { C, styled } from '@unocha/hpc-ui';
 import { useNavigate } from 'react-router';
-import { AppContext, getEnv } from '../../../context';
 import { t } from '../../../../i18n';
-import { FormStatus } from '../types';
+import { AppContext, getEnv } from '../../../context';
+import { type FormStatus } from '../types';
 
 interface Props {
-  loading: boolean;
   assignment: reportingWindows.GetAssignmentResult;
   setStatus: Dispatch<SetStateAction<FormStatus>>;
 }
@@ -31,10 +30,10 @@ const StatusChangeButtons = (props: Props) => {
         state,
       })
       .then(() => navigate(0))
-      .catch((err) => {
+      .catch((error) => {
         setStatus({
           type: 'error',
-          message: err.message || err.toString(),
+          message: error.message ?? error.toString(),
         });
       });
   };

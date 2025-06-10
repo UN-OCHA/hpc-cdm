@@ -1,6 +1,6 @@
+import React from 'react';
 import tw from 'twin.macro';
 import Caret from '../assets/icons/caret';
-import React from 'react';
 import { styled } from '../theme';
 
 export interface SectionProps {
@@ -48,14 +48,14 @@ const Container = tw.div`
   gap-8
 `;
 const Section = ({ title, type, children }: SectionProps) => {
-  const [open, setOpen] = React.useState(type !== 'primary');
+  const [isOpen, setIsOpen] = React.useState(type !== 'primary');
 
   return (
     <SectionContainer type={type} open={type === 'primary'}>
-      <SectionTitle type={type} onClick={() => setOpen(!open)}>
+      <SectionTitle type={type} onClick={() => setIsOpen(!isOpen)}>
         {title}
         <Caret
-          direction={open ? 'up' : 'down'}
+          direction={isOpen ? 'up' : 'down'}
           size={type === 'primary' ? 12 : 10}
         />
       </SectionTitle>

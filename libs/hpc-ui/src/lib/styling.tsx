@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
 import { CLASSES } from './classes';
-import { Theme } from './theme';
+import { type Theme } from './theme';
 
 export const BaseStyling = createGlobalStyle<{ theme: Theme }>`
 body, html {

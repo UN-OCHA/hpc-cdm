@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 
-import { BaseStyling, C, styled, dataLoader, dialogs } from '@unocha/hpc-ui';
+import { BaseStyling, C, dataLoader, dialogs, styled } from '@unocha/hpc-ui';
 
-import env, { Environment } from '../environments/environment';
+import env, { type Environment } from '../environments/environment';
+import { LANGUAGE_CHOICE, type LanguageKey, t } from '../i18n';
+import PageMeta from './components/page-meta';
 import { AppContext, contextFromEnv } from './context';
-import { LANGUAGE_CHOICE, LanguageKey, t } from '../i18n';
 import { Z_INDEX } from './layout';
 import * as paths from './paths';
-import PageMeta from './components/page-meta';
 
 import PageNotLoggedIn from './pages/not-logged-in';
 
@@ -65,8 +65,8 @@ export const App = () => {
 
   const loadEnv = dataLoader([], () =>
     env()
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
         throw new Error(t.t(lang, (s) => s.errors.unableToLoadCDM));
       })
       .then(contextFromEnv)

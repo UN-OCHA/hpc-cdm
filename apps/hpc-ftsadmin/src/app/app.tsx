@@ -10,8 +10,8 @@ import {
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
-import env, { Environment } from '../environments/environment';
-import { LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
+import env, { type Environment } from '../environments/environment';
+import { type LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
 import PageMeta from './components/page-meta';
 import { AppContext, contextFromEnv } from './context';
 import { Z_INDEX } from './layout';
@@ -68,8 +68,8 @@ export const App = () => {
 
   const loadEnv = dataLoader([], () =>
     env()
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
         throw new Error(t.t(lang, (s) => s.errors.unableToLoadFTSAdmin));
       })
       .then(contextFromEnv)

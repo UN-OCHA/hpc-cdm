@@ -1,12 +1,12 @@
-import * as React from 'react';
+import CheckIcon from '@mui/icons-material/Check';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { IconButton, Modal, type SvgIconProps, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import CheckIcon from '@mui/icons-material/Check';
-import tw from 'twin.macro';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { IconButton, Modal, SvgIconProps, Tooltip } from '@mui/material';
-import { Button } from './button';
+import * as React from 'react';
 import { useNavigate } from 'react-router';
+import tw from 'twin.macro';
+import { Button } from './button';
 
 interface AsyncIconButtonProps {
   fnPromise: () => Promise<void | unknown>;
@@ -48,43 +48,43 @@ const AsyncIconButton = ({
   iconSx,
   redirectAfterFetch,
 }: AsyncIconButtonProps) => {
-  const [loading, setLoading] = React.useState(false);
-  const [success, setSuccess] = React.useState(false);
-  const [error, setError] = React.useState(false);
-  const [confirmed, setConfirmed] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isSuccess, setIsSuccess] = React.useState(false);
+  const [hasError, setHasError] = React.useState(false);
+  const [isConfirmed, setConfirmed] = React.useState(false);
   const navigate = useNavigate();
   const isDisabled = disabledText !== undefined;
   const buttonSx = {
-    ...(success && tw`disabled:bg-unocha-success-light`),
-    ...(error && tw`disabled:bg-unocha-error-light`),
+    ...(isSuccess && tw`disabled:bg-unocha-success-light`),
+    ...(hasError && tw`disabled:bg-unocha-error-light`),
     ...(isDisabled && tw`disabled:bg-opacity-40`),
   };
 
   React.useEffect(() => {
-    if (success || error) {
+    if (isSuccess || hasError) {
       setTimeout(() => {
-        setSuccess(false);
-        setError(false);
+        setIsSuccess(false);
+        setHasError(false);
       }, 1500);
     }
-  }, [success, error]);
+  }, [isSuccess, hasError]);
   const handleButtonClick = async () => {
-    if (!loading) {
-      setSuccess(false);
-      setError(false);
-      setLoading(true);
+    if (!isLoading) {
+      setIsSuccess(false);
+      setHasError(false);
+      setIsLoading(true);
       setConfirmed(false);
       try {
         await fnPromise();
-        setSuccess(true);
-        setLoading(false);
+        setIsSuccess(true);
+        setIsLoading(false);
         if (redirectAfterFetch) {
           navigate(redirectAfterFetch);
         }
-      } catch (err) {
-        console.error(err);
-        setError(true);
-        setLoading(false);
+      } catch (error) {
+        console.error(error);
+        setHasError(true);
+        setIsLoading(false);
       }
     }
   };
@@ -92,26 +92,26 @@ const AsyncIconButton = ({
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Tooltip title={disabledText || tooltipText}>
+        <Tooltip title={disabledText ?? tooltipText}>
           <Box sx={{ m: 1, position: 'relative' }}>
             <IconButton
-              disabled={success || error || isDisabled}
+              disabled={isSuccess || hasError || isDisabled}
               size="small"
               sx={buttonSx}
               onClick={
                 confirmModal ? () => setConfirmed(true) : handleButtonClick
               }
             >
-              {success ? (
+              {isSuccess ? (
                 <CheckIcon sx={iconSx} />
-              ) : error ? (
+              ) : hasError ? (
                 <ErrorOutlineIcon sx={iconSx} />
               ) : (
                 <IconComponent sx={iconSx} />
               )}
             </IconButton>
 
-            {loading && (
+            {isLoading && (
               <CircularProgress
                 size={34}
                 sx={tw`text-unocha-primary start-0 top-0 z-10 absolute`}
@@ -122,8 +122,8 @@ const AsyncIconButton = ({
       </Box>
       {confirmModal && (
         <Modal
-          open={confirmed}
-          onClose={() => setConfirmed(!confirmed)}
+          open={isConfirmed}
+          onClose={() => setConfirmed(!isConfirmed)}
           sx={tw`flex items-center justify-center`}
         >
           <ModalPaper>

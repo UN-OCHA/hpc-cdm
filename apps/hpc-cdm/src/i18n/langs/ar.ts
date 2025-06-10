@@ -1,4 +1,4 @@
-import { PartialLanguage } from '../iface';
+import { type PartialLanguage } from '../iface';
 import strings from './ar.json';
 
 const LANGUAGE: PartialLanguage = {

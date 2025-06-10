@@ -1,11 +1,11 @@
-import { useField } from 'formik';
-import { TextField, Link } from '@mui/material';
-import { DatePicker as BaseDatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Link, TextField } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker as BaseDatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { useField } from 'formik';
+import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import dayjs from '../../i18n/utils/dayjs';
-import { useEffect, useState } from 'react';
 
 const StyledDatePicker = tw.div`
   flex
@@ -29,17 +29,17 @@ const DatePicker = ({
   enableButton?: boolean;
 }) => {
   const [field, , helpers] = useField(name);
-  const [cleared, setCleared] = useState(false);
+  const [isCleared, setIsCleared] = useState(false);
 
   useEffect(() => {
-    if (cleared) {
+    if (isCleared) {
       const timeout = setTimeout(() => {
-        setCleared(false);
+        setIsCleared(false);
       }, 1000);
 
       return () => clearTimeout(timeout);
     }
-  }, [cleared]);
+  }, [isCleared]);
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={lang}>
       <StyledDatePicker>
@@ -72,7 +72,7 @@ const DatePicker = ({
             ),
           }}
           slotProps={{
-            field: { clearable: true, onClear: () => setCleared(true) },
+            field: { clearable: true, onClear: () => setIsCleared(true) },
           }}
         />
         {enableButton && (

@@ -3,7 +3,7 @@ import { MdTranslate } from 'react-icons/md';
 
 import { C, CLASSES, styled } from '@unocha/hpc-ui';
 
-import { t, LANGUAGE_CHOICE } from '../../i18n';
+import { LANGUAGE_CHOICE, t } from '../../i18n';
 import en from '../../i18n/langs/en';
 import es from '../../i18n/langs/es';
 import fr from '../../i18n/langs/fr';
@@ -37,7 +37,7 @@ const AUN = styled(C.AcceptableUseNotification)`
 const PageNotLoggedIn = (props: Props) => (
   <AppContext.Consumer>
     {({ lang, env }) => (
-      <Container className={CLASSES.CONTAINER.CENTERED}>
+      <Container className={`${CLASSES.CONTAINER.CENTERED} ${props.className}`}>
         <Actions>
           {lang !== 'en' && (
             <C.Button

@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,16 +9,17 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import { C, ActionableButtonState, styled } from '@unocha/hpc-ui';
-import { access, errors } from '@unocha/hpc-data';
+import { type access, errors } from '@unocha/hpc-data';
+import { type ActionableButtonState, C, styled } from '@unocha/hpc-ui';
+import React, { useState } from 'react';
 
 import { t } from '../../i18n';
 import { getContext } from '../context';
 
 interface Props {
   target: access.AccessTarget;
-  open: boolean;
-  setOpen: (open: boolean) => void;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
   updateLoadedData: (data: access.GetTargetAccessResult) => void;
   roles: string[];
 }
@@ -52,7 +52,7 @@ type SubmissionState =
     };
 
 export const TargetAccessManagementAddUser = (props: Props) => {
-  const { open, setOpen, roles, target, updateLoadedData } = props;
+  const { isOpen, setIsOpen, roles, target, updateLoadedData } = props;
   const { lang, env } = getContext();
 
   const [emailInputValue, setEmailInputValue] = useState<string>('');
@@ -70,7 +70,9 @@ export const TargetAccessManagementAddUser = (props: Props) => {
     );
 
   const submit = async (event?: React.FormEvent<HTMLFormElement>) => {
-    event && event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
     if (emailInputValue === '') {
       setSubmissionState({
         type: 'userError',
@@ -93,28 +95,27 @@ export const TargetAccessManagementAddUser = (props: Props) => {
         email: emailInputValue,
         roles: [roleInputValue],
       })
-      .catch((err) => {
-        console.log(err);
-        if (errors.isUserError(err)) {
+      .catch((error) => {
+        console.log(error);
+        if (errors.isUserError(error)) {
           setSubmissionState({
             type: 'userError',
             emailInvalid: true,
-            error: t.t(lang, (s) => s.errors.userErrors[err.key]),
+            error: t.t(lang, (s) => s.errors.userErrors[error.key]),
           });
           return null;
-        } else {
-          setSubmissionState({
-            type: 'unknownError',
-            error: err.message || err.toString(),
-          });
-          throw err;
         }
+        setSubmissionState({
+          type: 'unknownError',
+          error: error.message ?? error.toString(),
+        });
+        throw error;
       });
     if (data) {
       setSubmissionState({
         type: 'idle',
       });
-      setOpen(false);
+      setIsOpen(false);
       updateLoadedData(data);
     }
   };
@@ -130,7 +131,7 @@ export const TargetAccessManagementAddUser = (props: Props) => {
   };
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
       <DialogTitle>
         {t.t(lang, (s) => s.components.accessControl.addPerson)}
       </DialogTitle>

@@ -1,20 +1,20 @@
 import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
-import { t } from '../../../i18n';
-import PageMeta from '../../components/page-meta';
-import { AppContext, getEnv } from '../../context';
 import tw from 'twin.macro';
+import { t } from '../../../i18n';
+import FilterOrganizationsTable, {
+  ORGANIZATIONS_FILTER_INITIAL_VALUES,
+} from '../../components/filters/filter-organization-table';
+import PageMeta from '../../components/page-meta';
+import OrganizationTable, {
+  type OrganizationTableProps,
+} from '../../components/tables/organizations-table';
+import { AppContext, getEnv } from '../../context';
+import { ORGANIZATION_PARAMS_CODEC } from '../../utils/codecs';
 import {
   DEFAULT_ORGANIZATION_TABLE_HEADERS,
   encodeTableHeaders,
 } from '../../utils/table-headers';
-import OrganizationTable, {
-  OrganizationTableProps,
-} from '../../components/tables/organizations-table';
-import FilterOrganizationsTable, {
-  ORGANIZATIONS_FILTER_INITIAL_VALUES,
-} from '../../components/filters/filter-organization-table';
 import useQueryParams from '../../utils/useQueryParams';
-import { ORGANIZATION_PARAMS_CODEC } from '../../utils/codecs';
 
 interface Props {
   className?: string;
@@ -45,8 +45,8 @@ export default (props: Props) => {
     headers: DEFAULT_ORGANIZATION_TABLE_HEADERS,
     rowsPerPageOption: rowsPerPageOptions,
     initialValues: ORGANIZATIONS_FILTER_INITIAL_VALUES,
-    query: query,
-    setQuery: setQuery,
+    query,
+    setQuery,
   };
 
   const env = getEnv();

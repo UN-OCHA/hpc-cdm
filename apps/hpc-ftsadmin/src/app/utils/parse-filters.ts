@@ -1,14 +1,14 @@
 import {
-  categories,
-  flows,
-  organizations,
-  FormObjectValue,
+  type categories,
+  type flows,
+  type organizations,
+  type util,
 } from '@unocha/hpc-data';
-import { PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
-import { Strings } from '../../i18n/iface';
-import { OrganizationFilterValues } from '../components/filters/filter-organization-table';
-import { Dayjs } from 'dayjs';
-import { FlowsFilterValues } from '../components/filters/filter-flows-table';
+import { type Dayjs } from 'dayjs';
+import { type Strings } from '../../i18n/iface';
+import { type FlowsFilterValues } from '../components/filters/filter-flows-table';
+import { type OrganizationFilterValues } from '../components/filters/filter-organization-table';
+import { type PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
 import { valueToInteger } from './map-functions';
 
 /*
@@ -34,9 +34,9 @@ export type FilterValues =
   | string
   | string[]
   | boolean
-  | FormObjectValue
+  | util.FormObjectValue
   | null
-  | Array<FormObjectValue>
+  | util.FormObjectValue[]
   | Dayjs;
 
 export type Filter<T extends FilterKeys> = {
@@ -73,7 +73,7 @@ const filterValueIsBoolean = (value: FilterValues): value is boolean => {
 
 const filterValueIsFormObjectValue = (
   value: FilterValues
-): value is FormObjectValue => {
+): value is util.FormObjectValue => {
   return (
     typeof value === 'object' &&
     !Array.isArray(value) &&
@@ -85,7 +85,7 @@ const filterValueIsFormObjectValue = (
 
 const filterValueIsArrayFormObjectValue = (
   value: FilterValues
-): value is Array<FormObjectValue> => {
+): value is util.FormObjectValue[] => {
   return Array.isArray(value) && typeof value[0] !== 'string';
 };
 
@@ -121,7 +121,7 @@ const parseInInitialValues = <T extends Filters>(
   initialValues: T
 ) => {
   for (const key in initialValues) {
-    filters[key] = filters[key] ? filters[key] : initialValues[key];
+    filters[key] = filters[key] ?? initialValues[key];
   }
   return filters;
 };
@@ -131,8 +131,9 @@ export const parseOutInitialValues = <T extends Filters>(
 ) => {
   const res = {} as T;
   for (const key in filters) {
-    if (JSON.stringify(filters[key]) !== JSON.stringify(initialValues[key]))
+    if (JSON.stringify(filters[key]) !== JSON.stringify(initialValues[key])) {
       res[key] = filters[key];
+    }
   }
   return res;
 };
@@ -154,9 +155,9 @@ export const decodeFilters = <T extends Filters>(
       initialValues
     );
     return res;
-  } catch (err) {
+  } catch (error) {
     console.warn(
-      err,
+      error,
       'Error parsing query to JSON. Reseting to initial Values...'
     );
     return initialValues;
@@ -196,11 +197,10 @@ export const extractDirectionObject = (
       singularObject.charAt(0).toLowerCase() + singularObject.slice(1);
     return (direction === 'destination' || direction === 'source') &&
       isFlowObjectTypes(lowerCaseSingularObject)
-      ? { direction: direction, object: lowerCaseSingularObject }
+      ? { direction, object: lowerCaseSingularObject }
       : null;
-  } else {
-    return null;
   }
+  return null;
 };
 
 type FlowObjectTypes =
@@ -243,7 +243,7 @@ export const parseFormFilters = <
         // Type missmatch is due to the typing is only accepting
         // string values for keys, instead of `string | number | symbol`
         parsedFormValue[key as unknown as T] = {
-          displayValue: displayValue,
+          displayValue,
           value: fieldValue,
         };
       }
@@ -253,8 +253,11 @@ export const parseFormFilters = <
 };
 
 const parseActiveStatus = (activeStatus: string): boolean | undefined => {
-  if (activeStatus === 'true') return true;
-  else if (activeStatus === 'false') return false;
+  if (activeStatus === 'true') {
+    return true;
+  } else if (activeStatus === 'false') {
+    return false;
+  }
 
   return undefined;
 };
@@ -270,7 +273,7 @@ export const parseFlowFilters = (
     flowFilters: {},
     nestedFlowFilters: {},
     flowObjectFilters: [],
-    pending: pending,
+    pending,
     flowCategoryFilters: [],
   };
   if (
@@ -278,8 +281,9 @@ export const parseFlowFilters = (
     !res.flowObjectFilters ||
     !res.flowCategoryFilters ||
     !res.nestedFlowFilters
-  )
+  ) {
     return res;
+  }
   for (const key in filters) {
     if (isKey(filters, key)) {
       switch (key) {
@@ -299,17 +303,19 @@ export const parseFlowFilters = (
         case 'sourceUsageYears': {
           const extractedDetails = extractDirectionObject(key);
           const value = filters[key]?.value;
-          if (extractedDetails && value) {
-            if (filterValueIsArrayFormObjectValue(value)) {
-              res.flowObjectFilters = [
-                ...res.flowObjectFilters,
-                ...value.map((flowObject) => ({
-                  objectID: valueToInteger(flowObject.value),
-                  direction: extractedDetails.direction,
-                  objectType: extractedDetails.object,
-                })),
-              ];
-            }
+          if (
+            extractedDetails &&
+            value &&
+            filterValueIsArrayFormObjectValue(value)
+          ) {
+            res.flowObjectFilters = [
+              ...res.flowObjectFilters,
+              ...value.map((flowObject) => ({
+                objectID: valueToInteger(flowObject.value),
+                direction: extractedDetails.direction,
+                objectType: extractedDetails.object,
+              })),
+            ];
           }
           break;
         }
@@ -363,7 +369,9 @@ export const parseFlowFilters = (
           }
           if (filterValueIsFormObjectValue(filterValue)) {
             const statusType = filterValue.value;
-            if (filterValueIsFlowStatusType(statusType)) res[statusType] = true;
+            if (filterValueIsFlowStatusType(statusType)) {
+              res[statusType] = true;
+            }
           }
           break;
         }
@@ -415,7 +423,7 @@ export const parseFlowFilters = (
             );
             res.flowCategoryFilters = [
               ...res.flowCategoryFilters,
-              ...(parsedCategories ? parsedCategories : []),
+              ...parsedCategories,
             ];
           }
           break;

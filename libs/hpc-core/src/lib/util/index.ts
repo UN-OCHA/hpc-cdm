@@ -5,13 +5,13 @@ export const isDefined = <T>(v: T | null | undefined): v is T =>
 export const isString = (v: any): v is string => typeof v === 'string';
 
 /**
- * return true if the given object has the given key,
+ * Return true if the given object has the given key,
  * can be used as a type guard.
  */
 export const hasKey = <K extends string>(
   o: { [k in K]: unknown },
   k: string | undefined | null
-): k is K => !!k && Object.keys(o).indexOf(k) > -1;
+): k is K => !!k && Object.keys(o).includes(k);
 
 export type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
@@ -32,10 +32,10 @@ for (let n = 0; n <= 0xff; ++n) {
  */
 export const arrayBufferToHex = (data: ArrayBuffer): string => {
   const buff = new Uint8Array(data);
-  const hexOctets = new Array(buff.length);
+  const hexOctets = Array.from({ length: buff.length });
 
-  for (let i = 0; i < buff.length; ++i) {
-    hexOctets[i] = BYTE_TO_HEX[buff[i]];
+  for (const [i, element] of buff.entries()) {
+    hexOctets[i] = BYTE_TO_HEX[element];
   }
 
   return hexOctets.join('');
@@ -74,7 +74,7 @@ export const getLocalStorageItem = <K>(
     }
 
     const parsedValue = JSON.parse(item) as K[keyof K];
-    if (typeof parsedValue === 'undefined') {
+    if (parsedValue === undefined) {
       console.error(`Corrupted data in localStorage for ${key.toString()}`);
       return defaultValue;
     }
