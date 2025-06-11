@@ -1,5 +1,5 @@
-import * as t from 'io-ts';
 import { Dayjs, isDayjs } from 'dayjs';
+import * as t from 'io-ts';
 
 export type FormObjectValue = { displayLabel: string; value: string | number };
 
@@ -22,9 +22,8 @@ export const INTEGER_FROM_STRING = new t.Type<number, number>(
       return Number.isInteger(v) ? t.success(v) : t.failure(v, c);
     } else if (typeof v === 'string') {
       return INTEGER_REGEX.test(v) ? t.success(parseInt(v)) : t.failure(v, c);
-    } else {
-      return t.failure(v, c);
     }
+    return t.failure(v, c);
   },
   t.identity
 );
@@ -40,9 +39,8 @@ export const POSITIVE_INTEGER_FROM_STRING = new t.Type<number, number>(
       return Number.isInteger(v) && v >= 0 ? t.success(v) : t.failure(v, c);
     } else if (typeof v === 'string') {
       return INTEGER_REGEX.test(v) ? t.success(parseInt(v)) : t.failure(v, c);
-    } else {
-      return t.failure(v, c);
     }
+    return t.failure(v, c);
   },
   t.identity
 );
@@ -57,17 +55,15 @@ export const validInteger = (integerOptions: readonly number[]) =>
     t.number.is,
     (v, c) => {
       if (typeof v === 'number') {
-        return Number.isInteger(v) && integerOptions.some((row) => row === v)
+        return Number.isInteger(v) && integerOptions.includes(v)
           ? t.success(v)
           : t.failure(v, c);
       } else if (typeof v === 'string') {
-        return /^\d+$/.test(v) &&
-          integerOptions.some((row) => row === parseInt(v))
+        return /^\d+$/.test(v) && integerOptions.includes(parseInt(v))
           ? t.success(parseInt(v))
           : t.failure(v, c);
-      } else {
-        return t.failure(v, c);
       }
+      return t.failure(v, c);
     },
     t.identity
   );
@@ -86,9 +82,8 @@ export const NUMBER_FROM_STRING = new t.Type<number, number>(
       return !isNaN(v as any) && !isNaN(parseFloat(v))
         ? t.success(parseFloat(v))
         : t.failure(v, c);
-    } else {
-      return t.failure(v, c);
     }
+    return t.failure(v, c);
   },
   t.identity
 );
@@ -108,9 +103,8 @@ export const POSITIVE_NUMBER_FROM_STRING = new t.Type<number, number>(
       return !isNaN(v as any) && !isNaN(parseFloat(v)) && parseFloat(v) >= 0
         ? t.success(parseFloat(v))
         : t.failure(v, c);
-    } else {
-      return t.failure(v, c);
     }
+    return t.failure(v, c);
   },
   t.identity
 );
@@ -124,9 +118,8 @@ export const EMPTY_STRING = new t.Type<string, string>(
   (v, c) => {
     if (typeof v === 'string') {
       return v === '' ? t.success(v) : t.failure(v, c);
-    } else {
-      return t.failure(v, c);
     }
+    return t.failure(v, c);
   },
   t.identity
 );
@@ -140,9 +133,8 @@ export const NON_EMPTY_STRING = new t.Type<string, string>(
   (v, c) => {
     if (typeof v === 'string') {
       return v !== '' ? t.success(v) : t.failure(v, c);
-    } else {
-      return t.failure(v, c);
     }
+    return t.failure(v, c);
   },
   t.identity
 );
@@ -150,15 +142,14 @@ export const NON_EMPTY_STRING = new t.Type<string, string>(
 /**
  * Accepts any array except an empty array, serializes to an array type.
  */
-export const NON_EMPTY_ARRAY = new t.Type<Array<unknown>, Array<unknown>>(
+export const NON_EMPTY_ARRAY = new t.Type<unknown[], unknown[]>(
   'NON_EMPTY_ARRAY',
   t.array(t.unknown).is,
   (v, c) => {
     if (Array.isArray(v)) {
       return v.length > 0 ? t.success(v) : t.failure(v, c);
-    } else {
-      return t.failure(v, c);
     }
+    return t.failure(v, c);
   },
   t.identity
 );
@@ -179,9 +170,8 @@ export const INTEGER_ARRAY_FROM_STRING = new t.Type<number[], number[]>(
       return nums.every((n) => INTEGER_REGEX.test(n))
         ? t.success(nums.map((n) => parseInt(n)))
         : t.failure(v, c);
-    } else {
-      return t.failure(v, c);
     }
+    return t.failure(v, c);
   },
   t.identity
 );
@@ -202,9 +192,8 @@ export const STRING_ARRAY_FROM_STRING = new t.Type<string[], string[]>(
       return strings.every((s) => typeof s === 'string')
         ? t.success(strings)
         : t.failure(v, c);
-    } else {
-      return t.failure(v, c);
     }
+    return t.failure(v, c);
   },
   t.identity
 );
@@ -271,14 +260,13 @@ export const BLOB = new t.Type<Blob, Blob>(
   (v, c) => {
     if (v instanceof Blob) {
       return t.success(v);
-    } else {
-      return t.failure(v, c);
     }
+    return t.failure(v, c);
   },
   t.identity
 );
 
-export const BUFFER = new t.Type<Buffer, Buffer, any>(
+export const BUFFER = new t.Type<Buffer, Buffer, unknown>(
   'Buffer',
   (v): v is Buffer => v instanceof Buffer,
   (v, c) => (v instanceof Buffer ? t.success(v) : t.failure(v, c)),
@@ -294,9 +282,8 @@ export const ARRAY_BUFFER = new t.Type<ArrayBuffer, ArrayBuffer>(
   (v, c) => {
     if (v instanceof ArrayBuffer) {
       return t.success(v);
-    } else {
-      return t.failure(v, c);
     }
+    return t.failure(v, c);
   },
   t.identity
 );

@@ -1,7 +1,7 @@
-import { access } from '@unocha/hpc-data';
+import { type access } from '@unocha/hpc-data';
 import { createContext, useContext } from 'react';
-import { Environment } from '../environments/environment';
-import { LanguageKey } from '../i18n';
+import { type Environment } from '../environments/environment';
+import { type LanguageKey } from '../i18n';
 
 interface Context {
   lang: LanguageKey;

@@ -1,12 +1,12 @@
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import { Paper, Switch, Typography } from '@mui/material';
+import React, { type ReactNode, useState } from 'react';
 import {
   DragDropContext,
-  Droppable,
   Draggable,
-  DropResult,
+  Droppable,
+  type DropResult,
 } from 'react-beautiful-dnd';
-import React, { ReactNode, useState } from 'react';
-import { Paper, Switch, Typography } from '@mui/material';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import tw from 'twin.macro';
 import { ButtonSubmit } from './button';
 
@@ -72,13 +72,13 @@ const DraggableListItem = ({
   item: DraggableListItemProps;
   index: number;
 }) => {
-  const [active, setActive] = useState(item.active);
+  const [isActive, setIsActive] = useState(item.active);
   return (
     <Draggable
       draggableId={item.id.toString()}
       index={index}
       key={item.id}
-      isDragDisabled={!active}
+      isDragDisabled={!isActive}
     >
       {(provided) => (
         <DraggableListItemContainer
@@ -87,15 +87,15 @@ const DraggableListItem = ({
           ref={provided.innerRef}
         >
           <DragIconContainer>
-            <DragIndicatorIcon color={active ? 'primary' : 'disabled'} />
+            <DragIndicatorIcon color={isActive ? 'primary' : 'disabled'} />
             <TextContainer>{item.label}</TextContainer>
           </DragIconContainer>
           <Switch
             color="primary"
             size="small"
-            checked={active}
+            checked={isActive}
             onClick={() => {
-              setActive(!active);
+              setIsActive(!isActive);
               item.active = !item.active;
             }}
           />
@@ -109,7 +109,7 @@ const reorder = (
   startIndex: number,
   endIndex: number
 ): DraggableListItemProps[] => {
-  const result = Array.from(list);
+  const result = [...list];
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
 

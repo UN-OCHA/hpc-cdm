@@ -1,23 +1,22 @@
-import React, { useState, useRef } from 'react';
 import {
-  MenuItem,
-  Popper,
   ClickAwayListener,
+  Grow,
+  MenuItem,
   MenuList,
   Paper,
-  Grow,
+  Popper,
 } from '@mui/material';
+import React, { useRef, useState } from 'react';
 
-import { Session } from '@unocha/hpc-core';
-import { i18n } from '@unocha/hpc-core';
+import { type i18n, type Session } from '@unocha/hpc-core';
 
-import { CLASSES, combineClasses } from '../classes';
-import UNOCHA from '../assets/logos/unocha';
 import Caret from '../assets/icons/caret';
-import HeaderButton from './header-button';
+import User from '../assets/icons/user';
+import UNOCHA from '../assets/logos/unocha';
+import { CLASSES, combineClasses } from '../classes';
 import LanguagePicker from '../components/language-picker';
 import { styled } from '../theme';
-import User from '../assets/icons/user';
+import HeaderButton from './header-button';
 
 const CLS = {
   LOGO: 'logo',
@@ -40,7 +39,7 @@ interface Props {
 
 const Header = (props: Props) => {
   const { className, session, language, strings, userMenu } = props;
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuAnchor = useRef<HTMLButtonElement>(null);
 
   const user = () => {
@@ -50,14 +49,14 @@ const Header = (props: Props) => {
         <>
           <HeaderButton
             ref={userMenuAnchor}
-            onClick={() => setUserMenuOpen(true)}
+            onClick={() => setIsUserMenuOpen(true)}
           >
             <User />
             <span>{u.name}</span>
-            <Caret direction={userMenuOpen ? 'up' : 'down'} />
+            <Caret direction={isUserMenuOpen ? 'up' : 'down'} />
           </HeaderButton>
           <Popper
-            open={userMenuOpen}
+            open={isUserMenuOpen}
             anchorEl={userMenuAnchor.current}
             role={undefined}
             transition
@@ -66,13 +65,15 @@ const Header = (props: Props) => {
             {({ TransitionProps }) => (
               <Grow {...TransitionProps}>
                 <Paper>
-                  <ClickAwayListener onClickAway={() => setUserMenuOpen(false)}>
-                    <MenuList autoFocusItem={userMenuOpen}>
+                  <ClickAwayListener
+                    onClickAway={() => setIsUserMenuOpen(false)}
+                  >
+                    <MenuList autoFocusItem={isUserMenuOpen}>
                       {userMenu.map((item, i) => (
                         <MenuItem
                           key={i}
                           onClick={() => {
-                            setUserMenuOpen(false);
+                            setIsUserMenuOpen(false);
                             item.onClick();
                           }}
                         >
@@ -87,14 +88,13 @@ const Header = (props: Props) => {
           </Popper>
         </>
       );
-    } else {
-      return (
-        <HeaderButton onClick={session.logIn}>
-          <User />
-          <span>{strings.login}</span>
-        </HeaderButton>
-      );
     }
+    return (
+      <HeaderButton onClick={session.logIn}>
+        <User />
+        <span>{strings.login}</span>
+      </HeaderButton>
+    );
   };
 
   return (

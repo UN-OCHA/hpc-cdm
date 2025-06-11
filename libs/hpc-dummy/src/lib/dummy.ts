@@ -1,24 +1,30 @@
-import { PathReporter } from 'io-ts/lib/PathReporter';
-import { Session } from '@unocha/hpc-core';
+/* eslint-disable require-await */
+import { type Session } from '@unocha/hpc-core';
 import {
-  Model,
-  access,
-  operations,
-  reportingWindows,
+  type Model,
+  type access,
+  type categories,
+  type emergencies,
   errors,
-  organizations,
-  locations,
-  categories,
-  emergencies,
-  plans,
-  projects,
-  globalClusters,
-  usageYears,
+  type globalClusters,
+  type locations,
+  type operations,
+  type organizations,
+  type plans,
+  type projects,
+  reportingWindows,
+  type usageYears,
 } from '@unocha/hpc-data';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import isEqual from 'lodash/isEqual';
 
-import { Assignment, DummyData, DUMMY_DATA, User } from './data-types';
 import { INITIAL_DATA } from './data';
+import {
+  type Assignment,
+  DUMMY_DATA,
+  DummyData,
+  type User,
+} from './data-types';
 import { Users } from './users';
 
 const uriToBlob = (uri: string) => fetch(uri).then((res) => res.blob());
@@ -59,13 +65,13 @@ function dummyEndpoint<Args extends [unknown, ...unknown[]], Data>(
 ): (...args: Args) => Promise<Data> {
   return (...args: Args) =>
     new Promise<Data>((resolve) => {
-      console.log('[DUMMY] Endpoint Called: ', name, ...args);
+      console.log('[DUMMY] Endpoint Called:', name, ...args);
       // TODO: allow triggering dummy endpoint failures for testing
       setTimeout(
         () =>
           resolve(
             fn(...args).then((data) => {
-              console.log('[DUMMY] Endpoint Resolving: ', name, ...args, data);
+              console.log('[DUMMY] Endpoint Resolving:', name, ...args, data);
               return data;
             })
           ),
@@ -85,14 +91,14 @@ export class Dummy {
     this.users = new Users();
     this.users.attach();
 
-    window.addEventListener('storage', this.load);
+    globalThis.addEventListener('storage', this.load);
     this.load();
 
     this.users.addListener({
       loginAsUser: (user) => {
         this.data.currentUser = user.id;
         this.store();
-        window.location.reload();
+        globalThis.location.reload();
       },
     });
   }
@@ -106,7 +112,7 @@ export class Dummy {
           // Print discrepancy in console
           console.error(PathReporter.report(DUMMY_DATA.decode(this.data)));
           if (
-            window.confirm(
+            globalThis.confirm(
               `The stored dummy data doesn't match the current type definitions, ` +
                 `do you want to reset it to the default?`
             )
@@ -117,8 +123,8 @@ export class Dummy {
         } else {
           this.users.setUsers(this.data.users);
         }
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        console.error(error);
       }
     } else {
       this.users.setUsers(this.data.users);
@@ -144,7 +150,7 @@ export class Dummy {
       logOut: () => {
         this.data.currentUser = null;
         this.store();
-        window.location.reload();
+        globalThis.location.reload();
       },
     };
   };
@@ -153,9 +159,8 @@ export class Dummy {
     const forms = this.data.forms.filter((f) => f.id === formId);
     if (forms.length === 1) {
       return forms[0];
-    } else {
-      throw new Error('Unexpected result when getting forms for ID:' + formId);
     }
+    throw new Error(`Unexpected result when getting forms for ID:${formId}`);
   }
 
   private async getAssignmentResult(
@@ -191,21 +196,20 @@ export class Dummy {
           ),
         };
         return r;
-      } else {
-        throw new Error('Unknown type');
       }
+      throw new Error('Unknown type');
     };
 
     let assignee: reportingWindows.GetAssignmentResult['assignee'];
     if (assignment.assignee.type === 'operationCluster') {
       const clusterId = assignment.assignee.clusterId;
-      const cluster = this.data.operationClusters.filter(
+      const cluster = this.data.operationClusters.find(
         (c) => c.id === clusterId
       );
       assignee = {
         type: 'operationCluster',
         clusterId,
-        clusterName: cluster[0]?.name,
+        clusterName: cluster?.name ?? '',
       };
     } else {
       assignee = assignment.assignee;
@@ -249,10 +253,7 @@ export class Dummy {
 
     for (const a of userAccess) {
       for (const option of options) {
-        if (
-          isEqual(a.target, option.target) &&
-          a.roles.indexOf(option.role) > -1
-        ) {
+        if (isEqual(a.target, option.target) && a.roles.includes(option.role)) {
           return true;
         }
       }
@@ -276,7 +277,7 @@ export class Dummy {
 
     const getFullGrantee = (g: access.Grantee): access.GranteeWithMeta => {
       if (g.type === 'user') {
-        const u = this.data.users.filter((u) => u.id === g.id)[0];
+        const u = this.data.users.find((u) => u.id === g.id);
         if (!u) {
           throw new Error('Unknown User');
         }
@@ -285,9 +286,8 @@ export class Dummy {
           name: u.user.name,
           email: u.email,
         };
-      } else {
-        throw new Error('Unexpected access grantee type');
       }
+      throw new Error('Unexpected access grantee type');
     };
 
     const getAllowedRoles = (target: access.AccessTarget) => {
@@ -297,9 +297,8 @@ export class Dummy {
         return ['operationLead', 'testRole1', 'testRole2'];
       } else if (target.type === 'operationCluster') {
         return ['clusterLead'];
-      } else {
-        throw new Error('Unexpected access target type');
       }
+      throw new Error('Unexpected access target type');
     };
 
     return {
@@ -341,7 +340,7 @@ export class Dummy {
                 (a) =>
                   a.grantee.id === this.data.currentUser &&
                   a.target.type === 'global'
-              )?.roles || false;
+              )?.roles ?? false;
             console.log(roles);
             return {
               permissions: {
@@ -428,9 +427,9 @@ export class Dummy {
             if (existingInvite.length > 0) {
               throw new errors.UserError('access.userAlreadyInvited');
             }
-            const existingUser = this.data.users.filter(
+            const existingUser = this.data.users.find(
               (u) => u.email === email
-            )[0] as User | undefined;
+            ) as User | undefined;
             const existingUserAccess = this.data.access.active.filter(
               (i) =>
                 isEqual(i.target, target) &&
@@ -450,33 +449,31 @@ export class Dummy {
                   actor: this.data.currentUser,
                 });
               }
-            } else {
               // Not added yet, add user
-              if (existingUser) {
-                const grantee = {
-                  type: 'user',
-                  id: existingUser.id,
-                } as const;
-                this.data.access.active.push({
-                  target,
-                  grantee,
-                  roles,
-                });
-                this.data.access.auditLog.push({
-                  target,
-                  grantee,
-                  roles,
-                  date: Date.now(),
-                  actor: this.data.currentUser,
-                });
-              } else {
-                this.data.access.invites.push({
-                  target,
-                  email,
-                  roles,
-                  lastModifiedBy: this.data.currentUser,
-                });
-              }
+            } else if (existingUser) {
+              const grantee = {
+                type: 'user',
+                id: existingUser.id,
+              } as const;
+              this.data.access.active.push({
+                target,
+                grantee,
+                roles,
+              });
+              this.data.access.auditLog.push({
+                target,
+                grantee,
+                roles,
+                date: Date.now(),
+                actor: this.data.currentUser,
+              });
+            } else {
+              this.data.access.invites.push({
+                target,
+                email,
+                roles,
+                lastModifiedBy: this.data.currentUser,
+              });
             }
             this.store();
             return this.getAccessForTarget(target);
@@ -705,7 +702,7 @@ export class Dummy {
             // Replace the following line with the actual implementation
             return [
               {
-                id: 26512,
+                id: 26_512,
                 hrinfoId: null,
                 type: 'custom',
                 name: 'Agriculture',
@@ -732,7 +729,7 @@ export class Dummy {
                 updatedAt: '2021-08-24T11:51:20.534Z',
               },
               {
-                id: 26480,
+                id: 26_480,
                 hrinfoId: null,
                 type: 'custom',
                 name: 'Coordination and support services',
@@ -745,7 +742,7 @@ export class Dummy {
                 updatedAt: '2021-08-24T11:51:24.794Z',
               },
               {
-                id: 26513,
+                id: 26_513,
                 hrinfoId: null,
                 type: 'custom',
                 name: 'COVID-19',
@@ -850,7 +847,7 @@ export class Dummy {
                 updatedAt: '2021-08-24T11:52:18.249Z',
               },
               {
-                id: 26479,
+                id: 26_479,
                 hrinfoId: null,
                 type: 'custom',
                 name: 'Multi-sector',
@@ -876,7 +873,7 @@ export class Dummy {
                 updatedAt: '2021-08-24T11:52:27.907Z',
               },
               {
-                id: 26481,
+                id: 26_481,
                 hrinfoId: null,
                 type: 'custom',
                 name: 'Other',
@@ -942,7 +939,7 @@ export class Dummy {
                 updatedAt: '2021-04-26T14:42:40.052Z',
               },
               {
-                id: 26546,
+                id: 26_546,
                 hrinfoId: null,
                 type: 'aor',
                 name: 'Protection - Human Trafficking & Smuggling',
@@ -997,8 +994,8 @@ export class Dummy {
                 externalId: '389',
                 name: 'Spain',
                 adminLevel: 0,
-                latitude: 40.309787496783,
-                longitude: -3.578125378279,
+                latitude: 40.309_787_496_783,
+                longitude: -3.578_125_378_279,
                 iso3: 'ESP',
                 pcode: null,
                 validOn: null,
@@ -1326,8 +1323,8 @@ export class Dummy {
               const r: operations.GetOperationResult = {
                 data: {
                   ...op[0],
-                  reportingWindows: this.data.reportingWindows.filter(
-                    (w) => w.associations.operations.indexOf(id) > -1
+                  reportingWindows: this.data.reportingWindows.filter((w) =>
+                    w.associations.operations.includes(id)
                   ),
                   permissions: {
                     canModifyAccess: this.userHasAccess([
@@ -2029,11 +2026,11 @@ export class Dummy {
             if (
               reportingWindows.UPDATE_ASSIGNMENT_PARAMS_STATE_CHANGE.is(params)
             ) {
-              const [assignment] = this.data.reportingWindows
+              const assignment = this.data.reportingWindows
                 .map((rw) =>
                   rw.assignments.find((a) => a.id === params.assignmentId)
                 )
-                .filter((a) => a);
+                .find(Boolean);
 
               if (assignment) {
                 assignment.state = params.state;
@@ -2043,7 +2040,7 @@ export class Dummy {
             }
             const {
               assignmentId,
-              form: { id, data, files, finalized },
+              form: { id, data, files, finalized: isFinalized },
               previousVersion,
             } = params;
 
@@ -2056,13 +2053,13 @@ export class Dummy {
                       a.lastUpdatedBy
                     );
                   }
-                  const u = this.data.users.filter(
+                  const u = this.data.users.find(
                     (u) => u.id === this.data.currentUser
                   );
                   a.version++;
-                  a.state = finalized ? 'raw:finalized' : 'raw:entered';
+                  a.state = isFinalized ? 'raw:finalized' : 'raw:entered';
                   a.lastUpdatedAt = Date.now();
-                  a.lastUpdatedBy = u[0]?.user.name || 'Unknown';
+                  a.lastUpdatedBy = u?.user.name ?? 'Unknown';
                   a.currentData = data;
                   a.currentFiles = await Promise.all(
                     files.map(async (f) => ({

@@ -1,11 +1,11 @@
 import {
   UserManager,
-  User,
-  OidcMetadata,
   WebStorageStateStore,
+  type OidcMetadata,
+  type User,
 } from 'oidc-client';
 
-import { config, Session } from '@unocha/hpc-core';
+import { type config, type Session } from '@unocha/hpc-core';
 
 import { LiveModel } from './model';
 
@@ -51,7 +51,7 @@ export class LiveBrowserClient {
     });
 
     (
-      window as unknown as { clearSessionStorage: () => Promise<void> }
+      globalThis as unknown as { clearSessionStorage: () => Promise<void> }
     ).clearSessionStorage = this.clearSessionStorage;
 
     this.userManager = getOpenIDMetadata(config.hpcAuthUrl).then(
@@ -71,7 +71,7 @@ export class LiveBrowserClient {
   private clearSessionStorage = async () => {
     const keys = await this.store.getAllKeys();
     await Promise.all(keys.map((key) => this.store.remove(key)));
-    window.location.reload();
+    globalThis.location.reload();
   };
 
   private getSessionUser = async (
@@ -79,24 +79,22 @@ export class LiveBrowserClient {
   ): Promise<Session['getUser']> => {
     if (!user) {
       return () => null;
-    } else {
-      const accountUrl = new URL('/account.json', this.config.hpcAuthUrl);
-      const res = await fetch(accountUrl.href, {
-        headers: {
-          Authorization: `Bearer ${user.access_token}`,
-        },
-      });
-      if (!res.ok) {
-        return () => ({
-          name: 'unknown',
-        });
-      } else {
-        const info = await res.json();
-        return () => ({
-          name: info.name || 'unknown',
-        });
-      }
     }
+    const accountUrl = new URL('/account.json', this.config.hpcAuthUrl);
+    const res = await fetch(accountUrl.href, {
+      headers: {
+        Authorization: `Bearer ${user.access_token}`,
+      },
+    });
+    if (!res.ok) {
+      return () => ({
+        name: 'unknown',
+      });
+    }
+    const info = await res.json();
+    return () => ({
+      name: info.name ?? 'unknown',
+    });
   };
 
   public init = async () => {
@@ -105,14 +103,14 @@ export class LiveBrowserClient {
     await userManager
       .signinRedirectCallback()
       .then((user) => {
-        const redirectTo = user.state || document.location.pathname;
+        const redirectTo = user.state ?? document.location.pathname;
         if (history.replaceState) {
           history.replaceState(null, document.title, redirectTo);
           // TODO: interact directly with React Router history to get it to reload
           // the route without needing to reload the page
-          window.location.reload();
+          globalThis.location.reload();
         } else {
-          window.location = redirectTo;
+          globalThis.location = redirectTo;
         }
       })
       .catch(() => {
@@ -123,19 +121,19 @@ export class LiveBrowserClient {
       getUser: await this.getSessionUser(user),
       logIn: () =>
         userManager.signinRedirect({
-          state: window.location.href,
+          state: globalThis.location.href,
         }),
       logOut: () =>
         userManager.signoutRedirect().then(() => userManager.removeUser()),
     };
 
     // When user logs in/out in a different tab, log in/out in current tab as well
-    window.addEventListener('storage', (e) => {
+    globalThis.addEventListener('storage', (e) => {
       // This is how oidc-client creates its storage keys
       const keyPart = `user:${this.config.hpcAuthUrl}:${this.config.hpcAuthClientId}`;
       if (e.key?.indexOf(keyPart) !== -1) {
         // Reload the window to have new session from different tab applied to current one
-        window.location.reload();
+        globalThis.location.reload();
       }
     });
 
@@ -149,16 +147,15 @@ export class LiveBrowserClient {
         }),
       };
       return result;
-    } else {
-      const result = {
-        session,
-        model: new LiveModel({
-          baseUrl: this.config.hpcApiUrl,
-          hidToken: null,
-          clearSessionStorage: this.clearSessionStorage,
-        }),
-      };
-      return result;
     }
+    const result = {
+      session,
+      model: new LiveModel({
+        baseUrl: this.config.hpcApiUrl,
+        hidToken: null,
+        clearSessionStorage: this.clearSessionStorage,
+      }),
+    };
+    return result;
   };
 }

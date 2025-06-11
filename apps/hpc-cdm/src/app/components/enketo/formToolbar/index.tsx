@@ -1,58 +1,54 @@
-import React, { Dispatch, SetStateAction, useContext } from 'react';
 import { C, CLASSES } from '@unocha/hpc-ui';
+import React, { type Dispatch, type SetStateAction, useContext } from 'react';
 import { AppContext } from '../../../context';
 
-import { reportingWindows } from '@unocha/hpc-data';
+import { type reportingWindows } from '@unocha/hpc-data';
+import dayjs from '../../../../libraries/dayjs';
+import { type FormStatus } from '../types';
 import AssignedUsersButton from './assignUsersButton';
 import Indicator from './indicator';
-import { FormStatus } from '../types';
-import dayjs from '../../../../libraries/dayjs';
 import StatusChangeButtons from './StatusChangeButtons';
 
 interface Props {
-  loading: boolean;
-  editable: boolean;
+  isLoading: boolean;
+  isEditable: boolean;
   reportingWindow: reportingWindows.ReportingWindow;
-  setShowAssignedUsers: Dispatch<SetStateAction<boolean>>;
+  setShouldShowAssignedUsers: Dispatch<SetStateAction<boolean>>;
   assignment: reportingWindows.GetAssignmentResult;
-  formTouched: boolean;
-  formStatus: FormStatus;
+  isFormTouched: boolean;
+  status: FormStatus;
   setStatus: Dispatch<SetStateAction<FormStatus>>;
 }
 
 const FormToolbar = ({
-  loading,
-  editable,
+  isLoading,
+  isEditable,
   reportingWindow,
-  setShowAssignedUsers,
+  setShouldShowAssignedUsers,
   assignment,
-  formTouched,
-  formStatus,
+  isFormTouched,
+  status,
   setStatus,
 }: Props) => {
   const { lang } = useContext(AppContext);
   const { state: assignmentState } = assignment;
 
-  const changeStatusButtonsProps = { loading, assignment, setStatus, editable };
+  const changeStatusButtonsProps = { assignment, setStatus };
 
   const lastUpdatedAt = dayjs(
-    formStatus.type === 'conflict'
-      ? formStatus.timestamp
-      : assignment.lastUpdatedAt
+    status.type === 'conflict' ? status.timestamp : assignment.lastUpdatedAt
   )
     .locale(lang)
     .fromNow();
   const lastUpdatedBy =
-    formStatus.type === 'conflict'
-      ? formStatus.otherPerson
-      : assignment.lastUpdatedBy;
+    status.type === 'conflict' ? status.otherPerson : assignment.lastUpdatedBy;
 
   const indicatorProps = {
-    loading,
-    editable,
+    isLoading,
+    isEditable,
     reportingWindow,
-    formTouched,
-    formStatus,
+    isFormTouched,
+    formStatus: status,
     assignmentState,
     lastUpdatedAt,
     lastUpdatedBy,
@@ -60,12 +56,14 @@ const FormToolbar = ({
 
   return (
     <C.Toolbar>
-      {!loading && formStatus.type !== 'saving' && (
+      {!isLoading && status.type !== 'saving' && (
         <StatusChangeButtons {...changeStatusButtonsProps} />
       )}
       <div className={CLASSES.FLEX.GROW} />
-      {!loading && (
-        <AssignedUsersButton setShowAssignedUsers={setShowAssignedUsers} />
+      {!isLoading && (
+        <AssignedUsersButton
+          setShowAssignedUsers={setShouldShowAssignedUsers}
+        />
       )}
       {<Indicator {...indicatorProps} />}
     </C.Toolbar>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Routes, useParams } from 'react-router';
 
+import { type operations } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
-import { operations } from '@unocha/hpc-data';
 
 import { t } from '../../i18n';
 import { AppContext } from '../context';
@@ -26,7 +26,7 @@ type PageOperationClusterFormAssignmentsRouteParams = {
 };
 
 const PageOperationClusterFormAssignments = (props: Props) => {
-  const { operation, cluster } = props;
+  const { operation, cluster, className } = props;
 
   const { windowId: windowIdString } =
     useParams<PageOperationClusterFormAssignmentsRouteParams>();
@@ -43,7 +43,7 @@ const PageOperationClusterFormAssignments = (props: Props) => {
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <div className={props.className}>
+        <div className={className}>
           <Routes>
             <Route
               path={paths.home()}
@@ -52,7 +52,7 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                   <ClusterNavigation
                     operation={operation}
                     cluster={cluster}
-                    showSettingsButton
+                    shouldShowSettingsButton
                   />
                   <C.SidebarNavigation
                     menu={prepareReportingWindowsAsSidebarNavigation(

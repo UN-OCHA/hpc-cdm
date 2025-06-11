@@ -1,16 +1,16 @@
 {
   "name": "unocha",
-  "version": "1.12.1",
+  "version": "1.13.0",
   "license": "Apache-2.0",
   "scripts": {
-    "remove-unneeded-deps": "node tools/remove-unneeded-deps.js",
+    "remove-unneeded-deps": "node tools/remove-unneeded-deps.mjs",
     "nx": "nx",
     "start": "nx serve",
     "check-types": "tsc --noEmit --project tsconfig.base.json",
     "build": "nx build",
     "test": "nx test",
-    "lint": "nx affected:lint && nx lint && prettier --check '**/*.{ts,tsx,js}'",
-    "lint:fix": "nx affected:lint --fix && nx lint --fix && prettier --write '**/*.{js,ts,tsx,md,json}'",
+    "lint": "nx affected:lint && nx lint && prettier --check '**/*' '*'",
+    "lint:fix": "nx affected:lint --fix && nx lint --fix && prettier --write '**/*' '*'",
     "e2e": "nx e2e",
     "affected:apps": "nx affected:apps",
     "affected:libs": "nx affected:libs",
@@ -27,14 +27,14 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "workspace-generator": "nx workspace-generator",
-    "prepare": "husky install"
+    "prepare": "[ -d .git ] && git config blame.ignoreRevsFile .git-blame-ignore-revs; husky install"
   },
   "engines": {
     "node": ">=20.19.0 || >=22.14.0",
     "npm": ">=9.6.5 || >=10.9.0 || >=11.3.0"
   },
   "lint-staged": {
-    "*.{js,ts,tsx,md,json}": [
+    "*": [
       "prettier --check"
     ]
   },
@@ -70,8 +70,7 @@
     "@types/react-helmet": "6.1.11",
     "@types/react-is": "18.3.0",
     "@types/styled-components": "5.1.26",
-    "@typescript-eslint/eslint-plugin": "7.18.0",
-    "@typescript-eslint/parser": "7.18.0",
+    "@unocha/hpc-repo-tools": "^7.1.0",
     "autoprefixer": "10.4.20",
     "babel-jest": "29.7.0",
     "babel-plugin-macros": "3.1.0",
@@ -82,13 +81,12 @@
     "dayjs": "^1.11.7",
     "dotenv": "16.0.3",
     "enketo-core": "^5.16.6",
-    "eslint": "8.57.0",
-    "eslint-config-prettier": "10.1.1",
-    "eslint-plugin-cypress": "2.13.2",
+    "eslint": "9.27.0",
+    "eslint-plugin-cypress": "4.3.0",
     "eslint-plugin-import": "2.31.0",
-    "eslint-plugin-jsx-a11y": "6.10.1",
-    "eslint-plugin-react": "7.32.2",
-    "eslint-plugin-react-hooks": "5.0.0",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "5.2.0",
     "exceljs": "4.4.0",
     "formik": "2.4.6",
     "fp-ts": "^2.14.0",

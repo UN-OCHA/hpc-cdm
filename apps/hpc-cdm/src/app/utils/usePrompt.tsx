@@ -11,8 +11,8 @@ function useConfirmExit(confirmExit: () => boolean, when = true) {
     const push = navigator.push;
 
     navigator.push = (...args: Parameters<typeof push>) => {
-      const result = confirmExit();
-      if (result !== false) {
+      const hasConfirmedExit = confirmExit();
+      if (hasConfirmedExit !== false) {
         push(...args);
       }
     };
@@ -29,20 +29,23 @@ function useConfirmExit(confirmExit: () => boolean, when = true) {
  */
 export function usePrompt(message: string, when = true) {
   useEffect(() => {
+    const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = message;
+      return message;
+    };
     if (when) {
-      window.onbeforeunload = function () {
-        return message;
-      };
+      globalThis.addEventListener('beforeunload', beforeUnloadHandler);
     }
 
     return () => {
-      window.onbeforeunload = null;
+      globalThis.removeEventListener('beforeunload', beforeUnloadHandler);
     };
   }, [message, when]);
 
   const confirmExit = useCallback(() => {
-    const confirm = window.confirm(message);
-    return confirm;
+    const hasConfirmed = globalThis.confirm(message);
+    return hasConfirmed;
   }, [message]);
 
   useConfirmExit(confirmExit, when);

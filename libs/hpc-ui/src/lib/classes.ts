@@ -10,15 +10,15 @@ const CLASS_PREFIX = 'hpc-';
  */
 export const CLASSES = {
   CONTAINER: {
-    CENTERED: CLASS_PREFIX + 'container',
+    CENTERED: `${CLASS_PREFIX}container`,
     /**
      * A container that always takes up the full width of its parent
      */
-    FLUID: CLASS_PREFIX + 'container-fluid',
+    FLUID: `${CLASS_PREFIX}container-fluid`,
   },
   FLEX: {
-    CONTAINER: CLASS_PREFIX + 'flex-container',
-    GROW: CLASS_PREFIX + 'flex-grow',
+    CONTAINER: `${CLASS_PREFIX}flex-container`,
+    GROW: `${CLASS_PREFIX}flex-grow`,
   },
   VISUALLY_HIDDEN: 'visually-hidden',
 } as const;
@@ -28,7 +28,7 @@ export const CLASSES = {
  * class string.
  */
 export const combineClasses = (
-  ...args: (string | undefined | null | false)[]
+  ...args: Array<string | undefined | null | false>
 ) =>
   args
     .filter(util.isString)

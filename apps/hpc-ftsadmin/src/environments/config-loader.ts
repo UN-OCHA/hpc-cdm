@@ -1,18 +1,17 @@
 import { config } from '@unocha/hpc-core';
 import { LiveBrowserClient } from '@unocha/hpc-live';
 import { t } from '../i18n';
-import { Environment } from './interface';
+import { type Environment } from './interface';
 
 const parseConfig = async (res: Response) => {
   if (res.ok) {
     const c = await res.json();
     if (config.CONFIG.is(c)) {
       return c;
-    } else {
-      throw new Error('Invalid config');
     }
+    throw new Error('Invalid config');
   } else {
-    throw Error(`Unable to get config (${res.status}): ${res.statusText}`);
+    throw new Error(`Unable to get config (${res.status}): ${res.statusText}`);
   }
 };
 

@@ -1,6 +1,6 @@
 import {
   FormControlLabel,
-  FormControlLabelProps,
+  type FormControlLabelProps,
   Switch as SwitchMUI,
 } from '@mui/material';
 import { useField } from 'formik';

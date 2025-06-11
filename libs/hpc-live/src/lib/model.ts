@@ -1,26 +1,26 @@
-import * as t from 'io-ts';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { util } from '@unocha/hpc-core';
 import {
-  Model,
-  forms,
-  flows,
-  locations,
-  organizations,
-  operations,
-  reportingWindows,
+  type Model,
   access,
-  errors,
-  util as dataUtil,
   categories,
+  util as dataUtil,
+  emergencies,
+  errors,
+  flows,
+  forms,
+  globalClusters,
+  locations,
+  operations,
+  organizations,
   plans,
   projects,
-  emergencies,
+  reportingWindows,
   systems,
-  globalClusters,
   usageYears,
 } from '@unocha/hpc-data';
+import { isRight } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { searchFlowsParams } from './utils';
 interface URLInterface {
   new (url: string): {
@@ -330,9 +330,9 @@ export class LiveModel implements Model {
 
   public constructor(config: Config) {
     this.config = config;
-    this.URL = config.interfaces?.URL || URL;
-    this.fetch = config.interfaces?.fetch || fetch.bind(window);
-    this.sha256Hash = config.interfaces?.sha256Hash || util.hashFileInBrowser;
+    this.URL = config.interfaces?.URL ?? URL;
+    this.fetch = config.interfaces?.fetch ?? fetch.bind(globalThis);
+    this.sha256Hash = config.interfaces?.sha256Hash ?? util.hashFileInBrowser;
   }
 
   private baseFetchInit = ({
@@ -354,7 +354,7 @@ export class LiveModel implements Model {
       }
     }
     const init: RequestInit = {
-      method: method || 'GET',
+      method: method ?? 'GET',
       headers: this.config.hidToken
         ? {
             Authorization: `Bearer ${this.config.hidToken}`,
@@ -407,11 +407,10 @@ export class LiveModel implements Model {
       const decode = resultType.decode(json.data);
       if (isRight(decode)) {
         return decode.right;
-      } else {
-        const report = PathReporter.report(decode);
-        console.error('Received unexpected result from server', report, json);
-        throw new ModelError('Received unexpected result from server', json);
       }
+      const report = PathReporter.report(decode);
+      console.error('Received unexpected result from server', report, json);
+      throw new ModelError('Received unexpected result from server', json);
     } else {
       const json = (await res.json()) as {
         timestamp: Date;
@@ -433,7 +432,7 @@ export class LiveModel implements Model {
         throw new errors.UserError(json.message);
       } else if (
         json?.code === 'BadRequestError' &&
-        json.details?.code === '23505' && // error code for duplicate primary key
+        json.details?.code === '23505' && // Error code for duplicate primary key
         json.details.detail &&
         json.details.table
       ) {
@@ -464,16 +463,16 @@ export class LiveModel implements Model {
         this.call({
           pathname: `/v2/access/self`,
           resultType: access.GET_OWN_ACCESS_RESULT,
-        }).catch((err) => {
+        }).catch((error) => {
           if (
-            ((err as ModelError)?.json as { code: string })?.code ===
+            ((error as ModelError)?.json as { code: string })?.code ===
             'ForbiddenError'
           ) {
             // If a 403 error occurred with this endpoint,
             // the auth token has probably expired, so clear storage and refresh
             this.config.clearSessionStorage();
           }
-          throw err;
+          throw error;
         }),
       getTargetAccess: (params) =>
         this.call({
@@ -639,7 +638,7 @@ export class LiveModel implements Model {
           body: {
             type: 'json',
             data: {
-              query: query,
+              query,
             },
           },
           signal: params.signal,
@@ -668,7 +667,7 @@ export class LiveModel implements Model {
           body: {
             type: 'json',
             data: {
-              query: query,
+              query,
             },
           },
           signal: params.signal,
@@ -859,7 +858,8 @@ export class LiveModel implements Model {
         const { assignmentId: aId } = params;
 
         if (reportingWindows.UPDATE_ASSIGNMENT_PARAMS_STATE_CHANGE.is(params)) {
-          const [type, finalized] = params.state.split(':');
+          const { state } = params;
+          const [type, finalized] = state.split(':');
 
           const result = await this.call({
             method: 'PUT',
@@ -876,52 +876,52 @@ export class LiveModel implements Model {
             resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
           });
           return handleAssignmentResult(result);
-        } else {
-          const files = await Promise.all(
-            params.form.files.map(async (f) => ({
-              name: f.name,
-              data: f.data,
-              fileHash: await this.sha256Hash(f.data),
-            }))
-          );
-
-          keepOnlyGivenFiles(files.map((f) => f.fileHash));
-
-          for (const file of files) {
-            fileCache.set(file.fileHash, Promise.resolve(file.data));
-          }
-
-          if (files && files.length) {
-            const newFiles = await this.checkFormAssignmentFiles(aId, files);
-            if (newFiles) {
-              await this.uploadFormAssignmentFiles(aId, newFiles);
-            }
-          }
-
-          const data = {
-            ...params,
-            form: {
-              id: params.form.id,
-              version: params.form.version,
-              data: params.form.data,
-              finalized: params.form.finalized,
-              files: files.map((f) => ({
-                name: f.name,
-                data: { fileHash: f.fileHash },
-              })),
-            },
-          };
-          const result = await this.call({
-            method: 'PUT',
-            body: {
-              type: 'json',
-              data,
-            },
-            pathname: `/v2/reportingwindows/assignments/${aId}`,
-            resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
-          });
-          return handleAssignmentResult(result);
         }
+        const { form } = params;
+        const files = await Promise.all(
+          form.files.map(async (f) => ({
+            name: f.name,
+            data: f.data,
+            fileHash: await this.sha256Hash(f.data),
+          }))
+        );
+
+        keepOnlyGivenFiles(files.map((f) => f.fileHash));
+
+        for (const file of files) {
+          fileCache.set(file.fileHash, Promise.resolve(file.data));
+        }
+
+        if (files?.length) {
+          const newFiles = await this.checkFormAssignmentFiles(aId, files);
+          if (newFiles) {
+            await this.uploadFormAssignmentFiles(aId, newFiles);
+          }
+        }
+
+        const data = {
+          ...params,
+          form: {
+            id: form.id,
+            version: form.version,
+            data: form.data,
+            finalized: form.finalized,
+            files: files.map((f) => ({
+              name: f.name,
+              data: { fileHash: f.fileHash },
+            })),
+          },
+        };
+        const result = await this.call({
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data,
+          },
+          pathname: `/v2/reportingwindows/assignments/${aId}`,
+          resultType: LIVE_TYPES.REPORTING_WINDOWS.GET_ASSIGNMENT_RESULT,
+        });
+        return handleAssignmentResult(result);
       },
     };
   }

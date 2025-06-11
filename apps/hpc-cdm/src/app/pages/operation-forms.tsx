@@ -1,16 +1,16 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 
+import { type operations } from '@unocha/hpc-data';
 import { C, combineClasses, styled } from '@unocha/hpc-ui';
-import { operations } from '@unocha/hpc-data';
 
-import { AppContext } from '../context';
 import { t } from '../../i18n';
-import OperationFormAssignments from './operation-form-assignments';
-import * as paths from '../paths';
 import PageMeta from '../components/page-meta';
 import { RouteParamsValidator } from '../components/route-params-validator';
+import { AppContext } from '../context';
+import * as paths from '../paths';
 import { getBestReportingWindow } from '../utils/reportingWindows';
+import OperationFormAssignments from './operation-form-assignments';
 
 interface Props {
   className?: string;
@@ -18,12 +18,12 @@ interface Props {
 }
 
 const PageOperationForms = (props: Props) => {
-  const { operation } = props;
+  const { operation, className } = props;
   // Get the single reporting window we will be displaying for now
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <div className={combineClasses(props.className)}>
+        <div className={combineClasses(className)}>
           <PageMeta
             title={[t.t(lang, (s) => s.navigation.forms), operation.name]}
           />

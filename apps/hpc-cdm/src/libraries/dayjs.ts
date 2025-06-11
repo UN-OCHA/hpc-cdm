@@ -9,10 +9,10 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 
 // Import languages that we require
 
+import 'dayjs/locale/ar';
 import 'dayjs/locale/en';
 import 'dayjs/locale/es';
 import 'dayjs/locale/fr';
-import 'dayjs/locale/ar';
 
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);

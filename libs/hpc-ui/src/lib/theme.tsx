@@ -1,12 +1,12 @@
+import { ThemeProvider as MUIThemeProvider } from '@mui/material';
+import { arSA, enUS, esES, frFR, zhCN } from '@mui/material/locale';
+import { createTheme, type ThemeOptions } from '@mui/material/styles';
 import { useMemo } from 'react';
 import styled, {
   css,
-  ThemedCssFunction,
-  ThemedStyledInterface,
+  type ThemedCssFunction,
+  type ThemedStyledInterface,
 } from 'styled-components';
-import { ThemeProvider as MUIThemeProvider } from '@mui/material';
-import { arSA, enUS, esES, frFR, zhCN } from '@mui/material/locale';
-import { createTheme, ThemeOptions } from '@mui/material/styles';
 
 const COLOR_PALETTE = {
   red: {
@@ -16,7 +16,7 @@ const COLOR_PALETTE = {
   orange: {
     dark2: '#b44d0e',
     dark1: '#d05b10',
-    normal: '#e16856', // from style guide
+    normal: '#e16856', // From style guide
     light: '#fd9282',
   },
   yellow: {
@@ -24,20 +24,20 @@ const COLOR_PALETTE = {
   },
   blue: {
     dark2: '#025995',
-    normal: '#026cb6', // from style guide
+    normal: '#026cb6', // From style guide
     light: '#96c3e1',
   },
   green: {
     light: '#afdfb0',
   },
   gray: {
-    normal: '#333333', // from style guide
-    light: '#6f7e94', // from style guide
+    normal: '#333333', // From style guide
+    light: '#6f7e94', // From style guide
     light1: '#999999',
     light2: '#d1d1d1',
     light3: '#dadada',
-    light4: '#e6ecf1', // from style guide
-    light5: '#f3f5f8', // from style guide
+    light4: '#e6ecf1', // From style guide
+    light5: '#f3f5f8', // From style guide
   },
 };
 
@@ -118,7 +118,7 @@ export type Theme = typeof THEME;
 const themedStyled: ThemedStyledInterface<Theme> = styled;
 const themedCSS: ThemedCssFunction<Theme> = css;
 
-export { themedStyled as styled, themedCSS as css };
+export { themedCSS as css, themedStyled as styled };
 
 const localeMapper = {
   ar: arSA,
@@ -132,7 +132,7 @@ export const ThemeProvider = (props: {
   children: JSX.Element | JSX.Element[];
   language?: keyof typeof localeMapper;
 }) => {
-  const { language } = props;
+  const { language, children } = props;
   const muiTheme = useMemo(() => {
     return createTheme(
       language && language === 'ar' ? MUI_THEME_RTL : MUI_THEME,
@@ -140,5 +140,5 @@ export const ThemeProvider = (props: {
     );
   }, [language]);
 
-  return <MUIThemeProvider theme={muiTheme}>{props.children}</MUIThemeProvider>;
+  return <MUIThemeProvider theme={muiTheme}>{children}</MUIThemeProvider>;
 };

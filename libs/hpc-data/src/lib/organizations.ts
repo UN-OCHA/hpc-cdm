@@ -217,7 +217,7 @@ export type UpdateOrganizationResult = t.TypeOf<
   typeof UPDATE_ORGANIZATION_RESULT
 >;
 
-const DELETE_ORGANIZATION_PARAMS = t.type({
+export const DELETE_ORGANIZATION_PARAMS = t.type({
   id: t.number,
 });
 export type DeleteOrganizationParams = t.TypeOf<

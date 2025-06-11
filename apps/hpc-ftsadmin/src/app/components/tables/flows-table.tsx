@@ -1,3 +1,5 @@
+import DownloadIcon from '@mui/icons-material/Download';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   Alert,
   Box,
@@ -15,54 +17,52 @@ import {
   TableSortLabel,
   Tooltip,
 } from '@mui/material';
-import { flows } from '@unocha/hpc-data';
+import { util } from '@unocha/hpc-core';
+import { type flows } from '@unocha/hpc-data';
 import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
-import { MdInfoOutline } from 'react-icons/md';
-import SettingsIcon from '@mui/icons-material/Settings';
-import { LanguageKey, t } from '../../../i18n';
-import { AppContext, getEnv } from '../../context';
-import tw from 'twin.macro';
+import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
+import { MdInfoOutline } from 'react-icons/md';
+import { useNavigate } from 'react-router';
+import tw from 'twin.macro';
+import { type LanguageKey, t } from '../../../i18n';
+import { AppContext, getEnv } from '../../context';
+import * as paths from '../../paths';
+import { downloadExcel } from '../../utils/download-excel';
+import { type LocalStorageSchema } from '../../utils/local-storage-type';
 import {
+  type FilterKeys,
   decodeFilters,
   encodeFilters,
-  parseFormFilters,
-  parseFlowFilters,
   isKey,
-  FilterKeys,
+  parseFlowFilters,
+  parseFormFilters,
 } from '../../utils/parse-filters';
-import { Form, Formik } from 'formik';
-import { PendingFlowsFilterValues } from '../filters/filter-pending-flows-table';
 import {
-  FlowHeaderID,
-  TableHeadersProps,
+  type FlowHeaderID,
+  type TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
   isCompatibleTableHeaderType,
   isTableHeadersPropsFlow,
 } from '../../utils/table-headers';
-import { downloadExcel } from '../../utils/download-excel';
-import DownloadIcon from '@mui/icons-material/Download';
+import { type FlowsFilterValues } from '../filters/filter-flows-table';
+import { type PendingFlowsFilterValues } from '../filters/filter-pending-flows-table';
 import {
   ChipDiv,
   type FlowQuery,
-  type SetQuery,
   RejectPendingFlowsButton,
   RenderChipsRow,
+  type SetQuery,
   StyledLoader,
   TableHeaderButton,
   TableRowClick,
   TopRowContainer,
   handleTableSettingsInfoClose,
 } from './table-utils';
-import { useNavigate } from 'react-router';
-import * as paths from '../../paths';
-import { LocalStorageSchema } from '../../utils/local-storage-type';
-import { util } from '@unocha/hpc-core';
-import { FlowsFilterValues } from '../filters/filter-flows-table';
 
 export interface FlowsTableProps {
-  headers: TableHeadersProps<FlowHeaderID>[];
+  headers: Array<TableHeadersProps<FlowHeaderID>>;
   initialValues: FlowsFilterValues | PendingFlowsFilterValues;
   rowsPerPageOption: number[];
   query: FlowQuery;
@@ -71,15 +71,15 @@ export interface FlowsTableProps {
   pending?: boolean;
 }
 
-export default function FlowsTable(props: FlowsTableProps) {
+const FlowsTable = (props: FlowsTableProps) => {
   const env = getEnv();
   const chipSpacing = { m: 0.5 };
   const rowsPerPageOptions = props.rowsPerPageOption;
   const filters = decodeFilters(props.query.filters, props.initialValues);
   const tableFilters = parseFormFilters(filters, props.initialValues);
   const [query, setQuery] = [props.query, props.setQuery];
-  const [openSettings, setOpenSettings] = useState(false);
-  const [tableInfoDisplay, setTableInfoDisplay] = useState(
+  const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
+  const [shouldDisplayTableInfo, setShouldDisplayTableInfo] = useState(
     util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
   );
 
@@ -124,9 +124,9 @@ export default function FlowsTable(props: FlowsTableProps) {
   };
 
   const handleSort = (newSort: FlowHeaderID) => {
-    const changeDir = newSort === query.orderBy;
+    const shouldChangeDir = newSort === query.orderBy;
 
-    if (changeDir) {
+    if (shouldChangeDir) {
       setQuery({
         ...query,
         orderDir: query.orderDir === 'ASC' ? 'DESC' : 'ASC',
@@ -145,9 +145,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     row: flows.Flow,
     lang: LanguageKey
   ) => {
-    const rd =
-      row.reportDetails &&
-      row.reportDetails.filter((rd) => rd.organizationID === org.id);
+    const rd = row.reportDetails?.filter((rd) => rd.organizationID === org.id);
     return (
       rd &&
       rd.length > 0 &&
@@ -178,7 +176,7 @@ export default function FlowsTable(props: FlowsTableProps) {
     data: flows.SearchFlowsResult;
   }) => {
     const [selectedRows, setSelectedRows] = useState<
-      { id: number; versionID: number }[]
+      Array<{ id: number; versionID: number }>
     >([]);
     const nonSafeTypedTableHeaders = decodeTableHeaders(
       query.tableHeaders,
@@ -199,13 +197,12 @@ export default function FlowsTable(props: FlowsTableProps) {
         ];
         setSelectedRows(addedRow);
         return addedRow;
-      } else {
-        const filteredRows = selectedRows.filter(
-          (selectedRow) => selectedRow.id !== row.id
-        );
-        setSelectedRows(filteredRows);
-        return filteredRows;
       }
+      const filteredRows = selectedRows.filter(
+        (selectedRow) => selectedRow.id !== row.id
+      );
+      setSelectedRows(filteredRows);
+      return filteredRows;
     };
     return (
       <>
@@ -287,7 +284,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-external-reference"
                     >
-                      {row.externalReferences?.at(0)?.systemID || '--'}
+                      {row.externalReferences?.at(0)?.systemID ?? '--'}
                     </TableCell>
                   );
                 case 'flow.amountUSD':
@@ -335,23 +332,22 @@ export default function FlowsTable(props: FlowsTableProps) {
                             <br />
                           </>
                         )}
-                      {row.organizations &&
-                        row.organizations
-                          .filter((org) => org.direction === 'source')
-                          .map((org, index) => (
-                            <>
-                              <Tooltip
-                                title={org.name}
-                                placement="top"
-                                followCursor={true}
-                              >
-                                <span key={`source_${row.id}_${index}`}>
-                                  {org.abbreviation}
-                                </span>
-                              </Tooltip>
-                              {renderReportDetail(org, row, lang)}
-                            </>
-                          ))}
+                      {row.organizations
+                        ?.filter((org) => org.direction === 'source')
+                        .map((org, index) => (
+                          <>
+                            <Tooltip
+                              title={org.name}
+                              placement="top"
+                              followCursor={true}
+                            >
+                              <span key={`source_${row.id}_${index}`}>
+                                {org.abbreviation}
+                              </span>
+                            </Tooltip>
+                            {renderReportDetail(org, row, lang)}
+                          </>
+                        ))}
                     </TableCell>
                   );
                 case 'organization.destination.name':
@@ -361,23 +357,22 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-destination-organization"
                     >
-                      {row.organizations &&
-                        row.organizations
-                          .filter((org) => org.direction === 'destination')
-                          .map((org, index) => (
-                            <>
-                              <Tooltip
-                                title={org.name}
-                                placement="top"
-                                followCursor={true}
-                              >
-                                <span key={`destination_${row.id}_${index}`}>
-                                  {org.abbreviation}
-                                </span>
-                              </Tooltip>
-                              {renderReportDetail(org, row, lang)}
-                            </>
-                          ))}
+                      {row.organizations
+                        ?.filter((org) => org.direction === 'destination')
+                        .map((org, index) => (
+                          <>
+                            <Tooltip
+                              title={org.name}
+                              placement="top"
+                              followCursor={true}
+                            >
+                              <span key={`destination_${row.id}_${index}`}>
+                                {org.abbreviation}
+                              </span>
+                            </Tooltip>
+                            {renderReportDetail(org, row, lang)}
+                          </>
+                        ))}
                     </TableCell>
                   );
                 case 'planVersion.destination.name':
@@ -416,11 +411,10 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-years"
                     >
-                      {row.usageYears &&
-                        row.usageYears
-                          .filter((year) => year.direction === 'destination')
-                          .map((year) => year.year)
-                          .join(', ')}
+                      {row.usageYears
+                        ?.filter((year) => year.direction === 'destination')
+                        .map((year) => year.year)
+                        .join(', ')}
                     </TableCell>
                   );
                 case 'details':
@@ -430,17 +424,16 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-details"
                     >
-                      {row.categories &&
-                        row.categories
-                          .filter((cat) => cat.group === 'flowStatus')
-                          .map((cat, index) => (
-                            <Chip
-                              key={`category_${row.id}_${index}`}
-                              sx={chipSpacing}
-                              label={cat.name.toLowerCase()}
-                              size="small"
-                            />
-                          ))}
+                      {row.categories
+                        ?.filter((cat) => cat.group === 'flowStatus')
+                        .map((cat, index) => (
+                          <Chip
+                            key={`category_${row.id}_${index}`}
+                            sx={chipSpacing}
+                            label={cat.name.toLowerCase()}
+                            size="small"
+                          />
+                        ))}
                       {row.restricted && (
                         <Chip
                           label={[
@@ -539,7 +532,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                         .map((rd) => rd.sourceID)
                         .filter(util.isDefined)
                     );
-                    const uniqueSourceIDsArray = Array.from(uniqueSourceIDs);
+                    const uniqueSourceIDsArray = [...uniqueSourceIDs];
                     rd = uniqueSourceIDsArray.join(', ');
                     rd = rd.length > 0 ? rd : '--';
                   }
@@ -562,7 +555,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                         .map((rd) => rd.refCode)
                         .filter(util.isDefined)
                     );
-                    const uniqueRefCodesArray = Array.from(uniqueSourceIDs);
+                    const uniqueRefCodesArray = [...uniqueSourceIDs];
                     rd = uniqueRefCodesArray.join(', ');
                     rd = rd.length > 0 ? rd : '--';
                   }
@@ -672,14 +665,16 @@ export default function FlowsTable(props: FlowsTableProps) {
   }) => {
     if (pending) {
       const PENDING_FLOWS_INITIAL_VALUES: {
-        flows: { id: number; versionID: number }[];
+        flows: Array<{ id: number; versionID: number }>;
       } = {
         flows: [],
       };
       const handleSubmit = (values: {
-        flows: { id: number; versionID: number }[];
+        flows: Array<{ id: number; versionID: number }>;
       }) => {
-        if (values.flows.length === 0) return;
+        if (values.flows.length === 0) {
+          return;
+        }
         env.model.flows.bulkRejectPendingFlows(values).finally(load);
       };
       return (
@@ -770,13 +765,13 @@ export default function FlowsTable(props: FlowsTableProps) {
 
                     <TableHeaderButton
                       size="small"
-                      onClick={() => setOpenSettings(!openSettings)}
+                      onClick={() => setShouldOpenSettings(!shouldOpenSettings)}
                     >
                       <SettingsIcon />
                     </TableHeaderButton>
                     <Modal
-                      open={openSettings}
-                      onClose={() => setOpenSettings(!openSettings)}
+                      open={shouldOpenSettings}
+                      onClose={() => setShouldOpenSettings(!shouldOpenSettings)}
                       sx={tw`flex items-center justify-center`}
                     >
                       <Box sx={tw`max-h-[70vh] overflow-y-scroll rounded-xl`}>
@@ -819,11 +814,13 @@ export default function FlowsTable(props: FlowsTableProps) {
                               severity="info"
                               onClose={() =>
                                 handleTableSettingsInfoClose(
-                                  setTableInfoDisplay
+                                  setShouldDisplayTableInfo
                                 )
                               }
                               sx={{
-                                display: tableInfoDisplay ? 'flex' : 'none',
+                                display: shouldDisplayTableInfo
+                                  ? 'flex'
+                                  : 'none',
                                 ...tw`mx-8 mt-4`,
                               }}
                             >
@@ -885,4 +882,6 @@ export default function FlowsTable(props: FlowsTableProps) {
       )}
     </AppContext.Consumer>
   );
-}
+};
+
+export default FlowsTable;

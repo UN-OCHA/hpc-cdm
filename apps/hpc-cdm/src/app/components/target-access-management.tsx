@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { MdClear, MdAdd } from 'react-icons/md';
+import { MdAdd, MdClear } from 'react-icons/md';
 
+import { type access } from '@unocha/hpc-data';
 import { C, dataLoader, styled } from '@unocha/hpc-ui';
-import { access } from '@unocha/hpc-data';
 
 import dayjs from '../../libraries/dayjs';
 
@@ -32,7 +32,7 @@ export const TargetAccessManagement = (props: Props) => {
   const { target } = props;
   const { lang, env } = getContext();
 
-  const [addUserOpen, setAddUserOpen] = useState(false);
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
 
   const loader = dataLoader(
     [target.type, target.type === 'global' ? null : target.targetId],
@@ -62,8 +62,8 @@ export const TargetAccessManagement = (props: Props) => {
         <Wrapper>
           <TargetAccessManagementAddUser
             target={target}
-            open={addUserOpen}
-            setOpen={setAddUserOpen}
+            isOpen={isAddUserOpen}
+            setIsOpen={setIsAddUserOpen}
             roles={roles}
             updateLoadedData={updateLoadedData}
           />
@@ -72,7 +72,7 @@ export const TargetAccessManagement = (props: Props) => {
             actions={
               <C.Button
                 color="secondary"
-                onClick={() => setAddUserOpen(true)}
+                onClick={() => setIsAddUserOpen(true)}
                 startIcon={MdAdd}
                 text={t.t(lang, (s) => s.components.accessControl.addPerson)}
               />
@@ -89,19 +89,18 @@ export const TargetAccessManagement = (props: Props) => {
                         <C.ActionableDropdown
                           loadingLabel={t.t(lang, (s) => s.common.saving)}
                           label={getRoleNames(item.roles)}
-                          showCheckboxes
+                          shouldShowCheckboxes
                           options={roles.map((role) => ({
                             key: role,
                             label: getRoleName(role),
-                            selected: item.roles.indexOf(role) >= 0,
+                            selected: item.roles.includes(role),
                           }))}
                           onSelect={async (role) => {
-                            const roles =
-                              item.roles.indexOf(role) >= 0
-                                ? item.roles.filter((r) => r !== role)
-                                : [...item.roles, role];
+                            const roles = item.roles.includes(role)
+                              ? item.roles.filter((r) => r !== role)
+                              : [...item.roles, role];
                             if (
-                              window.confirm(
+                              globalThis.confirm(
                                 t
                                   .t(
                                     lang,
@@ -132,7 +131,7 @@ export const TargetAccessManagement = (props: Props) => {
                           )}
                           onClick={async () => {
                             if (
-                              window.confirm(
+                              globalThis.confirm(
                                 t
                                   .t(
                                     lang,
@@ -160,7 +159,7 @@ export const TargetAccessManagement = (props: Props) => {
               })
             ) : (
               <C.ListItem
-                muted
+                isMuted
                 text={t.t(lang, (s) => s.components.accessControl.noUsers)}
               />
             )}
@@ -187,19 +186,18 @@ export const TargetAccessManagement = (props: Props) => {
                         <C.ActionableDropdown
                           loadingLabel={t.t(lang, (s) => s.common.saving)}
                           label={getRoleNames(item.roles)}
-                          showCheckboxes
+                          shouldShowCheckboxes
                           options={roles.map((role) => ({
                             key: role,
                             label: getRoleName(role),
-                            selected: item.roles.indexOf(role) >= 0,
+                            selected: item.roles.includes(role),
                           }))}
                           onSelect={async (role) => {
-                            const roles =
-                              item.roles.indexOf(role) >= 0
-                                ? item.roles.filter((r) => r !== role)
-                                : [...item.roles, role];
+                            const roles = item.roles.includes(role)
+                              ? item.roles.filter((r) => r !== role)
+                              : [...item.roles, role];
                             if (
-                              window.confirm(
+                              globalThis.confirm(
                                 t
                                   .t(
                                     lang,
@@ -232,7 +230,7 @@ export const TargetAccessManagement = (props: Props) => {
                           )}
                           onClick={async () => {
                             if (
-                              window.confirm(
+                              globalThis.confirm(
                                 t
                                   .t(
                                     lang,
@@ -262,7 +260,7 @@ export const TargetAccessManagement = (props: Props) => {
               })
             ) : (
               <C.ListItem
-                muted
+                isMuted
                 text={t.t(
                   lang,
                   (s) => s.components.accessControl.noPendingInvites
@@ -306,7 +304,7 @@ export const TargetAccessManagement = (props: Props) => {
               })
             ) : (
               <C.ListItem
-                muted
+                isMuted
                 text={t.t(
                   lang,
                   (s) => s.components.accessControl.auditLogEmpty

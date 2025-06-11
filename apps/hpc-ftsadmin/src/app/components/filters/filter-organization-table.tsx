@@ -1,20 +1,20 @@
-import { Form, Formik, FormikState } from 'formik';
+import { Form, Formik, type FormikState } from 'formik';
 import tw from 'twin.macro';
 
+import { util } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
-import { util as codecs, FormObjectValue } from '@unocha/hpc-data';
-import { Environment } from '../../../environments/interface';
-import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
-import { LanguageKey, t } from '../../../i18n';
-import { Dayjs } from 'dayjs';
-import type { OrganizationQuery, SetQuery } from '../tables/table-utils';
+import { type Dayjs } from 'dayjs';
 import * as io from 'io-ts';
-import validateForm from '../../utils/form-validation';
+import { type Environment } from '../../../environments/interface';
+import { type LanguageKey, t } from '../../../i18n';
 import {
   fnCategories,
   fnLocations,
   fnOrganizations,
 } from '../../utils/fn-promises';
+import validateForm from '../../utils/form-validation';
+import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
+import type { OrganizationQuery, SetQuery } from '../tables/table-utils';
 interface Props {
   environment: Environment;
   query: OrganizationQuery;
@@ -23,9 +23,9 @@ interface Props {
 }
 export interface OrganizationFilterValues {
   organization?: string;
-  organizationType?: FormObjectValue | null;
-  parentOrganization?: FormObjectValue | null;
-  locations?: FormObjectValue | null;
+  organizationType?: util.FormObjectValue | null;
+  parentOrganization?: util.FormObjectValue | null;
+  locations?: util.FormObjectValue | null;
   date?: Dayjs | null;
   status?: string;
 }
@@ -53,7 +53,7 @@ export const FilterOrganizationsTable = (props: Props) => {
   );
 
   const FORM_VALIDATION = io.partial({
-    date: io.union([codecs.VALID_DAYJS_DATE, io.null]),
+    date: io.union([util.VALID_DAYJS_DATE, io.null]),
   });
 
   const handleSubmit = (values: OrganizationFilterValues) => {

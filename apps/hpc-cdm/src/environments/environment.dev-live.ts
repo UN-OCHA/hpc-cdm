@@ -1,11 +1,11 @@
-import { Environment } from './interface';
 import { config } from '@unocha/hpc-core';
-import env from './env.json';
 import { initializeLiveEnvironment } from './config-loader';
+import env from './env.json';
+import { Environment } from './interface';
 
 export { Environment };
 
-export default async (): Promise<Environment> => {
+export default (): Promise<Environment> => {
   if (!config.isValid(env)) {
     throw new Error('Invalid config');
   }

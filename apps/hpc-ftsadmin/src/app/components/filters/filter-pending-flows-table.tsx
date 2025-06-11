@@ -1,32 +1,32 @@
-import { Form, Formik, FormikState } from 'formik';
+import { Form, Formik, type FormikState } from 'formik';
 import tw from 'twin.macro';
 
+import { type util } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
-import { FormObjectValue } from '@unocha/hpc-data';
-import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
-import { t } from '../../../i18n';
-import type { FlowQuery, SetQuery } from '../tables/table-utils';
 import { useContext } from 'react';
+import { t } from '../../../i18n';
 import { AppContext } from '../../context';
 import {
   fnLocations,
   fnOrganizations,
   fnUsageYears,
 } from '../../utils/fn-promises';
+import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
+import type { FlowQuery, SetQuery } from '../tables/table-utils';
 interface Props {
   query: FlowQuery;
   setQuery: SetQuery<FlowQuery>;
   handleAbortController: () => void;
 }
 export interface PendingFlowsFilterValues {
-  status?: FormObjectValue | null;
-  dataProvider?: FormObjectValue | null;
+  status?: util.FormObjectValue | null;
+  dataProvider?: util.FormObjectValue | null;
   reporterRefCode?: string;
-  sourceOrganizations?: Array<FormObjectValue>;
-  sourceCountries?: Array<FormObjectValue>;
-  destinationOrganizations?: Array<FormObjectValue>;
-  destinationCountries?: Array<FormObjectValue>;
-  destinationUsageYears?: Array<FormObjectValue>;
+  sourceOrganizations?: util.FormObjectValue[];
+  sourceCountries?: util.FormObjectValue[];
+  destinationOrganizations?: util.FormObjectValue[];
+  destinationCountries?: util.FormObjectValue[];
+  destinationUsageYears?: util.FormObjectValue[];
   includeChildrenOfParkedFlows?: boolean;
 }
 

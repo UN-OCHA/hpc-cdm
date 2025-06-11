@@ -1,16 +1,16 @@
 import React from 'react';
 import { Navigate, Route, Routes, useParams } from 'react-router';
 
+import { type operations } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
-import { operations } from '@unocha/hpc-data';
 
 import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
+import PageMeta from '../components/page-meta';
 import PageOperationClusterForms from './operation-cluster-forms';
 import PageOperationClusterSettings from './operation-cluster-settings';
-import PageMeta from '../components/page-meta';
 
 interface Props {
   className?: string;
@@ -23,7 +23,7 @@ type OperationClusterRouteParams = {
 };
 
 const PageOperationCluster = (props: Props) => {
-  const { operation, clusters } = props;
+  const { operation, clusters, className } = props;
 
   const { clusterId: clusterIdString } =
     useParams<OperationClusterRouteParams>();
@@ -35,12 +35,12 @@ const PageOperationCluster = (props: Props) => {
   }
   const cluster = clusterWithMatchingId[0];
 
-  const displaySettings = cluster.permissions.canModifyAccess;
+  const shouldDisplaySettings = cluster.permissions.canModifyAccess;
 
   return (
     <AppContext.Consumer>
       {({ lang }) => (
-        <div className={props.className}>
+        <div className={className}>
           <PageMeta title={[cluster.name, operation.name]} />
           <Routes>
             <Route
@@ -53,7 +53,7 @@ const PageOperationCluster = (props: Props) => {
                 <PageOperationClusterForms {...{ operation, cluster }} />
               }
             />
-            {displaySettings && (
+            {shouldDisplaySettings && (
               <Route
                 path={paths.settingsRoot()}
                 element={

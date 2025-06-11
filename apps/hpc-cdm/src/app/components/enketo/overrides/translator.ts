@@ -1,5 +1,5 @@
-import { get } from 'lodash';
 import { t as originalTranslate } from 'enketo-core/src/js/fake-translator';
+import { get } from 'lodash';
 
 import { LANGUAGE_CHOICE, t } from '../../../../i18n';
 
@@ -18,9 +18,8 @@ export const enketoTranslate = (
       );
       if (typeof override === 'string') {
         return override;
-      } else {
-        return originalTranslate(key, options);
       }
+      return originalTranslate(key, options);
     },
     options
   );

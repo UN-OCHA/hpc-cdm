@@ -1,13 +1,13 @@
+import { type organizations, type util } from '@unocha/hpc-data';
 import { C, CLASSES, combineClasses, useDataLoader } from '@unocha/hpc-ui';
+import { useParams } from 'react-router';
+import tw from 'twin.macro';
 import { t } from '../../../i18n';
+import OrganizationForm, {
+  type AddEditOrganizationValues,
+} from '../../components/organization-form';
 import PageMeta from '../../components/page-meta';
 import { AppContext, getEnv } from '../../context';
-import tw from 'twin.macro';
-import { useParams } from 'react-router';
-import OrganizationForm, {
-  AddEditOrganizationValues,
-} from '../../components/organization-form';
-import { organizations, FormObjectValue } from '@unocha/hpc-data';
 
 interface Props {
   className?: string;
@@ -34,11 +34,13 @@ const InfoText = tw.p`
 
 type OrganizationCategories = 'type' | 'subType' | 'level';
 const orgCategoryTo = (
-  categories: Array<organizations.OrganizationCategory> | undefined,
+  categories: organizations.OrganizationCategory[] | undefined,
   type: OrganizationCategories
-): Array<FormObjectValue> => {
-  const res: Array<FormObjectValue> = [];
-  if (!categories) return res;
+): util.FormObjectValue[] => {
+  const res: util.FormObjectValue[] = [];
+  if (!categories) {
+    return res;
+  }
   switch (type) {
     case 'type': {
       res.push(
@@ -84,13 +86,16 @@ const parseOrganizationToInitialValue = (
     abbreviation,
     nativeName,
     url,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     active,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     verified,
     notes,
     categories,
     locations,
     parent,
     comments,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     collectiveInd,
   } = org;
   const res: AddEditOrganizationValues = {

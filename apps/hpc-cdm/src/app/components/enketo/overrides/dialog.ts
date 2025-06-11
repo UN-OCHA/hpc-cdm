@@ -10,9 +10,6 @@ type DialogContentObject = {
   heading: string;
 };
 
-// TODO: implement prompts at some point
-const alert = (content: string | DialogContentObject) => Promise.reject('TODO');
-
 const confirm = (content: string | DialogContentObject) =>
   LANGUAGE_CHOICE.withLanguage((lang) => {
     /**
@@ -34,7 +31,7 @@ const confirm = (content: string | DialogContentObject) =>
         message:
           typeof content === 'string'
             ? content
-            : content.message || content.msg,
+            : content.message ?? content.msg,
       })
       .then((res) => {
         if (res && mode === 'repeatremove') {
@@ -58,11 +55,6 @@ const confirm = (content: string | DialogContentObject) =>
       });
   });
 
-// TODO: implement prompts at some point
-const prompt = () => Promise.reject('TODO');
-
 export default {
-  alert,
   confirm,
-  prompt,
 };

@@ -1,16 +1,16 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 
+import { type operations } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
-import { operations } from '@unocha/hpc-data';
 
 import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
 import ClusterNavigation from '../components/cluster-navigation';
-import { TargetAccessManagement } from '../components/target-access-management';
 import PageMeta from '../components/page-meta';
+import { TargetAccessManagement } from '../components/target-access-management';
 
 interface Props {
   className?: string;
@@ -35,7 +35,7 @@ const PageOperationClusterSettings = (props: Props) => {
           <ClusterNavigation
             operation={operation}
             cluster={cluster}
-            showSettingsButton
+            shouldShowSettingsButton
           />
           <C.SidebarNavigation
             menu={[
