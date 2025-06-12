@@ -84,6 +84,16 @@
     "flowForm": {
       "activeTag": "Active",
       "addReportingDetail": "Add Reporting Detail",
+      "behaviorLabel": {
+        "overlap": {
+          "label": "Overlap",
+          "tooltip": "Overlap will be reported as direct funding for each of the selected values."
+        },
+        "shared": {
+          "label": "Shared",
+          "tooltip": "Shared will be reported as possible funding for each of the selected values."
+        }
+      },
       "blockNavigation": "You have unsaved changes, are you sure you want to leave?",
       "codecValidation": {
         "amountUSD": "The value must be greater than 0",

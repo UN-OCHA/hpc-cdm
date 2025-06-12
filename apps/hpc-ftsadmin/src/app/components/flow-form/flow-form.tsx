@@ -1,10 +1,12 @@
 import {
   Box,
+  Chip,
   Grow,
   Paper,
   Snackbar,
   type SxProps,
   type Theme,
+  Tooltip,
   useTheme,
 } from '@mui/material';
 import {
@@ -355,6 +357,40 @@ export const FormGroup = ({
         </Box>
       )}
     </FormGroupPaper>
+  );
+};
+
+const BehaviorLabel = ({
+  values,
+  name,
+}: {
+  values: FlowFormType;
+  name: keyof Pick<
+    FlowFormType,
+    | 'fundingDestinationOrganizations'
+    | 'fundingSourceOrganizations'
+    | 'fundingDestinationEmergencies'
+    | 'fundingSourceEmergencies'
+  >;
+}) => {
+  if (values[name].length <= 1) {
+    return null;
+  }
+  const lang = getContext().lang;
+  const label =
+    name === 'fundingDestinationOrganizations' ||
+    name === 'fundingSourceOrganizations'
+      ? 'shared'
+      : 'overlap';
+
+  const { tooltip, label: chipLabel } = t.get(
+    lang,
+    (s) => s.components.flowForm.behaviorLabel[label]
+  );
+  return (
+    <Tooltip title={tooltip}>
+      <Chip label={chipLabel} size="small" sx={tw`ms-4`} color="primary" />
+    </Tooltip>
   );
 };
 
@@ -1100,12 +1136,20 @@ export const FlowForm = (props: FlowFormProps) => {
                     <>
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourceOrganizations"
-                        label={t.t(
-                          lang,
-                          (s) =>
-                            s.components.flowForm.fields
-                              .fundingSourceOrganizations
-                        )}
+                        label={
+                          <>
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.fields
+                                  .fundingSourceOrganizations
+                            )}
+                            <BehaviorLabel
+                              values={values}
+                              name="fundingSourceOrganizations"
+                            />
+                          </>
+                        }
                         fnPromise={(query) => fnOrganizations(query, env)}
                         setPendingValuesHandled={setPendingValuesHandled}
                         onChange={(newValue) => {
@@ -1253,12 +1297,20 @@ export const FlowForm = (props: FlowFormProps) => {
                       />
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourceEmergencies"
-                        label={t.t(
-                          lang,
-                          (s) =>
-                            s.components.flowForm.fields
-                              .fundingSourceEmergencies
-                        )}
+                        label={
+                          <>
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.fields
+                                  .fundingSourceEmergencies
+                            )}
+                            <BehaviorLabel
+                              values={values}
+                              name="fundingSourceEmergencies"
+                            />
+                          </>
+                        }
                         fnPromise={(query) => fnEmergencies(query, env)}
                         setPendingValuesHandled={setPendingValuesHandled}
                         onChange={(newValue) => {
@@ -1317,12 +1369,20 @@ export const FlowForm = (props: FlowFormProps) => {
                   )}
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationOrganizations"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields
-                          .fundingDestinationOrganizations
-                    )}
+                    label={
+                      <>
+                        {t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingDestinationOrganizations
+                        )}
+                        <BehaviorLabel
+                          values={values}
+                          name="fundingDestinationOrganizations"
+                        />
+                      </>
+                    }
                     fnPromise={(query) => fnOrganizations(query, env)}
                     setPendingValuesHandled={setPendingValuesHandled}
                     disabled={isDisabled}
@@ -1493,12 +1553,20 @@ export const FlowForm = (props: FlowFormProps) => {
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationEmergencies"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields
-                          .fundingDestinationEmergencies
-                    )}
+                    label={
+                      <>
+                        {t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingDestinationEmergencies
+                        )}
+                        <BehaviorLabel
+                          values={values}
+                          name="fundingDestinationEmergencies"
+                        />
+                      </>
+                    }
                     fnPromise={(query) => fnEmergencies(query, env)}
                     setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) => {

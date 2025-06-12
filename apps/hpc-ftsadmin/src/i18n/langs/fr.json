@@ -84,6 +84,16 @@
     "flowForm": {
       "activeTag": "Actif",
       "addReportingDetail": "Ajouter un détail de rapport",
+      "behaviorLabel": {
+        "overlap": {
+          "label": "Chevauchement",
+          "tooltip": "Le chevauchement sera signalé comme un financement direct pour chacune des valeurs sélectionnées."
+        },
+        "shared": {
+          "label": "Partagé",
+          "tooltip": "Partagé sera signalé comme un financement possible pour chacune des valeurs sélectionnées."
+        }
+      },
       "blockNavigation": "Vous avez des modifications non enregistrées, êtes-vous sûr de vouloir partir ?",
       "codecValidation": {
         "amountUSD": "La valeur doit être supérieure à 0",

@@ -84,6 +84,16 @@
     "flowForm": {
       "activeTag": "Activo",
       "addReportingDetail": "Agregar detalle de informe",
+      "behaviorLabel": {
+        "overlap": {
+          "label": "Superpuesto",
+          "tooltip": "Superpuesto se informará como financiación directa para cada uno de los valores seleccionados."
+        },
+        "shared": {
+          "label": "Compartido",
+          "tooltip": "Compartido se informará como financiación posible para cada uno de los valores seleccionados."
+        }
+      },
       "blockNavigation": "Tienes cambios no guardados, ¿estás seguro de que quieres salir?",
       "codecValidation": {
         "amountUSD": "El valor debe ser mayor a 0",

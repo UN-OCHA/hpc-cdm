@@ -84,6 +84,16 @@
     "flowForm": {
       "activeTag": "激活",
       "addReportingDetail": "添加报告详细信息",
+      "behaviorLabel": {
+        "overlap": {
+          "label": "重叠",
+          "tooltip": "重叠将被报告为每个选定值的直接资助。"
+        },
+        "shared": {
+          "label": "共享",
+          "tooltip": "共享将被报告为每个选定值的可能资助。"
+        }
+      },
       "blockNavigation": "您有未保存的更改，您确定要离开吗？",
       "codecValidation": {
         "amountUSD": "值必须大于 0",

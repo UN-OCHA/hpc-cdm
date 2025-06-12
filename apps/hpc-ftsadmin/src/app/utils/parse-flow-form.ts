@@ -154,16 +154,22 @@ const isArrayFormObjectValue = (
   );
 };
 
-const createFlowObject = (
-  direction: string,
-  lowerCaseSingularObject: FlowObjectTypes,
-  value: util.FormObjectValue
-): CreateFlowObject => {
+const createFlowObject = ({
+  direction,
+  lowerCaseSingularObject,
+  value,
+  behavior,
+}: {
+  direction: string;
+  lowerCaseSingularObject: FlowObjectTypes;
+  value: util.FormObjectValue;
+  behavior: CreateFlowObject['behavior'];
+}): CreateFlowObject => {
   const flowObject = {
     objectID: valueToInteger(value.value),
     objectType: lowerCaseSingularObject,
-    behavior: null,
-  };
+    behavior,
+  } satisfies Partial<CreateFlowObject>;
   if (direction === 'fundingSource') {
     return {
       ...flowObject,
@@ -199,11 +205,41 @@ const extractDirectionObject = (
     }
     const value = values[key];
     if (isArrayFormObjectValue(value)) {
+      const areOrganizationsShared =
+        (key === 'fundingSourceOrganizations' ||
+          key === 'fundingDestinationOrganizations') &&
+        value.length > 1;
+
+      const areEmergenciesOverlap =
+        (key === 'fundingSourceEmergencies' ||
+          key === 'fundingDestinationEmergencies') &&
+        value.length > 1;
+
+      const behavior = (
+        areOrganizationsShared
+          ? 'shared'
+          : areEmergenciesOverlap
+          ? 'overlap'
+          : null
+      ) satisfies CreateFlowObject['behavior'];
+
       return value.map((formObjectValue) =>
-        createFlowObject(direction, lowerCaseSingularObject, formObjectValue)
+        createFlowObject({
+          direction,
+          lowerCaseSingularObject,
+          value: formObjectValue,
+          behavior,
+        })
       );
     } else if (isFormObjectValue(value)) {
-      return [createFlowObject(direction, lowerCaseSingularObject, value)];
+      return [
+        createFlowObject({
+          direction,
+          lowerCaseSingularObject,
+          value,
+          behavior: null,
+        }),
+      ];
     }
   }
   return [];
