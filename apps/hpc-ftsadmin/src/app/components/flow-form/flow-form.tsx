@@ -912,13 +912,8 @@ export const FlowForm = (props: FlowFormProps) => {
     newValue: util.FormObjectValue | util.FormObjectValue[] | null,
     setFieldValue: FormikHelpers<FlowFormType>['setFieldValue']
   ) => {
-    const isFormObjectValueArray = (
-      val: Array<string | util.FormObjectValue>
-    ): val is util.FormObjectValue[] =>
-      !val.some((val) => typeof val === 'string');
-
     setFieldValue('fundingDestinationOrganizations', newValue);
-    if (!Array.isArray(newValue) || !isFormObjectValueArray(newValue)) {
+    if (!Array.isArray(newValue)) {
       return;
     }
 
