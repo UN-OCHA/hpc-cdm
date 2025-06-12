@@ -35,6 +35,8 @@ const StyledAutocomplete = tw(Autocomplete)`
   w-full
 `;
 
+type FieldValue = util.FormObjectValue | util.FormObjectValue[] | null;
+
 export type AsyncAutocompleteSelectProps = {
   name: string;
   label: string | ReactNode;
@@ -49,9 +51,7 @@ export type AsyncAutocompleteSelectProps = {
     response: util.FormObjectValue[],
     removeOptions: util.FormObjectValue[] | undefined
   ) => util.FormObjectValue[];
-  onChange?: (
-    newValue: util.FormObjectValue | util.FormObjectValue[] | null
-  ) => void;
+  onChange?: (newValue: FieldValue) => void;
   disabled?: boolean;
   /**
    *  **Warning:**
@@ -59,7 +59,7 @@ export type AsyncAutocompleteSelectProps = {
    *  `Formik`, if you are using `Formik`, you don't need
    *  to pass this prop. This is for controlled fields
    */
-  initialValue?: util.FormObjectValue | util.FormObjectValue[] | null;
+  initialValue?: FieldValue;
   /**
    *  **Warning:**
    *  This prop is used only if we are not using
@@ -114,17 +114,13 @@ const AsyncAutocompleteSelect = ({
   controlledError,
   firstViewCondition,
 }: AsyncAutocompleteSelectProps) => {
-  const [controlledValue, setControlledValue] = useState<
-    | NonNullable<string | util.FormObjectValue>
-    | Array<string | util.FormObjectValue>
-    | null
-  >();
+  const [controlledValue, setControlledValue] = useState<FieldValue>();
 
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const { setFieldValue } = useFormikContext<util.FormObjectValue[]>();
+  const { setFieldValue } = useFormikContext<FieldValue>();
   const [field, meta, { setTouched: setIsTouched }] =
-    useField<util.FormObjectValue[]>(name);
+    useField<FieldValue>(name);
   const [isControlledTouched, setIsControlledTouched] = useState(false);
   const [options, setOptions] = useState<util.FormObjectValue[]>([]);
   const [data, setData] = useState<util.FormObjectValue[]>([]);
@@ -143,6 +139,24 @@ const AsyncAutocompleteSelect = ({
   const isEmptyControlledFormObjectValue =
     onChange && !(controlledValue ?? initialValue);
 
+  /**
+   *  We have to include the values in the options for MUI
+   *  `<Autocomplete />` to work properly and avoid warning
+   *  messages, where the value is not in the options.
+   */
+  const includeValuesInOptions = (newOptions: util.FormObjectValue[]) => {
+    const fieldValue = field.value ?? controlledValue ?? [];
+    return [
+      //  We filter to avoid duplicates
+      ...newOptions.filter((opt) =>
+        Array.isArray(fieldValue)
+          ? !fieldValue.some(({ value }) => value === opt.value)
+          : fieldValue?.value !== opt.value
+      ),
+      ...(Array.isArray(fieldValue) ? fieldValue : [fieldValue]),
+    ];
+  };
+
   useEffect(() => {
     const delay = isFetch ? 0 : 300;
     const debounceTimer = setTimeout(() => {
@@ -159,18 +173,20 @@ const AsyncAutocompleteSelect = ({
     const input = debouncedInputValue;
 
     if (isAutocompleteAPI && (input === '' || input.length < 3)) {
-      setOptions([]);
+      setOptions(includeValuesInOptions([]));
       setData([]);
       setIsFetch(false);
       return;
     }
     if (data.length > 0 && (input.length >= 3 || !isAutocompleteAPI)) {
       if (firstViewCondition && input.length === 0) {
-        setOptions(data.filter(firstViewCondition));
+        setOptions(includeValuesInOptions(data.filter(firstViewCondition)));
       } else {
         setOptions(
-          data.filter((x) =>
-            x.displayLabel.toUpperCase().includes(input.toUpperCase())
+          includeValuesInOptions(
+            data.filter((x) =>
+              x.displayLabel.toUpperCase().includes(input.toUpperCase())
+            )
           )
         );
       }
@@ -181,24 +197,24 @@ const AsyncAutocompleteSelect = ({
     }
     (async () => {
       try {
-        let response: util.FormObjectValue[];
-        if (fnPromise) {
-          //  Don't include trailing spaces on query
-          const query =
-            input.at(-1) === ' ' && input.length > 3 ? input.trimEnd() : input;
-          response = await fnPromise({
-            query,
-          });
-        } else {
-          response = field.value;
-        }
+        //  Don't include trailing spaces on query except if the input
+        //  is 3 characters long, like to search for `SC `
+        const query =
+          input.at(-1) === ' ' && input.length > 3 ? input.trimEnd() : input;
+        const response = await fnPromise({
+          query,
+        });
         const filteredResponse = removeOptionsFn(response, removeOptions);
         setData(filteredResponse);
         if (isActive) {
           if (firstViewCondition) {
-            setOptions(filteredResponse.filter(firstViewCondition));
+            setOptions(
+              includeValuesInOptions(
+                filteredResponse.filter(firstViewCondition)
+              )
+            );
           } else {
-            setOptions(filteredResponse);
+            setOptions(includeValuesInOptions(filteredResponse));
           }
         }
         setIsFetch(true);
@@ -291,7 +307,7 @@ const AsyncAutocompleteSelect = ({
           ...getTagProps({ index }),
           sx: option.chipColor ? { bgcolor: option.chipColor } : {},
         };
-        const { key, ...chipOtionsWithoutKey } = chipOptions;
+        const { key, ...chipOptionsWithoutKey } = chipOptions;
         return (
           <Tooltip
             title={
@@ -301,12 +317,13 @@ const AsyncAutocompleteSelect = ({
             }
             key={`${name}-${option.value}`}
           >
-            <Chip key={key} {...chipOtionsWithoutKey} />
+            <Chip key={key} {...chipOptionsWithoutKey} />
           </Tooltip>
         );
       }),
     getOptionDisabled: (option) =>
       isMulti === true &&
+      Array.isArray(field.value) &&
       field.value.some((a) => a.parent?.value === option.value),
     renderInput: (params) => (
       <StyledTextField
@@ -327,7 +344,10 @@ const AsyncAutocompleteSelect = ({
         inputProps={{
           ...params.inputProps,
           //  Needed to support native <input /> required on 'multiple' autocomplete select
-          required: isMulti && required ? field.value.length === 0 : undefined,
+          required:
+            isMulti && Array.isArray(field.value) && required
+              ? field.value.length === 0
+              : undefined,
         }}
         InputProps={{
           ...params.InputProps,
