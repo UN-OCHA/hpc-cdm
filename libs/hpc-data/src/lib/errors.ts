@@ -47,6 +47,10 @@ export const isUserError = (error: Error): error is UserError =>
   error instanceof UserError ||
   (error && (error as UserError).code === USER_ERROR);
 
+export const isUserErrorKey = (message: string): message is UserErrorKey => {
+  return new Set<string>(USER_ERROR_KEYS).has(message);
+};
+
 /**
  * An error thrown when a user tries to perform a task that fails because
  * another user has modified the same data in a conflicting way.

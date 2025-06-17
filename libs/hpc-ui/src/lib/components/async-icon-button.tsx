@@ -20,6 +20,7 @@ interface AsyncIconButtonProps {
   };
   iconSx?: React.CSSProperties;
   redirectAfterFetch?: { to: To; options?: NavigateOptions };
+  handlerErrorToast?: (err: Error) => void;
   onSuccess?: () => void;
 }
 
@@ -49,6 +50,7 @@ const AsyncIconButton = ({
   iconSx,
   redirectAfterFetch,
   onSuccess,
+  handlerErrorToast,
 }: AsyncIconButtonProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
@@ -89,6 +91,9 @@ const AsyncIconButton = ({
         })
         .catch((error) => {
           console.error(error);
+          if (handlerErrorToast) {
+            handlerErrorToast(error);
+          }
           setHasError(true);
         })
         .finally(() => {

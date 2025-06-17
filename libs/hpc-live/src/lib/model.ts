@@ -473,7 +473,7 @@ export class LiveModel implements Model {
         timestamp: Date;
         otherUser: string;
         code?: string;
-        message: errors.UserErrorKey | { message: string };
+        message: errors.UserErrorKey | { message: string } | string;
         details?: {
           code?: string;
           detail?: string;
@@ -486,7 +486,7 @@ export class LiveModel implements Model {
       } else if (
         json?.code === 'BadRequestError' &&
         !isObjectMessage(json.message) &&
-        errors.USER_ERROR_KEYS.includes(json.message)
+        errors.isUserErrorKey(json.message)
       ) {
         throw new errors.UserError(json.message);
       } else if (

@@ -201,6 +201,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
   };
 
   const errorHandling = (err: Error) => {
+    toast.dismiss();
     if (errors.isDuplicateError(err)) {
       toast.error(
         t.t(
@@ -226,7 +227,13 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
     }
   };
 
+  const deleteErrorHandling = (err: Error) => {
+    toast.dismiss();
+    toast.error(err.message, TOAST_CONFIG_ERROR);
+  };
+
   const handleSubmit = async (values: AddEditOrganizationValues) => {
+    toast.dismiss();
     if (id && load) {
       await environment.model.organizations
         .updateOrganization(formToUpdate(values, id))
@@ -435,6 +442,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
                     },
                   },
                 }}
+                handlerErrorToast={deleteErrorHandling}
               />
             )}
             <AlignButton>
