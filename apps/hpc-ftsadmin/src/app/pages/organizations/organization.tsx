@@ -136,10 +136,12 @@ const parseOrganizationToInitialValue = async (
   }
 
   const organizationSubType = orgCategoryTo(categories, 'subType');
-  const organizationType = (await fnOrganizationType(env)).find(
-    (orgType) => orgType.value === organizationSubType?.value
-  );
-  res.organizationTypes = organizationType ?? null;
+  const organizationType =
+    (await fnOrganizationType(env)).find(
+      (orgType) => orgType.value === organizationSubType?.value
+    ) ?? orgCategoryTo(categories, 'type');
+
+  res.organizationTypes = organizationType;
 
   return res;
 };
