@@ -73,6 +73,11 @@ export type AsyncAutocompleteSelectProps = {
    *  to display in the first view of the autocomplete
    */
   firstViewCondition?: (option: util.FormObjectValue) => boolean;
+  /**
+   * If `isMulti` is true, this will limit the number of
+   * values that can be selected in the autocomplete.
+   */
+  valueLimit?: number;
 };
 
 /**
@@ -113,6 +118,7 @@ const AsyncAutocompleteSelect = ({
   observedValue,
   controlledError,
   firstViewCondition,
+  valueLimit,
 }: AsyncAutocompleteSelectProps) => {
   const [controlledValue, setControlledValue] = useState<FieldValue>();
 
@@ -129,6 +135,9 @@ const AsyncAutocompleteSelect = ({
   const isLoading =
     isOpen && !isFetch && (!isAutocompleteAPI || inputValue.length >= 3);
 
+  const isValueLimitReached =
+    Array.isArray(field.value) &&
+    !!(valueLimit && field.value.length >= valueLimit);
   const isEmptyUncontrolledFormObjectValueArray =
     !onChange && Array.isArray(field.value) && field.value.length === 0;
   const isEmptyUncontrolledFormObjectValue = !onChange && !field.value;
@@ -322,9 +331,10 @@ const AsyncAutocompleteSelect = ({
         );
       }),
     getOptionDisabled: (option) =>
-      isMulti === true &&
+      !!isMulti &&
       Array.isArray(field.value) &&
-      field.value.some((a) => a.parent?.value === option.value),
+      (field.value.some((a) => a.parent?.value === option.value) ||
+        isValueLimitReached),
     renderInput: (params) => (
       <StyledTextField
         {...params}

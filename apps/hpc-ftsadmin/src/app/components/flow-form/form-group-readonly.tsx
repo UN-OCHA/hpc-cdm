@@ -34,18 +34,11 @@ const Blank = tw.span`
   rounded-sm
 `;
 
-const isEmpty = (
-  value: util.FormObjectValue | util.FormObjectValue[] | null
-): value is util.FormObjectValue[] | null => {
+const isEmpty = (value: util.FormObjectValue[]): boolean => {
   if (Array.isArray(value)) {
     return value.length === 0;
   }
   return !value;
-};
-const isArrayWithContent = (
-  value: util.FormObjectValue | util.FormObjectValue[] | null
-): value is util.FormObjectValue[] => {
-  return Array.isArray(value) && value.length > 0;
 };
 
 const FormChip = ({ text }: { text: string }) => {
@@ -78,14 +71,12 @@ const FormGroupReadOnly = ({ fields, values }: FormGroupReadOnlyProps) => {
             <Box sx={tw`flex flex-wrap`}>
               {isEmpty(fieldValue) ? (
                 <Blank>blank</Blank>
-              ) : isArrayWithContent(fieldValue) ? (
+              ) : (
                 fieldValue.map(({ value, displayLabel }) => (
                   <div key={value}>
                     <FormChip text={displayLabel} />
                   </div>
                 ))
-              ) : (
-                fieldValue.displayLabel
               )}
             </Box>
           </Box>

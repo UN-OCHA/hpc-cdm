@@ -87,7 +87,7 @@ type CreateFlowObject = Pick<
 const TRANSFERRED_CHIP_COLOR = THEME.colors.pallete.blue.light;
 const INFERRED_CHIP_COLOR = THEME.colors.pallete.orange.variant1;
 
-const FUNDING_KEYS = [
+export const FUNDING_KEYS = [
   'fundingSourceOrganizations',
   'fundingSourceLocations',
   'fundingSourceEmergencies',
@@ -106,7 +106,29 @@ const FUNDING_KEYS = [
   'fundingDestinationUsageYears',
   'fundingDestinationFieldClusters',
 ] as const;
-type FlowFormFlowObjectKey = (typeof FUNDING_KEYS)[number];
+export type FlowFormFlowObjectKey = (typeof FUNDING_KEYS)[number];
+
+export const SHARED_FIELDS = new Set<string>([
+  'fundingSourceOrganizations',
+  'fundingSourceLocations',
+  'fundingSourceGlobalClusters',
+  'fundingSourceUsageYears',
+  'fundingSourceFieldClusters',
+  'fundingSourcePlan',
+  'fundingDestinationOrganizations',
+  'fundingDestinationLocations',
+  'fundingDestinationGlobalClusters',
+  'fundingDestinationUsageYears',
+  'fundingDestinationFieldClusters',
+  'fundingDestinationPlan',
+] satisfies FlowFormFlowObjectKey[]);
+
+const OVERLAP_FIELDS = new Set<string>([
+  'fundingSourceEmergencies',
+  'fundingSourceProject',
+  'fundingDestinationEmergencies',
+  'fundingDestinationProject',
+] satisfies FlowFormFlowObjectKey[]);
 
 export const CTP = 'Cash transfer programming (CTP)' as const;
 export const isMethodOption = (value: util.FormObjectValue) =>
@@ -205,20 +227,12 @@ const extractDirectionObject = (
     }
     const value = values[key];
     if (isArrayFormObjectValue(value)) {
-      const areOrganizationsShared =
-        (key === 'fundingSourceOrganizations' ||
-          key === 'fundingDestinationOrganizations') &&
-        value.length > 1;
-
-      const areEmergenciesOverlap =
-        (key === 'fundingSourceEmergencies' ||
-          key === 'fundingDestinationEmergencies') &&
-        value.length > 1;
-
+      const areFlowObjectsShared = SHARED_FIELDS.has(key) && value.length > 1;
+      const areFlowObjectsOverlap = OVERLAP_FIELDS.has(key) && value.length > 1;
       const behavior = (
-        areOrganizationsShared
+        areFlowObjectsShared
           ? 'shared'
-          : areEmergenciesOverlap
+          : areFlowObjectsOverlap
           ? 'overlap'
           : null
       ) satisfies CreateFlowObject['behavior'];
@@ -552,22 +566,18 @@ const flowObjectToFormObjectValue = (
           ...inferredTransferredChipColor(flow, gC, 'globalCluster'),
         }))
     ),
-    fundingSourcePlan:
-      sourceFlow.plans
-        .filter((plan) => plan.flowObject.refDirection === 'source')
-        .map((plan) => ({
-          displayLabel: plan.planVersion.name,
-          value: plan.id,
-        }))
-        .at(0) ?? null,
-    fundingSourceProject:
-      sourceFlow.projects
-        .filter((project) => project.flowObject.refDirection === 'source')
-        .map((project) => ({
-          displayLabel: project.projectVersions[0]?.name,
-          value: project.id,
-        }))
-        .at(0) ?? null,
+    fundingSourcePlan: sourceFlow.plans
+      .filter((plan) => plan.flowObject.refDirection === 'source')
+      .map((plan) => ({
+        displayLabel: plan.planVersion.name,
+        value: plan.id,
+      })),
+    fundingSourceProject: sourceFlow.projects
+      .filter((project) => project.flowObject.refDirection === 'source')
+      .map((project) => ({
+        displayLabel: project.projectVersions[0]?.name,
+        value: project.id,
+      })),
     fundingSourceUsageYears: usageYearsOptions(
       sourceFlow.usageYears
         .filter((usageYear) => usageYear.flowObject.refDirection === 'source')
@@ -634,22 +644,18 @@ const flowObjectToFormObjectValue = (
           ...inferredTransferredChipColor(flow, gC, 'globalCluster'),
         }))
     ),
-    fundingDestinationPlan:
-      flow.plans
-        .filter((plan) => plan.flowObject.refDirection === 'destination')
-        .map((plan) => ({
-          displayLabel: plan.planVersion.name,
-          value: plan.id,
-        }))
-        .at(0) ?? null,
-    fundingDestinationProject:
-      flow.projects
-        .filter((project) => project.flowObject.refDirection === 'destination')
-        .map((project) => ({
-          displayLabel: project.projectVersions[0]?.name,
-          value: project.id,
-        }))
-        .at(0) ?? null,
+    fundingDestinationPlan: flow.plans
+      .filter((plan) => plan.flowObject.refDirection === 'destination')
+      .map((plan) => ({
+        displayLabel: plan.planVersion.name,
+        value: plan.id,
+      })),
+    fundingDestinationProject: flow.projects
+      .filter((project) => project.flowObject.refDirection === 'destination')
+      .map((project) => ({
+        displayLabel: project.projectVersions[0]?.name,
+        value: project.id,
+      })),
     fundingDestinationUsageYears: usageYearsOptions(
       flow.usageYears
         .filter(
@@ -848,10 +854,10 @@ const flowFormToFlowsFilterValues = async (
   }: FlowFormType,
   env: Environment
 ): Promise<FlowsFilterValues> => {
-  const destinationPlans = fundingDestinationPlan?.value
+  const destinationPlans = fundingDestinationPlan?.at(0)?.value
     ? await env.model.plans
         .getAutocompletePlansById({
-          id: valueToInteger(fundingDestinationPlan.value),
+          id: valueToInteger(fundingDestinationPlan[0].value),
         })
         .then((plans) =>
           plans.map(
@@ -861,9 +867,7 @@ const flowFormToFlowsFilterValues = async (
             })
           )
         )
-    : fundingDestinationPlan
-    ? [fundingDestinationPlan]
-    : undefined;
+    : fundingDestinationPlan;
 
   return {
     includeChildrenOfParkedFlows: true,
@@ -956,7 +960,9 @@ const compareFlowForms = (
       case 'fundingSourceLocations':
       case 'fundingSourceEmergencies':
       case 'fundingSourceGlobalClusters':
-      case 'fundingSourceFieldClusters': {
+      case 'fundingSourceFieldClusters':
+      case 'fundingSourceProject':
+      case 'fundingSourcePlan': {
         const currentValue = currentFlow[key];
         const incomingValue = incomingFlow[key];
         if (
@@ -977,6 +983,8 @@ const compareFlowForms = (
       case 'fundingDestinationEmergencies':
       case 'fundingDestinationGlobalClusters':
       case 'fundingDestinationFieldClusters':
+      case 'fundingDestinationProject':
+      case 'fundingDestinationPlan':
       case 'keywords': {
         const currentValue = currentFlow[key];
         const incomingValue = incomingFlow[key];
@@ -991,21 +999,6 @@ const compareFlowForms = (
         }
         break;
       }
-      // For FormObjectValue | null
-      case 'fundingSourceProject':
-      case 'fundingSourcePlan': {
-        const currentValue = currentFlow[key];
-        const incomingValue = incomingFlow[key];
-        if (
-          isDifferentFormObjectValue(currentValue, incomingValue) &&
-          !currentFlow.parentFlow
-        ) {
-          result[key] = incomingValue;
-        }
-        break;
-      }
-      case 'fundingDestinationProject':
-      case 'fundingDestinationPlan':
       case 'currency':
       case 'flowType':
       case 'flowStatus':

@@ -136,12 +136,14 @@ const setPlan = (
   }
 
   //  If value already exist, there is no need to add it again
-  if (values[formKey]?.value !== newValue.id) {
-    setFieldValue(formKey, {
-      displayLabel: newValue.planVersion.name,
-      value: newValue.id,
-      chipColor: AUTOFILL_CHIP_COLOR,
-    });
+  if (values[formKey]?.at(0)?.value !== newValue.id) {
+    setFieldValue(formKey, [
+      {
+        displayLabel: newValue.planVersion.name,
+        value: newValue.id,
+        chipColor: AUTOFILL_CHIP_COLOR,
+      } satisfies util.FormObjectValue,
+    ]);
   }
 };
 
@@ -213,13 +215,13 @@ export const autofillProject = async ({
 }: AutofillProps) => {
   setFieldValue(fieldName, newValue);
 
-  //  Project field is not multi select
-  if (!newValue || Array.isArray(newValue)) {
+  //  Project field is multi select
+  if (!newValue || !Array.isArray(newValue) || !newValue.at(0)) {
     return;
   }
 
   const project = await env.model.projects.getProject({
-    id: valueToInteger(newValue.value),
+    id: valueToInteger(newValue[0].value),
   });
 
   const usageYears: usageYears.GetUsageYearsResult = [];
@@ -352,12 +354,12 @@ export const autofillPlan = async ({
 
   // When Plan is modified or set to null, we need to clear Field Clusters
   setFieldValue(`funding${direction}FieldClusters`, []);
-  //  Plan field is not multi select
-  if (!newValue || Array.isArray(newValue)) {
+  //  Plan field is multi select
+  if (!newValue || !Array.isArray(newValue) || !newValue.at(0)) {
     return;
   }
 
-  const planId = valueToInteger(newValue.value);
+  const planId = valueToInteger(newValue[0].value);
   const { years, locations, emergencies } = await env.model.plans.getPlan({
     id: planId,
     scopes: ['years', 'locations', 'emergencies'],
@@ -476,7 +478,7 @@ export const autofillGlobalClusters = async ({
     ? 'Destination'
     : 'Source';
 
-  const planId = values[`funding${direction}Plan`]?.value;
+  const planId = values[`funding${direction}Plan`]?.at(0)?.value;
   if (!planId) {
     return;
   }

@@ -67,7 +67,9 @@ import {
 } from '../../utils/map-functions';
 import {
   CTP,
+  type FlowFormFlowObjectKey,
   type RefDirection,
+  SHARED_FIELDS,
   isMethodOption,
   parseFlowForm,
   pendingValuesFlowForm,
@@ -113,8 +115,8 @@ export type FlowFormType = {
   fundingSourceEmergencies: util.FormObjectValue[];
   fundingSourceGlobalClusters: util.FormObjectValue[];
   fundingSourceFieldClusters: util.FormObjectValue[];
-  fundingSourceProject: util.FormObjectValue | null;
-  fundingSourcePlan: util.FormObjectValue | null;
+  fundingSourceProject: util.FormObjectValue[];
+  fundingSourcePlan: util.FormObjectValue[];
 
   fundingDestinationOrganizations: util.FormObjectValue[];
   fundingDestinationAnonymizedOrganizations: util.FormObjectValue[];
@@ -123,8 +125,8 @@ export type FlowFormType = {
   fundingDestinationEmergencies: util.FormObjectValue[];
   fundingDestinationGlobalClusters: util.FormObjectValue[];
   fundingDestinationFieldClusters: util.FormObjectValue[];
-  fundingDestinationProject: util.FormObjectValue | null;
-  fundingDestinationPlan: util.FormObjectValue | null;
+  fundingDestinationProject: util.FormObjectValue[];
+  fundingDestinationPlan: util.FormObjectValue[];
 
   isNewMoney: boolean;
   amountUSD: string;
@@ -229,8 +231,8 @@ export const INITIAL_FORM_VALUES: FlowFormType = {
   fundingSourceEmergencies: [],
   fundingSourceGlobalClusters: [],
   fundingSourceFieldClusters: [],
-  fundingSourceProject: null,
-  fundingSourcePlan: null,
+  fundingSourceProject: [],
+  fundingSourcePlan: [],
 
   fundingDestinationOrganizations: [],
   fundingDestinationAnonymizedOrganizations: [],
@@ -239,8 +241,8 @@ export const INITIAL_FORM_VALUES: FlowFormType = {
   fundingDestinationEmergencies: [],
   fundingDestinationGlobalClusters: [],
   fundingDestinationFieldClusters: [],
-  fundingDestinationProject: null,
-  fundingDestinationPlan: null,
+  fundingDestinationProject: [],
+  fundingDestinationPlan: [],
 
   isNewMoney: false,
   amountUSD: '',
@@ -365,23 +367,13 @@ const BehaviorLabel = ({
   name,
 }: {
   values: FlowFormType;
-  name: keyof Pick<
-    FlowFormType,
-    | 'fundingDestinationOrganizations'
-    | 'fundingSourceOrganizations'
-    | 'fundingDestinationEmergencies'
-    | 'fundingSourceEmergencies'
-  >;
+  name: FlowFormFlowObjectKey;
 }) => {
   if (values[name].length <= 1) {
     return null;
   }
   const lang = getContext().lang;
-  const label =
-    name === 'fundingDestinationOrganizations' ||
-    name === 'fundingSourceOrganizations'
-      ? 'shared'
-      : 'overlap';
+  const label = SHARED_FIELDS.has(name) ? 'shared' : 'overlap';
 
   const { tooltip, label: chipLabel } = t.get(
     lang,
@@ -1170,11 +1162,20 @@ export const FlowForm = (props: FlowFormProps) => {
                       />
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourceUsageYears"
-                        label={t.t(
-                          lang,
-                          (s) =>
-                            s.components.flowForm.fields.fundingSourceUsageYears
-                        )}
+                        label={
+                          <>
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.fields
+                                  .fundingSourceUsageYears
+                            )}
+                            <BehaviorLabel
+                              values={values}
+                              name="fundingSourceUsageYears"
+                            />
+                          </>
+                        }
                         fnPromise={() => fnUsageYears(env)}
                         setPendingValuesHandled={setPendingValuesHandled}
                         onChange={(newValue) =>
@@ -1196,11 +1197,20 @@ export const FlowForm = (props: FlowFormProps) => {
                       />
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourceLocations"
-                        label={t.t(
-                          lang,
-                          (s) =>
-                            s.components.flowForm.fields.fundingSourceLocations
-                        )}
+                        label={
+                          <>
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.fields
+                                  .fundingSourceLocations
+                            )}
+                            <BehaviorLabel
+                              values={values}
+                              name="fundingSourceLocations"
+                            />
+                          </>
+                        }
                         fnPromise={(query) => fnLocations(query, env)}
                         setPendingValuesHandled={setPendingValuesHandled}
                         disabled={isDisabled}
@@ -1210,12 +1220,20 @@ export const FlowForm = (props: FlowFormProps) => {
                       />
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourceGlobalClusters"
-                        label={t.t(
-                          lang,
-                          (s) =>
-                            s.components.flowForm.fields
-                              .fundingSourceGlobalClusters
-                        )}
+                        label={
+                          <>
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.fields
+                                  .fundingSourceGlobalClusters
+                            )}
+                            <BehaviorLabel
+                              values={values}
+                              name="fundingSourceGlobalClusters"
+                            />
+                          </>
+                        }
                         fnPromise={() => fnGlobalClusters(env)}
                         setPendingValuesHandled={setPendingValuesHandled}
                         onChange={(newValue) =>
@@ -1237,10 +1255,19 @@ export const FlowForm = (props: FlowFormProps) => {
                       />
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourcePlan"
-                        label={t.t(
-                          lang,
-                          (s) => s.components.flowForm.fields.fundingSourcePlan
-                        )}
+                        label={
+                          <>
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.fields.fundingSourcePlan
+                            )}
+                            <BehaviorLabel
+                              values={values}
+                              name="fundingSourcePlan"
+                            />
+                          </>
+                        }
                         fnPromise={(query) => fnPlans(query, env)}
                         setPendingValuesHandled={setPendingValuesHandled}
                         onChange={(newValue) => {
@@ -1255,20 +1282,32 @@ export const FlowForm = (props: FlowFormProps) => {
                         disabled={isDisabled}
                         pendingValues={pendingValues?.fundingSourcePlan}
                         shouldAcceptChange={shouldAcceptAllPendingChanges}
+                        valueLimit={1}
+                        isMulti
                       />
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourceFieldClusters"
-                        label={t.t(
-                          lang,
-                          (s) =>
-                            s.components.flowForm.fields
-                              .fundingSourceFieldClusters
-                        )}
+                        label={
+                          <>
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.fields
+                                  .fundingSourceFieldClusters
+                            )}
+                            <BehaviorLabel
+                              values={values}
+                              name="fundingSourceFieldClusters"
+                            />
+                          </>
+                        }
                         fnPromise={() =>
-                          values.fundingSourcePlan?.value
+                          values.fundingSourcePlan?.at(0)?.value
                             ? fnGoverningEntities(
                                 env,
-                                valueToInteger(values.fundingSourcePlan.value)
+                                valueToInteger(
+                                  values.fundingSourcePlan[0].value
+                                )
                               )
                             : new Promise<util.FormObjectValue[]>((resolve) =>
                                 resolve([])
@@ -1285,13 +1324,15 @@ export const FlowForm = (props: FlowFormProps) => {
                           })
                         }
                         disabled={
-                          !!isDisabled || values.fundingSourcePlan === null
+                          !!isDisabled || !values.fundingSourcePlan.length
                         }
                         isAutocompleteAPI={false}
                         pendingValues={
                           pendingValues?.fundingSourceFieldClusters
                         }
-                        observedValue={values.fundingSourcePlan?.value.toString()}
+                        observedValue={values.fundingSourcePlan
+                          ?.at(0)
+                          ?.value.toString()}
                         shouldAcceptChange={shouldAcceptAllPendingChanges}
                         isMulti
                       />
@@ -1329,11 +1370,20 @@ export const FlowForm = (props: FlowFormProps) => {
                       />
                       <AsyncAutocompleteSelectReview
                         fieldName="fundingSourceProject"
-                        label={t.t(
-                          lang,
-                          (s) =>
-                            s.components.flowForm.fields.fundingSourceProject
-                        )}
+                        label={
+                          <>
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.fields
+                                  .fundingSourceProject
+                            )}
+                            <BehaviorLabel
+                              values={values}
+                              name="fundingSourceProject"
+                            />
+                          </>
+                        }
                         fnPromise={(query) => fnProjects(query, env)}
                         setPendingValuesHandled={setPendingValuesHandled}
                         onChange={(newValue) => {
@@ -1348,6 +1398,8 @@ export const FlowForm = (props: FlowFormProps) => {
                         disabled={isDisabled}
                         pendingValues={pendingValues?.fundingSourceProject}
                         shouldAcceptChange={shouldAcceptAllPendingChanges}
+                        valueLimit={1}
+                        isMulti
                       />
                     </>
                   )}
@@ -1426,12 +1478,20 @@ export const FlowForm = (props: FlowFormProps) => {
                   )}
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationUsageYears"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields
-                          .fundingDestinationUsageYears
-                    )}
+                    label={
+                      <>
+                        {t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingDestinationUsageYears
+                        )}
+                        <BehaviorLabel
+                          values={values}
+                          name="fundingDestinationUsageYears"
+                        />
+                      </>
+                    }
                     fnPromise={() => fnUsageYears(env)}
                     setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) =>
@@ -1453,11 +1513,20 @@ export const FlowForm = (props: FlowFormProps) => {
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationLocations"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields.fundingDestinationLocations
-                    )}
+                    label={
+                      <>
+                        {t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingDestinationLocations
+                        )}
+                        <BehaviorLabel
+                          values={values}
+                          name="fundingDestinationLocations"
+                        />
+                      </>
+                    }
                     fnPromise={(query) => fnLocations(query, env)}
                     setPendingValuesHandled={setPendingValuesHandled}
                     disabled={isDisabled}
@@ -1467,12 +1536,20 @@ export const FlowForm = (props: FlowFormProps) => {
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationGlobalClusters"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields
-                          .fundingDestinationGlobalClusters
-                    )}
+                    label={
+                      <>
+                        {t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingDestinationGlobalClusters
+                        )}
+                        <BehaviorLabel
+                          values={values}
+                          name="fundingDestinationGlobalClusters"
+                        />
+                      </>
+                    }
                     fnPromise={() => fnGlobalClusters(env)}
                     setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) =>
@@ -1494,10 +1571,19 @@ export const FlowForm = (props: FlowFormProps) => {
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationPlan"
-                    label={t.t(
-                      lang,
-                      (s) => s.components.flowForm.fields.fundingDestinationPlan
-                    )}
+                    label={
+                      <>
+                        {t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields.fundingDestinationPlan
+                        )}
+                        <BehaviorLabel
+                          values={values}
+                          name="fundingDestinationPlan"
+                        />
+                      </>
+                    }
                     fnPromise={(query) => fnPlans(query, env)}
                     setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) => {
@@ -1511,20 +1597,32 @@ export const FlowForm = (props: FlowFormProps) => {
                     }}
                     disabled={isDisabled}
                     shouldAcceptChange={shouldAcceptAllPendingChanges}
+                    valueLimit={1}
+                    isMulti
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationFieldClusters"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields
-                          .fundingDestinationFieldClusters
-                    )}
+                    label={
+                      <>
+                        {t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingDestinationFieldClusters
+                        )}
+                        <BehaviorLabel
+                          values={values}
+                          name="fundingDestinationFieldClusters"
+                        />
+                      </>
+                    }
                     fnPromise={() =>
-                      values.fundingDestinationPlan?.value
+                      values.fundingDestinationPlan?.at(0)?.value
                         ? fnGoverningEntities(
                             env,
-                            valueToInteger(values.fundingDestinationPlan.value)
+                            valueToInteger(
+                              values.fundingDestinationPlan[0].value
+                            )
                           )
                         : new Promise<util.FormObjectValue[]>((resolve) =>
                             resolve([])
@@ -1541,14 +1639,16 @@ export const FlowForm = (props: FlowFormProps) => {
                       })
                     }
                     disabled={
-                      !!isDisabled || values.fundingDestinationPlan === null
+                      !!isDisabled || !values.fundingDestinationPlan.length
                     }
                     isAutocompleteAPI={false}
                     pendingValues={
                       pendingValues?.fundingDestinationFieldClusters
                     }
                     isMulti
-                    observedValue={values.fundingDestinationPlan?.value.toString()}
+                    observedValue={values.fundingDestinationPlan
+                      ?.at(0)
+                      ?.value.toString()}
                     shouldAcceptChange={shouldAcceptAllPendingChanges}
                   />
                   <AsyncAutocompleteSelectReview
@@ -1585,11 +1685,20 @@ export const FlowForm = (props: FlowFormProps) => {
                   />
                   <AsyncAutocompleteSelectReview
                     fieldName="fundingDestinationProject"
-                    label={t.t(
-                      lang,
-                      (s) =>
-                        s.components.flowForm.fields.fundingDestinationProject
-                    )}
+                    label={
+                      <>
+                        {t.t(
+                          lang,
+                          (s) =>
+                            s.components.flowForm.fields
+                              .fundingDestinationProject
+                        )}
+                        <BehaviorLabel
+                          values={values}
+                          name="fundingDestinationProject"
+                        />
+                      </>
+                    }
                     fnPromise={(query) => fnProjects(query, env)}
                     setPendingValuesHandled={setPendingValuesHandled}
                     onChange={(newValue) => {
@@ -1604,6 +1713,8 @@ export const FlowForm = (props: FlowFormProps) => {
                     disabled={isDisabled}
                     pendingValues={pendingValues?.fundingDestinationProject}
                     shouldAcceptChange={shouldAcceptAllPendingChanges}
+                    valueLimit={1}
+                    isMulti
                   />
                 </FormGroup>
               </Box>

@@ -146,16 +146,16 @@ const validateParentFlowAmountUSD = (
 };
 
 const validatePlan = async (
-  plan: util.FormObjectValue | null,
+  plan: util.FormObjectValue[],
   formLocations: util.FormObjectValue[],
   lang: LanguageKey,
   env: Environment,
   direction: 'source' | 'destination'
 ) => {
-  if (!plan) {
+  if (!plan.at(0)) {
     return [];
   }
-  const planId = valueToInteger(plan.value);
+  const planId = valueToInteger(plan[0].value);
   const { locations, planVersion } = await env.model.plans.getPlan({
     id: planId,
     scopes: ['locations', 'planVersion'],
