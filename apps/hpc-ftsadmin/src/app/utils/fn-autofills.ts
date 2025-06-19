@@ -154,11 +154,19 @@ export const autofillOrganizations = async ({
   env,
   newValue,
 }: AutofillProps) => {
+  const hasValueBeenDeleted =
+    Array.isArray(newValue) && newValue.length < values[fieldName].length;
+
   setFieldValue(fieldName, newValue);
 
   //  It only applies to source Organization
   //  Organization field is multi select
-  if (!fieldName.includes('Source') || !newValue || !Array.isArray(newValue)) {
+  if (
+    !fieldName.includes('Source') ||
+    !newValue ||
+    !Array.isArray(newValue) ||
+    hasValueBeenDeleted
+  ) {
     return;
   }
 
@@ -213,10 +221,18 @@ export const autofillProject = async ({
   env,
   newValue,
 }: AutofillProps) => {
+  const hasValueBeenDeleted =
+    Array.isArray(newValue) && newValue.length < values[fieldName].length;
+
   setFieldValue(fieldName, newValue);
 
   //  Project field is multi select
-  if (!newValue || !Array.isArray(newValue) || !newValue.at(0)) {
+  if (
+    !newValue ||
+    !Array.isArray(newValue) ||
+    !newValue.at(0) ||
+    hasValueBeenDeleted
+  ) {
     return;
   }
 
@@ -349,13 +365,21 @@ export const autofillPlan = async ({
   env,
   newValue,
 }: AutofillProps) => {
+  const hasValueBeenDeleted =
+    Array.isArray(newValue) && newValue.length < values[fieldName].length;
+
   setFieldValue(fieldName, newValue);
   const direction = fieldName.includes('Source') ? 'Source' : 'Destination';
 
   // When Plan is modified or set to null, we need to clear Field Clusters
   setFieldValue(`funding${direction}FieldClusters`, []);
   //  Plan field is multi select
-  if (!newValue || !Array.isArray(newValue) || !newValue.at(0)) {
+  if (
+    !newValue ||
+    !Array.isArray(newValue) ||
+    !newValue.at(0) ||
+    hasValueBeenDeleted
+  ) {
     return;
   }
 
@@ -419,10 +443,13 @@ export const autofillFieldClusters = async ({
   env,
   newValue,
 }: AutofillProps) => {
+  const hasValueBeenDeleted =
+    Array.isArray(newValue) && newValue.length < values[fieldName].length;
+
   setFieldValue(fieldName, newValue);
 
   //  FieldClusters field is multi select
-  if (!newValue || !Array.isArray(newValue)) {
+  if (!newValue || !Array.isArray(newValue) || hasValueBeenDeleted) {
     return;
   }
 
@@ -462,10 +489,13 @@ export const autofillGlobalClusters = async ({
   env,
   newValue,
 }: AutofillProps) => {
+  const hasValueBeenDeleted =
+    Array.isArray(newValue) && newValue.length < values[fieldName].length;
+
   setFieldValue(fieldName, newValue);
 
   //  GlobalClusters field is multi select
-  if (!newValue || !Array.isArray(newValue)) {
+  if (!newValue || !Array.isArray(newValue) || hasValueBeenDeleted) {
     return;
   }
   const newGlobalClusterIds = new Set(
@@ -510,6 +540,9 @@ export const autofillUsageYears = async ({
   env,
   newValue,
 }: AutofillProps) => {
+  const hasValueBeenDeleted =
+    Array.isArray(newValue) && newValue.length < values[fieldName].length;
+
   setFieldValue(fieldName, newValue);
 
   //  UsageYears field is multi select
@@ -517,7 +550,8 @@ export const autofillUsageYears = async ({
     !newValue ||
     !Array.isArray(newValue) ||
     newValue.length < 2 ||
-    values.keywords.some((keyword) => keyword.displayLabel === 'Multiyear')
+    values.keywords.some((keyword) => keyword.displayLabel === 'Multiyear') ||
+    hasValueBeenDeleted
   ) {
     return;
   }
@@ -546,10 +580,13 @@ export const autofillEmergencies = async ({
   env,
   newValue,
 }: AutofillProps) => {
+  const hasValueBeenDeleted =
+    Array.isArray(newValue) && newValue.length < values[fieldName].length;
+
   setFieldValue(fieldName, newValue);
 
   //  Emergencies field is multi select
-  if (!newValue || !Array.isArray(newValue)) {
+  if (!newValue || !Array.isArray(newValue) || hasValueBeenDeleted) {
     return;
   }
   const lastEmergency = newValue.at(-1);
