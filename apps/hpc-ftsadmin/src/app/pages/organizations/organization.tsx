@@ -1,4 +1,8 @@
-import { type organizations, type util } from '@unocha/hpc-data';
+import {
+  type categories,
+  type organizations,
+  type util,
+} from '@unocha/hpc-data';
 import { C, CLASSES, combineClasses, useDataLoader } from '@unocha/hpc-ui';
 import { useEffect } from 'react';
 import { useLocation, useParams } from 'react-router';
@@ -12,7 +16,7 @@ import OrganizationForm, {
 import PageMeta from '../../components/page-meta';
 import { AppContext, getEnv } from '../../context';
 import { TOAST_CONFIG } from '../../utils/constants';
-import { fnOrganizationType } from '../../utils/fn-promises';
+import { defaultOptions } from '../../utils/fn-promises';
 
 interface Props {
   className?: string;
@@ -65,10 +69,37 @@ const orgCategoryTo = (
   } satisfies util.FormObjectValue;
 };
 
-const parseOrganizationToInitialValue = async (
+export const fnOrganizationType = (
+  organizationTypes: categories.GetCategoriesResult
+): util.FormObjectValue[] => {
+  const response = organizationTypes
+    .map((organizationType, _, organizationTypes) => {
+      if (organizationType.parentID) {
+        const parent = organizationTypes.find(
+          (orgType) => orgType.id === organizationType.parentID
+        );
+        if (!parent) {
+          return organizationType;
+        }
+        return {
+          ...organizationType,
+          name: `${parent.name}: ${organizationType.name}`,
+        };
+      }
+      return organizationType;
+    })
+    .filter(
+      (organizationType) =>
+        organizationType.name === 'Other' || organizationType.parentID !== null
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
+  return defaultOptions(response);
+};
+
+const parseOrganizationToInitialValue = (
   org: organizations.GetOrganizationResult,
-  env: Environment
-): Promise<AddEditOrganizationValues> => {
+  organizationTypes: categories.GetCategoriesResult
+): AddEditOrganizationValues => {
   const {
     name,
     abbreviation,
@@ -137,7 +168,7 @@ const parseOrganizationToInitialValue = async (
 
   const organizationSubType = orgCategoryTo(categories, 'subType');
   const organizationType =
-    (await fnOrganizationType(env)).find(
+    fnOrganizationType(organizationTypes).find(
       (orgType) => orgType.value === organizationSubType?.value
     ) ?? orgCategoryTo(categories, 'type');
 
@@ -147,18 +178,42 @@ const parseOrganizationToInitialValue = async (
 };
 
 const getOrganizationData = async (
-  id: number,
-  env: Environment
+  env: Environment,
+  idString?: string
 ): Promise<
-  [organizations.GetOrganizationResult, AddEditOrganizationValues]
+  [
+    organizations.GetOrganizationResult | undefined,
+    AddEditOrganizationValues | undefined,
+    categories.GetCategoriesResult,
+    categories.GetCategoriesResult,
+  ]
 > => {
+  const [organizationLevels, organizationTypes] = await Promise.all([
+    env.model.categories.getCategories({
+      query: 'organizationLevel',
+    }),
+
+    env.model.categories.getCategories({
+      query: 'organizationType',
+    }),
+  ]);
+
+  if (!idString) {
+    return [undefined, undefined, organizationLevels, organizationTypes];
+  }
+  const id = parseInt(idString, 10);
   const org = await env.model.organizations.getOrganization({ id });
-  return [org, await parseOrganizationToInitialValue(org, env)];
+
+  return [
+    org,
+    parseOrganizationToInitialValue(org, organizationTypes),
+    organizationLevels,
+    organizationTypes,
+  ];
 };
 
 export default (props: Props) => {
-  const { id: idString } = useParams<OrganizationRouteParams>();
-  const id = parseInt(idString ?? '', 10);
+  const { id } = useParams<OrganizationRouteParams>();
   const env = getEnv();
 
   const locationState: { successMessage?: string } | null = useLocation().state;
@@ -169,7 +224,7 @@ export default (props: Props) => {
     }
   }, [locationState?.successMessage]);
 
-  const [state, load] = useDataLoader([id], () => getOrganizationData(id, env));
+  const [state, load] = useDataLoader([id], () => getOrganizationData(env, id));
   return (
     <AppContext.Consumer>
       {({ lang }) => (
@@ -179,18 +234,48 @@ export default (props: Props) => {
           <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
           <Container>
             <LandingContainer>
-              {idString ? (
-                <C.Loader
-                  loader={state}
-                  strings={{
-                    ...t.get(lang, (s) => s.components.loader),
-                    notFound: {
-                      ...t.get(lang, (s) => s.components.notFound),
-                      ...t.get(lang, (s) => s.components.flowsTable.notFound),
-                    },
-                  }}
-                >
-                  {([data, initialValues]) => (
+              <C.Loader
+                loader={state}
+                strings={{
+                  ...t.get(lang, (s) => s.components.loader),
+                  notFound: {
+                    ...t.get(lang, (s) => s.components.notFound),
+                    ...t.get(lang, (s) => s.components.flowsTable.notFound),
+                  },
+                }}
+              >
+                {(orgData) => {
+                  const [
+                    data,
+                    initialValues,
+                    organizationLevels,
+                    organizationTypes,
+                  ] = orgData;
+                  if (!data || !initialValues) {
+                    return (
+                      <PaddingContainer>
+                        <C.PageTitle style={{ marginBottom: 0 }}>
+                          {t.t(
+                            lang,
+                            (s) =>
+                              s.components.organizationUpdateCreate.title.create
+                          )}
+                        </C.PageTitle>
+                        <InfoText>
+                          {t.t(
+                            lang,
+                            (s) =>
+                              s.components.organizationUpdateCreate.text.create
+                          )}
+                        </InfoText>
+                        <OrganizationForm
+                          organizationLevels={organizationLevels}
+                          organizationTypes={organizationTypes}
+                        />
+                      </PaddingContainer>
+                    );
+                  }
+                  return (
                     <PaddingContainer>
                       <C.PageTitle>{data.name}</C.PageTitle>
                       <InfoText>
@@ -200,30 +285,16 @@ export default (props: Props) => {
                         )}
                       </InfoText>
                       <OrganizationForm
+                        organizationLevels={organizationLevels}
+                        organizationTypes={organizationTypes}
                         initialValues={initialValues}
-                        id={id}
+                        id={data.id}
                         load={load}
                       />
                     </PaddingContainer>
-                  )}
-                </C.Loader>
-              ) : (
-                <PaddingContainer>
-                  <C.PageTitle style={{ marginBottom: 0 }}>
-                    {t.t(
-                      lang,
-                      (s) => s.components.organizationUpdateCreate.title.create
-                    )}
-                  </C.PageTitle>
-                  <InfoText>
-                    {t.t(
-                      lang,
-                      (s) => s.components.organizationUpdateCreate.text.create
-                    )}
-                  </InfoText>
-                  <OrganizationForm />
-                </PaddingContainer>
-              )}
+                  );
+                }}
+              </C.Loader>
             </LandingContainer>
           </Container>
         </div>

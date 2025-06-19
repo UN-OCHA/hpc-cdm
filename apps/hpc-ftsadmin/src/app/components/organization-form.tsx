@@ -2,7 +2,12 @@ import { Form, Formik, type FormikHelpers } from 'formik';
 import tw from 'twin.macro';
 
 import DeleteIcon from '@mui/icons-material/Delete';
-import { errors, util, type organizations } from '@unocha/hpc-data';
+import {
+  errors,
+  util,
+  type categories,
+  type organizations,
+} from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import * as io from 'io-ts';
 import { useContext } from 'react';
@@ -10,17 +15,16 @@ import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
+import { fnOrganizationType } from '../pages/organizations/organization';
 import paths from '../paths';
 import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
-import {
-  fnLocations,
-  fnOrganizations,
-  fnOrganizationType,
-} from '../utils/fn-promises';
+import { fnLocations, fnOrganizations } from '../utils/fn-promises';
 import validateForm from '../utils/form-validation';
 import { valueToInteger } from '../utils/map-functions';
 import { isFormObjectValue } from '../utils/parse-flow-form';
 interface Props {
+  organizationLevels: categories.GetCategoriesResult;
+  organizationTypes: categories.GetCategoriesResult;
   id?: number;
   load?: () => void;
   initialValues?: AddEditOrganizationValues;
@@ -128,7 +132,13 @@ const formToCreate = (
   return res;
 };
 
-export const OrganizationForm = ({ initialValues, id, load }: Props) => {
+export const OrganizationForm = ({
+  organizationLevels,
+  organizationTypes,
+  initialValues,
+  id,
+  load,
+}: Props) => {
   const { lang, env } = useContext(AppContext);
   const environment = env();
   const navigate = useNavigate();
@@ -158,7 +168,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
     ),
   };
 
-  const handleChangeOrganizationType = async ({
+  const handleChangeOrganizationType = ({
     setFieldValue,
     newValue,
   }: {
@@ -172,21 +182,13 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
       return;
     }
 
-    const organizationLevelCategories =
-      await environment.model.categories.getCategories({
-        query: 'organizationLevel',
-      });
-    const organizationTypes = await environment.model.categories.getCategories({
-      query: 'organizationType',
-    });
-
     const organizationType = organizationTypes.find(
       (orgType) => orgType.id === valueToInteger(newValue.value)
     );
-    const organizationLevelChild = organizationLevelCategories.find(
+    const organizationLevelChild = organizationLevels.find(
       (orgLevel) => orgLevel.name === organizationType?.name
     );
-    const organizationLevel = organizationLevelCategories.find(
+    const organizationLevel = organizationLevels.find(
       (orgLevel) => orgLevel.id === organizationLevelChild?.parentID
     );
     if (!organizationLevel) {
@@ -347,18 +349,17 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
 
           <C.Divider />
 
-          <C.AsyncAutocompleteSelect
+          <C.AutocompleteSelect
             label={t.t(
               lang,
               (s) =>
                 s.components.organizationUpdateCreate.fields.organizationTypes
             )}
             name="organizationTypes"
-            fnPromise={() => fnOrganizationType(environment)}
-            onChange={async (newValue) =>
-              await handleChangeOrganizationType({ setFieldValue, newValue })
+            options={fnOrganizationType(organizationTypes)}
+            onChange={(newValue) =>
+              handleChangeOrganizationType({ setFieldValue, newValue })
             }
-            isAutocompleteAPI={false}
             required
           />
           <InfoText>
