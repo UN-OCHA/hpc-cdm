@@ -689,7 +689,7 @@ export class LiveModel implements Model {
     return {
       getAutocompleteEmergencies: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/emergency/${encodeURIComponent(
+          pathname: `/v2/object/autocomplete/emergency/${encodeURIComponent(
             params.query
           )}`,
           resultType: emergencies.GET_EMERGENCIES_RESULT,
@@ -704,14 +704,14 @@ export class LiveModel implements Model {
         }
 
         return this.call({
-          pathname: `/v1/emergency`,
+          pathname: `/v2/emergency`,
           queryParams,
           resultType: emergencies.GET_EMERGENCIES_RESULT,
         });
       },
       getEmergency: ({ id }) => {
         return this.call({
-          pathname: `/v1/emergency/${id}`,
+          pathname: `/v2/emergency/${id}`,
           method: 'GET',
           resultType: emergencies.GET_EMERGENCY_RESULT,
         });
@@ -731,7 +731,7 @@ export class LiveModel implements Model {
     return {
       fileUpload: (file) =>
         this.call({
-          pathname: '/v1/files/fts',
+          pathname: '/v2/files/fts',
           method: 'POST',
           body: {
             type: 'form-data',
@@ -742,13 +742,13 @@ export class LiveModel implements Model {
 
       fileDelete: (id, collection) =>
         this.call({
-          pathname: `/v1/files/${collection}/${id}`,
+          pathname: `/v2/files/${collection}/${id}`,
           method: 'DELETE',
           resultType: fileAssetEntities.DELETE_FILE_RESULT,
         }),
       fileDownload: (id, collection) =>
         this.call({
-          pathname: `/v1/files/download/${collection}/${id}`,
+          pathname: `/v2/files/download/${collection}/${id}`,
           method: 'GET',
           resultType: fileAssetEntities.BLOB_TYPE,
           isDownload: true,
@@ -807,12 +807,12 @@ export class LiveModel implements Model {
       },
       getFlow: ({ id, versionID }) =>
         this.call({
-          pathname: `/v1/flow/${id}${versionID ? `/version/${versionID}` : ''}`,
+          pathname: `/v2/flow/${id}${versionID ? `/version/${versionID}` : ''}`,
           resultType: flows.GET_FLOW_RESULT,
         }),
       getAutocompleteFlows: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/id/flow/${encodeURIComponent(
+          pathname: `/v2/object/autocomplete/id/flow/${encodeURIComponent(
             params.query
           )}`,
           resultType: flows.GET_FLOWS_AUTOCOMPLETE_RESULT,
@@ -840,7 +840,7 @@ export class LiveModel implements Model {
       },
       bulkRejectPendingFlows: (params) =>
         this.call({
-          pathname: `/v1/flow/bulkupdatestatus/87`,
+          pathname: `/v2/flow/bulkupdatestatus/87`,
           method: 'POST',
           body: {
             type: 'json',
@@ -863,7 +863,7 @@ export class LiveModel implements Model {
       },
       createFlow: (params) =>
         this.call({
-          pathname: '/v1/flow/create',
+          pathname: '/v2/flow',
           method: 'POST',
           body: {
             type: 'json',
@@ -874,7 +874,7 @@ export class LiveModel implements Model {
 
       updateFlow: (params) =>
         this.call({
-          pathname: `/v1/flow/update/${params.flow.id}`,
+          pathname: `/v2/flow/${params.flow.id}`,
           method: 'PUT',
           body: {
             type: 'json',
@@ -884,8 +884,8 @@ export class LiveModel implements Model {
         }),
       deleteFlow: ({ flowId, versionID }) =>
         this.call({
-          pathname: `/v1/flow/delete/${flowId}/version/${versionID}`,
-          method: 'POST',
+          pathname: `/v2/flow/${flowId}/version/${versionID}`,
+          method: 'DELETE',
           resultType: flows.DELETE_FLOW_RESULT,
         }),
       compareFlows: ({ flowIdA, flowIdB, versionIdA, versionIdB }) =>
@@ -915,12 +915,12 @@ export class LiveModel implements Model {
     return {
       getGoverningEntity: (params) =>
         this.call({
-          pathname: `/v1/governingEntity/${params.id}`,
+          pathname: `/v2/governingEntity/${params.id}`,
           resultType: governingEntities.GET_GOVERNING_ENTITY_RESULT,
         }),
       getGoverningEntitiesByPlanId: ({ planId, excludeAttachments }) =>
         this.call({
-          pathname: `/v1/governingEntity`,
+          pathname: `/v2/governingEntity`,
           queryParams: {
             planId: planId.toString(),
             ...(excludeAttachments !== undefined
@@ -936,7 +936,7 @@ export class LiveModel implements Model {
     return {
       getAutocompleteLocations: (params) =>
         this.call({
-          pathname: `/v1/location/autocomplete/${encodeURIComponent(
+          pathname: `/v2/location/autocomplete/${encodeURIComponent(
             params.query
           )}`,
           resultType: locations.GET_LOCATIONS_AUTOCOMPLETE_RESULT,
@@ -947,7 +947,7 @@ export class LiveModel implements Model {
     return {
       getAutocompleteOrganizations: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/organization/${encodeURIComponent(
+          pathname: `/v2/object/autocomplete/organization/${encodeURIComponent(
             params.query
           )}`,
           resultType: organizations.GET_ORGANIZATIONS_RESULT,
@@ -965,13 +965,13 @@ export class LiveModel implements Model {
         }),
       getOrganization: (params) =>
         this.call({
-          pathname: `/v1/organization/id/${params.id}`,
+          pathname: `/v2/organization/${params.id}`,
           method: 'GET',
           resultType: organizations.GET_ORGANIZATION_RESULT,
         }),
       createOrganization: (params) =>
         this.call({
-          pathname: '/v1/organization/create',
+          pathname: '/v2/organization',
           method: 'POST',
           body: {
             type: 'json',
@@ -981,7 +981,7 @@ export class LiveModel implements Model {
         }),
       updateOrganization: (params) =>
         this.call({
-          pathname: `/v1/organization/update/${params.id}`,
+          pathname: `/v2/organization/${params.id}`,
           method: 'PUT',
           body: {
             type: 'json',
@@ -991,13 +991,13 @@ export class LiveModel implements Model {
         }),
       deleteOrganization: (params) =>
         this.call({
-          pathname: `/v1/organization/delete/${params.id}`,
-          method: 'POST',
+          pathname: `/v2/organization/${params.id}`,
+          method: 'DELETE',
           resultType: organizations.DELETE_ORGANIZATION_RESULT,
         }),
       mergeOrganizations: (receivingOrganizationID, data) =>
         this.call({
-          pathname: `/v1/organization/merge/${receivingOrganizationID}`,
+          pathname: `/v2/organization/merge/${receivingOrganizationID}`,
           method: 'PUT',
           body: {
             type: 'json',
@@ -1031,7 +1031,7 @@ export class LiveModel implements Model {
     return {
       getAutocompletePlans: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/plan/${encodeURIComponent(
+          pathname: `/v2/object/autocomplete/plan/${encodeURIComponent(
             params.query
           )}`,
           resultType: plans.GET_PLANS_AUTOCOMPLETE_RESULT,
@@ -1047,7 +1047,7 @@ export class LiveModel implements Model {
       },
       getAutocompletePlansById: ({ id }) =>
         this.call({
-          pathname: `/v1/object/autocomplete/id/plan/${id}`,
+          pathname: `/v2/object/autocomplete/id/plan/${id}`,
           resultType: plans.GET_AUTOCOMPLETE_PLANS_BY_ID_RESULT,
         }),
     };
@@ -1056,7 +1056,7 @@ export class LiveModel implements Model {
     return {
       getAutocompleteProjects: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/project/${encodeURIComponent(
+          pathname: `/v2/object/autocomplete/project/${encodeURIComponent(
             params.query
           )}`,
           resultType: projects.GET_PROJECTS_AUTOCOMPLETE_RESULT,
@@ -1214,12 +1214,12 @@ export class LiveModel implements Model {
     return {
       getUsageYears: () =>
         this.call({
-          pathname: '/v1/fts/usage-year',
+          pathname: '/v2/fts/usage-year',
           resultType: usageYears.GET_USAGE_YEARS_RESULT,
         }),
       getAutocompleteUsageYears: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/usageYear/${encodeURIComponent(
+          pathname: `/v2/object/autocomplete/usageYear/${encodeURIComponent(
             params.query
           )}`,
           resultType: usageYears.GET_USAGE_YEARS_RESULT,
