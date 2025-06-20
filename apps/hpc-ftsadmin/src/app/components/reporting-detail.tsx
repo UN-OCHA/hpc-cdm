@@ -61,7 +61,7 @@ export const validateReportingDetailsURLFormat = (
   if (value === '') {
     return;
   }
-  return /^https:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+$/.test(value)
+  return /^https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+$/.test(value)
     ? undefined
     : t.t(lang, (s) => s.components.reportingDetail.validation.url);
 };
