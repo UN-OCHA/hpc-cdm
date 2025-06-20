@@ -260,13 +260,7 @@ export const GET_FLOW_RESULT = t.type({
   categories: t.array(CATEGORY),
   flowObjects: t.array(FLOW_OBJECT),
   children: t.array(FLOW_LINK),
-  /**
-   * @deprecated
-   * Use `parent` instead, as it's correctly typed
-   */
   parents: t.array(FLOW_LINK),
-  // TODO: Remove undefined when rewritten endpoint is added
-  parent: t.union([optional(FLOW_LINK), t.undefined]),
   externalReferences: t.array(EXTERNAL_REFERENCE),
   externalData: t.array(EXTERNAL_DATA),
   reportDetails: t.array(GET_FLOW_REPORT_DETAIL),
