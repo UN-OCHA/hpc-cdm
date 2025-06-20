@@ -27,6 +27,7 @@ const IMPLEMENTATION_STATUS = t.keyof({
   'Ended - Terminated': null,
   'Ended - Not started and abandoned': null,
 });
+
 export const PROJECT = t.type({
   id: t.number,
   createdAt: DATE_FROM_STRING,
@@ -45,6 +46,7 @@ export type ProjectAutocomplete = t.TypeOf<typeof PROJECT_AUTOCOMPLETE>;
 export const GET_PROJECTS_AUTOCOMPLETE_PARAMS = t.type({
   query: t.string,
 });
+
 export type GetProjectsAutocompleteParams = t.TypeOf<
   typeof GET_PROJECTS_AUTOCOMPLETE_PARAMS
 >;
@@ -85,6 +87,7 @@ const GET_PROJECT_PROJECT_VERSION = t.type({
 });
 
 export const GET_PROJECTS_AUTOCOMPLETE_RESULT = t.array(PROJECT_AUTOCOMPLETE);
+
 export type GetProjectsAutocompleteResult = t.TypeOf<
   typeof GET_PROJECTS_AUTOCOMPLETE_RESULT
 >;

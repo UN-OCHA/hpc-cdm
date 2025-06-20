@@ -179,6 +179,7 @@ export const GET_FLOW_PARAMS = t.intersection([
     shouldIncludeAllVersionsReportDetails: t.boolean,
   }),
 ]);
+
 type GetFlowParams = t.TypeOf<typeof GET_FLOW_PARAMS>;
 
 const GET_FLOW_REPORT_DETAIL = t.type({
@@ -451,6 +452,7 @@ const FLOW_ORGANIZATION = t.type({
 });
 
 export type FlowOrganization = t.TypeOf<typeof FLOW_ORGANIZATION>;
+
 const FLOW_USAGE_YEAR = t.type({
   year: t.string,
   direction: FLOW_OBJECT_REF_DIRECTION,
@@ -495,6 +497,8 @@ export const FLOW_V4 = t.type({
   parkedParentSource: optional(FLOW_PARKED_PARENT_SOURCE),
 });
 
+export type FlowV4 = t.TypeOf<typeof FLOW_V4>;
+
 export const GET_FLOW_V4_PARAMS = t.type({
   id: t.number,
 });
@@ -502,7 +506,6 @@ export const GET_FLOW_V4_PARAMS = t.type({
 type GetFlowV4Params = t.TypeOf<typeof GET_FLOW_V4_PARAMS>;
 
 export const GET_FLOW_V4_RESULT = t.array(FLOW_V4);
-export type FlowV4 = t.TypeOf<typeof FLOW_V4>;
 
 type GetFlowV4Result = t.TypeOf<typeof GET_FLOW_V4_RESULT>;
 
@@ -582,6 +585,7 @@ export const BULK_REJECT_PENDING_FLOWS_PARAMS = t.type({
     })
   ),
 });
+
 export type BulkRejectPendingFlowsParams = t.TypeOf<
   typeof BULK_REJECT_PENDING_FLOWS_PARAMS
 >;
@@ -602,6 +606,7 @@ export const SEARCH_FLOWS_BATCHES_RESULT = t.type({
     flows: GET_FLOW_V4_RESULT,
   }),
 });
+
 export type SearchFlowsBatchesResult = t.TypeOf<
   typeof SEARCH_FLOWS_BATCHES_RESULT
 >;
@@ -644,13 +649,15 @@ const STATE = t.keyof({
   deletion: 'deletion',
   noop: 'noop',
 });
+
+export type State = t.TypeOf<typeof STATE>;
+
 const COMPARE_FLOW_OBJECT = t.type({
   id: t.number,
   name: t.string,
   direction: FLOW_OBJECT_REF_DIRECTION,
   state: STATE,
 });
-export type State = t.TypeOf<typeof STATE>;
 
 const COMPARE_FLOW = t.intersection([
   t.type({

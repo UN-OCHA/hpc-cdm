@@ -60,6 +60,7 @@ export const GET_GOVERNING_ENTITIES_BY_PLAN_ID_RESULT = t.array(
 export type GetGoverningEntitiesByPlanIdResult = t.TypeOf<
   typeof GET_GOVERNING_ENTITIES_BY_PLAN_ID_RESULT
 >;
+
 export interface Model {
   getGoverningEntity(
     params: GetGoverningEntityParams

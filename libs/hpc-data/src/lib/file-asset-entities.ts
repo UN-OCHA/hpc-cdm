@@ -40,6 +40,7 @@ export const BLOB_TYPE = new t.Type<Blob>(
     input instanceof Blob ? t.success(input) : t.failure(input, context),
   t.identity
 );
+
 type BlobType = t.TypeOf<typeof BLOB_TYPE>;
 
 export type FileUploadResult = t.TypeOf<typeof FILE_ASSET_UPLOAD>;

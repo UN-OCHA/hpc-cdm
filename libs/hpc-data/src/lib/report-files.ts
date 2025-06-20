@@ -23,6 +23,7 @@ export const CREATE_FILE = t.type({
   url: REPORT_FILE.props.url,
   fileAssetID: REPORT_FILE.props.fileAssetID,
 });
+
 export type CreateFile = t.TypeOf<typeof CREATE_FILE>;
 
 export const REPORT_FILE_WITH_ENTITY = t.type({

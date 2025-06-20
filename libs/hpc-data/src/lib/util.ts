@@ -458,8 +458,8 @@ export const ABORT_SIGNAL = new t.Type<AbortSignal, AbortSignal, unknown>(
     input instanceof AbortSignal ? t.success(input) : t.failure(input, context),
   t.identity
 );
-
 export type AbortSignalType = t.TypeOf<typeof ABORT_SIGNAL>;
+
 export const YEAR_FROM_STRING = new t.Type<string, string>(
   'YEAR_FROM_STRING',
   t.string.is,

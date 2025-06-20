@@ -9,6 +9,7 @@ export const CURRENCY = t.type({
 });
 
 export const GET_CURRENCIES_RESULT = t.array(CURRENCY);
+
 export type GetCurrenciesResult = t.TypeOf<typeof GET_CURRENCIES_RESULT>;
 
 export interface Model {

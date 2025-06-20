@@ -23,6 +23,7 @@ export const GLOBAL_CLUSTER = t.type({
 export type GlobalCluster = t.TypeOf<typeof GLOBAL_CLUSTER>;
 
 export const GET_GLOBAL_CLUSTERS_RESULT = t.array(GLOBAL_CLUSTER);
+
 export type GetGlobalClustersResult = t.TypeOf<
   typeof GET_GLOBAL_CLUSTERS_RESULT
 >;

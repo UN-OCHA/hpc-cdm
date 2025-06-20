@@ -41,11 +41,13 @@ export const PLAN_AUTOCOMPLETE = t.type({
 export const GET_PLANS_AUTOCOMPLETE_PARAMS = t.type({
   query: t.string,
 });
+
 export type GetPlansAutocompleteParams = t.TypeOf<
   typeof GET_PLANS_AUTOCOMPLETE_PARAMS
 >;
 
 export const GET_PLANS_AUTOCOMPLETE_RESULT = t.array(PLAN_AUTOCOMPLETE);
+
 export type GetPlansAutocompleteResult = t.TypeOf<
   typeof GET_PLANS_AUTOCOMPLETE_RESULT
 >;
@@ -107,6 +109,7 @@ const GET_PLAN_RESULT_PART = t.type({
   id: t.number,
   restricted: t.boolean,
 });
+
 export type GetPlanResult<T extends GetPlanScope[]> = t.TypeOf<
   typeof GET_PLAN_RESULT_PART
 > &
@@ -123,6 +126,7 @@ export const getPlanResultCodec = <T extends GetPlanScope[]>(
 export const GET_AUTOCOMPLETE_PLANS_BY_ID_PARAMS = t.type({
   id: t.number,
 });
+
 export type GetAutocompletePlansByIdParams = t.TypeOf<
   typeof GET_AUTOCOMPLETE_PLANS_BY_ID_PARAMS
 >;

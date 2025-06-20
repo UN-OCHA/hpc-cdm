@@ -52,7 +52,9 @@ const UPDATED_CREATED_BY = t.type({
   date: DATE_FROM_STRING,
   endpointId: t.number,
 });
+
 export type UpdatedCreatedBy = t.TypeOf<typeof UPDATED_CREATED_BY>;
+
 const SEARCH_ORGANIZATION = t.type({
   id: ORGANIZATION_MODEL.props.id,
   name: ORGANIZATION_MODEL.props.name,
@@ -76,9 +78,11 @@ const SEARCH_ORGANIZATION = t.type({
   create: t.array(UPDATED_CREATED_BY),
   update: t.array(UPDATED_CREATED_BY),
 });
+
 export type SearchOrganization = t.TypeOf<typeof SEARCH_ORGANIZATION>;
 
 export const SEARCH_ORGANIZATIONS = t.array(SEARCH_ORGANIZATION);
+
 export type SearchOrganizations = t.TypeOf<typeof SEARCH_ORGANIZATIONS>;
 
 export const GET_ORGANIZATIONS_AUTOCOMPLETE_PARAMS = t.type({
@@ -116,6 +120,7 @@ export const SEARCH_ORGANIZATION_PARAMS = t.type({
     signal: ABORT_SIGNAL,
   }),
 });
+
 export type SearchOrganizationParams = t.TypeOf<
   typeof SEARCH_ORGANIZATION_PARAMS
 >;
@@ -203,6 +208,7 @@ export const UPDATE_ORGANIZATION_PARAMS = t.intersection([
     deletedAt: optional(DATE_FROM_STRING),
   }),
 ]);
+
 export type UpdateOrganizationParams = t.TypeOf<
   typeof UPDATE_ORGANIZATION_PARAMS
 >;
@@ -225,11 +231,13 @@ export type DeleteOrganizationResult = t.TypeOf<
 export const MERGE_ORGANIZATION_PARAMS = t.type({
   id: INTEGER_FROM_STRING,
 });
+
 type MergeOrganizationsParams = t.TypeOf<typeof MERGE_ORGANIZATION_PARAMS>;
 
 export const MERGE_ORGANIZATION_BODY = t.type({
   organizationsToBeMerged: t.array(t.number),
 });
+
 type MergeOrganizationsBody = t.TypeOf<typeof MERGE_ORGANIZATION_BODY>;
 
 export const MERGE_ORGANIZATION_RESULT = t.intersection([
@@ -250,6 +258,7 @@ export const MERGE_ORGANIZATION_RESULT = t.intersection([
     notes: t.string,
   }),
 ]);
+
 export type MergeOrganizationResult = t.TypeOf<
   typeof MERGE_ORGANIZATION_RESULT
 >;
