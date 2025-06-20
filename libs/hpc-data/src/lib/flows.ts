@@ -437,8 +437,6 @@ export const UPDATE_FLOW_PARAMS = t.type({
 
 export type UpdateFlowParams = t.TypeOf<typeof UPDATE_FLOW_PARAMS>;
 
-// * GRAPHQL CODE FROM HERE *
-
 const FLOW_LOCATION = t.type({
   id: t.number,
   name: t.string,
