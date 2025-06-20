@@ -9,8 +9,7 @@ const IMPORT_INFORMATION = t.partial({
         reason: t.string,
       }),
       t.partial({
-        //  TODO: Change to `t.number` when data corruption is fixed
-        valueId: t.any,
+        valueId: t.number,
       }),
     ])
   ),
@@ -20,8 +19,7 @@ const IMPORT_INFORMATION = t.partial({
         key: t.string,
       }),
       t.partial({
-        //  TODO: Change to `t.number` when data corruption is fixed
-        valueId: t.any,
+        valueId: t.number,
       }),
     ])
   ),
