@@ -8,7 +8,12 @@ import {
 import { LOCATION } from './locations';
 import { PLAN_VERSION } from './plan-versions';
 import { USAGE_YEAR } from './usageYears';
-import { DATE_FROM_STRING, optional, recursiveIntersection } from './util';
+import {
+  DATE_FROM_STRING,
+  optional,
+  recursiveIntersection,
+  type UnionToIntersection,
+} from './util';
 
 const PLAN_REVISION_STATE = t.keyof({
   none: null,
@@ -92,11 +97,6 @@ export type GetPlanScope = t.TypeOf<typeof GET_PLAN_SCOPE>;
 type V2GetPlanCodec<T extends GetPlanScope> = t.TypeOf<
   (typeof GET_PLAN_MAP)[T]
 >;
-type UnionToIntersection<U> = (
-  U extends unknown ? (k: U) => void : never
-) extends (k: infer I) => void
-  ? I
-  : never;
 
 export type GetPlanParams<T extends GetPlanScope[]> = {
   id: number;

@@ -11,6 +11,12 @@ export type FormObjectValue = {
   isConfidential?: boolean;
 };
 
+export type UnionToIntersection<U> = (
+  U extends unknown ? (k: U) => void : never
+) extends (k: infer I) => void
+  ? I
+  : never;
+
 export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(
   data: t.Type<D>,
   permissions: t.Type<P>
