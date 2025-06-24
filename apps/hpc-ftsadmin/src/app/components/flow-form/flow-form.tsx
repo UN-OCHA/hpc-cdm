@@ -999,15 +999,11 @@ export const FlowForm = (props: FlowFormProps) => {
                 deleteLoading: isDeleteLoading,
               }}
             />
-            {!isDisabled && (
-              <C.CheckBox
-                name="isRestricted"
-                label={t.t(
-                  lang,
-                  (s) => s.components.flowForm.fields.restricted
-                )}
-              />
-            )}
+            <C.CheckBox
+              name="isRestricted"
+              label={t.t(lang, (s) => s.components.flowForm.fields.restricted)}
+              disabled={isDisabled}
+            />
             {initialValues && flow && !isDeleted && (
               <Box sx={tw`flex justify-between`}>
                 <Box sx={tw`flex gap-x-6 items-center`}>
