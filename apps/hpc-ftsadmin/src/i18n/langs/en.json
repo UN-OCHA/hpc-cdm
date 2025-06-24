@@ -112,6 +112,7 @@
       "copyFlow": "Copy Flow",
       "createdUpdated": "Created at {createdDate}, and latest updated at {updatedDate}",
       "deleteFlow": "Delete Flow",
+      "deletedTag": "Deleted",
       "fields": {
         "restricted": "Restricted to internal use",
         "isErrorCorrection": "As error correction",

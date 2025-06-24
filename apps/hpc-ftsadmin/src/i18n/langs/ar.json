@@ -112,6 +112,7 @@
       "copyFlow": "نسخ التدفق",
       "createdUpdated": "تم الإنشاء في {createdDate}، وآخر تحديث في {updatedDate}",
       "deleteFlow": "حذف التدفق",
+      "deletedTag": "تم حذفه",
       "fields": {
         "restricted": "مقتصر على الاستخدام الداخلي",
         "isErrorCorrection": "كإصلاح للأخطاء",

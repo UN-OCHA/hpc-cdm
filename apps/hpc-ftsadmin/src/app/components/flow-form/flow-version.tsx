@@ -34,6 +34,11 @@ const PendingReviewSpan = tw.span`
   bg-unocha-pallete-orange-light
   border-unocha-pallete-orange
 `;
+const DeletedSpan = tw.span`
+  ${SPAN_STYLES}
+  bg-unocha-error-light
+  border-unocha-error
+`;
 const MarginEndLink = tw(Link)`
   me-2
 `;
@@ -140,6 +145,11 @@ const FlowVersions = ({
                     <LatestSpan>
                       {t.t(lang, (s) => s.components.flowForm.activeTag)}
                     </LatestSpan>
+                  )}
+                  {flowVersion.deletedAt && (
+                    <DeletedSpan>
+                      {t.t(lang, (s) => s.components.flowForm.deletedTag)}
+                    </DeletedSpan>
                   )}
                   {flowVersion.categories.some(
                     (cat) => cat.categoryID === pendingReviewCategory?.id

@@ -112,6 +112,7 @@
       "copyFlow": "复制资金流",
       "createdUpdated": "创建于 {createdDate}, 最近更新于 {updatedDate}",
       "deleteFlow": "删除资金流",
+      "deletedTag": "已删除",
       "fields": {
         "restricted": "限内部使用",
         "isErrorCorrection": "作为错误更正",
