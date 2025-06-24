@@ -69,6 +69,10 @@ const FlowActiveVersionPath = ({
   const pendingFlow = flow.versions.find((f) =>
     f.categories.some((cat) => cat.categoryID === pendingReview?.id)
   );
+  const flowInactiveReasons = flow.categories
+    .filter((c) => c.group === 'inactiveReason')
+    .map((c) => c.name)
+    .join(', ');
 
   const isRestricted = flow.restricted;
   const isInactiveWithActiveVersion = isInactive && activeFlow;
@@ -83,9 +87,12 @@ const FlowActiveVersionPath = ({
             ? t.t(lang, (s) => s.components.flow.deleted)
             : t.t(lang, (s) => s.components.flow.inactiveReason, {
                 reason:
-                  flow.categories.find((c) => c.group === 'inactiveReason')
-                    ?.name ??
-                  t.t(lang, (s) => s.components.flow.unknownInactiveReasons),
+                  flowInactiveReasons !== ''
+                    ? flowInactiveReasons
+                    : t.t(
+                        lang,
+                        (s) => s.components.flow.unknownInactiveReasons
+                      ),
               })}
         </InactiveReason>
       )}
