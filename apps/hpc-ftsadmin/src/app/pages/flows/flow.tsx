@@ -84,7 +84,7 @@ const FlowActiveVersionPath = ({
     );
   }
 
-  if (!activeFlow || !isInactive) {
+  if (!isInactive) {
     return null;
   }
   return (
@@ -99,12 +99,14 @@ const FlowActiveVersionPath = ({
                 t.t(lang, (s) => s.components.flow.unknownInactiveReasons),
             })}
       </InactiveReason>
-      <InactiveReason>
-        {t.t(lang, (s) => s.components.flow.activeFlowLinkText)}
-        <Link
-          to={paths.flow(activeFlow.id, activeFlow.versionID)}
-        >{`${activeFlow.id}v${activeFlow.versionID}`}</Link>
-      </InactiveReason>
+      {activeFlow && (
+        <InactiveReason>
+          {t.t(lang, (s) => s.components.flow.activeFlowLinkText)}
+          <Link
+            to={paths.flow(activeFlow.id, activeFlow.versionID)}
+          >{`${activeFlow.id}v${activeFlow.versionID}`}</Link>
+        </InactiveReason>
+      )}
     </>
   );
 };
