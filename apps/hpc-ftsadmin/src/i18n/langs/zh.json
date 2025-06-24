@@ -70,6 +70,7 @@
       "deleted": "此资金流已被删除",
       "inactiveReason": "此资金流未激活，因为它已被标记为 {reason}",
       "unknownInactiveReasons": "未知的未激活原因",
+      "restricted": "此资金流被标记为受限，不会计入FTS网站上的资助总额",
       "legacyID": "遗留贡献 ID: {id}",
       "copyOfFlow": "资金流副本",
       "addFLow": "添加资金流",

@@ -70,41 +70,44 @@ const FlowActiveVersionPath = ({
     f.categories.some((cat) => cat.categoryID === pendingReview?.id)
   );
 
+  const isRestricted = flow.restricted;
+  const isInactiveWithActiveVersion = isInactive && activeFlow;
   const isCurrentFlowPendingFlow =
     flow.id === pendingFlow?.id && flow.versionID === pendingFlow?.versionID;
 
-  if (pendingFlow && !isCurrentFlowPendingFlow) {
-    return (
-      <InactiveReason>
-        {t.t(lang, (s) => s.components.flow.hasPendingFlowLinkText)}
-        <Link
-          to={paths.flow(pendingFlow.id, pendingFlow.versionID)}
-        >{`${pendingFlow.id}v${pendingFlow.versionID}`}</Link>
-      </InactiveReason>
-    );
-  }
-
-  if (!isInactive) {
-    return null;
-  }
   return (
     <>
-      <InactiveReason>
-        {flow.deletedAt
-          ? t.t(lang, (s) => s.components.flow.deleted)
-          : t.t(lang, (s) => s.components.flow.inactiveReason, {
-              reason:
-                flow.categories.find((c) => c.group === 'inactiveReason')
-                  ?.name ??
-                t.t(lang, (s) => s.components.flow.unknownInactiveReasons),
-            })}
-      </InactiveReason>
-      {activeFlow && (
+      {isInactive && (
+        <InactiveReason>
+          {flow.deletedAt
+            ? t.t(lang, (s) => s.components.flow.deleted)
+            : t.t(lang, (s) => s.components.flow.inactiveReason, {
+                reason:
+                  flow.categories.find((c) => c.group === 'inactiveReason')
+                    ?.name ??
+                  t.t(lang, (s) => s.components.flow.unknownInactiveReasons),
+              })}
+        </InactiveReason>
+      )}
+      {pendingFlow && !isCurrentFlowPendingFlow && (
+        <InactiveReason>
+          {t.t(lang, (s) => s.components.flow.hasPendingFlowLinkText)}
+          <Link
+            to={paths.flow(pendingFlow.id, pendingFlow.versionID)}
+          >{`${pendingFlow.id}v${pendingFlow.versionID}`}</Link>
+        </InactiveReason>
+      )}
+      {isInactiveWithActiveVersion && (
         <InactiveReason>
           {t.t(lang, (s) => s.components.flow.activeFlowLinkText)}
           <Link
             to={paths.flow(activeFlow.id, activeFlow.versionID)}
           >{`${activeFlow.id}v${activeFlow.versionID}`}</Link>
+        </InactiveReason>
+      )}
+      {isRestricted && (
+        <InactiveReason>
+          {t.t(lang, (s) => s.components.flow.restricted)}
         </InactiveReason>
       )}
     </>

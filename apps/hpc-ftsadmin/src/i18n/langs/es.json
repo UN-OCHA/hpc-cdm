@@ -70,6 +70,7 @@
       "deleted": "Este flujo ha sido eliminado",
       "inactiveReason": "Este flujo no está activo porque ha sido marcado como {reason}",
       "unknownInactiveReasons": "Razones inactivas desconocidas",
+      "restricted": "Este flujo está marcado como Restringido y no se incluirá en los totales de financiación en el sitio web de FTS.",
       "legacyID": "ID de contribución heredado: {id}",
       "copyOfFlow": "Copia del flujo",
       "addFLow": "Añadir flujo",

@@ -70,6 +70,7 @@
       "deleted": "This flow has been deleted",
       "inactiveReason": "This flow is not active because it has been marked as {reason}",
       "unknownInactiveReasons": "Unknown inactive reasons",
+      "restricted": "This flow is marked as Restricted and will not be included in the funding totals on the FTS website.",
       "legacyID": "Legacy contribution ID: {id}",
       "copyOfFlow": "Copy of Flow",
       "addFLow": "Add Flow",
