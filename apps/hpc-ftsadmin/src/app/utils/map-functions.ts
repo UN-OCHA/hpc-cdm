@@ -8,6 +8,26 @@ import { isRight } from 'fp-ts/lib/Either';
 import dayjs from '../../libs/dayjs';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
 
+export const mergeArraysByUniqueProperty = <
+  T extends Record<K, unknown>,
+  K extends keyof T,
+>(
+  property: K,
+  ...arrays: T[][]
+): T[] => {
+  const map = new Map<T[K], T>();
+
+  for (const array of arrays) {
+    for (const obj of array) {
+      const value = obj[property] as T[K];
+      if (!map.has(value)) {
+        map.set(value, obj);
+      }
+    }
+  }
+  return [...map.values()];
+};
+
 export const valueToInteger = (value: string | number) => {
   const decodedValue = util.INTEGER_FROM_STRING.decode(value);
   if (isRight(decodedValue)) {

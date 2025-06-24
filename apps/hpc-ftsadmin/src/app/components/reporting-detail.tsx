@@ -8,6 +8,7 @@ import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../i18n';
 import { getContext } from '../context';
 import { fnCategories, fnOrganizations } from '../utils/fn-promises';
+import { mergeArraysByUniqueProperty } from '../utils/map-functions';
 import { type FlowFormType, FormGroup } from './flow-form/flow-form';
 
 export type ReportingDetailProps = {
@@ -92,6 +93,12 @@ const ReportingDetail = ({
     reporterContactInfo,
     reporterReferenceCode,
   } = values.reportingDetails[index] ?? REPORTING_DETAIL_INITIAL_VALUES;
+
+  const recommendedOrganizations = mergeArraysByUniqueProperty(
+    'value',
+    values.fundingSourceOrganizations,
+    values.fundingDestinationOrganizations
+  );
 
   const reportSourceOptions = () => {
     const PRIMARY = 'Primary';
@@ -264,17 +271,7 @@ const ReportingDetail = ({
                       s.components.reportingDetail.reportedByOrganization
                         .organizationsInFlow
                   )}
-                  {values.fundingSourceOrganizations.map((org) => (
-                    <ReportingOrganizationSuggestion
-                      onClick={() =>
-                        handleChange('reportedByOrganization', org)
-                      }
-                      key={org.value}
-                    >
-                      {` ${org.displayLabel} `}
-                    </ReportingOrganizationSuggestion>
-                  ))}
-                  {values.fundingDestinationOrganizations.map((org) => (
+                  {recommendedOrganizations.map((org) => (
                     <ReportingOrganizationSuggestion
                       onClick={() =>
                         handleChange('reportedByOrganization', org)
