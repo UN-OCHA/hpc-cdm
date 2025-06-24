@@ -2,6 +2,8 @@ import {
   Checkbox,
   FormControlLabel,
   type FormControlLabelProps,
+  type SxProps,
+  type Theme,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 import React from 'react';
@@ -14,6 +16,7 @@ const CheckBox = ({
   onChange,
   disabled,
   isControlled,
+  sx,
 }: {
   name: string;
   label?: string;
@@ -22,6 +25,7 @@ const CheckBox = ({
   size?: 'small' | 'medium';
   disabled?: boolean;
   isControlled?: boolean;
+  sx?: SxProps<Theme>;
 }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext();
@@ -51,7 +55,7 @@ const CheckBox = ({
       />
     ),
   };
-  return <FormControlLabel {...configCheckBox} />;
+  return <FormControlLabel sx={sx} {...configCheckBox} />;
 };
 
 export default CheckBox;

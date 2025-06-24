@@ -172,6 +172,7 @@
         "remainingAmount": "Remaining Amount:",
         "remainingOrigAmount": "Remaining Original Currency Amount:"
       },
+      "restrictedInfo": "The Restricted setting applies to this flow only. If linked parent or child flows should have the same Restricted setting, you must manually update those flows accordingly.",
       "searchSimilarFlow": "Search similar Flows",
       "sectionTitles": {
         "sourceFlow": "Funding Source(s)",

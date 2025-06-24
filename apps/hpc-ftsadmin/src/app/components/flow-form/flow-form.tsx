@@ -1,3 +1,4 @@
+import InfoIcon from '@mui/icons-material/Info';
 import {
   Box,
   Chip,
@@ -999,11 +1000,22 @@ export const FlowForm = (props: FlowFormProps) => {
                 deleteLoading: isDeleteLoading,
               }}
             />
-            <C.CheckBox
-              name="isRestricted"
-              label={t.t(lang, (s) => s.components.flowForm.fields.restricted)}
-              disabled={isDisabled}
-            />
+            <Box sx={tw`flex items-center`}>
+              <C.CheckBox
+                sx={tw`me-2`}
+                name="isRestricted"
+                label={t.t(
+                  lang,
+                  (s) => s.components.flowForm.fields.restricted
+                )}
+                disabled={isDisabled}
+              />
+              <Tooltip
+                title={t.t(lang, (s) => s.components.flowForm.restrictedInfo)}
+              >
+                <InfoIcon sx={tw`h-8 w-8`} color="primary" />
+              </Tooltip>
+            </Box>
             {initialValues && flow && !isDeleted && (
               <Box sx={tw`flex justify-between`}>
                 <Box sx={tw`flex gap-x-6 items-center`}>

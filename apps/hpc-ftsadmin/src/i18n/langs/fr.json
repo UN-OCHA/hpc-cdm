@@ -172,6 +172,7 @@
         "remainingAmount": "Montant restant :",
         "remainingOrigAmount": "Montant restant dans la devise d'origine :"
       },
+      "restrictedInfo": "Le paramètre Restreint s'applique uniquement à ce flux. Si des flux parents ou enfants liés doivent avoir le même paramètre Restreint, vous devez les mettre à jour manuellement.",
       "searchSimilarFlow": "Rechercher des flux similaires",
       "sectionTitles": {
         "sourceFlow": "Source(s) de financement",

@@ -172,6 +172,7 @@
         "remainingAmount": "Monto restante:",
         "remainingOrigAmount": "Monto restante en la moneda original:"
       },
+      "restrictedInfo": "La configuración de Restringido se aplica solo a este flujo. Si los flujos vinculados, ya sean principales o secundarios, deben tener la misma configuración de Restringido, debe actualizarlos manualmente.",
       "searchSimilarFlow": "Buscar flujos similares",
       "sectionTitles": {
         "sourceFlow": "Fuente(s) de financiación",

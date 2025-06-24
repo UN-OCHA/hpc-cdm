@@ -172,6 +172,7 @@
         "remainingAmount": "剩余金额：",
         "remainingOrigAmount": "原始货币剩余金额："
       },
+      "restrictedInfo": "受限设置仅适用于此资金流。如果关联的父流或子流也应具有相同的受限设置，您必须手动更新这些资金流。",
       "searchSimilarFlow": "搜索类似资金流",
       "sectionTitles": {
         "sourceFlow": "资金来源",
