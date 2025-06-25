@@ -141,17 +141,21 @@ const projectsOptions = (
   response: Array<{
     name: string;
     id: number;
-    code: string | null;
+    projectVersionCode: string | null;
     chipColor?: string;
     tooltip?: string;
   }>
 ): util.FormObjectValue[] => {
-  return response.map(({ name, id, chipColor, tooltip, code }) => ({
-    displayLabel: `${name}${code ? ` [${code}]` : ''}`,
-    value: id,
-    chipColor,
-    tooltip,
-  }));
+  return response.map(
+    ({ name, id, chipColor, tooltip, projectVersionCode }) => ({
+      displayLabel: `${name}${
+        projectVersionCode ? ` [${projectVersionCode}]` : ''
+      }`,
+      value: id,
+      chipColor,
+      tooltip,
+    })
+  );
 };
 // Functions to pass to <AsyncAutocompleteSelect /> fnPromise prop
 
