@@ -845,6 +845,16 @@ export const deserializeFlowForm = (
   };
 };
 
+const extractToPureFormObjectValue = (
+  value: util.FormObjectValue[]
+): util.FormObjectValue[] => {
+  return value.map(
+    ({ chipColor: _chipColor, tooltip: _tooltip, ...otherProps }) => ({
+      ...otherProps,
+    })
+  );
+};
+
 const flowFormToFlowsFilterValues = async (
   {
     fundingDestinationPlan,
@@ -856,24 +866,27 @@ const flowFormToFlowsFilterValues = async (
 ): Promise<FlowsFilterValues> => {
   const destinationPlans = fundingDestinationPlan?.at(0)?.value
     ? await env.model.plans
-        .getAutocompletePlansById({
+        .getPlan({
           id: valueToInteger(fundingDestinationPlan[0].value),
+          scopes: ['planVersion'],
         })
-        .then((plans) =>
-          plans.map(
-            (plan): util.FormObjectValue => ({
-              displayLabel: `Plan ID: ${plan.id}`,
-              value: plan.id,
-            })
-          )
-        )
+        .then((plan): [util.FormObjectValue] => [
+          {
+            displayLabel: plan.planVersion.name,
+            value: plan.id,
+          },
+        ])
     : fundingDestinationPlan;
 
   return {
     includeChildrenOfParkedFlows: true,
-    sourceLocations: fundingSourceLocations,
-    sourceOrganizations: fundingSourceOrganizations,
-    destinationOrganizations: fundingDestinationOrganizations,
+    sourceLocations: extractToPureFormObjectValue(fundingSourceLocations),
+    sourceOrganizations: extractToPureFormObjectValue(
+      fundingSourceOrganizations
+    ),
+    destinationOrganizations: extractToPureFormObjectValue(
+      fundingDestinationOrganizations
+    ),
     destinationPlans,
   };
 };
