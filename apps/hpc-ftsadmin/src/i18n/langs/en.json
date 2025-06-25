@@ -111,7 +111,7 @@
       },
       "copyFlow": "Copy Flow",
       "createdUpdated": "Created at {createdDate}, and latest updated at {updatedDate}",
-      "deleteFlow": "Delete Flow",
+      "deleteFlow": "Delete Flow Version",
       "deletedTag": "Deleted",
       "fields": {
         "restricted": "Restricted to internal use",

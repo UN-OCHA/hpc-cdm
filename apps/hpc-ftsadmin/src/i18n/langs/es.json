@@ -111,7 +111,7 @@
       },
       "copyFlow": "Copiar flujo",
       "createdUpdated": "Creado el {createdDate}, y actualizado por última vez el {updatedDate}",
-      "deleteFlow": "Eliminar flujo",
+      "deleteFlow": "Eliminar Versión de Flujo",
       "deletedTag": "Eliminado",
       "fields": {
         "restricted": "Restringido para uso interno",
