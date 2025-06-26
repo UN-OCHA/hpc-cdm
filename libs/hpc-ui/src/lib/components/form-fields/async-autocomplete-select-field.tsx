@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { type util } from '@unocha/hpc-data';
 import { useField, useFormikContext } from 'formik';
-import { type ReactNode, useEffect, useState } from 'react';
+import React, { type ReactNode, useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import { REQUIRED_BORDER_STYLE } from '../../util';
 import { StyledTextField } from './text-field';
@@ -16,17 +16,14 @@ const FlexDiv = tw.div`ms-8 border-l border-l-slate-400 border-solid border-y-0 
 const StyledLI = tw.li`w-full max-h-min`;
 const ChildrenOption = ({
   children,
-  key,
+
   ...otherProps
 }: {
   children: React.ReactNode;
-  key: string | number;
 }) => {
   return (
     <FlexDiv>
-      <StyledLI {...otherProps} key={key}>
-        {children}
-      </StyledLI>
+      <StyledLI {...otherProps}>{children}</StyledLI>
     </FlexDiv>
   );
 };
@@ -295,12 +292,12 @@ const AsyncAutocompleteSelect = ({
     },
     clearOnBlur: false,
     loading: isLoading,
-    renderOption: (props, option) => {
+    renderOption: ({ key: _key, ...props }, option) => {
       if (allowChildrenRender && option.parent) {
         return (
-          <ChildrenOption {...props} key={option.value}>
-            {option.displayLabel}
-          </ChildrenOption>
+          <React.Fragment key={option.value}>
+            <ChildrenOption {...props}>{option.displayLabel}</ChildrenOption>
+          </React.Fragment>
         );
       }
       return (
