@@ -992,6 +992,8 @@ export const FlowForm = (props: FlowFormProps) => {
               !validateReportingDetailsURLFormat(url, lang),
             true
           );
+        const isFlowLinkEmptyAndDisabled =
+          values.childFlows.length === 0 && !values.parentFlow && isDisabled;
         return (
           <Form>
             <BlockNavigationOnUnsavedChanges
@@ -2032,112 +2034,116 @@ export const FlowForm = (props: FlowFormProps) => {
                   shouldAcceptChange={shouldAcceptAllPendingChanges}
                 />
               </FormGroup>
-              <FormGroup
-                title={t.t(
-                  lang,
-                  (s) => s.components.flowForm.sectionTitles.flowLink
-                )}
-              >
-                {values.parentFlow && (
-                  <Box sx={tw`my-4`}>
-                    <h3>
-                      {t.t(lang, (s) => s.components.flowLink.parentFlow)}
-                    </h3>
-                    <FlowLink
-                      flowLink={values.parentFlow}
-                      fieldName="parentFlow"
-                      disabled={isDisabled}
-                    />
-                  </Box>
-                )}
-
-                {values.childFlows.length > 0 && (
-                  <Box sx={tw`mb-4`}>
-                    <h3>
-                      {t.t(lang, (s) => s.components.flowLink.childFlows)}
-                    </h3>
-                    <Box sx={tw`flex flex-col gap-y-4 my-4`}>
-                      {values.childFlows.map((childFlow) => (
-                        <div key={childFlow.id}>
-                          <FlowLink
-                            flowLink={childFlow}
-                            fieldName="childFlows"
-                            disabled={isDisabled}
-                          />
-                        </div>
-                      ))}
+              {!isFlowLinkEmptyAndDisabled && (
+                <FormGroup
+                  title={t.t(
+                    lang,
+                    (s) => s.components.flowForm.sectionTitles.flowLink
+                  )}
+                >
+                  {values.parentFlow && (
+                    <Box sx={tw`my-4`}>
+                      <h3>
+                        {t.t(lang, (s) => s.components.flowLink.parentFlow)}
+                      </h3>
+                      <FlowLink
+                        flowLink={values.parentFlow}
+                        fieldName="parentFlow"
+                        disabled={isDisabled}
+                      />
                     </Box>
-                    <Box sx={tw`text-end mb-6 w-fit float-end flex gap-x-12`}>
-                      <Box sx={tw`flex flex-col justify-end`}>
-                        <span />
-                        <span>
-                          {t.t(
-                            lang,
-                            (s) =>
-                              s.components.flowForm.remainingAmount
-                                .remainingAmount
-                          )}
-                        </span>
-                        {values.amountOriginalCurrency && (
+                  )}
+
+                  {values.childFlows.length > 0 && (
+                    <Box sx={tw`mb-4`}>
+                      <h3>
+                        {t.t(lang, (s) => s.components.flowLink.childFlows)}
+                      </h3>
+                      <Box sx={tw`flex flex-col gap-y-4 my-4`}>
+                        {values.childFlows.map((childFlow) => (
+                          <div key={childFlow.id}>
+                            <FlowLink
+                              flowLink={childFlow}
+                              fieldName="childFlows"
+                              disabled={isDisabled}
+                            />
+                          </div>
+                        ))}
+                      </Box>
+                      <Box sx={tw`text-end mb-6 w-fit float-end flex gap-x-12`}>
+                        <Box sx={tw`flex flex-col justify-end`}>
+                          <span />
                           <span>
                             {t.t(
                               lang,
                               (s) =>
                                 s.components.flowForm.remainingAmount
-                                  .remainingOrigAmount
+                                  .remainingAmount
                             )}
                           </span>
-                        )}
-                      </Box>
-                      <Box sx={tw`flex flex-col justify-end font-bold`}>
-                        <span />
-                        <span>{getChildFlowsAmountUSDDiff(values)}</span>
-                        <span>{getChildFlowsOriginalAmountDiff(values)}</span>
-                      </Box>
-
-                      <Box sx={tw`flex flex-col font-bold`}>
-                        <RestrictedSpan>
-                          {t.t(
-                            lang,
-                            (s) =>
-                              s.components.flowForm.remainingAmount
-                                .excludeRestricted
+                          {values.amountOriginalCurrency && (
+                            <span>
+                              {t.t(
+                                lang,
+                                (s) =>
+                                  s.components.flowForm.remainingAmount
+                                    .remainingOrigAmount
+                              )}
+                            </span>
                           )}
-                        </RestrictedSpan>
-                        <span>{getChildFlowsAmountUSDDiff(values, true)}</span>
-                        <span>
-                          {getChildFlowsOriginalAmountDiff(values, true)}
-                        </span>
+                        </Box>
+                        <Box sx={tw`flex flex-col justify-end font-bold`}>
+                          <span />
+                          <span>{getChildFlowsAmountUSDDiff(values)}</span>
+                          <span>{getChildFlowsOriginalAmountDiff(values)}</span>
+                        </Box>
+
+                        <Box sx={tw`flex flex-col font-bold`}>
+                          <RestrictedSpan>
+                            {t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.remainingAmount
+                                  .excludeRestricted
+                            )}
+                          </RestrictedSpan>
+                          <span>
+                            {getChildFlowsAmountUSDDiff(values, true)}
+                          </span>
+                          <span>
+                            {getChildFlowsOriginalAmountDiff(values, true)}
+                          </span>
+                        </Box>
                       </Box>
                     </Box>
-                  </Box>
-                )}
-                {!isDisabled && (
-                  <Box sx={tw`flex gap-x-4`}>
-                    {!values.parentFlow && (
+                  )}
+                  {!isDisabled && (
+                    <Box sx={tw`flex gap-x-4`}>
+                      {!values.parentFlow && (
+                        <FlowSearch
+                          name="parentFlow"
+                          text={t.t(
+                            lang,
+                            (s) => s.components.flowForm.fields.parentFlow
+                          )}
+                          startIcon={MdAdd}
+                          currentFlow={flow}
+                        />
+                      )}
                       <FlowSearch
-                        name="parentFlow"
+                        name="childFlows"
                         text={t.t(
                           lang,
-                          (s) => s.components.flowForm.fields.parentFlow
+                          (s) => s.components.flowForm.fields.childFlows
                         )}
                         startIcon={MdAdd}
                         currentFlow={flow}
                       />
-                    )}
-                    <FlowSearch
-                      name="childFlows"
-                      text={t.t(
-                        lang,
-                        (s) => s.components.flowForm.fields.childFlows
-                      )}
-                      startIcon={MdAdd}
-                      currentFlow={flow}
-                    />
-                  </Box>
-                )}
-              </FormGroup>
-              {flow && flow.versions.length > 1 && (
+                    </Box>
+                  )}
+                </FormGroup>
+              )}
+              {flow && flow.versions.length > 1 && flow.versionID > 1 && (
                 <FormGroup
                   title={t.t(
                     lang,
