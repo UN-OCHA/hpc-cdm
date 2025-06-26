@@ -69,7 +69,7 @@
       "createdBy": "تم الإنشاء في {date} بواسطة {user}",
       "deleted": "تم حذف هذا التدفق",
       "inactiveReason": "هذا التدفق غير نشط لأنه تم تعيينه كـ {reason}",
-      "unknownInactiveReasons": "أسباب غير معروفة لعدم النشاط",
+      "unknownInactiveReasons": "سبب غير معروف للتعطيل",
       "restricted": "تم تصنيف هذا التدفق على أنه مقيد ولن يتم تضمينه في إجماليات التمويل على موقع FTS الإلكتروني",
       "legacyID": "معرف المساهمة القديم: {id}",
       "copyOfFlow": "نسخة من التدفق",

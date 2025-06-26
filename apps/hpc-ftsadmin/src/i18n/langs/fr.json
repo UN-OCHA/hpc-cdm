@@ -69,7 +69,7 @@
       "createdBy": "Créé le {date} par {user}",
       "deleted": "Ce flux a été supprimé",
       "inactiveReason": "Ce flux n'est pas actif car il a été marqué comme {reason}",
-      "unknownInactiveReasons": "Raisons inactives inconnues",
+      "unknownInactiveReasons": "Raison inactive inconnue",
       "restricted": "Ce flux est marqué comme Restreint et ne sera pas inclus dans les totaux de financement sur le site Web du FTS.",
       "legacyID": "ID de contribution hérité : {id}",
       "copyOfFlow": "Copie du flux",

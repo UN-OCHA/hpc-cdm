@@ -69,7 +69,7 @@
       "createdBy": "Created {date} by {user}",
       "deleted": "This flow has been deleted",
       "inactiveReason": "This flow is not active because it has been marked as {reason}",
-      "unknownInactiveReasons": "Unknown inactive reasons",
+      "unknownInactiveReasons": "Unknown inactive reason",
       "restricted": "This flow is marked as Restricted and will not be included in the funding totals on the FTS website.",
       "legacyID": "Legacy contribution ID: {id}",
       "copyOfFlow": "Copy of Flow",
