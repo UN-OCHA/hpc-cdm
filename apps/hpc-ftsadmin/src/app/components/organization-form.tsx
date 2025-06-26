@@ -42,7 +42,7 @@ export interface AddEditOrganizationValues {
   isActive?: boolean;
   isVerified?: boolean;
   notes?: string; // "notes" makes reference what in the UI it's called "Comments"
-  organizationTypes: util.FormObjectValue | null;
+  organizationSubType: util.FormObjectValue | null;
   organizationLevel?: util.FormObjectValue | null; // Number[] we need array of IDs
   parent?: util.FormObjectValue | null;
   isCollectiveInd?: boolean;
@@ -57,7 +57,7 @@ export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   isActive: true,
   isVerified: true,
   notes: '', // "notes" makes reference what in the UI it's called "Comments"
-  organizationTypes: null,
+  organizationSubType: null,
   organizationLevel: null, // Number[] we need array of IDs
   parent: null,
   isCollectiveInd: false,
@@ -81,7 +81,10 @@ const InfoText = tw.p`
   text-unocha-textLight
 `;
 
-const parseFormValues = (values: AddEditOrganizationValues) => {
+const parseFormValues = (
+  values: AddEditOrganizationValues,
+  organizationTypes: categories.GetCategoriesResult
+) => {
   const locations = values.locations
     ?.flatMap((loc) => [
       valueToInteger(loc.value),
@@ -92,9 +95,19 @@ const parseFormValues = (values: AddEditOrganizationValues) => {
   const parsedLocations = locations?.length
     ? [...new Set(locations)]
     : undefined;
-  const categories = values.organizationTypes?.value
-    ? [valueToInteger(values.organizationTypes.value)]
-    : [];
+
+  let categories: number[] = [];
+  const organizationSubType = values.organizationSubType?.value;
+  if (organizationSubType) {
+    const organizationTypeID = organizationTypes.find(
+      (orgType) => orgType.id === valueToInteger(organizationSubType)
+    )?.parentID;
+
+    if (organizationTypeID) {
+      categories = [organizationTypeID, valueToInteger(organizationSubType)];
+    }
+  }
+
   const parentID = values.parent?.value
     ? valueToInteger(values.parent.value)
     : undefined;
@@ -110,23 +123,25 @@ const parseFormValues = (values: AddEditOrganizationValues) => {
 };
 const formToUpdate = (
   values: AddEditOrganizationValues,
-  id: number
+  id: number,
+  organizationTypes: categories.GetCategoriesResult
 ): organizations.UpdateOrganizationParams => {
   const res: organizations.UpdateOrganizationParams = {
     id,
     ...values,
-    ...parseFormValues(values),
+    ...parseFormValues(values, organizationTypes),
   };
   return res;
 };
 
 const formToCreate = (
-  values: AddEditOrganizationValues
+  values: AddEditOrganizationValues,
+  organizationTypes: categories.GetCategoriesResult
 ): organizations.CreateOrganizationParams => {
   const res: organizations.CreateOrganizationParams = {
     organization: {
       ...values,
-      ...parseFormValues(values),
+      ...parseFormValues(values, organizationTypes),
     },
   };
   return res;
@@ -147,7 +162,7 @@ export const OrganizationForm = ({
   const FORM_VALIDATION = io.type({
     name: util.NON_EMPTY_STRING,
     abbreviation: util.NON_EMPTY_STRING,
-    organizationTypes: util.NON_NULL_VALUE,
+    organizationSubType: util.NON_NULL_VALUE,
   });
 
   const VALIDATION_ERROR_MESSAGES: Record<
@@ -162,7 +177,7 @@ export const OrganizationForm = ({
       lang,
       (s) => s.components.organizationUpdateCreate.formErrors.abbreviation
     ),
-    organizationTypes: t.t(
+    organizationSubType: t.t(
       lang,
       (s) => s.components.organizationUpdateCreate.formErrors.organizationType
     ),
@@ -175,7 +190,7 @@ export const OrganizationForm = ({
     setFieldValue: FormikHelpers<AddEditOrganizationValues>['setFieldValue'];
     newValue: util.FormObjectValue | util.FormObjectValue[] | null;
   }) => {
-    setFieldValue('organizationTypes', newValue);
+    setFieldValue('organizationSubType', newValue);
 
     if (!newValue || !isFormObjectValue(newValue)) {
       setFieldValue('organizationLevel', null);
@@ -238,7 +253,7 @@ export const OrganizationForm = ({
     toast.dismiss();
     if (id && load) {
       await environment.model.organizations
-        .updateOrganization(formToUpdate(values, id))
+        .updateOrganization(formToUpdate(values, id, organizationTypes))
         .then(() => {
           load();
           toast.success(
@@ -253,7 +268,7 @@ export const OrganizationForm = ({
         .catch((error) => errorHandling(error));
     } else {
       await environment.model.organizations
-        .createOrganization(formToCreate(values))
+        .createOrganization(formToCreate(values, organizationTypes))
         .then((org) => {
           navigate(paths.organization(org.id), {
             state: {
@@ -355,7 +370,7 @@ export const OrganizationForm = ({
               (s) =>
                 s.components.organizationUpdateCreate.fields.organizationTypes
             )}
-            name="organizationTypes"
+            name="organizationSubType"
             options={fnOrganizationType(organizationTypes)}
             onChange={(newValue) =>
               handleChangeOrganizationType({ setFieldValue, newValue })

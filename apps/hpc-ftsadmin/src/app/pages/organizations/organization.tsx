@@ -120,7 +120,7 @@ const parseOrganizationToInitialValue = (
     isActive,
     isVerified,
     isCollectiveInd,
-    organizationTypes: null,
+    organizationSubType: null,
     nativeName: nativeName ?? undefined,
     url: url ?? undefined,
     notes: notes ?? undefined,
@@ -172,7 +172,7 @@ const parseOrganizationToInitialValue = (
       (orgType) => orgType.value === organizationSubType?.value
     ) ?? orgCategoryTo(categories, 'type');
 
-  res.organizationTypes = organizationType;
+  res.organizationSubType = organizationType;
 
   return res;
 };
