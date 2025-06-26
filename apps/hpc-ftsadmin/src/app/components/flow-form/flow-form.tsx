@@ -743,18 +743,20 @@ export const FlowForm = (props: FlowFormProps) => {
             load();
             return;
           }
+          setIsSubmitLoading(false);
           navigate(paths.flow(updatedFlow.id, updatedFlow.versionID));
         })
         .catch((error) => {
           handleSubmitError(error);
-        })
-        .finally(() => setIsSubmitLoading(false));
+          setIsSubmitLoading(false);
+        });
     } else {
       env.model.flows
         .createFlow(
           parseFlowForm(values, inactiveReasons, flowType, initialValues)
         )
         .then((res) => {
+          setIsSubmitLoading(false);
           navigate(paths.flow(res.id, res.versionID), {
             state: {
               successMessage: t.t(
@@ -765,9 +767,9 @@ export const FlowForm = (props: FlowFormProps) => {
           });
         })
         .catch((error) => {
+          setIsSubmitLoading(false);
           handleSubmitError(error);
-        })
-        .finally(() => setIsSubmitLoading(false));
+        });
     }
   };
   const handleChangeFirstReported = (
