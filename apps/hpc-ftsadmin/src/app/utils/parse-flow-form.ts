@@ -697,7 +697,7 @@ const reportDetailsToReportingDetailProps = (
       displayLabel: reportDetail.categories[0]?.name,
       value: reportDetail.categories[0]?.id,
     },
-    sourceSystemRecordId: reportDetail.id.toString(),
+    sourceSystemRecordId: reportDetail.sourceID ?? '',
     verified: reportDetail.verified.toString(),
     dateReported: reportDetail.date ? dayjs(reportDetail.date) : null,
     reporterReferenceCode: reportDetail.refCode ?? '',
