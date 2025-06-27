@@ -1154,7 +1154,7 @@ export class Dummy {
             }
             //  Remove organization
             this.data.organizations.splice(index, 1);
-            return { status: 'ok' };
+            return { meta: { language: 'en' } };
           }
         ),
         mergeOrganizations: dummyEndpoint(

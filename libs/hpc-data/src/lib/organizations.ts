@@ -222,7 +222,9 @@ export type DeleteOrganizationParams = t.TypeOf<
   typeof DELETE_ORGANIZATION_PARAMS
 >;
 
-export const DELETE_ORGANIZATION_RESULT = t.type({ status: t.literal('ok') });
+export const DELETE_ORGANIZATION_RESULT = t.type({
+  meta: t.type({ language: t.string }),
+});
 
 export type DeleteOrganizationResult = t.TypeOf<
   typeof DELETE_ORGANIZATION_RESULT
