@@ -40,6 +40,13 @@ const FlowLinkContainer = tw.div`
   p-4
 `;
 
+const LongSpan = tw.span`
+  basis-3/12
+`;
+const ShortSpan = tw.span`
+  basis-1/12
+`;
+
 const FlowLink = ({
   flowLink,
   fieldName,
@@ -94,15 +101,17 @@ const FlowLink = ({
       <Link to={paths.flow(id, versionID)} target="_blank">
         #{id}
       </Link>
-      <span>{description}</span>
-      <span>{flowLinkDescription}</span>
-      <span>{flowLinkDate}</span>
-      <span>US${integerToCurrency(valueToInteger(amountUSD))}</span>
-      {amountOriginalCurrency && currency && (
-        <span>
+      <LongSpan>{description}</LongSpan>
+      <LongSpan>{flowLinkDescription}</LongSpan>
+      <ShortSpan>{flowLinkDate}</ShortSpan>
+      <ShortSpan>US${integerToCurrency(valueToInteger(amountUSD))}</ShortSpan>
+      {amountOriginalCurrency && currency ? (
+        <ShortSpan>
           {currency}
           {integerToCurrency(valueToInteger(amountOriginalCurrency))}
-        </span>
+        </ShortSpan>
+      ) : (
+        <ShortSpan>--</ShortSpan>
       )}
       {!disabled && (
         <C.Button
