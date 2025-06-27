@@ -8,10 +8,12 @@ import {
 } from '@mui/material';
 import { type flows } from '@unocha/hpc-data';
 import { C, useDataLoader } from '@unocha/hpc-ui';
+import { Link } from 'react-router';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import dayjs from '../../../libs/dayjs';
 import { getContext } from '../../context';
+import { URL_REGEX } from '../../utils/constants';
 
 type Props = {
   flow: flows.GetFlowResult;
@@ -87,8 +89,17 @@ const FlowPreviousReportingDetails = ({ flow }: Props) => {
                       {rD.verified &&
                         t.t(lang, (s) => s.components.mergeModal.button.yes)}
                     </TableCell>
-                    <TableCell>
-                      {rD.reportFiles.map((rF) => rF.title).join(', ')}
+                    <TableCell sx={tw`flex gap-x-2`}>
+                      {!rD.reportFiles.length ? (
+                        <span>--</span>
+                      ) : (
+                        rD.reportFiles.map((rF) => {
+                          if (rF.url && URL_REGEX.test(rF.url)) {
+                            return <Link to={rF.url}>{rF.title}</Link>;
+                          }
+                          return <span>{rF.title}</span>;
+                        })
+                      )}
                     </TableCell>
                   </TableRow>
                 ))

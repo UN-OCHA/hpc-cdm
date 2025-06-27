@@ -7,6 +7,7 @@ import { MdUploadFile } from 'react-icons/md';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../i18n';
 import { getContext } from '../context';
+import { URL_REGEX } from '../utils/constants';
 import { fnCategories, fnOrganizations } from '../utils/fn-promises';
 import { mergeArraysByUniqueProperty } from '../utils/map-functions';
 import { type FlowFormType, FormGroup } from './flow-form/flow-form';
@@ -62,7 +63,7 @@ export const validateReportingDetailsURLFormat = (
   if (value === '') {
     return;
   }
-  return /^https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+$/.test(value)
+  return URL_REGEX.test(value)
     ? undefined
     : t.t(lang, (s) => s.components.reportingDetail.validation.url);
 };
