@@ -505,8 +505,15 @@ export const FlowForm = (props: FlowFormProps) => {
     isPending ? pendingValuesFlowForm(initialValues, flow) : undefined
   );
 
-  const isDisabled = isInactive && !isPending;
+  const isDisabled = !!isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
+  const cancelledInactiveReason = inactiveReasons.find(
+    (reason) => reason.name === 'Cancelled'
+  );
+  const isCancelled = !!(
+    isInactive &&
+    flow?.categories.some((cat) => cat.id === cancelledInactiveReason?.id)
+  );
 
   const [methodOptions, childMethodOptions] = method.reduce(
     (acc, value) => {
@@ -2197,7 +2204,7 @@ export const FlowForm = (props: FlowFormProps) => {
                 </FormGroup>
               )}
             </Box>
-            {!isDeleted && (
+            {!(isDeleted || (isInactive && !isCancelled && !isPending)) && (
               <Snackbar
                 open
                 anchorOrigin={{
@@ -2259,7 +2266,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       shouldDisplayLoading={isSubmitLoading}
                     />
                   )}
-                  {isInactive && !isPending && (
+                  {isCancelled && (
                     <C.Button
                       onClick={() => {
                         handleSubmit({
