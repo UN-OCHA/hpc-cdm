@@ -571,12 +571,14 @@ const flowObjectToFormObjectValue = (
       .map((plan) => ({
         displayLabel: plan.planVersion.name,
         value: plan.id,
+        ...inferredTransferredChipColor(flow, plan, 'plan'),
       })),
     fundingSourceProject: sourceFlow.projects
       .filter((project) => project.flowObject.refDirection === 'source')
       .map((project) => ({
         displayLabel: project.projectVersions[0]?.name,
         value: project.id,
+        ...inferredTransferredChipColor(flow, project, 'project'),
       })),
     fundingSourceUsageYears: usageYearsOptions(
       sourceFlow.usageYears
@@ -649,12 +651,14 @@ const flowObjectToFormObjectValue = (
       .map((plan) => ({
         displayLabel: plan.planVersion.name,
         value: plan.id,
+        ...inferredTransferredChipColor(flow, plan, 'plan'),
       })),
     fundingDestinationProject: flow.projects
       .filter((project) => project.flowObject.refDirection === 'destination')
       .map((project) => ({
         displayLabel: project.projectVersions[0]?.name,
         value: project.id,
+        ...inferredTransferredChipColor(flow, project, 'project'),
       })),
     fundingDestinationUsageYears: usageYearsOptions(
       flow.usageYears
