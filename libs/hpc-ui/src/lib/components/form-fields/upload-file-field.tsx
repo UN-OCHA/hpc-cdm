@@ -83,6 +83,7 @@ const UploadFile = ({
   const inputFile = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [savedFile, setSavedFile] = useState<File>();
+  const [isChanged, setIsChanged] = useState(false);
 
   const fileName = file ? file.displayLabel : savedFile ? savedFile.name : '';
   const hasNoFile = !file && !savedFile;
@@ -154,9 +155,9 @@ const UploadFile = ({
                           inputFile.current?.click();
                           return Promise.resolve(undefined);
                         }
-                        return onDelete(setSavedFile).then(
-                          () => inputFile.current?.click()
-                        );
+                        setIsChanged(true);
+                        inputFile.current?.click();
+                        return Promise.resolve(undefined);
                       }}
                       IconComponent={ChangeCircleIcon}
                       tooltipText={t.t(lang, (s) => s.uploadFileField.change)}
@@ -178,8 +179,11 @@ const UploadFile = ({
       <VisuallyHiddenInput
         type="file"
         name={name}
-        onChange={(event) => {
+        onChange={async (event) => {
           const newFile = event.target.files?.[0];
+          if (!newFile) {
+            return;
+          }
           if (confirmUpload) {
             const { validation } = confirmUpload;
             if (!validation(newFile)) {
@@ -189,7 +193,11 @@ const UploadFile = ({
             return;
           }
           setIsLoading(true);
-          onUpload(newFile).then(() => setIsLoading(false));
+          if (onDelete && isChanged) {
+            await onDelete(setSavedFile);
+          }
+          await onUpload(newFile);
+          setIsLoading(false);
         }}
         ref={inputFile}
       />
