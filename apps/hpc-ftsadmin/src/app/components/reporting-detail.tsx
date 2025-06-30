@@ -416,6 +416,7 @@ const ReportingDetail = ({
                 : undefined
             }
             disabled={disabled}
+            lang={lang}
           />
         </Box>
         <Box sx={tw`basis-1/2 max-w-[50%]`}>

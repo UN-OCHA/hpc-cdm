@@ -1,5 +1,11 @@
 {
-  "date-picker": {
+  "datePicker": {
     "today": "Today"
+  },
+  "uploadFileField": {
+    "change": "Change",
+    "delete": "Delete",
+    "download": "Download",
+    "upload": "Upload"
   }
 }

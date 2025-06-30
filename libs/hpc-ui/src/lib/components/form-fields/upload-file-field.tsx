@@ -7,6 +7,7 @@ import { styled } from '@mui/material/styles';
 import { type util } from '@unocha/hpc-data';
 import { useRef, useState } from 'react';
 import tw from 'twin.macro';
+import { type LanguageKey, t } from '../../i18n';
 import AsyncIconButton from '../async-icon-button';
 import { Button, type ButtonProps } from '../button';
 
@@ -25,6 +26,7 @@ type UploadFileProps = {
     onError: (err: unknown) => unknown;
   };
   disabled?: boolean;
+  lang?: LanguageKey;
 };
 
 /**
@@ -76,21 +78,41 @@ const UploadFile = ({
   file,
   confirmUpload,
   disabled,
+  lang = 'en',
 }: UploadFileProps) => {
   const inputFile = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [savedFile, setSavedFile] = useState<File>();
 
   const fileName = file ? file.displayLabel : savedFile ? savedFile.name : '';
+  const hasNoFile = !file && !savedFile;
 
   const resetFileField = () => {
     if (inputFile.current?.value) {
       inputFile.current.value = '';
     }
   };
+  const handleUpload = async () => {
+    if (!confirmUpload) {
+      return;
+    }
+    const { onError, onSuccess } = confirmUpload;
+    setIsLoading(true);
+    try {
+      await onUpload(savedFile);
+      onSuccess(fileName);
+      setSavedFile(undefined);
+      resetFileField();
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      onError(error);
+    }
+  };
+
   return (
     <div>
-      {!file && !savedFile ? (
+      {hasNoFile ? (
         !disabled && (
           <Button
             {...buttonConfig}
@@ -103,7 +125,7 @@ const UploadFile = ({
       ) : (
         <FileViewContainer>
           <Box sx={tw`flex gap-x-2 items-center overflow-hidden`}>
-            <FilePresentIcon color={'primary'} />
+            <FilePresentIcon color="primary" />
             <OverflowSpan>{fileName}</OverflowSpan>
           </Box>
           <ButtonsContainer>
@@ -112,21 +134,8 @@ const UploadFile = ({
                 {confirmUpload && (
                   <Button
                     color="primary"
-                    onClick={async () => {
-                      const { onError, onSuccess } = confirmUpload;
-                      setIsLoading(true);
-                      try {
-                        await onUpload(savedFile);
-                        onSuccess(fileName);
-                        setSavedFile(undefined);
-                        resetFileField();
-                      } catch (error) {
-                        onError(error);
-                      } finally {
-                        setIsLoading(false);
-                      }
-                    }}
-                    text="Upload"
+                    onClick={handleUpload}
+                    text={t.t(lang, (s) => s.uploadFileField.upload)}
                   />
                 )}
                 {onDelete && (
@@ -137,6 +146,7 @@ const UploadFile = ({
                         resetFileField();
                       }}
                       IconComponent={DeleteIcon}
+                      tooltipText={t.t(lang, (s) => s.uploadFileField.delete)}
                     />
                     <AsyncIconButton
                       fnPromise={() => {
@@ -149,6 +159,7 @@ const UploadFile = ({
                         );
                       }}
                       IconComponent={ChangeCircleIcon}
+                      tooltipText={t.t(lang, (s) => s.uploadFileField.change)}
                     />
                   </>
                 )}
@@ -158,6 +169,7 @@ const UploadFile = ({
               <AsyncIconButton
                 fnPromise={onDownload}
                 IconComponent={FileDownloadIcon}
+                tooltipText={t.t(lang, (s) => s.uploadFileField.download)}
               />
             )}
           </ButtonsContainer>

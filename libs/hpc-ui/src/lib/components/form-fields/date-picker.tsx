@@ -118,7 +118,7 @@ const DatePicker = ({
               }
             }}
           >
-            {t.t(lang, (s) => s['date-picker'].today)}
+            {t.t(lang, (s) => s.datePicker.today)}
           </Link>
         )}
       </StyledDatePicker>
