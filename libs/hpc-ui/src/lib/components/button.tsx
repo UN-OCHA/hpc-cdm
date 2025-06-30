@@ -99,7 +99,12 @@ const BaseButton = (props: Props) => {
       {children && <span>{children}</span>}
       {EndIcon && <EndIcon size={16} />}
       {shouldDisplayCaret && <Caret direction="end" size={16} />}
-      {shouldDisplayLoading && <CircularProgress size={16} color="inherit" />}
+      {shouldDisplayLoading && (
+        <CircularProgress
+          size={16}
+          color={color === 'primary_light' ? 'primary' : 'inherit'}
+        />
+      )}
     </>
   );
 
