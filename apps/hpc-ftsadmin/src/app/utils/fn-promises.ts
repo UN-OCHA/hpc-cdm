@@ -137,7 +137,7 @@ export const governingEntitiesOptions = (
   }));
 };
 
-const projectsOptions = (
+export const projectsOptions = (
   response: Array<{
     name: string;
     id: number;

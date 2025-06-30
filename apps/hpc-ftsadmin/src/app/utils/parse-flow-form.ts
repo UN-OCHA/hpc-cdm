@@ -24,6 +24,7 @@ import {
   defaultOptions,
   locationsOptions,
   organizationsOptions,
+  projectsOptions,
   usageYearsOptions,
 } from './fn-promises';
 import {
@@ -573,13 +574,16 @@ const flowObjectToFormObjectValue = (
         value: plan.id,
         ...inferredTransferredChipColor(flow, plan, 'plan'),
       })),
-    fundingSourceProject: sourceFlow.projects
-      .filter((project) => project.flowObject.refDirection === 'source')
-      .map((project) => ({
-        displayLabel: project.projectVersions[0]?.name,
-        value: project.id,
-        ...inferredTransferredChipColor(flow, project, 'project'),
-      })),
+    fundingSourceProject: projectsOptions(
+      sourceFlow.projects
+        .filter((project) => project.flowObject.refDirection === 'source')
+        .map((project) => ({
+          ...project,
+          projectVersionCode: project.projectVersions[0]?.code,
+          name: project.projectVersions[0]?.name,
+          ...inferredTransferredChipColor(flow, project, 'project'),
+        }))
+    ),
     fundingSourceUsageYears: usageYearsOptions(
       sourceFlow.usageYears
         .filter((usageYear) => usageYear.flowObject.refDirection === 'source')
@@ -653,13 +657,17 @@ const flowObjectToFormObjectValue = (
         value: plan.id,
         ...inferredTransferredChipColor(flow, plan, 'plan'),
       })),
-    fundingDestinationProject: flow.projects
-      .filter((project) => project.flowObject.refDirection === 'destination')
-      .map((project) => ({
-        displayLabel: project.projectVersions[0]?.name,
-        value: project.id,
-        ...inferredTransferredChipColor(flow, project, 'project'),
-      })),
+
+    fundingDestinationProject: projectsOptions(
+      flow.projects
+        .filter((project) => project.flowObject.refDirection === 'destination')
+        .map((project) => ({
+          ...project,
+          projectVersionCode: project.projectVersions[0]?.code,
+          name: project.projectVersions[0]?.name,
+          ...inferredTransferredChipColor(flow, project, 'project'),
+        }))
+    ),
     fundingDestinationUsageYears: usageYearsOptions(
       flow.usageYears
         .filter(
