@@ -89,16 +89,22 @@ const FlowPreviousReportingDetails = ({ flow }: Props) => {
                       {rD.verified &&
                         t.t(lang, (s) => s.components.mergeModal.button.yes)}
                     </TableCell>
-                    <TableCell sx={tw`flex gap-x-2`}>
+                    <TableCell>
                       {!rD.reportFiles.length ? (
                         <span>--</span>
                       ) : (
-                        rD.reportFiles.map((rF) => {
-                          if (rF.url && URL_REGEX.test(rF.url)) {
-                            return <Link to={rF.url}>{rF.title}</Link>;
-                          }
-                          return <span>{rF.title}</span>;
-                        })
+                        <Box sx={tw`flex gap-x-2`}>
+                          {rD.reportFiles.map((rF, i) => {
+                            if (rF.url && URL_REGEX.test(rF.url)) {
+                              return (
+                                <Link to={rF.url} key={i}>
+                                  {rF.title}
+                                </Link>
+                              );
+                            }
+                            return <span>{rF.title}</span>;
+                          })}
+                        </Box>
                       )}
                     </TableCell>
                   </TableRow>
