@@ -51,13 +51,13 @@ const StyledDiv = tw.div`
 
 export const OVERRIDING_FLOW_KEYS = [
   'fundingSourceOrganizations',
+  'fundingSourceUsageYears',
   'fundingSourceLocations',
-  'fundingSourceEmergencies',
   'fundingSourceGlobalClusters',
   'fundingSourcePlan',
-  'fundingSourceProject',
-  'fundingSourceUsageYears',
   'fundingSourceFieldClusters',
+  'fundingSourceEmergencies',
+  'fundingSourceProject',
 ] as const;
 
 type OverridingFlowKeys = (typeof OVERRIDING_FLOW_KEYS)[number];
