@@ -527,16 +527,14 @@ const inferredTransferredChipColor = (
 
 const flowObjectToFormObjectValue = (
   flow: flows.GetFlowResult,
-  keys: readonly FlowFormFlowObjectKey[],
-  parent?: flows.GetFlowResult
+  keys: readonly FlowFormFlowObjectKey[]
 ): FlowFormType => {
-  const sourceFlow = parent ?? flow;
   const MAP_KEYS_TO_FIELDS: Record<
     FlowFormFlowObjectKey,
     FlowFormType[FlowFormFlowObjectKey]
   > = {
     fundingSourceOrganizations: organizationsOptions(
-      sourceFlow.organizations
+      flow.organizations
         .filter((org) => org.flowObject.refDirection === 'source')
         .map((org) => ({
           ...org,
@@ -544,7 +542,7 @@ const flowObjectToFormObjectValue = (
         }))
     ),
     fundingSourceLocations: locationsOptions(
-      sourceFlow.locations
+      flow.locations
         .filter((loc) => loc.flowObject.refDirection === 'source')
         .map((loc) => ({
           ...loc,
@@ -552,7 +550,7 @@ const flowObjectToFormObjectValue = (
         }))
     ),
     fundingSourceEmergencies: defaultOptions(
-      sourceFlow.emergencies
+      flow.emergencies
         .filter((emergency) => emergency.flowObject.refDirection === 'source')
         .map((emergency) => ({
           ...emergency,
@@ -560,14 +558,14 @@ const flowObjectToFormObjectValue = (
         }))
     ),
     fundingSourceGlobalClusters: defaultOptions(
-      sourceFlow.globalClusters
+      flow.globalClusters
         .filter((gC) => gC.flowObject.refDirection === 'source')
         .map((gC) => ({
           ...gC,
           ...inferredTransferredChipColor(flow, gC, 'globalCluster'),
         }))
     ),
-    fundingSourcePlan: sourceFlow.plans
+    fundingSourcePlan: flow.plans
       .filter((plan) => plan.flowObject.refDirection === 'source')
       .map((plan) => ({
         displayLabel: plan.planVersion.name,
@@ -575,7 +573,7 @@ const flowObjectToFormObjectValue = (
         ...inferredTransferredChipColor(flow, plan, 'plan'),
       })),
     fundingSourceProject: projectsOptions(
-      sourceFlow.projects
+      flow.projects
         .filter((project) => project.flowObject.refDirection === 'source')
         .map((project) => ({
           ...project,
@@ -585,14 +583,14 @@ const flowObjectToFormObjectValue = (
         }))
     ),
     fundingSourceUsageYears: usageYearsOptions(
-      sourceFlow.usageYears
+      flow.usageYears
         .filter((usageYear) => usageYear.flowObject.refDirection === 'source')
         .map((usageYear) => ({
           ...usageYear,
           ...inferredTransferredChipColor(flow, usageYear, 'usageYear'),
         }))
     ),
-    fundingSourceFieldClusters: sourceFlow.clusters
+    fundingSourceFieldClusters: flow.governingEntities
       .filter((cluster) => cluster.flowObject.refDirection === 'source')
       .map((cluster) => ({
         displayLabel: cluster.governingEntityVersion.name,
@@ -751,7 +749,7 @@ export const parseToFlowForm = (
   const flowForm: FlowFormType = {
     ...INITIAL_FORM_VALUES,
     ...categoriesToFlowForm(flow),
-    ...flowObjectToFormObjectValue(flow, FUNDING_KEYS, parents?.[0]),
+    ...flowObjectToFormObjectValue(flow, FUNDING_KEYS),
     amountUSD: `${amountUSD}`,
     flowDescription: description ?? '',
     amountOriginalCurrency: `${

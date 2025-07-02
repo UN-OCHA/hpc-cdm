@@ -19,7 +19,10 @@ import {
   flowLinkToFormObjectValue,
   flowToFormObjectValue,
 } from '../../utils/map-functions';
-import { isFormObjectValue } from '../../utils/parse-flow-form';
+import {
+  isFormObjectValue,
+  type RefDirection,
+} from '../../utils/parse-flow-form';
 import { type FlowFormType } from './flow-form';
 import { type FlowLinkProps } from './flow-link';
 import FlowLinkWarning from './flow-link-warning';
@@ -57,6 +60,8 @@ export const OVERRIDING_FLOW_KEYS = [
   'fundingSourceFieldClusters',
 ] as const;
 
+type OverridingFlowKeys = (typeof OVERRIDING_FLOW_KEYS)[number];
+
 const removeOptionsFn: AsyncAutocompleteSelectProps['removeOptionsFn'] = (
   response,
   removeOptions
@@ -72,6 +77,16 @@ const removeOptionsFn: AsyncAutocompleteSelectProps['removeOptionsFn'] = (
       )
   );
   return res;
+};
+const filterByDirection = <
+  T extends { flowObject: { refDirection: RefDirection } },
+>(
+  entities: T[],
+  refDirection: RefDirection
+): T[] => {
+  return entities.filter(
+    (entity) => entity.flowObject.refDirection === refDirection
+  );
 };
 
 const FlowSearch = (props: FlowSearchProps) => {
@@ -110,57 +125,43 @@ const FlowSearch = (props: FlowSearchProps) => {
         if (!overridingFlow) {
           return;
         }
-        const MAP_KEYS_TO_FIELDS: Record<
-          (typeof OVERRIDING_FLOW_KEYS)[number],
-          util.FormObjectValue[] | util.FormObjectValue | null
-        > = {
+        const MAP_KEYS_TO_FIELDS: Pick<FlowFormType, OverridingFlowKeys> = {
           fundingSourceOrganizations: organizationsOptions(
-            overridingFlow.organizations.filter(
-              (org) => org.flowObject.refDirection === 'source'
-            )
+            filterByDirection(overridingFlow.organizations, 'destination')
           ),
           fundingSourceLocations: locationsOptions(
-            overridingFlow.locations.filter(
-              (loc) => loc.flowObject.refDirection === 'source'
-            )
+            filterByDirection(overridingFlow.locations, 'destination')
           ),
           fundingSourceEmergencies: defaultOptions(
-            overridingFlow.emergencies.filter(
-              (emergency) => emergency.flowObject.refDirection === 'source'
-            )
+            filterByDirection(overridingFlow.emergencies, 'destination')
           ),
           fundingSourceGlobalClusters: defaultOptions(
-            overridingFlow.globalClusters.filter(
-              (gC) => gC.flowObject.refDirection === 'source'
-            )
+            filterByDirection(overridingFlow.globalClusters, 'destination')
           ),
-          fundingSourcePlan:
-            overridingFlow.plans
-              .filter((plan) => plan.flowObject.refDirection === 'source')
-              .map((plan) => ({
-                displayLabel: plan.planVersion.name,
-                value: plan.id,
-              }))
-              .at(0) ?? null,
-          fundingSourceProject:
-            overridingFlow.projects
-              .filter((project) => project.flowObject.refDirection === 'source')
-              .map((project) => ({
-                displayLabel: project.projectVersions[0]?.name,
-                value: project.id,
-              }))
-              .at(0) ?? null,
+          fundingSourcePlan: filterByDirection(
+            overridingFlow.plans,
+            'destination'
+          ).map((plan) => ({
+            displayLabel: plan.planVersion.name,
+            value: plan.id,
+          })),
+          fundingSourceProject: filterByDirection(
+            overridingFlow.projects,
+            'destination'
+          ).map((project) => ({
+            displayLabel: project.projectVersions[0]?.name,
+            value: project.id,
+          })),
           fundingSourceUsageYears: usageYearsOptions(
-            overridingFlow.usageYears.filter(
-              (usageYear) => usageYear.flowObject.refDirection === 'source'
-            )
+            filterByDirection(overridingFlow.usageYears, 'destination')
           ),
-          fundingSourceFieldClusters: overridingFlow.clusters
-            .filter((cluster) => cluster.flowObject.refDirection === 'source')
-            .map((cluster) => ({
-              displayLabel: cluster.governingEntityVersion.name,
-              value: cluster.id,
-            })),
+          fundingSourceFieldClusters: filterByDirection(
+            overridingFlow.clusters,
+            'destination'
+          ).map((cluster) => ({
+            displayLabel: cluster.governingEntityVersion.name,
+            value: cluster.id,
+          })),
         };
         for (const key of OVERRIDING_FLOW_KEYS) {
           setFieldValue(key, MAP_KEYS_TO_FIELDS[key]);
