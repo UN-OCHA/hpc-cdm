@@ -89,7 +89,7 @@
     "eslint-plugin-react-hooks": "5.2.0",
     "exceljs": "4.4.0",
     "formik": "2.4.6",
-    "fp-ts": "^2.14.0",
+    "fp-ts": "2.16.10",
     "husky": "8.0.3",
     "intl-list-format": "^1.0.3",
     "intl-messageformat": "^10.3.4",
