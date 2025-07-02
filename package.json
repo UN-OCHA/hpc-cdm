@@ -93,7 +93,7 @@
     "husky": "8.0.3",
     "intl-list-format": "^1.0.3",
     "intl-messageformat": "^10.3.4",
-    "io-ts": "^2.2.20",
+    "io-ts": "2.2.22",
     "jest": "29.7.0",
     "lint-staged": "15.0.2",
     "nx": "20.7.0",
