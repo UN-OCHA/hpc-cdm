@@ -736,6 +736,7 @@ export const parseToFlowForm = (
     amountUSD,
     description,
     origAmount,
+    budgetYear: donorBudgetYear,
     origCurrency,
     decisionDate,
     firstReportedDate,
@@ -752,6 +753,7 @@ export const parseToFlowForm = (
     ...flowObjectToFormObjectValue(flow, FUNDING_KEYS),
     amountUSD: `${amountUSD}`,
     flowDescription: description ?? '',
+    donorBudgetYear: donorBudgetYear ?? '',
     amountOriginalCurrency: `${
       origAmount ?? INITIAL_FORM_VALUES['amountOriginalCurrency']
     }`,
