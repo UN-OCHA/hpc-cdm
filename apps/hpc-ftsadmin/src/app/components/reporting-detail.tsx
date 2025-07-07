@@ -3,6 +3,7 @@ import { type fileAssetEntities, type util } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { type Dayjs } from 'dayjs';
 import { useFormikContext } from 'formik';
+import React from 'react';
 import { MdUploadFile } from 'react-icons/md';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../i18n';
@@ -272,15 +273,22 @@ const ReportingDetail = ({
                       s.components.reportingDetail.reportedByOrganization
                         .organizationsInFlow
                   )}
-                  {recommendedOrganizations.map((org) => (
-                    <ReportingOrganizationSuggestion
-                      onClick={() =>
-                        handleChange('reportedByOrganization', org)
-                      }
-                      key={org.value}
-                    >
-                      {` ${org.displayLabel} `}
-                    </ReportingOrganizationSuggestion>
+                  {recommendedOrganizations.map((org, i) => (
+                    <React.Fragment key={org.value}>
+                      <ReportingOrganizationSuggestion
+                        onClick={() =>
+                          handleChange('reportedByOrganization', org)
+                        }
+                        key={org.value}
+                      >
+                        {org.displayLabel}
+                      </ReportingOrganizationSuggestion>
+                      <span>
+                        {`${
+                          recommendedOrganizations.length - 1 !== i ? ' | ' : ''
+                        }`}
+                      </span>
+                    </React.Fragment>
                   ))}
                 </span>
               )}
