@@ -598,7 +598,7 @@
       },
       "validation": {
         "required": "Ce champ est obligatoire",
-        "url": "L'URL doit être au format 'https://...'"
+        "url": "Veuillez fournir une URL valide"
       }
     },
     "upload": {

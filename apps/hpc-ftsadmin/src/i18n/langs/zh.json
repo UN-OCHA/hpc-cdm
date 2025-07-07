@@ -601,7 +601,7 @@
       },
       "validation": {
         "required": "此字段为必填项",
-        "url": "URL必须是 'https://...' 格式"
+        "url": "请输入有效的 URL"
       }
     },
     "upload": {

@@ -599,7 +599,7 @@
       },
       "validation": {
         "required": "This field is required",
-        "url": "URL must be of format 'https://...'"
+        "url": "Invalid URL format"
       }
     },
     "upload": {
