@@ -583,7 +583,13 @@
         "label": "Report File Title"
       },
       "file": {
-        "label": "Report File"
+        "label": "Report File",
+        "download": {
+          "error": {
+            "notFound": "The file you are trying to download does not exist or has been deleted",
+            "unknown": "There has been an unknown error downloading the file"
+          }
+        }
       },
       "reportURLTitle": {
         "label": "Report URL Title"

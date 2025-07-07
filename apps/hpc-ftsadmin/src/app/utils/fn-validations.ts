@@ -7,7 +7,7 @@ import type {
   FlowFormTypeValidated,
 } from '../components/flow-form/flow-form';
 import { TOAST_CONFIG_ERROR } from './constants';
-import { valueToInteger } from './map-functions';
+import { valueToInteger } from './utils';
 
 const validateEarmarking = (
   values: FlowFormType,

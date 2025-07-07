@@ -62,11 +62,6 @@ import {
 } from '../../utils/fn-validations';
 import validateForm from '../../utils/form-validation';
 import {
-  currencyToInteger,
-  integerToCurrency,
-  valueToInteger,
-} from '../../utils/map-functions';
-import {
   CTP,
   type FlowFormFlowObjectKey,
   type RefDirection,
@@ -77,6 +72,11 @@ import {
   queryParamsFlowFilter,
   serializeFlowForm,
 } from '../../utils/parse-flow-form';
+import {
+  currencyToInteger,
+  integerToCurrency,
+  valueToInteger,
+} from '../../utils/utils';
 import ReportingDetail, {
   REPORTING_DETAIL_INITIAL_VALUES,
   type ReportingDetailProps,

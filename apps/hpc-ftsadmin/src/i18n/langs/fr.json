@@ -582,7 +582,13 @@
         "label": "Titre du fichier du rapport"
       },
       "file": {
-        "label": "Fichier du rapport"
+        "label": "Fichier du rapport",
+        "download": {
+          "error": {
+            "notFound": "Le fichier demandé n'a pas pu être trouvé",
+            "unknown": "Une erreur inconnue s'est produite lors du téléchargement du fichier"
+          }
+        }
       },
       "reportURLTitle": {
         "label": "Titre de l'URL du rapport"

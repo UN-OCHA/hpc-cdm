@@ -8,7 +8,7 @@ import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import { getContext } from '../../context';
 import paths from '../../paths';
-import { integerToCurrency, valueToInteger } from '../../utils/map-functions';
+import { integerToCurrency, valueToInteger } from '../../utils/utils';
 import { type FlowFormType } from './flow-form';
 
 export type FlowLinkProps = {

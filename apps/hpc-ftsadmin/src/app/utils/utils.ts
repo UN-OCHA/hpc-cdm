@@ -8,6 +8,15 @@ import { isRight } from 'fp-ts/lib/Either';
 import dayjs from '../../libs/dayjs';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
 
+export const isValidUrl = (urlString: string): boolean => {
+  try {
+    const url = new URL(urlString);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
 export const mergeArraysByUniqueProperty = <
   T extends Record<K, unknown>,
   K extends keyof T,

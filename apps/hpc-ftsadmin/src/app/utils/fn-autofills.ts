@@ -10,7 +10,7 @@ import {
   organizationsOptions,
   usageYearsOptions,
 } from './fn-promises';
-import { valueToInteger } from './map-functions';
+import { valueToInteger } from './utils';
 
 type FundingObjectKeys =
   | 'fundingSourceLocations'

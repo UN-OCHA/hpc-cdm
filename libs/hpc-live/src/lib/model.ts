@@ -501,6 +501,8 @@ export class LiveModel implements Model {
         );
       } else if (json.details?.reason) {
         throw new errors.DataConsistencyError(json.details.reason);
+      } else if (json?.code === 'NotFoundError') {
+        throw new errors.NotFoundError();
       } else {
         const message =
           json?.code && json?.message

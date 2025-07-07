@@ -585,7 +585,13 @@
         "label": "报告文件标题"
       },
       "file": {
-        "label": "报告文件"
+        "label": "报告文件",
+        "download": {
+          "error": {
+            "notFound": "无法下载文件，因为它不存在",
+            "unknown": "下载文件时发生未知错误"
+          }
+        }
       },
       "reportURLTitle": {
         "label": "报告链接标题"

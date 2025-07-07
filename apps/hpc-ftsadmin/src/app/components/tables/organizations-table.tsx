@@ -22,10 +22,6 @@ import { type Strings } from '../../../i18n/iface';
 import { AppContext, getEnv } from '../../context';
 import paths from '../../paths';
 import {
-  parseUpdatedCreatedBy,
-  valueToInteger,
-} from '../../utils/map-functions';
-import {
   decodeFilters,
   encodeFilters,
   type FilterKey,
@@ -40,6 +36,7 @@ import {
   isCompatibleTableHeaderType,
   type OrganizationHeaderID,
 } from '../../utils/table-headers';
+import { parseUpdatedCreatedBy, valueToInteger } from '../../utils/utils';
 import { type OrganizationFilterValues } from '../filters/filter-organization-table';
 import InfoAlert from '../info-alert';
 import MergeModal from '../merge-modal';

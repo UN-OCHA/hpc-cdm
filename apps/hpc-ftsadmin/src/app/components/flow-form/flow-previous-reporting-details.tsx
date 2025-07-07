@@ -13,7 +13,7 @@ import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import dayjs from '../../../libs/dayjs';
 import { getContext } from '../../context';
-import { URL_REGEX } from '../../utils/constants';
+import { isValidUrl } from '../../utils/utils';
 
 type Props = {
   flow: flows.GetFlowResult;
@@ -95,7 +95,7 @@ const FlowPreviousReportingDetails = ({ flow }: Props) => {
                       ) : (
                         <Box sx={tw`flex gap-x-2`}>
                           {rD.reportFiles.map((rF, i) => {
-                            if (rF.url && URL_REGEX.test(rF.url)) {
+                            if (rF.url && isValidUrl(rF.url)) {
                               return (
                                 <Link to={rF.url} key={i}>
                                   {rF.title}

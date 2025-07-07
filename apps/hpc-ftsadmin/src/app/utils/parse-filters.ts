@@ -10,7 +10,7 @@ import dayjs from '../../libs/dayjs';
 import { type FlowsFilterValues } from '../components/filters/filter-flows-table';
 import { type OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { type PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
-import { currencyToInteger, valueToInteger } from './map-functions';
+import { currencyToInteger, valueToInteger } from './utils';
 
 /*
  * The whole idea of this filtering system is to parse

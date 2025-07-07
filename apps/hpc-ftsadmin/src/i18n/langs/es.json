@@ -582,7 +582,13 @@
         "label": "Título del archivo del informe"
       },
       "file": {
-        "label": "Archivo del informe"
+        "label": "Archivo del informe",
+        "download": {
+          "error": {
+            "notFound": "No se pudo encontrar el archivo",
+            "unknown": "Ha ocurrido un error desconocido al descargar el archivo"
+          }
+        }
       },
       "reportURLTitle": {
         "label": "Título de la URL del informe"

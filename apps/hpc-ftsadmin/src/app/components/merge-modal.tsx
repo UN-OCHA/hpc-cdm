@@ -14,7 +14,7 @@ import paths from '../paths';
 import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
 import { fnCategories, fnOrganizations } from '../utils/fn-promises';
 import validateForm from '../utils/form-validation';
-import { valueToInteger } from '../utils/map-functions';
+import { valueToInteger } from '../utils/utils';
 
 type MergeModalProps = {
   type: 'organization' | 'keyword';

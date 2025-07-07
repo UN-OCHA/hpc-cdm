@@ -17,13 +17,13 @@ import {
   usageYearsOptions,
 } from '../../utils/fn-promises';
 import {
-  flowLinkToFormObjectValue,
-  flowToFormObjectValue,
-} from '../../utils/map-functions';
-import {
   isFormObjectValue,
   type RefDirection,
 } from '../../utils/parse-flow-form';
+import {
+  flowLinkToFormObjectValue,
+  flowToFormObjectValue,
+} from '../../utils/utils';
 import { type FlowFormType } from './flow-form';
 import { type FlowLinkProps } from './flow-link';
 import FlowLinkWarning from './flow-link-warning';

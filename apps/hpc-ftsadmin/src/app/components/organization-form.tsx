@@ -20,8 +20,8 @@ import paths from '../paths';
 import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
 import { fnLocations, fnOrganizations } from '../utils/fn-promises';
 import validateForm from '../utils/form-validation';
-import { valueToInteger } from '../utils/map-functions';
 import { isFormObjectValue } from '../utils/parse-flow-form';
+import { valueToInteger } from '../utils/utils';
 interface Props {
   organizationLevels: categories.GetCategoriesResult;
   organizationTypes: categories.GetCategoriesResult;

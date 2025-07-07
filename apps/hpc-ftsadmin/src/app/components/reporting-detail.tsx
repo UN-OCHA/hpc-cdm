@@ -8,9 +8,8 @@ import { MdUploadFile } from 'react-icons/md';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../i18n';
 import { getContext } from '../context';
-import { URL_REGEX } from '../utils/constants';
 import { fnCategories, fnOrganizations } from '../utils/fn-promises';
-import { mergeArraysByUniqueProperty } from '../utils/map-functions';
+import { isValidUrl, mergeArraysByUniqueProperty } from '../utils/utils';
 import { type FlowFormType, FormGroup } from './flow-form/flow-form';
 
 export type ReportingDetailProps = {
@@ -64,7 +63,7 @@ export const validateReportingDetailsURLFormat = (
   if (value === '') {
     return;
   }
-  return URL_REGEX.test(value)
+  return isValidUrl(value)
     ? undefined
     : t.t(lang, (s) => s.components.reportingDetail.validation.url);
 };
