@@ -1,6 +1,12 @@
 import CheckIcon from '@mui/icons-material/Check';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { IconButton, Modal, type SvgIconProps, Tooltip } from '@mui/material';
+import {
+  IconButton,
+  Modal,
+  type SvgIconProps,
+  Tooltip,
+  type TooltipProps,
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import * as React from 'react';
@@ -13,6 +19,7 @@ interface AsyncIconButtonProps {
   IconComponent: React.FC<SvgIconProps>;
   disabledText?: string;
   tooltipText?: string;
+  tooltipPlacement?: TooltipProps['placement'];
   confirmModal?: {
     text: string;
     principalButton: string;
@@ -46,6 +53,7 @@ const AsyncIconButton = ({
   fnPromise,
   disabledText,
   tooltipText,
+  tooltipPlacement,
   confirmModal,
   iconSx,
   redirectAfterFetch,
@@ -105,7 +113,10 @@ const AsyncIconButton = ({
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Tooltip title={disabledText ?? tooltipText}>
+        <Tooltip
+          title={disabledText ?? tooltipText}
+          placement={tooltipPlacement}
+        >
           <Box sx={{ m: 1, position: 'relative' }}>
             <IconButton
               disabled={isSuccess || hasError || isDisabled}

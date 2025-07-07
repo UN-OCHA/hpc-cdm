@@ -148,6 +148,7 @@ const UploadFile = ({
                       }}
                       IconComponent={DeleteIcon}
                       tooltipText={t.t(lang, (s) => s.uploadFileField.delete)}
+                      tooltipPlacement="right"
                     />
                     <AsyncIconButton
                       fnPromise={() => {
@@ -161,6 +162,7 @@ const UploadFile = ({
                       }}
                       IconComponent={ChangeCircleIcon}
                       tooltipText={t.t(lang, (s) => s.uploadFileField.change)}
+                      tooltipPlacement="right"
                     />
                   </>
                 )}
@@ -171,6 +173,7 @@ const UploadFile = ({
                 fnPromise={onDownload}
                 IconComponent={FileDownloadIcon}
                 tooltipText={t.t(lang, (s) => s.uploadFileField.download)}
+                tooltipPlacement="right"
               />
             )}
           </ButtonsContainer>
