@@ -13,6 +13,7 @@ import {
   fnFlows,
   locationsOptions,
   organizationsOptions,
+  projectsOptions,
   usageYearsOptions,
 } from '../../utils/fn-promises';
 import {
@@ -145,13 +146,16 @@ const FlowSearch = (props: FlowSearchProps) => {
             displayLabel: plan.planVersion.name,
             value: plan.id,
           })),
-          fundingSourceProject: filterByDirection(
-            overridingFlow.projects,
-            'destination'
-          ).map((project) => ({
-            displayLabel: project.projectVersions[0]?.name,
-            value: project.id,
-          })),
+          fundingSourceProject: projectsOptions(
+            filterByDirection(overridingFlow.projects, 'destination').map(
+              (project) => ({
+                ...project,
+                name: project.projectVersions[0]?.name,
+                projectVersionCode: project.code,
+                value: project.id,
+              })
+            )
+          ),
           fundingSourceUsageYears: usageYearsOptions(
             filterByDirection(overridingFlow.usageYears, 'destination')
           ),
