@@ -223,7 +223,7 @@
         "reportingOrganization": "您的资金流报告详情中的组织与来源或目的地组织不匹配。您确定这是正确的吗？",
         "originalAmountIsDifferentToParent": "此流程的外币必须与其停放的父流程相同",
         "originalAmountIsDifferentToChildren": "子流程的外币必须与当前流程保持一致",
-        "originalAmountNotFilled": "请选择一种货币和大于0的数量",
+        "originalAmountNotFilled": "[{filledFields}] 字段已填写，但 [{notFilledFields}] 为空。请检查并正确填写字段后再次保存。",
         "unknownError": "创建/更新资金流时发生意外错误"
       },
       "warning": {

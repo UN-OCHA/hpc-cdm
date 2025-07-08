@@ -269,15 +269,51 @@ export const validateFlow = async ({
     parentFlow,
     childFlows,
   } = values;
-  const isOriginalCurrencyNotFilled =
-    (amountOriginalCurrency || currency || exchangeRate) &&
-    (!amountOriginalCurrency || !currency || !exchangeRate);
 
-  if (isOriginalCurrencyNotFilled) {
+  const originalCurrencyFields = [
+    ['amountOriginalCurrency', amountOriginalCurrency],
+    ['currency', currency],
+    ['exchangeRate', exchangeRate],
+  ] as const satisfies Array<
+    [
+      keyof FlowFormTypeValidated,
+      FlowFormTypeValidated[keyof FlowFormTypeValidated],
+    ]
+  >;
+
+  const [filledFields, notFilledFields] = originalCurrencyFields.reduce(
+    ([filled, notFilled], [fieldName, fieldValue]) => {
+      if (fieldValue) {
+        filled.push(fieldName);
+      } else {
+        notFilled.push(fieldName);
+      }
+      return [filled, notFilled];
+    },
+    [[], []] as [
+      Array<(typeof originalCurrencyFields)[number][0]>,
+      Array<(typeof originalCurrencyFields)[number][0]>,
+    ]
+  );
+  const isOriginalAmountValidationNeeded =
+    filledFields.length > 0 && filledFields.length < 3;
+  if (isOriginalAmountValidationNeeded) {
     toast.error(
       t.t(
         lang,
-        (s) => s.components.flowForm.submitValidation.originalAmountNotFilled
+        (s) => s.components.flowForm.submitValidation.originalAmountNotFilled,
+        {
+          filledFields: filledFields
+            .map((filledField) =>
+              t.t(lang, (s) => s.components.flowForm.fields[filledField])
+            )
+            .join(', '),
+          notFilledFields: notFilledFields
+            .map((notFilledField) =>
+              t.t(lang, (s) => s.components.flowForm.fields[notFilledField])
+            )
+            .join(', '),
+        }
       ),
       TOAST_CONFIG_ERROR
     );

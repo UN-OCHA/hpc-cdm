@@ -223,7 +223,7 @@
         "reportingOrganization": "Your flow's Report Detail organization doesn't match the source or destination organization. Are you sure this is right?",
         "originalAmountIsDifferentToParent": "This flow's foreign currency must be the same as it's parked parent flow",
         "originalAmountIsDifferentToChildren": "This flow's children flows foreign currency, must be the same as in current flow",
-        "originalAmountNotFilled": "Please select a currency and a quantity bigger than 0",
+        "originalAmountNotFilled": "[{filledFields}] fields are filled but [{notFilledFields}] are empty. Please check and complete the fields correctly before saving again.",
         "unknownError": "Unexpected error while creating/updating flow"
       },
       "warning": {

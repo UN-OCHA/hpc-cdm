@@ -223,7 +223,7 @@
         "reportingOrganization": "L'organisation des détails du rapport de votre flux ne correspond pas à l'organisation source ou de destination. Êtes-vous sûr que c'est correct ?",
         "originalAmountIsDifferentToParent": "La devise étrangère de ce flux doit être la même que celle de son flux parent mis en veille",
         "originalAmountIsDifferentToChildren": "La devise étrangère des flux enfants doit être la même que celle du flux actuel",
-        "originalAmountNotFilled": "Veuillez sélectionner une devise et une quantité supérieure à 0",
+        "originalAmountNotFilled": "[{filledFields}] champs sont remplis mais [{notFilledFields}] sont vides. Veuillez vérifier et compléter les champs correctement avant de sauvegarder à nouveau.",
         "unknownError": "Erreur inattendue lors de la création/mise à jour du flux"
       },
       "warning": {
