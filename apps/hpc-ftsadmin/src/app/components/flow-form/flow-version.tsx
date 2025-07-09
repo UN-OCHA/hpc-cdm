@@ -72,33 +72,24 @@ const FlowVersions = ({
   );
 
   const handleVersionSelection = (flowVersion: FlowVersion) => {
-    setSelectedVersions((prev) => {
-      const checkedRowIndex = prev.findIndex(
-        (a) => a?.id === flowVersion.id && a.versionID === flowVersion.versionID
-      );
-
-      if (checkedRowIndex !== -1) {
-        const prevSelectedRowsClone = structuredClone(prev);
-        prevSelectedRowsClone[checkedRowIndex] = null;
-        if (checkedRowIndex === 0) {
-          prevSelectedRowsClone[0] = prevSelectedRowsClone[1];
-          prevSelectedRowsClone[1] = null;
-        }
-        return prevSelectedRowsClone;
+    setSelectedVersions(([a, b]) => {
+      const isASelected =
+        a && a.id === flowVersion.id && a.versionID === flowVersion.versionID;
+      const isBSelected =
+        b && b.id === flowVersion.id && b.versionID === flowVersion.versionID;
+      // Deselect if already selected
+      if (isASelected) {
+        return [null, b];
       }
-
-      if (prev.every((selectedVersion) => selectedVersion !== null)) {
-        const prevSelectedRowsClone = structuredClone(prev);
-        prevSelectedRowsClone[1] = flowVersion;
-        return prevSelectedRowsClone;
+      if (isBSelected) {
+        return [a, null];
       }
-
-      if (!prev[0]) {
-        return [flowVersion, null];
+      // If both slots filled, replace second
+      if (a && b) {
+        return [a, flowVersion];
       }
-      const flowB = prev[1] ?? flowVersion;
-
-      return [prev[0], flowB];
+      // Fill the first empty slot
+      return a ? [a, flowVersion] : [flowVersion, null];
     });
   };
 
