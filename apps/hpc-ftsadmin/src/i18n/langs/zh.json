@@ -244,7 +244,7 @@
     },
     "flowSearch": {
       "title": "搜索资金流",
-      "flowId": "输入资金流 ID:",
+      "flowId": "输入资金流 ID",
       "warning": "流程: [{removeOptions}] 不可用，因为它们已经被链接，或者它们是当前流程。"
     },
     "flowVersions": {

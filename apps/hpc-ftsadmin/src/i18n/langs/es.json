@@ -244,7 +244,7 @@
     },
     "flowSearch": {
       "title": "Buscar flujos",
-      "flowId": "Introduzca el ID del flujo:",
+      "flowId": "Introduzca el ID del flujo",
       "warning": "Los flujos: [{removeOptions}] no están disponibles porque ya estaban vinculados o porque son el flujo actual."
     },
     "flowVersions": {

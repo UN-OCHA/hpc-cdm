@@ -244,7 +244,7 @@
     },
     "flowSearch": {
       "title": "Search flows",
-      "flowId": "Introduce Flow ID:",
+      "flowId": "Introduce Flow ID",
       "warning": "Flows: [{removeOptions}] are not available because they were already linked, or because they are the current flow."
     },
     "flowVersions": {
