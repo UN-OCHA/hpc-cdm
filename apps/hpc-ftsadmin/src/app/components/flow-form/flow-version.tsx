@@ -112,7 +112,7 @@ const FlowVersions = ({
       <Table>
         <TableBody>
           {flow.versions
-            ?.sort(
+            .sort(
               (flowVersion, previous) =>
                 previous.versionID - flowVersion.versionID
             )
@@ -131,7 +131,7 @@ const FlowVersions = ({
                 }}
               >
                 <TableCell>
-                  {flowVersion.versionID === flow?.versionID && (
+                  {flowVersion.versionID === flow.versionID && (
                     <VisibilityIcon color="primary" sx={tw`me-4 float-start`} />
                   )}
                   <MarginEndLink
