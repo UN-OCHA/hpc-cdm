@@ -9,6 +9,11 @@ import type {
 import { TOAST_CONFIG_ERROR } from './constants';
 import { valueToInteger } from './utils';
 
+type CurrencyFields = Extract<
+  keyof FlowFormTypeValidated,
+  'amountOriginalCurrency' | 'currency' | 'exchangeRate'
+>;
+
 const validateEarmarking = (
   values: FlowFormType,
   lang: LanguageKey
@@ -275,10 +280,7 @@ export const validateFlow = async ({
     ['currency', currency],
     ['exchangeRate', exchangeRate],
   ] as const satisfies Array<
-    [
-      keyof FlowFormTypeValidated,
-      FlowFormTypeValidated[keyof FlowFormTypeValidated],
-    ]
+    [CurrencyFields, FlowFormTypeValidated[CurrencyFields]]
   >;
 
   const [filledFields, notFilledFields] = originalCurrencyFields.reduce(
@@ -290,10 +292,7 @@ export const validateFlow = async ({
       }
       return [filled, notFilled];
     },
-    [[], []] as [
-      Array<(typeof originalCurrencyFields)[number][0]>,
-      Array<(typeof originalCurrencyFields)[number][0]>,
-    ]
+    [[], []] as [CurrencyFields[], CurrencyFields[]]
   );
   const isOriginalAmountValidationNeeded =
     filledFields.length > 0 && filledFields.length < 3;
