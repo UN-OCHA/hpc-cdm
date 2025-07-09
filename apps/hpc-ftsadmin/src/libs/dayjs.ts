@@ -4,8 +4,6 @@
  */
 
 import dayjs from 'dayjs';
-import localizedFormat from 'dayjs/plugin/localizedFormat';
-import relativeTime from 'dayjs/plugin/relativeTime';
 
 // Import languages that we require
 
@@ -14,9 +12,6 @@ import 'dayjs/locale/en';
 import 'dayjs/locale/es';
 import 'dayjs/locale/fr';
 import 'dayjs/locale/zh';
-
-dayjs.extend(localizedFormat);
-dayjs.extend(relativeTime);
 
 export const FTS_DEFAULT_FORMAT = 'DD/MM/YYYY';
 
@@ -32,7 +27,7 @@ dayjs.extend((_, DayjsClass) => {
 declare module 'dayjs' {
   interface Dayjs {
     /**
-     * * This is a modified version of Dayjs format() function *
+     * *This is a modified version of Dayjs format() function*
      * Get the formatted date according to the string of tokens passed in.
      *
      * To escape characters, wrap them in square brackets (e.g. [MM]).
