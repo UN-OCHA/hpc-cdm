@@ -304,166 +304,131 @@ export const parseFlowFilters = (
     return res;
   }
   for (const key in filters) {
-    if (isKey(filters, key)) {
-      switch (key) {
-        case 'destinationLocations':
-        case 'destinationEmergencies':
-        case 'destinationGlobalClusters':
-        case 'destinationOrganizations':
-        case 'destinationAnonymizedOrganizations':
-        case 'destinationPlans':
-        case 'destinationProjects':
-        case 'destinationUsageYears':
-        case 'sourceLocations':
-        case 'sourceEmergencies':
-        case 'sourceGlobalClusters':
-        case 'sourceOrganizations':
-        case 'sourcePlans':
-        case 'sourceProjects':
-        case 'sourceUsageYears': {
-          const extractedDetails = extractDirectionObject(key);
-          const value = filters[key]?.value;
-          if (
-            extractedDetails &&
-            value &&
-            filterValueIsArrayFormObjectValue(value)
-          ) {
-            res.flowObjectFilters = [
-              ...res.flowObjectFilters,
-              ...value.map((flowObject) => ({
-                objectID: valueToInteger(flowObject.value),
-                direction: extractedDetails.direction,
-                objectType: extractedDetails.object,
-              })),
-            ];
-          }
-          break;
+    if (!isKey(filters, key)) {
+      continue;
+    }
+
+    const value = filters[key]?.value;
+    if (!value) {
+      continue;
+    }
+
+    switch (key) {
+      case 'destinationLocations':
+      case 'destinationEmergencies':
+      case 'destinationGlobalClusters':
+      case 'destinationOrganizations':
+      case 'destinationAnonymizedOrganizations':
+      case 'destinationPlans':
+      case 'destinationProjects':
+      case 'destinationUsageYears':
+      case 'sourceLocations':
+      case 'sourceEmergencies':
+      case 'sourceGlobalClusters':
+      case 'sourceOrganizations':
+      case 'sourcePlans':
+      case 'sourceProjects':
+      case 'sourceUsageYears': {
+        const extractedDetails = extractDirectionObject(key);
+        if (extractedDetails && filterValueIsArrayFormObjectValue(value)) {
+          res.flowObjectFilters = [
+            ...res.flowObjectFilters,
+            ...value.map((flowObject) => ({
+              objectID: valueToInteger(flowObject.value),
+              direction: extractedDetails.direction,
+              objectType: extractedDetails.object,
+            })),
+          ];
         }
-        case 'reporterRefCode':
-        case 'sourceSystemID': {
-          const value = filters[key]?.value;
-          if (!value) {
-            break;
-          }
-          if (filterValueIsString(value)) {
-            res.nestedFlowFilters[key] = value;
-          }
-          break;
+        break;
+      }
+      case 'reporterRefCode':
+      case 'sourceSystemID': {
+        if (filterValueIsString(value)) {
+          res.nestedFlowFilters[key] = value;
         }
-        case 'legacyID': {
-          const legacyID = filters[key]?.value;
-          if (!legacyID) {
-            break;
-          }
-          if (filterValueIsString(legacyID)) {
-            res.nestedFlowFilters[key] = valueToInteger(legacyID);
-          }
-          break;
+        break;
+      }
+      case 'legacyID': {
+        if (filterValueIsString(value)) {
+          res.nestedFlowFilters[key] = valueToInteger(value);
         }
-        case 'amountUSD': {
-          const amountUSD = filters[key]?.value;
-          if (!amountUSD) {
-            break;
-          }
-          if (filterValueIsString(amountUSD)) {
-            res.flowFilters[key] = currencyToInteger(amountUSD);
-          }
-          break;
+        break;
+      }
+      case 'amountUSD': {
+        if (filterValueIsString(value)) {
+          res.flowFilters[key] = currencyToInteger(value);
         }
-        case 'flowID': {
-          const ids = filters.flowID?.value;
-          if (!ids) {
-            break;
-          }
-          if (filterValueIsArrayString(ids)) {
-            res.flowFilters.id = ids.map((id) => valueToInteger(id));
-          }
-          break;
+        break;
+      }
+      case 'flowID': {
+        if (filterValueIsArrayString(value)) {
+          res.flowFilters.id = value.map((id) => valueToInteger(id));
         }
-        case 'flowType':
-        case 'flowStatus': {
-          const filterValue = filters[key]?.value;
-          if (!filterValue) {
-            break;
+        break;
+      }
+      case 'flowType':
+      case 'flowStatus': {
+        if (filterValueIsFormObjectValue(value)) {
+          const { value: statusType } = value;
+          if (filterValueIsFlowStatusType(statusType)) {
+            res[statusType] = true;
           }
-          if (filterValueIsFormObjectValue(filterValue)) {
-            const statusType = filterValue.value;
-            if (filterValueIsFlowStatusType(statusType)) {
-              res[statusType] = true;
+        }
+        break;
+      }
+      case 'includeChildrenOfParkedFlows': {
+        if (filterValueIsBoolean(value)) {
+          res[key] = value;
+        }
+        break;
+      }
+      case 'flowActiveStatus': {
+        if (filterValueIsFormObjectValue(value)) {
+          const { value: flowActiveStatus } = value;
+
+          if (typeof flowActiveStatus === 'string') {
+            res.flowFilters.activeStatus = parseActiveStatus(flowActiveStatus);
+          }
+        }
+        break;
+      }
+      case 'keywords': {
+        if (filterValueIsArrayFormObjectValue(value)) {
+          const parsedCategories = value.map(
+            (keyword): { id: number; group: categories.CategoryGroup } => {
+              return { id: valueToInteger(keyword.value), group: 'keywords' };
             }
-          }
-          break;
+          );
+          res.flowCategoryFilters = [
+            ...res.flowCategoryFilters,
+            ...parsedCategories,
+          ];
         }
-        case 'includeChildrenOfParkedFlows': {
-          const value = filters.includeChildrenOfParkedFlows?.value;
-          if (!value) {
-            break;
+        break;
+      }
+      case 'dataProvider': {
+        if (filterValueIsFormObjectValue(value)) {
+          const { value: dataProvider } = value;
+
+          if (filterValueIsString(dataProvider)) {
+            res.nestedFlowFilters.systemID = dataProvider;
           }
-          if (filterValueIsBoolean(value)) {
-            res[key] = value;
-          }
-          break;
         }
-        case 'flowActiveStatus': {
-          const flowActiveStatus = filters[key]?.value;
-          if (!flowActiveStatus) {
-            break;
-          }
+        break;
+      }
+      case 'status': {
+        if (filterValueIsFormObjectValue(value)) {
+          const { value: status } = value;
+
           if (
-            filterValueIsFormObjectValue(flowActiveStatus) &&
-            typeof flowActiveStatus.value === 'string'
+            filterValueIsString(status) &&
+            (status === 'new' || status === 'updated')
           ) {
-            res.flowFilters.activeStatus = parseActiveStatus(
-              flowActiveStatus.value
-            );
+            res.status = status;
           }
-          break;
         }
-        case 'keywords': {
-          const keywords = filters.keywords?.value;
-          if (!keywords) {
-            break;
-          }
-          if (filterValueIsArrayFormObjectValue(keywords)) {
-            const parsedCategories = keywords.map(
-              (keyword): { id: number; group: categories.CategoryGroup } => {
-                return { id: valueToInteger(keyword.value), group: 'keywords' };
-              }
-            );
-            res.flowCategoryFilters = [
-              ...res.flowCategoryFilters,
-              ...parsedCategories,
-            ];
-          }
-          break;
-        }
-        case 'dataProvider': {
-          const dataProvider = filters.dataProvider?.value;
-          if (!dataProvider) {
-            break;
-          }
-          if (
-            filterValueIsFormObjectValue(dataProvider) &&
-            filterValueIsString(dataProvider.value)
-          ) {
-            res.nestedFlowFilters.systemID = dataProvider.value;
-          }
-          break;
-        }
-        case 'status': {
-          const status = filters.status?.value;
-          if (!status) {
-            break;
-          }
-          if (
-            filterValueIsFormObjectValue(status) &&
-            filterValueIsString(status.value) &&
-            (status.value === 'new' || status.value === 'updated')
-          ) {
-            res.status = status.value;
-          }
-          break;
-        }
+        break;
       }
     }
   }
@@ -475,86 +440,74 @@ export const parseOrganizationFilters = (
 ): organizations.SearchOrganizationParams => {
   const res: organizations.SearchOrganizationParams = { search: {} };
   for (const key in filters) {
-    if (isKey(filters, key)) {
-      switch (key) {
-        case 'parentOrganization':
-        case 'organizationType': {
-          const value = filters[key]?.value;
-          if (!value) {
-            break;
-          }
-          if (filterValueIsFormObjectValue(value)) {
-            res.search[key] = {
-              name: value.displayLabel,
-              id: valueToInteger(value.value),
-            };
-          }
-          break;
+    if (!isKey(filters, key)) {
+      continue;
+    }
+
+    const value = filters[key]?.value;
+    if (!value) {
+      continue;
+    }
+
+    switch (key) {
+      case 'parentOrganization':
+      case 'organizationType': {
+        if (filterValueIsFormObjectValue(value)) {
+          res.search[key] = {
+            name: value.displayLabel,
+            id: valueToInteger(value.value),
+          };
         }
-        case 'locations': {
-          const locations = filters.locations?.value;
-          if (!locations) {
-            break;
+        break;
+      }
+      case 'locations': {
+        if (filterValueIsFormObjectValue(value)) {
+          const { displayLabel, value: id, parent } = value;
+          const location = {
+            name: displayLabel,
+            id: valueToInteger(id),
+          };
+          if (parent) {
+            res.search[key] = [
+              {
+                ...location,
+                parentId: valueToInteger(parent.value),
+              },
+              {
+                name: parent.displayLabel,
+                id: valueToInteger(parent.value),
+              },
+            ];
+          } else {
+            res.search[key] = [location];
           }
-          if (filterValueIsFormObjectValue(locations)) {
-            const location = {
-              name: locations.displayLabel,
-              id: valueToInteger(locations.value),
-            };
-            if (locations.parent) {
-              res.search[key] = [
-                {
-                  ...location,
-                  parentId: valueToInteger(locations.parent.value),
-                },
-                {
-                  name: locations.parent.displayLabel,
-                  id: valueToInteger(locations.parent.value),
-                },
-              ];
-            } else {
-              res.search[key] = [location];
-            }
-          }
-          break;
         }
-        case 'organization': {
-          const organization = filters.organization?.value;
-          if (!organization) {
-            break;
-          }
-          if (filterValueIsString(organization)) {
-            res.search.organization = {
-              name: organization,
-            };
-          }
-          break;
+        break;
+      }
+      case 'organization': {
+        if (filterValueIsString(value)) {
+          res.search.organization = {
+            name: value,
+          };
         }
-        case 'date': {
-          const date = filters.date?.value;
-          if (!date) {
-            break;
-          }
-          if (filterValueIsDayJS(date)) {
-            res.search.date = date.toString();
-          } else if (filterValueIsString(date)) {
-            res.search.date = date;
-          }
-          break;
+        break;
+      }
+      case 'date': {
+        if (filterValueIsDayJS(value)) {
+          res.search.date = value.toString();
+        } else if (filterValueIsString(value)) {
+          res.search.date = value;
         }
-        default: {
-          const value = filters[key]?.value;
-          if (!value) {
-            break;
-          }
-          if (
-            filterValueIsFormObjectValue(value) &&
-            filterValueIsString(value.value)
-          ) {
-            res.search[key] = value.value;
-          }
-          break;
+        break;
+      }
+      default: {
+        if (
+          filterValueIsFormObjectValue(value) &&
+          filterValueIsString(value.value)
+        ) {
+          res.search[key] = value.value;
         }
+        break;
       }
     }
   }
