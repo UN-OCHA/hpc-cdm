@@ -443,18 +443,19 @@ const FlowAmountButton = ({
 
 const BlockNavigationOnUnsavedChanges = ({
   dirty,
-  submitLoading,
-  rejectLoading,
-  deleteLoading,
+  isSubmitLoading,
+  shouldRejectLoading,
+  isDeleteLoading,
 }: {
   dirty: boolean;
-  submitLoading: boolean;
-  rejectLoading: boolean;
-  deleteLoading: boolean;
+  isSubmitLoading: boolean;
+  shouldRejectLoading: boolean;
+  isDeleteLoading: boolean;
 }) => {
   const { lang } = getContext();
   const message = t.t(lang, (s) => s.components.flowForm.blockNavigation);
-  const isSubmitting = submitLoading || rejectLoading || deleteLoading;
+  const isSubmitting =
+    isSubmitLoading || shouldRejectLoading || isDeleteLoading;
   //  User reloading or closing tab
   useBeforeUnload((event) => {
     if (dirty && !isSubmitting) {
@@ -1006,9 +1007,9 @@ export const FlowForm = (props: FlowFormProps) => {
             <BlockNavigationOnUnsavedChanges
               {...{
                 dirty,
-                submitLoading: isSubmitLoading,
-                rejectLoading: shouldRejectLoading,
-                deleteLoading: isDeleteLoading,
+                isSubmitLoading,
+                shouldRejectLoading,
+                isDeleteLoading,
               }}
             />
             <Box sx={tw`flex items-center`}>
