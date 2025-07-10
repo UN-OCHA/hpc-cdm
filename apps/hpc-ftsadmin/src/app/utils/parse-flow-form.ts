@@ -511,7 +511,7 @@ const inferredTransferredChipColor = (
   flow: flows.GetFlowResult,
   entity: {
     id: number;
-    flowObject: { refDirection: 'source' | 'destination' };
+    flowObject: { refDirection: RefDirection };
   },
   entityName: EntityName
 ) => {

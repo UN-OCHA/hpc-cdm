@@ -10,6 +10,7 @@ import dayjs from '../../libs/dayjs';
 import { type FlowsFilterValues } from '../components/filters/filter-flows-table';
 import { type OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { type PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
+import { type RefDirection } from './parse-flow-form';
 import { currencyToInteger, valueToInteger } from './utils';
 
 /*
@@ -210,7 +211,7 @@ export function isFlowObjectTypes(value: string): value is FlowObjectTypes {
 export const extractDirectionObject = (
   inputString: FilterKey
 ): {
-  direction: 'source' | 'destination';
+  direction: RefDirection;
   object: FlowObjectTypes;
 } | null => {
   const match = inputString.match(

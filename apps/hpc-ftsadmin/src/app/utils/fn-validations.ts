@@ -7,6 +7,7 @@ import type {
   FlowFormTypeValidated,
 } from '../components/flow-form/flow-form';
 import { TOAST_CONFIG_ERROR } from './constants';
+import { type RefDirection } from './parse-flow-form';
 import { valueToInteger } from './utils';
 
 type CurrencyFields = Extract<
@@ -155,7 +156,7 @@ const validatePlan = async (
   formLocations: util.FormObjectValue[],
   lang: LanguageKey,
   env: Environment,
-  direction: 'source' | 'destination'
+  direction: RefDirection
 ) => {
   if (!plan.at(0)) {
     return [];
