@@ -3,6 +3,7 @@ import { Chip, IconButton, TableHead, TableRow, Tooltip } from '@mui/material';
 import { C } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
+import { SPECIAL_SEPARATOR } from '../../utils/constants';
 import {
   type Filter,
   type FilterKey,
@@ -84,7 +85,6 @@ const ChipFilterValues = tw.div`
   rounded-full
 `;
 
-const SPECIAL_SEPARATOR = '<||>' as const;
 const ORGANIZATION_ABBREVIATION_REGEX = /\[(.*)\]/;
 
 export const RenderChipsRow = ({

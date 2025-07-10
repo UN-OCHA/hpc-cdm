@@ -9,3 +9,5 @@ export const TOAST_CONFIG_ERROR = {
   ...TOAST_CONFIG,
   autoClose: false,
 } as const;
+
+export const SPECIAL_SEPARATOR = '<||>' as const;
