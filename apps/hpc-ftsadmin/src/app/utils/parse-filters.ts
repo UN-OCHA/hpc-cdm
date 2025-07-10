@@ -68,20 +68,22 @@ const isEmptyValue = (value: unknown): value is EmptyValue =>
   (typeof value === 'string' && value === '') ||
   (Array.isArray(value) && value.length === 0);
 
-const filterValueIsString = (value: FilterValue | number): value is string => {
+const filterValueIsString = (value: unknown): value is string => {
   return typeof value === 'string';
 };
 
-const filterValueIsArrayString = (value: FilterValue): value is string[] => {
-  return Array.isArray(value) && typeof value[0] === 'string';
+const filterValueIsStringArray = (value: unknown): value is string[] => {
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === 'string')
+  );
 };
 
-const filterValueIsBoolean = (value: FilterValue): value is boolean => {
+const filterValueIsBoolean = (value: unknown): value is boolean => {
   return typeof value === 'boolean';
 };
 
 const filterValueIsFormObjectValue = (
-  value: FilterValue
+  value: unknown
 ): value is util.FormObjectValue => {
   return (
     typeof value === 'object' &&
@@ -93,22 +95,17 @@ const filterValueIsFormObjectValue = (
 };
 
 const filterValueIsArrayFormObjectValue = (
-  value: FilterValue
+  value: unknown
 ): value is util.FormObjectValue[] => {
-  return Array.isArray(value) && typeof value[0] !== 'string';
+  return Array.isArray(value) && value.every(filterValueIsFormObjectValue);
 };
 
 const filterValueIsDayJS = (value: FilterValue): value is Dayjs => {
-  return (
-    typeof value === 'object' &&
-    !Array.isArray(value) &&
-    value !== null &&
-    !filterValueIsFormObjectValue(value)
-  );
+  return dayjs.isDayjs(value);
 };
 
 const filterValueIsFlowStatusType = (
-  value: FilterValue | number
+  value: unknown
 ): value is FlowStatusType => {
   const values = [
     'commitment',
@@ -362,7 +359,7 @@ export const parseFlowFilters = (
         break;
       }
       case 'flowID': {
-        if (filterValueIsArrayString(value)) {
+        if (filterValueIsStringArray(value)) {
           res.flowFilters.id = value.map((id) => valueToInteger(id));
         }
         break;
