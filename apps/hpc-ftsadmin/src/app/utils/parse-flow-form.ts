@@ -686,8 +686,7 @@ const flowObjectToFormObjectValue = (
 
   const res = {} as FlowFormType;
   for (const key of keys) {
-    res[key] = MAP_KEYS_TO_FIELDS[key] as util.FormObjectValue[] &
-      util.FormObjectValue;
+    res[key] = MAP_KEYS_TO_FIELDS[key];
   }
   return res;
 };
@@ -752,8 +751,8 @@ export const parseToFlowForm = (
     ...categoriesToFlowForm(flow),
     ...flowObjectToFormObjectValue(flow, FUNDING_KEYS),
     amountUSD: `${amountUSD}`,
-    flowDescription: description ?? '',
-    donorBudgetYear: donorBudgetYear ?? '',
+    flowDescription: description ?? INITIAL_FORM_VALUES['flowDescription'],
+    donorBudgetYear: donorBudgetYear ?? INITIAL_FORM_VALUES['donorBudgetYear'],
     amountOriginalCurrency: `${
       origAmount ?? INITIAL_FORM_VALUES['amountOriginalCurrency']
     }`,
