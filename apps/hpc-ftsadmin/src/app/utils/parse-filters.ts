@@ -188,7 +188,7 @@ export function isKey<T>(x: T, k: PropertyKey): k is keyof T {
   return typeof x === 'object' && x !== null && k in x;
 }
 
-const FLOW_OBJECT_TYPES = [
+const FLOW_OBJECT_TYPES = new Set([
   'location',
   'emergency',
   'globalCluster',
@@ -198,12 +198,14 @@ const FLOW_OBJECT_TYPES = [
   'plan',
   'project',
   'usageYear',
-] as const;
+] as const);
 
-export type FlowObjectTypes = (typeof FLOW_OBJECT_TYPES)[number];
+export type FlowObjectTypes = typeof FLOW_OBJECT_TYPES extends Set<infer U>
+  ? U
+  : never;
 
 export function isFlowObjectTypes(value: string): value is FlowObjectTypes {
-  return new Set<string>(FLOW_OBJECT_TYPES).has(value);
+  return (FLOW_OBJECT_TYPES as Set<string>).has(value);
 }
 export const extractDirectionObject = (
   inputString: FilterKey
