@@ -35,10 +35,7 @@ const Blank = tw.span`
 `;
 
 const isEmpty = (value: util.FormObjectValue[]): boolean => {
-  if (Array.isArray(value)) {
-    return value.length === 0;
-  }
-  return !value;
+  return value.length === 0;
 };
 
 const FormChip = ({ text }: { text: string }) => {
