@@ -19,7 +19,7 @@ import {
 } from '../components/flow-form/flow-form';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
 import { type ReportingDetailProps } from '../components/reporting-detail';
-import { PENDING_REVIEW } from './constants';
+import { CTP, PENDING_REVIEW, TRADITIONAL_AID } from './constants';
 import {
   defaultOptions,
   locationsOptions,
@@ -131,9 +131,8 @@ const OVERLAP_FIELDS = new Set<string>([
   'fundingDestinationProject',
 ] satisfies FlowFormFlowObjectKey[]);
 
-export const CTP = 'Cash transfer programming (CTP)' as const;
 export const isMethodOption = (value: util.FormObjectValue) =>
-  value.displayLabel === 'Traditional aid' || value.displayLabel === CTP;
+  value.displayLabel === TRADITIONAL_AID || value.displayLabel === CTP;
 
 const categoryIds = (categories: Array<{ value: number | string } | null>) => {
   const ids: number[] = [];

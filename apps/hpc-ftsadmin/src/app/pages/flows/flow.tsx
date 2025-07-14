@@ -10,7 +10,7 @@ import { FlowForm } from '../../components/flow-form/flow-form';
 import PageMeta from '../../components/page-meta';
 import { AppContext, getContext, getEnv } from '../../context';
 import paths from '../../paths';
-import { TOAST_CONFIG } from '../../utils/constants';
+import { PENDING_REVIEW, TOAST_CONFIG } from '../../utils/constants';
 import {
   fnCategories,
   fnFlowStatusId,
@@ -64,7 +64,7 @@ const FlowActiveVersionPath = ({
   isInactive: boolean;
 }) => {
   const lang = getContext().lang;
-  const pendingReview = categories.find((cat) => cat.name === 'Pending review');
+  const pendingReview = categories.find((cat) => cat.name === PENDING_REVIEW);
   const activeFlow = flow.versions.find((f) => f.activeStatus === true);
   const pendingFlow = flow.versions.find((f) =>
     f.categories.some((cat) => cat.categoryID === pendingReview?.id)
@@ -141,7 +141,7 @@ export default () => {
   const { id: idString, version } = useParams<FlowRouteParams>();
 
   const isPendingFlow = (flow: flows.GetFlowResult): flow is PendingFlow =>
-    flow.categories.some((c) => c.name === 'Pending review');
+    flow.categories.some((c) => c.name === PENDING_REVIEW);
   const isInactiveFlow = (flow: flows.GetFlowResult) =>
     !flow.activeStatus ||
     flow.categories.some((c) => c.group === 'inactiveReason');

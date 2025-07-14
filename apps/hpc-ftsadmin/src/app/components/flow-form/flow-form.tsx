@@ -33,7 +33,7 @@ import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
 import { getContext } from '../../context';
 import paths from '../../paths';
-import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
+import { CTP, TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
 import {
   autofillEmergencies,
   autofillFieldClusters,
@@ -62,7 +62,6 @@ import {
 } from '../../utils/fn-validations';
 import validateForm from '../../utils/form-validation';
 import {
-  CTP,
   type FlowFormFlowObjectKey,
   type RefDirection,
   SHARED_FIELDS,
