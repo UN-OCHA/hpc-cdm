@@ -401,12 +401,12 @@ export const parseFlowForm = (
     firstReportedDate: firstReported.toDate(),
     flowDate: flowDate.toDate(),
     flowObjects,
-    isCancellation: null, //  TODO
+    isCancellation: null,
     isErrorCorrection:
       isErrorCorrection || !!isPending?.isApproved || isPending?.isSaved,
     isApprovedFlowVersion: !!isPending?.isApproved || isPending?.isSaved,
     inactiveReason,
-    newCategories: [], //  TODO
+    newCategories: [],
     newMoney: isNewMoney,
     notes,
     origAmount: amountOriginalCurrency
