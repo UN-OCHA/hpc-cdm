@@ -1,13 +1,15 @@
 import { Box } from '@mui/material';
-import { type fileAssetEntities, type util } from '@unocha/hpc-data';
+import { errors, type fileAssetEntities, type util } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { type Dayjs } from 'dayjs';
 import { useFormikContext } from 'formik';
 import React from 'react';
 import { MdUploadFile } from 'react-icons/md';
+import { toast } from 'react-toastify';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../i18n';
 import { getContext } from '../context';
+import { TOAST_CONFIG_ERROR } from '../utils/constants';
 import { fnCategories, fnOrganizations } from '../utils/fn-promises';
 import { isValidUrl, mergeArraysByUniqueProperty } from '../utils/utils';
 import { type FlowFormType, FormGroup } from './flow-form/flow-form';
@@ -413,7 +415,31 @@ const ReportingDetail = ({
             }}
             onUpload={handleUploadFile}
             onDelete={handleDeleteFile}
-            onDownload={handleDownloadFile}
+            onDownload={{
+              handleDownload: handleDownloadFile,
+              handleErrorToast: (error) => {
+                if (errors.isNotFoundError(error)) {
+                  toast.error(
+                    t.t(
+                      lang,
+                      (s) =>
+                        s.components.reportingDetail.file.download.error
+                          .notFound
+                    ),
+                    TOAST_CONFIG_ERROR
+                  );
+                  return;
+                }
+                toast.error(
+                  t.t(
+                    lang,
+                    (s) =>
+                      s.components.reportingDetail.file.download.error.unknown
+                  ),
+                  TOAST_CONFIG_ERROR
+                );
+              },
+            }}
             file={
               file
                 ? {

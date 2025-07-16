@@ -18,7 +18,10 @@ type UploadFileProps = {
   onDelete?: (
     setSavedFile: React.Dispatch<React.SetStateAction<File | undefined>>
   ) => Promise<unknown>;
-  onDownload?: () => Promise<unknown>;
+  onDownload?: {
+    handleDownload: () => Promise<unknown>;
+    handleErrorToast?: (error: Error) => void;
+  };
   file?: util.FormObjectValue;
   confirmUpload?: {
     validation: (file?: File, ...args: unknown[]) => unknown;
@@ -170,7 +173,8 @@ const UploadFile = ({
             )}
             {onDownload && (
               <AsyncIconButton
-                fnPromise={onDownload}
+                fnPromise={onDownload.handleDownload}
+                handlerErrorToast={onDownload.handleErrorToast}
                 IconComponent={FileDownloadIcon}
                 tooltipText={t.t(lang, (s) => s.uploadFileField.download)}
                 tooltipPlacement="right"
