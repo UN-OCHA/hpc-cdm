@@ -64,8 +64,12 @@ export const currencyToInteger = (value: string | number) => {
   return parseInt(value.replaceAll(',', ''));
 };
 
-export const integerToCurrency = (value: number) => {
-  return value.toString().replaceAll(/\B(?=(\d{3})+(?!\d))/g, ',');
+export const integerToCurrency = (value: number, currency: string) => {
+  return Intl.NumberFormat([], {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 0,
+  }).format(value);
 };
 
 export const parseUpdatedCreatedBy = (

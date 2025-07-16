@@ -105,11 +105,13 @@ const FlowLink = ({
       <LongSpan>{description}</LongSpan>
       <LongSpan>{flowLinkDescription}</LongSpan>
       <ShortSpan>{flowLinkDate}</ShortSpan>
-      <ShortSpan>US${integerToCurrency(valueToInteger(amountUSD))}</ShortSpan>
+      <ShortSpan>
+        US {integerToCurrency(valueToInteger(amountUSD), 'USD')}
+      </ShortSpan>
       {amountOriginalCurrency && currency ? (
         <ShortSpan>
-          {currency}
-          {integerToCurrency(valueToInteger(amountOriginalCurrency))}
+          {currency}{' '}
+          {integerToCurrency(valueToInteger(amountOriginalCurrency), currency)}
         </ShortSpan>
       ) : (
         <ShortSpan>{EMPTY_CELL}</ShortSpan>
