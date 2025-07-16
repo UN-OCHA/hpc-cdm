@@ -31,7 +31,7 @@ const router = createBrowserRouter([
       { path: paths.flows(), element: <PageFlowsList /> },
       { path: paths.addFlow(), element: <PageFlow /> },
       {
-        path: paths.flowRoot(),
+        path: paths.flowMatcher(),
         element: (
           <RouteParamsValidator
             element={<PageFlow />}
@@ -42,7 +42,7 @@ const router = createBrowserRouter([
       { path: paths.pendingFlows(), element: <PagePendingFlowsList /> },
       { path: paths.organizations(), element: <PageOrganizationsList /> },
       {
-        path: paths.organizationRoot(),
+        path: paths.organizationMatcher(),
         element: (
           <RouteParamsValidator
             element={<PageOrganization />}

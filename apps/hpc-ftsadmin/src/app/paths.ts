@@ -1,5 +1,4 @@
 const HOME = '/';
-const ROOT = '/*';
 const SPLAT = '*';
 const FLOWS = '/flows';
 const FLOW = `${FLOWS}/:id/:version`;
@@ -48,9 +47,9 @@ export const flow = (id: number, version: number) =>
   replacePlaceholders(FLOW, { id, version });
 
 /**
- * `/flows/:id/:version/*`
+ * `/flows/:id/:version`
  */
-export const flowRoot = () => FLOW + ROOT;
+export const flowMatcher = () => FLOW;
 
 /**
  * `/pending-flows`
@@ -69,9 +68,9 @@ export const organization = (id: number) =>
   replacePlaceholders(ORGANIZATION, { id });
 
 /**
- * `/organizations/:id/*`
+ * `/organizations/:id`
  */
-export const organizationRoot = () => ORGANIZATION + ROOT;
+export const organizationMatcher = () => ORGANIZATION;
 
 /**
  * `/organizations/add`
@@ -94,11 +93,11 @@ export default {
   flows,
   addFlow,
   flow,
-  flowRoot,
+  flowMatcher,
   pendingFlows,
   organizations,
   organization,
-  organizationRoot,
+  organizationMatcher,
   addOrganization,
   keywords,
   uploadXLSX,
