@@ -804,7 +804,9 @@ export default function FlowsTable(props: FlowsTableProps) {
                               response,
                               lang,
                               tableHeaders,
-                              'export'
+                              `export_flows_${dayjs().format(
+                                'YYYY-MM-DD_HH[h]mm[m]ss[s]'
+                              )}`
                             )
                           );
                         });
