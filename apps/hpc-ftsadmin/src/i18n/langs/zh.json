@@ -643,6 +643,9 @@
     },
     "organizations": {
       "title": "组织机构"
+    },
+    "organization": {
+      "title": "组织 {id}"
     }
   }
 }

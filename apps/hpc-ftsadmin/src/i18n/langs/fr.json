@@ -640,6 +640,9 @@
     },
     "organizations": {
       "title": "Organizations"
+    },
+    "organization": {
+      "title": "Organisation {id}"
     }
   }
 }

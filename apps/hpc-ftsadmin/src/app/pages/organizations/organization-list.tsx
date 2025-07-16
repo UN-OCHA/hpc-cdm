@@ -93,7 +93,7 @@ export default (props: Props) => {
         <div
           className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
         >
-          <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
+          <PageMeta title={[t.t(lang, (s) => s.routes.organizations.title)]} />
           <Container>
             <FilterOrganizationsTable
               environment={env}
