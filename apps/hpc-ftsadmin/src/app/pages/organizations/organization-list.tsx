@@ -13,7 +13,7 @@ import OrganizationTable, {
 } from '../../components/tables/organizations-table';
 import { AppContext, getEnv } from '../../context';
 import { ORGANIZATION_PARAMS_CODEC } from '../../utils/codecs';
-import { TOAST_CONFIG } from '../../utils/constants';
+import { ROWS_PER_PAGE_OPTIONS, TOAST_CONFIG } from '../../utils/constants';
 import { encodeTableHeaders } from '../../utils/table-headers';
 import useQueryParams from '../../utils/useQueryParams';
 
@@ -34,8 +34,6 @@ const LandingContainer = styled.div`
   `}
 `;
 export default (props: Props) => {
-  const rowsPerPageOptions = [10, 25, 50, 100];
-
   const state: { successMessage?: string } = useLocation().state;
 
   useEffect(() => {
@@ -81,7 +79,7 @@ export default (props: Props) => {
   });
 
   const organizationTableProps: OrganizationTableProps = {
-    rowsPerPageOptions,
+    rowsPerPageOptions: ROWS_PER_PAGE_OPTIONS,
     initialValues: ORGANIZATIONS_FILTER_INITIAL_VALUES,
     query,
     setQuery,

@@ -10,6 +10,7 @@ import FlowsTable, {
 } from '../../components/tables/flows-table';
 import { AppContext } from '../../context';
 import { FLOW_PARAMS_CODEC } from '../../utils/codecs';
+import { ROWS_PER_PAGE_OPTIONS } from '../../utils/constants';
 import { encodeTableHeaders } from '../../utils/table-headers';
 import useQueryParams from '../../utils/useQueryParams';
 
@@ -48,7 +49,7 @@ export default (props: Props) => {
 
   const pendingFlowsTableProps: FlowsTableProps = {
     initialValues: PENDING_FLOWS_FILTER_INITIAL_VALUES,
-    rowsPerPageOptions: [10, 25, 50, 100],
+    rowsPerPageOptions: ROWS_PER_PAGE_OPTIONS,
     query,
     setQuery,
     isPending: true,

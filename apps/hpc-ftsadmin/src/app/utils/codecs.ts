@@ -1,5 +1,6 @@
 import { util } from '@unocha/hpc-data';
 import * as t from 'io-ts';
+import { ROWS_PER_PAGE_OPTIONS } from './constants';
 import {
   DEFAULT_FLOW_TABLE_HEADERS,
   DEFAULT_KEYWORD_TABLE_HEADERS,
@@ -8,7 +9,6 @@ import {
   type TableType,
 } from './table-headers';
 
-const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100] as const;
 const ROWS_PER_PAGE = util.validInteger(ROWS_PER_PAGE_OPTIONS);
 
 const PARAMS_CODEC = t.type({

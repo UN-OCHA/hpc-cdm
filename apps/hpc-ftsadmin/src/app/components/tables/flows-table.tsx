@@ -71,7 +71,7 @@ import {
 
 export interface FlowsTableProps {
   initialValues: FlowsFilterValues | PendingFlowsFilterValues;
-  rowsPerPageOptions: number[];
+  rowsPerPageOptions: readonly number[];
   query: FlowQuery;
   setQuery: SetQuery<FlowQuery>;
   isPending?: boolean;

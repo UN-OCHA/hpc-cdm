@@ -60,7 +60,7 @@ const ButtonWrapper = tw.div`
 `;
 export interface OrganizationTableProps {
   initialValues: OrganizationFilterValues;
-  rowsPerPageOptions: number[];
+  rowsPerPageOptions: readonly number[];
   query: OrganizationQuery;
   setQuery: SetQuery<OrganizationQuery>;
   abortSignal: AbortSignal;
