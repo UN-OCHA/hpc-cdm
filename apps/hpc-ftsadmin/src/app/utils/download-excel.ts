@@ -29,181 +29,177 @@ export const downloadExcel = async (
     const tableRow: { [label: string]: string | number } = {};
 
     for (const tableHeader of tableHeaders) {
-      if (tableHeader.isActive) {
-        const label = tableHeader.label;
-        const displayLabel = t.t(
-          lang,
-          (s) => s.components.flowsTable.headers[label]
-        );
+      if (!tableHeader.isActive) {
+        continue;
+      }
 
-        switch (label) {
-          case 'id':
-            tableRow[displayLabel] = `${flow.id} v${flow.versionID}`;
-            break;
+      const label = tableHeader.label;
+      const displayLabel = t.t(
+        lang,
+        (s) => s.components.flowsTable.headers[label]
+      );
 
-          case 'amountUSD':
-            tableRow[displayLabel] =
-              flow.amountUSD > 0
-                ? new Intl.NumberFormat(lang, {
-                    style: 'currency',
-                    currency: 'USD',
-                    maximumFractionDigits: 0,
-                  }).format(flow.amountUSD)
-                : flow.origAmount && flow.origCurrency
-                ? new Intl.NumberFormat(lang, {
-                    style: 'currency',
-                    currency: flow.origCurrency,
-                    maximumFractionDigits: 0,
-                  }).format(flow.origAmount)
-                : EMPTY_CELL;
-            break;
+      switch (label) {
+        case 'id':
+          tableRow[displayLabel] = `${flow.id} v${flow.versionID}`;
+          break;
 
-          case 'dataProvider':
-            tableRow[displayLabel] =
-              flow.externalReferences?.at(0)?.systemID ?? EMPTY_CELL;
-            break;
-
-          case 'decisionDate':
-            tableRow[displayLabel] = flow.decisionDate
-              ? dayjs(flow.decisionDate).format()
+        case 'amountUSD':
+          tableRow[displayLabel] =
+            flow.amountUSD > 0
+              ? new Intl.NumberFormat(lang, {
+                  style: 'currency',
+                  currency: 'USD',
+                  maximumFractionDigits: 0,
+                }).format(flow.amountUSD)
+              : flow.origAmount && flow.origCurrency
+              ? new Intl.NumberFormat(lang, {
+                  style: 'currency',
+                  currency: flow.origCurrency,
+                  maximumFractionDigits: 0,
+                }).format(flow.origAmount)
               : EMPTY_CELL;
-            break;
+          break;
 
-          case 'destinationCountry':
-            tableRow[displayLabel] =
-              flow.locations
+        case 'dataProvider':
+          tableRow[displayLabel] =
+            flow.externalReferences?.at(0)?.systemID ?? EMPTY_CELL;
+          break;
+
+        case 'decisionDate':
+          tableRow[displayLabel] = flow.decisionDate
+            ? dayjs(flow.decisionDate).format()
+            : EMPTY_CELL;
+          break;
+
+        case 'destinationCountry':
+          tableRow[displayLabel] =
+            flow.locations
+              ?.filter((x) => x.direction === 'destination')
+              .map((x) => x.name)
+              .join(', ') || EMPTY_CELL;
+          break;
+
+        case 'destinationOrganization': {
+          const destinationOrg = flow.parkedParentSource
+            ? `${t.t(
+                lang,
+                (s) => s.components.flowsTable.parkedSource
+              )}: ${flow.parkedParentSource?.orgName.join(', ')}`
+            : flow.organizations
                 ?.filter((x) => x.direction === 'destination')
                 .map((x) => x.name)
                 .join(', ') || EMPTY_CELL;
-            break;
 
-          case 'destinationOrganization': {
-            const destinationOrg = flow.parkedParentSource
-              ? `${t.t(
-                  lang,
-                  (s) => s.components.flowsTable.parkedSource
-                )}: ${flow.parkedParentSource?.orgName.join(', ')}`
-              : flow.organizations
-                  ?.filter((x) => x.direction === 'destination')
-                  .map((x) => x.name)
-                  .join(', ') || EMPTY_CELL;
-
-            tableRow[displayLabel] = destinationOrg;
-            break;
-          }
-          case 'destinationPlan':
-            tableRow[displayLabel] =
-              flow.plans
-                ?.filter((x) => x.direction === 'destination')
-                .map((x) => x.name)
-                .join(', ') || EMPTY_CELL;
-            break;
-
-          case 'destinationYear':
-            tableRow[displayLabel] =
-              flow.usageYears
-                ?.filter((x) => x.direction === 'destination')
-                .map((x) => x.year)
-                .join(', ') || EMPTY_CELL;
-            break;
-
-          case 'details': {
-            const details: string[] = [];
-
-            if (flow.categories) {
-              details.push(
-                ...flow.categories
-                  .filter((cat) => cat.group === 'flowStatus')
-                  .map((cat) => cat.name.toLowerCase())
-              );
-            }
-            if (flow.restricted) {
-              details.push(
-                t.t(lang, (s) => s.components.flowsTable.restricted)
-              );
-            }
-            if (!flow.activeStatus) {
-              details.push(t.t(lang, (s) => s.components.flowsTable.inactive));
-            }
-            if ((flow.parentIDs?.length ?? 0) > 0) {
-              details.push(t.t(lang, (s) => s.components.flowsTable.child));
-            }
-            if ((flow.childIDs?.length ?? 0) > 0) {
-              details.push(t.t(lang, (s) => s.components.flowsTable.parent));
-            }
-
-            tableRow[displayLabel] =
-              details.length > 0 ? details.join(', ') : EMPTY_CELL;
-            break;
-          }
-
-          case 'exchangeRate':
-            tableRow[displayLabel] = flow.exchangeRate ?? EMPTY_CELL;
-            break;
-
-          case 'flowDate':
-            tableRow[displayLabel] = flow.flowDate
-              ? dayjs(flow.flowDate).format()
-              : EMPTY_CELL;
-            break;
-
-          case 'newMoney':
-            tableRow[displayLabel] = flow.newMoney?.toString() || EMPTY_CELL;
-            break;
-
-          case 'reporterRefCode': {
-            const reporterRefCodes = [
-              ...new Set(
-                flow.reportDetails
-                  .map((rd) => rd.refCode)
-                  .filter(util.isDefined)
-              ),
-            ].join(', ');
-
-            tableRow[displayLabel] =
-              reporterRefCodes.length > 0 ? reporterRefCodes : EMPTY_CELL;
-            break;
-          }
-          case 'sourceID': {
-            const sourceIDs = [
-              ...new Set(
-                flow.reportDetails
-                  .map((rd) => rd.sourceID)
-                  .filter(util.isDefined)
-              ),
-            ].join(', ');
-
-            tableRow[displayLabel] =
-              sourceIDs.length > 0 ? sourceIDs : EMPTY_CELL;
-            break;
-          }
-          case 'sourceOrganization': {
-            const sourceOrg = flow.parkedParentSource
-              ? `${t.t(
-                  lang,
-                  (s) => s.components.flowsTable.parkedSource
-                )}: ${flow.parkedParentSource?.orgName.join(', ')}`
-              : flow.organizations
-                  ?.filter((x) => x.direction === 'source')
-                  .map((x) => x.name)
-                  .join(', ') || EMPTY_CELL;
-
-            tableRow[displayLabel] = sourceOrg;
-            break;
-          }
-
-          case 'status':
-            tableRow[displayLabel] = t.t(lang, (s) =>
-              flow.versionID > 1
-                ? s.components.flowsTable.update
-                : s.components.flowsTable.new
-            );
-            break;
-
-          case 'updatedCreated':
-            tableRow[displayLabel] = dayjs(flow.updatedAt).format();
-            break;
+          tableRow[displayLabel] = destinationOrg;
+          break;
         }
+        case 'destinationPlan':
+          tableRow[displayLabel] =
+            flow.plans
+              ?.filter((x) => x.direction === 'destination')
+              .map((x) => x.name)
+              .join(', ') || EMPTY_CELL;
+          break;
+
+        case 'destinationYear':
+          tableRow[displayLabel] =
+            flow.usageYears
+              ?.filter((x) => x.direction === 'destination')
+              .map((x) => x.year)
+              .join(', ') || EMPTY_CELL;
+          break;
+
+        case 'details': {
+          const details: string[] = [];
+
+          if (flow.categories) {
+            details.push(
+              ...flow.categories
+                .filter((cat) => cat.group === 'flowStatus')
+                .map((cat) => cat.name.toLowerCase())
+            );
+          }
+          if (flow.restricted) {
+            details.push(t.t(lang, (s) => s.components.flowsTable.restricted));
+          }
+          if (!flow.activeStatus) {
+            details.push(t.t(lang, (s) => s.components.flowsTable.inactive));
+          }
+          if ((flow.parentIDs?.length ?? 0) > 0) {
+            details.push(t.t(lang, (s) => s.components.flowsTable.child));
+          }
+          if ((flow.childIDs?.length ?? 0) > 0) {
+            details.push(t.t(lang, (s) => s.components.flowsTable.parent));
+          }
+
+          tableRow[displayLabel] =
+            details.length > 0 ? details.join(', ') : EMPTY_CELL;
+          break;
+        }
+
+        case 'exchangeRate':
+          tableRow[displayLabel] = flow.exchangeRate ?? EMPTY_CELL;
+          break;
+
+        case 'flowDate':
+          tableRow[displayLabel] = flow.flowDate
+            ? dayjs(flow.flowDate).format()
+            : EMPTY_CELL;
+          break;
+
+        case 'newMoney':
+          tableRow[displayLabel] = flow.newMoney?.toString() || EMPTY_CELL;
+          break;
+
+        case 'reporterRefCode': {
+          const reporterRefCodes = [
+            ...new Set(
+              flow.reportDetails.map((rd) => rd.refCode).filter(util.isDefined)
+            ),
+          ].join(', ');
+
+          tableRow[displayLabel] =
+            reporterRefCodes.length > 0 ? reporterRefCodes : EMPTY_CELL;
+          break;
+        }
+        case 'sourceID': {
+          const sourceIDs = [
+            ...new Set(
+              flow.reportDetails.map((rd) => rd.sourceID).filter(util.isDefined)
+            ),
+          ].join(', ');
+
+          tableRow[displayLabel] =
+            sourceIDs.length > 0 ? sourceIDs : EMPTY_CELL;
+          break;
+        }
+        case 'sourceOrganization': {
+          const sourceOrg = flow.parkedParentSource
+            ? `${t.t(
+                lang,
+                (s) => s.components.flowsTable.parkedSource
+              )}: ${flow.parkedParentSource?.orgName.join(', ')}`
+            : flow.organizations
+                ?.filter((x) => x.direction === 'source')
+                .map((x) => x.name)
+                .join(', ') || EMPTY_CELL;
+
+          tableRow[displayLabel] = sourceOrg;
+          break;
+        }
+
+        case 'status':
+          tableRow[displayLabel] = t.t(lang, (s) =>
+            flow.versionID > 1
+              ? s.components.flowsTable.update
+              : s.components.flowsTable.new
+          );
+          break;
+
+        case 'updatedCreated':
+          tableRow[displayLabel] = dayjs(flow.updatedAt).format();
+          break;
       }
     }
 
