@@ -196,14 +196,13 @@ const ReportingDetail = ({
         return file;
       });
   };
-  const handleDeleteFile = async () => {
+  const handleDeleteFile = () => {
     const fileId = file?.id;
     if (!fileId) {
-      return;
+      return Promise.resolve(undefined);
     }
-    return await env.model.fileAssetEntities
-      .fileDelete(fileId, 'fts')
-      .then(() => handleChange('file', null));
+    handleChange('file', null);
+    return Promise.resolve(undefined);
   };
 
   const handleDownloadFile = async () => {
