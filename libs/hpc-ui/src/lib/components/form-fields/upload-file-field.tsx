@@ -30,6 +30,7 @@ type UploadFileProps = {
   };
   disabled?: boolean;
   lang?: LanguageKey;
+  hideFileChangeStatusStyle?: boolean;
 };
 
 /**
@@ -82,6 +83,7 @@ const UploadFile = ({
   confirmUpload,
   disabled,
   lang = 'en',
+  hideFileChangeStatusStyle,
 }: UploadFileProps) => {
   const inputFile = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -166,6 +168,7 @@ const UploadFile = ({
                       IconComponent={ChangeCircleIcon}
                       tooltipText={t.t(lang, (s) => s.uploadFileField.change)}
                       tooltipPlacement="right"
+                      hideStatusStyle={hideFileChangeStatusStyle}
                     />
                   </>
                 )}

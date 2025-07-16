@@ -449,6 +449,7 @@ const ReportingDetail = ({
             }
             disabled={disabled}
             lang={lang}
+            hideFileChangeStatusStyle
           />
         </Box>
         <Box sx={tw`basis-1/2 max-w-[50%]`}>

@@ -29,6 +29,7 @@ interface AsyncIconButtonProps {
   redirectAfterFetch?: { to: To; options?: NavigateOptions };
   handlerErrorToast?: (err: Error) => void;
   onSuccess?: () => void;
+  hideStatusStyle?: boolean;
 }
 
 const ModalPaper = tw.div`
@@ -59,6 +60,7 @@ const AsyncIconButton = ({
   redirectAfterFetch,
   onSuccess,
   handlerErrorToast,
+  hideStatusStyle,
 }: AsyncIconButtonProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
@@ -67,8 +69,8 @@ const AsyncIconButton = ({
   const navigate = useNavigate();
   const isDisabled = disabledText !== undefined;
   const buttonSx = {
-    ...(isSuccess && tw`disabled:bg-unocha-success-light`),
-    ...(hasError && tw`disabled:bg-unocha-error-light`),
+    ...(!hideStatusStyle && isSuccess && tw`disabled:bg-unocha-success-light`),
+    ...(!hideStatusStyle && hasError && tw`disabled:bg-unocha-error-light`),
     ...(isDisabled && tw`disabled:bg-opacity-40`),
   };
 
@@ -126,9 +128,9 @@ const AsyncIconButton = ({
                 confirmModal ? () => setConfirmed(true) : handleButtonClick
               }
             >
-              {isSuccess ? (
+              {!hideStatusStyle && isSuccess ? (
                 <CheckIcon sx={iconSx} />
-              ) : hasError ? (
+              ) : !hideStatusStyle && hasError ? (
                 <ErrorOutlineIcon sx={iconSx} />
               ) : (
                 <IconComponent sx={iconSx} />
