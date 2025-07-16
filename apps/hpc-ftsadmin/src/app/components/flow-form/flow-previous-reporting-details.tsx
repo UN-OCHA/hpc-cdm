@@ -13,6 +13,7 @@ import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import dayjs from '../../../libs/dayjs';
 import { getContext } from '../../context';
+import { EMPTY_CELL } from '../../utils/constants';
 import { isValidUrl } from '../../utils/utils';
 
 type Props = {
@@ -91,7 +92,7 @@ const FlowPreviousReportingDetails = ({ flow }: Props) => {
                     </TableCell>
                     <TableCell>
                       {!rD.reportFiles.length ? (
-                        <span>--</span>
+                        <span>{EMPTY_CELL}</span>
                       ) : (
                         <Box sx={tw`flex gap-x-2`}>
                           {rD.reportFiles.map((rF, i) => {

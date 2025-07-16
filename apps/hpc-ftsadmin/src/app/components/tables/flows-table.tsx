@@ -30,7 +30,11 @@ import { type LanguageKey, t } from '../../../i18n';
 import dayjs from '../../../libs/dayjs';
 import { getContext } from '../../context';
 import paths from '../../paths';
-import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
+import {
+  EMPTY_CELL,
+  TOAST_CONFIG,
+  TOAST_CONFIG_ERROR,
+} from '../../utils/constants';
 import { downloadExcel } from '../../utils/download-excel';
 import {
   type FilterKey,
@@ -293,7 +297,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-external-reference"
                     >
-                      {row.externalReferences?.at(0)?.systemID ?? '--'}
+                      {row.externalReferences?.at(0)?.systemID ?? EMPTY_CELL}
                     </TableCell>
                   );
                 case 'flow.amountUSD':
@@ -315,7 +319,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                             currency: row.origCurrency,
                             maximumFractionDigits: 0,
                           }).format(row.origAmount)
-                        : '--'}
+                        : EMPTY_CELL}
                     </TableCell>
                   );
                 case 'organization.source.name':
@@ -391,7 +395,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                             .filter((plan) => plan.direction === 'destination')
                             .map((plan) => plan.name)
                             .join(', ')
-                        : '--'}
+                        : EMPTY_CELL}
                     </TableCell>
                   );
                 case 'location.destination.name':
@@ -408,7 +412,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                             )
                             .map((location) => location.name)
                             .join(', ')
-                        : '--'}
+                        : EMPTY_CELL}
                     </TableCell>
                   );
                 case 'usageYear.destination.year':
@@ -493,7 +497,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-newMoney"
                     >
-                      {(row.newMoney ?? '--').toString()}
+                      {(row.newMoney ?? EMPTY_CELL).toString()}
                     </TableCell>
                   );
                 case 'flow.decisionDate':
@@ -505,7 +509,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                     >
                       {row.decisionDate
                         ? dayjs(row.decisionDate).format()
-                        : '--'}
+                        : EMPTY_CELL}
                     </TableCell>
                   );
                 case 'flow.exchangeRate':
@@ -515,7 +519,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-exchangeRate"
                     >
-                      {row.exchangeRate ?? '--'}
+                      {row.exchangeRate ?? EMPTY_CELL}
                     </TableCell>
                   );
                 case 'flow.flowDate':
@@ -525,11 +529,11 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-flowDate"
                     >
-                      {row.flowDate ? dayjs(row.flowDate).format() : '--'}
+                      {row.flowDate ? dayjs(row.flowDate).format() : EMPTY_CELL}
                     </TableCell>
                   );
                 case 'reportDetail.sourceID': {
-                  let rd = '--';
+                  let rd: string = EMPTY_CELL;
                   if (row.reportDetails) {
                     const uniqueSourceIDs = new Set(
                       row.reportDetails
@@ -538,7 +542,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                     );
                     const uniqueSourceIDsArray = [...uniqueSourceIDs];
                     rd = uniqueSourceIDsArray.join(', ');
-                    rd = rd.length > 0 ? rd : '--';
+                    rd = rd.length > 0 ? rd : EMPTY_CELL;
                   }
 
                   return (
@@ -552,7 +556,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                   );
                 }
                 case 'reportDetail.reporterRefCode': {
-                  let rd = '--';
+                  let rd: string = EMPTY_CELL;
                   if (row.reportDetails) {
                     const uniqueSourceIDs = new Set(
                       row.reportDetails
@@ -561,7 +565,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                     );
                     const uniqueRefCodesArray = [...uniqueSourceIDs];
                     rd = uniqueRefCodesArray.join(', ');
-                    rd = rd.length > 0 ? rd : '--';
+                    rd = rd.length > 0 ? rd : EMPTY_CELL;
                   }
 
                   return (

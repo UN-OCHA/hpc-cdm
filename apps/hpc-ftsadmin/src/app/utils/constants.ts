@@ -13,3 +13,4 @@ export const TOAST_CONFIG_ERROR = {
 } as const;
 
 export const SPECIAL_SEPARATOR = '<||>' as const;
+export const EMPTY_CELL = '--' as const;

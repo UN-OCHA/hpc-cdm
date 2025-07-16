@@ -7,6 +7,7 @@ import {
 import { isRight } from 'fp-ts/lib/Either';
 import dayjs from '../../libs/dayjs';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
+import { EMPTY_CELL } from './constants';
 
 export const isValidUrl = (urlString: string): boolean => {
   try {
@@ -71,7 +72,7 @@ export const parseUpdatedCreatedBy = (
   updatedCreatedBy: organizations.UpdatedCreatedBy[]
 ): string => {
   if (updatedCreatedBy.length === 0) {
-    return '--';
+    return EMPTY_CELL;
   }
   const { participantName, date } = updatedCreatedBy.reduce((a, b) => {
     return new Date(a.date) > new Date(b.date) ? a : b;

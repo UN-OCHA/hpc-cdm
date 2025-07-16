@@ -43,7 +43,11 @@ import {
 
 import { Form, Formik } from 'formik';
 import { toast } from 'react-toastify';
-import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
+import {
+  EMPTY_CELL,
+  TOAST_CONFIG,
+  TOAST_CONFIG_ERROR,
+} from '../../utils/constants';
 import InfoAlert from '../info-alert';
 import MergeModal from '../merge-modal';
 
@@ -350,7 +354,11 @@ const KeywordTable = (props: KeywordTableProps) => {
                         size="small"
                         data-test="_keyword-table-public"
                       >
-                        {row.description === 'public' ? <CheckIcon /> : '--'}
+                        {row.description === 'public' ? (
+                          <CheckIcon />
+                        ) : (
+                          EMPTY_CELL
+                        )}
                       </TableCell>
                     );
 

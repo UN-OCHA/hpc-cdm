@@ -3,9 +3,8 @@ import { type flows } from '@unocha/hpc-data';
 import { Workbook } from 'exceljs';
 import { type LanguageKey, t } from '../../i18n';
 import dayjs from '../../libs/dayjs';
+import { EMPTY_CELL } from './constants';
 import { type TableHeadersProps } from './table-headers';
-
-const EMPTY_CELL = '--';
 
 export const downloadExcel = async (
   data: flows.SearchFlowsBatchesResult,

@@ -8,6 +8,7 @@ import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import { getContext } from '../../context';
 import paths from '../../paths';
+import { EMPTY_CELL } from '../../utils/constants';
 import { integerToCurrency, valueToInteger } from '../../utils/utils';
 import { type FlowFormType } from './flow-form';
 
@@ -111,7 +112,7 @@ const FlowLink = ({
           {integerToCurrency(valueToInteger(amountOriginalCurrency))}
         </ShortSpan>
       ) : (
-        <ShortSpan>--</ShortSpan>
+        <ShortSpan>{EMPTY_CELL}</ShortSpan>
       )}
       {!disabled && (
         <C.Button

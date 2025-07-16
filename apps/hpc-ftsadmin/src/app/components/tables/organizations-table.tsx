@@ -21,6 +21,7 @@ import { type LanguageKey, t } from '../../../i18n';
 import { type Strings } from '../../../i18n/iface';
 import { AppContext, getEnv } from '../../context';
 import paths from '../../paths';
+import { EMPTY_CELL } from '../../utils/constants';
 import {
   decodeFilters,
   encodeFilters,
@@ -216,7 +217,9 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                             cat.group === 'organizationType' &&
                             cat.parentID === null
                         );
-                        return res.length > 0 ? res.map((x) => x.name) : '--';
+                        return res.length > 0
+                          ? res.map((x) => x.name)
+                          : EMPTY_CELL;
                       })()}
                     </TableCell>
                   );
@@ -233,7 +236,9 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                             cat.group === 'organizationType' &&
                             cat.parentID !== null
                         );
-                        return res.length > 0 ? res.map((x) => x.name) : '--';
+                        return res.length > 0
+                          ? res.map((x) => x.name)
+                          : EMPTY_CELL;
                       })()}
                     </TableCell>
                   );
@@ -251,7 +256,7 @@ export default function OrganizationTable(props: OrganizationTableProps) {
                                 index === row.locations.length - 1 ? '' : ', '
                               }`
                           )
-                        : '--'}
+                        : EMPTY_CELL}
                     </TableCell>
                   );
                 case 'organization.createdBy':
