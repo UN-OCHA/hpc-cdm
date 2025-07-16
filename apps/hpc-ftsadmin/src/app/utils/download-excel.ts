@@ -15,7 +15,7 @@ export const downloadExcel = async (
   const flows = data.searchFlowsBatches.flows;
 
   const workbook = new Workbook();
-  const worksheet = workbook.addWorksheet('Sheet1');
+  const flowData = workbook.addWorksheet('Flow data');
 
   const headers = tableHeaders
     .filter((header) => header.isActive)
@@ -23,7 +23,7 @@ export const downloadExcel = async (
       t.t(lang, (s) => s.components.flowsTable.headers[header.label])
     );
 
-  worksheet.addRow(headers);
+  flowData.addRow(headers);
 
   for (const flow of flows) {
     const tableRow: { [label: string]: string | number } = {};
@@ -207,7 +207,7 @@ export const downloadExcel = async (
       }
     }
 
-    worksheet.addRow(Object.values(tableRow));
+    flowData.addRow(Object.values(tableRow));
   }
 
   return await workbook.xlsx.writeBuffer().then((data) => {
