@@ -9,13 +9,97 @@ import dayjs from '../../libs/dayjs';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
 import { DEFAULT_LOCALE_INTL, EMPTY_CELL } from './constants';
 
+/**
+ * Validate URL with strict hostname requirements:
+ * - Only HTTP/HTTPS protocols
+ * - No explicit port numbers
+ * - Hostname must have at least one dot (TLD required)
+ * - Each hostname part must be 63 characters or less (hostname limit)
+ * - Each hostname part contains only ASCII letters, numbers, and hyphens
+ * - Each hostname part cannot start or end with a hyphen
+ * - TLD must be at least 2 characters and contain only ASCII letters
+ * - TLD cannot be numeric
+ * - No Punicode/internationalized domain names
+ * - No whitespace in any part
+ */
 export const isValidUrl = (urlString: string): boolean => {
+  // Reject URLs that contain Punicode in the original string
+  if (urlString.includes('xn--')) {
+    return false;
+  }
+
+  let url: URL;
   try {
-    const url = new URL(urlString);
-    return url.protocol === 'http:' || url.protocol === 'https:';
+    url = new URL(urlString);
   } catch {
     return false;
   }
+
+  const { hostname, host, protocol } = url;
+
+  // Reject URLs where hostname contains Punicode (catches Unicode chars that got converted)
+  if (hostname.includes('xn--')) {
+    return false;
+  }
+
+  // Only allow HTTP/HTTPS protocols
+  if (protocol !== 'http:' && protocol !== 'https:') {
+    return false;
+  }
+
+  // Reject URLs with explicit port numbers
+  if (host !== hostname) {
+    return false;
+  }
+
+  // Split hostname into parts
+  const parts = hostname.split('.');
+  const tld = parts.at(-1);
+
+  // Require TLD - disallow hostnames without at least one dot
+  if (parts.length < 2) {
+    return false;
+  }
+
+  // Cannot ever be true at this point, after above condition is passed, but needed just for TS
+  if (!tld) {
+    return false;
+  }
+
+  // Reject numeric TLDs
+  if (/^\d+$/.test(tld)) {
+    return false;
+  }
+
+  // TLD must be at least 2 characters and contain only ASCII letters
+  if (!/^[a-z]{2,}$/i.test(tld)) {
+    return false;
+  }
+
+  // Disallow spaces in TLD
+  if (/\s/.test(tld)) {
+    return false;
+  }
+
+  // Check each part of the hostname
+  return parts.every((part) => {
+    // Reject parts longer than 63 characters
+    if (part.length > 63) {
+      return false;
+    }
+
+    // Only allow ASCII letters, numbers, and hyphens
+    if (!/^[a-z0-9-]+$/i.test(part)) {
+      return false;
+    }
+
+    // Disallow parts starting or ending with hyphen
+    if (/^-|-$/.test(part)) {
+      return false;
+    }
+
+    return true;
+  });
 };
 
 export const mergeArraysByUniqueProperty = <
