@@ -107,6 +107,8 @@ export const FUNDING_KEYS = [
   'fundingDestinationUsageYears',
   'fundingDestinationFieldClusters',
 ] as const;
+const FUNDING_KEYS_SET = new Set<string>(FUNDING_KEYS);
+
 export type FlowFormFlowObjectKey = (typeof FUNDING_KEYS)[number];
 
 export const SHARED_FIELDS = new Set<string>([
@@ -1077,7 +1079,7 @@ const compareFlowForms = (
 };
 
 const isFundingKey = (key: string): key is FlowFormFlowObjectKey =>
-  new Set<string>(FUNDING_KEYS).has(key);
+  FUNDING_KEYS_SET.has(key);
 
 export const pendingValuesFlowForm = (
   initialValues?: FlowFormType,
