@@ -1,4 +1,3 @@
-import type { util } from '@unocha/hpc-data';
 import type { FlowFormType } from './flow-form';
 
 import { Box, Chip, Tooltip } from '@mui/material';
@@ -34,10 +33,6 @@ const Blank = tw.span`
   rounded-sm
 `;
 
-const isEmpty = (value: util.FormObjectValue[]): boolean => {
-  return value.length === 0;
-};
-
 const FormChip = ({ text }: { text: string }) => {
   return (
     <Tooltip title={text}>
@@ -66,7 +61,7 @@ const FormGroupReadOnly = ({ fields, values }: FormGroupReadOnlyProps) => {
               {t.t(lang, (s) => s.components.flowForm.fields[fieldName])}:
             </Label>
             <Box sx={tw`flex flex-wrap`}>
-              {isEmpty(fieldValue) ? (
+              {fieldValue.length === 0 ? (
                 <Blank>blank</Blank>
               ) : (
                 fieldValue.map(({ value, displayLabel }) => (
