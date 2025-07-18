@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
 import { optional } from './util';
 
-const FLOW_OBJECT_OBJECT_TYPE = t.keyof({
+export const FLOW_OBJECT_OBJECT_TYPE = t.keyof({
   anonymizedOrganization: null,
   cluster: null,
   corePlanEntityActivity: null,

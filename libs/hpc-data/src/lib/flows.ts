@@ -7,7 +7,11 @@ import { ENTITY_PROTOTYPE_REF_CODE } from './entity-prototypes';
 import { EXTERNAL_DATA } from './external-data';
 import { EXTERNAL_REFERENCE } from './external-references';
 import { FLOW_LINK } from './flow-links';
-import { FLOW_OBJECT, FLOW_OBJECT_REF_DIRECTION } from './flow-objects';
+import {
+  FLOW_OBJECT,
+  FLOW_OBJECT_OBJECT_TYPE,
+  FLOW_OBJECT_REF_DIRECTION,
+} from './flow-objects';
 import { GLOBAL_CLUSTER } from './global-clusters';
 import {
   GOVERNING_ENTITY,
@@ -535,7 +539,7 @@ const FLOW_FILTERS = t.partial({
       t.type({
         objectID: t.number,
         direction: FLOW_OBJECT_REF_DIRECTION,
-        objectType: t.string,
+        objectType: FLOW_OBJECT_OBJECT_TYPE,
       }),
       t.partial({ inclusive: t.boolean }),
     ])
