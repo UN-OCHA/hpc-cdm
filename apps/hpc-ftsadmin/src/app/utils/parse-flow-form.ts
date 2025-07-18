@@ -19,7 +19,7 @@ import {
 } from '../components/flow-form/flow-form';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
 import { type ReportingDetailProps } from '../components/reporting-detail';
-import { CTP, PENDING_REVIEW, TRADITIONAL_AID } from './constants';
+import { CANCELLED, CTP, PENDING_REVIEW, TRADITIONAL_AID } from './constants';
 import {
   defaultOptions,
   locationsOptions,
@@ -351,7 +351,7 @@ export const parseFlowForm = (
     (inactiveReason) => inactiveReason.name === PENDING_REVIEW
   );
   const cancelledCategory = inactiveReasons.find(
-    (inactiveReason) => inactiveReason.name === 'Cancelled'
+    (inactiveReason) => inactiveReason.name === CANCELLED
   );
 
   const notes = dirtyNotes || undefined;

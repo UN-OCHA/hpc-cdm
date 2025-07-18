@@ -33,7 +33,12 @@ import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
 import { getContext } from '../../context';
 import paths from '../../paths';
-import { CTP, TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
+import {
+  CANCELLED,
+  CTP,
+  TOAST_CONFIG,
+  TOAST_CONFIG_ERROR,
+} from '../../utils/constants';
 import {
   autofillEmergencies,
   autofillFieldClusters,
@@ -508,7 +513,7 @@ export const FlowForm = (props: FlowFormProps) => {
   const isDisabled = !!isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
   const cancelledInactiveReason = inactiveReasons.find(
-    (reason) => reason.name === 'Cancelled'
+    (reason) => reason.name === CANCELLED
   );
   const isCancelled = !!(
     isInactive &&
