@@ -11,7 +11,11 @@ import { type FlowsFilterValues } from '../components/filters/filter-flows-table
 import { type OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { type PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
 import { SPECIAL_SEPARATOR } from './constants';
-import { type RefDirection } from './parse-flow-form';
+import {
+  isArrayFormObjectValue,
+  isFormObjectValue,
+  type RefDirection,
+} from './parse-flow-form';
 import { currencyToInteger, valueToInteger } from './utils';
 
 /*
@@ -86,21 +90,11 @@ const filterValueIsBoolean = (value: unknown): value is boolean => {
 
 const filterValueIsFormObjectValue = (
   value: unknown
-): value is util.FormObjectValue => {
-  return (
-    typeof value === 'object' &&
-    !Array.isArray(value) &&
-    value !== null &&
-    Object.keys(value).includes('displayLabel') &&
-    Object.keys(value).includes('value')
-  );
-};
+): value is util.FormObjectValue => isFormObjectValue(value);
 
 const filterValueIsArrayFormObjectValue = (
   value: unknown
-): value is util.FormObjectValue[] => {
-  return Array.isArray(value) && value.every(filterValueIsFormObjectValue);
-};
+): value is util.FormObjectValue[] => isArrayFormObjectValue(value);
 
 const filterValueIsDayJS = (value: FilterValue): value is Dayjs => {
   return dayjs.isDayjs(value);

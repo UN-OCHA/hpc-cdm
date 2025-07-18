@@ -168,12 +168,10 @@ export const isFormObjectValue = (
   Object.keys(value).includes('displayLabel') &&
   Object.keys(value).includes('value');
 
-const isArrayFormObjectValue = (
+export const isArrayFormObjectValue = (
   value: unknown
 ): value is util.FormObjectValue[] => {
-  return (
-    Array.isArray(value) && (isFormObjectValue(value[0]) || value.length === 0)
-  );
+  return Array.isArray(value) && value.every(isFormObjectValue);
 };
 
 const createFlowObject = ({
