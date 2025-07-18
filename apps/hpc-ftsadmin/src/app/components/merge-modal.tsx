@@ -87,7 +87,9 @@ const ConfirmationText = ({
   receivingEntity,
   lang,
 }: {
-  mergingEntities: util.FormObjectValue[] | (util.FormObjectValue | null);
+  mergingEntities:
+    | OrganizationMergeModalValues['mergingEntities']
+    | KeywordMergeModalValues['mergingEntities'];
   receivingEntity: util.FormObjectValue | null;
   lang: LanguageKey;
 }) => {
