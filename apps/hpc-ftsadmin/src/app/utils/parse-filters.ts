@@ -10,6 +10,7 @@ import dayjs from '../../libs/dayjs';
 import { type FlowsFilterValues } from '../components/filters/filter-flows-table';
 import { type OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { type PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
+import { SPECIAL_SEPARATOR } from './constants';
 import { type RefDirection } from './parse-flow-form';
 import { currencyToInteger, valueToInteger } from './utils';
 
@@ -250,7 +251,7 @@ export const parseFormFilters = <
       const displayValue = Array.isArray(fieldValue)
         ? fieldValue
             .map((x) => (typeof x === 'string' ? x : x.displayLabel))
-            .join('<||>')
+            .join(SPECIAL_SEPARATOR)
         : filterValueIsFormObjectValue(fieldValue)
         ? fieldValue.displayLabel
         : fieldValue.toString();
