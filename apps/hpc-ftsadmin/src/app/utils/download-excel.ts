@@ -5,6 +5,7 @@ import { type LanguageKey, t } from '../../i18n';
 import dayjs from '../../libs/dayjs';
 import { EMPTY_CELL } from './constants';
 import { type TableHeadersProps } from './table-headers';
+import { integerToCurrency } from './utils';
 
 export const downloadExcel = async (
   data: flows.SearchFlowsBatchesResult,
@@ -47,17 +48,9 @@ export const downloadExcel = async (
         case 'amountUSD':
           tableRow[displayLabel] =
             flow.amountUSD > 0
-              ? new Intl.NumberFormat(lang, {
-                  style: 'currency',
-                  currency: 'USD',
-                  maximumFractionDigits: 0,
-                }).format(flow.amountUSD)
+              ? `$${integerToCurrency(flow.amountUSD)}`
               : flow.origAmount && flow.origCurrency
-              ? new Intl.NumberFormat(lang, {
-                  style: 'currency',
-                  currency: flow.origCurrency,
-                  maximumFractionDigits: 0,
-                }).format(flow.origAmount)
+              ? `${flow.origCurrency} ${integerToCurrency(flow.origAmount)}`
               : EMPTY_CELL;
           break;
 

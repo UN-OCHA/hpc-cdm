@@ -51,6 +51,7 @@ import {
   getDraggableTableHeaders,
   isCompatibleTableHeaderType,
 } from '../../utils/table-headers';
+import { integerToCurrency } from '../../utils/utils';
 import {
   FLOWS_FILTER_INITIAL_VALUES,
   type FlowsFilterValues,
@@ -308,17 +309,11 @@ export default function FlowsTable(props: FlowsTableProps) {
                       data-test="flows-table-amount-usd"
                     >
                       {row.amountUSD
-                        ? new Intl.NumberFormat(lang, {
-                            style: 'currency',
-                            currency: 'USD',
-                            maximumFractionDigits: 0,
-                          }).format(row.amountUSD)
+                        ? `$${integerToCurrency(row.amountUSD)}`
                         : row.origAmount && row.origCurrency
-                        ? new Intl.NumberFormat(lang, {
-                            style: 'currency',
-                            currency: row.origCurrency,
-                            maximumFractionDigits: 0,
-                          }).format(row.origAmount)
+                        ? `${row.origCurrency} ${integerToCurrency(
+                            row.origAmount
+                          )}`
                         : EMPTY_CELL}
                     </TableCell>
                   );

@@ -554,10 +554,9 @@ export const FlowForm = (props: FlowFormProps) => {
         filteredChildFlows.reduce(
           (acc, cur) => acc + valueToInteger(cur.amountUSD),
           0
-        ),
-      'USD'
+        )
     );
-    return `US ${amountUSDDifference}`;
+    return `USD $${amountUSDDifference}`;
   };
 
   const getChildFlowsOriginalAmountDiff = (
@@ -580,8 +579,7 @@ export const FlowForm = (props: FlowFormProps) => {
             return acc;
           }
           return acc + valueToInteger(cur.amountOriginalCurrency);
-        }, 0),
-      `${currency.value}`
+        }, 0)
     );
     return `${currency.displayLabel} ${originalAmountDifference}`;
   };

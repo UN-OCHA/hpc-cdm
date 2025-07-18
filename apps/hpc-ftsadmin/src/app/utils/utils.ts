@@ -7,7 +7,7 @@ import {
 import { isRight } from 'fp-ts/lib/Either';
 import dayjs from '../../libs/dayjs';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
-import { EMPTY_CELL } from './constants';
+import { DEFAULT_LOCALE_INTL, EMPTY_CELL } from './constants';
 
 export const isValidUrl = (urlString: string): boolean => {
   try {
@@ -64,10 +64,8 @@ export const currencyToInteger = (value: string | number) => {
   return parseInt(value.replaceAll(',', ''));
 };
 
-export const integerToCurrency = (value: number, currency: string) => {
-  return Intl.NumberFormat([], {
-    style: 'currency',
-    currency,
+export const integerToCurrency = (value: number) => {
+  return Intl.NumberFormat(DEFAULT_LOCALE_INTL, {
     maximumFractionDigits: 0,
   }).format(value);
 };

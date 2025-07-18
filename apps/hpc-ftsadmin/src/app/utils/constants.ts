@@ -15,3 +15,9 @@ export const SPECIAL_SEPARATOR = '<||>' as const;
 export const EMPTY_CELL = '--' as const;
 
 export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100] as const;
+
+/**
+ * We want to format currencies with the same format, so we chose `en-GB`
+ * as standard locale to use on formatting.
+ */
+export const DEFAULT_LOCALE_INTL = new Intl.Locale('en-GB');
