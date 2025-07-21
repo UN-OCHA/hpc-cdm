@@ -1,9 +1,4 @@
-import {
-  type fileAssetEntities,
-  type flows,
-  type organizations,
-  util,
-} from '@unocha/hpc-data';
+import { type flows, type organizations, util } from '@unocha/hpc-data';
 import { isRight } from 'fp-ts/lib/Either';
 import dayjs from '../../libs/dayjs';
 import { type FlowLinkProps } from '../components/flow-form/flow-link';
@@ -207,20 +202,5 @@ export const flowLinkToFormObjectValue = (
   return {
     displayLabel: `${flowLink.id}: ${flowLink.description}`,
     value: JSON.stringify(flowLink),
-  };
-};
-
-export const fileAssetEntityToFileUploadResult = (
-  fileAssetEntity?: flows.GetFlowResult['reportDetails'][number]['reportFiles'][number]['fileAssetEntity']
-): fileAssetEntities.FileUploadResult | null => {
-  if (!fileAssetEntity) {
-    return null;
-  }
-  const self = `/files/fts/${fileAssetEntity.id}`;
-  return {
-    ...fileAssetEntity,
-    name: fileAssetEntity.filename,
-    self,
-    file: `/public${self}`,
   };
 };

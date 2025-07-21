@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { errors, type fileAssetEntities, type util } from '@unocha/hpc-data';
+import { errors, type flows, type util } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { type Dayjs } from 'dayjs';
 import { useFormikContext } from 'formik';
@@ -24,7 +24,9 @@ export type ReportingDetailProps = {
   reporterReferenceCode: string;
   reporterContactInfo: string;
   reportFileTitle: string;
-  file: fileAssetEntities.FileUploadResult | null;
+  file:
+    | flows.GetFlowResult['reportDetails'][number]['reportFiles'][number]['fileAssetEntity']
+    | null;
   reportURLTitle: string;
   url: string;
 };
@@ -216,7 +218,7 @@ const ReportingDetail = ({
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = file.name;
+        a.download = file.filename;
         a.click();
         URL.revokeObjectURL(url);
       });
@@ -442,7 +444,7 @@ const ReportingDetail = ({
             file={
               file
                 ? {
-                    displayLabel: file.name,
+                    displayLabel: file.filename,
                     value: file.id,
                   }
                 : undefined

@@ -34,7 +34,6 @@ import {
 } from './parse-filters';
 import {
   currencyToInteger,
-  fileAssetEntityToFileUploadResult,
   flowToFlowLinkProps,
   valueToFloat,
   valueToInteger,
@@ -709,9 +708,9 @@ const reportDetailsToReportingDetailProps = (
     reporterContactInfo: reportDetail.contactInfo ?? '',
     reportFileTitle:
       reportDetail.reportFiles.find((rF) => rF.type === 'file')?.title ?? '',
-    file: fileAssetEntityToFileUploadResult(
-      reportDetail.reportFiles.find((rF) => rF.type === 'file')?.fileAssetEntity
-    ),
+    file:
+      reportDetail.reportFiles.find((rF) => rF.type === 'file')
+        ?.fileAssetEntity ?? null,
     reportURLTitle:
       reportDetail.reportFiles.find((rF) => rF.type.toLowerCase() === 'url')
         ?.title ?? '',
