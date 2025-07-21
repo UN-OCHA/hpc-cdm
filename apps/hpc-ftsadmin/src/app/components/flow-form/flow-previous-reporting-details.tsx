@@ -68,14 +68,18 @@ const FlowPreviousReportingDetails = ({ flow }: Props) => {
             <TableHead>
               <TableRow>
                 {HEADERS.map((header) => (
-                  <TableCell key={header}>{header}</TableCell>
+                  <TableCell key={`previous_report_detail_${header}`}>
+                    {header}
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {flows.map((f) =>
                 f.reportDetails.map((rD) => (
-                  <TableRow key={`${f.versionID}_${rD.id}`}>
+                  <TableRow
+                    key={`previous_report_detail_${f.versionID}_${rD.id}`}
+                  >
                     <TableCell>{rD.versionID}</TableCell>
                     <TableCell>{rD.source}</TableCell>
                     <TableCell>{rD.organization?.name ?? null}</TableCell>
@@ -98,12 +102,14 @@ const FlowPreviousReportingDetails = ({ flow }: Props) => {
                           {rD.reportFiles.map((rF, i) => {
                             if (rF.url && isValidUrl(rF.url)) {
                               return (
-                                <Link to={rF.url} key={i}>
+                                <Link to={rF.url} key={`${rF.title}_${i}`}>
                                   {rF.title}
                                 </Link>
                               );
                             }
-                            return <span>{rF.title}</span>;
+                            return (
+                              <span key={`${rF.title}_${i}`}>{rF.title}</span>
+                            );
                           })}
                         </Box>
                       )}
