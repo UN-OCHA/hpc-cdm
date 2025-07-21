@@ -467,7 +467,7 @@ const isInferred = (
     return false;
   }
 
-  const inferredList = flow.externalReferences.map((eR) => {
+  return flow.externalReferences.some((eR) => {
     if (!eR.importInformation?.inferred) {
       return false;
     }
@@ -478,7 +478,6 @@ const isInferred = (
         inf.valueId === entity.id
     );
   });
-  return inferredList.includes(true);
 };
 
 const isTransferred = (
@@ -491,7 +490,7 @@ const isTransferred = (
     return false;
   }
 
-  const transferredList = flow.externalReferences.map((eR) => {
+  return flow.externalReferences.some((eR) => {
     if (!eR.importInformation?.transferred) {
       return false;
     }
@@ -502,8 +501,6 @@ const isTransferred = (
         inf.valueId === entity.id
     );
   });
-
-  return transferredList.includes(true);
 };
 
 const inferredTransferredChipColor = (
