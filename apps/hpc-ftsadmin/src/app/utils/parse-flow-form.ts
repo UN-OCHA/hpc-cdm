@@ -1095,8 +1095,6 @@ export const pendingValuesFlowForm = (
     globalCluster: 'GlobalClusters',
     plan: 'Plan',
     project: 'Project',
-    usageYear: 'UsageYears',
-    fieldCluster: 'FieldClusters',
   };
 
   const comparedFlow = compareFlowForms(initialValues, parseToFlowForm(flow));
