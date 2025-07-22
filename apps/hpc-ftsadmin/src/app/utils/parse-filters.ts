@@ -84,22 +84,6 @@ const filterValueIsStringArray = (value: unknown): value is string[] => {
   );
 };
 
-const filterValueIsBoolean = (value: unknown): value is boolean => {
-  return typeof value === 'boolean';
-};
-
-const filterValueIsFormObjectValue = (
-  value: unknown
-): value is util.FormObjectValue => isFormObjectValue(value);
-
-const filterValueIsArrayFormObjectValue = (
-  value: unknown
-): value is util.FormObjectValue[] => isArrayFormObjectValue(value);
-
-const filterValueIsDayJS = (value: FilterValue): value is Dayjs => {
-  return dayjs.isDayjs(value);
-};
-
 const filterValueIsFlowStatusType = (
   value: unknown
 ): value is FlowStatusType => {
@@ -247,9 +231,9 @@ export const parseFormFilters = <
         displayValue = fieldValue
           .map((x) => (typeof x === 'string' ? x : x.displayLabel))
           .join(SPECIAL_SEPARATOR);
-      } else if (filterValueIsFormObjectValue(fieldValue)) {
+      } else if (isFormObjectValue(fieldValue)) {
         displayValue = fieldValue.displayLabel;
-      } else if (filterValueIsDayJS(fieldValue)) {
+      } else if (dayjs.isDayjs(fieldValue)) {
         displayValue = fieldValue.format();
       } else {
         displayValue = fieldValue.toString();
@@ -330,7 +314,7 @@ export const parseFlowFilters = (
       case 'sourceProjects':
       case 'sourceUsageYears': {
         const extractedDetails = extractDirectionObject(key);
-        if (extractedDetails && filterValueIsArrayFormObjectValue(value)) {
+        if (extractedDetails && isArrayFormObjectValue(value)) {
           res.flowObjectFilters = [
             ...res.flowObjectFilters,
             ...value.map((flowObject) => ({
@@ -369,7 +353,7 @@ export const parseFlowFilters = (
       }
       case 'flowType':
       case 'flowStatus': {
-        if (filterValueIsFormObjectValue(value)) {
+        if (isFormObjectValue(value)) {
           const { value: statusType } = value;
           if (filterValueIsFlowStatusType(statusType)) {
             res[statusType] = true;
@@ -378,13 +362,13 @@ export const parseFlowFilters = (
         break;
       }
       case 'includeChildrenOfParkedFlows': {
-        if (filterValueIsBoolean(value)) {
+        if (typeof value === 'boolean') {
           res[key] = value;
         }
         break;
       }
       case 'flowActiveStatus': {
-        if (filterValueIsFormObjectValue(value)) {
+        if (isFormObjectValue(value)) {
           const { value: flowActiveStatus } = value;
 
           if (typeof flowActiveStatus === 'string') {
@@ -394,7 +378,7 @@ export const parseFlowFilters = (
         break;
       }
       case 'keywords': {
-        if (filterValueIsArrayFormObjectValue(value)) {
+        if (isArrayFormObjectValue(value)) {
           const parsedCategories = value.map(
             (keyword): { id: number; group: categories.CategoryGroup } => {
               return { id: valueToInteger(keyword.value), group: 'keywords' };
@@ -408,7 +392,7 @@ export const parseFlowFilters = (
         break;
       }
       case 'dataProvider': {
-        if (filterValueIsFormObjectValue(value)) {
+        if (isFormObjectValue(value)) {
           const { value: dataProvider } = value;
 
           if (filterValueIsString(dataProvider)) {
@@ -418,7 +402,7 @@ export const parseFlowFilters = (
         break;
       }
       case 'status': {
-        if (filterValueIsFormObjectValue(value)) {
+        if (isFormObjectValue(value)) {
           const { value: status } = value;
 
           if (
@@ -452,7 +436,7 @@ export const parseOrganizationFilters = (
     switch (key) {
       case 'parentOrganization':
       case 'organizationType': {
-        if (filterValueIsFormObjectValue(value)) {
+        if (isFormObjectValue(value)) {
           res.search[key] = {
             name: value.displayLabel,
             id: valueToInteger(value.value),
@@ -461,7 +445,7 @@ export const parseOrganizationFilters = (
         break;
       }
       case 'locations': {
-        if (filterValueIsFormObjectValue(value)) {
+        if (isFormObjectValue(value)) {
           const { displayLabel, value: id, parent } = value;
           const location = {
             name: displayLabel,
@@ -493,7 +477,7 @@ export const parseOrganizationFilters = (
         break;
       }
       case 'date': {
-        if (filterValueIsDayJS(value)) {
+        if (dayjs.isDayjs(value)) {
           res.search.date = value.toString();
         } else if (filterValueIsString(value)) {
           res.search.date = value;
@@ -501,10 +485,7 @@ export const parseOrganizationFilters = (
         break;
       }
       default: {
-        if (
-          filterValueIsFormObjectValue(value) &&
-          filterValueIsString(value.value)
-        ) {
+        if (isFormObjectValue(value) && filterValueIsString(value.value)) {
           res.search[key] = value.value;
         }
         break;
