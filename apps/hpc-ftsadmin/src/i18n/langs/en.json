@@ -589,6 +589,11 @@
             "notFound": "The file you are trying to download does not exist or has been deleted",
             "unknown": "There has been an unknown error downloading the file"
           }
+        },
+        "upload": {
+          "error": {
+            "invalidExtension": "The file selected is not [{whitelist}]. Please choose a file with the correct format"
+          }
         }
       },
       "reportURLTitle": {

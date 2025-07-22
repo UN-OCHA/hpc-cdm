@@ -14,6 +14,8 @@ import { fnCategories, fnOrganizations } from '../utils/fn-promises';
 import { isValidUrl, mergeArraysByUniqueProperty } from '../utils/utils';
 import { type FlowFormType, FormGroup } from './flow-form/flow-form';
 
+type FileType =
+  flows.GetFlowResult['reportDetails'][number]['reportFiles'][number]['fileAssetEntity'];
 export type ReportingDetailProps = {
   reportSource: 'Primary' | 'Secondary';
   reportedByOrganization: util.FormObjectValue | null;
@@ -24,9 +26,7 @@ export type ReportingDetailProps = {
   reporterReferenceCode: string;
   reporterContactInfo: string;
   reportFileTitle: string;
-  file:
-    | flows.GetFlowResult['reportDetails'][number]['reportFiles'][number]['fileAssetEntity']
-    | null;
+  file: FileType | null;
   reportURLTitle: string;
   url: string;
 };
@@ -45,6 +45,20 @@ export const REPORTING_DETAIL_INITIAL_VALUES = {
   reportURLTitle: '',
   url: '',
 } satisfies ReportingDetailProps;
+
+const WHITELIST_FILE_EXTENSIONS = new Set([
+  'png',
+  'gif',
+  'jpg',
+  'jpeg',
+  'pdf',
+  'doc',
+  'docx',
+  'xls',
+  'xml',
+  'xlsx',
+  'txt',
+] as const satisfies string[]);
 
 const ReportingOrganizationSuggestion = tw.span`
   text-unocha-textLink
@@ -194,7 +208,10 @@ const ReportingDetail = ({
     return await env.model.fileAssetEntities
       .fileUpload(formData)
       .then((file) => {
-        handleChange('file', file);
+        handleChange('file', {
+          ...file,
+          filename: file.name,
+        });
         return file;
       });
   };
@@ -451,6 +468,20 @@ const ReportingDetail = ({
             }
             disabled={disabled}
             lang={lang}
+            validFileFormats={{
+              whitelist: WHITELIST_FILE_EXTENSIONS,
+              validationErrorToast: () =>
+                toast.error(
+                  t.t(
+                    lang,
+                    (s) =>
+                      s.components.reportingDetail.file.upload.error
+                        .invalidExtension,
+                    { whitelist: [...WHITELIST_FILE_EXTENSIONS].join(', ') }
+                  ),
+                  TOAST_CONFIG_ERROR
+                ),
+            }}
             hideFileChangeStatusStyle
           />
         </Box>

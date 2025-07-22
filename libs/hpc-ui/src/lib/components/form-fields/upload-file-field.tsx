@@ -31,6 +31,10 @@ type UploadFileProps = {
   disabled?: boolean;
   lang?: LanguageKey;
   hideFileChangeStatusStyle?: boolean;
+  validFileFormats?: {
+    whitelist: Set<string>;
+    validationErrorToast: () => unknown;
+  };
 };
 
 /**
@@ -73,6 +77,15 @@ const OverflowSpan = tw.span`
   overflow-hidden
 `;
 
+const validateExtension = (filename: string, whitelist: Set<string>) => {
+  const parts = filename.split('.');
+  if (!parts.length) {
+    return '';
+  }
+  const extension = parts.at(-1)?.toLowerCase() ?? '';
+  return whitelist.has(extension);
+};
+
 const UploadFile = ({
   name,
   buttonConfig,
@@ -84,6 +97,7 @@ const UploadFile = ({
   disabled,
   lang = 'en',
   hideFileChangeStatusStyle,
+  validFileFormats,
 }: UploadFileProps) => {
   const inputFile = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -192,6 +206,13 @@ const UploadFile = ({
         onChange={async (event) => {
           const newFile = event.target.files?.[0];
           if (!newFile) {
+            return;
+          }
+          if (
+            validFileFormats &&
+            !validateExtension(newFile.name, validFileFormats.whitelist)
+          ) {
+            validFileFormats.validationErrorToast();
             return;
           }
           if (confirmUpload) {

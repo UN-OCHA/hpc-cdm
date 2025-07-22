@@ -591,6 +591,11 @@
             "notFound": "无法下载文件，因为它不存在",
             "unknown": "下载文件时发生未知错误"
           }
+        },
+        "upload": {
+          "error": {
+            "invalidExtension": "所选文件不是 [{whitelist}]。请选择正确格式的文件"
+          }
         }
       },
       "reportURLTitle": {

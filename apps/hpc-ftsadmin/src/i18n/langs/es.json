@@ -588,6 +588,11 @@
             "notFound": "No se pudo encontrar el archivo",
             "unknown": "Ha ocurrido un error desconocido al descargar el archivo"
           }
+        },
+        "upload": {
+          "error": {
+            "invalidExtension": "El archivo seleccionado no es [{whitelist}]. Por favor, elija un archivo con el formato correcto"
+          }
         }
       },
       "reportURLTitle": {
