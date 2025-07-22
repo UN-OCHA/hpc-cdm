@@ -242,13 +242,18 @@ export const parseFormFilters = <
     const fieldValue = cleanedFilters[key];
 
     if (fieldValue !== null && fieldValue !== undefined) {
-      const displayValue = Array.isArray(fieldValue)
-        ? fieldValue
-            .map((x) => (typeof x === 'string' ? x : x.displayLabel))
-            .join(SPECIAL_SEPARATOR)
-        : filterValueIsFormObjectValue(fieldValue)
-        ? fieldValue.displayLabel
-        : fieldValue.toString();
+      let displayValue = '';
+      if (Array.isArray(fieldValue)) {
+        displayValue = fieldValue
+          .map((x) => (typeof x === 'string' ? x : x.displayLabel))
+          .join(SPECIAL_SEPARATOR);
+      } else if (filterValueIsFormObjectValue(fieldValue)) {
+        displayValue = fieldValue.displayLabel;
+      } else if (filterValueIsDayJS(fieldValue)) {
+        displayValue = fieldValue.format();
+      } else {
+        displayValue = fieldValue.toString();
+      }
 
       if (
         JSON.stringify(parsedFormValue[key]?.value) !==

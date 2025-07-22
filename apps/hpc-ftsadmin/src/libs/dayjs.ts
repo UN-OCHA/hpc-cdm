@@ -4,6 +4,7 @@
  */
 
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 // Import languages that we require
 
@@ -15,6 +16,7 @@ import 'dayjs/locale/zh';
 
 export const FTS_DEFAULT_FORMAT = 'DD/MM/YYYY';
 
+dayjs.extend(utc);
 // Extend the Dayjs class with the new format function
 dayjs.extend((_, DayjsClass) => {
   const oldFormat = DayjsClass.prototype.format;
