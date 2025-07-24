@@ -28,6 +28,7 @@ import {
   getDraggableTableHeaders,
   isCompatibleTableHeaderType,
   type KeywordHeaderID,
+  type TableHeadersProps,
 } from '../../utils/table-headers';
 
 import tw from 'twin.macro';
@@ -136,119 +137,196 @@ const KeywordTableContext = createContext<{
 type EditableRowProps = {
   lang: LanguageKey;
   row: categories.Keyword;
-  entityEdited: boolean;
-  setEntityEdited: React.Dispatch<React.SetStateAction<boolean>>;
+  tableHeaders: Array<TableHeadersProps<'keywords'>>;
 };
-const EditableRow = ({
-  lang,
-  row,
-  setEntityEdited,
-  entityEdited,
-}: EditableRowProps) => {
+const EditableRow = ({ tableHeaders, lang, row }: EditableRowProps) => {
   const keywordIconSize = tw`h-8 w-8`;
   const { load } = useContext(KeywordTableContext);
   const env = getEnv();
   const [isEdit, setEdit] = useState(false);
+  const [editableRow, setEditableRow] = useState(row);
+
+  const handleRowEdit = (values: { keyword: string; public: boolean }) => {
+    const modifiedKeyword: categories.Keyword = {
+      ...editableRow,
+      name: values.keyword,
+      description: values.public ? 'public' : null,
+    };
+    env.model.categories
+      .updateKeyword(modifiedKeyword)
+      .then(() => {
+        setEditableRow(modifiedKeyword);
+        toast.success(
+          t.t(lang, (s) => s.components.keywordsTable.success.update),
+          TOAST_CONFIG
+        );
+      })
+      .catch((error) => {
+        if (errors.isDuplicateError(error)) {
+          toast.error(
+            parseError(error.code, lang, error.value),
+            TOAST_CONFIG_ERROR
+          );
+          return;
+        }
+        toast.error(parseError('unknown', lang), TOAST_CONFIG_ERROR);
+      });
+    setEdit(false);
+  };
 
   return (
-    <IconContainer>
-      {!isEdit ? (
-        <>
-          {row.name}
-          <Tooltip
-            title={t.t(lang, (s) => s.components.keywordsTable.labels.edit)}
-          >
-            <IconButton size="small" onClick={() => setEdit(true)}>
-              <EditIcon sx={keywordIconSize} />
-            </IconButton>
-          </Tooltip>
-        </>
-      ) : (
-        <Formik
-          initialValues={{
-            keyword: row.name,
-            public: row.description === 'public',
-          }}
-          onSubmit={(values) => {
-            const modifiedKeyword: categories.Keyword = {
-              ...row,
-              name: values.keyword,
-              description: values.public ? 'public' : null,
-            };
-            env.model.categories
-              .updateKeyword(modifiedKeyword)
-              .then(() => {
-                toast.success(
-                  t.t(lang, (s) => s.components.keywordsTable.success.update),
-                  TOAST_CONFIG
-                );
-                setEntityEdited(!entityEdited);
-              })
-              .catch((error) => {
-                if (errors.isDuplicateError(error)) {
-                  toast.error(
-                    parseError(error.code, lang, error.value),
-                    TOAST_CONFIG_ERROR
-                  );
-                  return;
-                }
-                toast.error(parseError('unknown', lang), TOAST_CONFIG_ERROR);
-              });
-            setEdit(false);
-          }}
-        >
-          <StyledForm>
-            <FieldsWrapper>
-              <C.TextFieldWrapper
-                name="keyword"
-                label={t.t(
-                  lang,
-                  (s) => s.components.keywordsTable.labels.newName
-                )}
-              />
-              <C.Switch
-                name="public"
-                label={t.t(
-                  lang,
-                  (s) => s.components.keywordsTable.labels.public
-                )}
-              />
-            </FieldsWrapper>
-            <C.ButtonSubmit
-              color="primary"
-              text={t.t(lang, (s) => s.components.keywordsTable.labels.save)}
-            />
-            <Tooltip
-              title={t.t(lang, (s) => s.components.keywordsTable.labels.cancel)}
-            >
-              <IconButton size="small" onClick={() => setEdit(false)}>
-                <CancelIcon sx={keywordIconSize} />
-              </IconButton>
-            </Tooltip>
-          </StyledForm>
-        </Formik>
-      )}
-      <C.AsyncIconButton
-        fnPromise={() =>
-          env.model.categories.deleteKeyword({
-            id: row.id,
-          })
+    <TableRow>
+      {tableHeaders.map((column) => {
+        if (!column.isActive) {
+          return null;
         }
-        IconComponent={DeleteIcon}
-        confirmModal={t.get(lang, (s) => s.components.keywordsTable.modal)}
-        tooltipText={t.t(lang, (s) => s.components.keywordsTable.labels.delete)}
-        iconSx={keywordIconSize}
-        onSuccess={() => {
-          toast.success(
-            t.t(lang, (s) => s.components.keywordsTable.success.delete),
-            TOAST_CONFIG
-          );
-          if (load) {
-            load();
-          }
-        }}
-      />
-    </IconContainer>
+        switch (column.identifierID) {
+          case 'keyword.id':
+            return (
+              <TableCell
+                key={`${editableRow.id}keyword.id`}
+                size="small"
+                component="th"
+                scope="row"
+                data-test="keyword-table-id"
+              >
+                {editableRow.id}
+              </TableCell>
+            );
+          case 'keyword.name':
+            return (
+              <TableCell
+                key={`${editableRow.id}keyword.name`}
+                component="th"
+                size="small"
+                scope="row"
+                data-test="keyword-table-name"
+              >
+                <IconContainer>
+                  {!isEdit ? (
+                    <>
+                      {editableRow.name}
+                      <Tooltip
+                        title={t.t(
+                          lang,
+                          (s) => s.components.keywordsTable.labels.edit
+                        )}
+                      >
+                        <IconButton size="small" onClick={() => setEdit(true)}>
+                          <EditIcon sx={keywordIconSize} />
+                        </IconButton>
+                      </Tooltip>
+                    </>
+                  ) : (
+                    <Formik
+                      initialValues={{
+                        keyword: editableRow.name,
+                        public: editableRow.description === 'public',
+                      }}
+                      onSubmit={handleRowEdit}
+                    >
+                      <StyledForm>
+                        <FieldsWrapper>
+                          <C.TextFieldWrapper
+                            name="keyword"
+                            label={t.t(
+                              lang,
+                              (s) => s.components.keywordsTable.labels.newName
+                            )}
+                          />
+                          <C.Switch
+                            name="public"
+                            label={t.t(
+                              lang,
+                              (s) => s.components.keywordsTable.labels.public
+                            )}
+                          />
+                        </FieldsWrapper>
+                        <C.ButtonSubmit
+                          color="primary"
+                          text={t.t(
+                            lang,
+                            (s) => s.components.keywordsTable.labels.save
+                          )}
+                        />
+                        <Tooltip
+                          title={t.t(
+                            lang,
+                            (s) => s.components.keywordsTable.labels.cancel
+                          )}
+                        >
+                          <IconButton
+                            size="small"
+                            onClick={() => setEdit(false)}
+                          >
+                            <CancelIcon sx={keywordIconSize} />
+                          </IconButton>
+                        </Tooltip>
+                      </StyledForm>
+                    </Formik>
+                  )}
+                  <C.AsyncIconButton
+                    fnPromise={() =>
+                      env.model.categories.deleteKeyword({
+                        id: editableRow.id,
+                      })
+                    }
+                    IconComponent={DeleteIcon}
+                    confirmModal={t.get(
+                      lang,
+                      (s) => s.components.keywordsTable.modal
+                    )}
+                    tooltipText={t.t(
+                      lang,
+                      (s) => s.components.keywordsTable.labels.delete
+                    )}
+                    iconSx={keywordIconSize}
+                    onSuccess={() => {
+                      toast.success(
+                        t.t(
+                          lang,
+                          (s) => s.components.keywordsTable.success.delete
+                        ),
+                        TOAST_CONFIG
+                      );
+                      if (load) {
+                        load();
+                      }
+                    }}
+                  />
+                </IconContainer>
+              </TableCell>
+            );
+          case 'keyword.relatedFlows':
+            return (
+              <TableCell
+                key={`${editableRow.id}_keyword.relatedFlows`}
+                size="small"
+                data-test="_keyword-table-relatedFlows"
+              >
+                {editableRow.refCount}
+              </TableCell>
+            );
+          case 'keyword.public':
+            return (
+              <TableCell
+                key={`${editableRow.id}_keyword.public`}
+                size="small"
+                data-test="_keyword-table-public"
+              >
+                {editableRow.description === 'public' ? (
+                  <CheckIcon />
+                ) : (
+                  EMPTY_CELL
+                )}
+              </TableCell>
+            );
+
+          default:
+            return null;
+        }
+      })}
+    </TableRow>
   );
 };
 
@@ -257,8 +335,7 @@ const KeywordTable = (props: KeywordTableProps) => {
 
   const [query, setQuery] = [props.query, props.setQuery];
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
-  const [isEntityEdited, setIsEntityEdited] = useState(false);
-  const [state, load] = useDataLoader([isEntityEdited], () =>
+  const [state, load] = useDataLoader([], () =>
     env.model.categories.getKeywords(props.abortSignal)
   );
 
@@ -302,71 +379,9 @@ const KeywordTable = (props: KeywordTableProps) => {
             )
           )
           .map((row) => (
-            <TableRow key={`${row.id}`}>
-              {tableHeaders.map((column) => {
-                if (!column.isActive) {
-                  return null;
-                }
-                switch (column.identifierID) {
-                  case 'keyword.id':
-                    return (
-                      <TableCell
-                        key={`${row.id}keyword.id`}
-                        size="small"
-                        component="th"
-                        scope="row"
-                        data-test="keyword-table-id"
-                      >
-                        {row.id}
-                      </TableCell>
-                    );
-                  case 'keyword.name':
-                    return (
-                      <TableCell
-                        key={`${row.id}keyword.name`}
-                        component="th"
-                        size="small"
-                        scope="row"
-                        data-test="keyword-table-name"
-                      >
-                        <EditableRow
-                          lang={lang}
-                          row={row}
-                          entityEdited={isEntityEdited}
-                          setEntityEdited={setIsEntityEdited}
-                        />
-                      </TableCell>
-                    );
-                  case 'keyword.relatedFlows':
-                    return (
-                      <TableCell
-                        key={`${row.id}_keyword.relatedFlows`}
-                        size="small"
-                        data-test="_keyword-table-relatedFlows"
-                      >
-                        {row.refCount}
-                      </TableCell>
-                    );
-                  case 'keyword.public':
-                    return (
-                      <TableCell
-                        key={`${row.id}_keyword.public`}
-                        size="small"
-                        data-test="_keyword-table-public"
-                      >
-                        {row.description === 'public' ? (
-                          <CheckIcon />
-                        ) : (
-                          EMPTY_CELL
-                        )}
-                      </TableCell>
-                    );
-
-                  default:
-                    return null;
-                }
-              })}
-            </TableRow>
+            <React.Fragment key={row.id}>
+              <EditableRow {...{ tableHeaders, lang, row }} />
+            </React.Fragment>
           ))}
       </>
     );
