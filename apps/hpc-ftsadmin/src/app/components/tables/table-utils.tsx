@@ -85,7 +85,29 @@ const ChipFilterValues = tw.div`
   rounded-full
 `;
 
-const ORGANIZATION_ABBREVIATION_REGEX = /\[(.*)\]/;
+/**
+ * Extracts the last group of characters enclosed in brackets from a string.
+ * If no such group exists, returns null.
+ *
+ * ie: `"[example] text [another [example]]"` returns `"another [example]"`
+ */
+const getLastBracketGroup = (input: string): string | null => {
+  const stack: number[] = [];
+  let lastGroup: [number, number] | null = null;
+
+  for (const [i, char] of [...input].entries()) {
+    if (char === '[') {
+      stack.push(i);
+    } else if (char === ']') {
+      const start = stack.pop();
+      if (start !== undefined) {
+        lastGroup = [start, i];
+      }
+    }
+  }
+
+  return lastGroup ? input.slice(lastGroup[0] + 1, lastGroup[1]) : null;
+};
 
 export const RenderChipsRow = ({
   tableFilters,
@@ -202,9 +224,7 @@ export const RenderChipsRow = ({
                 {displayValue.split(SPECIAL_SEPARATOR).map((filter, index) => (
                   <ChipFilterValues key={index}>
                     <EllipsisText maxWidth={400}>
-                      {ORGANIZATION_ABBREVIATION_REGEX.test(filter) // We do this in order to shorten organization names
-                        ? filter.match(ORGANIZATION_ABBREVIATION_REGEX)?.[1]
-                        : filter}
+                      {getLastBracketGroup(filter) ?? filter}
                     </EllipsisText>
                   </ChipFilterValues>
                 ))}
