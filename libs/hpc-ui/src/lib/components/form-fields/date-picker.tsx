@@ -75,6 +75,7 @@ const DatePicker = ({
     ...field,
     ...(controlledField ? { value: controlledField.value } : {}),
     format: 'DD/MM/YYYY',
+    timezone: 'UTC',
     disabled,
     onError: (error) => {
       console.error(error);
