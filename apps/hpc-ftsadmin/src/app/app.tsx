@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { MdAdd } from 'react-icons/md';
 import { Outlet } from 'react-router';
 import { Slide, ToastContainer } from 'react-toastify';
-import env, { type Environment } from '../environments/environment.prod';
+import env, { type Environment } from '../environments/environment';
 import { type LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
 import PageMeta from './components/page-meta';
 import { AppContext, contextFromEnv } from './context';
