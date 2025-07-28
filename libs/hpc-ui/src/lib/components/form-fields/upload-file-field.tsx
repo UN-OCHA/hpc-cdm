@@ -78,11 +78,11 @@ const OverflowSpan = tw.span`
 `;
 
 const validateExtension = (filename: string, whitelist: Set<string>) => {
-  const parts = filename.split('.');
-  if (!parts.length) {
-    return '';
+  const lastDot = filename.lastIndexOf('.');
+  if (lastDot <= 0) {
+    return false;
   }
-  const extension = parts.at(-1)?.toLowerCase() ?? '';
+  const extension = filename.slice(lastDot + 1).toLowerCase();
   return whitelist.has(extension);
 };
 
