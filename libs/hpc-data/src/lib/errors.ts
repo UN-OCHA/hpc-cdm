@@ -1,7 +1,6 @@
 const NOT_FOUND_ERROR = 'not_found';
 const ABORT_ERROR = 'abort_error';
 const CONFLICT_ERROR = 'conflict';
-const DUPLICATE_ERROR = 'duplicate';
 const USER_ERROR = 'user_error';
 const DATA_CONSISTENCY_ERROR = 'data_consistency_error';
 
@@ -79,53 +78,6 @@ export class ConflictError extends Error {
 export const isConflictError = (error: Error): error is ConflictError =>
   error instanceof ConflictError ||
   (error && (error as ConflictError).code === CONFLICT_ERROR);
-
-/*
- * TODO: Remove DuplicateError as soon as issue with update organization
- * endpoint is solved. Currently when we update an organization we throw
- * a DB error instead of a ConflictError
- */
-
-/**
- * An error thrown when the user creates a new Entity with a
- * duplicated primary key of an already existing one
- */
-export class DuplicateError extends Error {
-  public readonly code = DUPLICATE_ERROR;
-  public readonly details: string;
-  public readonly table: string;
-  public readonly key: string;
-  public readonly value: string;
-  public constructor(
-    /**
-     * Details where we can get the field and key that is conflicting
-     */
-    details: string,
-    /**
-     * Table where conflicts appear
-     */
-    table: string
-  ) {
-    super(DUPLICATE_ERROR);
-    this.details = details;
-    this.table = table;
-    const match = /^Key \(([a-zA-Z0-9_]+)\)=\((.+)\) already exists\.$/.exec(
-      details
-    );
-    if (match) {
-      const [, key, value] = match;
-      this.key = key;
-      this.value = value;
-    } else {
-      this.key = 'ERROR WHILE APPLYING REGEX';
-      this.value = 'ERROR WHILE APPLYING REGEX';
-    }
-  }
-}
-
-export const isDuplicateError = (error: Error): error is DuplicateError =>
-  error instanceof DuplicateError ||
-  (error && (error as DuplicateError).code === DUPLICATE_ERROR);
 
 export type DataConsistencyErrorReason = Array<{
   type: string;

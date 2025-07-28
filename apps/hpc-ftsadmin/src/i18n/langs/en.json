@@ -369,7 +369,7 @@
       },
       "errors": {
         "unknown": "Unexpected error while creating/updating keyword.",
-        "duplicate": "A keyword with name {keywordName} already exists. Please choose a different name."
+        "conflict": "A keyword with name {keywordName} already exists. Please choose a different name."
       },
       "success": {
         "update": "Successfully updated keyword",
@@ -513,8 +513,7 @@
         "comments": "Organization Description"
       },
       "errors": {
-        "duplicate": "An organization with name {organizationName} already exists. Please choose a different name.",
-        "conflict": "An organization with provided name already exists. Please choose a different name.",
+        "conflict": "An organization with name {organizationName} already exists. Please choose a different name.",
         "unknown": "Unexpected error while creating/updating organization"
       },
       "formErrors": {

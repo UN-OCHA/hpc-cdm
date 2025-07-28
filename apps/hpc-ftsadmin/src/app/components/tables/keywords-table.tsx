@@ -84,27 +84,6 @@ function by<T>(
   };
 }
 
-const parseError = (
-  error: 'unknown' | 'duplicate' | 'conflict',
-  lang: LanguageKey,
-  errorValue?: string
-) => {
-  const translatedError = t.t(
-    lang,
-    (s) => {
-      if (error !== 'conflict') {
-        return s.components.keywordsTable.errors[error];
-      }
-      return s.components.keywordsTable.errors.unknown;
-    },
-    error === 'duplicate' && errorValue
-      ? { keywordName: errorValue }
-      : undefined
-  );
-
-  return translatedError;
-};
-
 function typeQuery(value: string): keyof categories.Keyword {
   if (value === 'keyword.id') {
     return 'id';
@@ -162,14 +141,19 @@ const EditableRow = ({ tableHeaders, lang, row }: EditableRowProps) => {
         );
       })
       .catch((error) => {
-        if (errors.isDuplicateError(error)) {
+        if (errors.isConflictError(error)) {
           toast.error(
-            parseError(error.code, lang, error.value),
+            t.t(lang, (s) => s.components.keywordsTable.errors.conflict, {
+              keywordName: modifiedKeyword.name,
+            }),
             TOAST_CONFIG_ERROR
           );
-          return;
+        } else {
+          toast.error(
+            t.t(lang, (s) => s.components.keywordsTable.errors.unknown),
+            TOAST_CONFIG_ERROR
+          );
         }
-        toast.error(parseError('unknown', lang), TOAST_CONFIG_ERROR);
       });
     setEdit(false);
   };

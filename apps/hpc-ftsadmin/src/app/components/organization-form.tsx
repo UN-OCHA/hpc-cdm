@@ -217,22 +217,14 @@ export const OrganizationForm = ({
     } satisfies util.FormObjectValue);
   };
 
-  const errorHandling = (err: Error) => {
+  const errorHandling = (err: Error, organizationName: string) => {
     toast.dismiss();
-    if (errors.isDuplicateError(err)) {
+    if (errors.isConflictError(err)) {
       toast.error(
         t.t(
           lang,
-          (s) => s.components.organizationUpdateCreate.errors[err.code],
-          { organizationName: err.value }
-        ),
-        TOAST_CONFIG_ERROR
-      );
-    } else if (errors.isConflictError(err)) {
-      toast.error(
-        t.t(
-          lang,
-          (s) => s.components.organizationUpdateCreate.errors[err.code]
+          (s) => s.components.organizationUpdateCreate.errors.conflict,
+          { organizationName }
         ),
         TOAST_CONFIG_ERROR
       );
@@ -265,7 +257,7 @@ export const OrganizationForm = ({
             TOAST_CONFIG
           );
         })
-        .catch((error) => errorHandling(error));
+        .catch((error) => errorHandling(error, values.name));
     } else {
       await environment.model.organizations
         .createOrganization(formToCreate(values, organizationTypes))
@@ -280,7 +272,7 @@ export const OrganizationForm = ({
             },
           });
         })
-        .catch((error) => errorHandling(error));
+        .catch((error) => errorHandling(error, values.name));
     }
   };
   return (

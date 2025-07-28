@@ -372,7 +372,7 @@
       },
       "errors": {
         "unknown": "创建/更新关键字时发生意外错误。",
-        "duplicate": "已经存在名为 {keywordName} 的关键字。请选择一个不同的名称。"
+        "conflict": "已经存在名为 {keywordName} 的关键字。请选择一个不同的名称。"
       },
       "success": {
         "update": "关键词更新成功",
@@ -515,8 +515,7 @@
         "comments": "组织描述"
       },
       "errors": {
-        "duplicate": "已经存在名为 {organizationName} 的组织。请选择一个不同的名称。",
-        "conflict": "已经存在使用提供的名称的组织。请选择一个不同的名称。",
+        "conflict": "已经存在名为 {organizationName} 的组织。请选择一个不同的名称。",
         "unknown": "创建/更新组织时发生意外错误"
       },
       "formErrors": {

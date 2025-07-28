@@ -489,16 +489,6 @@ export class LiveModel implements Model {
         errors.isUserErrorKey(json.message)
       ) {
         throw new errors.UserError(json.message);
-      } else if (
-        json?.code === 'BadRequestError' &&
-        json.details?.code === '23505' && // Error code for duplicate primary key
-        json.details.detail &&
-        json.details.table
-      ) {
-        throw new errors.DuplicateError(
-          json.details.detail,
-          json.details.table
-        );
       } else if (json.details?.reason) {
         throw new errors.DataConsistencyError(json.details.reason);
       } else if (json?.code === 'NotFoundError') {
