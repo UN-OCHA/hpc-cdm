@@ -756,14 +756,16 @@ export const parseToFlowForm = (
       : INITIAL_FORM_VALUES['currency'],
     childFlows: children ? children.map(flowToFlowLinkProps) : [],
     decisionDate: decisionDate
-      ? dayjs(decisionDate)
+      ? dayjs(decisionDate).utc().startOf('day')
       : INITIAL_FORM_VALUES['decisionDate'],
     firstReported: firstReportedDate
-      ? dayjs(firstReportedDate)
+      ? dayjs(firstReportedDate).utc().startOf('day')
       : INITIAL_FORM_VALUES['firstReported'],
     exchangeRate:
       exchangeRate?.toString() ?? INITIAL_FORM_VALUES['exchangeRate'],
-    flowDate: flowDate ? dayjs(flowDate) : INITIAL_FORM_VALUES['flowDate'],
+    flowDate: flowDate
+      ? dayjs(flowDate).utc().startOf('day')
+      : INITIAL_FORM_VALUES['flowDate'],
     isInactive: !isActiveStatus,
     isNewMoney,
     notes: notes ?? INITIAL_FORM_VALUES['notes'],

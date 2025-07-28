@@ -41,16 +41,6 @@ const StyledDatePicker = tw.div`
   items-start
 `;
 
-function toUTCMidnight(date: Dayjs): Dayjs;
-function toUTCMidnight(date: Dayjs | null): Dayjs | null;
-
-function toUTCMidnight(date: Dayjs | null): Dayjs | null {
-  if (date === null) {
-    return null;
-  }
-  return date.utc().startOf('day');
-}
-
 const DatePicker = ({
   name,
   label,
@@ -81,21 +71,13 @@ const DatePicker = ({
       console.error(error);
     },
     onChange: (date) => {
-      let dateUTC = toUTCMidnight(date);
-
-      const isNotUTCDate = date && !date.isUTC();
-      if (isNotUTCDate) {
-        const offsetMinutes = new Date().getTimezoneOffset();
-        dateUTC = toUTCMidnight(date.subtract(offsetMinutes, 'minute'));
-      }
-
       setTouched(true);
       setIsControlledTouched(true);
       if (controlledField) {
-        controlledField.onChange(dateUTC);
+        controlledField.onChange(date);
         return;
       }
-      setValue(dateUTC);
+      setValue(date);
     },
     label,
     slotProps: {
@@ -129,7 +111,7 @@ const DatePicker = ({
             variant="body2"
             color={THEME.colors.textLink}
             onClick={() => {
-              const today = toUTCMidnight(dayjs());
+              const today = dayjs.utc().startOf('day');
               if (controlledField) {
                 controlledField.onChange(today);
               } else {
