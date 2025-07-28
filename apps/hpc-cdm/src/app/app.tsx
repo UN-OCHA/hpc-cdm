@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 
-import { BaseStyling, C, dataLoader, dialogs, styled } from '@unocha/hpc-ui';
+import { BaseStyling, C, dialogs, styled, useDataLoader } from '@unocha/hpc-ui';
 
 import env, { type Environment } from '../environments/environment';
 import { LANGUAGE_CHOICE, type LanguageKey, t } from '../i18n';
@@ -63,7 +63,7 @@ export const App = () => {
     };
   }, []);
 
-  const loadEnv = dataLoader([], () =>
+  const [loadEnv] = useDataLoader([], () =>
     env()
       .catch((error) => {
         console.error(error);

@@ -4,7 +4,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SettingsIcon from '@mui/icons-material/Settings';
 import {
-  Alert,
   Box,
   IconButton,
   Modal,
@@ -13,25 +12,23 @@ import {
   TableCell,
   TableContainer,
   TableFooter,
-  TableHead,
   TableRow,
   TableSortLabel,
   Tooltip,
 } from '@mui/material';
 import { type categories, errors } from '@unocha/hpc-data';
-import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
+import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
 import React, { createContext, useContext, useState } from 'react';
 import { type LanguageKey, t } from '../../../i18n';
 import { AppContext, getEnv } from '../../context';
-import * as paths from '../../paths';
 
 import {
-  type KeywordHeaderID,
-  type TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
+  getDraggableTableHeaders,
   isCompatibleTableHeaderType,
-  isTableHeadersPropsKeyword,
+  type KeywordHeaderID,
+  type TableHeadersProps,
 } from '../../utils/table-headers';
 
 import tw from 'twin.macro';
@@ -39,22 +36,26 @@ import {
   ChipDiv,
   type KeywordQuery,
   type SetQuery,
+  StickyTableHead,
   StyledLoader,
   TableHeaderButton,
   TopRowContainer,
-  handleTableSettingsInfoClose,
 } from './table-utils';
 
-import { util } from '@unocha/hpc-core';
 import { Form, Formik } from 'formik';
-import { type Strings } from '../../../i18n/iface';
-import { type LocalStorageSchema } from '../../utils/local-storage-type';
-import { parseError } from '../../utils/map-functions';
+import { toast } from 'react-toastify';
+import {
+  EMPTY_CELL,
+  TOAST_CONFIG,
+  TOAST_CONFIG_ERROR,
+} from '../../utils/constants';
+import InfoAlert from '../info-alert';
+import MergeModal from '../merge-modal';
 
 export interface KeywordTableProps {
-  headers: Array<TableHeadersProps<KeywordHeaderID>>;
   query: KeywordQuery;
   setQuery: SetQuery<KeywordQuery>;
+  abortSignal: AbortSignal;
 }
 
 /**
@@ -75,15 +76,9 @@ function by<T>(
     const y = isNumber && isString(bProp) ? parseInt(bProp) : bProp;
 
     if (x > y) {
-      if (order === 'ASC') {
-        return 1;
-      }
-      return -1;
+      return order === 'ASC' ? 1 : -1;
     } else if (x < y) {
-      if (order === 'ASC') {
-        return -1;
-      }
-      return 1;
+      return order === 'ASC' ? -1 : 1;
     }
     return 0;
   };
@@ -115,118 +110,207 @@ const FieldsWrapper = tw.div`
   gap-x-8
 `;
 const KeywordTableContext = createContext<{
-  setError?: React.Dispatch<
-    React.SetStateAction<
-      | {
-          code: keyof Strings['components']['keywordTable']['errors'];
-          value: string;
-        }
-      | undefined
-    >
-  >;
+  load?: () => void;
 }>({});
 
 type EditableRowProps = {
   lang: LanguageKey;
   row: categories.Keyword;
-  entityEdited: boolean;
-  setEntityEdited: React.Dispatch<React.SetStateAction<boolean>>;
+  tableHeaders: Array<TableHeadersProps<'keywords'>>;
 };
-const EditableRow = ({
-  lang,
-  row,
-  setEntityEdited,
-  entityEdited,
-}: EditableRowProps) => {
+const EditableRow = ({ tableHeaders, lang, row }: EditableRowProps) => {
   const keywordIconSize = tw`h-8 w-8`;
-  const { setError } = useContext(KeywordTableContext);
+  const { load } = useContext(KeywordTableContext);
   const env = getEnv();
   const [isEdit, setEdit] = useState(false);
+  const [editableRow, setEditableRow] = useState(row);
+
+  const handleRowEdit = (values: { keyword: string; public: boolean }) => {
+    const modifiedKeyword: categories.Keyword = {
+      ...editableRow,
+      name: values.keyword,
+      description: values.public ? 'public' : null,
+    };
+    env.model.categories
+      .updateKeyword(modifiedKeyword)
+      .then(() => {
+        setEditableRow(modifiedKeyword);
+        toast.success(
+          t.t(lang, (s) => s.components.keywordsTable.success.update),
+          TOAST_CONFIG
+        );
+      })
+      .catch((error) => {
+        if (errors.isConflictError(error)) {
+          toast.error(
+            t.t(lang, (s) => s.components.keywordsTable.errors.conflict, {
+              keywordName: modifiedKeyword.name,
+            }),
+            TOAST_CONFIG_ERROR
+          );
+        } else {
+          toast.error(
+            t.t(lang, (s) => s.components.keywordsTable.errors.unknown),
+            TOAST_CONFIG_ERROR
+          );
+        }
+      });
+    setEdit(false);
+  };
 
   return (
-    <IconContainer>
-      {!isEdit ? (
-        <>
-          {row.name}
-          <Tooltip title="Edit">
-            <IconButton size="small" onClick={() => setEdit(true)}>
-              <EditIcon sx={keywordIconSize} />
-            </IconButton>
-          </Tooltip>
-        </>
-      ) : (
-        <Formik
-          initialValues={{
-            keyword: row.name,
-            public: row.description === 'public',
-          }}
-          onSubmit={(values) => {
-            const modfiedKeyword: categories.Keyword = {
-              ...row,
-              name: values.keyword,
-              description: values.public ? 'public' : null,
-            };
-            env.model.categories
-              .updateKeyword(modfiedKeyword)
-              .then(() => {
-                setEntityEdited(!entityEdited);
-              })
-              .catch((error) => {
-                if (errors.isDuplicateError(error)) {
-                  if (setError) {
-                    setError({ code: error.code, value: error.value });
-                  }
-                } else if (setError) {
-                  setError({ code: 'unknown', value: 'unknown' });
-                }
-              });
-            setEdit(false);
-          }}
-        >
-          <StyledForm>
-            <FieldsWrapper>
-              <C.TextFieldWrapper
-                name="keyword"
-                label={t.t(
-                  lang,
-                  (s) => s.components.keywordTable.labels.newName
-                )}
-              />
-              <C.Switch
-                name="public"
-                label={t.t(
-                  lang,
-                  (s) => s.components.keywordTable.labels.public
-                )}
-              />
-            </FieldsWrapper>
-            <C.ButtonSubmit
-              color="primary"
-              text={t.t(lang, (s) => s.components.keywordTable.labels.save)}
-            />
-            <Tooltip
-              title={t.t(lang, (s) => s.components.keywordTable.labels.cancel)}
-            >
-              <IconButton size="small" onClick={() => setEdit(false)}>
-                <CancelIcon sx={keywordIconSize} />
-              </IconButton>
-            </Tooltip>
-          </StyledForm>
-        </Formik>
-      )}
-      <C.AsyncIconButton
-        fnPromise={() =>
-          env.model.categories.deleteKeyword({
-            id: row.id,
-          })
+    <TableRow>
+      {tableHeaders.map((column) => {
+        if (!column.isActive) {
+          return null;
         }
-        IconComponent={DeleteIcon}
-        confirmModal={t.get(lang, (s) => s.components.keywordTable.modal)}
-        redirectAfterFetch={paths.keywords()}
-        tooltipText={t.t(lang, (s) => s.components.keywordTable.labels.delete)}
-        iconSx={keywordIconSize}
-      />
-    </IconContainer>
+        switch (column.identifierID) {
+          case 'keyword.id':
+            return (
+              <TableCell
+                key={`${editableRow.id}keyword.id`}
+                size="small"
+                component="th"
+                scope="row"
+                data-test="keyword-table-id"
+              >
+                {editableRow.id}
+              </TableCell>
+            );
+          case 'keyword.name':
+            return (
+              <TableCell
+                key={`${editableRow.id}keyword.name`}
+                component="th"
+                size="small"
+                scope="row"
+                data-test="keyword-table-name"
+              >
+                <IconContainer>
+                  {!isEdit ? (
+                    <>
+                      {editableRow.name}
+                      <Tooltip
+                        title={t.t(
+                          lang,
+                          (s) => s.components.keywordsTable.labels.edit
+                        )}
+                      >
+                        <IconButton size="small" onClick={() => setEdit(true)}>
+                          <EditIcon sx={keywordIconSize} />
+                        </IconButton>
+                      </Tooltip>
+                    </>
+                  ) : (
+                    <Formik
+                      initialValues={{
+                        keyword: editableRow.name,
+                        public: editableRow.description === 'public',
+                      }}
+                      onSubmit={handleRowEdit}
+                    >
+                      <StyledForm>
+                        <FieldsWrapper>
+                          <C.TextFieldWrapper
+                            name="keyword"
+                            label={t.t(
+                              lang,
+                              (s) => s.components.keywordsTable.labels.newName
+                            )}
+                          />
+                          <C.Switch
+                            name="public"
+                            label={t.t(
+                              lang,
+                              (s) => s.components.keywordsTable.labels.public
+                            )}
+                          />
+                        </FieldsWrapper>
+                        <C.ButtonSubmit
+                          color="primary"
+                          text={t.t(
+                            lang,
+                            (s) => s.components.keywordsTable.labels.save
+                          )}
+                        />
+                        <Tooltip
+                          title={t.t(
+                            lang,
+                            (s) => s.components.keywordsTable.labels.cancel
+                          )}
+                        >
+                          <IconButton
+                            size="small"
+                            onClick={() => setEdit(false)}
+                          >
+                            <CancelIcon sx={keywordIconSize} />
+                          </IconButton>
+                        </Tooltip>
+                      </StyledForm>
+                    </Formik>
+                  )}
+                  <C.AsyncIconButton
+                    fnPromise={() =>
+                      env.model.categories.deleteKeyword({
+                        id: editableRow.id,
+                      })
+                    }
+                    IconComponent={DeleteIcon}
+                    confirmModal={t.get(
+                      lang,
+                      (s) => s.components.keywordsTable.modal
+                    )}
+                    tooltipText={t.t(
+                      lang,
+                      (s) => s.components.keywordsTable.labels.delete
+                    )}
+                    iconSx={keywordIconSize}
+                    onSuccess={() => {
+                      toast.success(
+                        t.t(
+                          lang,
+                          (s) => s.components.keywordsTable.success.delete
+                        ),
+                        TOAST_CONFIG
+                      );
+                      if (load) {
+                        load();
+                      }
+                    }}
+                  />
+                </IconContainer>
+              </TableCell>
+            );
+          case 'keyword.relatedFlows':
+            return (
+              <TableCell
+                key={`${editableRow.id}_keyword.relatedFlows`}
+                size="small"
+                data-test="_keyword-table-relatedFlows"
+              >
+                {editableRow.refCount}
+              </TableCell>
+            );
+          case 'keyword.public':
+            return (
+              <TableCell
+                key={`${editableRow.id}_keyword.public`}
+                size="small"
+                data-test="_keyword-table-public"
+              >
+                {editableRow.description === 'public' ? (
+                  <CheckIcon />
+                ) : (
+                  EMPTY_CELL
+                )}
+              </TableCell>
+            );
+
+          default:
+            return null;
+        }
+      })}
+    </TableRow>
   );
 };
 
@@ -235,17 +319,9 @@ const KeywordTable = (props: KeywordTableProps) => {
 
   const [query, setQuery] = [props.query, props.setQuery];
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
-  const [isEntityEdited, setIsEntityEdited] = useState(false);
-  const state = dataLoader([isEntityEdited], () =>
-    env.model.categories.getKeywords()
+  const [state, load] = useDataLoader([], () =>
+    env.model.categories.getKeywords(props.abortSignal)
   );
-  const [shouldDisplayTableInfo, setShouldDisplayTableInfo] = useState(
-    util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
-  );
-  const [error, setError] = useState<{
-    code: keyof Strings['components']['keywordTable']['errors'];
-    value: string;
-  }>();
 
   const handleSort = (newSort: KeywordHeaderID) => {
     const shouldChangeDir = newSort === query.orderBy;
@@ -271,14 +347,11 @@ const KeywordTable = (props: KeywordTableProps) => {
     lang: LanguageKey;
     data: categories.GetKeywordsResult;
   }) => {
-    const nonSafeTypedTableHeaders = decodeTableHeaders(
-      query.tableHeaders,
+    const tableHeaders = decodeTableHeaders({
+      queryParam: query.tableHeaders,
       lang,
-      'keywords'
-    );
-    const tableHeaders = isTableHeadersPropsKeyword(nonSafeTypedTableHeaders)
-      ? nonSafeTypedTableHeaders
-      : [];
+      table: 'keywords',
+    });
     return (
       <>
         {data
@@ -290,67 +363,9 @@ const KeywordTable = (props: KeywordTableProps) => {
             )
           )
           .map((row) => (
-            <TableRow key={`${row.id}`}>
-              {tableHeaders.map((column) => {
-                if (!column.active) {
-                  return null;
-                }
-                switch (column.identifierID) {
-                  case 'keyword.id':
-                    return (
-                      <TableCell
-                        key={`${row.id}keyword.id`}
-                        size="small"
-                        component="th"
-                        scope="row"
-                        data-test="keyword-table-id"
-                      >
-                        {row.id}
-                      </TableCell>
-                    );
-                  case 'keyword.name':
-                    return (
-                      <TableCell
-                        key={`${row.id}keyword.name`}
-                        component="th"
-                        size="small"
-                        scope="row"
-                        data-test="keyword-table-name"
-                      >
-                        <EditableRow
-                          lang={lang}
-                          row={row}
-                          entityEdited={isEntityEdited}
-                          setEntityEdited={setIsEntityEdited}
-                        />
-                      </TableCell>
-                    );
-                  case 'keyword.relatedFlows':
-                    return (
-                      <TableCell
-                        key={`${row.id}_keyword.relatedFlows`}
-                        size="small"
-                        data-test="_keyword-table-relatedFlows"
-                      >
-                        {row.refCount}
-                      </TableCell>
-                    );
-                  case 'keyword.public':
-                    return (
-                      <TableCell
-                        key={`${row.id}_keyword.public`}
-                        size="small"
-                        data-test="_keyword-table-public"
-                      >
-                        {row.description === 'public' ? <CheckIcon /> : '--'}
-                      </TableCell>
-                    );
-
-                  default:
-                    return null;
-                }
-              })}
-            </TableRow>
+            <React.Fragment key={row.id}>
+              <EditableRow {...{ tableHeaders, lang, row }} />
+            </React.Fragment>
           ))}
       </>
     );
@@ -362,20 +377,17 @@ const KeywordTable = (props: KeywordTableProps) => {
     lang: LanguageKey;
     data: categories.GetKeywordsResult;
   }) => {
-    const nonSafeTypedTableHeaders = decodeTableHeaders(
-      query.tableHeaders,
+    const tableHeaders = decodeTableHeaders({
+      queryParam: query.tableHeaders,
       lang,
-      'keywords'
-    );
-    const tableHeaders = isTableHeadersPropsKeyword(nonSafeTypedTableHeaders)
-      ? nonSafeTypedTableHeaders
-      : [];
+      table: 'keywords',
+    });
     return (
       <Table size="small">
-        <TableHead>
+        <StickyTableHead>
           <TableRow>
             {tableHeaders.map((header) => {
-              if (!header.active) {
+              if (!header.isActive) {
                 return null;
               }
               return (
@@ -383,13 +395,13 @@ const KeywordTable = (props: KeywordTableProps) => {
                   size="small"
                   key={`${header.identifierID}_${header.label}`}
                   data-test={`header-${header.label}`}
-                  {...(header.sortable &&
+                  {...(header.isSortable &&
                     query.orderBy === header.identifierID && {
                       'aria-sort':
                         query.orderDir === 'ASC' ? 'ascending' : 'descending',
                     })}
                 >
-                  {header.sortable ? (
+                  {header.isSortable ? (
                     <TableSortLabel
                       active={query.orderBy === header.identifierID}
                       direction={
@@ -406,26 +418,26 @@ const KeywordTable = (props: KeywordTableProps) => {
                       <span className={CLASSES.VISUALLY_HIDDEN}>
                         {t.t(
                           lang,
-                          (s) => s.components.organizationTable.sortBy
+                          (s) => s.components.organizationsTable.sortBy
                         )}
                         <br />
                       </span>
                       {t.t(
                         lang,
-                        (s) => s.components.keywordTable.headers[header.label]
+                        (s) => s.components.keywordsTable.headers[header.label]
                       )}
                     </TableSortLabel>
                   ) : (
                     t.t(
                       lang,
-                      (s) => s.components.keywordTable.headers[header.label]
+                      (s) => s.components.keywordsTable.headers[header.label]
                     )
                   )}
                 </TableCell>
               );
             })}
           </TableRow>
-        </TableHead>
+        </StickyTableHead>
         <TableBody>
           <TableRowsComponent lang={lang} data={data} />
         </TableBody>
@@ -443,23 +455,15 @@ const KeywordTable = (props: KeywordTableProps) => {
             ...t.get(lang, (s) => s.components.loader),
             notFound: {
               ...t.get(lang, (s) => s.components.notFound),
-              ...t.get(lang, (s) => s.components.organizationTable.notFound),
+              ...t.get(lang, (s) => s.components.organizationsTable.notFound),
             },
           }}
         >
           {(data) => (
-            <KeywordTableContext.Provider value={{ setError }}>
-              <C.ErrorAlert
-                setError={setError}
-                error={parseError(
-                  error?.code,
-                  'keywordTable',
-                  lang,
-                  error?.value
-                )}
-              />
+            <KeywordTableContext.Provider value={{ load }}>
               <ChipDiv>
                 <TopRowContainer>
+                  <MergeModal type="keyword" load={load} />
                   <TableHeaderButton
                     size="small"
                     onClick={() => setShouldOpenSettings(!shouldOpenSettings)}
@@ -478,7 +482,7 @@ const KeywordTable = (props: KeywordTableProps) => {
                     <Box
                       sx={{
                         maxHeight: '70vh',
-                        overflowY: 'scroll',
+                        overflowY: 'auto',
                         borderRadius: '10px',
                       }}
                     >
@@ -486,59 +490,49 @@ const KeywordTable = (props: KeywordTableProps) => {
                         title={t.t(
                           lang,
                           (s) =>
-                            s.components.organizationTable.tableSettings.title
+                            s.components.organizationsTable.tableSettings.title
                         )}
                         buttonText={t.t(
                           lang,
                           (s) =>
-                            s.components.organizationTable.tableSettings.save
+                            s.components.organizationsTable.tableSettings.save
                         )}
-                        queryValues={decodeTableHeaders(
-                          query.tableHeaders,
+                        queryValues={getDraggableTableHeaders({
+                          queryParam: query.tableHeaders,
                           lang,
-                          'keywords',
+                          table: 'keywords',
                           query,
-                          setQuery
-                        )}
+                          setQuery,
+                        })}
                         onClick={(element) => {
                           if (isCompatibleTableHeaderType(element)) {
                             setQuery({
                               ...query,
-                              tableHeaders: encodeTableHeaders(
-                                element,
-                                'keywords',
+                              tableHeaders: encodeTableHeaders({
+                                headers: element,
+                                table: 'keywords',
                                 query,
-                                setQuery
-                              ),
+                                setQuery,
+                              }),
                             });
                             setShouldOpenSettings(false);
                           }
                         }}
+                        setOpenSettings={setShouldOpenSettings}
                         elevation={6}
                         sx={{
                           width: '400px',
                           height: 'fit-content',
                         }}
                         children={
-                          <Alert
-                            severity="info"
-                            onClose={() =>
-                              handleTableSettingsInfoClose(
-                                setShouldDisplayTableInfo
-                              )
-                            }
-                            sx={{
-                              display: shouldDisplayTableInfo ? 'flex' : 'none',
-                              ...tw`mx-8 mt-4`,
-                            }}
-                          >
-                            {t.t(
+                          <InfoAlert
+                            text={t.t(
                               lang,
-                              (s) =>
-                                s.components.organizationTable.tableSettings
-                                  .info
+                              (s) => s.components.flowsTable.tableSettings.info
                             )}
-                          </Alert>
+                            localStorageKey="tableSettings"
+                            sxProps={tw`mx-8 mt-4`}
+                          />
                         }
                       />
                     </Box>

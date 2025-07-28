@@ -2,7 +2,7 @@ import React from 'react';
 import { MdCheckCircle } from 'react-icons/md';
 
 import { type operations, type reportingWindows } from '@unocha/hpc-data';
-import { C, dataLoader, styled } from '@unocha/hpc-ui';
+import { C, styled, useDataLoader } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
 
 import { AppContext, getEnv } from '../context';
@@ -22,7 +22,7 @@ interface Props {
 const OperationClusterFormAssignmentsList = (props: Props) => {
   const { operation, window, cluster } = props;
 
-  const loader = dataLoader(
+  const [loader] = useDataLoader(
     [
       {
         reportingWindowId: window.id,

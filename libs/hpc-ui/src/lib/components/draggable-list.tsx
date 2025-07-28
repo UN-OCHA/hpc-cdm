@@ -15,6 +15,7 @@ export interface DraggableListProps {
   queryValues: DraggableListItemProps[];
   buttonText: string;
   onClick: (elements: DraggableListItemProps[]) => unknown;
+  setOpenSettings?: React.Dispatch<React.SetStateAction<boolean>>;
   sx?: React.CSSProperties;
   innerRef?: React.ForwardedRef<HTMLDivElement>;
   elevation?: number;
@@ -24,7 +25,7 @@ export interface DraggableListProps {
 export type DraggableListItemProps = {
   id: number;
   label: string;
-  active?: boolean;
+  isActive?: boolean;
 };
 
 const PaperContainer = tw(Paper)`
@@ -72,7 +73,7 @@ const DraggableListItem = ({
   item: DraggableListItemProps;
   index: number;
 }) => {
-  const [isActive, setIsActive] = useState(item.active);
+  const [isActive, setIsActive] = useState(item.isActive);
   return (
     <Draggable
       draggableId={item.id.toString()}
@@ -96,7 +97,7 @@ const DraggableListItem = ({
             checked={isActive}
             onClick={() => {
               setIsActive(!isActive);
-              item.active = !item.active;
+              item.isActive = !item.isActive;
             }}
           />
         </DraggableListItemContainer>
@@ -120,6 +121,7 @@ const DraggableList = ({
   queryValues,
   buttonText,
   onClick,
+  setOpenSettings,
   sx,
   innerRef,
   elevation,
@@ -160,7 +162,12 @@ const DraggableList = ({
       </DragDropContext>
       <SaveButtonWrapper>
         <ButtonSubmit
-          onClick={() => onClick(values)}
+          onClick={() => {
+            onClick(values);
+            if (setOpenSettings) {
+              setOpenSettings(false);
+            }
+          }}
           color="primary"
           text={buttonText}
         />
@@ -169,7 +176,4 @@ const DraggableList = ({
   );
 };
 
-DraggableList.defaultProps = {
-  type: 'primary',
-};
 export default DraggableList;

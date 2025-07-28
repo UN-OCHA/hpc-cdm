@@ -25,6 +25,9 @@
       "p3": "所有对ICT资源和ICT数据的使用均受ST/SGB/2004/15规定的监控和调查",
       "p4": "任何用户（经授权或未经授权）对该系统的使用均构成对适用的联合国法规和规则的同意"
     },
+    "datePicker": {
+      "today": "今天"
+    },
     "dialogs": {
       "okay": "确认",
       "cancel": "取消"
@@ -33,6 +36,10 @@
       "title": "找不到页面",
       "info": "我们找不到您要查找的页面",
       "back": "返回"
+    },
+    "noResultTable": {
+      "title": "未找到结果",
+      "description": "您的筛选条件没有匹配任何结果。请修改您的筛选条件选择。"
     },
     "invalidRouteParam": {
       "title": "无效路由",
@@ -44,15 +51,216 @@
       "error": "错误：",
       "retry": "重试"
     },
+    "reviewPendingValues": {
+      "unmatched": "不匹配",
+      "label": "更改：新值",
+      "button": {
+        "accept": "接受",
+        "reject": "拒绝",
+        "confirm": "确认处理的案件"
+      }
+    },
     "unsupportedBrowser": {
       "title": "不受支持的浏览器！",
       "info": "很抱歉，您当前的浏览器不受支持。请切换到 Firefox 或 Google Chrome。要执行此操作，只需复制上面的表单地址（URL），然后打开 Firefox 或 Chrome，并将地址粘贴到浏览器中。"
+    },
+    "flow": {
+      "updatedBy": "{date} 更新者：{user}",
+      "createdBy": "{date} 创建者：{user}",
+      "deleted": "此资金流已被删除",
+      "inactiveReason": "此资金流未激活，因为它已被标记为 {reason}",
+      "unknownInactiveReasons": "未知的非活动原因",
+      "restricted": "此资金流被标记为受限，不会计入FTS网站上的资助总额",
+      "legacyID": "遗留贡献 ID: {id}",
+      "copyOfFlow": "资金流副本",
+      "addFLow": "添加资金流",
+      "activeFlowLinkText": "当前活动流是：",
+      "hasPendingFlowLinkText": "此流程有待处理的更新。查看待处理"
+    },
+    "flowAmountButton": {
+      "amountOriginalCurrency": "计算原始金额",
+      "amountUSD": "计算美元金额",
+      "exchangeRate": "计算汇率"
+    },
+    "flowForm": {
+      "activeTag": "激活",
+      "addReportingDetail": "添加报告详细信息",
+      "behaviorLabel": {
+        "overlap": {
+          "label": "重叠",
+          "tooltip": "重叠将被报告为每个选定值的直接资助。"
+        },
+        "shared": {
+          "label": "共享",
+          "tooltip": "共享将被报告为每个选定值的可能资助。"
+        }
+      },
+      "blockNavigation": "您有未保存的更改，您确定要离开吗？",
+      "codecValidation": {
+        "amountUSD": "值必须大于 0",
+        "amountOriginalCurrency": "值必须是正数",
+        "donorBudgetYear": "值需要采用 YYYY 格式",
+        "exchangeRate": "值必须是正数",
+        "flowStatus": "此字段为必填项",
+        "flowType": "此字段为必填项",
+        "flowDescription": "此字段为必填项",
+        "firstReported": "此字段为必填项",
+        "flowDate": "此字段为必填项",
+        "fundingSourceUsageYears": "此字段为必填项",
+        "fundingDestinationUsageYears": "此字段为必填项"
+      },
+      "copyFlow": "复制资金流",
+      "createdUpdated": "创建于 {createdDate}, 最近更新于 {updatedDate}",
+      "deleteFlow": "删除流版本",
+      "deletedTag": "已删除",
+      "fields": {
+        "restricted": "限内部使用",
+        "isErrorCorrection": "作为错误更正",
+        "isInactive": "标记为未激活",
+        "fundingSourceOrganizations": "组织",
+        "fundingSourceUsageYears": "使用年份",
+        "fundingSourceLocations": "位置",
+        "fundingSourceEmergencies": "紧急情况",
+        "fundingSourceGlobalClusters": "全球集群",
+        "fundingSourcePlan": "计划",
+        "fundingSourceFieldClusters": "现场集群",
+        "fundingSourceProject": "项目",
+        "fundingDestinationOrganizations": "组织",
+        "fundingDestinationAnonymizedOrganizations": "匿名化组织(们)",
+        "fundingDestinationUsageYears": "使用年份",
+        "fundingDestinationLocations": "位置",
+        "fundingDestinationEmergencies": "紧急情况",
+        "fundingDestinationGlobalClusters": "全球集群",
+        "fundingDestinationPlan": "计划",
+        "fundingDestinationFieldClusters": "现场集群",
+        "fundingDestinationProject": "项目",
+        "isNewMoney": "这笔资金流是新资金吗？",
+        "amountUSD": "资金金额（美元）",
+        "amountOriginalCurrency": "资金金额（原始货币）",
+        "currency": "货币",
+        "exchangeRate": "使用的汇率",
+        "flowDescription": {
+          "label": "资金流描述",
+          "placeholder": "1-2 句话描述资金流名称"
+        },
+        "firstReported": "首次报告",
+        "decisionDate": "决策日期",
+        "donorBudgetYear": "捐赠者预算年份",
+        "flowType": "资金流类型",
+        "flowStatus": "资金流状态",
+        "flowDate": "资金流日期",
+        "contributionType": "贡献类型",
+        "earmarkingType": "GB 标记类型",
+        "method": "援助方式",
+        "childMethod": "现金转移编程（CTP）类型",
+        "keywords": "关键词",
+        "beneficiaryGroup": "受益群体",
+        "notes": "备注",
+        "parentFlow": "添加主资金流",
+        "childFlows": "添加子资金流"
+      },
+      "links": {
+        "UNTreasury": "联合国财政部操作汇率"
+      },
+      "pendingReviewTag": "待审查",
+      "rejectFlow": {
+        "button": "拒绝资金流",
+        "confirm": "您确定要拒绝此资金流吗？",
+        "categoryNotFound": "内部错误：资金流无法标记为拒绝，因为类别不存在"
+      },
+      "remainingAmount": {
+        "excludeRestricted": "（不包括受限金额）",
+        "remainingAmount": "剩余金额：",
+        "remainingOrigAmount": "原始货币剩余金额："
+      },
+      "restrictedInfo": "受限设置仅适用于此资金流。如果关联的父流或子流也应具有相同的受限设置，您必须手动更新这些资金流。",
+      "searchSimilarFlow": "搜索类似资金流",
+      "sectionTitles": {
+        "sourceFlow": "资金来源",
+        "destinationFlow": "资金去向",
+        "flowDetails": "资金流详情",
+        "flowLink": "关联资金流",
+        "flowVersion": "资金流版本"
+      },
+      "submitValidation": {
+        "acceptAllPendingChanges": "接受所有更改",
+        "dataConsistency": "所选的{entity}：{selected} 与可能的预期 {entity}：{expected} 不匹配",
+        "parentFlowAmountUSD": "子流的美元金额大于父流的美元金额。你想继续吗？",
+        "submitButton": {
+          "reactivate": {
+            "button": "重新激活"
+          },
+          "submit": {
+            "label": {
+              "true": "可以提交资金流",
+              "false": "请填写所有必填字段"
+            },
+            "button": "提交"
+          },
+          "save": {
+            "button": "保存"
+          },
+          "saveAndApprove": {
+            "button": "保存并批准"
+          }
+        },
+        "reportingDetails": {
+          "requiredFields": "请填写报告详细信息的所有必填字段",
+          "fileTitle": "请为报告详细信息中上传的文件填写标题字段",
+          "urlTitle": "请为报告详细信息中提供的 URL 填写标题字段"
+        },
+        "createSuccess": "资金流创建成功",
+        "updateSuccess": "流程更新成功",
+        "deleteFlowWarning": "您确定要删除此资金流吗？",
+        "deleteLinkedFlows": "继续之前，请先取消关联所有资金流",
+        "deleteSuccess": "资金流已成功删除",
+        "rejectSuccess": "流程已成功拒绝",
+        "earmarking": "标记值为空，您仍要保存吗？",
+        "emergency": "此资金流在所选年份和地点至少有一个可用的紧急情况，如 {emergency}，您仍要保存吗？",
+        "pendingValues": "请处理所有待处理的值",
+        "planLocation": "未添加任何与{plan}相关联的{entity}。请至少添加以下位置中的一个: [{locations}]",
+        "rejectAllPendingChanges": "拒绝剩余更改",
+        "reportingOrganization": "您的资金流报告详情中的组织与来源或目的地组织不匹配。您确定这是正确的吗？",
+        "originalAmountIsDifferentToParent": "此流程的外币必须与其停放的父流程相同",
+        "originalAmountIsDifferentToChildren": "子流程的外币必须与当前流程保持一致",
+        "originalAmountNotFilled": "[{filledFields}] 字段已填写，但 [{notFilledFields}] 为空。请检查并正确填写字段后再次保存。",
+        "unknownError": "创建/更新资金流时发生意外错误"
+      },
+      "warning": {
+        "sourceFlow": "资金来源与主去向相关联。要编辑这些字段，请删除主资金流或直接对主资金流进行更改: ",
+        "destinationFlow": "您已为此资金流添加子资金流。更新此资金流的资金去向将更新子资金流的资金来源。如果您不想更新子资金流的资金来源，请先取消关联。"
+      }
+    },
+    "flowLink": {
+      "unlink": "取消关联",
+      "parentFlow": "父流",
+      "childFlows": "子流"
+    },
+    "flowPreviousReportingDetails": {
+      "title": "以前的报告详情",
+      "header": {
+        "version": "版本"
+      }
+    },
+    "flowSearch": {
+      "title": "搜索资金流",
+      "flowId": "输入资金流 ID",
+      "warning": "流程: [{removeOptions}] 不可用，因为它们已经被链接，或者它们是当前流程。"
+    },
+    "flowVersions": {
+      "direction": {
+        "source": "来源",
+        "destination": "目的地"
+      },
+      "info": {
+        "compareInfo": "通过点击两个流版本的行，您可以比较版本之间的差异"
+      }
     },
     "flowsTable": {
       "headers": {
         "id": "ID",
         "status": "状态",
-        "updatedCreated": "更新/创建",
+        "updatedCreated": "创建/更新",
         "dataProvider": "数据提供者",
         "amountUSD": "金额（美元）",
         "sourceOrganization": "源组织",
@@ -82,8 +290,15 @@
       "parkedSource": "停车源",
       "totalAmount": "总金额：",
       "sortBy": "排序方式",
-      "rejectPendingFlows": "拒绝待处理的资金流",
-      "downloadDisabled": "只有在至少应用了一个过滤器时才允许下载",
+      "rejectPendingFlows": {
+        "message": "您是否要拒绝所选的待处理流？",
+        "button": "是",
+        "state": {
+          "error": "批量拒绝所选待处理流时发生意外错误",
+          "success": "所有选定的待处理流均已成功拒绝"
+        }
+      },
+      "downloadDisabled": "只有在应用了至少一个过滤器并且表格中有多个流时才允许下载",
       "totalAmountDisabled": "只有在至少应用了一个过滤器时才允许总金额",
       "tableSettings": {
         "title": "表格设置",
@@ -104,7 +319,6 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "包括匹配的停车流的子项",
-        "restricted": "受限",
         "flowID": "资金流ID",
         "amountUSD": "金额（美元）",
         "keywords": "关键词",
@@ -122,6 +336,7 @@
         "sourceGlobalClusters": "全球集群（源）",
         "sourceEmergencies": "紧急情况（源）",
         "destinationOrganizations": "组织（目标）",
+        "destinationAnonymizedOrganizations": "目标匿名组织",
         "destinationLocations": "国家（目标）",
         "destinationUsageYears": "使用年份（目标）",
         "destinationProjects": "项目（目标）",
@@ -143,7 +358,7 @@
         "filters": "筛选器"
       }
     },
-    "keywordTable": {
+    "keywordsTable": {
       "headers": {
         "id": "ID",
         "name": "名称",
@@ -157,14 +372,49 @@
       },
       "errors": {
         "unknown": "创建/更新关键字时发生意外错误。",
-        "duplicate": "已经存在名为 {keywordName} 的关键字。请选择一个不同的名称。"
+        "conflict": "已经存在名为 {keywordName} 的关键字。请选择一个不同的名称。"
+      },
+      "success": {
+        "update": "关键词更新成功",
+        "delete": "关键词已成功删除"
       },
       "labels": {
         "newName": "新名称",
+        "edit": "编辑",
         "save": "保存",
         "public": "公开",
         "cancel": "取消",
         "delete": "删除"
+      }
+    },
+    "mergeModal": {
+      "description": "合并{entity}",
+      "mergingEntity": "正在合并{entity}",
+      "receivingEntity": "接收{entity}",
+      "confirmationMessage": "您确定要将 {mergingEntities} 合并到 {receivingEntity} 吗？",
+      "formError": {
+        "mergingEntity": "此字段为必填项，请至少添加一个值",
+        "receivingEntity": "此字段为必填项"
+      },
+      "error": {
+        "conflict": "在合并{entities}时发生冲突",
+        "unknown": "在合并{entities}时发生未知错误"
+      },
+      "success": {
+        "merge": "成功合并 {entities}"
+      },
+      "organization": {
+        "singular": "组织",
+        "plural": "组织"
+      },
+      "keyword": {
+        "singular": "关键词",
+        "plural": "关键词"
+      },
+      "button": {
+        "yes": "是",
+        "cancel": "取消",
+        "next": "下一步"
       }
     },
     "pendingFlowsFilter": {
@@ -218,7 +468,7 @@
         "filters": "筛选器"
       }
     },
-    "organizationTable": {
+    "organizationsTable": {
       "headers": {
         "id": "ID",
         "name": "组织",
@@ -237,6 +487,7 @@
         "title": "找不到组织",
         "info": "我们无法加载组织"
       },
+      "addOrganization": "+ 组织",
       "sortBy": "排序方式",
       "tableSettings": {
         "title": "表格设置",
@@ -264,7 +515,7 @@
         "comments": "组织描述"
       },
       "errors": {
-        "duplicate": "已经存在名为 {organizationName} 的组织。请选择一个不同的名称。",
+        "conflict": "已经存在名为 {organizationName} 的组织。请选择一个不同的名称。",
         "unknown": "创建/更新组织时发生意外错误"
       },
       "formErrors": {
@@ -277,6 +528,11 @@
         "principalButton": "删除",
         "secondaryButton": "取消"
       },
+      "success": {
+        "create": "{organizationName} 组织创建成功",
+        "update": "{organizationName} 组织更新成功",
+        "delete": "{organizationName} 组织已成功删除"
+      },
       "text": {
         "collectiveOrganization": "集体组织设置指示该组织是同一类型的一个或多个组织的“替代品”（例如，“红十字组织”），当不知道具体组织或出于安全目的需要对其进行掩码时使用",
         "organizationType": "这是一个只读字段，根据'组织类型'填充",
@@ -285,11 +541,87 @@
       },
       "create": "创建",
       "update": "更新"
+    },
+    "reportingDetail": {
+      "title": "报告详情 {index}",
+      "fileSection": "报告文件：",
+      "urlSection": "报告链接：",
+      "removeButton": "移除报告详情",
+      "reportSource": {
+        "label": "报告来源",
+        "options": {
+          "Primary": "主要",
+          "Secondary": "次要"
+        }
+      },
+      "reportedByOrganization": {
+        "label": "报告的组织",
+        "organizationsInFlow": "已在此流程中的组织："
+      },
+      "reportChannel": {
+        "label": "报告渠道"
+      },
+      "sourceSystemRecordId": {
+        "label": "来源系统记录 ID"
+      },
+      "verified": {
+        "label": "已验证",
+        "options": {
+          "true": "已验证",
+          "false": "未验证"
+        }
+      },
+      "dateReported": {
+        "label": "报告日期"
+      },
+      "reporterReferenceCode": {
+        "label": "报告者参考代码"
+      },
+      "reporterContactInfo": {
+        "label": "报告者联系方式"
+      },
+      "reportFileTitle": {
+        "label": "报告文件标题"
+      },
+      "file": {
+        "label": "报告文件",
+        "download": {
+          "error": {
+            "notFound": "无法下载文件，因为它不存在",
+            "unknown": "下载文件时发生未知错误"
+          }
+        },
+        "upload": {
+          "error": {
+            "invalidExtension": "所选文件不是 [{whitelist}]。请选择正确格式的文件"
+          }
+        }
+      },
+      "reportURLTitle": {
+        "label": "报告链接标题"
+      },
+      "url": {
+        "label": "报告链接"
+      },
+      "validation": {
+        "required": "此字段为必填项",
+        "url": "请输入有效的 URL"
+      }
+    },
+    "upload": {
+      "buttonText": "上传",
+      "error": {
+        "invalidExtension": "所选文件不是 .xlsx 或 .xls。请选择一个正确格式的文件",
+        "unknown": "上传文件时发生未知错误"
+      },
+      "success": "文件 \"{fileName}\" 已成功上传"
     }
   },
   "navigation": {
+    "addFlow": "添加流",
     "flows": "资金流",
     "keywords": "关键词",
+    "uploadXLSX": "上传XLSX",
     "pendingFlows": "待处理的资金流",
     "organizations": "组织",
     "rpm": "响应规划模块",
@@ -301,14 +633,23 @@
     "flows": {
       "title": "搜索资金流"
     },
+    "flow": {
+      "title": "流程 {id}v{versionID}"
+    },
     "keywords": {
       "title": "管理关键词"
+    },
+    "uploadXLSX": {
+      "title": "上传XLSX/XLS文件"
     },
     "pendingFlows": {
       "title": "搜索待处理流程"
     },
     "organizations": {
       "title": "组织机构"
+    },
+    "organization": {
+      "title": "组织 {id}"
     }
   }
 }

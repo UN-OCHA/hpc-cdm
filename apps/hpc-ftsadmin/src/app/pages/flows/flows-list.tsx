@@ -1,5 +1,7 @@
-import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
-import { useCallback, useEffect, useRef } from 'react';
+import { C, CLASSES, combineClasses, styled } from '@unocha/hpc-ui';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router';
+import { toast } from 'react-toastify';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import FilterFlowsTable, {
@@ -11,10 +13,8 @@ import FlowsTable, {
 } from '../../components/tables/flows-table';
 import { AppContext } from '../../context';
 import { FLOW_PARAMS_CODEC } from '../../utils/codecs';
-import {
-  DEFAULT_FLOW_TABLE_HEADERS,
-  encodeTableHeaders,
-} from '../../utils/table-headers';
+import { ROWS_PER_PAGE_OPTIONS, TOAST_CONFIG } from '../../utils/constants';
+import { encodeTableHeaders } from '../../utils/table-headers';
 import useQueryParams from '../../utils/useQueryParams';
 
 interface Props {
@@ -24,23 +24,23 @@ interface Props {
 const Container = tw.div`
   flex
 `;
-const LandingContainer = tw.div`
-  w-full
+const LandingContainer = styled.div`
+  height: calc(100vh - ${(p) => p.theme.sizing.totalHeaderHeight});
+  ${tw`
+    w-full
+    overflow-x-clip
+    flex
+    flex-col
+  `}
 `;
 export default (props: Props) => {
-  const rowsPerPageOptions = [10, 25, 50, 100];
-  const abortControllerRef = useRef<AbortController>(new AbortController());
-
-  const handleAbortController = useCallback(() => {
-    abortControllerRef.current.abort();
-    abortControllerRef.current = new AbortController();
-  }, []);
+  const state: { successMessage?: string } | undefined = useLocation().state;
 
   useEffect(() => {
-    return () => {
-      abortControllerRef.current.abort();
-    };
-  }, []);
+    if (state?.successMessage) {
+      toast.success(state.successMessage, TOAST_CONFIG);
+    }
+  }, [state?.successMessage]);
 
   const [query, setQuery] = useQueryParams({
     codec: FLOW_PARAMS_CODEC,
@@ -50,17 +50,15 @@ export default (props: Props) => {
       orderBy: 'flow.updatedAt',
       orderDir: 'DESC',
       filters: JSON.stringify({}),
-      tableHeaders: encodeTableHeaders([]), // Default value of table headers
+      tableHeaders: encodeTableHeaders({ headers: [], table: 'flows' }), // Default value of table headers
     },
   });
 
   const flowsTableProps: FlowsTableProps = {
-    headers: DEFAULT_FLOW_TABLE_HEADERS,
-    rowsPerPageOption: rowsPerPageOptions,
+    rowsPerPageOptions: ROWS_PER_PAGE_OPTIONS,
     initialValues: FLOWS_FILTER_INITIAL_VALUES,
     query,
     setQuery,
-    abortSignal: abortControllerRef.current.signal,
   };
 
   return (
@@ -71,11 +69,7 @@ export default (props: Props) => {
         >
           <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
           <Container>
-            <FilterFlowsTable
-              setQuery={setQuery}
-              query={query}
-              handleAbortController={handleAbortController}
-            />
+            <FilterFlowsTable setQuery={setQuery} query={query} />
             <LandingContainer>
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.flows.title)}

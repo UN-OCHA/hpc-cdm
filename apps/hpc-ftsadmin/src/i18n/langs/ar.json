@@ -25,6 +25,9 @@
       "p3": "يُخضع جميع استخدامات موارد تكنولوجيا المعلومات والاتصالات وبيانات ICT للمراقبة والتحقيق وفقًا لما هو مبين في ST/SGB/2004/15.",
       "p4": "استخدام هذا النظام من قبل أي مستخدم، مصرح به أو غير مصرح به، يشكل موافقة على اللوائح والقواعد المعمول بها في الأمم المتحدة."
     },
+    "datePicker": {
+      "today": "اليوم"
+    },
     "dialogs": {
       "okay": "تأكيد",
       "cancel": "إلغاء"
@@ -33,6 +36,10 @@
       "title": "الصفحة غير موجودة",
       "info": "لم نتمكن من العثور على الصفحة التي كنت تبحث عنها",
       "back": "العودة"
+    },
+    "noResultTable": {
+      "title": "لم يتم العثور على نتائج",
+      "description": "لا تتطابق تصفياتك مع أي نتائج. يرجى تعديل اختيارك للفلاتر."
     },
     "invalidRouteParam": {
       "title": "مسار غير صالح",
@@ -44,15 +51,216 @@
       "error": "خطأ:",
       "retry": "إعادة المحاولة"
     },
+    "reviewPendingValues": {
+      "unmatched": "غير متطابق",
+      "label": "تغيير: قيمة جديدة",
+      "button": {
+        "accept": "قبول",
+        "reject": "رفض",
+        "confirm": "تأكيد التعامل مع الحالة"
+      }
+    },
     "unsupportedBrowser": {
       "title": "المتصفح غير مدعوم!",
       "info": "للأسف، المتصفح الحالي الخاص بك غير مدعوم. يرجى التبديل إما إلى Firefox أو Google Chrome. لفعل ذلك، قم بنسخ عنوان النموذج (الرابط) أعلاه، ثم افتح Firefox أو Chrome والصق العنوان في المتصفح."
+    },
+    "flow": {
+      "updatedBy": "تم التحديث في {date} بواسطة {user}",
+      "createdBy": "تم الإنشاء في {date} بواسطة {user}",
+      "deleted": "تم حذف هذا التدفق",
+      "inactiveReason": "هذا التدفق غير نشط لأنه تم تعيينه كـ {reason}",
+      "unknownInactiveReasons": "سبب غير معروف للتعطيل",
+      "restricted": "تم تصنيف هذا التدفق على أنه مقيد ولن يتم تضمينه في إجماليات التمويل على موقع FTS الإلكتروني",
+      "legacyID": "معرف المساهمة القديم: {id}",
+      "copyOfFlow": "نسخة من التدفق",
+      "addFLow": "إضافة تدفق",
+      "activeFlowLinkText": "التدفق النشط الحالي هو: ",
+      "hasPendingFlowLinkText": "هناك تحديث معلق لهذا التدفق. راجع التحديث المعلق"
+    },
+    "flowAmountButton": {
+      "amountOriginalCurrency": "حساب القيمة بالعملة الأصلية",
+      "amountUSD": "حساب القيمة بالدولار الأمريكي",
+      "exchangeRate": "حساب سعر الصرف"
+    },
+    "flowForm": {
+      "activeTag": "نشط",
+      "addReportingDetail": "إضافة تفاصيل التقرير",
+      "behaviorLabel": {
+        "overlap": {
+          "label": "تداخل",
+          "tooltip": "سيتم الإبلاغ عن التداخل كتمويل مباشر لكل من القيم المحددة."
+        },
+        "shared": {
+          "label": "مشترك",
+          "tooltip": "سيتم الإبلاغ عن المشترك كتمويل محتمل لكل من القيم المحددة."
+        }
+      },
+      "blockNavigation": "لديك تغييرات غير محفوظة، هل أنت متأكد أنك تريد المغادرة؟",
+      "codecValidation": {
+        "amountUSD": "القيمة يجب أن تكون أكبر من 0",
+        "amountOriginalCurrency": "القيمة يجب أن تكون رقمًا موجبًا",
+        "donorBudgetYear": "القيمة يجب أن تكون بصيغة YYYY",
+        "exchangeRate": "القيمة يجب أن تكون رقمًا موجبًا",
+        "flowStatus": "هذا الحقل مطلوب",
+        "flowType": "هذا الحقل مطلوب",
+        "flowDescription": "هذا الحقل مطلوب",
+        "firstReported": "هذا الحقل مطلوب",
+        "flowDate": "هذا الحقل مطلوب",
+        "fundingSourceUsageYears": "هذا الحقل مطلوب",
+        "fundingDestinationUsageYears": "هذا الحقل مطلوب"
+      },
+      "copyFlow": "نسخ التدفق",
+      "createdUpdated": "تم الإنشاء في {createdDate}، وآخر تحديث في {updatedDate}",
+      "deleteFlow": "حذف إصدار التدفق",
+      "deletedTag": "تم حذفه",
+      "fields": {
+        "restricted": "مقتصر على الاستخدام الداخلي",
+        "isErrorCorrection": "كإصلاح للأخطاء",
+        "isInactive": "تعيين كغير نشط",
+        "fundingSourceOrganizations": "المنظمة/المنظمات",
+        "fundingSourceUsageYears": "سنة/سنوات الاستخدام",
+        "fundingSourceLocations": "الموقع/المواقع",
+        "fundingSourceEmergencies": "الطوارئ",
+        "fundingSourceGlobalClusters": "المجموعات العالمية",
+        "fundingSourcePlan": "الخطة",
+        "fundingSourceFieldClusters": "مجموعات الحقول",
+        "fundingSourceProject": "المشروع",
+        "fundingDestinationOrganizations": "المنظمة/المنظمات",
+        "fundingDestinationAnonymizedOrganizations": "المنظمة(ات) المجهولة",
+        "fundingDestinationUsageYears": "سنة/سنوات الاستخدام",
+        "fundingDestinationLocations": "الموقع/المواقع",
+        "fundingDestinationEmergencies": "الطوارئ",
+        "fundingDestinationGlobalClusters": "المجموعات العالمية",
+        "fundingDestinationPlan": "الخطة",
+        "fundingDestinationFieldClusters": "مجموعات الحقول",
+        "fundingDestinationProject": "المشروع",
+        "isNewMoney": "هل هذا التدفق يمثل أموالاً جديدة؟",
+        "amountUSD": "مبلغ التمويل بالدولار الأمريكي",
+        "amountOriginalCurrency": "مبلغ التمويل (بالعملة الأصلية)",
+        "currency": "العملة",
+        "exchangeRate": "سعر الصرف المستخدم",
+        "flowDescription": {
+          "label": "وصف تدفق التمويل",
+          "placeholder": "1-2 جملة لوصف اسم التدفق"
+        },
+        "firstReported": "تم الإبلاغ عنه لأول مرة",
+        "decisionDate": "تاريخ القرار",
+        "donorBudgetYear": "سنة ميزانية المانح",
+        "flowType": "نوع التدفق",
+        "flowStatus": "حالة التدفق",
+        "flowDate": "تاريخ التدفق",
+        "contributionType": "نوع المساهمة",
+        "earmarkingType": "GB تحديد الأهداف",
+        "method": "طريقة المساعدة",
+        "childMethod": "نوع برمجة التحويلات النقدية (CTP)",
+        "keywords": "الكلمات الرئيسية",
+        "beneficiaryGroup": "مجموعة المستفيدين",
+        "notes": "الملاحظات",
+        "parentFlow": "إضافة تدفق رئيسي",
+        "childFlows": "إضافة تدفق فرعي"
+      },
+      "links": {
+        "UNTreasury": "أسعار الصرف التشغيلية لخزانة الأمم المتحدة"
+      },
+      "pendingReviewTag": "بانتظار المراجعة",
+      "rejectFlow": {
+        "button": "رفض التدفق",
+        "confirm": "هل أنت متأكد أنك تريد رفض هذا التدفق؟",
+        "categoryNotFound": "خطأ داخلي: لا يمكن تعيين التدفق كرفض لأن الفئة غير موجودة"
+      },
+      "remainingAmount": {
+        "excludeRestricted": "(باستثناء المقيد)",
+        "remainingAmount": "المبلغ المتبقي:",
+        "remainingOrigAmount": "المبلغ المتبقي بالعملة الأصلية:"
+      },
+      "restrictedInfo": "ينطبق إعداد التقييد على هذا التدفق فقط. إذا كان يجب أن تحتوي التدفقات المرتبطة، سواء كانت رئيسية أو فرعية، على نفس إعداد التقييد، فيجب عليك تحديث تلك التدفقات يدويًا.",
+      "searchSimilarFlow": "البحث عن تدفقات مماثلة",
+      "sectionTitles": {
+        "sourceFlow": "مصدر(مصادر) التمويل",
+        "destinationFlow": "وجهة(وجهات) التمويل",
+        "flowDetails": "تفاصيل التدفق",
+        "flowLink": "التدفقات المرتبطة",
+        "flowVersion": "إصدارات التدفق"
+      },
+      "submitValidation": {
+        "acceptAllPendingChanges": "قبول جميع التغييرات",
+        "dataConsistency": "الـ {entity} المحددة: {selected} لا تتطابق مع الـ {entity} المتوقعة: {expected}",
+        "parentFlowAmountUSD": "مقدار الدولار الأمريكي في تدفق الطفل أكبر من مقدار الدولار الأمريكي في تدفق الوالد. هل ترغب في المتابعة؟",
+        "submitButton": {
+          "reactivate": {
+            "button": "إعادة تنشيط"
+          },
+          "submit": {
+            "label": {
+              "true": "يمكن تقديم التدفق",
+              "false": "يرجى ملء جميع الحقول المطلوبة"
+            },
+            "button": "تقديم"
+          },
+          "save": {
+            "button": "حفظ"
+          },
+          "saveAndApprove": {
+            "button": "حفظ والموافقة"
+          }
+        },
+        "reportingDetails": {
+          "requiredFields": "يرجى ملء جميع الحقول المطلوبة لتفاصيل التقرير",
+          "fileTitle": "يرجى ملء حقل العنوان للملف المرفوع في تفاصيل التقرير",
+          "urlTitle": "يرجى ملء حقل العنوان للرابط المقدم في تفاصيل التقرير"
+        },
+        "createSuccess": "تم إنشاء التدفق بنجاح",
+        "updateSuccess": "تم تحديث التدفق بنجاح",
+        "deleteFlowWarning": "هل أنت متأكد أنك تريد حذف هذا التدفق؟",
+        "deleteLinkedFlows": "يرجى فك ارتباط جميع التدفقات قبل المتابعة",
+        "deleteSuccess": "تم حذف التدفق بنجاح",
+        "rejectSuccess": "تم رفض التدفق بنجاح",
+        "earmarking": "قيمة تحديد الأهداف فارغة، هل تريد الحفظ على أي حال؟",
+        "emergency": "هذا التدفق يحتوي على حالة طوارئ واحدة على الأقل متاحة للسنوات والمواقع المحددة مثل {emergency}. هل تريد الحفظ على أي حال؟",
+        "pendingValues": "يرجى معالجة جميع القيم المعلقة",
+        "planLocation": "لم يتم إضافة أي {entity} مرتبط بـ {plan}. الرجاء إضافة واحدة على الأقل من المواقع التالية: [{locations}]",
+        "rejectAllPendingChanges": "رفض التغييرات المتبقية",
+        "reportingOrganization": "المنظمة في تفاصيل تقرير التدفق الخاص بك لا تتطابق مع المنظمة المصدر أو الوجهة. هل أنت متأكد أن هذا صحيح؟",
+        "originalAmountIsDifferentToParent": "يجب أن تكون العملة الأجنبية لهذا التدفق هي نفسها عملة التدفق الأب المتوقف",
+        "originalAmountIsDifferentToChildren": "يجب أن تكون العملة الأجنبية لتدفقات الأطفال مطابقة للعملة في التدفق الحالي",
+        "originalAmountNotFilled": "[{filledFields}] الحقول مملوءة ولكن [{notFilledFields}] فارغة. يرجى التحقق وإكمال الحقول بشكل صحيح قبل الحفظ مرة أخرى.",
+        "unknownError": "حدث خطأ غير متوقع أثناء إنشاء/تحديث التدفق"
+      },
+      "warning": {
+        "sourceFlow": "مصدر التدفق مرتبط بوجهة رئيسية. لتعديل هذه الحقول، قم بإزالة التدفق الرئيسي أو قم بإجراء التغييرات مباشرة عليه: ",
+        "destinationFlow": "لقد أضفت تدفقًا فرعيًا لهذا التدفق. تحديث وجهة التمويل لهذا التدفق سيؤدي إلى تحديث مصادر التمويل للتدفقات الفرعية. إذا كنت لا تريد تحديث مصادر تمويل التدفقات الفرعية، فقم بإلغاء الربط أولاً."
+      }
+    },
+    "flowLink": {
+      "unlink": "إلغاء الربط",
+      "parentFlow": "التدفق الرئيسي",
+      "childFlows": "التدفقات الفرعية"
+    },
+    "flowPreviousReportingDetails": {
+      "title": "تفاصيل التقارير السابقة",
+      "header": {
+        "version": "الإصدار"
+      }
+    },
+    "flowSearch": {
+      "title": "البحث عن تدفقات",
+      "flowId": "أدخل معرف التدفق",
+      "warning": "التدفقات: [{removeOptions}] غير متاحة لأنها تم ربطها بالفعل، أو لأنها هي التدفق الحالي."
+    },
+    "flowVersions": {
+      "direction": {
+        "source": "المصدر",
+        "destination": "الوجهة"
+      },
+      "info": {
+        "compareInfo": "من خلال النقر على صفين من إصدار التدفق، يمكنك مقارنة الفروق بين الإصدارات"
+      }
     },
     "flowsTable": {
       "headers": {
         "id": "المعرف",
         "status": "الحالة",
-        "updatedCreated": "تم التحديث/تم الإنشاء",
+        "updatedCreated": "تم الإنشاء/تم التحديث",
         "dataProvider": "مزود البيانات",
         "amountUSD": "المبلغ بالدولار الأمريكي",
         "sourceOrganization": "المؤسسة المصدرة",
@@ -82,8 +290,15 @@
       "parkedSource": "المصدر المتوقف",
       "sortBy": "الترتيب حسب",
       "totalAmount": "المبلغ الإجمالي: ",
-      "rejectPendingFlows": "رفض الأنسجة المعلقة",
-      "downloadDisabled": "التنزيل مسموح به فقط عند وجود على الأقل تطبيق فلتر واحد",
+      "rejectPendingFlows": {
+        "message": "هل ترغب في رفض تدفقات الانتظار المحددة؟",
+        "button": "نعم",
+        "state": {
+          "error": "حدث خطأ غير متوقع أثناء الرفض الجماعي للتدفقات المعلقة المحددة",
+          "success": "تم رفض جميع التدفقات المعلقة المحددة بنجاح"
+        }
+      },
+      "downloadDisabled": "التنزيل مسموح به فقط عند وجود تطبيق للتصفية وهناك أكثر من تدفق في الجدول",
       "totalAmountDisabled": "المبلغ الإجمالي مسموح به فقط عند وجود على الأقل تطبيق فلتر واحد",
       "tableSettings": {
         "title": "إعدادات الجدول",
@@ -105,7 +320,6 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "تضمين أطفال التدفق المتطابق",
-        "restricted": "مقيد",
         "flowID": "معرف التدفق",
         "amountUSD": "المبلغ بالدولار الأمريكي",
         "keywords": "الكلمات الرئيسية",
@@ -123,6 +337,7 @@
         "sourceGlobalClusters": "المجموعات العالمية المصدرة",
         "sourceEmergencies": "الحالات الطارئة المصدرة",
         "destinationOrganizations": "المنظمة(ات) الوجهة",
+        "destinationAnonymizedOrganizations": "المنظمة(ات) المجهولة الوجهة",
         "destinationLocations": "البلدان الوجهة",
         "destinationUsageYears": "سنوات الاستخدام الوجهة",
         "destinationProjects": "المشروعات الوجهة",
@@ -141,7 +356,7 @@
         "filters": "المرشحات"
       }
     },
-    "keywordTable": {
+    "keywordsTable": {
       "headers": {
         "id": "المعرف",
         "name": "الاسم",
@@ -155,14 +370,49 @@
       },
       "errors": {
         "unknown": "حدث خطأ غير متوقع أثناء إنشاء/تحديث الكلمة الرئيسية.",
-        "duplicate": "يوجد كلمة رئيسية بالفعل بالاسم {keywordName}. يرجى اختيار اسم مختلف."
+        "conflict": "يوجد كلمة رئيسية بالفعل بالاسم {keywordName}. يرجى اختيار اسم مختلف."
+      },
+      "success": {
+        "update": "تم تحديث الكلمة الرئيسية بنجاح",
+        "delete": "تم حذف الكلمة الرئيسية بنجاح"
       },
       "labels": {
         "newName": "الاسم الجديد",
+        "edit": "تحرير",
         "save": "حفظ",
         "public": "عام",
         "cancel": "إلغاء",
         "delete": "حذف"
+      }
+    },
+    "mergeModal": {
+      "description": "دمج {entity}",
+      "mergingEntity": "دمج {entity}",
+      "receivingEntity": "استلام {entity} ",
+      "confirmationMessage": "هل أنت متأكد أنك تريد دمج {mergingEntities} في {receivingEntity}؟",
+      "formError": {
+        "mergingEntity": "هذا الحقل مطلوب، يرجى إضافة قيمة واحدة على الأقل",
+        "receivingEntity": "هذا الحقل مطلوب"
+      },
+      "error": {
+        "conflict": "حدث تضارب أثناء دمج {entities} ",
+        "unknown": "حدث خطأ غير معروف أثناء دمج {entities} "
+      },
+      "success": {
+        "merge": "تم دمج {entities} بنجاح"
+      },
+      "organization": {
+        "singular": "منظمة",
+        "plural": "منظمات"
+      },
+      "keyword": {
+        "singular": "كلمة مفتاحية",
+        "plural": "كلمات مفتاحية"
+      },
+      "button": {
+        "yes": "نعم",
+        "cancel": "إلغاء",
+        "next": "التالي"
       }
     },
     "pendingFlowsFilter": {
@@ -216,7 +466,7 @@
         "filters": "المرشحات"
       }
     },
-    "organizationTable": {
+    "organizationsTable": {
       "headers": {
         "id": "المعرف",
         "name": "المنظمة",
@@ -235,6 +485,7 @@
         "title": "لم يتم العثور على منظمات",
         "info": "لم نتمكن من تحميل المنظمات"
       },
+      "addOrganization": "+ المنظمة",
       "sortBy": "ترتيب حسب",
       "tableSettings": {
         "title": "إعدادات الجدول",
@@ -262,7 +513,7 @@
         "comments": "وصف المؤسسة"
       },
       "errors": {
-        "duplicate": "توجد مؤسسة بالفعل باسم {organizationName}. يرجى اختيار اسم مختلف.",
+        "conflict": "توجد مؤسسة بالفعل باسم {organizationName}. يرجى اختيار اسم مختلف.",
         "unknown": "خطأ غير متوقع أثناء إنشاء/تحديث المؤسسة"
       },
       "formErrors": {
@@ -275,6 +526,11 @@
         "principalButton": "حذف",
         "secondaryButton": "إلغاء"
       },
+      "success": {
+        "create": "تم إنشاء منظمة {organizationName} بنجاح",
+        "update": "تم تحديث منظمة {organizationName} بنجاح",
+        "delete": "تم حذف منظمة {organizationName} بنجاح"
+      },
       "text": {
         "collectiveOrganization": "تشير إعدادات المؤسسة الجماعية إلى أن المؤسسة هي 'بديل' لمؤسسة واحدة أو أكثر من نفس نوع المؤسسة (على سبيل المثال، \"منظمات الصليب الأحمر\"، ويتم استخدامها عندما لا يتم معرفة المؤسسات المحددة أو يجب إخفاؤها لأغراض الأمان",
         "organizationType": "هذا حقل للقراءة فقط يمتلأ استنادًا إلى 'نوع المؤسسة'",
@@ -283,11 +539,87 @@
       },
       "create": "إنشاء",
       "update": "تحديث"
+    },
+    "reportingDetail": {
+      "title": "تفاصيل التقرير {index}",
+      "fileSection": "ملف التقرير:",
+      "urlSection": "رابط التقرير:",
+      "removeButton": "إزالة تفاصيل التقرير",
+      "reportSource": {
+        "label": "مصدر التقرير",
+        "options": {
+          "Primary": "رئيسي",
+          "Secondary": "ثانوي"
+        }
+      },
+      "reportedByOrganization": {
+        "label": "تم الإبلاغ من قبل المنظمة",
+        "organizationsInFlow": "المنظمات الموجودة بالفعل في هذا التدفق: "
+      },
+      "reportChannel": {
+        "label": "قناة التقرير"
+      },
+      "sourceSystemRecordId": {
+        "label": "معرف سجل النظام المصدر"
+      },
+      "verified": {
+        "label": "تم التحقق",
+        "options": {
+          "true": "تم التحقق",
+          "false": "غير متحقق"
+        }
+      },
+      "dateReported": {
+        "label": "تاريخ التقرير"
+      },
+      "reporterReferenceCode": {
+        "label": "رمز مرجع المبلغ"
+      },
+      "reporterContactInfo": {
+        "label": "معلومات الاتصال بالمبلغ"
+      },
+      "reportFileTitle": {
+        "label": "عنوان ملف التقرير"
+      },
+      "file": {
+        "label": "ملف التقرير",
+        "download": {
+          "error": {
+            "notFound": "لم يتم العثور على الملف",
+            "unknown": "حدث خطأ غير معروف أثناء تنزيل الملف"
+          }
+        },
+        "upload": {
+          "error": {
+            "invalidExtension": "الملف المحدد ليس من النوع [{whitelist}]. يرجى اختيار ملف بالتنسيق الصحيح"
+          }
+        }
+      },
+      "reportURLTitle": {
+        "label": "عنوان رابط التقرير"
+      },
+      "url": {
+        "label": "رابط التقرير"
+      },
+      "validation": {
+        "required": "هذا الحقل مطلوب",
+        "url": "يرجى إدخال رابط صالح"
+      }
+    },
+    "upload": {
+      "buttonText": "تحميل",
+      "error": {
+        "invalidExtension": "الملف المحدد ليس .xlsx أو .xls. يرجى اختيار ملف بالتنسيق الصحيح",
+        "unknown": "حدث خطأ غير معروف أثناء تحميل الملف"
+      },
+      "success": "تم تحميل الملف \"{fileName}\" بنجاح"
     }
   },
   "navigation": {
+    "addFlow": "إضافة تدفق",
     "flows": "التدفقات",
     "keywords": "الكلمات الرئيسية",
+    "uploadXLSX": "تحميل XLSX",
     "pendingFlows": "التدفقات المعلقة",
     "organizations": "المنظمات",
     "rpm": "وحدة تخطيط الاستجابة",
@@ -299,14 +631,23 @@
     "flows": {
       "title": "البحث في التدفقات التمويلية"
     },
+    "flow": {
+      "title": "التدفق {id}v{versionID}"
+    },
     "keywords": {
       "title": "إدارة الكلمات الرئيسية"
+    },
+    "uploadXLSX": {
+      "title": "تحميل ملف XLSX/XLS"
     },
     "pendingFlows": {
       "title": "البحث في التدفقات المعلقة"
     },
     "organizations": {
       "title": "المؤسسات"
+    },
+    "organization": {
+      "title": "المؤسسة {id}"
     }
   }
 }

@@ -4,4 +4,5 @@
 export interface LocalStorageSchema {
   tableSettings?: boolean;
   filterCommaSeparate?: boolean;
+  compareFlowVersions?: boolean;
 }

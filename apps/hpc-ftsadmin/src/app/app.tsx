@@ -2,21 +2,22 @@ import {
   BaseStyling,
   C,
   CLASSES,
-  dataLoader,
   dialogs,
   styled,
   ThemeProvider,
+  useDataLoader,
 } from '@unocha/hpc-ui';
 import { useEffect, useState } from 'react';
+import { MdAdd } from 'react-icons/md';
 import { Outlet } from 'react-router';
-import { ToastContainer } from 'react-toastify';
+import { Slide, ToastContainer } from 'react-toastify';
 import env, { type Environment } from '../environments/environment';
 import { type LanguageKey, LANGUAGE_CHOICE, t } from '../i18n';
 import PageMeta from './components/page-meta';
 import { AppContext, contextFromEnv } from './context';
 import { Z_INDEX } from './layout';
 import PageNotLoggedIn from './pages/not-logged-in';
-import * as paths from './paths';
+import paths from './paths';
 
 const environmentWarning = (env: Environment, lang: LanguageKey) => {
   const warning = env.getDevHeaderWarning(lang);
@@ -44,7 +45,6 @@ const Main = styled.main`
 
 const LoggedInContainer = styled.div`
   width: 100%;
-  margin-bottom: ${(p) => p.theme.marginPx.lg * 2}px;
 `;
 
 const TitlePrimary = styled.div`
@@ -54,6 +54,18 @@ const TitlePrimary = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
+`;
+
+/**
+ *  https://fkhadra.github.io/react-toastify/how-to-style#override-css-variables
+ */
+const ToastContainerStyled = styled(ToastContainer)`
+  .Toastify__toast-theme--colored.Toastify__toast--success {
+    background-color: ${(p) => p.theme.colors.pallete.green.normal};
+  }
+  .Toastify__toast-theme--colored.Toastify__toast--error {
+    background-color: ${(p) => p.theme.colors.pallete.red.dark};
+  }
 `;
 
 export const App = () => {
@@ -66,7 +78,7 @@ export const App = () => {
     };
   }, []);
 
-  const loadEnv = dataLoader([], () =>
+  const [loadEnv] = useDataLoader([], () =>
     env()
       .catch((error) => {
         console.error(error);
@@ -132,6 +144,16 @@ export const App = () => {
                             label: t.t(lang, (s) => s.navigation.keywords),
                             path: paths.keywords(),
                           },
+                          {
+                            label: t.t(lang, (s) => s.navigation.uploadXLSX),
+                            path: paths.uploadXLSX(),
+                          },
+                          {
+                            label: t.t(lang, (s) => s.navigation.addFlow),
+                            path: paths.addFlow(),
+                            icon: MdAdd,
+                            selected: false,
+                          },
                         ]}
                         className={CLASSES.CONTAINER.FLUID}
                         externalLinks={[
@@ -190,7 +212,7 @@ export const App = () => {
           );
         }}
       </C.Loader>
-      <ToastContainer />
+      <ToastContainerStyled limit={5} stacked transition={Slide} />
     </ThemeProvider>
   );
 };

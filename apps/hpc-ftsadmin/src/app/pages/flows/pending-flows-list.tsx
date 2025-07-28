@@ -1,5 +1,4 @@
-import { C, CLASSES, combineClasses } from '@unocha/hpc-ui';
-import { useCallback, useEffect, useRef } from 'react';
+import { C, CLASSES, combineClasses, styled } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import FilterPendingFlowsTable, {
@@ -11,10 +10,8 @@ import FlowsTable, {
 } from '../../components/tables/flows-table';
 import { AppContext } from '../../context';
 import { FLOW_PARAMS_CODEC } from '../../utils/codecs';
-import {
-  DEFAULT_FLOW_TABLE_HEADERS,
-  encodeTableHeaders,
-} from '../../utils/table-headers';
+import { ROWS_PER_PAGE_OPTIONS } from '../../utils/constants';
+import { encodeTableHeaders } from '../../utils/table-headers';
 import useQueryParams from '../../utils/useQueryParams';
 
 interface Props {
@@ -23,13 +20,17 @@ interface Props {
 const Container = tw.div`
   flex
 `;
-const LandingContainer = tw.div`
-  w-full
+const LandingContainer = styled.div`
+  height: calc(100vh - ${(p) => p.theme.sizing.totalHeaderHeight});
+  ${tw`
+    w-full
+    overflow-x-clip
+    flex
+    flex-col
+  `}
 `;
 
 export default (props: Props) => {
-  const abortControllerRef = useRef<AbortController>(new AbortController());
-
   const [query, setQuery] = useQueryParams({
     codec: FLOW_PARAMS_CODEC,
     initialValues: {
@@ -38,29 +39,20 @@ export default (props: Props) => {
       orderBy: 'flow.updatedAt',
       orderDir: 'DESC',
       filters: JSON.stringify({}),
-      tableHeaders: encodeTableHeaders([]), // Default value of table headers
+      tableHeaders: encodeTableHeaders({
+        headers: [],
+        table: 'flows',
+        isPending: true,
+      }), // Default value of table headers
     },
   });
 
-  const handleAbortController = useCallback(() => {
-    abortControllerRef.current.abort();
-    abortControllerRef.current = new AbortController();
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      abortControllerRef.current.abort();
-    };
-  }, []);
-
   const pendingFlowsTableProps: FlowsTableProps = {
-    headers: DEFAULT_FLOW_TABLE_HEADERS,
     initialValues: PENDING_FLOWS_FILTER_INITIAL_VALUES,
-    rowsPerPageOption: [10, 25, 50, 100],
+    rowsPerPageOptions: ROWS_PER_PAGE_OPTIONS,
     query,
     setQuery,
-    pending: true,
-    abortSignal: abortControllerRef.current.signal,
+    isPending: true,
   };
 
   return (
@@ -69,13 +61,9 @@ export default (props: Props) => {
         <div
           className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
         >
-          <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
+          <PageMeta title={[t.t(lang, (s) => s.routes.pendingFlows.title)]} />
           <Container>
-            <FilterPendingFlowsTable
-              setQuery={setQuery}
-              query={query}
-              handleAbortController={handleAbortController}
-            />
+            <FilterPendingFlowsTable setQuery={setQuery} query={query} />
             <LandingContainer>
               <C.PageTitle>
                 {t.t(lang, (s) => s.routes.pendingFlows.title)}

@@ -1,7 +1,20 @@
 import * as t from 'io-ts';
 
-import { access, forms } from '@unocha/hpc-data';
-
+import {
+  access,
+  categories,
+  currencies,
+  emergencies,
+  flows,
+  forms,
+  globalClusters,
+  governingEntities,
+  locations,
+  organizations,
+  plans,
+  projects,
+  usageYears,
+} from '@unocha/hpc-data';
 /**
  * TODO: make into union of different assignee types
  */
@@ -106,101 +119,6 @@ const USER = t.type({
 
 export type User = t.TypeOf<typeof USER>;
 
-const FLOW_REF_DIRECTION = t.keyof({
-  source: null,
-  destination: null,
-});
-
-const FLOW_CATEGORY = t.type({
-  name: t.string,
-  group: t.string,
-});
-
-const FLOW_ORGANIZATION = t.type({
-  name: t.string,
-  objectID: t.number,
-  refDirection: FLOW_REF_DIRECTION,
-});
-
-const FLOW_LOCATION_OR_PLAN = t.type({
-  name: t.string,
-});
-
-const FLOW_USAGE_YEAR = t.type({
-  year: t.string,
-  refDirection: FLOW_REF_DIRECTION,
-});
-
-const FLOW_REPORT_DETAIL = t.intersection([
-  t.type({
-    id: t.number,
-    organizationID: t.number,
-    source: t.string,
-  }),
-  t.partial({
-    date: t.string,
-    channel: t.union([t.string, t.null]),
-    refCode: t.union([t.string, t.null]),
-    sourceID: t.union([t.string, t.null]),
-  }),
-]);
-
-const TRANSFERRED_ENTITY = t.type({
-  key: t.string,
-  valueId: t.number,
-});
-
-const INFERRED_ENTITY = t.type({
-  key: t.string,
-  valueId: t.number,
-  reason: t.string,
-});
-
-const FLOW_EXTERNAL_REFERENCE = t.intersection([
-  t.type({
-    id: t.number,
-    systemID: t.string,
-    flowID: t.number,
-    externalRecordID: t.string,
-    externalRecordDate: t.string,
-  }),
-  t.partial({
-    versionID: t.number,
-    importInformation: t.partial({
-      inferred: t.union([t.array(INFERRED_ENTITY), t.null]),
-      transferred: t.union([t.array(TRANSFERRED_ENTITY), t.null]),
-    }),
-  }),
-]);
-
-const FLOW = t.intersection([
-  t.type({
-    id: t.number,
-    versionID: t.number,
-    amountUSD: t.string,
-    updatedAt: t.string,
-    activeStatus: t.boolean,
-    restricted: t.boolean,
-  }),
-  t.partial({
-    childIDs: t.union([t.array(t.number), t.null]),
-    parentIDs: t.union([t.array(t.number), t.null]),
-    categories: t.union([t.array(FLOW_CATEGORY), t.null]),
-    organizations: t.union([t.array(FLOW_ORGANIZATION), t.null]),
-    plans: t.union([t.array(FLOW_LOCATION_OR_PLAN), t.null]),
-    locations: t.union([t.array(FLOW_LOCATION_OR_PLAN), t.null]),
-    usageYears: t.union([t.array(FLOW_USAGE_YEAR), t.null]),
-    reportDetails: t.union([t.array(FLOW_REPORT_DETAIL), t.null]),
-    externalReference: t.union([FLOW_EXTERNAL_REFERENCE, t.null]),
-    origAmount: t.union([t.string, t.null]),
-    origCurrency: t.union([t.string, t.null]),
-    parkedParentSource: t.type({
-      organization: t.array(t.number),
-      OrgName: t.array(t.string),
-    }),
-  }),
-]);
-
 const OPERATION = t.type({
   id: t.number,
   name: t.string,
@@ -223,15 +141,39 @@ const FORM = t.type(
   'FORM'
 );
 
+const FLOW = flows.FLOW_V4;
+const CATEGORY = categories.CATEGORY;
+const CURRENCY = currencies.CURRENCY;
+const KEYWORD = categories.KEYWORD;
+const EMERGENCY = emergencies.EMERGENCY;
+const GLOBAL_CLUSTER = globalClusters.GLOBAL_CLUSTER;
+const GOVERNING_ENTITY = governingEntities.GOVERNING_ENTITY;
+const LOCATION = locations.LOCATION_WITH_CHILDREN;
+const ORGANIZATION = organizations.ORGANIZATION;
+const PLAN = plans.PLAN_AUTOCOMPLETE;
+const PROJECT = projects.PROJECT_AUTOCOMPLETE;
+const USAGE_YEAR = usageYears.USAGE_YEAR;
+
 export const DUMMY_DATA = t.type(
   {
     access: ACCESS,
     users: t.array(USER),
+    categories: t.array(CATEGORY),
+    currencies: t.array(CURRENCY),
     currentUser: t.union([t.null, t.number]),
+    emergencies: t.array(EMERGENCY),
     flows: t.array(FLOW),
+    globalClusters: t.array(GLOBAL_CLUSTER),
+    governingEntities: t.array(GOVERNING_ENTITY),
+    keywords: t.array(KEYWORD),
+    locations: t.array(LOCATION),
     operations: t.array(OPERATION),
     operationClusters: t.array(OPERATION_CLUSTER),
+    organizations: t.array(ORGANIZATION),
+    plans: t.array(PLAN),
+    projects: t.array(PROJECT),
     reportingWindows: t.array(REPORTING_WINDOW),
+    usageYears: t.array(USAGE_YEAR),
     forms: t.array(FORM),
   },
   'DUMMY_DATA'

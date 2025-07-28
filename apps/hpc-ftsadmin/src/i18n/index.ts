@@ -7,8 +7,11 @@ import es from './langs/es';
 import fr from './langs/fr';
 import zh from './langs/zh';
 
+import 'intl-list-format/locale-data/ar';
 import 'intl-list-format/locale-data/en';
+import 'intl-list-format/locale-data/es';
 import 'intl-list-format/locale-data/fr';
+import 'intl-list-format/locale-data/zh';
 
 const LANGUAGES = {
   ar,
