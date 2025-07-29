@@ -1,64 +1,72 @@
 import * as t from 'io-ts';
+import { CATEGORY_REF } from './category-refs';
+import { DATE_FROM_STRING, optional, type AbortSignalType } from './util';
 
-export type CategoryGroup =
-  | 'flowType'
-  | 'keywords'
-  | 'contributionType'
-  | 'contributionStatus'
-  | 'sectorIASC'
-  | 'inactiveReason'
-  | 'regions'
-  | 'emergencyType'
-  | 'planType'
-  | 'organizationType'
-  | 'planCosting'
-  | 'reportChannel'
-  | 'beneficiaryGroup'
-  | 'genderMarker'
-  | 'method'
-  | 'customLocation'
-  | 'projectPriority'
-  | 'projectGrouping1'
-  | 'projectGrouping2'
-  | 'subsetOfPlan'
-  | 'pendingStatus'
-  | 'flowStatus'
-  | 'responseType'
-  | 'planIndicated'
-  | 'earmarkingType'
-  | 'organizationLevel';
+export const CATEGORY_GROUP_TYPE = t.keyof({
+  beneficiaryGroup: null,
+  contributionStatus: null,
+  contributionType: null,
+  customLocation: null,
+  earmarkingType: null,
+  emergencyType: null,
+  flowStatus: null,
+  flowType: null,
+  genderMarker: null,
+  inactiveReason: null,
+  keywords: null,
+  method: null,
+  organizationLevel: null,
+  organizationType: null,
+  pendingStatus: null,
+  planClusterType: null,
+  planCosting: null,
+  planIndicated: null,
+  planLanguage: null,
+  planType: null,
+  projectGrouping1: null,
+  projectGrouping2: null,
+  projectPriority: null,
+  regions: null,
+  reportChannel: null,
+  responseType: null,
+  sectorIASC: null,
+  subsetOfPlan: null,
+});
 
+export type CategoryGroup = t.TypeOf<typeof CATEGORY_GROUP_TYPE>;
 export const CATEGORY = t.type({
   id: t.number,
   name: t.string,
-  description: t.union([t.string, t.null]),
-  parentID: t.union([t.number, t.null]),
-  code: t.union([t.string, t.null]),
-  group: t.string,
-  includeTotals: t.union([t.boolean, t.null]),
-  createdAt: t.string,
-  updatedAt: t.string,
+  group: CATEGORY_GROUP_TYPE,
+  createdAt: DATE_FROM_STRING,
+  updatedAt: DATE_FROM_STRING,
+  description: optional(t.string),
+  parentID: optional(t.number),
+  code: optional(t.string),
 });
 
 export type Category = t.TypeOf<typeof CATEGORY>;
 
+export const CATEGORY_WITH_CATEGORY_REF = t.type({
+  ...CATEGORY.props,
+  categoryRef: CATEGORY_REF,
+});
+
+export type CategoryWithCategoryRef = t.TypeOf<
+  typeof CATEGORY_WITH_CATEGORY_REF
+>;
+
 export const KEYWORD = t.type({
-  id: t.number,
-  name: t.string,
-  description: t.union([t.string, t.null]),
-  parentID: t.union([t.number, t.null]),
-  code: t.union([t.string, t.null]),
-  group: t.string,
-  includeTotals: t.union([t.boolean, t.null]),
-  createdAt: t.string,
-  updatedAt: t.string,
+  ...CATEGORY.props,
   refCount: t.string,
 });
 
 export type Keyword = t.TypeOf<typeof KEYWORD>;
 
+const STATUS_OK = t.type({ status: t.keyof({ ok: 'ok' }) });
+
 export const GET_CATEGORIES_PARAMS = t.type({
-  query: t.string,
+  query: CATEGORY_GROUP_TYPE,
 });
 
 export type GetCategoriesParams = t.TypeOf<typeof GET_CATEGORIES_PARAMS>;
@@ -76,12 +84,22 @@ export const DELETE_KEYWORD_PARAMS = t.type({
 });
 export type DeleteKeywordParams = t.TypeOf<typeof DELETE_KEYWORD_PARAMS>;
 
-export const DELETE_KEYWORD_RESULT = t.undefined;
+export const DELETE_KEYWORD_RESULT = STATUS_OK;
 export type DeleteKeywordResult = t.TypeOf<typeof DELETE_KEYWORD_RESULT>;
+
+export const MERGE_KEYWORDS_PARAMS = t.type({
+  receivingKeywordID: t.number,
+  mergingKeywordID: t.number,
+});
+export type MergeKeywordParams = t.TypeOf<typeof MERGE_KEYWORDS_PARAMS>;
+
+export const MERGE_KEYWORD_RESULT = STATUS_OK;
+export type MergeKeywordResult = t.TypeOf<typeof MERGE_KEYWORD_RESULT>;
 
 export interface Model {
   getCategories(params: GetCategoriesParams): Promise<GetCategoriesResult>;
-  getKeywords(): Promise<GetKeywordsResult>;
+  getKeywords(abortSignal?: AbortSignalType): Promise<GetKeywordsResult>;
   deleteKeyword(params: DeleteKeywordParams): Promise<DeleteKeywordResult>;
   updateKeyword(params: Keyword): Promise<Category>;
+  mergeKeywords(params: MergeKeywordParams): Promise<MergeKeywordResult>;
 }

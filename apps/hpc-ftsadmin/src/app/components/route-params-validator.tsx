@@ -6,24 +6,28 @@ import { AppContext } from '../context';
 
 interface Props {
   element: JSX.Element;
-  routeParam: string;
+  routeParams: string[];
   errorElement?: JSX.Element;
 }
 
 export const RouteParamsValidator = (props: Props) => {
-  const { element, routeParam, errorElement } = props;
+  const { element, routeParams, errorElement } = props;
   const { lang } = useContext(AppContext);
 
-  const param = useParams()[routeParam];
-  const numericParam = parseFloat(param ?? '');
-  if (!Number.isInteger(numericParam)) {
-    return (
-      errorElement ?? (
-        <C.NotFound
-          strings={t.get(lang, (s) => s.components.invalidRouteParam)}
-        />
-      )
-    );
+  const params = useParams();
+
+  for (const routeParam of routeParams) {
+    const param = params[routeParam];
+    const numericParam = parseFloat(param ?? '');
+    if (!Number.isInteger(numericParam)) {
+      return (
+        errorElement ?? (
+          <C.NotFound
+            strings={t.get(lang, (s) => s.components.invalidRouteParam)}
+          />
+        )
+      );
+    }
   }
 
   return element;

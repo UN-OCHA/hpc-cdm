@@ -25,6 +25,9 @@
       "p3": "Todo uso de los recursos de TIC y datos de TIC está sujeto a monitoreo e investigación según lo establecido en ST/SGB/2004/15.",
       "p4": "El uso de este sistema por parte de cualquier usuario, autorizado o no autorizado, constituye el consentimiento a las regulaciones y reglas aplicables de las Naciones Unidas."
     },
+    "datePicker": {
+      "today": "Hoy"
+    },
     "dialogs": {
       "okay": "Confirmar",
       "cancel": "Cancelar"
@@ -33,6 +36,10 @@
       "title": "Página no encontrada",
       "info": "No pudimos encontrar la página que estabas buscando",
       "back": "Volver"
+    },
+    "noResultTable": {
+      "title": "No se encontraron resultados",
+      "description": "Sus filtros no coinciden con ningún resultado. Por favor, modifique su selección de filtros."
     },
     "invalidRouteParam": {
       "title": "Ruta invalidad",
@@ -44,15 +51,216 @@
       "error": "Error:",
       "retry": "Reintentar"
     },
+    "reviewPendingValues": {
+      "unmatched": "No coinciden",
+      "label": "Cambio: Nuevo Valor",
+      "button": {
+        "accept": "Aceptar",
+        "reject": "Rechazar",
+        "confirm": "Confirmar caso manejado"
+      }
+    },
     "unsupportedBrowser": {
       "title": "Navegador no compatible",
       "info": "Lamentablemente, tu navegador actual no es compatible. Cambia a Firefox o Google Chrome. Para hacerlo, simplemente copia la dirección del formulario (URL) de arriba, luego abre Firefox o Chrome y pega la dirección en el navegador."
+    },
+    "flow": {
+      "updatedBy": "Actualizado el {date} por {user}",
+      "createdBy": "Creado el {date} por {user}",
+      "deleted": "Este flujo ha sido eliminado",
+      "inactiveReason": "Este flujo no está activo porque ha sido marcado como {reason}",
+      "unknownInactiveReasons": "Razón inactiva desconocida",
+      "restricted": "Este flujo está marcado como Restringido y no se incluirá en los totales de financiación en el sitio web de FTS.",
+      "legacyID": "ID de contribución heredado: {id}",
+      "copyOfFlow": "Copia del flujo",
+      "addFLow": "Añadir flujo",
+      "activeFlowLinkText": "El flujo activo actual es: ",
+      "hasPendingFlowLinkText": "Hay una actualización pendiente para este flujo. Revisar pendiente "
+    },
+    "flowAmountButton": {
+      "amountOriginalCurrency": "Calcular el monto original",
+      "amountUSD": "Calcular el monto en USD",
+      "exchangeRate": "Calcular la tasa de cambio"
+    },
+    "flowForm": {
+      "activeTag": "Activo",
+      "addReportingDetail": "Agregar detalle de informe",
+      "behaviorLabel": {
+        "overlap": {
+          "label": "Superpuesto",
+          "tooltip": "Superpuesto se informará como financiación directa para cada uno de los valores seleccionados."
+        },
+        "shared": {
+          "label": "Compartido",
+          "tooltip": "Compartido se informará como financiación posible para cada uno de los valores seleccionados."
+        }
+      },
+      "blockNavigation": "Tienes cambios no guardados, ¿estás seguro de que quieres salir?",
+      "codecValidation": {
+        "amountUSD": "El valor debe ser mayor a 0",
+        "amountOriginalCurrency": "El valor debe ser un número positivo",
+        "donorBudgetYear": "El valor debe estar en formato AAAA",
+        "exchangeRate": "El valor debe ser un número positivo",
+        "flowStatus": "Este campo es obligatorio",
+        "flowType": "Este campo es obligatorio",
+        "flowDescription": "Este campo es obligatorio",
+        "firstReported": "Este campo es obligatorio",
+        "flowDate": "Este campo es obligatorio",
+        "fundingSourceUsageYears": "Este campo es obligatorio",
+        "fundingDestinationUsageYears": "Este campo es obligatorio"
+      },
+      "copyFlow": "Copiar flujo",
+      "createdUpdated": "Creado el {createdDate}, y actualizado por última vez el {updatedDate}",
+      "deleteFlow": "Eliminar Versión de Flujo",
+      "deletedTag": "Eliminado",
+      "fields": {
+        "restricted": "Restringido para uso interno",
+        "isErrorCorrection": "Como corrección de errores",
+        "isInactive": "Marcar como inactivo",
+        "fundingSourceOrganizations": "Organización(es)",
+        "fundingSourceUsageYears": "Año(s) de uso",
+        "fundingSourceLocations": "Ubicación(es)",
+        "fundingSourceEmergencies": "Emergencia(s)",
+        "fundingSourceGlobalClusters": "Cluster(s) global(es)",
+        "fundingSourcePlan": "Plan",
+        "fundingSourceFieldClusters": "Cluster(s) de campo",
+        "fundingSourceProject": "Proyecto",
+        "fundingDestinationOrganizations": "Organización(es)",
+        "fundingDestinationAnonymizedOrganizations": "Organización(es) anonimizada(s)",
+        "fundingDestinationUsageYears": "Año(s) de uso",
+        "fundingDestinationLocations": "Ubicación(es)",
+        "fundingDestinationEmergencies": "Emergencia(s)",
+        "fundingDestinationGlobalClusters": "Cluster(s) global(es)",
+        "fundingDestinationPlan": "Plan",
+        "fundingDestinationFieldClusters": "Cluster(s) de campo",
+        "fundingDestinationProject": "Proyecto",
+        "isNewMoney": "¿Es este flujo dinero nuevo?",
+        "amountUSD": "Monto de financiación en USD",
+        "amountOriginalCurrency": "Monto de financiación (Moneda original)",
+        "currency": "Moneda",
+        "exchangeRate": "Tasa de cambio utilizada",
+        "flowDescription": {
+          "label": "Descripción del flujo de financiación",
+          "placeholder": "1-2 oraciones para el nombre del flujo"
+        },
+        "firstReported": "Reportado por primera vez",
+        "decisionDate": "Fecha de decisión",
+        "donorBudgetYear": "Año presupuestario del donante",
+        "flowType": "Tipo de flujo",
+        "flowStatus": "Estado del flujo",
+        "flowDate": "Fecha del flujo",
+        "contributionType": "Tipo de contribución",
+        "earmarkingType": "Earmarking GB",
+        "method": "Modalidad de ayuda",
+        "childMethod": "Tipo de Programación de Transferencias en Efectivo (CTP)",
+        "keywords": "Palabra(s) clave",
+        "beneficiaryGroup": "Grupo beneficiario",
+        "notes": "Notas",
+        "parentFlow": "Agregar flujo principal",
+        "childFlows": "Agregar flujo secundario"
+      },
+      "links": {
+        "UNTreasury": "Tasas operativas del Tesoro de la ONU"
+      },
+      "pendingReviewTag": "Revisión pendiente",
+      "rejectFlow": {
+        "button": "Rechazar flujo",
+        "confirm": "¿Está seguro de que desea rechazar este flujo?",
+        "categoryNotFound": "Error interno: No se pudo marcar el flujo como rechazado porque la categoría no existe"
+      },
+      "remainingAmount": {
+        "excludeRestricted": "(Excluyendo los restringidos)",
+        "remainingAmount": "Monto restante:",
+        "remainingOrigAmount": "Monto restante en la moneda original:"
+      },
+      "restrictedInfo": "La configuración de Restringido se aplica solo a este flujo. Si los flujos vinculados, ya sean principales o secundarios, deben tener la misma configuración de Restringido, debe actualizarlos manualmente.",
+      "searchSimilarFlow": "Buscar flujos similares",
+      "sectionTitles": {
+        "sourceFlow": "Fuente(s) de financiación",
+        "destinationFlow": "Destino(s) de financiación",
+        "flowDetails": "Detalles del flujo",
+        "flowLink": "Flujos vinculados",
+        "flowVersion": "Versiones de flujo"
+      },
+      "submitValidation": {
+        "acceptAllPendingChanges": "Aceptar todos los cambios",
+        "dataConsistency": "La/Lo(s) {entity} seleccionada: {selected} no coincide con la/lo(s) {entity} esperada posible: {expected}",
+        "parentFlowAmountUSD": "La cantidad en USD del flujo hijo es mayor que la cantidad en USD del flujo padre. ¿Desea continuar?",
+        "submitButton": {
+          "reactivate": {
+            "button": "Reactivar"
+          },
+          "submit": {
+            "label": {
+              "true": "El flujo puede ser enviado",
+              "false": "Por favor complete todos los campos obligatorios"
+            },
+            "button": "Enviar"
+          },
+          "save": {
+            "button": "Guardar"
+          },
+          "saveAndApprove": {
+            "button": "Guardar y aprobar"
+          }
+        },
+        "reportingDetails": {
+          "requiredFields": "Por favor complete todos los campos obligatorios en los detalles del informe",
+          "fileTitle": "Por favor complete el campo Título para el archivo subido en los detalles del informe",
+          "urlTitle": "Por favor complete el campo Título para la URL proporcionada en los detalles del informe"
+        },
+        "createSuccess": "Flujo creado con éxito",
+        "updateSuccess": "Flujo actualizado con éxito",
+        "deleteFlowWarning": "¿Está seguro de que desea eliminar este flujo?",
+        "deleteLinkedFlows": "Desvincule todos los flujos antes de continuar",
+        "deleteSuccess": "El flujo ha sido eliminado con éxito",
+        "rejectSuccess": "El flujo ha sido rechazado con éxito",
+        "earmarking": "El valor de earmarking está vacío, ¿aún desea guardar?",
+        "emergency": "Este flujo tiene al menos una emergencia disponible para los años y ubicaciones seleccionados, como {emergency}, ¿aún desea guardar?",
+        "pendingValues": "Por favor gestione todos los valores pendientes",
+        "planLocation": "No se añadió ningún {entity} vinculado a {plan}. Por favor, añada al menos una de las siguientes ubicaciones: [{locations}]",
+        "rejectAllPendingChanges": "Rechazar los cambios restantes",
+        "reportingOrganization": "La organización del detalle del informe de su flujo no coincide con la organización de origen o destino. ¿Está seguro de que esto es correcto?",
+        "originalAmountIsDifferentToParent": "La moneda extranjera de este flujo debe ser la misma que la del flujo principal estacionado",
+        "originalAmountIsDifferentToChildren": "La moneda extranjera de los flujos secundarios debe ser la misma que en el flujo actual",
+        "originalAmountNotFilled": "[{filledFields}] campos están llenos pero [{notFilledFields}] están vacíos. Por favor, verifique y complete los campos correctamente antes de guardar nuevamente.",
+        "unknownError": "Error inesperado al crear/actualizar el flujo"
+      },
+      "warning": {
+        "sourceFlow": "Fuente de flujo asociada con un destino principal. Para editar estos campos, elimine el flujo principal o realice cambios directamente en el flujo principal: ",
+        "destinationFlow": "Ha agregado un flujo secundario a este flujo. Actualizar los destinos de financiación de este flujo actualizará las fuentes de financiación de los flujos secundarios. Si no desea actualizar las fuentes de financiación de los flujos secundarios, desvínclelos primero."
+      }
+    },
+    "flowLink": {
+      "unlink": "Desvincular",
+      "parentFlow": "Flujo Principal",
+      "childFlows": "Flujos Hijos"
+    },
+    "flowPreviousReportingDetails": {
+      "title": "Detalles de Informes Anteriores",
+      "header": {
+        "version": "Versión"
+      }
+    },
+    "flowSearch": {
+      "title": "Buscar flujos",
+      "flowId": "Introduzca el ID del flujo",
+      "warning": "Los flujos: [{removeOptions}] no están disponibles porque ya estaban vinculados o porque son el flujo actual."
+    },
+    "flowVersions": {
+      "direction": {
+        "source": "Origen",
+        "destination": "Destino"
+      },
+      "info": {
+        "compareInfo": "Al hacer clic en 2 filas de versión de flujo, puede comparar las diferencias entre las versiones"
+      }
     },
     "flowsTable": {
       "headers": {
         "id": "ID",
         "status": "Estado",
-        "updatedCreated": "Actualizado/ Creado",
+        "updatedCreated": "Creado/ Actualizado",
         "dataProvider": "Proveedor de datos",
         "amountUSD": "Cantidad USD",
         "sourceOrganization": "Organización de origen",
@@ -82,8 +290,15 @@
       "parkedSource": "Origen estacionado",
       "sortBy": "Ordenar por",
       "totalAmount": "Monto Total：",
-      "rejectPendingFlows": "Rechazar flujos pendientes",
-      "downloadDisabled": "La descarga solo está permitida cuando se aplica al menos un filtro",
+      "rejectPendingFlows": {
+        "message": "¿Desea rechazar los flujos pendientes seleccionados?",
+        "button": "Sí",
+        "state": {
+          "error": "Error inesperado al rechazar los flujos pendientes seleccionados",
+          "success": "Todos los flujos pendientes seleccionados han sido rechazados con éxito"
+        }
+      },
+      "downloadDisabled": "La descarga solo está permitida cuando se ha aplicado al menos un filtro y hay más de un flujo en la tabla",
       "totalAmountDisabled": "El monto total solo está permitido cuando se aplica al menos un filtro",
       "tableSettings": {
         "title": "Configuración de la tabla",
@@ -104,7 +319,6 @@
       },
       "filters": {
         "includeChildrenOfParkedFlows": "Incluir hijos de flujos estacionados coincidentes",
-        "restricted": "Restringido",
         "flowID": "ID del Flujo",
         "amountUSD": "Monto en USD",
         "keywords": "Palabras Clave",
@@ -122,6 +336,7 @@
         "sourceGlobalClusters": "Clusters Globales Fuente",
         "sourceEmergencies": "Emergencia(s) Fuente",
         "destinationOrganizations": "Organización(es) Destino",
+        "destinationAnonymizedOrganizations": "Organización(es) de destino anonimizada(s)",
         "destinationLocations": "País(es) Destino",
         "destinationUsageYears": "Año(s) de Uso Destino",
         "destinationProjects": "Proyecto(s) Destino",
@@ -140,7 +355,7 @@
         "filters": "Filtros"
       }
     },
-    "keywordTable": {
+    "keywordsTable": {
       "headers": {
         "id": "ID",
         "name": "Nombre",
@@ -154,14 +369,49 @@
       },
       "errors": {
         "unknown": "Error inesperado al crear/actualizar la palabra clave.",
-        "duplicate": "Ya existe una palabra clave con el nombre {keywordName}. Por favor, elige un nombre diferente."
+        "conflict": "Ya existe una palabra clave con el nombre {keywordName}. Por favor, elige un nombre diferente."
+      },
+      "success": {
+        "update": "Palabra clave actualizada con éxito",
+        "delete": "Palabra clave eliminada con éxito"
       },
       "labels": {
         "newName": "Nuevo Nombre",
+        "edit": "Editar",
         "save": "Guardar",
         "public": "Público",
         "cancel": "Cancelar",
         "delete": "Eliminar"
+      }
+    },
+    "mergeModal": {
+      "description": "Fusionar {entity}",
+      "mergingEntity": "Fusionando {entity}",
+      "receivingEntity": "Entidad receptora {entity}",
+      "confirmationMessage": "¿Estás seguro de que quieres fusionar {mergingEntities} en {receivingEntity}?",
+      "formError": {
+        "mergingEntity": "Este campo es obligatorio, por favor agregue al menos un valor",
+        "receivingEntity": "Este campo es obligatorio"
+      },
+      "error": {
+        "conflict": "Se ha producido un conflicto al fusionar {entities}",
+        "unknown": "Se ha producido un error desconocido al fusionar {entities}"
+      },
+      "success": {
+        "merge": "Fusión de {entities} realizada con éxito"
+      },
+      "organization": {
+        "singular": "Organización",
+        "plural": "Organizaciones"
+      },
+      "keyword": {
+        "singular": "Palabra clave",
+        "plural": "Palabras clave"
+      },
+      "button": {
+        "yes": "Sí",
+        "cancel": "Cancelar",
+        "next": "Siguiente"
       }
     },
     "pendingFlowsFilter": {
@@ -215,7 +465,7 @@
         "filters": "Filtros"
       }
     },
-    "organizationTable": {
+    "organizationsTable": {
       "headers": {
         "id": "ID",
         "name": "Organización",
@@ -234,6 +484,7 @@
         "title": "Organizaciones no encontradas",
         "info": "No pudimos cargar las organizaciones"
       },
+      "addOrganization": "Añadir Organización",
       "sortBy": "Ordenar por",
       "tableSettings": {
         "title": "Configuración de la tabla",
@@ -261,7 +512,7 @@
         "comments": "Descripción de la organización"
       },
       "errors": {
-        "duplicate": "Ya existe una organización con el nombre {organizationName}. Por favor, elige un nombre diferente.",
+        "conflict": "Ya existe una organización con el nombre {organizationName}. Por favor, elige un nombre diferente.",
         "unknown": "Error inesperado al crear/actualizar la organización"
       },
       "formErrors": {
@@ -274,6 +525,11 @@
         "principalButton": "Eliminar",
         "secondaryButton": "Cancelar"
       },
+      "success": {
+        "create": "Organización {organizationName} creada con éxito",
+        "update": "Organización {organizationName} actualizada con éxito",
+        "delete": "Organización {organizationName} eliminada con éxito"
+      },
       "text": {
         "collectiveOrganization": "La configuración de Organización Colectiva indica que la organización es un 'sustituto' de una o más organizaciones del mismo tipo de organización (por ejemplo, 'Organizaciones de la Cruz Roja'), y se utiliza cuando las organizaciones específicas no son conocidas o deben ocultarse por motivos de seguridad.",
         "organizationType": "Este es un campo de solo lectura que se completa en función del 'Tipo de organización'",
@@ -282,11 +538,87 @@
       },
       "create": "Crear",
       "update": "Actualizar"
+    },
+    "reportingDetail": {
+      "title": "Detalle del informe {index}",
+      "fileSection": "Archivo del informe:",
+      "urlSection": "URL del informe:",
+      "removeButton": "Eliminar detalle del informe",
+      "reportSource": {
+        "label": "Fuente del informe",
+        "options": {
+          "Primary": "Primario",
+          "Secondary": "Secundario"
+        }
+      },
+      "reportedByOrganization": {
+        "label": "Reportado por la organización",
+        "organizationsInFlow": "Organizaciones ya en este flujo: "
+      },
+      "reportChannel": {
+        "label": "Canal de informe"
+      },
+      "sourceSystemRecordId": {
+        "label": "ID de registro del sistema fuente"
+      },
+      "verified": {
+        "label": "Verificado",
+        "options": {
+          "true": "Verificado",
+          "false": "No verificado"
+        }
+      },
+      "dateReported": {
+        "label": "Fecha del informe"
+      },
+      "reporterReferenceCode": {
+        "label": "Código de referencia del reportero"
+      },
+      "reporterContactInfo": {
+        "label": "Información de contacto del reportero"
+      },
+      "reportFileTitle": {
+        "label": "Título del archivo del informe"
+      },
+      "file": {
+        "label": "Archivo del informe",
+        "download": {
+          "error": {
+            "notFound": "No se pudo encontrar el archivo",
+            "unknown": "Ha ocurrido un error desconocido al descargar el archivo"
+          }
+        },
+        "upload": {
+          "error": {
+            "invalidExtension": "El archivo seleccionado no es [{whitelist}]. Por favor, elija un archivo con el formato correcto"
+          }
+        }
+      },
+      "reportURLTitle": {
+        "label": "Título de la URL del informe"
+      },
+      "url": {
+        "label": "URL del informe"
+      },
+      "validation": {
+        "required": "Este campo es obligatorio",
+        "url": "Por favor, introduzca una URL válida"
+      }
+    },
+    "upload": {
+      "buttonText": "Subir",
+      "error": {
+        "invalidExtension": "El archivo seleccionado no es .xlsx ni .xls. Por favor, elija un archivo con el formato correcto",
+        "unknown": "Ha habido un error desconocido al cargar el archivo"
+      },
+      "success": "El archivo \"{fileName}\" se ha cargado con éxito"
     }
   },
   "navigation": {
+    "addFlow": "Agregar Flujo",
     "flows": "Flujos",
     "keywords": "Palabras Clave",
+    "uploadXLSX": "Subir XLSX",
     "pendingFlows": "Flujos Pendientes",
     "organizations": "Organizaciones",
     "rpm": "Módulo de Planificación de Respuesta",
@@ -298,14 +630,23 @@
     "flows": {
       "title": "Buscar flujos de financiamiento"
     },
+    "flow": {
+      "title": "Flujo {id}v{versionID}"
+    },
     "keywords": {
       "title": "Gestionar Palabras Clave"
+    },
+    "uploadXLSX": {
+      "title": "Subir archivo XLSX/XLS"
     },
     "pendingFlows": {
       "title": "Buscar flujos pendientes"
     },
     "organizations": {
       "title": "Organizaciones"
+    },
+    "organization": {
+      "title": "Organización {id}"
     }
   }
 }

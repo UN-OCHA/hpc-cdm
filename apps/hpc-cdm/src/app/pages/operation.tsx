@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Route, Routes, useParams } from 'react-router';
 
-import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
+import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
 import { AppContext, getEnv } from '../context';
@@ -20,7 +20,10 @@ const PageOperation = () => {
   const { id: idString } = useParams<OperationRouteParams>();
   const id = parseInt(idString ?? '', 10);
 
-  const loader = dataLoader([{ id }], getEnv().model.operations.getOperation);
+  const [loader] = useDataLoader(
+    [{ id }],
+    getEnv().model.operations.getOperation
+  );
 
   return (
     <AppContext.Consumer>

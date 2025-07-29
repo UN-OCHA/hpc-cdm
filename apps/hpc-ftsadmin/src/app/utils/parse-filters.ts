@@ -6,10 +6,17 @@ import {
 } from '@unocha/hpc-data';
 import { type Dayjs } from 'dayjs';
 import { type Strings } from '../../i18n/iface';
+import dayjs from '../../libs/dayjs';
 import { type FlowsFilterValues } from '../components/filters/filter-flows-table';
 import { type OrganizationFilterValues } from '../components/filters/filter-organization-table';
 import { type PendingFlowsFilterValues } from '../components/filters/filter-pending-flows-table';
-import { valueToInteger } from './map-functions';
+import { SPECIAL_SEPARATOR } from './constants';
+import {
+  isArrayFormObjectValue,
+  isFormObjectValue,
+  type RefDirection,
+} from './parse-flow-form';
+import { currencyToInteger, valueToInteger } from './utils';
 
 /*
  * The whole idea of this filtering system is to parse
@@ -25,12 +32,12 @@ export type Filters =
   | PendingFlowsFilterValues
   | OrganizationFilterValues;
 
-export type FilterKeys =
+export type FilterKey =
   | keyof Strings['components']['flowsFilter']['filters']
   | keyof Strings['components']['pendingFlowsFilter']['filters']
   | keyof Strings['components']['organizationsFilter']['filters'];
 
-export type FilterValues =
+export type FilterValue =
   | string
   | string[]
   | boolean
@@ -39,9 +46,11 @@ export type FilterValues =
   | util.FormObjectValue[]
   | Dayjs;
 
-export type Filter<T extends FilterKeys> = {
+type EmptyValue = null | '' | [] | false;
+
+export type Filter<T extends FilterKey> = {
   [key in T]?: {
-    value: FilterValues;
+    value: FilterValue;
     displayValue: string;
   };
 };
@@ -55,51 +64,28 @@ export type FlowStatusType =
   | 'pass_through'
   | 'standard';
 
-/**
+/*
  * Type guard functions
  */
 
-const filterValueIsString = (value: FilterValues | number): value is string => {
+const isEmptyValue = (value: unknown): value is EmptyValue =>
+  value === null ||
+  value === false ||
+  (typeof value === 'string' && value === '') ||
+  (Array.isArray(value) && value.length === 0);
+
+const filterValueIsString = (value: unknown): value is string => {
   return typeof value === 'string';
 };
 
-const filterValueIsArrayString = (value: FilterValues): value is string[] => {
-  return Array.isArray(value) && typeof value[0] === 'string';
-};
-
-const filterValueIsBoolean = (value: FilterValues): value is boolean => {
-  return typeof value === 'boolean';
-};
-
-const filterValueIsFormObjectValue = (
-  value: FilterValues
-): value is util.FormObjectValue => {
+const filterValueIsStringArray = (value: unknown): value is string[] => {
   return (
-    typeof value === 'object' &&
-    !Array.isArray(value) &&
-    value !== null &&
-    Object.keys(value).includes('displayLabel') &&
-    Object.keys(value).includes('value')
-  );
-};
-
-const filterValueIsArrayFormObjectValue = (
-  value: FilterValues
-): value is util.FormObjectValue[] => {
-  return Array.isArray(value) && typeof value[0] !== 'string';
-};
-
-const filterValueIsDayJS = (value: FilterValues): value is Dayjs => {
-  return (
-    typeof value === 'object' &&
-    !Array.isArray(value) &&
-    value !== null &&
-    !filterValueIsFormObjectValue(value)
+    Array.isArray(value) && value.every((item) => typeof item === 'string')
   );
 };
 
 const filterValueIsFlowStatusType = (
-  value: FilterValues | number
+  value: unknown
 ): value is FlowStatusType => {
   const values = [
     'commitment',
@@ -117,21 +103,35 @@ const filterValueIsFlowStatusType = (
 };
 
 const parseInInitialValues = <T extends Filters>(
-  filters: T,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  filters: Record<keyof T, any>,
   initialValues: T
 ) => {
   for (const key in initialValues) {
+    //  `dayjs` object gets stringified to its .toString(), so we need
+    //  to convert it back to a dayjs object
+    const isInitialValueDayJS =
+      (initialValues[key] === null || dayjs.isDayjs(initialValues[key])) &&
+      typeof filters[key] === 'string';
+
+    if (isInitialValueDayJS) {
+      filters[key] = dayjs(filters[key]);
+      continue;
+    }
     filters[key] = filters[key] ?? initialValues[key];
   }
   return filters;
 };
-export const parseOutInitialValues = <T extends Filters>(
+export const parseOutEmptyInitialValues = <T extends Filters>(
   filters: T,
   initialValues: T
 ) => {
   const res = {} as T;
   for (const key in filters) {
-    if (JSON.stringify(filters[key]) !== JSON.stringify(initialValues[key])) {
+    if (
+      !isEmptyValue(filters[key]) ||
+      JSON.stringify(filters[key]) !== JSON.stringify(initialValues[key])
+    ) {
       res[key] = filters[key];
     }
   }
@@ -141,7 +141,7 @@ export const encodeFilters = <T extends Filters>(
   filters: T,
   initialValue: T
 ) => {
-  const cleanedFilters = parseOutInitialValues(filters, initialValue);
+  const cleanedFilters = parseOutEmptyInitialValues(filters, initialValue);
   return JSON.stringify(cleanedFilters);
 };
 
@@ -150,7 +150,7 @@ export const decodeFilters = <T extends Filters>(
   initialValues: T
 ): T => {
   try {
-    const res: T = parseInInitialValues<T>(
+    const res: T = parseInInitialValues(
       JSON.parse(stringFilters),
       initialValues
     );
@@ -158,35 +158,43 @@ export const decodeFilters = <T extends Filters>(
   } catch (error) {
     console.warn(
       error,
-      'Error parsing query to JSON. Reseting to initial Values...'
+      'Error parsing query to JSON. Resetting to initial Values...'
     );
     return initialValues;
   }
 };
 
-export function isKey<T extends object>(x: T, k: PropertyKey): k is keyof T {
-  return k in x;
+export function isKey<T>(x: T, k: PropertyKey): k is keyof T {
+  return typeof x === 'object' && x !== null && k in x;
 }
 
-function isFlowObjectTypes(value: string): value is FlowObjectTypes {
-  return [
-    'location',
-    'emergency',
-    'globalCluster',
-    'organization',
-    'plan',
-    'project',
-    'usageYear',
-  ].includes(value);
+const FLOW_OBJECT_TYPES = new Set([
+  'location',
+  'emergency',
+  'globalCluster',
+  'governingEntity',
+  'organization',
+  'anonymizedOrganization',
+  'plan',
+  'project',
+  'usageYear',
+] as const);
+
+export type FlowObjectTypes = typeof FLOW_OBJECT_TYPES extends Set<infer U>
+  ? U
+  : never;
+
+export function isFlowObjectTypes(value: string): value is FlowObjectTypes {
+  return (FLOW_OBJECT_TYPES as Set<string>).has(value);
 }
 export const extractDirectionObject = (
-  inputString: FilterKeys
+  inputString: FilterKey
 ): {
-  direction: 'source' | 'destination';
+  direction: RefDirection;
   object: FlowObjectTypes;
 } | null => {
   const match = inputString.match(
-    /^(source|destination)(Locations|Emergencies|GlobalClusters|Organizations|Plans|Projects|UsageYears)$/
+    /^(source|destination)(Locations|Emergencies|GlobalClusters|Organizations|AnonymizedOrganizations|Plans|Projects|UsageYears)$/
   );
 
   if (match) {
@@ -203,45 +211,40 @@ export const extractDirectionObject = (
   return null;
 };
 
-type FlowObjectTypes =
-  | 'location'
-  | 'organization'
-  | 'usageYear'
-  | 'location'
-  | 'project'
-  | 'plan'
-  | 'globalCluster'
-  | 'emergency';
-
 export const parseFormFilters = <
-  T extends FilterKeys,
+  T extends FilterKey,
   K extends {
-    [x in T]?: FilterValues | undefined;
+    [x in T]?: FilterValue | undefined;
   },
 >(
   filters: K,
   initialValues: K
 ): Filter<T> => {
-  const cleanedFilters = parseOutInitialValues(filters, initialValues);
+  const cleanedFilters = parseOutEmptyInitialValues(filters, initialValues);
   const parsedFormValue: Filter<T> = {};
   for (const key in cleanedFilters) {
     const fieldValue = cleanedFilters[key];
 
     if (fieldValue !== null && fieldValue !== undefined) {
-      const displayValue = Array.isArray(fieldValue)
-        ? fieldValue
-            .map((x) => (typeof x === 'string' ? x : x.displayLabel))
-            .join('<||>')
-        : filterValueIsFormObjectValue(fieldValue)
-        ? fieldValue.displayLabel
-        : fieldValue.toString();
+      let displayValue = '';
+      if (Array.isArray(fieldValue)) {
+        displayValue = fieldValue
+          .map((x) => (typeof x === 'string' ? x : x.displayLabel))
+          .join(SPECIAL_SEPARATOR);
+      } else if (isFormObjectValue(fieldValue)) {
+        displayValue = fieldValue.displayLabel;
+      } else if (dayjs.isDayjs(fieldValue)) {
+        displayValue = fieldValue.format();
+      } else {
+        displayValue = fieldValue.toString();
+      }
 
       if (
         JSON.stringify(parsedFormValue[key]?.value) !==
         JSON.stringify(fieldValue)
       ) {
-        // Type missmatch is due to the typing is only accepting
-        // string values for keys, instead of `string | number | symbol`
+        //  Type miss-match is due to the typing is only accepting
+        //  string values for keys, instead of `string | number | symbol`
         parsedFormValue[key as unknown as T] = {
           displayValue,
           value: fieldValue,
@@ -285,176 +288,131 @@ export const parseFlowFilters = (
     return res;
   }
   for (const key in filters) {
-    if (isKey(filters, key)) {
-      switch (key) {
-        case 'destinationLocations':
-        case 'destinationEmergencies':
-        case 'destinationGlobalClusters':
-        case 'destinationOrganizations':
-        case 'destinationPlans':
-        case 'destinationProjects':
-        case 'destinationUsageYears':
-        case 'sourceLocations':
-        case 'sourceEmergencies':
-        case 'sourceGlobalClusters':
-        case 'sourceOrganizations':
-        case 'sourcePlans':
-        case 'sourceProjects':
-        case 'sourceUsageYears': {
-          const extractedDetails = extractDirectionObject(key);
-          const value = filters[key]?.value;
-          if (
-            extractedDetails &&
-            value &&
-            filterValueIsArrayFormObjectValue(value)
-          ) {
-            res.flowObjectFilters = [
-              ...res.flowObjectFilters,
-              ...value.map((flowObject) => ({
-                objectID: valueToInteger(flowObject.value),
-                direction: extractedDetails.direction,
-                objectType: extractedDetails.object,
-              })),
-            ];
-          }
-          break;
+    if (!isKey(filters, key)) {
+      continue;
+    }
+
+    const value = filters[key]?.value;
+    if (!value) {
+      continue;
+    }
+
+    switch (key) {
+      case 'destinationLocations':
+      case 'destinationEmergencies':
+      case 'destinationGlobalClusters':
+      case 'destinationOrganizations':
+      case 'destinationAnonymizedOrganizations':
+      case 'destinationPlans':
+      case 'destinationProjects':
+      case 'destinationUsageYears':
+      case 'sourceLocations':
+      case 'sourceEmergencies':
+      case 'sourceGlobalClusters':
+      case 'sourceOrganizations':
+      case 'sourcePlans':
+      case 'sourceProjects':
+      case 'sourceUsageYears': {
+        const extractedDetails = extractDirectionObject(key);
+        if (extractedDetails && isArrayFormObjectValue(value)) {
+          res.flowObjectFilters = [
+            ...res.flowObjectFilters,
+            ...value.map((flowObject) => ({
+              objectID: valueToInteger(flowObject.value),
+              direction: extractedDetails.direction,
+              objectType: extractedDetails.object,
+            })),
+          ];
         }
-        case 'reporterRefCode':
-        case 'sourceSystemID': {
-          const value = filters[key]?.value;
-          if (!value) {
-            break;
-          }
-          if (filterValueIsString(value)) {
-            res.nestedFlowFilters[key] = value;
-          }
-          break;
+        break;
+      }
+      case 'reporterRefCode':
+      case 'sourceSystemID': {
+        if (filterValueIsString(value)) {
+          res.nestedFlowFilters[key] = value;
         }
-        case 'legacyID': {
-          const legacyID = filters[key]?.value;
-          if (!legacyID) {
-            break;
-          }
-          if (filterValueIsString(legacyID)) {
-            res.nestedFlowFilters[key] = valueToInteger(legacyID);
-          }
-          break;
+        break;
+      }
+      case 'legacyID': {
+        if (filterValueIsString(value)) {
+          res.nestedFlowFilters[key] = valueToInteger(value);
         }
-        case 'amountUSD': {
-          const amountUSD = filters[key]?.value;
-          if (!amountUSD) {
-            break;
-          }
-          if (filterValueIsString(amountUSD)) {
-            res.flowFilters[key] = valueToInteger(amountUSD);
-          }
-          break;
+        break;
+      }
+      case 'amountUSD': {
+        if (filterValueIsString(value)) {
+          res.flowFilters[key] = currencyToInteger(value);
         }
-        case 'flowID': {
-          const ids = filters.flowID?.value;
-          if (!ids) {
-            break;
-          }
-          if (filterValueIsArrayString(ids)) {
-            res.flowFilters.id = ids.map((id) => valueToInteger(id));
-          }
-          break;
+        break;
+      }
+      case 'flowID': {
+        if (filterValueIsStringArray(value)) {
+          res.flowFilters.id = value.map((id) => valueToInteger(id));
         }
-        case 'flowType':
-        case 'flowStatus': {
-          const filterValue = filters[key]?.value;
-          console.log(filterValue);
-          if (!filterValue) {
-            break;
+        break;
+      }
+      case 'flowType':
+      case 'flowStatus': {
+        if (isFormObjectValue(value)) {
+          const { value: statusType } = value;
+          if (filterValueIsFlowStatusType(statusType)) {
+            res[statusType] = true;
           }
-          if (filterValueIsFormObjectValue(filterValue)) {
-            const statusType = filterValue.value;
-            if (filterValueIsFlowStatusType(statusType)) {
-              res[statusType] = true;
+        }
+        break;
+      }
+      case 'includeChildrenOfParkedFlows': {
+        if (typeof value === 'boolean') {
+          res[key] = value;
+        }
+        break;
+      }
+      case 'flowActiveStatus': {
+        if (isFormObjectValue(value)) {
+          const { value: flowActiveStatus } = value;
+
+          if (typeof flowActiveStatus === 'string') {
+            res.flowFilters.activeStatus = parseActiveStatus(flowActiveStatus);
+          }
+        }
+        break;
+      }
+      case 'keywords': {
+        if (isArrayFormObjectValue(value)) {
+          const parsedCategories = value.map(
+            (keyword): { id: number; group: categories.CategoryGroup } => {
+              return { id: valueToInteger(keyword.value), group: 'keywords' };
             }
-          }
-          break;
+          );
+          res.flowCategoryFilters = [
+            ...res.flowCategoryFilters,
+            ...parsedCategories,
+          ];
         }
-        case 'restricted': {
-          const restricted = filters.restricted?.value;
-          if (!restricted) {
-            break;
+        break;
+      }
+      case 'dataProvider': {
+        if (isFormObjectValue(value)) {
+          const { value: dataProvider } = value;
+
+          if (filterValueIsString(dataProvider)) {
+            res.nestedFlowFilters.systemID = dataProvider;
           }
-          if (filterValueIsBoolean(restricted)) {
-            res.flowFilters.restricted = restricted;
-          }
-          break;
         }
-        case 'includeChildrenOfParkedFlows': {
-          const value = filters.includeChildrenOfParkedFlows?.value;
-          if (!value) {
-            break;
-          }
-          if (filterValueIsBoolean(value)) {
-            res[key] = value;
-          }
-          break;
-        }
-        case 'flowActiveStatus': {
-          const flowActiveStatus = filters[key]?.value;
-          if (!flowActiveStatus) {
-            break;
-          }
+        break;
+      }
+      case 'status': {
+        if (isFormObjectValue(value)) {
+          const { value: status } = value;
+
           if (
-            filterValueIsFormObjectValue(flowActiveStatus) &&
-            typeof flowActiveStatus.value === 'string'
+            filterValueIsString(status) &&
+            (status === 'new' || status === 'updated')
           ) {
-            res.flowFilters.activeStatus = parseActiveStatus(
-              flowActiveStatus.value
-            );
+            res.status = status;
           }
-          break;
         }
-        case 'keywords': {
-          const keywords = filters.keywords?.value;
-          if (!keywords) {
-            break;
-          }
-          if (filterValueIsArrayFormObjectValue(keywords)) {
-            const parsedCategories = keywords.map(
-              (keyword): { id: number; group: categories.CategoryGroup } => {
-                return { id: valueToInteger(keyword.value), group: 'keywords' };
-              }
-            );
-            res.flowCategoryFilters = [
-              ...res.flowCategoryFilters,
-              ...parsedCategories,
-            ];
-          }
-          break;
-        }
-        case 'dataProvider': {
-          const dataProvider = filters.dataProvider?.value;
-          if (!dataProvider) {
-            break;
-          }
-          if (
-            filterValueIsFormObjectValue(dataProvider) &&
-            filterValueIsString(dataProvider.value)
-          ) {
-            res.nestedFlowFilters.systemID = dataProvider.value;
-          }
-          break;
-        }
-        case 'status': {
-          const status = filters.status?.value;
-          if (!status) {
-            break;
-          }
-          if (
-            filterValueIsFormObjectValue(status) &&
-            filterValueIsString(status.value) &&
-            (status.value === 'new' || status.value === 'updated')
-          ) {
-            res.status = status.value;
-          }
-          break;
-        }
+        break;
       }
     }
   }
@@ -466,74 +424,71 @@ export const parseOrganizationFilters = (
 ): organizations.SearchOrganizationParams => {
   const res: organizations.SearchOrganizationParams = { search: {} };
   for (const key in filters) {
-    if (isKey(filters, key)) {
-      switch (key) {
-        case 'parentOrganization':
-        case 'organizationType': {
-          const value = filters[key]?.value;
-          if (!value) {
-            break;
-          }
-          if (filterValueIsFormObjectValue(value)) {
-            res.search[key] = {
-              name: value.displayLabel,
-              id: valueToInteger(value.value),
-            };
-          }
-          break;
+    if (!isKey(filters, key)) {
+      continue;
+    }
+
+    const value = filters[key]?.value;
+    if (!value) {
+      continue;
+    }
+
+    switch (key) {
+      case 'parentOrganization':
+      case 'organizationType': {
+        if (isFormObjectValue(value)) {
+          res.search[key] = {
+            name: value.displayLabel,
+            id: valueToInteger(value.value),
+          };
         }
-        case 'locations': {
-          const locations = filters.locations?.value;
-          if (!locations) {
-            break;
-          }
-          if (filterValueIsFormObjectValue(locations)) {
+        break;
+      }
+      case 'locations': {
+        if (isFormObjectValue(value)) {
+          const { displayLabel, value: id, parent } = value;
+          const location = {
+            name: displayLabel,
+            id: valueToInteger(id),
+          };
+          if (parent) {
             res.search[key] = [
               {
-                name: locations.displayLabel,
-                id: valueToInteger(locations.value),
+                ...location,
+                parentId: valueToInteger(parent.value),
+              },
+              {
+                name: parent.displayLabel,
+                id: valueToInteger(parent.value),
               },
             ];
+          } else {
+            res.search[key] = [location];
           }
-          break;
         }
-        case 'organization': {
-          const organization = filters.organization?.value;
-          if (!organization) {
-            break;
-          }
-          if (filterValueIsString(organization)) {
-            res.search.organization = {
-              name: organization,
-            };
-          }
-          break;
+        break;
+      }
+      case 'organization': {
+        if (filterValueIsString(value)) {
+          res.search.organization = {
+            name: value,
+          };
         }
-        case 'date': {
-          const date = filters.date?.value;
-          if (!date) {
-            break;
-          }
-          if (filterValueIsDayJS(date)) {
-            res.search.date = date.toString();
-          } else if (filterValueIsString(date)) {
-            res.search.date = date;
-          }
-          break;
+        break;
+      }
+      case 'date': {
+        if (dayjs.isDayjs(value)) {
+          res.search.date = value.toString();
+        } else if (filterValueIsString(value)) {
+          res.search.date = value;
         }
-        default: {
-          const value = filters[key]?.value;
-          if (!value) {
-            break;
-          }
-          if (
-            filterValueIsFormObjectValue(value) &&
-            filterValueIsString(value.value)
-          ) {
-            res.search[key] = value.value;
-          }
-          break;
+        break;
+      }
+      default: {
+        if (isFormObjectValue(value) && filterValueIsString(value.value)) {
+          res.search[key] = value.value;
         }
+        break;
       }
     }
   }

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import { type reportingWindows } from '@unocha/hpc-data';
-import { C, dataLoader } from '@unocha/hpc-ui';
+import { C, useDataLoader } from '@unocha/hpc-ui';
 import { useParams } from 'react-router';
 import { t } from '../../i18n';
 
@@ -27,7 +27,7 @@ const FormAssignmentData = (props: Props) => {
     useParams<FormAssignmentRouteParams>();
   const assignmentId = parseInt(assignmentIdString ?? '', 10);
 
-  const loader = dataLoader(
+  const [loader] = useDataLoader(
     [
       {
         assignmentId,

@@ -1,10 +1,16 @@
 import CheckIcon from '@mui/icons-material/Check';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { IconButton, Modal, type SvgIconProps, Tooltip } from '@mui/material';
+import {
+  IconButton,
+  Modal,
+  type SvgIconProps,
+  Tooltip,
+  type TooltipProps,
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import * as React from 'react';
-import { useNavigate } from 'react-router';
+import { type NavigateOptions, type To, useNavigate } from 'react-router';
 import tw from 'twin.macro';
 import { Button } from './button';
 
@@ -13,13 +19,17 @@ interface AsyncIconButtonProps {
   IconComponent: React.FC<SvgIconProps>;
   disabledText?: string;
   tooltipText?: string;
+  tooltipPlacement?: TooltipProps['placement'];
   confirmModal?: {
     text: string;
     principalButton: string;
     secondaryButton?: string;
   };
   iconSx?: React.CSSProperties;
-  redirectAfterFetch?: string;
+  redirectAfterFetch?: { to: To; options?: NavigateOptions };
+  handlerErrorToast?: (err: Error) => void;
+  onSuccess?: () => void;
+  hideStatusStyle?: boolean;
 }
 
 const ModalPaper = tw.div`
@@ -44,9 +54,13 @@ const AsyncIconButton = ({
   fnPromise,
   disabledText,
   tooltipText,
+  tooltipPlacement,
   confirmModal,
   iconSx,
   redirectAfterFetch,
+  onSuccess,
+  handlerErrorToast,
+  hideStatusStyle,
 }: AsyncIconButtonProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
@@ -55,8 +69,8 @@ const AsyncIconButton = ({
   const navigate = useNavigate();
   const isDisabled = disabledText !== undefined;
   const buttonSx = {
-    ...(isSuccess && tw`disabled:bg-unocha-success-light`),
-    ...(hasError && tw`disabled:bg-unocha-error-light`),
+    ...(!hideStatusStyle && isSuccess && tw`disabled:bg-unocha-success-light`),
+    ...(!hideStatusStyle && hasError && tw`disabled:bg-unocha-error-light`),
     ...(isDisabled && tw`disabled:bg-opacity-40`),
   };
 
@@ -68,31 +82,43 @@ const AsyncIconButton = ({
       }, 1500);
     }
   }, [isSuccess, hasError]);
-  const handleButtonClick = async () => {
+  const handleButtonClick = () => {
     if (!isLoading) {
       setIsSuccess(false);
       setHasError(false);
       setIsLoading(true);
       setConfirmed(false);
-      try {
-        await fnPromise();
-        setIsSuccess(true);
-        setIsLoading(false);
-        if (redirectAfterFetch) {
-          navigate(redirectAfterFetch);
-        }
-      } catch (error) {
-        console.error(error);
-        setHasError(true);
-        setIsLoading(false);
-      }
+      fnPromise()
+        .then(() => {
+          setIsSuccess(true);
+          if (redirectAfterFetch) {
+            const { to, options } = redirectAfterFetch;
+            navigate(to, options);
+          }
+          if (onSuccess) {
+            onSuccess();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          if (handlerErrorToast) {
+            handlerErrorToast(error);
+          }
+          setHasError(true);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   };
 
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Tooltip title={disabledText ?? tooltipText}>
+        <Tooltip
+          title={disabledText ?? tooltipText}
+          placement={tooltipPlacement}
+        >
           <Box sx={{ m: 1, position: 'relative' }}>
             <IconButton
               disabled={isSuccess || hasError || isDisabled}
@@ -102,9 +128,9 @@ const AsyncIconButton = ({
                 confirmModal ? () => setConfirmed(true) : handleButtonClick
               }
             >
-              {isSuccess ? (
+              {!hideStatusStyle && isSuccess ? (
                 <CheckIcon sx={iconSx} />
-              ) : hasError ? (
+              ) : !hideStatusStyle && hasError ? (
                 <ErrorOutlineIcon sx={iconSx} />
               ) : (
                 <IconComponent sx={iconSx} />

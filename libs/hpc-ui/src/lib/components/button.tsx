@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { type IconType } from 'react-icons/lib';
 import { Link } from 'react-router';
 
+import { CircularProgress } from '@mui/material';
 import Caret from '../assets/icons/caret';
 import { combineClasses } from '../classes';
 import { styled } from '../theme';
@@ -47,6 +48,10 @@ interface Props {
    */
   shouldDisplayCaret?: boolean;
   /**
+   * If true, add a loading icon
+   */
+  shouldDisplayLoading?: boolean;
+  /**
    * If true, set the styling of this button to "active",
    * similar visually to hover of focus styling.
    */
@@ -64,6 +69,7 @@ const BaseButton = (props: Props) => {
     startIcon: StartIcon,
     endIcon: EndIcon,
     shouldDisplayCaret,
+    shouldDisplayLoading,
     isActive,
     isCondensed,
     shouldAutoFocus,
@@ -93,6 +99,12 @@ const BaseButton = (props: Props) => {
       {children && <span>{children}</span>}
       {EndIcon && <EndIcon size={16} />}
       {shouldDisplayCaret && <Caret direction="end" size={16} />}
+      {shouldDisplayLoading && (
+        <CircularProgress
+          size={16}
+          color={color === 'primary_light' ? 'primary' : 'inherit'}
+        />
+      )}
     </>
   );
 
@@ -100,6 +112,7 @@ const BaseButton = (props: Props) => {
     <button
       className={className}
       onClick={behaviour.onClick}
+      type={behaviour.type}
       ref={ref as React.RefObject<HTMLButtonElement>}
     >
       {contents}
@@ -227,7 +240,7 @@ export const ButtonLink = (props: ButtonLinkProps) => (
   />
 );
 
-type ButtonProps = Omit<Props, 'behaviour'> & { onClick: () => void };
+export type ButtonProps = Omit<Props, 'behaviour'> & { onClick: () => void };
 
 export const Button = (props: ButtonProps) => (
   <StyledBaseButton

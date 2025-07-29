@@ -1,15 +1,25 @@
+import {
+  ApolloClient,
+  type DocumentNode,
+  gql,
+  InMemoryCache,
+  type NormalizedCacheObject,
+} from '@apollo/client';
 import { util } from '@unocha/hpc-core';
 import {
-  type Model,
   access,
   categories,
+  currencies,
   util as dataUtil,
   emergencies,
   errors,
+  fileAssetEntities,
   flows,
   forms,
   globalClusters,
+  governingEntities,
   locations,
+  type Model,
   operations,
   organizations,
   plans,
@@ -38,7 +48,7 @@ interface RequestInit {
   headers: {
     [id: string]: string;
   };
-  body?: string | ArrayBuffer;
+  body?: string | ArrayBuffer | FormData;
   signal?: AbortSignal;
 }
 
@@ -47,6 +57,7 @@ interface Response {
   readonly statusText: string;
   json(): Promise<unknown>;
   arrayBuffer(): Promise<ArrayBuffer>;
+  blob(): Promise<Blob>;
 }
 
 interface FetchInterface {
@@ -109,6 +120,16 @@ export class ModelError extends Error {
 
 export const isModelError = (value: unknown): value is ModelError =>
   value instanceof Error && (value as ModelError).code === MODEL_ERROR;
+
+/**
+ * Some error messages are returned as object containing `message` key
+ * which is of `string` type
+ */
+const isObjectMessage = (value: unknown): value is { message: string } =>
+  !!value &&
+  typeof value === 'object' &&
+  'message' in value &&
+  typeof value.message === 'string';
 
 /**
  * Temporarily store the downloaded files in a map from sha to the binary data.
@@ -227,6 +248,7 @@ export class LiveModel implements Model {
   private readonly URL: URLInterface;
   private readonly fetch: FetchInterface;
   private readonly sha256Hash: (data: ArrayBuffer) => Promise<string>;
+  private readonly apolloClient: ApolloClient<NormalizedCacheObject>;
 
   private readonly searchFlowFields = `flows {
     id
@@ -239,6 +261,13 @@ export class LiveModel implements Model {
     flowDate
     newMoney
     decisionDate
+    budgetYear
+    createdAt
+    description
+    firstReportedDate
+    notes
+    versionStartDate
+    versionEndDate
     categories {
       id
       name
@@ -248,13 +277,13 @@ export class LiveModel implements Model {
       description
       parentID
       code
-      includeTotals
       categoryRef {
         objectID
         versionID
         objectType
         categoryID
         updatedAt
+        createdAt
       }
     }
 
@@ -333,6 +362,10 @@ export class LiveModel implements Model {
     this.URL = config.interfaces?.URL ?? URL;
     this.fetch = config.interfaces?.fetch ?? fetch.bind(globalThis);
     this.sha256Hash = config.interfaces?.sha256Hash ?? util.hashFileInBrowser;
+    this.apolloClient = new ApolloClient({
+      uri: `${this.config.baseUrl}/v4/graphql`,
+      cache: new InMemoryCache({}),
+    });
   }
 
   private baseFetchInit = ({
@@ -371,6 +404,7 @@ export class LiveModel implements Model {
     resultType,
     body,
     signal,
+    isDownload,
   }: {
     method?: HttpMethod;
     pathname: string;
@@ -387,8 +421,13 @@ export class LiveModel implements Model {
           type: 'raw';
           data: string | ArrayBuffer;
           contentType: string;
+        }
+      | {
+          type: 'form-data';
+          data: FormData;
         };
     signal?: AbortSignal;
+    isDownload?: boolean;
   }) => {
     const { url, init } = this.baseFetchInit({ pathname, method, queryParams });
     init.signal = signal;
@@ -396,6 +435,8 @@ export class LiveModel implements Model {
       if (body.type === 'json') {
         init.body = JSON.stringify(body.data);
         init.headers['Content-Type'] = 'application/json';
+      } else if (body.type === 'form-data') {
+        init.body = body.data;
       } else {
         init.body = body.data;
         init.headers['Content-Type'] = body.contentType;
@@ -403,53 +444,115 @@ export class LiveModel implements Model {
     }
     const res = await this.fetch(url.href, init);
     if (res.ok) {
-      const json: Res<T> = (await res.json()) as Res<T>;
-      const decode = resultType.decode(json.data);
+      if (res.statusText === 'No Content') {
+        return null as T;
+      }
+      let decode;
+      let jsonError = {};
+      if (isDownload) {
+        const blob = await res.blob();
+        decode = resultType.decode(blob);
+      } else {
+        const json: Res<T> = (await res.json()) as Res<T>;
+        decode = resultType.decode(json.data ?? json);
+        jsonError = json;
+      }
+
       if (isRight(decode)) {
         return decode.right;
       }
       const report = PathReporter.report(decode);
-      console.error('Received unexpected result from server', report, json);
-      throw new ModelError('Received unexpected result from server', json);
+      console.error(
+        'Received unexpected result from server',
+        report,
+        jsonError
+      );
+      throw new ModelError('Received unexpected result from server', jsonError);
     } else {
       const json = (await res.json()) as {
         timestamp: Date;
         otherUser: string;
         code?: string;
-        message: errors.UserErrorKey;
+        message: errors.UserErrorKey | { message: string } | string;
         details?: {
-          code: string;
-          detail: string;
-          table: string;
+          code?: string;
+          detail?: string;
+          table?: string;
+          reason?: errors.DataConsistencyErrorReason;
         };
       };
       if (json?.code === 'ConflictError') {
         throw new errors.ConflictError(json.timestamp, json.otherUser);
       } else if (
         json?.code === 'BadRequestError' &&
-        errors.USER_ERROR_KEYS.includes(json?.message)
+        !isObjectMessage(json.message) &&
+        errors.isUserErrorKey(json.message)
       ) {
         throw new errors.UserError(json.message);
-      } else if (
-        json?.code === 'BadRequestError' &&
-        json.details?.code === '23505' && // Error code for duplicate primary key
-        json.details.detail &&
-        json.details.table
-      ) {
-        throw new errors.DuplicateError(
-          json.details.detail,
-          json.details.table
-        );
+      } else if (json.details?.reason) {
+        throw new errors.DataConsistencyError(json.details.reason);
+      } else if (json?.code === 'NotFoundError') {
+        throw new errors.NotFoundError();
       } else {
         const message =
           json?.code && json?.message
-            ? `${json.code}: ${json.message}`
+            ? `${json.code}: ${
+                isObjectMessage(json.message)
+                  ? json.message.message
+                  : json.message
+              }`
             : res.statusText;
         throw new ModelError(message, json);
       }
     }
   };
 
+  private callGraphQL = async <T>({
+    query,
+    resultType,
+  }: {
+    query: DocumentNode;
+    resultType: t.Type<T>;
+  }) => {
+    const res = await this.apolloClient.query<T>({
+      query,
+      fetchPolicy: 'no-cache',
+    });
+
+    if (!res.error && !res.errors) {
+      const data = res.data;
+      const decode = resultType.decode(data);
+      if (isRight(decode)) {
+        return decode.right;
+      }
+
+      const report = PathReporter.report(decode);
+      console.error('Received unexpected result from server', report, data);
+      throw new ModelError('Received unexpected result from server', data);
+    }
+
+    const json = res.error?.networkError as null | {
+      timestamp: Date;
+      otherUser: string;
+      code?: string;
+      message: errors.UserErrorKey;
+      details?: {
+        code: string;
+        detail: string;
+        table: string;
+      };
+    };
+    if (
+      json?.code === 'BadRequestError' &&
+      errors.USER_ERROR_KEYS.includes(json?.message)
+    ) {
+      throw new errors.UserError(json.message);
+    }
+
+    const message =
+      json?.code && json?.message ? `${json.code}: ${json.message}` : '';
+    throw new ModelError(message, json);
+  };
   get access(): access.Model {
     const accessPathnameForTarget = (target: access.AccessTarget) =>
       `/v2/access/${
@@ -531,7 +634,7 @@ export class LiveModel implements Model {
           },
           resultType: categories.GET_CATEGORIES_RESULT,
         }),
-      getKeywords: () =>
+      getKeywords: (signal) =>
         this.call({
           pathname: '/v2/category',
           queryParams: {
@@ -539,6 +642,7 @@ export class LiveModel implements Model {
             scopes: 'relatedCount',
           },
           resultType: categories.GET_KEYWORDS_RESULT,
+          signal,
         }),
       deleteKeyword: (params) =>
         this.call({
@@ -556,15 +660,54 @@ export class LiveModel implements Model {
           },
           resultType: categories.CATEGORY,
         }),
+      mergeKeywords: (params) =>
+        this.call({
+          pathname: `v2/category/merge/${params.receivingKeywordID}/${params.mergingKeywordID}`,
+          method: 'GET',
+          resultType: categories.MERGE_KEYWORD_RESULT,
+        }),
+    };
+  }
+  get currencies(): currencies.Model {
+    return {
+      getCurrencies: () =>
+        this.call({
+          pathname: `/v1/currency`,
+          resultType: currencies.GET_CURRENCIES_RESULT,
+        }),
     };
   }
   get emergencies(): emergencies.Model {
     return {
       getAutocompleteEmergencies: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/emergency/${params.query}`,
-          resultType: emergencies.GET_EMERGENCIES_AUTOCOMPLETE_RESULT,
+          pathname: `/v2/object/autocomplete/emergency/${encodeURIComponent(
+            params.query
+          )}`,
+          resultType: emergencies.GET_EMERGENCIES_RESULT,
         }),
+      getEmergencies: ({ years, locations }) => {
+        const queryParams: { years?: string; locations?: string } = {};
+        if (years) {
+          queryParams.years = years.join(',');
+        }
+        if (locations) {
+          queryParams.locations = locations.join(',');
+        }
+
+        return this.call({
+          pathname: `/v2/emergency`,
+          queryParams,
+          resultType: emergencies.GET_EMERGENCIES_RESULT,
+        });
+      },
+      getEmergency: ({ id }) => {
+        return this.call({
+          pathname: `/v2/emergency/${id}`,
+          method: 'GET',
+          resultType: emergencies.GET_EMERGENCY_RESULT,
+        });
+      },
     };
   }
   get systems(): systems.Model {
@@ -576,78 +719,120 @@ export class LiveModel implements Model {
         }),
     };
   }
-  get flows(): flows.Model {
+  get fileAssetEntities(): fileAssetEntities.Model {
     return {
-      getFlowREST: (params) =>
+      fileUpload: (file) =>
         this.call({
-          pathname: `/v2/flow/${params.id}`,
-          resultType: flows.GET_FLOW_RESULT,
-        }),
-      getFlow: (params) =>
-        this.call({
-          pathname: `/v4/graphql`,
+          pathname: '/v2/files/fts',
           method: 'POST',
           body: {
-            type: 'raw',
-            data: ` query Flow{
-              flow(id: ${params}) {
-                  createdAt
-                  updatedAt
-                  deletedAt
-                  id
-                  versionID
-                  amountUSD
-                  flowDate
-                  decisionDate
-                  firstReportedDate
-                  budgetYear
-                  origAmount
-                  origCurrency
-                  exchangeRate
-                  activeStatus
-                  newMoney
-                  restricted
-                  description
-                  notes
-                  versionStartDate
-                  versionEndDate
-                  createdBy
-                  lastUpdatedBy
-              }
-          }`,
-            contentType: 'application/json; charset=utf-8',
+            type: 'form-data',
+            data: file,
           },
+          resultType: fileAssetEntities.FILE_ASSET_UPLOAD,
+        }),
+
+      fileDelete: (id, collection) =>
+        this.call({
+          pathname: `/v2/files/${collection}/${id}`,
+          method: 'DELETE',
+          resultType: fileAssetEntities.DELETE_FILE_RESULT,
+        }),
+      fileDownload: (id, collection) =>
+        this.call({
+          pathname: `/v2/files/download/${collection}/${id}`,
+          method: 'GET',
+          resultType: fileAssetEntities.BLOB_TYPE,
+          isDownload: true,
+        }),
+      uploadXLSX: (file) => {
+        const data = new FormData();
+        data.append('xls', file);
+
+        return this.call({
+          pathname: '/v2/flow/excel',
+          method: 'POST',
+          resultType: t.unknown,
+          body: {
+            type: 'form-data',
+            data,
+          },
+        });
+      },
+    };
+  }
+  get flows(): flows.Model {
+    return {
+      getFlowV4: (params) => {
+        const query = gql`
+          query Flow{
+                    flow(id: ${params}) {
+                        createdAt
+                        updatedAt
+                        deletedAt
+                        id
+                        versionID
+                        amountUSD
+                        flowDate
+                        decisionDate
+                        firstReportedDate
+                        budgetYear
+                        origAmount
+                        origCurrency
+                        exchangeRate
+                        activeStatus
+                        newMoney
+                        restricted
+                        description
+                        notes
+                        versionStartDate
+                        versionEndDate
+                        createdBy
+                        lastUpdatedBy
+                    }
+                }
+        `;
+        return this.callGraphQL({
+          query,
+          resultType: flows.GET_FLOW_V4_RESULT,
+        });
+      },
+      getFlow: ({ id, versionID }) =>
+        this.call({
+          pathname: `/v2/flow/${id}${versionID ? `/version/${versionID}` : ''}`,
           resultType: flows.GET_FLOW_RESULT,
+        }),
+      getAutocompleteFlows: (params) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/id/flow/${encodeURIComponent(
+            params.query
+          )}`,
+          resultType: flows.GET_FLOWS_AUTOCOMPLETE_RESULT,
         }),
       /**
        * TODO: Dynamically fetch only necessary fields, Ex: if we don't display 'NewMoney' we shouldn't ask for it
        */
       searchFlows: (params) => {
-        const query = `query {
-          searchFlows${searchFlowsParams(params)} {
-            total
-            hasNextPage
-            hasPreviousPage
-            pageSize
-            ${this.searchFlowFields}
+        const query = gql`
+          query {
+            searchFlows${searchFlowsParams(params)} {
+              total
+              hasNextPage
+              hasPreviousPage
+              pageSize
+              ${this.searchFlowFields}
+            }
           }
-        }`;
-        return this.call({
-          pathname: `/v4/graphql`,
-          method: 'POST',
-          body: {
-            type: 'json',
-            data: {
-              query,
-            },
-          },
-          signal: params.signal,
+        `;
+
+        return this.callGraphQL({
+          query,
           resultType: flows.SEARCH_FLOWS_RESULT,
         });
       },
       bulkRejectPendingFlows: (params) =>
         this.call({
-          pathname: `/v1/flow/bulkupdatestatus/87`,
+          pathname: `/v2/flow/bulkupdatestatus/87`,
           method: 'POST',
           body: {
             type: 'json',
@@ -656,24 +841,57 @@ export class LiveModel implements Model {
           resultType: flows.BULK_REJECT_PENDING_FLOWS_RESULT,
         }),
       getFlowsDownloadXLSX: (params) => {
-        const query = `query {
-          searchFlowsBatches${searchFlowsParams(params)} {
-            ${this.searchFlowFields}
-          }
-        }`;
-        return this.call({
-          pathname: `/v4/graphql`,
-          method: 'POST',
-          body: {
-            type: 'json',
-            data: {
-              query,
-            },
-          },
-          signal: params.signal,
+        const query = gql`
+          query {
+                    searchFlowsBatches${searchFlowsParams(params)} {
+                      ${this.searchFlowFields}
+                    }
+                  }
+        `;
+        return this.callGraphQL({
+          query,
           resultType: flows.SEARCH_FLOWS_BATCHES_RESULT,
         });
       },
+      createFlow: (params) =>
+        this.call({
+          pathname: '/v2/flow',
+          method: 'POST',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.CREATE_FLOW_RESULT,
+        }),
+
+      updateFlow: (params) =>
+        this.call({
+          pathname: `/v2/flow/${params.flow.id}`,
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data: params,
+          },
+          resultType: flows.CREATE_FLOW_RESULT,
+        }),
+      deleteFlow: ({ flowId, versionID }) =>
+        this.call({
+          pathname: `/v2/flow/${flowId}/version/${versionID}`,
+          method: 'DELETE',
+          resultType: flows.DELETE_FLOW_RESULT,
+        }),
+      compareFlows: ({ flowIdA, flowIdB, versionIdA, versionIdB }) =>
+        this.call({
+          pathname: '/v2/flow/compare',
+          method: 'GET',
+          queryParams: {
+            flowIdA: `${flowIdA}`,
+            flowIdB: `${flowIdB}`,
+            versionIdA: `${versionIdA}`,
+            versionIdB: `${versionIdB}`,
+          },
+          resultType: flows.COMPARE_FLOWS_RESULT,
+        }),
     };
   }
   get globalClusters(): globalClusters.Model {
@@ -685,11 +903,34 @@ export class LiveModel implements Model {
         }),
     };
   }
+  get governingEntities(): governingEntities.Model {
+    return {
+      getGoverningEntity: (params) =>
+        this.call({
+          pathname: `/v2/governingEntity/${params.id}`,
+          resultType: governingEntities.GET_GOVERNING_ENTITY_RESULT,
+        }),
+      getGoverningEntitiesByPlanId: ({ planId, excludeAttachments }) =>
+        this.call({
+          pathname: `/v2/governingEntity`,
+          queryParams: {
+            planId: planId.toString(),
+            ...(excludeAttachments !== undefined
+              ? { excludeAttachments: excludeAttachments.toString() }
+              : {}),
+          },
+          resultType:
+            governingEntities.GET_GOVERNING_ENTITIES_BY_PLAN_ID_RESULT,
+        }),
+    };
+  }
   get locations(): locations.Model {
     return {
       getAutocompleteLocations: (params) =>
         this.call({
-          pathname: `/v1/location/autocomplete/${params.query}`,
+          pathname: `/v2/location/autocomplete/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: locations.GET_LOCATIONS_AUTOCOMPLETE_RESULT,
         }),
     };
@@ -698,7 +939,9 @@ export class LiveModel implements Model {
     return {
       getAutocompleteOrganizations: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/organization/${params.query}`,
+          pathname: `/v2/object/autocomplete/organization/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: organizations.GET_ORGANIZATIONS_RESULT,
         }),
       searchOrganizations: (params) =>
@@ -709,17 +952,18 @@ export class LiveModel implements Model {
             type: 'json',
             data: params,
           },
+          signal: params.search.signal,
           resultType: organizations.SEARCH_ORGANIZATION_RESULT,
         }),
       getOrganization: (params) =>
         this.call({
-          pathname: `/v1/organization/id/${params.id}`,
+          pathname: `/v2/organization/${params.id}`,
           method: 'GET',
-          resultType: organizations.ORGANIZATION,
+          resultType: organizations.GET_ORGANIZATION_RESULT,
         }),
       createOrganization: (params) =>
         this.call({
-          pathname: '/v1/organization/create',
+          pathname: '/v2/organization',
           method: 'POST',
           body: {
             type: 'json',
@@ -729,19 +973,29 @@ export class LiveModel implements Model {
         }),
       updateOrganization: (params) =>
         this.call({
-          pathname: `/v1/organization/update/${params.id}`,
+          pathname: `/v2/organization/${params.id}`,
           method: 'PUT',
           body: {
             type: 'json',
             data: { organization: { ...params } },
           },
-          resultType: organizations.UPDATE_ORGANIZATION_RESULT,
+          resultType: organizations.ORGANIZATION,
         }),
       deleteOrganization: (params) =>
         this.call({
-          pathname: `/v1/organization/delete/${params.id}`,
-          method: 'POST',
+          pathname: `/v2/organization/${params.id}`,
+          method: 'DELETE',
           resultType: organizations.DELETE_ORGANIZATION_RESULT,
+        }),
+      mergeOrganizations: (receivingOrganizationID, data) =>
+        this.call({
+          pathname: `/v2/organization/merge/${receivingOrganizationID}`,
+          method: 'PUT',
+          body: {
+            type: 'json',
+            data,
+          },
+          resultType: organizations.MERGE_ORGANIZATION_RESULT,
         }),
     };
   }
@@ -769,8 +1023,24 @@ export class LiveModel implements Model {
     return {
       getAutocompletePlans: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/plan/${params.query}`,
+          pathname: `/v2/object/autocomplete/plan/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: plans.GET_PLANS_AUTOCOMPLETE_RESULT,
+        }),
+      getPlan: ({ id, scopes }) => {
+        return this.call({
+          pathname: `/v2/plan/${id}`,
+          queryParams: {
+            scopes: scopes.join(','),
+          },
+          resultType: plans.getPlanResultCodec(scopes),
+        });
+      },
+      getAutocompletePlansById: ({ id }) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/id/plan/${id}`,
+          resultType: plans.GET_AUTOCOMPLETE_PLANS_BY_ID_RESULT,
         }),
     };
   }
@@ -778,8 +1048,15 @@ export class LiveModel implements Model {
     return {
       getAutocompleteProjects: (params) =>
         this.call({
-          pathname: `/v1/object/autocomplete/project/${params.query}`,
+          pathname: `/v2/object/autocomplete/project/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: projects.GET_PROJECTS_AUTOCOMPLETE_RESULT,
+        }),
+      getProject: ({ id }) =>
+        this.call({
+          pathname: `/v2/project/${id}`,
+          resultType: projects.GET_PROJECT_RESULT,
         }),
     };
   }
@@ -929,7 +1206,14 @@ export class LiveModel implements Model {
     return {
       getUsageYears: () =>
         this.call({
-          pathname: '/v1/fts/usage-year',
+          pathname: '/v2/fts/usage-year',
+          resultType: usageYears.GET_USAGE_YEARS_RESULT,
+        }),
+      getAutocompleteUsageYears: (params) =>
+        this.call({
+          pathname: `/v2/object/autocomplete/usageYear/${encodeURIComponent(
+            params.query
+          )}`,
           resultType: usageYears.GET_USAGE_YEARS_RESULT,
         }),
     };

@@ -102,7 +102,7 @@ module.exports = {
         lg: '30px',
       },
       borderRadius: {
-        sm: '3px',
+        sm: '4px',
         md: '6px',
       },
       container: {

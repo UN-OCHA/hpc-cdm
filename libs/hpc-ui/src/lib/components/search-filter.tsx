@@ -1,12 +1,17 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { Drawer, IconButton, Tooltip } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import { Drawer, IconButton, Tooltip, useTheme } from '@mui/material';
+import {
+  useCallback,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+  type ReactNode,
+} from 'react';
 import tw from 'twin.macro';
 import { styled } from '../theme';
 interface Props {
   className?: string;
   title?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export interface SearchFields {
@@ -41,17 +46,19 @@ const FlexDiv = tw.div`
   justify-between
   items-center
 `;
-const StyledDrawer = tw(Drawer)`
-  sticky
-  top-0
-  z-0
-  overflow-y-visible
-  h-screen
-  [&>div]:relative
-  [&>div]:border-y-0
-  [&>div]:border-s-0
-  [&>div]:border-e
-  [&>div]:w-full
+const StyledDrawer = styled(Drawer)`
+  height: calc(100vh - ${(p) => p.theme.sizing.totalHeaderHeight});
+  ${tw`
+    sticky
+    top-0
+    z-0
+    overflow-y-visible
+    [&>div]:relative
+    [&>div]:border-y-0
+    [&>div]:border-s-0
+    [&>div]:border-e
+    [&>div]:w-full
+  `}
 `;
 const Dragger = tw.div`
   cursor-col-resize
@@ -89,10 +96,12 @@ export const SearchFilter = ({ className, title, children }: Props) => {
   const minDrawerWidth = 260;
   const maxDrawerWidth = 600;
 
-  const [drawerWidth, setDrawerWidth] = React.useState(defaultDrawerWidth);
-  const [isDragging, setIsDragging] = React.useState(false);
+  const [drawerWidth, setDrawerWidth] = useState(defaultDrawerWidth);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const dir = useTheme().direction;
+
+  const handleMouseDown = (e: ReactMouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
     setIsDragging(true);
 
@@ -106,17 +115,26 @@ export const SearchFilter = ({ className, title, children }: Props) => {
     document.removeEventListener('mousemove', handleMouseMove, true);
   };
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    const newWidth = e.clientX - document.body.offsetLeft;
-    if (newWidth > minDrawerWidth && newWidth < maxDrawerWidth) {
-      setDrawerWidth(newWidth);
-    }
-  }, []);
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      const offsetStart =
+        document.body.offsetLeft +
+        (dir === 'ltr' ? 0 : document.body.offsetWidth);
+      const newWidth =
+        dir === 'ltr' ? e.clientX - offsetStart : offsetStart - e.clientX;
+
+      if (newWidth > minDrawerWidth && newWidth < maxDrawerWidth) {
+        setDrawerWidth(newWidth);
+      }
+    },
+    [dir]
+  );
 
   return (
     <>
       <StyledDrawer
         variant="persistent"
+        // RTL support: 'left' behaves as 'start' if `dir` is set
         anchor="left"
         open={isOpen}
         sx={{
@@ -148,7 +166,7 @@ export const SearchFilter = ({ className, title, children }: Props) => {
         onMouseDown={(e) => handleMouseDown(e)}
         style={{ width: isOpen ? '3px' : '0px' }}
       />
-      <Tooltip title="Filters">
+      <Tooltip title={title}>
         <HideDrawerButton onClick={() => setOpen(!isOpen)} autoFocus={isOpen}>
           <ChevronLeftIcon
             sx={{

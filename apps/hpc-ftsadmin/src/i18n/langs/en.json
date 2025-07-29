@@ -25,6 +25,9 @@
       "p3": "All use of ICT resources and ICT data is subject to monitoring and investigation as set forth in ST/SGB/2004/15",
       "p4": "Use of this system by any user, authorized or unauthorized, constitutes consent to the applicable UN regulations and rules"
     },
+    "datePicker": {
+      "today": "Today"
+    },
     "dialogs": {
       "okay": "Confirm",
       "cancel": "Cancel"
@@ -33,6 +36,10 @@
       "title": "Page not found",
       "info": "We were unable to find the page you were looking for",
       "back": "Go back"
+    },
+    "noResultTable": {
+      "title": "No results found",
+      "description": "Your filters did not match any results. Please modify your filter selection"
     },
     "invalidRouteParam": {
       "title": "Invalid route",
@@ -44,15 +51,216 @@
       "error": "Error:",
       "retry": "Retry"
     },
+    "reviewPendingValues": {
+      "unmatched": "Unmatched",
+      "label": "Change: New Value",
+      "button": {
+        "accept": "Accept",
+        "reject": "Reject",
+        "confirm": "Confirm handled case"
+      }
+    },
     "unsupportedBrowser": {
       "title": "Unsupported Browser!",
       "info": "Unfortunately, your current browser is not supported. Please switch to either Firefox or Google Chrome. To do this, simply copy the form address (URL) above, then open Firefox or Chrome, and paste the address into the browser."
+    },
+    "flow": {
+      "updatedBy": "Updated {date} by {user}",
+      "createdBy": "Created {date} by {user}",
+      "deleted": "This flow has been deleted",
+      "inactiveReason": "This flow is not active because it has been marked as {reason}",
+      "unknownInactiveReasons": "Unknown inactive reason",
+      "restricted": "This flow is marked as Restricted and will not be included in the funding totals on the FTS website.",
+      "legacyID": "Legacy contribution ID: {id}",
+      "copyOfFlow": "Copy of Flow",
+      "addFLow": "Add Flow",
+      "activeFlowLinkText": "The current active flow is: ",
+      "hasPendingFlowLinkText": "There is a pending update to this flow. Review pending "
+    },
+    "flowAmountButton": {
+      "amountOriginalCurrency": "Calculate the original amount",
+      "amountUSD": "Calculate the USD amount",
+      "exchangeRate": "Calculate the exchange rate"
+    },
+    "flowForm": {
+      "activeTag": "Active",
+      "addReportingDetail": "Add Reporting Detail",
+      "behaviorLabel": {
+        "overlap": {
+          "label": "Overlap",
+          "tooltip": "Overlap will be reported as direct funding for each of the selected values."
+        },
+        "shared": {
+          "label": "Shared",
+          "tooltip": "Shared will be reported as possible funding for each of the selected values."
+        }
+      },
+      "blockNavigation": "You have unsaved changes, are you sure you want to leave?",
+      "codecValidation": {
+        "amountUSD": "The value must be greater than 0",
+        "amountOriginalCurrency": "The value must be a positive number",
+        "donorBudgetYear": "The value needs to be of format YYYY",
+        "exchangeRate": "The value must be a positive number",
+        "flowStatus": "This field is required",
+        "flowType": "This field is required",
+        "flowDescription": "This field is required",
+        "firstReported": "This field is required",
+        "flowDate": "This field is required",
+        "fundingSourceUsageYears": "This field is required",
+        "fundingDestinationUsageYears": "This field is required"
+      },
+      "copyFlow": "Copy Flow",
+      "createdUpdated": "Created at {createdDate}, and latest updated at {updatedDate}",
+      "deleteFlow": "Delete Flow Version",
+      "deletedTag": "Deleted",
+      "fields": {
+        "restricted": "Restricted to internal use",
+        "isErrorCorrection": "As error correction",
+        "isInactive": "Set as inactive",
+        "fundingSourceOrganizations": "Organization(s)",
+        "fundingSourceUsageYears": "Usage Year(s)",
+        "fundingSourceLocations": "Location(s)",
+        "fundingSourceEmergencies": "Emergency(ies)",
+        "fundingSourceGlobalClusters": "Global Cluster(s)",
+        "fundingSourcePlan": "Plan",
+        "fundingSourceFieldClusters": "Field Cluster(s)",
+        "fundingSourceProject": "Project",
+        "fundingDestinationOrganizations": "Organization(s)",
+        "fundingDestinationAnonymizedOrganizations": "Anonymized Organization(s)",
+        "fundingDestinationUsageYears": "Usage Year(s)",
+        "fundingDestinationLocations": "Location(s)",
+        "fundingDestinationEmergencies": "Emergency(ies)",
+        "fundingDestinationGlobalClusters": "Global Cluster(s)",
+        "fundingDestinationPlan": "Plan",
+        "fundingDestinationFieldClusters": "Field Cluster(s)",
+        "fundingDestinationProject": "Project",
+        "isNewMoney": "Is this flow new money?",
+        "amountUSD": "Funding Amount in USD",
+        "amountOriginalCurrency": "Funding amount (Original currency)",
+        "currency": "Currency",
+        "exchangeRate": "Exchange Rate Used",
+        "flowDescription": {
+          "label": "Funding Flow Description",
+          "placeholder": "1-2 sentences for flow name"
+        },
+        "firstReported": "First Reported",
+        "decisionDate": "Decision Date",
+        "donorBudgetYear": "Donor Budget Year",
+        "flowType": "Flow Type",
+        "flowStatus": "Flow Status",
+        "flowDate": "Flow Date",
+        "contributionType": "Contribution Type",
+        "earmarkingType": "GB Earmarking",
+        "method": "Aid Modality",
+        "childMethod": "Cash Transfer Programming (CTP) Type",
+        "keywords": "Keyword(s)",
+        "beneficiaryGroup": "Beneficiary group",
+        "notes": "Notes",
+        "parentFlow": "Add Parent Flow",
+        "childFlows": "Add Child Flow"
+      },
+      "links": {
+        "UNTreasury": "UN Treasury Operational Rates"
+      },
+      "pendingReviewTag": "Pending Review",
+      "rejectFlow": {
+        "button": "Reject Flow",
+        "confirm": "Are you sure you want to reject this flow?",
+        "categoryNotFound": "Internal Error: Flow could not be set as Rejected because category does not exist"
+      },
+      "remainingAmount": {
+        "excludeRestricted": "(Excluding restricted)",
+        "remainingAmount": "Remaining Amount:",
+        "remainingOrigAmount": "Remaining Original Currency Amount:"
+      },
+      "restrictedInfo": "The Restricted setting applies to this flow only. If linked parent or child flows should have the same Restricted setting, you must manually update those flows accordingly.",
+      "searchSimilarFlow": "Search similar Flows",
+      "sectionTitles": {
+        "sourceFlow": "Funding Source(s)",
+        "destinationFlow": "Funding Destination(s)",
+        "flowDetails": "Flow Details",
+        "flowLink": "Linked Flows",
+        "flowVersion": "Flow Versions"
+      },
+      "submitValidation": {
+        "acceptAllPendingChanges": "Accept All Changes",
+        "dataConsistency": "The selected {entity}: [{selected}] do not match the possible expected {entity}: [{expected}]",
+        "parentFlowAmountUSD": "The amount USD of the child flow is greater than the amount USD of the parent flow. Do you want to proceed?",
+        "submitButton": {
+          "reactivate": {
+            "button": "Reactivate"
+          },
+          "submit": {
+            "label": {
+              "true": "Flow can be submitted",
+              "false": "Please fill all required fields"
+            },
+            "button": "Submit"
+          },
+          "save": {
+            "button": "Save"
+          },
+          "saveAndApprove": {
+            "button": "Save & Approve"
+          }
+        },
+        "reportingDetails": {
+          "requiredFields": "Please fill all required fields of Reporting Details",
+          "fileTitle": "Please fill the Title field for the uploaded file in Reporting Details",
+          "urlTitle": "Please fill the Title field for the url supplied in Reporting Details"
+        },
+        "createSuccess": "Flow created successfully",
+        "updateSuccess": "Flow updated successfully",
+        "deleteFlowWarning": "Are you sure you want to delete this flow?",
+        "deleteLinkedFlows": "Unlink all flows before proceeding",
+        "deleteSuccess": "Flow has been deleted successfully",
+        "rejectSuccess": "Flow has been rejected successfully",
+        "earmarking": "Earmarking value is blank, do you still want to save?",
+        "emergency": "This flow has at least one emergency available for the selected year(s) and location(s), like {emergency} do you still want to save",
+        "pendingValues": "Please handle all pending values",
+        "planLocation": "No {entity} linked to {plan} was added. Please add least one of the following locations: [{locations}]",
+        "rejectAllPendingChanges": "Reject Remaining Changes",
+        "reportingOrganization": "Your flow's Report Detail organization doesn't match the source or destination organization. Are you sure this is right?",
+        "originalAmountIsDifferentToParent": "This flow's foreign currency must be the same as it's parked parent flow",
+        "originalAmountIsDifferentToChildren": "This flow's children flows foreign currency, must be the same as in current flow",
+        "originalAmountNotFilled": "[{filledFields}] fields are filled but [{notFilledFields}] are empty. Please check and complete the fields correctly before saving again.",
+        "unknownError": "Unexpected error while creating/updating flow"
+      },
+      "warning": {
+        "sourceFlow": "Flow Source associated with Parent Destination. To edit these fields, remove the Parent flow or make changes directly to the Parent flow: ",
+        "destinationFlow": "You have added a Child flow for this flow. Updating the Funding Destination(s) for this flow will update the Funding Source(s) for the child flows. If you don't want to update the Child flow's funding sources, unlink it first."
+      }
+    },
+    "flowLink": {
+      "parentFlow": "Parent Flow",
+      "childFlows": "Child Flows",
+      "unlink": "Unlink"
+    },
+    "flowPreviousReportingDetails": {
+      "title": "Previous Reporting Details",
+      "header": {
+        "version": "Version"
+      }
+    },
+    "flowSearch": {
+      "title": "Search flows",
+      "flowId": "Introduce Flow ID",
+      "warning": "Flows: [{removeOptions}] are not available because they were already linked, or because they are the current flow."
+    },
+    "flowVersions": {
+      "direction": {
+        "source": "Source",
+        "destination": "Destination"
+      },
+      "info": {
+        "compareInfo": "By clicking 2 flow version rows, you can compare the differences between them"
+      }
     },
     "flowsTable": {
       "headers": {
         "id": "ID",
         "status": "Status",
-        "updatedCreated": "Updated/ Created",
+        "updatedCreated": "Created/ Updated",
         "dataProvider": "Data Provider",
         "amountUSD": "Amount USD",
         "sourceOrganization": "Source Organization",
@@ -82,8 +290,15 @@
       "reportTooltip": "reported by {organization} on {date} via {channel}",
       "parkedSource": "Parked source",
       "sortBy": "Sort by",
-      "rejectPendingFlows": "Reject Pending Flows",
-      "downloadDisabled": "Download only allowed when there is at least one filter applied",
+      "rejectPendingFlows": {
+        "message": "Do you want to reject the selected pending flows?",
+        "button": "Yes",
+        "state": {
+          "error": "Unexpected error while bulk rejecting the selected pending flows",
+          "success": "All selected pending flows have been successfully rejected"
+        }
+      },
+      "downloadDisabled": "Download only allowed when there is at least one filter applied, and there is more than one flow on the table",
       "totalAmountDisabled": "Total Amount only allowed when there are is least one filter applied",
       "tableSettings": {
         "title": "Table Settings",
@@ -103,11 +318,10 @@
         "destinationDetails": "Destination Details"
       },
       "info": {
-        "filterInfo": "Using ',' sepparated values will create multiple values. Copy and paste also works with this functionality"
+        "filterInfo": "Using ',' separated values will create multiple values. Copy and paste also works with this functionality"
       },
       "filters": {
         "includeChildrenOfParkedFlows": "Include children of matching parked flows",
-        "restricted": "Restricted",
         "flowID": "Flow ID",
         "amountUSD": "Amount USD",
         "keywords": "Keywords",
@@ -125,6 +339,7 @@
         "sourceGlobalClusters": "Source Global Cluster(s)",
         "sourceEmergencies": "Source Emergency(ies)",
         "destinationOrganizations": "Destination Organization(s)",
+        "destinationAnonymizedOrganizations": "Destination Anonymized Organization(s)",
         "destinationLocations": "Destination Country(ies)",
         "destinationUsageYears": "Destination Usage Year(s)",
         "destinationProjects": "Destination Project(s)",
@@ -140,7 +355,7 @@
         "filters": "Filters"
       }
     },
-    "keywordTable": {
+    "keywordsTable": {
       "headers": {
         "id": "ID",
         "name": "Name",
@@ -154,14 +369,49 @@
       },
       "errors": {
         "unknown": "Unexpected error while creating/updating keyword.",
-        "duplicate": "A keyword with name {keywordName} already exists. Please choose a different name."
+        "conflict": "A keyword with name {keywordName} already exists. Please choose a different name."
+      },
+      "success": {
+        "update": "Successfully updated keyword",
+        "delete": "Successfully deleted keyword"
       },
       "labels": {
         "newName": "New Name",
+        "edit": "Edit",
         "save": "Save",
         "public": "Public",
         "cancel": "Cancel",
         "delete": "Delete"
+      }
+    },
+    "mergeModal": {
+      "description": "Merge {entity}",
+      "mergingEntity": "Merging {entity}",
+      "receivingEntity": "Receiving {entity} ",
+      "confirmationMessage": "Are you sure you want to merge {mergingEntities} into {receivingEntity}?",
+      "formError": {
+        "mergingEntity": "This field is required, please add at least one value",
+        "receivingEntity": "This field is required"
+      },
+      "error": {
+        "conflict": "There has been a conflict while merging {entities} ",
+        "unknown": "There has been an unknown error while merging {entities} "
+      },
+      "success": {
+        "merge": "Successfully merged {entities}"
+      },
+      "organization": {
+        "singular": "Organization",
+        "plural": "Organizations"
+      },
+      "keyword": {
+        "singular": "Keyword",
+        "plural": "Keywords"
+      },
+      "button": {
+        "yes": "Yes",
+        "cancel": "Cancel",
+        "next": "Next"
       }
     },
     "pendingFlowsFilter": {
@@ -216,7 +466,7 @@
         "filters": "Filters"
       }
     },
-    "organizationTable": {
+    "organizationsTable": {
       "headers": {
         "id": "ID",
         "name": "Organization",
@@ -235,6 +485,7 @@
         "title": "Organizations not found",
         "info": "We were unable to load organizations"
       },
+      "addOrganization": "Add Organization",
       "sortBy": "Sort by",
       "tableSettings": {
         "title": "Table Settings",
@@ -262,7 +513,7 @@
         "comments": "Organization Description"
       },
       "errors": {
-        "duplicate": "An organization with name {organizationName} already exists. Please choose a different name.",
+        "conflict": "An organization with name {organizationName} already exists. Please choose a different name.",
         "unknown": "Unexpected error while creating/updating organization"
       },
       "formErrors": {
@@ -275,19 +526,100 @@
         "principalButton": "Delete",
         "secondaryButton": "Cancel"
       },
+      "success": {
+        "create": "Successfully created {organizationName} organization",
+        "update": "Successfully updated {organizationName} organization",
+        "delete": "Successfully deleted {organizationName} organization"
+      },
       "text": {
         "collectiveOrganization": "The Collective Organization setting indicates that the organization is a 'stand-in' for one or more organizations of the same Organization Type (e.g., “Red Cross Organizations”), and is used when the specific organizations are not known or need to be masked for security purposes",
         "organizationType": "This is an only read field that fills based on the 'Organization Type'",
-        "create": "Provide information to add a new organization, this organization will be accesible in all HPC tools applications. Fields marked with '*' are mandatory.",
-        "edit": "Edit the selected organization, or click the Delete button to PERMANENTLY DELETE the organization, this organization will be accesible in all HPC tools applications. Fields marked with '*' are mandatory"
+        "create": "Provide information to add a new organization, this organization will be accessible in all HPC tools applications. Fields marked with '*' are mandatory.",
+        "edit": "Edit the selected organization, or click the Delete button to PERMANENTLY DELETE the organization, this organization will be accessible in all HPC tools applications. Fields marked with '*' are mandatory"
       },
       "create": "Create",
       "update": "Update"
+    },
+    "reportingDetail": {
+      "title": "Reporting Detail {index}",
+      "fileSection": "Report File:",
+      "urlSection": "Report URL:",
+      "removeButton": "Remove Reporting Detail",
+      "reportSource": {
+        "label": "Report Source",
+        "options": {
+          "Primary": "Primary",
+          "Secondary": "Secondary"
+        }
+      },
+      "reportedByOrganization": {
+        "label": "Reported by Organization",
+        "organizationsInFlow": "Organizations already on this flow: "
+      },
+      "reportChannel": {
+        "label": "Report Channel"
+      },
+      "sourceSystemRecordId": {
+        "label": "Source System Record ID"
+      },
+      "verified": {
+        "label": "Verified",
+        "options": {
+          "true": "Verified",
+          "false": "Unverified"
+        }
+      },
+      "dateReported": {
+        "label": "Date Reported"
+      },
+      "reporterReferenceCode": {
+        "label": "Reporter Reference Code"
+      },
+      "reporterContactInfo": {
+        "label": "Reporter Contact Information"
+      },
+      "reportFileTitle": {
+        "label": "Report File Title"
+      },
+      "file": {
+        "label": "Report File",
+        "download": {
+          "error": {
+            "notFound": "The file you are trying to download does not exist or has been deleted",
+            "unknown": "There has been an unknown error downloading the file"
+          }
+        },
+        "upload": {
+          "error": {
+            "invalidExtension": "The file selected is not [{whitelist}]. Please choose a file with the correct format"
+          }
+        }
+      },
+      "reportURLTitle": {
+        "label": "Report URL Title"
+      },
+      "url": {
+        "label": "Report URL"
+      },
+      "validation": {
+        "required": "This field is required",
+        "url": "Invalid URL format"
+      }
+    },
+    "upload": {
+      "buttonText": "Upload",
+      "error": {
+        "invalidExtension": "The file selected is not .xlsx or .xls. Please choose a file with the correct format",
+        "unknown": "There has been an unknown error uploading the file"
+      },
+      "success": "File \"{fileName}\" has been successfully uploaded"
     }
   },
   "navigation": {
+    "addFlow": "Add Flow",
     "flows": "Flows",
     "keywords": "Keywords",
+    "uploadXLSX": "Upload XLSX",
     "pendingFlows": "Pending Flows",
     "organizations": "Organizations",
     "rpm": "Response Planning Module",
@@ -299,14 +631,23 @@
     "flows": {
       "title": "Search funding flows"
     },
+    "flow": {
+      "title": "Flow {id}v{versionID}"
+    },
     "keywords": {
       "title": "Manage Keywords"
+    },
+    "uploadXLSX": {
+      "title": "Upload XLSX/XLS file"
     },
     "pendingFlows": {
       "title": "Search pending flows"
     },
     "organizations": {
       "title": "Organizations"
+    },
+    "organization": {
+      "title": "Organization {id}"
     }
   }
 }

@@ -1,42 +1,38 @@
 import { util } from '@unocha/hpc-data';
 import * as t from 'io-ts';
+import { ROWS_PER_PAGE_OPTIONS } from './constants';
 import {
   DEFAULT_FLOW_TABLE_HEADERS,
   DEFAULT_KEYWORD_TABLE_HEADERS,
   DEFAULT_ORGANIZATION_TABLE_HEADERS,
-  type FlowHeaderID,
-  type KeywordHeaderID,
-  type OrganizationHeaderID,
   type TableHeadersProps,
+  type TableType,
 } from './table-headers';
 
-const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100] as const;
 const ROWS_PER_PAGE = util.validInteger(ROWS_PER_PAGE_OPTIONS);
 
 const PARAMS_CODEC = t.type({
   page: util.INTEGER_FROM_STRING,
   rowsPerPage: ROWS_PER_PAGE,
   orderDir: t.keyof({
-    ASC: 'ASC',
-    DESC: 'DESC',
+    ASC: null,
+    DESC: null,
   }),
   filters: t.string,
   tableHeaders: t.string,
 });
 
-const extractIdentifierIds = <
-  T extends OrganizationHeaderID | FlowHeaderID | KeywordHeaderID,
->(
+const extractIdentifierIds = <T extends TableType>(
   val: Array<TableHeadersProps<T>>
 ) => {
   return val.reduce(
-    (acc, { identifierID: id, sortable }) => {
-      if (sortable) {
-        acc[id] = id;
+    (acc, { identifierID: id, isSortable }) => {
+      if (isSortable) {
+        acc[id] = null;
       }
       return acc;
     },
-    {} as Record<T, string>
+    {} as Record<TableHeadersProps<T>['identifierID'], null>
   );
 };
 
@@ -57,8 +53,8 @@ export const ORGANIZATION_PARAMS_CODEC = t.intersection([
 export const KEYWORD_PARAMS_CODEC = t.type({
   orderBy: t.keyof(extractIdentifierIds(DEFAULT_KEYWORD_TABLE_HEADERS)),
   orderDir: t.keyof({
-    ASC: 'ASC',
-    DESC: 'DESC',
+    ASC: null,
+    DESC: null,
   }),
   tableHeaders: t.string,
 });

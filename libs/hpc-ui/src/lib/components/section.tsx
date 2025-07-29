@@ -5,8 +5,8 @@ import { styled } from '../theme';
 
 export interface SectionProps {
   title: string;
-  type: 'primary' | 'secondary';
   children: React.ReactNode;
+  type?: 'primary' | 'secondary';
 }
 
 const SectionTitle = styled.summary(
@@ -47,7 +47,7 @@ const Container = tw.div`
   flex-wrap
   gap-8
 `;
-const Section = ({ title, type, children }: SectionProps) => {
+const Section = ({ title, type = 'primary', children }: SectionProps) => {
   const [isOpen, setIsOpen] = React.useState(type !== 'primary');
 
   return (
@@ -65,7 +65,4 @@ const Section = ({ title, type, children }: SectionProps) => {
   );
 };
 
-Section.defaultProps = {
-  type: 'primary',
-};
 export default Section;
