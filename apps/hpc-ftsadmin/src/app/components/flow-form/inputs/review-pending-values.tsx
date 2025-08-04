@@ -89,6 +89,7 @@ const ReviewPendingValues = ({
   shouldAcceptChange,
 }: ReviewPendingValuesProps) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [isAccepted, setIsAccepted] = useState(false);
   const lang = getContext().lang;
   const { setFieldValue } = useFormikContext();
 
@@ -114,10 +115,11 @@ const ReviewPendingValues = ({
       setFieldValue(fieldName, pendingValues);
       handleClick();
     }
+    setIsAccepted(true);
   };
 
   useEffect(() => {
-    if (!shouldAcceptChange) {
+    if (!shouldAcceptChange || isAccepted) {
       return;
     }
     if (isUnmatched && pendingValues !== undefined) {
