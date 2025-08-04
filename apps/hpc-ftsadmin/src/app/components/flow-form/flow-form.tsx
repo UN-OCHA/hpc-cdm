@@ -1620,6 +1620,7 @@ export const FlowForm = (props: FlowFormProps) => {
                       });
                     }}
                     disabled={isDisabled}
+                    pendingValues={pendingValues?.fundingDestinationPlan}
                     shouldAcceptChange={shouldAcceptAllPendingChanges}
                     valueLimit={1}
                     isMulti
