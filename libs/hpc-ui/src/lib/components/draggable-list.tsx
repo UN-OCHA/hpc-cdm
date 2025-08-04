@@ -1,12 +1,12 @@
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { Paper, Switch, Typography } from '@mui/material';
-import React, { type ReactNode, useState } from 'react';
 import {
   DragDropContext,
   Draggable,
   Droppable,
   type DropResult,
-} from 'react-beautiful-dnd';
+} from '@hello-pangea/dnd';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import { Paper, Switch, Typography } from '@mui/material';
+import React, { type ReactNode, useState } from 'react';
 import tw from 'twin.macro';
 import { ButtonSubmit } from './button';
 
