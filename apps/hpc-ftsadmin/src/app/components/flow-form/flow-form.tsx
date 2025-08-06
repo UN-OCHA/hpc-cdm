@@ -499,16 +499,17 @@ export const FlowForm = (props: FlowFormProps) => {
     flowStatus,
   } = props;
 
+  const initialPendingValues = isPending
+    ? pendingValuesFlowForm(initialValues, flow)
+    : null;
+
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const [shouldRejectLoading, setShouldRejectLoading] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [shouldAcceptAllPendingChanges, setShouldAcceptAllPendingChanges] =
     useState(false);
   const [pendingValuesHandled, setPendingValuesHandled] = useState(0);
-
-  const [pendingValues, setPendingValues] = useState(
-    isPending ? pendingValuesFlowForm(initialValues, flow) : undefined
-  );
+  const [pendingValues, setPendingValues] = useState(initialPendingValues);
 
   const isDisabled = !!isInactive && !isPending;
   const isDeleted = !!flow?.deletedAt;
@@ -1094,33 +1095,36 @@ export const FlowForm = (props: FlowFormProps) => {
                       shouldDisplayLoading={shouldRejectLoading}
                       startIcon={MdClose}
                     />
-                    <Box
-                      sx={tw`flex bg-unocha-primary p-3 ms-4 rounded-sm gap-x-4`}
-                    >
-                      <C.Button
-                        color="primary_light"
-                        onClick={handleApproveAll}
-                        text={t.t(
-                          lang,
-                          (s) =>
-                            s.components.flowForm.submitValidation
-                              .acceptAllPendingChanges
-                        )}
-                        startIcon={MdCheck}
-                      />
-                      <C.Button
-                        color="secondary_light"
-                        onClick={handleRejectAll}
-                        text={t.t(
-                          lang,
-                          (s) =>
-                            s.components.flowForm.submitValidation
-                              .rejectAllPendingChanges
-                        )}
-                        shouldDisplayLoading={shouldRejectLoading}
-                        startIcon={MdClose}
-                      />
-                    </Box>
+                    {initialPendingValues &&
+                      Object.keys(initialPendingValues).length > 0 && (
+                        <Box
+                          sx={tw`flex bg-unocha-primary p-3 ms-4 rounded-sm gap-x-4`}
+                        >
+                          <C.Button
+                            color="primary_light"
+                            onClick={handleApproveAll}
+                            text={t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.submitValidation
+                                  .acceptAllPendingChanges
+                            )}
+                            startIcon={MdCheck}
+                          />
+                          <C.Button
+                            color="secondary_light"
+                            onClick={handleRejectAll}
+                            text={t.t(
+                              lang,
+                              (s) =>
+                                s.components.flowForm.submitValidation
+                                  .rejectAllPendingChanges
+                            )}
+                            shouldDisplayLoading={shouldRejectLoading}
+                            startIcon={MdClose}
+                          />
+                        </Box>
+                      )}
                   </Box>
                 )}
               </Box>
