@@ -94,14 +94,14 @@ const Indicator = (props: Props) => {
         isSurveySubmitted && isEditable
           ? 'submittedEditable'
           : isSurveySubmitted && !isEditable
-          ? 'submittedNonEditable'
-          : !isSurveySubmitted && isEditable
-          ? 'notSubmittedEditable'
-          : reportingWindow.state === 'pending'
-          ? 'reportingWindowPending'
-          : reportingWindow.state === 'closed'
-          ? 'reportingWindowClosed'
-          : 'notSubmittedNotEditable'
+            ? 'submittedNonEditable'
+            : !isSurveySubmitted && isEditable
+              ? 'notSubmittedEditable'
+              : reportingWindow.state === 'pending'
+                ? 'reportingWindowPending'
+                : reportingWindow.state === 'closed'
+                  ? 'reportingWindowClosed'
+                  : 'notSubmittedNotEditable'
       ]
   );
 

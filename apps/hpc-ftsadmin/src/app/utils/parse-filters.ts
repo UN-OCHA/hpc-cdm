@@ -180,9 +180,8 @@ const FLOW_OBJECT_TYPES = new Set([
   'usageYear',
 ] as const);
 
-export type FlowObjectTypes = typeof FLOW_OBJECT_TYPES extends Set<infer U>
-  ? U
-  : never;
+export type FlowObjectTypes =
+  typeof FLOW_OBJECT_TYPES extends Set<infer U> ? U : never;
 
 export function isFlowObjectTypes(value: string): value is FlowObjectTypes {
   return (FLOW_OBJECT_TYPES as Set<string>).has(value);

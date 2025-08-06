@@ -645,9 +645,8 @@ export class Dummy {
             );
             /** Pending filter */
             if (params.pending) {
-              flows = this.data.flows.filter(
-                (flow) =>
-                  flow.categories?.some((category) => category.id === 45)
+              flows = this.data.flows.filter((flow) =>
+                flow.categories?.some((category) => category.id === 45)
               );
             }
             const searchFlows = {
@@ -1053,12 +1052,12 @@ export class Dummy {
               comments: organization.comments ?? null,
               verified: organization.verified ?? false,
               notes: organization.notes ?? null,
-              locations: this.data.locations.filter(
-                (location) => organization.locations?.includes(location.id)
+              locations: this.data.locations.filter((location) =>
+                organization.locations?.includes(location.id)
               ),
               categories: this.data.categories
-                .filter(
-                  (category) => organization.categories?.includes(category.id)
+                .filter((category) =>
+                  organization.categories?.includes(category.id)
                 )
                 .map((category) => ({
                   ...category,
@@ -1116,12 +1115,12 @@ export class Dummy {
                 this.data.organizations.find(
                   (org) => org.id === organization.parentID
                 ) ?? null,
-              locations: this.data.locations.filter(
-                (location) => organization.locations?.includes(location.id)
+              locations: this.data.locations.filter((location) =>
+                organization.locations?.includes(location.id)
               ),
               categories: this.data.categories
-                .filter(
-                  (category) => organization.categories?.includes(category.id)
+                .filter((category) =>
+                  organization.categories?.includes(category.id)
                 )
                 .map((category) => ({
                   ...category,

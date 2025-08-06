@@ -354,8 +354,8 @@ const MergeModal = (props: MergeModalProps) => {
                             isOrganizationValues(values)
                               ? values.mergingEntities
                               : values.mergingEntities !== null
-                              ? [values.mergingEntities]
-                              : undefined
+                                ? [values.mergingEntities]
+                                : undefined
                           }
                           required
                         />

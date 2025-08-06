@@ -311,10 +311,10 @@ export default function FlowsTable(props: FlowsTableProps) {
                       {row.amountUSD
                         ? `$${integerToCurrency(row.amountUSD)}`
                         : row.origAmount && row.origCurrency
-                        ? `${row.origCurrency} ${integerToCurrency(
-                            row.origAmount
-                          )}`
-                        : EMPTY_CELL}
+                          ? `${row.origCurrency} ${integerToCurrency(
+                              row.origAmount
+                            )}`
+                          : EMPTY_CELL}
                     </TableCell>
                   );
                 case 'organization.source.name':

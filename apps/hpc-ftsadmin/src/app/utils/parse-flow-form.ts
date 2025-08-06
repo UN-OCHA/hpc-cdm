@@ -232,8 +232,8 @@ const extractDirectionObject = (
         areFlowObjectsShared
           ? 'shared'
           : areFlowObjectsOverlap
-          ? 'overlap'
-          : null
+            ? 'overlap'
+            : null
       ) satisfies CreateFlowObject['behavior'];
 
       return value.map((formObjectValue) =>

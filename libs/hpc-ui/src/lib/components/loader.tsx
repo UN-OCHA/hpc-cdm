@@ -53,12 +53,12 @@ const Loader = <T,>(props: Props<T>) => {
   ) : loader.type === 'not-found' ? (
     <NotFound strings={strings.notFound} />
   ) : (
-    customLoadingElement ?? (
+    (customLoadingElement ?? (
       <StyledDiv className={className}>
         <h3>{strings.loading}</h3>
         <CircularProgress />
       </StyledDiv>
-    )
+    ))
   );
 };
 
