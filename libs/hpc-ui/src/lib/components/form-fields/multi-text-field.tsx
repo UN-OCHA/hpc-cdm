@@ -59,7 +59,7 @@ const MultiTextField = ({
       error: !!(meta && meta.touched && meta.error),
       helperText:
         meta && meta.touched && meta.error
-          ? errorMessage ?? meta.error
+          ? (errorMessage ?? meta.error)
           : undefined,
     };
   };

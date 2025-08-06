@@ -40,14 +40,14 @@ export const prepareReportingWindowsAsSidebarNavigation = (
           w.state === 'open'
             ? MdPendingActions
             : w.state === 'pending'
-            ? MdPending
-            : MdLock,
+              ? MdPending
+              : MdLock,
         color:
           w.state === 'open'
             ? colorOpen
             : w.state === 'pending'
-            ? colorPending
-            : colorClosed,
+              ? colorPending
+              : colorClosed,
         title: t.get(lang, (s) => s.common.reportingWindows.state[w.state]),
       },
     }));

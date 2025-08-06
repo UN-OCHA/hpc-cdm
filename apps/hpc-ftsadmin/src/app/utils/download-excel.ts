@@ -50,8 +50,8 @@ export const downloadExcel = async (
             flow.amountUSD > 0
               ? `$${integerToCurrency(flow.amountUSD)}`
               : flow.origAmount && flow.origCurrency
-              ? `${flow.origCurrency} ${integerToCurrency(flow.origAmount)}`
-              : EMPTY_CELL;
+                ? `${flow.origCurrency} ${integerToCurrency(flow.origAmount)}`
+                : EMPTY_CELL;
           break;
 
         case 'dataProvider':

@@ -272,7 +272,7 @@ const AsyncAutocompleteSelect = ({
     isOptionEqualToValue: (option, value) => option.value === value?.value,
     options,
     getOptionLabel: (op) =>
-      typeof op === 'string' ? op : op.displayLabel ?? '',
+      typeof op === 'string' ? op : (op.displayLabel ?? ''),
     filterSelectedOptions: true,
     filterOptions: (x) => x,
     ChipProps: { size: 'small' },
@@ -374,7 +374,7 @@ const AsyncAutocompleteSelect = ({
         helperText={
           (meta.touched && meta.error) ||
           (isControlledTouched && controlledError)
-            ? meta.error ?? controlledError
+            ? (meta.error ?? controlledError)
             : undefined
         }
       />
