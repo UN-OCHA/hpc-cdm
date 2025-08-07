@@ -36,25 +36,33 @@ const extractIdentifierIds = <T extends TableType>(
   );
 };
 
-export const FLOW_PARAMS_CODEC = t.intersection([
-  PARAMS_CODEC,
-  t.type({
-    orderBy: t.keyof(extractIdentifierIds(DEFAULT_FLOW_TABLE_HEADERS)),
-  }),
-]);
+export const FLOW_PARAMS_CODEC = t.exact(
+  t.intersection([
+    PARAMS_CODEC,
+    t.type({
+      orderBy: t.keyof(extractIdentifierIds(DEFAULT_FLOW_TABLE_HEADERS)),
+    }),
+  ])
+);
 
-export const ORGANIZATION_PARAMS_CODEC = t.intersection([
-  PARAMS_CODEC,
-  t.type({
-    orderBy: t.keyof(extractIdentifierIds(DEFAULT_ORGANIZATION_TABLE_HEADERS)),
-  }),
-]);
+export const ORGANIZATION_PARAMS_CODEC = t.exact(
+  t.intersection([
+    PARAMS_CODEC,
+    t.type({
+      orderBy: t.keyof(
+        extractIdentifierIds(DEFAULT_ORGANIZATION_TABLE_HEADERS)
+      ),
+    }),
+  ])
+);
 
-export const KEYWORD_PARAMS_CODEC = t.type({
-  orderBy: t.keyof(extractIdentifierIds(DEFAULT_KEYWORD_TABLE_HEADERS)),
-  orderDir: t.keyof({
-    ASC: null,
-    DESC: null,
-  }),
-  tableHeaders: t.string,
-});
+export const KEYWORD_PARAMS_CODEC = t.exact(
+  t.type({
+    orderBy: t.keyof(extractIdentifierIds(DEFAULT_KEYWORD_TABLE_HEADERS)),
+    orderDir: t.keyof({
+      ASC: null,
+      DESC: null,
+    }),
+    tableHeaders: t.string,
+  })
+);

@@ -41,8 +41,10 @@ function useQueryParams<T extends Record<string, string | number>>({
     const result = codec.decode(obj);
 
     if (!isRight(result)) {
-      console.error('Invalid query params:', result);
-      console.warn('Reverting back to initial values...');
+      if (Object.keys(obj).length !== 0) {
+        console.error('Invalid query params:', result);
+        console.warn('Reverting back to initial values...');
+      }
       return initialValues;
     }
 
