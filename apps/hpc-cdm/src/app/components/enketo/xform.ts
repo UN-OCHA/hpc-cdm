@@ -18,7 +18,7 @@ export interface PageInfo {
 export default class XForm {
   private form: Form;
   private files: FormFile[];
-  private loading: boolean;
+  private loading: boolean = true;
 
   constructor(
     html: string,
@@ -30,7 +30,6 @@ export default class XForm {
       onPageFlip?: (event: { xform: XForm }) => void;
     }
   ) {
-    this.loading = true;
     const { onDataUpdate, onPageFlip } = opts ?? {};
     this.files = files;
 
