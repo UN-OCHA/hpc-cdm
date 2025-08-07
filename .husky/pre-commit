@@ -1,4 +1,1 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-npm run affected:build && npm run affected:lint
+npm test && npm run affected:build && npm run affected:lint

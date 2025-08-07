@@ -28,7 +28,7 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "workspace-generator": "nx workspace-generator",
-    "prepare": "[ -d .git ] && git config blame.ignoreRevsFile .git-blame-ignore-revs; husky install"
+    "prepare": "[ -d .git ] && git config blame.ignoreRevsFile .git-blame-ignore-revs; husky"
   },
   "engines": {
     "node": ">=20.19.0 || >=22.14.0",
@@ -92,7 +92,7 @@
     "exceljs": "4.4.0",
     "formik": "2.4.6",
     "fp-ts": "2.16.10",
-    "husky": "8.0.3",
+    "husky": "9.1.7",
     "intl-list-format": "^1.0.3",
     "intl-messageformat": "^10.3.4",
     "io-ts": "2.2.22",
