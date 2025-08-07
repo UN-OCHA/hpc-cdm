@@ -94,7 +94,7 @@
     "fp-ts": "2.16.10",
     "husky": "9.1.7",
     "intl-list-format": "^1.0.3",
-    "intl-messageformat": "^10.3.4",
+    "intl-messageformat": "^10.7.16",
     "io-ts": "2.2.22",
     "jest": "30.0.5",
     "lint-staged": "15.0.2",
