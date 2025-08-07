@@ -2,7 +2,7 @@ import {
   Dialog,
   DialogTitle,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
@@ -97,13 +97,9 @@ const UserPicker = (props: Props) => {
       <DialogTitle>Select a user</DialogTitle>
       <List>
         {usersList.map((user) => (
-          <ListItem
-            button
-            onClick={() => users.loginAsUser(user)}
-            key={user.id}
-          >
+          <ListItemButton onClick={() => users.loginAsUser(user)} key={user.id}>
             <ListItemText primary={user.user.name} />
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
     </Dialog>

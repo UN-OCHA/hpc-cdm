@@ -220,9 +220,9 @@ export default function FlowsTable(props: FlowsTableProps) {
           <TableRow
             key={`${row.id}v${row.versionID}`}
             sx={{
-              backgroundColor: selectedRows.map((x) => x.id).includes(row.id)
+              ...(selectedRows.map((x) => x.id).includes(row.id)
                 ? tw`bg-unocha-primary bg-opacity-10`
-                : undefined,
+                : undefined),
             }}
           >
             {isPending && (
