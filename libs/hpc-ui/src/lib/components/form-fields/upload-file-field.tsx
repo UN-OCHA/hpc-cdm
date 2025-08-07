@@ -203,7 +203,7 @@ const UploadFile = ({
       <VisuallyHiddenInput
         type="file"
         name={name}
-        onChange={async (event) => {
+        onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
           const newFile = event.target.files?.[0];
           if (!newFile) {
             return;
