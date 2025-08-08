@@ -73,7 +73,7 @@ const COMPARISON: Record<
   }: {
     flowAValue: React.ReactNode;
     flowBValue: React.ReactNode;
-  }) => JSX.Element
+  }) => React.ReactElement
 > = {
   addition: ({ flowBValue }) => (
     <Box>

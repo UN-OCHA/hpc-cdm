@@ -12,7 +12,9 @@ import { browserSupportedByEnketo } from './enketo/util';
 interface Props {
   className?: string;
   window: reportingWindows.ReportingWindow;
-  header?: (assignment: reportingWindows.GetAssignmentResult) => JSX.Element;
+  header?: (
+    assignment: reportingWindows.GetAssignmentResult
+  ) => React.ReactElement;
 }
 
 type FormAssignmentRouteParams = {

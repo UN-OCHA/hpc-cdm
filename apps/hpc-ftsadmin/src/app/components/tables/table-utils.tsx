@@ -1,6 +1,7 @@
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import { Chip, IconButton, TableHead, TableRow, Tooltip } from '@mui/material';
 import { C } from '@unocha/hpc-ui';
+import React from 'react';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
 import { SPECIAL_SEPARATOR } from '../../utils/constants';
@@ -167,7 +168,7 @@ export const RenderChipsRow = ({
     }
   };
 
-  const chipList: JSX.Element[] = [];
+  const chipList: React.ReactElement[] = [];
   let key: keyof typeof tableFilters;
   for (key in tableFilters) {
     const savedKey = key;
