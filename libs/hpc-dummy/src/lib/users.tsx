@@ -6,7 +6,7 @@ import {
   ListItemText,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { ThemeProvider } from '@unocha/hpc-ui';
 
@@ -62,11 +62,12 @@ export class Users {
   public attach() {
     const container = document.createElement('div');
     document.body.append(container);
-    ReactDOM.render(
+    const root = createRoot(container);
+
+    root.render(
       <ThemeProvider>
         <UserPicker users={this} />
-      </ThemeProvider>,
-      container
+      </ThemeProvider>
     );
   }
 }
