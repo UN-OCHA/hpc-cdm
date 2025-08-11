@@ -2,11 +2,13 @@ import { ThemeProvider as MUIThemeProvider } from '@mui/material';
 import { arSA, enUS, esES, frFR, zhCN } from '@mui/material/locale';
 import { createTheme, type ThemeOptions } from '@mui/material/styles';
 import { useMemo } from 'react';
-import styled, {
-  css,
-  type ThemedCssFunction,
-  type ThemedStyledInterface,
-} from 'styled-components';
+
+/**
+ * Extend `Theme` so typescript can pickup custom Theme
+ */
+declare module 'styled-components' {
+  export interface DefaultTheme extends Theme {}
+}
 
 const COLOR_PALETTE = {
   red: {
@@ -141,11 +143,6 @@ const MUI_THEME_RTL: ThemeOptions = {
 };
 export type Theme = typeof THEME;
 
-const themedStyled: ThemedStyledInterface<Theme> = styled;
-const themedCSS: ThemedCssFunction<Theme> = css;
-
-export { themedCSS as css, themedStyled as styled };
-
 const localeMapper = {
   ar: arSA,
   en: enUS,
@@ -168,3 +165,5 @@ export const ThemeProvider = (props: {
 
   return <MUIThemeProvider theme={muiTheme}>{children}</MUIThemeProvider>;
 };
+
+export { css, styled } from 'styled-components';

@@ -112,13 +112,13 @@ const FlowVersions = ({
                 key={`flowVersion_${flowVersion.id}v${flowVersion.versionID}`}
                 onClick={() => handleVersionSelection(flowVersion)}
                 sx={{
-                  backgroundColor: selectedVersions.some(
+                  ...(selectedVersions.some(
                     (selectedVersion) =>
                       selectedVersion?.id === flowVersion.id &&
                       selectedVersion.versionID === flowVersion.versionID
                   )
                     ? tw`bg-unocha-primary bg-opacity-10`
-                    : undefined,
+                    : undefined),
                 }}
               >
                 <TableCell>
