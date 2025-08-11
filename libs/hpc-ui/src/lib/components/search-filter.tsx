@@ -163,7 +163,9 @@ export const SearchFilter = ({ className, title, children }: Props) => {
         </Container>
       </StyledDrawer>
       <Dragger
-        onMouseDown={(e) => handleMouseDown(e)}
+        onMouseDown={(e: ReactMouseEvent<HTMLDivElement, MouseEvent>) =>
+          handleMouseDown(e)
+        }
         style={{ width: isOpen ? '3px' : '0px' }}
       />
       <Tooltip title={title}>

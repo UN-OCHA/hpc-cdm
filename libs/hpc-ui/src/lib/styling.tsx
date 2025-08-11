@@ -1,9 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
 
 import { CLASSES } from './classes';
-import { type Theme } from './theme';
 
-export const BaseStyling = createGlobalStyle<{ theme: Theme }>`
+export const BaseStyling = createGlobalStyle`
 body, html {
   margin: 0;
   padding: 0;

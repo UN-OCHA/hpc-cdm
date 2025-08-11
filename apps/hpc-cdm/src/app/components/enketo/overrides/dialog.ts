@@ -31,7 +31,7 @@ const confirm = (content: string | DialogContentObject) =>
         message:
           typeof content === 'string'
             ? content
-            : content.message ?? content.msg,
+            : (content.message ?? content.msg),
       })
       .then((res) => {
         if (res && mode === 'repeatremove') {

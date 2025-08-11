@@ -220,9 +220,9 @@ export default function FlowsTable(props: FlowsTableProps) {
           <TableRow
             key={`${row.id}v${row.versionID}`}
             sx={{
-              backgroundColor: selectedRows.map((x) => x.id).includes(row.id)
+              ...(selectedRows.map((x) => x.id).includes(row.id)
                 ? tw`bg-unocha-primary bg-opacity-10`
-                : undefined,
+                : undefined),
             }}
           >
             {isPending && (
@@ -311,10 +311,10 @@ export default function FlowsTable(props: FlowsTableProps) {
                       {row.amountUSD
                         ? `$${integerToCurrency(row.amountUSD)}`
                         : row.origAmount && row.origCurrency
-                        ? `${row.origCurrency} ${integerToCurrency(
-                            row.origAmount
-                          )}`
-                        : EMPTY_CELL}
+                          ? `${row.origCurrency} ${integerToCurrency(
+                              row.origAmount
+                            )}`
+                          : EMPTY_CELL}
                     </TableCell>
                   );
                 case 'organization.source.name':
@@ -340,7 +340,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       {row.organizations
                         ?.filter((org) => org.direction === 'source')
                         .map((org, index) => (
-                          <React.Fragment key={`source_${row.id}_${index}`}>
+                          <Box key={`source_${row.id}_${index}`} sx={tw`me-2`}>
                             <Tooltip
                               title={org.name}
                               placement="top"
@@ -349,7 +349,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               <span>{org.abbreviation}</span>
                             </Tooltip>
                             {renderReportDetail(org, row, lang)}
-                          </React.Fragment>
+                          </Box>
                         ))}
                     </TableCell>
                   );

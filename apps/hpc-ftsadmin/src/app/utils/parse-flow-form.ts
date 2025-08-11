@@ -232,8 +232,8 @@ const extractDirectionObject = (
         areFlowObjectsShared
           ? 'shared'
           : areFlowObjectsOverlap
-          ? 'overlap'
-          : null
+            ? 'overlap'
+            : null
       ) satisfies CreateFlowObject['behavior'];
 
       return value.map((formObjectValue) =>
@@ -1058,13 +1058,24 @@ const compareFlowForms = (
       }
       case 'amountUSD':
       case 'amountOriginalCurrency':
-      case 'exchangeRate':
       case 'flowDescription':
       case 'donorBudgetYear':
       case 'notes': {
         const currentValue = currentFlow[key];
         const incomingValue = incomingFlow[key];
         if (currentValue !== incomingValue) {
+          result[key] = incomingValue;
+        }
+        break;
+      }
+      case 'exchangeRate': {
+        const currentValue = currentFlow[key];
+        const incomingValue = incomingFlow[key];
+        if (
+          currentValue &&
+          incomingValue &&
+          valueToFloat(currentValue) !== valueToFloat(incomingValue)
+        ) {
           result[key] = incomingValue;
         }
         break;

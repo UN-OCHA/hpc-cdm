@@ -8,7 +8,7 @@ import { t } from '../../i18n';
 import { AppContext } from '../context';
 import * as paths from '../paths';
 
-import PageMeta from '../components/page-meta';
+import { useTitle } from '../components/page-meta';
 import PageOperationClusterForms from './operation-cluster-forms';
 import PageOperationClusterSettings from './operation-cluster-settings';
 
@@ -37,11 +37,12 @@ const PageOperationCluster = (props: Props) => {
 
   const shouldDisplaySettings = cluster.permissions.canModifyAccess;
 
+  useTitle([cluster.name, operation.name]);
+
   return (
     <AppContext.Consumer>
       {({ lang }) => (
         <div className={className}>
-          <PageMeta title={[cluster.name, operation.name]} />
           <Routes>
             <Route
               path={paths.home()}

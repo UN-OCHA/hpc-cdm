@@ -1,9 +1,9 @@
 import { C, CLASSES, combineClasses, styled } from '@unocha/hpc-ui';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
-import PageMeta from '../../components/page-meta';
+import { useTitle } from '../../components/page-meta';
 import XLSXUploader from '../../components/xlsx-uploader';
-import { AppContext } from '../../context';
+import { getContext } from '../../context';
 
 type Props = {
   className?: string;
@@ -23,23 +23,20 @@ const LandingContainer = styled.div`
 `;
 
 export default (props: Props) => {
+  const { lang } = getContext();
+
+  useTitle([t.t(lang, (s) => s.routes.uploadXLSX.title)]);
+
   return (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <div
-          className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
-        >
-          <PageMeta title={[t.t(lang, (s) => s.routes.uploadXLSX.title)]} />
-          <Container>
-            <LandingContainer>
-              <C.PageTitle>
-                {t.t(lang, (s) => s.routes.uploadXLSX.title)}
-              </C.PageTitle>
-              <XLSXUploader />
-            </LandingContainer>
-          </Container>
-        </div>
-      )}
-    </AppContext.Consumer>
+    <div className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}>
+      <Container>
+        <LandingContainer>
+          <C.PageTitle>
+            {t.t(lang, (s) => s.routes.uploadXLSX.title)}
+          </C.PageTitle>
+          <XLSXUploader />
+        </LandingContainer>
+      </Container>
+    </div>
   );
 };

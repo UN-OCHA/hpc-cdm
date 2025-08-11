@@ -49,7 +49,7 @@ const AutocompleteSelect = ({
     },
     isOptionEqualToValue: (option, value) => option.value === value.value,
     getOptionLabel: (op) =>
-      typeof op === 'string' ? op : op.displayLabel ?? '',
+      typeof op === 'string' ? op : (op.displayLabel ?? ''),
     ChipProps: { size: 'small' },
     onChange: (_, newValue) => {
       if (onChange) {

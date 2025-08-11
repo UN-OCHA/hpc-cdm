@@ -5,11 +5,11 @@ import { type operations } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
-import { AppContext } from '../context';
+import { getContext } from '../context';
 import * as paths from '../paths';
 
 import ClusterNavigation from '../components/cluster-navigation';
-import PageMeta from '../components/page-meta';
+import { useTitle } from '../components/page-meta';
 import { TargetAccessManagement } from '../components/target-access-management';
 
 interface Props {
@@ -20,64 +20,60 @@ interface Props {
 
 const PageOperationClusterSettings = (props: Props) => {
   const { operation, cluster } = props;
+  const { lang } = getContext();
+
+  useTitle([
+    t.t(lang, (s) => s.navigation.settings),
+    cluster.name,
+    operation.name,
+  ]);
 
   return (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <>
-          <PageMeta
-            title={[
-              t.t(lang, (s) => s.navigation.settings),
-              cluster.name,
-              operation.name,
-            ]}
-          />
-          <ClusterNavigation
-            operation={operation}
-            cluster={cluster}
-            shouldShowSettingsButton
-          />
-          <C.SidebarNavigation
-            menu={[
-              cluster.permissions.canModifyAccess && {
-                label: t.t(lang, (s) => s.navigation.manageAccess),
-                path: paths.operationClusterSettingsAccess({
+    <>
+      <ClusterNavigation
+        operation={operation}
+        cluster={cluster}
+        shouldShowSettingsButton
+      />
+      <C.SidebarNavigation
+        menu={[
+          cluster.permissions.canModifyAccess && {
+            label: t.t(lang, (s) => s.navigation.manageAccess),
+            path: paths.operationClusterSettingsAccess({
+              operationId: operation.id,
+              clusterId: cluster.id,
+            }),
+          },
+        ]}
+      >
+        <Routes>
+          <Route
+            path={paths.home()}
+            element={
+              <Navigate
+                to={paths.operationClusterSettingsAccess({
                   operationId: operation.id,
                   clusterId: cluster.id,
-                }),
-              },
-            ]}
-          >
-            <Routes>
-              <Route
-                path={paths.home()}
-                element={
-                  <Navigate
-                    to={paths.operationClusterSettingsAccess({
-                      operationId: operation.id,
-                      clusterId: cluster.id,
-                    })}
-                  />
-                }
+                })}
               />
-              {cluster.permissions.canModifyAccess && (
-                <Route
-                  path={paths.access()}
-                  element={
-                    <TargetAccessManagement
-                      target={{
-                        type: 'operationCluster',
-                        targetId: cluster.id,
-                      }}
-                    />
-                  }
+            }
+          />
+          {cluster.permissions.canModifyAccess && (
+            <Route
+              path={paths.access()}
+              element={
+                <TargetAccessManagement
+                  target={{
+                    type: 'operationCluster',
+                    targetId: cluster.id,
+                  }}
                 />
-              )}
-            </Routes>
-          </C.SidebarNavigation>
-        </>
-      )}
-    </AppContext.Consumer>
+              }
+            />
+          )}
+        </Routes>
+      </C.SidebarNavigation>
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ import {
   ListItem as MUIListItem,
   ListItemButton as MUIListItemButton,
 } from '@mui/material';
+import React from 'react';
 import { type IconType } from 'react-icons/lib';
 import HpcLogo from '../assets/logos/hpc';
 import { CLASSES, combineClasses } from '../classes';
@@ -24,7 +25,7 @@ const CLS = {
 
 interface Props {
   homeLink: string;
-  appTitle: JSX.Element;
+  appTitle: React.ReactElement;
   tabs?: Array<
     | {
         path: string;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes, useParams } from 'react-router';
 
-import { type operations } from '@unocha/hpc-data';
+import { type operations, type reportingWindows } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
 import { t } from '../../i18n';
 
@@ -10,7 +10,7 @@ import * as paths from '../paths';
 
 import FormAssignmentData from '../components/form-assignment-data';
 import OperationFormAssignmentsList from '../components/operation-form-assignments-list';
-import PageMeta from '../components/page-meta';
+import { useTitle } from '../components/page-meta';
 import { RouteParamsValidator } from '../components/route-params-validator';
 import { prepareReportingWindowsAsSidebarNavigation } from '../utils/reportingWindows';
 
@@ -21,6 +21,47 @@ interface Props {
 
 type OperationFormAssignmentsRouteParams = {
   windowId: string;
+};
+
+const OperationFormAssignment = (
+  props: Props & {
+    assignment: reportingWindows.GetAssignmentResult;
+    window: operations.DetailedOperation['reportingWindows'][number];
+  }
+) => {
+  const { operation, assignment, window } = props;
+
+  useTitle([
+    assignment.task.form.name,
+    ...(assignment.assignee.type === 'operationCluster'
+      ? [assignment.assignee.clusterName]
+      : []),
+    operation.name,
+  ]);
+  return (
+    <C.TertiaryNavigation
+      breadcrumbs={[
+        {
+          label: window.name,
+          to: paths.operationFormAssignments({
+            operationId: operation.id,
+            windowId: window.id,
+          }),
+        },
+        {
+          label:
+            assignment.assignee.type === 'operation'
+              ? assignment.task.form.name
+              : `${assignment.assignee.clusterName}: ${assignment.task.form.name}`,
+          to: paths.operationFormAssignmentData({
+            operationId: operation.id,
+            windowId: window.id,
+            assignmentId: assignment.id,
+          }),
+        },
+      ]}
+    />
+  );
 };
 
 const PageOperationFormAssignments = (props: Props) => {
@@ -68,39 +109,10 @@ const PageOperationFormAssignments = (props: Props) => {
                 element={
                   <FormAssignmentData
                     header={(assignment) => (
-                      <>
-                        <PageMeta
-                          title={[
-                            assignment.task.form.name,
-                            ...(assignment.assignee.type === 'operationCluster'
-                              ? [assignment.assignee.clusterName]
-                              : []),
-                            operation.name,
-                          ]}
-                        />
-                        <C.TertiaryNavigation
-                          breadcrumbs={[
-                            {
-                              label: window.name,
-                              to: paths.operationFormAssignments({
-                                operationId: operation.id,
-                                windowId: window.id,
-                              }),
-                            },
-                            {
-                              label:
-                                assignment.assignee.type === 'operation'
-                                  ? assignment.task.form.name
-                                  : `${assignment.assignee.clusterName}: ${assignment.task.form.name}`,
-                              to: paths.operationFormAssignmentData({
-                                operationId: operation.id,
-                                windowId: window.id,
-                                assignmentId: assignment.id,
-                              }),
-                            },
-                          ]}
-                        />
-                      </>
+                      <OperationFormAssignment
+                        {...props}
+                        {...{ assignment, window }}
+                      />
                     )}
                     {...{ window }}
                   />

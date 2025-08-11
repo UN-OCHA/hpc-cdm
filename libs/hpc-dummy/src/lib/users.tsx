@@ -2,11 +2,11 @@ import {
   Dialog,
   DialogTitle,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { ThemeProvider } from '@unocha/hpc-ui';
 
@@ -62,11 +62,12 @@ export class Users {
   public attach() {
     const container = document.createElement('div');
     document.body.append(container);
-    ReactDOM.render(
+    const root = createRoot(container);
+
+    root.render(
       <ThemeProvider>
         <UserPicker users={this} />
-      </ThemeProvider>,
-      container
+      </ThemeProvider>
     );
   }
 }
@@ -97,13 +98,9 @@ const UserPicker = (props: Props) => {
       <DialogTitle>Select a user</DialogTitle>
       <List>
         {usersList.map((user) => (
-          <ListItem
-            button
-            onClick={() => users.loginAsUser(user)}
-            key={user.id}
-          >
+          <ListItemButton onClick={() => users.loginAsUser(user)} key={user.id}>
             <ListItemText primary={user.user.name} />
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
     </Dialog>

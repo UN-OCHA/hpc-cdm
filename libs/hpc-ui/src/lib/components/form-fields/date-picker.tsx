@@ -61,9 +61,10 @@ const DatePicker = ({
     textFieldErrorProps.helperText = meta.error ?? controlledField?.error;
   }
 
-  const datePickerProps: DatePickerPropsMUI<Dayjs> = {
+  const datePickerProps: DatePickerPropsMUI = {
     ...field,
     ...(controlledField ? { value: controlledField.value } : {}),
+    enableAccessibleFieldDOMStructure: false,
     format: 'DD/MM/YYYY',
     timezone: 'UTC',
     disabled,

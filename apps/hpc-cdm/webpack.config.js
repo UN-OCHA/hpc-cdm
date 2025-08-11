@@ -33,6 +33,9 @@ module.exports = composePlugins(
     // Use styled-components as MUI styled engine
     // https://mui.com/material-ui/guides/styled-engine/#how-to-switch-to-styled-components
     config.resolve.alias['@mui/styled-engine'] = '@mui/styled-engine-sc';
+    // After upgrading nx to v21 it has issue to resolve html5sortable from enketo-core
+    config.resolve.alias['html5sortable/dist/html5sortable.cjs'] =
+      'html5sortable/dist/html5sortable.cjs.js';
 
     return config;
   }
