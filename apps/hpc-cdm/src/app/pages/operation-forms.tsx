@@ -5,9 +5,9 @@ import { type operations } from '@unocha/hpc-data';
 import { C, combineClasses, styled } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
-import PageMeta from '../components/page-meta';
+import { useTitle } from '../components/page-meta';
 import { RouteParamsValidator } from '../components/route-params-validator';
-import { AppContext } from '../context';
+import { getContext } from '../context';
 import * as paths from '../paths';
 import { getBestReportingWindow } from '../utils/reportingWindows';
 import OperationFormAssignments from './operation-form-assignments';
@@ -19,48 +19,45 @@ interface Props {
 
 const PageOperationForms = (props: Props) => {
   const { operation, className } = props;
+  const { lang } = getContext();
+
+  useTitle([t.t(lang, (s) => s.navigation.forms), operation.name]);
+
   // Get the single reporting window we will be displaying for now
   return (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <div className={combineClasses(className)}>
-          <PageMeta
-            title={[t.t(lang, (s) => s.navigation.forms), operation.name]}
-          />
-          <Routes>
-            <Route
-              path={paths.formAssignmentsRoot()}
-              element={
-                <RouteParamsValidator
-                  element={<OperationFormAssignments operation={operation} />}
-                  routeParam="windowId"
-                />
-              }
+    <div className={combineClasses(className)}>
+      <Routes>
+        <Route
+          path={paths.formAssignmentsRoot()}
+          element={
+            <RouteParamsValidator
+              element={<OperationFormAssignments operation={operation} />}
+              routeParam="windowId"
             />
-            <Route
-              path={paths.home()}
-              element={
-                operation.reportingWindows.length > 0 ? (
-                  <Navigate
-                    to={
-                      paths.reportingWindow() +
-                      getBestReportingWindow(operation.reportingWindows).id
-                    }
-                  />
-                ) : (
-                  <C.ErrorMessage
-                    strings={{
-                      title: 'No reporting windows',
-                      info: "This operation doesn't have any reporting windows associated with it",
-                    }}
-                  />
-                )
-              }
-            />
-          </Routes>
-        </div>
-      )}
-    </AppContext.Consumer>
+          }
+        />
+        <Route
+          path={paths.home()}
+          element={
+            operation.reportingWindows.length > 0 ? (
+              <Navigate
+                to={
+                  paths.reportingWindow() +
+                  getBestReportingWindow(operation.reportingWindows).id
+                }
+              />
+            ) : (
+              <C.ErrorMessage
+                strings={{
+                  title: 'No reporting windows',
+                  info: "This operation doesn't have any reporting windows associated with it",
+                }}
+              />
+            )
+          }
+        />
+      </Routes>
+    </div>
   );
 };
 

@@ -7,11 +7,11 @@ import { t } from '../../../i18n';
 import FilterOrganizationsTable, {
   ORGANIZATIONS_FILTER_INITIAL_VALUES,
 } from '../../components/filters/filter-organization-table';
-import PageMeta from '../../components/page-meta';
+import { useTitle } from '../../components/page-meta';
 import OrganizationTable, {
   type OrganizationTableProps,
 } from '../../components/tables/organizations-table';
-import { AppContext, getEnv } from '../../context';
+import { getContext, getEnv } from '../../context';
 import { ORGANIZATION_PARAMS_CODEC } from '../../utils/codecs';
 import { ROWS_PER_PAGE_OPTIONS, TOAST_CONFIG } from '../../utils/constants';
 import { encodeTableHeaders } from '../../utils/table-headers';
@@ -35,6 +35,7 @@ const LandingContainer = styled.div`
 `;
 export default (props: Props) => {
   const state: { successMessage?: string } = useLocation().state;
+  const { lang } = getContext();
 
   useEffect(() => {
     if (state?.successMessage) {
@@ -65,6 +66,7 @@ export default (props: Props) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useTitle([t.t(lang, (s) => s.routes.organizations.title)]);
 
   const [query, setQuery] = useQueryParams({
     codec: ORGANIZATION_PARAMS_CODEC,
@@ -88,29 +90,22 @@ export default (props: Props) => {
 
   const env = getEnv();
   return (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <div
-          className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
-        >
-          <PageMeta title={[t.t(lang, (s) => s.routes.organizations.title)]} />
-          <Container>
-            <FilterOrganizationsTable
-              environment={env}
-              setQuery={setQuery}
-              query={query}
-              lang={lang}
-              handleAbortController={handleAbortController}
-            />
-            <LandingContainer>
-              <C.PageTitle>
-                {t.t(lang, (s) => s.routes.organizations.title)}
-              </C.PageTitle>
-              <OrganizationTable {...organizationTableProps} />
-            </LandingContainer>
-          </Container>
-        </div>
-      )}
-    </AppContext.Consumer>
+    <div className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}>
+      <Container>
+        <FilterOrganizationsTable
+          environment={env}
+          setQuery={setQuery}
+          query={query}
+          lang={lang}
+          handleAbortController={handleAbortController}
+        />
+        <LandingContainer>
+          <C.PageTitle>
+            {t.t(lang, (s) => s.routes.organizations.title)}
+          </C.PageTitle>
+          <OrganizationTable {...organizationTableProps} />
+        </LandingContainer>
+      </Container>
+    </div>
   );
 };

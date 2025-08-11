@@ -102,55 +102,64 @@ export const App = () => {
           const { canModifyGlobalUserAccess } = context.access().permissions;
           return (
             <AppContext.Provider value={{ lang, ...context }}>
-              <PageMeta />
-              <Container>
-                {environmentWarning(env, lang)}
-                <Header
-                  session={env.session}
-                  language={LANGUAGE_CHOICE}
-                  strings={t.get(lang, (s) => s.user)}
-                  userMenu={[
-                    {
-                      label: t.t(lang, (s) => s.user.logout),
-                      onClick: env.session.logOut,
-                    },
-                  ]}
-                />
-                <Main>
-                  {env.session.getUser() ? (
-                    <LoggedInContainer>
-                      <C.MainNavigation
-                        homeLink={paths.home()}
-                        appTitle={appTitle}
-                        tabs={[
-                          {
-                            label: t.t(lang, (s) => s.navigation.operations),
-                            path: paths.operations(),
-                          },
-                          ...(canModifyGlobalUserAccess
-                            ? [
-                                {
-                                  label: t.t(lang, (s) => s.navigation.admin),
-                                  path: paths.admin(),
-                                },
-                              ]
-                            : []),
-                        ]}
-                      />
-                      <Outlet />
-                    </LoggedInContainer>
-                  ) : (
-                    <>
-                      <C.MainNavigation
-                        homeLink={paths.home()}
-                        appTitle={appTitle}
-                      />
-                      <PageNotLoggedIn />
-                    </>
-                  )}
-                </Main>
-              </Container>
-              <dialogs.Dialogs />
+              <PageMeta>
+                <>
+                  <Container>
+                    {environmentWarning(env, lang)}
+                    <Header
+                      session={env.session}
+                      language={LANGUAGE_CHOICE}
+                      strings={t.get(lang, (s) => s.user)}
+                      userMenu={[
+                        {
+                          label: t.t(lang, (s) => s.user.logout),
+                          onClick: env.session.logOut,
+                        },
+                      ]}
+                    />
+                    <Main>
+                      {env.session.getUser() ? (
+                        <LoggedInContainer>
+                          <C.MainNavigation
+                            homeLink={paths.home()}
+                            appTitle={appTitle}
+                            tabs={[
+                              {
+                                label: t.t(
+                                  lang,
+                                  (s) => s.navigation.operations
+                                ),
+                                path: paths.operations(),
+                              },
+                              ...(canModifyGlobalUserAccess
+                                ? [
+                                    {
+                                      label: t.t(
+                                        lang,
+                                        (s) => s.navigation.admin
+                                      ),
+                                      path: paths.admin(),
+                                    },
+                                  ]
+                                : []),
+                            ]}
+                          />
+                          <Outlet />
+                        </LoggedInContainer>
+                      ) : (
+                        <>
+                          <C.MainNavigation
+                            homeLink={paths.home()}
+                            appTitle={appTitle}
+                          />
+                          <PageNotLoggedIn />
+                        </>
+                      )}
+                    </Main>
+                  </Container>
+                  <dialogs.Dialogs />
+                </>
+              </PageMeta>
             </AppContext.Provider>
           );
         }}

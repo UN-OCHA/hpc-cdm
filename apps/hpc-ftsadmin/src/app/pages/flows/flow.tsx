@@ -7,8 +7,8 @@ import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import dayjs, { FTS_DEFAULT_FORMAT } from '../../../libs/dayjs';
 import { FlowForm } from '../../components/flow-form/flow-form';
-import PageMeta from '../../components/page-meta';
-import { AppContext, getContext, getEnv } from '../../context';
+import { useTitle } from '../../components/page-meta';
+import { getContext } from '../../context';
 import paths from '../../paths';
 import { PENDING_REVIEW, TOAST_CONFIG } from '../../utils/constants';
 import {
@@ -122,6 +122,8 @@ const FlowActiveVersionPath = ({
 };
 
 export default () => {
+  const { lang, env: getEnv } = getContext();
+  const env = getEnv();
   const historyState:
     | {
         successMessage?: string;
@@ -148,7 +150,15 @@ export default () => {
 
   const id = parseInt(idString ?? '', 10);
   const versionID = parseInt(version ?? '', 10);
-  const env = getEnv();
+
+  const title = idString
+    ? t.t(lang, (s) => s.routes.flow.title, {
+        id,
+        versionID,
+      })
+    : t.t(lang, (s) => s.components.flow.addFLow);
+
+  useTitle([title]);
 
   if (id) {
     const getFlow = (version?: number) => {
@@ -202,93 +212,75 @@ export default () => {
     });
 
     return (
-      <AppContext.Consumer>
-        {({ lang }) => (
-          <C.Loader
-            loader={state}
-            strings={{
-              ...t.get(lang, (s) => s.components.loader),
-              notFound: {
-                ...t.get(lang, (s) => s.components.notFound),
-              },
-            }}
-          >
-            {({ flow, parents, children, ...otherFlowFormProps }) => {
-              const isPending = isPendingFlow(flow);
-              const isInactive = isInactiveFlow(flow);
-              return (
-                <>
-                  <PageMeta
-                    title={[
-                      t.t(lang, (s) => s.routes.flow.title, {
-                        id,
-                        versionID: flow.versionID,
-                      }),
-                    ]}
-                  />
-                  <PaddingContainer>
-                    <C.PageTitle>
-                      {t.t(lang, (s) => s.routes.flow.title, {
-                        id,
-                        versionID: flow.versionID,
-                      })}
-                    </C.PageTitle>
-                    <UpdatedCreatedBy>
-                      {t.t(lang, (s) => s.components.flow.updatedBy, {
-                        date: dayjs(flow.updatedAt).format(
-                          UPDATE_CREATE_DATE_FORMAT
-                        ),
-                        user: flow.lastUpdatedBy?.name ?? DEFAULT_USERNAME,
-                      })}
-                    </UpdatedCreatedBy>
-                    <UpdatedCreatedBy>
-                      {t.t(lang, (s) => s.components.flow.createdBy, {
-                        date: dayjs(flow.createdAt).format(
-                          UPDATE_CREATE_DATE_FORMAT
-                        ),
-                        user: flow.createdBy?.name ?? DEFAULT_USERNAME,
-                      })}
-                    </UpdatedCreatedBy>
+      <C.Loader
+        loader={state}
+        strings={{
+          ...t.get(lang, (s) => s.components.loader),
+          notFound: {
+            ...t.get(lang, (s) => s.components.notFound),
+          },
+        }}
+      >
+        {({ flow, parents, children, ...otherFlowFormProps }) => {
+          const isPending = isPendingFlow(flow);
+          const isInactive = isInactiveFlow(flow);
+          return (
+            <PaddingContainer>
+              <C.PageTitle>
+                {t.t(lang, (s) => s.routes.flow.title, {
+                  id,
+                  versionID: flow.versionID,
+                })}
+              </C.PageTitle>
+              <UpdatedCreatedBy>
+                {t.t(lang, (s) => s.components.flow.updatedBy, {
+                  date: dayjs(flow.updatedAt).format(UPDATE_CREATE_DATE_FORMAT),
+                  user: flow.lastUpdatedBy?.name ?? DEFAULT_USERNAME,
+                })}
+              </UpdatedCreatedBy>
+              <UpdatedCreatedBy>
+                {t.t(lang, (s) => s.components.flow.createdBy, {
+                  date: dayjs(flow.createdAt).format(UPDATE_CREATE_DATE_FORMAT),
+                  user: flow.createdBy?.name ?? DEFAULT_USERNAME,
+                })}
+              </UpdatedCreatedBy>
 
-                    <FlowActiveVersionPath
-                      flow={flow}
-                      categories={otherFlowFormProps.inactiveReasons}
-                      isInactive={isInactive}
-                    />
+              <FlowActiveVersionPath
+                flow={flow}
+                categories={otherFlowFormProps.inactiveReasons}
+                isInactive={isInactive}
+              />
 
-                    {flow.legacy?.legacyID && (
-                      <LegacyId>
-                        {t.t(lang, (s) => s.components.flow.legacyID, {
-                          id: flow.legacy.legacyID,
-                        })}
-                      </LegacyId>
-                    )}
-                    <FlowForm
-                      initialValues={
-                        isPending
-                          ? parseToFlowForm(
-                              {
-                                ...(flow.activeVersion ?? flow),
-                                reportDetails: flow.reportDetails,
-                              },
-                              parents,
-                              children
-                            )
-                          : parseToFlowForm(flow, parents, children)
-                      }
-                      flow={flow}
-                      load={load}
-                      isPending={isPending}
-                      isInactive={isInactive}
-                      {...otherFlowFormProps}
-                    />
-                  </PaddingContainer>
-                </>
-              );
-            }}
-          </C.Loader>
-        )}
-      </AppContext.Consumer>
+              {flow.legacy?.legacyID && (
+                <LegacyId>
+                  {t.t(lang, (s) => s.components.flow.legacyID, {
+                    id: flow.legacy.legacyID,
+                  })}
+                </LegacyId>
+              )}
+              <FlowForm
+                initialValues={
+                  isPending
+                    ? parseToFlowForm(
+                        {
+                          ...(flow.activeVersion ?? flow),
+                          reportDetails: flow.reportDetails,
+                        },
+                        parents,
+                        children
+                      )
+                    : parseToFlowForm(flow, parents, children)
+                }
+                flow={flow}
+                load={load}
+                isPending={isPending}
+                isInactive={isInactive}
+                {...otherFlowFormProps}
+              />
+            </PaddingContainer>
+          );
+        }}
+      </C.Loader>
     );
   }
   const [state, load] = useDataLoader([], async () => {
@@ -320,46 +312,42 @@ export default () => {
   });
 
   return (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <C.Loader
-          loader={state}
-          strings={{
-            ...t.get(lang, (s) => s.components.loader),
-            notFound: {
-              ...t.get(lang, (s) => s.components.notFound),
-            },
-          }}
-        >
-          {(flowFormProps) => (
-            <PaddingContainer>
-              <C.PageTitle>
-                {historyState?.flowFormCopyValues &&
-                historyState.flowFormCopyValuesPath &&
-                historyState.flowFormCopyValuesName ? (
-                  <span>
-                    {t.t(lang, (s) => s.components.flow.copyOfFlow)}{' '}
-                    <Link to={historyState.flowFormCopyValuesPath}>
-                      {historyState.flowFormCopyValuesName}
-                    </Link>
-                  </span>
-                ) : (
-                  t.t(lang, (s) => s.components.flow.addFLow)
-                )}
-              </C.PageTitle>
-              <FlowForm
-                {...flowFormProps}
-                load={load}
-                initialValues={
-                  historyState?.flowFormCopyValues
-                    ? deserializeFlowForm(historyState.flowFormCopyValues)
-                    : undefined
-                }
-              />
-            </PaddingContainer>
-          )}
-        </C.Loader>
+    <C.Loader
+      loader={state}
+      strings={{
+        ...t.get(lang, (s) => s.components.loader),
+        notFound: {
+          ...t.get(lang, (s) => s.components.notFound),
+        },
+      }}
+    >
+      {(flowFormProps) => (
+        <PaddingContainer>
+          <C.PageTitle>
+            {historyState?.flowFormCopyValues &&
+            historyState.flowFormCopyValuesPath &&
+            historyState.flowFormCopyValuesName ? (
+              <span>
+                {t.t(lang, (s) => s.components.flow.copyOfFlow)}{' '}
+                <Link to={historyState.flowFormCopyValuesPath}>
+                  {historyState.flowFormCopyValuesName}
+                </Link>
+              </span>
+            ) : (
+              t.t(lang, (s) => s.components.flow.addFLow)
+            )}
+          </C.PageTitle>
+          <FlowForm
+            {...flowFormProps}
+            load={load}
+            initialValues={
+              historyState?.flowFormCopyValues
+                ? deserializeFlowForm(historyState.flowFormCopyValues)
+                : undefined
+            }
+          />
+        </PaddingContainer>
       )}
-    </AppContext.Consumer>
+    </C.Loader>
   );
 };

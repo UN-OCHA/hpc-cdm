@@ -3,8 +3,8 @@ import React from 'react';
 import { C, CLASSES, combineClasses, useDataLoader } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
-import PageMeta from '../components/page-meta';
-import { AppContext, getEnv } from '../context';
+import { useTitle } from '../components/page-meta';
+import { AppContext, getContext, getEnv } from '../context';
 import * as paths from '../paths';
 
 interface Props {
@@ -13,6 +13,9 @@ interface Props {
 
 export default (props: Props) => {
   const [loader] = useDataLoader([], getEnv().model.operations.getOperations);
+  const { lang } = getContext();
+
+  useTitle([t.t(lang, (s) => s.navigation.operations)]);
 
   return (
     <AppContext.Consumer>
@@ -23,7 +26,6 @@ export default (props: Props) => {
             props.className
           )}
         >
-          <PageMeta title={[t.t(lang, (s) => s.navigation.operations)]} />
           <C.Loader
             loader={loader}
             strings={{

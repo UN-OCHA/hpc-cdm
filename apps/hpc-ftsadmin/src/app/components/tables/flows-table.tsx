@@ -340,7 +340,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       {row.organizations
                         ?.filter((org) => org.direction === 'source')
                         .map((org, index) => (
-                          <React.Fragment key={`source_${row.id}_${index}`}>
+                          <Box key={`source_${row.id}_${index}`} sx={tw`me-2`}>
                             <Tooltip
                               title={org.name}
                               placement="top"
@@ -349,7 +349,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                               <span>{org.abbreviation}</span>
                             </Tooltip>
                             {renderReportDetail(org, row, lang)}
-                          </React.Fragment>
+                          </Box>
                         ))}
                     </TableCell>
                   );
