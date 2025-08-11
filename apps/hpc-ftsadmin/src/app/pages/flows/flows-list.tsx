@@ -7,11 +7,11 @@ import { t } from '../../../i18n';
 import FilterFlowsTable, {
   FLOWS_FILTER_INITIAL_VALUES,
 } from '../../components/filters/filter-flows-table';
-import PageMeta from '../../components/page-meta';
+import { useTitle } from '../../components/page-meta';
 import FlowsTable, {
   type FlowsTableProps,
 } from '../../components/tables/flows-table';
-import { AppContext } from '../../context';
+import { getContext } from '../../context';
 import { FLOW_PARAMS_CODEC } from '../../utils/codecs';
 import { ROWS_PER_PAGE_OPTIONS, TOAST_CONFIG } from '../../utils/constants';
 import { encodeTableHeaders } from '../../utils/table-headers';
@@ -35,12 +35,7 @@ const LandingContainer = styled.div`
 `;
 export default (props: Props) => {
   const state: { successMessage?: string } | undefined = useLocation().state;
-
-  useEffect(() => {
-    if (state?.successMessage) {
-      toast.success(state.successMessage, TOAST_CONFIG);
-    }
-  }, [state?.successMessage]);
+  const { lang } = getContext();
 
   const [query, setQuery] = useQueryParams({
     codec: FLOW_PARAMS_CODEC,
@@ -61,24 +56,22 @@ export default (props: Props) => {
     setQuery,
   };
 
+  useEffect(() => {
+    if (state?.successMessage) {
+      toast.success(state.successMessage, TOAST_CONFIG);
+    }
+  }, [state?.successMessage]);
+  useTitle([t.t(lang, (s) => s.routes.flows.title)]);
+
   return (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <div
-          className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
-        >
-          <PageMeta title={[t.t(lang, (s) => s.routes.flows.title)]} />
-          <Container>
-            <FilterFlowsTable setQuery={setQuery} query={query} />
-            <LandingContainer>
-              <C.PageTitle>
-                {t.t(lang, (s) => s.routes.flows.title)}
-              </C.PageTitle>
-              <FlowsTable {...flowsTableProps} />
-            </LandingContainer>
-          </Container>
-        </div>
-      )}
-    </AppContext.Consumer>
+    <div className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}>
+      <Container>
+        <FilterFlowsTable setQuery={setQuery} query={query} />
+        <LandingContainer>
+          <C.PageTitle>{t.t(lang, (s) => s.routes.flows.title)}</C.PageTitle>
+          <FlowsTable {...flowsTableProps} />
+        </LandingContainer>
+      </Container>
+    </div>
   );
 };

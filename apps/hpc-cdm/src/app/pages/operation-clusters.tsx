@@ -5,9 +5,9 @@ import { type operations } from '@unocha/hpc-data';
 import { C, styled, useDataLoader } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
-import PageMeta from '../components/page-meta';
+import { useTitle } from '../components/page-meta';
 import { RouteParamsValidator } from '../components/route-params-validator';
-import { AppContext, getEnv } from '../context';
+import { AppContext, getContext, getEnv } from '../context';
 import * as paths from '../paths';
 
 import OperationCluster from './operation-cluster';
@@ -20,6 +20,34 @@ interface Props {
   className?: string;
   operation: operations.DetailedOperation;
 }
+
+const OperationClusterMatch = (
+  props: Props & { clusters: operations.GetClustersResult['data'] }
+) => {
+  const { operation, clusters } = props;
+  const { lang } = getContext();
+
+  useTitle([t.t(lang, (s) => s.navigation.clusters), operation.name]);
+
+  return (
+    <Container>
+      <C.List title={t.t(lang, (s) => s.routes.operations.clusters.listHeader)}>
+        {clusters
+          .sort((c1, c2) => (c1.name > c2.name ? 1 : -1))
+          .map((cluster) => (
+            <C.ListItem
+              key={cluster.id}
+              text={cluster.name}
+              link={paths.operationCluster({
+                operationId: operation.id,
+                clusterId: cluster.id,
+              })}
+            />
+          ))}
+      </C.List>
+    </Container>
+  );
+};
 
 const PageOperationClusters = (props: Props) => {
   const { operation, className } = props;
@@ -49,35 +77,7 @@ const PageOperationClusters = (props: Props) => {
                 <Route
                   path={paths.home()}
                   element={
-                    <>
-                      <PageMeta
-                        title={[
-                          t.t(lang, (s) => s.navigation.clusters),
-                          operation.name,
-                        ]}
-                      />
-                      <Container>
-                        <C.List
-                          title={t.t(
-                            lang,
-                            (s) => s.routes.operations.clusters.listHeader
-                          )}
-                        >
-                          {clusters
-                            .sort((c1, c2) => (c1.name > c2.name ? 1 : -1))
-                            .map((cluster) => (
-                              <C.ListItem
-                                key={cluster.id}
-                                text={cluster.name}
-                                link={paths.operationCluster({
-                                  operationId: operation.id,
-                                  clusterId: cluster.id,
-                                })}
-                              />
-                            ))}
-                        </C.List>
-                      </Container>
-                    </>
+                    <OperationClusterMatch {...props} clusters={clusters} />
                   }
                 />
                 <Route

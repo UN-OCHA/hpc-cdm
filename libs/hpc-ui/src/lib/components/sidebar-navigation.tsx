@@ -19,7 +19,7 @@ export interface SidebarNavigationItem {
 
 interface Props {
   menu: Array<SidebarNavigationItem | undefined | null | false>;
-  children?: JSX.Element | JSX.Element[];
+  children?: React.ReactElement | React.ReactElement[];
 }
 
 const Wrapper = styled.div`

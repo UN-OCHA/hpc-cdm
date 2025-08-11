@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes, useParams } from 'react-router';
 
-import { type operations } from '@unocha/hpc-data';
+import { type operations, type reportingWindows } from '@unocha/hpc-data';
 import { C, styled } from '@unocha/hpc-ui';
 
 import { t } from '../../i18n';
@@ -11,7 +11,7 @@ import * as paths from '../paths';
 import ClusterNavigation from '../components/cluster-navigation';
 import FormAssignmentData from '../components/form-assignment-data';
 import OperationClusterFormAssignmentsList from '../components/operation-cluster-form-assignments-list';
-import PageMeta from '../components/page-meta';
+import { useTitle } from '../components/page-meta';
 import { RouteParamsValidator } from '../components/route-params-validator';
 import { prepareReportingWindowsAsSidebarNavigation } from '../utils/reportingWindows';
 
@@ -23,6 +23,43 @@ interface Props {
 
 type PageOperationClusterFormAssignmentsRouteParams = {
   windowId: string;
+};
+
+const FormAssignmentDataHeader = (
+  props: Props & {
+    assignment: reportingWindows.GetAssignmentResult;
+    window: operations.DetailedOperation['reportingWindows'][number];
+  }
+) => {
+  const { operation, cluster, assignment, window } = props;
+
+  useTitle([assignment.task.form.name, cluster.name, operation.name]);
+
+  return (
+    <ClusterNavigation
+      breadcrumbs={[
+        {
+          to: paths.operationClusterFormAssignments({
+            operationId: operation.id,
+            clusterId: cluster.id,
+            windowId: window.id,
+          }),
+          label: window.name,
+        },
+        {
+          to: paths.operationClusterFormAssignmentData({
+            operationId: operation.id,
+            clusterId: cluster.id,
+            windowId: window.id,
+            assignmentId: assignment.id,
+          }),
+          label: assignment.task.form.name,
+        },
+      ]}
+      operation={operation}
+      cluster={cluster}
+    />
+  );
 };
 
 const PageOperationClusterFormAssignments = (props: Props) => {
@@ -80,38 +117,11 @@ const PageOperationClusterFormAssignments = (props: Props) => {
                   element={
                     <FormAssignmentData
                       header={(assignment) => (
-                        <>
-                          <PageMeta
-                            title={[
-                              assignment.task.form.name,
-                              cluster.name,
-                              operation.name,
-                            ]}
-                          />
-                          <ClusterNavigation
-                            breadcrumbs={[
-                              {
-                                to: paths.operationClusterFormAssignments({
-                                  operationId: operation.id,
-                                  clusterId: cluster.id,
-                                  windowId: window.id,
-                                }),
-                                label: window.name,
-                              },
-                              {
-                                to: paths.operationClusterFormAssignmentData({
-                                  operationId: operation.id,
-                                  clusterId: cluster.id,
-                                  windowId: window.id,
-                                  assignmentId: assignment.id,
-                                }),
-                                label: assignment.task.form.name,
-                              },
-                            ]}
-                            operation={operation}
-                            cluster={cluster}
-                          />
-                        </>
+                        <FormAssignmentDataHeader
+                          {...props}
+                          assignment={assignment}
+                          window={window}
+                        />
                       )}
                       {...{ window }}
                     />

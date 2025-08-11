@@ -15,7 +15,7 @@ interface Props {
     info?: string;
   };
   icon?: IconType | false;
-  buttons?: JSX.Element[] | JSX.Element;
+  buttons?: React.ReactElement[] | React.ReactElement;
 }
 const ErrorMessage = ({
   className,

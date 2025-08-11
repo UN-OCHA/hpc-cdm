@@ -1,13 +1,13 @@
 import { C } from '@unocha/hpc-ui';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { useParams } from 'react-router';
 import { t } from '../../i18n';
 import { AppContext } from '../context';
 
 interface Props {
-  element: JSX.Element;
+  element: React.ReactElement;
   routeParams: string[];
-  errorElement?: JSX.Element;
+  errorElement?: React.ReactElement;
 }
 
 export const RouteParamsValidator = (props: Props) => {

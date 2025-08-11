@@ -1,7 +1,7 @@
 import { ThemeProvider as MUIThemeProvider } from '@mui/material';
 import { arSA, enUS, esES, frFR, zhCN } from '@mui/material/locale';
 import { createTheme, type ThemeOptions } from '@mui/material/styles';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 /**
  * Extend `Theme` so typescript can pickup custom Theme
@@ -152,7 +152,7 @@ const localeMapper = {
 };
 
 export const ThemeProvider = (props: {
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactElement | React.ReactElement[];
   language?: keyof typeof localeMapper;
 }) => {
   const { language, children } = props;

@@ -13,8 +13,8 @@ import { t } from '../../../i18n';
 import OrganizationForm, {
   type AddEditOrganizationValues,
 } from '../../components/organization-form';
-import PageMeta from '../../components/page-meta';
-import { AppContext, getEnv } from '../../context';
+import { useTitle } from '../../components/page-meta';
+import { getContext } from '../../context';
 import { TOAST_CONFIG } from '../../utils/constants';
 import { defaultOptions } from '../../utils/fn-promises';
 
@@ -214,10 +214,16 @@ const getOrganizationData = async (
 
 export default (props: Props) => {
   const { id } = useParams<OrganizationRouteParams>();
+  const { lang, env: getEnv } = getContext();
   const env = getEnv();
 
   const locationState: { successMessage?: string } | null = useLocation().state;
 
+  useTitle([
+    t.t(lang, (s) => s.routes.organization.title, {
+      id: id ?? '',
+    }),
+  ]);
   useEffect(() => {
     if (locationState?.successMessage) {
       toast.success(locationState.successMessage, TOAST_CONFIG);
@@ -226,85 +232,71 @@ export default (props: Props) => {
 
   const [state, load] = useDataLoader([id], () => getOrganizationData(env, id));
   return (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <div
-          className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
-        >
-          <PageMeta
-            title={[
-              t.t(lang, (s) => s.routes.organization.title, {
-                id: id ?? '',
-              }),
-            ]}
-          />
-          <Container>
-            <LandingContainer>
-              <C.Loader
-                loader={state}
-                strings={{
-                  ...t.get(lang, (s) => s.components.loader),
-                  notFound: {
-                    ...t.get(lang, (s) => s.components.notFound),
-                    ...t.get(lang, (s) => s.components.flowsTable.notFound),
-                  },
-                }}
-              >
-                {(orgData) => {
-                  const [
-                    data,
-                    initialValues,
-                    organizationLevels,
-                    organizationTypes,
-                  ] = orgData;
-                  if (!data || !initialValues) {
-                    return (
-                      <PaddingContainer>
-                        <C.PageTitle style={{ marginBottom: 0 }}>
-                          {t.t(
-                            lang,
-                            (s) =>
-                              s.components.organizationUpdateCreate.title.create
-                          )}
-                        </C.PageTitle>
-                        <InfoText>
-                          {t.t(
-                            lang,
-                            (s) =>
-                              s.components.organizationUpdateCreate.text.create
-                          )}
-                        </InfoText>
-                        <OrganizationForm
-                          organizationLevels={organizationLevels}
-                          organizationTypes={organizationTypes}
-                        />
-                      </PaddingContainer>
-                    );
-                  }
-                  return (
-                    <PaddingContainer>
-                      <C.PageTitle>{data.name}</C.PageTitle>
-                      <InfoText>
-                        {t.t(
-                          lang,
-                          (s) => s.components.organizationUpdateCreate.text.edit
-                        )}
-                      </InfoText>
-                      <OrganizationForm
-                        organizationLevels={organizationLevels}
-                        organizationTypes={organizationTypes}
-                        initialValues={initialValues}
-                        id={data.id}
-                        load={load}
-                      />
-                    </PaddingContainer>
-                  );
-                }}
-              </C.Loader>
-            </LandingContainer>
-          </Container>
-        </div>
-      )}
-    </AppContext.Consumer>
+    <div className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}>
+      <Container>
+        <LandingContainer>
+          <C.Loader
+            loader={state}
+            strings={{
+              ...t.get(lang, (s) => s.components.loader),
+              notFound: {
+                ...t.get(lang, (s) => s.components.notFound),
+                ...t.get(lang, (s) => s.components.flowsTable.notFound),
+              },
+            }}
+          >
+            {(orgData) => {
+              const [
+                data,
+                initialValues,
+                organizationLevels,
+                organizationTypes,
+              ] = orgData;
+              if (!data || !initialValues) {
+                return (
+                  <PaddingContainer>
+                    <C.PageTitle style={{ marginBottom: 0 }}>
+                      {t.t(
+                        lang,
+                        (s) =>
+                          s.components.organizationUpdateCreate.title.create
+                      )}
+                    </C.PageTitle>
+                    <InfoText>
+                      {t.t(
+                        lang,
+                        (s) => s.components.organizationUpdateCreate.text.create
+                      )}
+                    </InfoText>
+                    <OrganizationForm
+                      organizationLevels={organizationLevels}
+                      organizationTypes={organizationTypes}
+                    />
+                  </PaddingContainer>
+                );
+              }
+              return (
+                <PaddingContainer>
+                  <C.PageTitle>{data.name}</C.PageTitle>
+                  <InfoText>
+                    {t.t(
+                      lang,
+                      (s) => s.components.organizationUpdateCreate.text.edit
+                    )}
+                  </InfoText>
+                  <OrganizationForm
+                    organizationLevels={organizationLevels}
+                    organizationTypes={organizationTypes}
+                    initialValues={initialValues}
+                    id={data.id}
+                    load={load}
+                  />
+                </PaddingContainer>
+              );
+            }}
+          </C.Loader>
+        </LandingContainer>
+      </Container>
+    </div>
   );
 };

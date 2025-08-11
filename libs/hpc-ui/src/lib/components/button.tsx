@@ -25,7 +25,7 @@ export type ButtonColor = keyof typeof COLOR_CLS;
 
 interface Props {
   className?: string;
-  children?: JSX.Element | JSX.Element[];
+  children?: React.ReactElement | React.ReactElement[];
   color: ButtonColor;
   behaviour:
     | {

@@ -107,107 +107,125 @@ export const App = () => {
           const env = context.env();
           return (
             <AppContext.Provider value={{ lang, ...context }}>
-              <PageMeta />
-              <Container>
-                {environmentWarning(env, lang)}
-                <Header
-                  session={env.session}
-                  language={LANGUAGE_CHOICE}
-                  strings={t.get(lang, (s) => s.user)}
-                  userMenu={[
-                    {
-                      label: t.t(lang, (s) => s.user.logout),
-                      onClick: env.session.logOut,
-                    },
-                  ]}
-                />
-                <Main>
-                  {env.session.getUser() ? (
-                    <LoggedInContainer>
-                      <C.MainNavigation
-                        homeLink={paths.home()}
-                        appTitle={appTitle}
-                        tabs={[
-                          {
-                            label: t.t(lang, (s) => s.navigation.flows),
-                            path: paths.flows(),
-                          },
-                          {
-                            label: t.t(lang, (s) => s.navigation.pendingFlows),
-                            path: paths.pendingFlows(),
-                          },
-                          {
-                            label: t.t(lang, (s) => s.navigation.organizations),
-                            path: paths.organizations(),
-                          },
-                          {
-                            label: t.t(lang, (s) => s.navigation.keywords),
-                            path: paths.keywords(),
-                          },
-                          {
-                            label: t.t(lang, (s) => s.navigation.uploadXLSX),
-                            path: paths.uploadXLSX(),
-                          },
-                          {
-                            label: t.t(lang, (s) => s.navigation.addFlow),
-                            path: paths.addFlow(),
-                            icon: MdAdd,
-                            selected: false,
-                          },
-                        ]}
-                        className={CLASSES.CONTAINER.FLUID}
-                        externalLinks={[
-                          ...(env.externalUrls?.rpmBaseUrl
-                            ? [
-                                {
-                                  label: t.t(lang, (s) => s.navigation.rpm),
-                                  url: env.externalUrls.rpmBaseUrl,
-                                },
-                              ]
-                            : []),
-                          ...(env.externalUrls?.prismBaseUrl
-                            ? [
-                                {
-                                  label: t.t(lang, (s) => s.navigation.prism),
-                                  url: env.externalUrls.prismBaseUrl,
-                                },
-                              ]
-                            : []),
-                          ...(env.externalUrls?.ftsWebsiteBaseUrl
-                            ? [
-                                {
-                                  label: t.t(
-                                    lang,
-                                    (s) => s.navigation.ftsWebsite
-                                  ),
-                                  url: env.externalUrls.ftsWebsiteBaseUrl,
-                                },
-                              ]
-                            : []),
-                          ...(env.externalUrls?.helpUrl
-                            ? [
-                                {
-                                  label: t.t(lang, (s) => s.navigation.help),
-                                  url: env.externalUrls.helpUrl,
-                                },
-                              ]
-                            : []),
-                        ]}
-                      />
-                      <Outlet />
-                    </LoggedInContainer>
-                  ) : (
-                    <>
-                      <C.MainNavigation
-                        homeLink={paths.home()}
-                        appTitle={appTitle}
-                      />
-                      <PageNotLoggedIn />
-                    </>
-                  )}
-                </Main>
-              </Container>
-              <dialogs.Dialogs />
+              <PageMeta>
+                <>
+                  <Container>
+                    {environmentWarning(env, lang)}
+                    <Header
+                      session={env.session}
+                      language={LANGUAGE_CHOICE}
+                      strings={t.get(lang, (s) => s.user)}
+                      userMenu={[
+                        {
+                          label: t.t(lang, (s) => s.user.logout),
+                          onClick: env.session.logOut,
+                        },
+                      ]}
+                    />
+                    <Main>
+                      {env.session.getUser() ? (
+                        <LoggedInContainer>
+                          <C.MainNavigation
+                            homeLink={paths.home()}
+                            appTitle={appTitle}
+                            tabs={[
+                              {
+                                label: t.t(lang, (s) => s.navigation.flows),
+                                path: paths.flows(),
+                              },
+                              {
+                                label: t.t(
+                                  lang,
+                                  (s) => s.navigation.pendingFlows
+                                ),
+                                path: paths.pendingFlows(),
+                              },
+                              {
+                                label: t.t(
+                                  lang,
+                                  (s) => s.navigation.organizations
+                                ),
+                                path: paths.organizations(),
+                              },
+                              {
+                                label: t.t(lang, (s) => s.navigation.keywords),
+                                path: paths.keywords(),
+                              },
+                              {
+                                label: t.t(
+                                  lang,
+                                  (s) => s.navigation.uploadXLSX
+                                ),
+                                path: paths.uploadXLSX(),
+                              },
+                              {
+                                label: t.t(lang, (s) => s.navigation.addFlow),
+                                path: paths.addFlow(),
+                                icon: MdAdd,
+                                selected: false,
+                              },
+                            ]}
+                            className={CLASSES.CONTAINER.FLUID}
+                            externalLinks={[
+                              ...(env.externalUrls?.rpmBaseUrl
+                                ? [
+                                    {
+                                      label: t.t(lang, (s) => s.navigation.rpm),
+                                      url: env.externalUrls.rpmBaseUrl,
+                                    },
+                                  ]
+                                : []),
+                              ...(env.externalUrls?.prismBaseUrl
+                                ? [
+                                    {
+                                      label: t.t(
+                                        lang,
+                                        (s) => s.navigation.prism
+                                      ),
+                                      url: env.externalUrls.prismBaseUrl,
+                                    },
+                                  ]
+                                : []),
+                              ...(env.externalUrls?.ftsWebsiteBaseUrl
+                                ? [
+                                    {
+                                      label: t.t(
+                                        lang,
+                                        (s) => s.navigation.ftsWebsite
+                                      ),
+                                      url: env.externalUrls.ftsWebsiteBaseUrl,
+                                    },
+                                  ]
+                                : []),
+                              ...(env.externalUrls?.helpUrl
+                                ? [
+                                    {
+                                      label: t.t(
+                                        lang,
+                                        (s) => s.navigation.help
+                                      ),
+                                      url: env.externalUrls.helpUrl,
+                                    },
+                                  ]
+                                : []),
+                            ]}
+                          />
+                          <Outlet />
+                        </LoggedInContainer>
+                      ) : (
+                        <>
+                          <C.MainNavigation
+                            homeLink={paths.home()}
+                            appTitle={appTitle}
+                          />
+                          <PageNotLoggedIn />
+                        </>
+                      )}
+                    </Main>
+                  </Container>
+                  <dialogs.Dialogs />
+                </>
+              </PageMeta>
             </AppContext.Provider>
           );
         }}

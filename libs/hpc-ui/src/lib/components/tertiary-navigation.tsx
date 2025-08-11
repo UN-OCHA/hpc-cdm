@@ -16,7 +16,7 @@ interface Props {
     label: string;
     to: string;
   }>;
-  actions?: JSX.Element | JSX.Element[];
+  actions?: React.ReactElement | React.ReactElement[];
 }
 
 const Breadcrumbs = styled.div`

@@ -21,16 +21,16 @@ interface Props {
   /**
    * If set, display this element as additional information before the main text
    */
-  prefix?: JSX.Element | string;
+  prefix?: React.ReactElement | string;
   /**
    * If set, display this element as secondary information after the main text
    */
-  secondary?: JSX.Element | string;
+  secondary?: React.ReactElement | string;
   /**
    * If set, display this element as additional information before the action
    */
-  itemEnd?: JSX.Element;
-  actions?: JSX.Element | JSX.Element[];
+  itemEnd?: React.ReactElement;
+  actions?: React.ReactElement | React.ReactElement[];
   isMuted?: boolean;
 }
 

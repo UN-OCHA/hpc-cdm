@@ -2,11 +2,11 @@ import { C, CLASSES, combineClasses, styled } from '@unocha/hpc-ui';
 import { useCallback, useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
-import PageMeta from '../../components/page-meta';
+import { useTitle } from '../../components/page-meta';
 import KeywordTable, {
   type KeywordTableProps,
 } from '../../components/tables/keywords-table';
-import { AppContext } from '../../context';
+import { getContext } from '../../context';
 import { KEYWORD_PARAMS_CODEC } from '../../utils/codecs';
 import { encodeTableHeaders } from '../../utils/table-headers';
 import useQueryParams from '../../utils/useQueryParams';
@@ -28,6 +28,7 @@ const LandingContainer = styled.div`
   `}
 `;
 export default (props: Props) => {
+  const { lang } = getContext();
   const [query, setQuery] = useQueryParams({
     codec: KEYWORD_PARAMS_CODEC,
     initialValues: {
@@ -60,6 +61,7 @@ export default (props: Props) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useTitle([t.t(lang, (s) => s.routes.keywords.title)]);
 
   const keywordTableProps: KeywordTableProps = {
     query,
@@ -68,22 +70,13 @@ export default (props: Props) => {
   };
 
   return (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <div
-          className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
-        >
-          <PageMeta title={[t.t(lang, (s) => s.routes.keywords.title)]} />
-          <Container>
-            <LandingContainer>
-              <C.PageTitle>
-                {t.t(lang, (s) => s.routes.keywords.title)}
-              </C.PageTitle>
-              <KeywordTable {...keywordTableProps} />
-            </LandingContainer>
-          </Container>
-        </div>
-      )}
-    </AppContext.Consumer>
+    <div className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}>
+      <Container>
+        <LandingContainer>
+          <C.PageTitle>{t.t(lang, (s) => s.routes.keywords.title)}</C.PageTitle>
+          <KeywordTable {...keywordTableProps} />
+        </LandingContainer>
+      </Container>
+    </div>
   );
 };

@@ -4,11 +4,11 @@ import { t } from '../../../i18n';
 import FilterPendingFlowsTable, {
   PENDING_FLOWS_FILTER_INITIAL_VALUES,
 } from '../../components/filters/filter-pending-flows-table';
-import PageMeta from '../../components/page-meta';
+import { useTitle } from '../../components/page-meta';
 import FlowsTable, {
   type FlowsTableProps,
 } from '../../components/tables/flows-table';
-import { AppContext } from '../../context';
+import { getContext } from '../../context';
 import { FLOW_PARAMS_CODEC } from '../../utils/codecs';
 import { ROWS_PER_PAGE_OPTIONS } from '../../utils/constants';
 import { encodeTableHeaders } from '../../utils/table-headers';
@@ -31,6 +31,7 @@ const LandingContainer = styled.div`
 `;
 
 export default (props: Props) => {
+  const { lang } = getContext();
   const [query, setQuery] = useQueryParams({
     codec: FLOW_PARAMS_CODEC,
     initialValues: {
@@ -55,24 +56,19 @@ export default (props: Props) => {
     isPending: true,
   };
 
+  useTitle([t.t(lang, (s) => s.routes.pendingFlows.title)]);
+
   return (
-    <AppContext.Consumer>
-      {({ lang }) => (
-        <div
-          className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}
-        >
-          <PageMeta title={[t.t(lang, (s) => s.routes.pendingFlows.title)]} />
-          <Container>
-            <FilterPendingFlowsTable setQuery={setQuery} query={query} />
-            <LandingContainer>
-              <C.PageTitle>
-                {t.t(lang, (s) => s.routes.pendingFlows.title)}
-              </C.PageTitle>
-              <FlowsTable {...pendingFlowsTableProps} />
-            </LandingContainer>
-          </Container>
-        </div>
-      )}
-    </AppContext.Consumer>
+    <div className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}>
+      <Container>
+        <FilterPendingFlowsTable setQuery={setQuery} query={query} />
+        <LandingContainer>
+          <C.PageTitle>
+            {t.t(lang, (s) => s.routes.pendingFlows.title)}
+          </C.PageTitle>
+          <FlowsTable {...pendingFlowsTableProps} />
+        </LandingContainer>
+      </Container>
+    </div>
   );
 };
