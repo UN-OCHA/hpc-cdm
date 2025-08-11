@@ -5,13 +5,13 @@ import { styled } from '../theme';
 
 export interface SectionProps {
   title: string;
-  type: 'primary' | 'secondary';
   children: React.ReactNode;
+  type?: 'primary' | 'secondary';
 }
+type SectionTypeProps = { type: 'primary' | 'secondary' };
 
-const SectionTitle = styled.summary(
-  ({ type }: { type: 'primary' | 'secondary' }) => [
-    tw`
+const SectionTitle = styled.summary<SectionTypeProps>(({ type }) => [
+  tw`
       font-bold
       m-0
       transition-all
@@ -21,8 +21,8 @@ const SectionTitle = styled.summary(
       cursor-pointer
       [&::-webkit-details-marker]:hidden
     `,
-    type === 'primary'
-      ? tw`
+  type === 'primary'
+    ? tw`
         flex
         justify-between 
         uppercase
@@ -30,24 +30,21 @@ const SectionTitle = styled.summary(
         text-2xl
         text-unocha-pallete-blue-dark2
       `
-      : tw`text-right [&>svg]:ms-2 text-unocha-pallete-blue text-xl`,
-  ]
-);
-const SectionContainer = styled.details(
-  ({ type }: { type: 'primary' | 'secondary' }) => [
-    tw`open:[&>summary]:mb-6`,
-    type === 'primary'
-      ? tw`p-4 hover:bg-unocha-panel-bgHover open:hover:bg-white`
-      : tw`p-0 w-full`,
-  ]
-);
+    : tw`text-right [&>svg]:ms-2 text-unocha-pallete-blue text-xl`,
+]);
+const SectionContainer = styled.details<SectionTypeProps>(({ type }) => [
+  tw`open:[&>summary]:mb-6`,
+  type === 'primary'
+    ? tw`p-4 hover:bg-unocha-panel-bgHover open:hover:bg-white`
+    : tw`p-0 w-full`,
+]);
 
 const Container = tw.div`
   flex
   flex-wrap
   gap-8
 `;
-const Section = ({ title, type, children }: SectionProps) => {
+const Section = ({ title, type = 'primary', children }: SectionProps) => {
   const [isOpen, setIsOpen] = React.useState(type !== 'primary');
 
   return (
@@ -65,7 +62,4 @@ const Section = ({ title, type, children }: SectionProps) => {
   );
 };
 
-Section.defaultProps = {
-  type: 'primary',
-};
 export default Section;

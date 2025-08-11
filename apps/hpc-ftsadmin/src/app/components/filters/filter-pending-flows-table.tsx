@@ -10,22 +10,22 @@ import {
   fnLocations,
   fnOrganizations,
   fnUsageYears,
+  usageYearFirstViewCondition,
 } from '../../utils/fn-promises';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
 import type { FlowQuery, SetQuery } from '../tables/table-utils';
 interface Props {
   query: FlowQuery;
   setQuery: SetQuery<FlowQuery>;
-  handleAbortController: () => void;
 }
 export interface PendingFlowsFilterValues {
   status?: util.FormObjectValue | null;
   dataProvider?: util.FormObjectValue | null;
   reporterRefCode?: string;
   sourceOrganizations?: util.FormObjectValue[];
-  sourceCountries?: util.FormObjectValue[];
+  sourceLocations?: util.FormObjectValue[];
   destinationOrganizations?: util.FormObjectValue[];
-  destinationCountries?: util.FormObjectValue[];
+  destinationLocations?: util.FormObjectValue[];
   destinationUsageYears?: util.FormObjectValue[];
   includeChildrenOfParkedFlows?: boolean;
 }
@@ -35,9 +35,9 @@ export const PENDING_FLOWS_FILTER_INITIAL_VALUES: PendingFlowsFilterValues = {
   dataProvider: null,
   reporterRefCode: '',
   sourceOrganizations: [],
-  sourceCountries: [],
+  sourceLocations: [],
   destinationOrganizations: [],
-  destinationCountries: [],
+  destinationLocations: [],
   destinationUsageYears: [],
   includeChildrenOfParkedFlows: false,
 };
@@ -49,22 +49,15 @@ const StyledDiv = tw.div`
   gap-x-4
 `;
 export const FilterPendingFlowsTable = (props: Props) => {
-  const { setQuery, query, handleAbortController } = props;
+  const { setQuery, query } = props;
   const { lang, env } = useContext(AppContext);
   const environment = env();
 
   const handleSubmit = (values: PendingFlowsFilterValues) => {
-    const encodedFilters = encodeFilters(
-      values,
-      PENDING_FLOWS_FILTER_INITIAL_VALUES
-    );
-    if (query.filters !== encodedFilters) {
-      handleAbortController();
-    }
     setQuery({
       ...query,
       page: 0,
-      filters: encodedFilters,
+      filters: encodeFilters(values, PENDING_FLOWS_FILTER_INITIAL_VALUES),
     });
   };
   const handleResetForm = (
@@ -72,14 +65,8 @@ export const FilterPendingFlowsTable = (props: Props) => {
       nextState?: Partial<FormikState<PendingFlowsFilterValues>>
     ) => void
   ) => {
-    const encodedFilters = encodeFilters(
-      {},
-      PENDING_FLOWS_FILTER_INITIAL_VALUES
-    );
     formikResetForm();
-    if (query.filters !== encodedFilters) {
-      handleAbortController();
-    }
+
     //  We need to delay this action in a synchronous way to avoid
     //  calling 2 setState() actions in an uncontrolled way that could
     //  mess with internal React's component update cycle
@@ -87,7 +74,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
       setQuery({
         ...query,
         page: 0,
-        filters: encodedFilters,
+        filters: encodeFilters({}, PENDING_FLOWS_FILTER_INITIAL_VALUES),
       });
     });
   };
@@ -151,13 +138,12 @@ export const FilterPendingFlowsTable = (props: Props) => {
                 }}
                 isAutocompleteAPI={false}
               />
-              <C.NumberField
+              <C.TextFieldWrapper
                 label={t.t(
                   lang,
                   (s) => s.components.pendingFlowsFilter.filters.reporterRefCode
                 )}
                 name="reporterRefCode"
-                type="number"
               />
             </C.Section>
             <C.Section
@@ -181,7 +167,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                   lang,
                   (s) => s.components.pendingFlowsFilter.filters.sourceLocations
                 )}
-                name="sourceCountries"
+                name="sourceLocations"
                 fnPromise={(query) => fnLocations(query, environment)}
                 isMulti
               />
@@ -210,7 +196,7 @@ export const FilterPendingFlowsTable = (props: Props) => {
                   (s) =>
                     s.components.pendingFlowsFilter.filters.destinationLocations
                 )}
-                name="destinationCountries"
+                name="destinationLocations"
                 fnPromise={(query) => fnLocations(query, environment)}
                 isMulti
               />
@@ -223,8 +209,9 @@ export const FilterPendingFlowsTable = (props: Props) => {
                 )}
                 name="destinationUsageYears"
                 fnPromise={() => fnUsageYears(environment)}
-                isMulti
+                firstViewCondition={usageYearFirstViewCondition}
                 isAutocompleteAPI={false}
+                isMulti
               />
             </C.Section>
             <C.CheckBox

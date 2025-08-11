@@ -1,19 +1,25 @@
-import React, { useContext } from 'react';
-import { Helmet } from 'react-helmet';
-
+import { useHead } from '@unhead/react';
+import { createHead, UnheadProvider } from '@unhead/react/client';
 import { t } from '../../i18n';
-import { AppContext } from '../context';
+import { getContext } from '../context';
 
 interface Props {
-  title?: string[];
+  children: React.ReactElement;
 }
 
-export const PageMeta = (props: Props) => {
-  const { title } = props;
-  const { lang } = useContext(AppContext);
-  const titleSegments = [...(title ?? []), t.t(lang, (s) => s.title)];
+const head = createHead();
 
-  return <Helmet title={titleSegments.join(' - ')} />;
+export const useTitle = (title: string[]) => {
+  const { lang } = getContext();
+  const titleSegments = [...title, t.t(lang, (s) => s.title)];
+
+  return useHead({
+    title: titleSegments.join(' - '),
+  });
 };
+
+export const PageMeta = (props: Props) => (
+  <UnheadProvider head={head}>{props.children}</UnheadProvider>
+);
 
 export default PageMeta;

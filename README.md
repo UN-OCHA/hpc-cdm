@@ -29,10 +29,13 @@ To run the app and connect to an API server
   interacting with
 - Run one of the following commands:
   - CDM
+
   ```bash
   npm run start hpc-cdm -- --configuration=dev-live
   ```
+
   - FTS Admin
+
   ```bash
   npm run start hpc-ftsadmin -- --configuration=dev-live
   ```

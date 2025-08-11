@@ -1,7 +1,5 @@
-import DownloadIcon from '@mui/icons-material/Download';
 import SettingsIcon from '@mui/icons-material/Settings';
 import {
-  Alert,
   Box,
   Modal,
   Table,
@@ -9,100 +7,108 @@ import {
   TableCell,
   TableContainer,
   TableFooter,
-  TableHead,
   TablePagination,
   TableRow,
   TableSortLabel,
 } from '@mui/material';
-import { util } from '@unocha/hpc-core';
+
 import { type organizations } from '@unocha/hpc-data';
-import { C, CLASSES, dataLoader } from '@unocha/hpc-ui';
+import { C, CLASSES, useDataLoader } from '@unocha/hpc-ui';
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
 import { type Strings } from '../../../i18n/iface';
 import { AppContext, getEnv } from '../../context';
-import * as paths from '../../paths';
-import { downloadExcel } from '../../utils/download-excel';
-import { type LocalStorageSchema } from '../../utils/local-storage-type';
-import { parseUpdatedCreatedBy } from '../../utils/map-functions';
+import paths from '../../paths';
+import { EMPTY_CELL } from '../../utils/constants';
 import {
-  type FilterKeys,
   decodeFilters,
   encodeFilters,
+  type FilterKey,
   isKey,
   parseFormFilters,
   parseOrganizationFilters,
 } from '../../utils/parse-filters';
 import {
-  type OrganizationHeaderID,
-  type TableHeadersProps,
   decodeTableHeaders,
   encodeTableHeaders,
+  getDraggableTableHeaders,
   isCompatibleTableHeaderType,
-  isTableHeadersPropsOrganization,
+  type OrganizationHeaderID,
 } from '../../utils/table-headers';
+import { parseUpdatedCreatedBy, valueToInteger } from '../../utils/utils';
 import { type OrganizationFilterValues } from '../filters/filter-organization-table';
+import InfoAlert from '../info-alert';
+import MergeModal from '../merge-modal';
+import NoResultTable from './no-result';
 import {
   ChipDiv,
   type OrganizationQuery,
   RenderChipsRow,
   type SetQuery,
+  StickyTableHead,
   StyledLoader,
   TableHeaderButton,
   TableRowClick,
   TopRowContainer,
-  handleTableSettingsInfoClose,
 } from './table-utils';
 
+const ButtonWrapper = tw.div`
+  self-center
+  me-4
+`;
 export interface OrganizationTableProps {
-  headers: Array<TableHeadersProps<OrganizationHeaderID>>;
   initialValues: OrganizationFilterValues;
-  rowsPerPageOption: number[];
+  rowsPerPageOptions: readonly number[];
   query: OrganizationQuery;
   setQuery: SetQuery<OrganizationQuery>;
+  abortSignal: AbortSignal;
 }
 
-const OrganizationTable = (props: OrganizationTableProps) => {
+export default function OrganizationTable(props: OrganizationTableProps) {
+  const { initialValues, rowsPerPageOptions, abortSignal } = props;
   const env = getEnv();
+
   const chipSpacing = { m: 0.5 };
-  const rowsPerPageOptions = props.rowsPerPageOption;
-  const filters = decodeFilters(props.query.filters, props.initialValues);
-  const [shouldDisplayTableInfo, setShouldDisplayTableInfo] = useState(
-    util.getLocalStorageItem<LocalStorageSchema>('tableSettings', true)
-  );
+
+  const [query, setQuery] = [props.query, props.setQuery];
+  const filters = decodeFilters(query.filters, initialValues);
   const parsedFilters = parseFormFilters<
     keyof Strings['components']['organizationsFilter']['filters'],
     OrganizationFilterValues
-  >(filters, props.initialValues);
-  const [query, setQuery] = [props.query, props.setQuery];
+  >(filters, initialValues);
+
   const [shouldOpenSettings, setShouldOpenSettings] = useState(false);
   const navigate = useNavigate();
-  const state = dataLoader([query], () =>
+
+  const { tableHeaders: queryTableHeaders, ...observableQueryParams } = query;
+
+  const [state, load] = useDataLoader([observableQueryParams], () =>
     env.model.organizations.searchOrganizations({
       search: {
         limit: query.rowsPerPage,
         offset: query.page * query.rowsPerPage,
         orderBy: query.orderBy,
         orderDir: query.orderDir,
+        signal: abortSignal,
         ...parseOrganizationFilters(parsedFilters).search,
       },
     })
   );
 
-  const handleChipDelete = <T extends FilterKeys>(fieldName: T) => {
+  const handleChipDelete = <T extends FilterKey>(fieldName: T) => {
     if (isKey(filters, fieldName)) {
       filters[fieldName] = undefined;
       setQuery({
         ...query,
         page: 0,
-        filters: encodeFilters(filters, props.initialValues),
+        filters: encodeFilters(filters, initialValues),
       });
     }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_: unknown, newPage: number) => {
     setQuery({
       ...query,
       page: newPage,
@@ -140,27 +146,27 @@ const OrganizationTable = (props: OrganizationTableProps) => {
     data,
   }: {
     lang: LanguageKey;
-    data: organizations.SearchOrnganizationResult;
+    data: organizations.SearchOrganizationResult;
   }) => {
-    const nonSafeTypedTableHeaders = decodeTableHeaders(
-      query.tableHeaders,
+    const tableHeaders = decodeTableHeaders({
+      queryParam: queryTableHeaders,
       lang,
-      'organizations'
-    );
-    const tableHeaders = isTableHeadersPropsOrganization(
-      nonSafeTypedTableHeaders
-    )
-      ? nonSafeTypedTableHeaders
-      : [];
+      table: 'organizations',
+    });
     return (
       <>
         {data.organizations.map((row) => (
           <TableRowClick
             key={`${row.id}`}
             onClick={() => navigate(paths.organization(row.id))}
+            sx={{
+              '&:hover': {
+                backgroundColor: tw`bg-unocha-primary bg-opacity-10`,
+              },
+            }}
           >
             {tableHeaders.map((column) => {
-              if (!column.active) {
+              if (!column.isActive) {
                 return null;
               }
               switch (column.identifierID) {
@@ -211,7 +217,9 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                             cat.group === 'organizationType' &&
                             cat.parentID === null
                         );
-                        return res.length > 0 ? res.map((x) => x.name) : '--';
+                        return res.length > 0
+                          ? res.map((x) => x.name)
+                          : EMPTY_CELL;
                       })()}
                     </TableCell>
                   );
@@ -228,7 +236,9 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                             cat.group === 'organizationType' &&
                             cat.parentID !== null
                         );
-                        return res.length > 0 ? res.map((x) => x.name) : '--';
+                        return res.length > 0
+                          ? res.map((x) => x.name)
+                          : EMPTY_CELL;
                       })()}
                     </TableCell>
                   );
@@ -240,8 +250,13 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                       data-test="organization-table-location"
                     >
                       {row.locations.length > 0
-                        ? row.locations.map((x) => x.name)
-                        : '--'}
+                        ? row.locations.map(
+                            (x, index) =>
+                              `${x.name}${
+                                index === row.locations.length - 1 ? '' : ', '
+                              }`
+                          )
+                        : EMPTY_CELL}
                     </TableCell>
                   );
                 case 'organization.createdBy':
@@ -251,7 +266,7 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                       size="small"
                       data-test="organization-table-created-by"
                     >
-                      {parseUpdatedCreatedBy(row.create, lang)}
+                      {parseUpdatedCreatedBy(row.create)}
                       {}
                     </TableCell>
                   );
@@ -262,7 +277,7 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                       size="small"
                       data-test="organization-table-updated-by"
                     >
-                      {parseUpdatedCreatedBy(row.update, lang)}
+                      {parseUpdatedCreatedBy(row.update)}
                     </TableCell>
                   );
                 default:
@@ -279,24 +294,19 @@ const OrganizationTable = (props: OrganizationTableProps) => {
     data,
   }: {
     lang: LanguageKey;
-    data: organizations.SearchOrnganizationResult;
+    data: organizations.SearchOrganizationResult;
   }) => {
-    const nonSafeTypedTableHeaders = decodeTableHeaders(
-      query.tableHeaders,
+    const tableHeaders = decodeTableHeaders({
+      queryParam: queryTableHeaders,
       lang,
-      'organizations'
-    );
-    const tableHeaders = isTableHeadersPropsOrganization(
-      nonSafeTypedTableHeaders
-    )
-      ? nonSafeTypedTableHeaders
-      : [];
+      table: 'organizations',
+    });
     return (
       <Table size="small">
-        <TableHead>
+        <StickyTableHead>
           <TableRow>
             {tableHeaders.map((header) => {
-              if (!header.active) {
+              if (!header.isActive) {
                 return null;
               }
               return (
@@ -304,13 +314,13 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                   size="small"
                   key={`${header.identifierID}_${header.label}`}
                   data-test={`header-${header.label}`}
-                  {...(header.sortable &&
+                  {...(header.isSortable &&
                     query.orderBy === header.identifierID && {
                       'aria-sort':
                         query.orderDir === 'ASC' ? 'ascending' : 'descending',
                     })}
                 >
-                  {header.sortable ? (
+                  {header.isSortable ? (
                     <TableSortLabel
                       active={query.orderBy === header.identifierID}
                       direction={
@@ -327,28 +337,28 @@ const OrganizationTable = (props: OrganizationTableProps) => {
                       <span className={CLASSES.VISUALLY_HIDDEN}>
                         {t.t(
                           lang,
-                          (s) => s.components.organizationTable.sortBy
+                          (s) => s.components.organizationsTable.sortBy
                         )}
                         <br />
                       </span>
                       {t.t(
                         lang,
                         (s) =>
-                          s.components.organizationTable.headers[header.label]
+                          s.components.organizationsTable.headers[header.label]
                       )}
                     </TableSortLabel>
                   ) : (
                     t.t(
                       lang,
                       (s) =>
-                        s.components.organizationTable.headers[header.label]
+                        s.components.organizationsTable.headers[header.label]
                     )
                   )}
                 </TableCell>
               );
             })}
           </TableRow>
-        </TableHead>
+        </StickyTableHead>
         <TableBody>
           <TableRowsComponent lang={lang} data={data} />
         </TableBody>
@@ -366,161 +376,152 @@ const OrganizationTable = (props: OrganizationTableProps) => {
             ...t.get(lang, (s) => s.components.loader),
             notFound: {
               ...t.get(lang, (s) => s.components.notFound),
-              ...t.get(lang, (s) => s.components.organizationTable.notFound),
+              ...t.get(lang, (s) => s.components.organizationsTable.notFound),
             },
           }}
         >
-          {(data) => (
-            <>
-              <ChipDiv>
-                <RenderChipsRow
-                  tableType="organizationsFilter"
-                  tableFilters={parsedFilters}
-                  lang={lang}
-                  chipSpacing={chipSpacing}
-                  handleChipDelete={handleChipDelete}
-                />
-                <TopRowContainer>
-                  <Link
-                    style={{ alignSelf: 'center' }}
-                    to={paths.addOrganization()}
-                  >
-                    Add Organization
-                  </Link>
-                  <C.AsyncIconButton
-                    fnPromise={() =>
-                      downloadExcel<organizations.SearchOrganiation>(
-                        data.organizations,
-                        'export'
-                      )
-                    }
-                    IconComponent={DownloadIcon}
+          {(data) => {
+            if (parseInt(data.count) === 0) {
+              return <NoResultTable />;
+            }
+            return (
+              <>
+                <ChipDiv>
+                  <RenderChipsRow
+                    tableType="organizationsFilter"
+                    tableFilters={parsedFilters}
+                    lang={lang}
+                    chipSpacing={chipSpacing}
+                    handleChipDelete={handleChipDelete}
                   />
-                  <TableHeaderButton
-                    size="small"
-                    onClick={() => setShouldOpenSettings(!shouldOpenSettings)}
-                  >
-                    <SettingsIcon />
-                  </TableHeaderButton>
-                  <Modal
-                    open={shouldOpenSettings}
-                    onClose={() => setShouldOpenSettings(!shouldOpenSettings)}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Box
+                  <TopRowContainer>
+                    <ButtonWrapper>
+                      <C.ButtonLink
+                        to={paths.addOrganization()}
+                        text={t.t(
+                          lang,
+                          (s) => s.components.organizationsTable.addOrganization
+                        )}
+                        color="neutral"
+                      />
+                    </ButtonWrapper>
+                    <MergeModal type="organization" load={load} />
+                    <TableHeaderButton
+                      size="small"
+                      onClick={() => setShouldOpenSettings(!shouldOpenSettings)}
+                    >
+                      <SettingsIcon />
+                    </TableHeaderButton>
+                    <Modal
+                      open={shouldOpenSettings}
+                      onClose={() => setShouldOpenSettings(!shouldOpenSettings)}
                       sx={{
-                        maxHeight: '70vh',
-                        overflowY: 'scroll',
-                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}
                     >
-                      <C.DraggableList
-                        title={t.t(
-                          lang,
-                          (s) =>
-                            s.components.organizationTable.tableSettings.title
-                        )}
-                        buttonText={t.t(
-                          lang,
-                          (s) =>
-                            s.components.organizationTable.tableSettings.save
-                        )}
-                        queryValues={decodeTableHeaders(
-                          query.tableHeaders,
-                          lang,
-                          'organizations',
-                          query,
-                          setQuery
-                        )}
-                        onClick={(element) => {
-                          if (isCompatibleTableHeaderType(element)) {
-                            setQuery({
-                              ...query,
-                              tableHeaders: encodeTableHeaders(
-                                element,
-                                'organizations',
-                                query,
-                                setQuery
-                              ),
-                            });
-                          }
-                        }}
-                        elevation={6}
+                      <Box
                         sx={{
-                          width: '400px',
-                          height: 'fit-content',
+                          maxHeight: '70vh',
+                          overflowY: 'auto',
+                          borderRadius: '10px',
                         }}
-                        children={
-                          <Alert
-                            severity="info"
-                            onClose={() =>
-                              handleTableSettingsInfoClose(
-                                setShouldDisplayTableInfo
-                              )
+                      >
+                        <C.DraggableList
+                          title={t.t(
+                            lang,
+                            (s) =>
+                              s.components.organizationsTable.tableSettings
+                                .title
+                          )}
+                          buttonText={t.t(
+                            lang,
+                            (s) =>
+                              s.components.organizationsTable.tableSettings.save
+                          )}
+                          queryValues={getDraggableTableHeaders({
+                            queryParam: queryTableHeaders,
+                            lang,
+                            table: 'organizations',
+                            query,
+                            setQuery,
+                          })}
+                          onClick={(element) => {
+                            if (isCompatibleTableHeaderType(element)) {
+                              setQuery({
+                                ...query,
+                                tableHeaders: encodeTableHeaders({
+                                  headers: element,
+                                  table: 'organizations',
+                                  query,
+                                  setQuery,
+                                }),
+                              });
                             }
-                            sx={{
-                              display: shouldDisplayTableInfo ? 'flex' : 'none',
-                              ...tw`mx-8 mt-4`,
-                            }}
-                          >
-                            {t.t(
-                              lang,
-                              (s) =>
-                                s.components.organizationTable.tableSettings
-                                  .info
-                            )}
-                          </Alert>
-                        }
-                      />
-                    </Box>
-                  </Modal>
-                  <TablePagination
-                    sx={{ display: 'block' }}
-                    rowsPerPageOptions={rowsPerPageOptions}
-                    component="div"
-                    count={parseInt(data.count)}
-                    rowsPerPage={query.rowsPerPage}
-                    page={query.page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                  />
-                </TopRowContainer>
-              </ChipDiv>
+                          }}
+                          setOpenSettings={setShouldOpenSettings}
+                          elevation={6}
+                          sx={{
+                            width: '400px',
+                            height: 'fit-content',
+                          }}
+                          children={
+                            <InfoAlert
+                              text={t.t(
+                                lang,
+                                (s) =>
+                                  s.components.flowsTable.tableSettings.info
+                              )}
+                              localStorageKey="tableSettings"
+                              sxProps={tw`mx-8 mt-4`}
+                            />
+                          }
+                        />
+                      </Box>
+                    </Modal>
+                    <TablePagination
+                      sx={{ display: 'block' }}
+                      rowsPerPageOptions={rowsPerPageOptions}
+                      component="div"
+                      count={valueToInteger(data.count)}
+                      rowsPerPage={query.rowsPerPage}
+                      page={query.page}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                  </TopRowContainer>
+                </ChipDiv>
 
-              <Box sx={{ overflowX: 'auto' }}>
-                <TableContainer
-                  sx={{
-                    width: '100%',
-                    display: 'table',
-                    tableLayout: 'fixed',
-                    lineHeight: '1.35',
-                    fontSize: '1.32rem',
-                  }}
-                >
-                  <TableComponent lang={lang} data={data} />
-                </TableContainer>
-              </Box>
-              <TablePagination
-                sx={{ display: 'block' }}
-                data-test="flows-table-pagination"
-                rowsPerPageOptions={rowsPerPageOptions}
-                component="div"
-                count={parseInt(data.count)}
-                rowsPerPage={query.rowsPerPage}
-                page={query.page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </>
-          )}
+                <Box sx={{ overflowX: 'auto' }}>
+                  <TableContainer
+                    sx={{
+                      width: '100%',
+                      display: 'table',
+                      tableLayout: 'fixed',
+                      lineHeight: '1.35',
+                      fontSize: '1.32rem',
+                    }}
+                  >
+                    <TableComponent lang={lang} data={data} />
+                  </TableContainer>
+                </Box>
+                <TablePagination
+                  sx={tw`shrink-0`}
+                  data-test="flows-table-pagination"
+                  rowsPerPageOptions={rowsPerPageOptions}
+                  component="div"
+                  count={valueToInteger(data.count)}
+                  rowsPerPage={query.rowsPerPage}
+                  page={query.page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </>
+            );
+          }}
         </StyledLoader>
       )}
     </AppContext.Consumer>
   );
-};
-
-export default OrganizationTable;
+}

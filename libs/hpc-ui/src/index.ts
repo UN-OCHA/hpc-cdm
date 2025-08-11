@@ -7,15 +7,28 @@ import DevEnvWarning from './lib/components/development-environment-warning';
 import Divider from './lib/components/divider';
 import DraggableList from './lib/components/draggable-list';
 import ErrorMessage from './lib/components/error-message';
-import ErrorAlert from './lib/components/error-message-alert';
-import AsyncAutocompleteSelect from './lib/components/form-fields/async-autocomplete-field';
-import AutocompleteSelect from './lib/components/form-fields/autocomplete-field';
+import AsyncAutocompleteSelect, {
+  type AsyncAutocompleteSelectProps as AsyncAutocompleteSelectExportProps,
+} from './lib/components/form-fields/async-autocomplete-select-field';
+import AutocompleteSelect, {
+  type AutocompleteSelectProps as AutocompleteSelectExportProps,
+} from './lib/components/form-fields/autocomplete-select-field';
 import CheckBox from './lib/components/form-fields/checkbox';
-import DatePicker from './lib/components/form-fields/date-picker';
+import DatePicker, {
+  type DatePickerProps as DatePickerExportProps,
+} from './lib/components/form-fields/date-picker';
 import MultiTextField from './lib/components/form-fields/multi-text-field';
-import NumberField from './lib/components/form-fields/number-field';
+import NumberField, {
+  type NumberFieldProps as NumberFieldExportProps,
+} from './lib/components/form-fields/number-field';
+import RadioButtonField, {
+  type RadioButtonFieldProps as RadioButtonFieldExportProps,
+} from './lib/components/form-fields/radio-button-field';
 import Switch from './lib/components/form-fields/switch';
-import TextFieldWrapper from './lib/components/form-fields/text-field';
+import TextFieldWrapper, {
+  type TextFieldWrapperProps as TextFieldWrapperExportProps,
+} from './lib/components/form-fields/text-field';
+import UploadFile from './lib/components/form-fields/upload-file-field';
 import Header from './lib/components/header';
 import List from './lib/components/list';
 import ListItem from './lib/components/list-item';
@@ -50,7 +63,6 @@ const COMPONENTS = {
   Divider,
   DraggableList,
   ErrorMessage,
-  ErrorAlert,
   Header,
   List,
   ListItem,
@@ -60,6 +72,7 @@ const COMPONENTS = {
   NotFound,
   NumberField,
   PageTitle,
+  RadioButtonField,
   SidebarNavigation: sidebarNavigation.default,
   SearchFilter,
   Section,
@@ -68,6 +81,7 @@ const COMPONENTS = {
   TertiaryNavigation,
   TextFieldWrapper,
   Toolbar,
+  UploadFile,
 };
 
 const ICONS = {
@@ -77,6 +91,13 @@ const ICONS = {
 
 export type ActionableButtonState = actionableButton.ActionableButtonState;
 export type SidebarNavigationItem = sidebarNavigation.SidebarNavigationItem;
+export type AsyncAutocompleteSelectProps = AsyncAutocompleteSelectExportProps;
+export type TextFieldWrapperProps = TextFieldWrapperExportProps;
+export type AutocompleteSelectProps = AutocompleteSelectExportProps;
+export type NumberFieldProps = NumberFieldExportProps;
+export type RadioButtonFieldProps<T extends string> =
+  RadioButtonFieldExportProps<T>;
+export type DatePickerProps = DatePickerExportProps;
 
 export { COMPONENTS as C, ICONS };
 
@@ -85,4 +106,4 @@ export * as dialogs from './lib/components/dialogs';
 export { Translations } from './lib/i18n';
 export { BaseStyling } from './lib/styling';
 export { css, styled, THEME, ThemeProvider, type Theme } from './lib/theme';
-export { dataLoader, useDataLoader, type DataLoaderState } from './lib/util';
+export { useDataLoader, type DataLoaderState } from './lib/util';

@@ -1,0 +1,40 @@
+import { type AutocompleteSelectProps, C } from '@unocha/hpc-ui';
+import ReviewPendingValues, {
+  type ReviewPendingValuesProps,
+} from './review-pending-values';
+
+type AutocompleteSelectReviewProps = Omit<AutocompleteSelectProps, 'name'> &
+  Omit<ReviewPendingValuesProps, 'componentType'>;
+
+const AutocompleteSelectReview = (props: AutocompleteSelectReviewProps) => {
+  const {
+    fieldName,
+    pendingValues,
+    setPendingValuesHandled,
+    onClick,
+    shouldAcceptChange,
+    ...asyncAutocompleteSelectProps
+  } = props;
+
+  const reviewPendingValuesProps = {
+    fieldName,
+    pendingValues,
+    setPendingValuesHandled,
+    onClick,
+    shouldAcceptChange,
+  };
+  return (
+    <div>
+      <C.AutocompleteSelect
+        {...asyncAutocompleteSelectProps}
+        name={fieldName}
+      />
+      <ReviewPendingValues
+        {...reviewPendingValuesProps}
+        componentType="Autocomplete"
+      />
+    </div>
+  );
+};
+
+export default AutocompleteSelectReview;

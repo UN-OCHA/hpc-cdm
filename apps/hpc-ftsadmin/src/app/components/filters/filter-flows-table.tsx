@@ -1,10 +1,8 @@
 import { Form, Formik, type FormikState } from 'formik';
 import * as io from 'io-ts';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import tw from 'twin.macro';
 
-import { Alert } from '@mui/material';
-import { util as helper } from '@unocha/hpc-core';
 import { util } from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import { t } from '../../../i18n';
@@ -12,22 +10,24 @@ import { AppContext } from '../../context';
 import {
   fnCategories,
   fnEmergencies,
+  fnFlowStatusSnakeCase,
+  fnFlowTypeSnakeCase,
   fnGlobalClusters,
   fnLocations,
   fnOrganizations,
   fnPlans,
   fnProjects,
   fnUsageYears,
+  usageYearFirstViewCondition,
 } from '../../utils/fn-promises';
 import validateForm from '../../utils/form-validation';
-import { type LocalStorageSchema } from '../../utils/local-storage-type';
 import { decodeFilters, encodeFilters } from '../../utils/parse-filters';
+import InfoAlert from '../info-alert';
 import type { FlowQuery, SetQuery } from '../tables/table-utils';
 
 interface Props {
   query: FlowQuery;
   setQuery: SetQuery<FlowQuery>;
-  handleAbortController: () => void;
 }
 export interface FlowsFilterValues {
   flowID?: string[];
@@ -35,7 +35,7 @@ export interface FlowsFilterValues {
   keywords?: util.FormObjectValue[];
   flowStatus?: util.FormObjectValue | null;
   flowType?: util.FormObjectValue | null;
-  flowActiveStatus?: string;
+  flowActiveStatus?: util.FormObjectValue;
   reporterRefCode?: string;
   sourceSystemID?: string;
   legacyID?: string;
@@ -47,6 +47,7 @@ export interface FlowsFilterValues {
   sourceGlobalClusters?: util.FormObjectValue[];
   sourceEmergencies?: util.FormObjectValue[];
   destinationOrganizations?: util.FormObjectValue[];
+  destinationAnonymizedOrganizations?: util.FormObjectValue[];
   destinationLocations?: util.FormObjectValue[];
   destinationUsageYears?: util.FormObjectValue[];
   destinationProjects?: util.FormObjectValue[];
@@ -54,7 +55,6 @@ export interface FlowsFilterValues {
   destinationGlobalClusters?: util.FormObjectValue[];
   destinationEmergencies?: util.FormObjectValue[];
   includeChildrenOfParkedFlows?: boolean;
-  restricted?: boolean;
 }
 export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   flowID: [],
@@ -62,7 +62,7 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   keywords: [],
   flowStatus: null,
   flowType: null,
-  flowActiveStatus: '',
+  flowActiveStatus: { displayLabel: 'Active', value: 'true' },
   reporterRefCode: '',
   sourceSystemID: '',
   legacyID: '',
@@ -74,19 +74,26 @@ export const FLOWS_FILTER_INITIAL_VALUES: FlowsFilterValues = {
   sourceGlobalClusters: [],
   sourceEmergencies: [],
   destinationOrganizations: [],
+  destinationAnonymizedOrganizations: [],
   destinationLocations: [],
   destinationUsageYears: [],
   destinationProjects: [],
   destinationPlans: [],
   destinationGlobalClusters: [],
   destinationEmergencies: [],
-  includeChildrenOfParkedFlows: false,
-  restricted: false,
+  includeChildrenOfParkedFlows: true,
 };
 
-const FORM_VALIDATION = io.partial({
+const FORM_VALIDATION = io.type({
   flowID: io.array(util.POSITIVE_INTEGER_FROM_STRING),
 });
+
+const VALIDATION_ERROR_MESSAGES: Record<
+  keyof io.TypeOf<typeof FORM_VALIDATION>,
+  string
+> = {
+  flowID: 'Only numbers are allowed in this field',
+};
 
 const StyledDiv = tw.div`
   my-6
@@ -96,36 +103,20 @@ const StyledDiv = tw.div`
   gap-x-4
 `;
 export const FilterFlowsTable = (props: Props) => {
-  const { setQuery, query, handleAbortController } = props;
+  const { setQuery, query } = props;
 
   const { lang, env } = useContext(AppContext);
   const environment = env();
-  const [shouldDisplayInfoAlert, setShouldDisplayInfoAlert] = useState(
-    helper.getLocalStorageItem<LocalStorageSchema>('filterCommaSeparate', true)
-  );
 
   const queryFilters = decodeFilters(
     query.filters,
     FLOWS_FILTER_INITIAL_VALUES
   );
-  const handleInfoAlertClose = () => {
-    helper.setLocalStorageItem<LocalStorageSchema>(
-      'filterCommaSeparate',
-      false
-    );
-    setShouldDisplayInfoAlert(false);
-  };
-
   const handleSubmit = (values: FlowsFilterValues) => {
-    const encodedFilters = encodeFilters(values, FLOWS_FILTER_INITIAL_VALUES);
-
-    if (query.filters !== encodedFilters) {
-      handleAbortController();
-    }
     setQuery({
       ...query,
       page: 0,
-      filters: encodedFilters,
+      filters: encodeFilters(values, FLOWS_FILTER_INITIAL_VALUES),
     });
   };
   const handleResetForm = (
@@ -133,12 +124,8 @@ export const FilterFlowsTable = (props: Props) => {
       nextState?: Partial<FormikState<FlowsFilterValues>>
     ) => void
   ) => {
-    const encodedFilters = encodeFilters({}, FLOWS_FILTER_INITIAL_VALUES);
     formikResetForm();
 
-    if (query.filters !== encodedFilters) {
-      handleAbortController();
-    }
     //  We need to delay this action in a synchronous way to avoid
     //  calling 2 setState() actions in an uncontrolled way that could
     //  mess with internal React's component update cycle
@@ -146,7 +133,7 @@ export const FilterFlowsTable = (props: Props) => {
       setQuery({
         ...query,
         page: 0,
-        filters: encodedFilters,
+        filters: encodeFilters({}, FLOWS_FILTER_INITIAL_VALUES),
       });
     });
   };
@@ -155,7 +142,9 @@ export const FilterFlowsTable = (props: Props) => {
       <Formik
         enableReinitialize
         initialValues={queryFilters}
-        validate={(values) => validateForm(values, FORM_VALIDATION)}
+        validate={(values) =>
+          validateForm(values, FORM_VALIDATION, VALIDATION_ERROR_MESSAGES)
+        }
         onSubmit={handleSubmit}
       >
         {({ resetForm }) => (
@@ -174,30 +163,20 @@ export const FilterFlowsTable = (props: Props) => {
                 )}
               />
             </StyledDiv>
-            <C.Switch
-              name="restricted"
-              label={t.t(
-                lang,
-                (s) => s.components.flowsFilter.filters.restricted
-              )}
-              color="error"
-            />
             <C.Section
               title={t.t(
                 lang,
                 (s) => s.components.flowsFilter.headers.flowDetails
               )}
             >
-              <Alert
-                severity="info"
-                onClose={handleInfoAlertClose}
-                sx={{
-                  display: shouldDisplayInfoAlert ? 'flex' : 'none',
-                  ...tw`mt-4`,
-                }}
-              >
-                {t.t(lang, (s) => s.components.flowsFilter.info.filterInfo)}
-              </Alert>
+              <InfoAlert
+                text={t.t(
+                  lang,
+                  (s) => s.components.flowsFilter.info.filterInfo
+                )}
+                localStorageKey="filterCommaSeparate"
+                sxProps={tw`mt-4`}
+              />
               <C.MultiTextField
                 label={t.t(
                   lang,
@@ -215,6 +194,7 @@ export const FilterFlowsTable = (props: Props) => {
                   (s) => s.components.flowsFilter.filters.amountUSD
                 )}
                 name="amountUSD"
+                allowNegative
                 type="currency"
               />
               <C.AsyncAutocompleteSelect
@@ -237,22 +217,7 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.flowStatus
                   )}
                   name="flowStatus"
-                  fnPromise={async () => {
-                    const response =
-                      await environment.model.categories.getCategories({
-                        query: 'flowStatus',
-                      });
-                    return response.map(
-                      (responseValue): util.FormObjectValue => {
-                        return {
-                          displayLabel: responseValue.name,
-                          value: responseValue.name
-                            .toLowerCase()
-                            .replace(' ', '_'),
-                        };
-                      }
-                    );
-                  }}
+                  fnPromise={() => fnFlowStatusSnakeCase(environment)}
                   isAutocompleteAPI={false}
                 />
                 <C.AsyncAutocompleteSelect
@@ -261,20 +226,7 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.flowType
                   )}
                   name="flowType"
-                  fnPromise={async () => {
-                    const response =
-                      await environment.model.categories.getCategories({
-                        query: 'flowType',
-                      });
-                    return response.map((responseValue) => {
-                      return {
-                        displayLabel: responseValue.name,
-                        value: responseValue.name
-                          .toLocaleLowerCase()
-                          .replace(' ', '_'),
-                      };
-                    });
-                  }}
+                  fnPromise={() => fnFlowTypeSnakeCase(environment)}
                   isAutocompleteAPI={false}
                 />
                 <C.AutocompleteSelect
@@ -289,22 +241,19 @@ export const FilterFlowsTable = (props: Props) => {
                     { displayLabel: 'Inactive', value: 'false' },
                   ]}
                 />
-                <C.NumberField
+                <C.TextFieldWrapper
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.reporterRefCode
                   )}
-                  type="number"
                   name="reporterRefCode"
                 />
-                <C.NumberField
+                <C.TextFieldWrapper
                   label={t.t(
                     lang,
                     (s) => s.components.flowsFilter.filters.sourceSystemID
                   )}
                   name="sourceSystemID"
-                  allowNegative
-                  type="number"
                 />
                 <C.NumberField
                   label={t.t(
@@ -312,7 +261,7 @@ export const FilterFlowsTable = (props: Props) => {
                     (s) => s.components.flowsFilter.filters.legacyID
                   )}
                   name="legacyID"
-                  type="number"
+                  type="integer"
                 />
               </C.Section>
             </C.Section>
@@ -348,8 +297,9 @@ export const FilterFlowsTable = (props: Props) => {
                 )}
                 name="sourceUsageYears"
                 fnPromise={() => fnUsageYears(environment)}
-                isMulti
+                firstViewCondition={usageYearFirstViewCondition}
                 isAutocompleteAPI={false}
+                isMulti
               />
               <C.Section
                 title={t.t(lang, (s) => s.components.flowsFilter.showMore)}
@@ -413,6 +363,17 @@ export const FilterFlowsTable = (props: Props) => {
               <C.AsyncAutocompleteSelect
                 label={t.t(
                   lang,
+                  (s) =>
+                    s.components.flowsFilter.filters
+                      .destinationAnonymizedOrganizations
+                )}
+                name="destinationAnonymizedOrganizations"
+                fnPromise={(query) => fnOrganizations(query, environment)}
+                isMulti
+              />
+              <C.AsyncAutocompleteSelect
+                label={t.t(
+                  lang,
                   (s) => s.components.flowsFilter.filters.destinationLocations
                 )}
                 name="destinationLocations"
@@ -427,8 +388,9 @@ export const FilterFlowsTable = (props: Props) => {
                 )}
                 name="destinationUsageYears"
                 fnPromise={() => fnUsageYears(environment)}
-                isMulti
+                firstViewCondition={usageYearFirstViewCondition}
                 isAutocompleteAPI={false}
+                isMulti
               />
               <C.Section
                 title={t.t(lang, (s) => s.components.flowsFilter.showMore)}

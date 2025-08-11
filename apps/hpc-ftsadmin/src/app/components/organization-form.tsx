@@ -1,24 +1,30 @@
-import { Form, Formik } from 'formik';
+import { Form, Formik, type FormikHelpers } from 'formik';
 import tw from 'twin.macro';
 
 import DeleteIcon from '@mui/icons-material/Delete';
-import { errors, util, type organizations } from '@unocha/hpc-data';
+import {
+  errors,
+  util,
+  type categories,
+  type organizations,
+} from '@unocha/hpc-data';
 import { C } from '@unocha/hpc-ui';
 import * as io from 'io-ts';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 import { t } from '../../i18n';
-import { type Strings } from '../../i18n/iface';
 import { AppContext } from '../context';
-import * as paths from '../paths';
-import {
-  fnCategories,
-  fnLocations,
-  fnOrganizations,
-} from '../utils/fn-promises';
-import validateForm, { parseFieldError } from '../utils/form-validation';
-import { parseError, valueToInteger } from '../utils/map-functions';
+import { fnOrganizationType } from '../pages/organizations/organization';
+import paths from '../paths';
+import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../utils/constants';
+import { fnLocations, fnOrganizations } from '../utils/fn-promises';
+import validateForm from '../utils/form-validation';
+import { isFormObjectValue } from '../utils/parse-flow-form';
+import { valueToInteger } from '../utils/utils';
 interface Props {
+  organizationLevels: categories.GetCategoriesResult;
+  organizationTypes: categories.GetCategoriesResult;
   id?: number;
   load?: () => void;
   initialValues?: AddEditOrganizationValues;
@@ -33,14 +39,14 @@ export interface AddEditOrganizationValues {
   nativeName?: string;
   locations?: util.FormObjectValue[]; // Number[] we need array of IDs
   url?: string;
-  active?: boolean;
-  verified?: boolean;
-  notes?: string; // "notes" makes reference what in the UI it's called "Comments" (Not my decision)
-  organizationTypes: util.FormObjectValue[];
-  organizationLevel?: util.FormObjectValue; // Number[] we need array of IDs
-  parent?: util.FormObjectValue;
-  collectiveInd?: boolean;
-  comments?: string; // "comments" makes reference what in the UI it's called "Organization Description" (Not my decision)
+  isActive?: boolean;
+  isVerified?: boolean;
+  notes?: string; // "notes" makes reference what in the UI it's called "Comments"
+  organizationSubType: util.FormObjectValue | null;
+  organizationLevel?: util.FormObjectValue | null; // Number[] we need array of IDs
+  parent?: util.FormObjectValue | null;
+  isCollectiveInd?: boolean;
+  comments?: string; // "comments" makes reference what in the UI it's called "Organization Description"
 }
 export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   name: '',
@@ -48,13 +54,13 @@ export const ADD_EDIT_ORGANIZATION_INITIAL_VALUES: AddEditOrganizationValues = {
   nativeName: '',
   locations: [], // Number[] we need array of IDs
   url: '',
-  active: true,
-  verified: true,
-  notes: '', // "notes" makes reference what in the UI it's called "Comments" (Not my decision)
-  organizationTypes: [],
-  organizationLevel: { displayLabel: '', value: '' }, // Number[] we need array of IDs
-  parent: { displayLabel: '', value: '' },
-  collectiveInd: false,
+  isActive: true,
+  isVerified: true,
+  notes: '', // "notes" makes reference what in the UI it's called "Comments"
+  organizationSubType: null,
+  organizationLevel: null, // Number[] we need array of IDs
+  parent: null,
+  isCollectiveInd: false,
   comments: '',
 };
 const StyledDiv = tw.div`
@@ -74,84 +80,199 @@ const InfoText = tw.p`
   italic
   text-unocha-textLight
 `;
+
+const parseFormValues = (
+  values: AddEditOrganizationValues,
+  organizationTypes: categories.GetCategoriesResult
+) => {
+  const locations = values.locations
+    ?.flatMap((loc) => [
+      valueToInteger(loc.value),
+      loc.parent?.value ? valueToInteger(loc.parent.value) : undefined,
+    ])
+    .filter((locID) => locID !== undefined);
+
+  const parsedLocations = locations?.length
+    ? [...new Set(locations)]
+    : undefined;
+
+  let categories: number[] = [];
+  const organizationSubType = values.organizationSubType?.value;
+  if (organizationSubType) {
+    const organizationTypeID = organizationTypes.find(
+      (orgType) => orgType.id === valueToInteger(organizationSubType)
+    )?.parentID;
+
+    if (organizationTypeID) {
+      categories = [organizationTypeID, valueToInteger(organizationSubType)];
+    }
+  }
+
+  const parentID = values.parent?.value
+    ? valueToInteger(values.parent.value)
+    : undefined;
+
+  return {
+    categories,
+    parentID,
+    locations: parsedLocations,
+    verified: values.isVerified,
+    active: values.isActive,
+    collectiveInd: values.isCollectiveInd,
+  };
+};
 const formToUpdate = (
   values: AddEditOrganizationValues,
-  id: number
+  id: number,
+  organizationTypes: categories.GetCategoriesResult
 ): organizations.UpdateOrganizationParams => {
   const res: organizations.UpdateOrganizationParams = {
-    ...values,
     id,
-    categories: values.organizationTypes.map((org) =>
-      valueToInteger(org.value)
-    ),
-    parentID: values.parent?.value
-      ? valueToInteger(values.parent.value)
-      : undefined,
-    locations: values.locations?.map((loc) => valueToInteger(loc.value)),
+    ...values,
+    ...parseFormValues(values, organizationTypes),
   };
   return res;
 };
 
 const formToCreate = (
-  values: AddEditOrganizationValues
+  values: AddEditOrganizationValues,
+  organizationTypes: categories.GetCategoriesResult
 ): organizations.CreateOrganizationParams => {
   const res: organizations.CreateOrganizationParams = {
     organization: {
       ...values,
-      categories: values.organizationTypes.map((org) =>
-        valueToInteger(org.value)
-      ),
-      parentID: values.parent?.value
-        ? valueToInteger(values.parent.value)
-        : undefined,
-      locations: values.locations?.map((loc) => valueToInteger(loc.value)),
+      ...parseFormValues(values, organizationTypes),
     },
   };
   return res;
 };
 
-export const OrganizationForm = ({ initialValues, id, load }: Props) => {
+export const OrganizationForm = ({
+  organizationLevels,
+  organizationTypes,
+  initialValues,
+  id,
+  load,
+}: Props) => {
   const { lang, env } = useContext(AppContext);
   const environment = env();
   const navigate = useNavigate();
   const type: 'update' | 'create' = id ? 'update' : 'create';
-  const [formError, setFormError] =
-    useState<
-      keyof Strings['components']['organizationUpdateCreate']['errors']
-    >();
-  const [errorValue, setErrorValue] = useState('');
-  const FORM_VALIDATION = io.partial({
+
+  const FORM_VALIDATION = io.type({
     name: util.NON_EMPTY_STRING,
     abbreviation: util.NON_EMPTY_STRING,
-    organizationTypes: util.NON_EMPTY_ARRAY,
+    organizationSubType: util.NON_NULL_VALUE,
   });
+
+  const VALIDATION_ERROR_MESSAGES: Record<
+    keyof io.TypeOf<typeof FORM_VALIDATION>,
+    string
+  > = {
+    name: t.t(
+      lang,
+      (s) => s.components.organizationUpdateCreate.formErrors.name
+    ),
+    abbreviation: t.t(
+      lang,
+      (s) => s.components.organizationUpdateCreate.formErrors.abbreviation
+    ),
+    organizationSubType: t.t(
+      lang,
+      (s) => s.components.organizationUpdateCreate.formErrors.organizationType
+    ),
+  };
+
+  const handleChangeOrganizationType = ({
+    setFieldValue,
+    newValue,
+  }: {
+    setFieldValue: FormikHelpers<AddEditOrganizationValues>['setFieldValue'];
+    newValue: util.FormObjectValue | util.FormObjectValue[] | null;
+  }) => {
+    setFieldValue('organizationSubType', newValue);
+
+    if (!newValue || !isFormObjectValue(newValue)) {
+      setFieldValue('organizationLevel', null);
+      return;
+    }
+
+    const organizationType = organizationTypes.find(
+      (orgType) => orgType.id === valueToInteger(newValue.value)
+    );
+    const organizationLevelChild = organizationLevels.find(
+      (orgLevel) => orgLevel.name === organizationType?.name
+    );
+    const organizationLevel = organizationLevels.find(
+      (orgLevel) => orgLevel.id === organizationLevelChild?.parentID
+    );
+    if (!organizationLevel) {
+      setFieldValue('organizationLevel', null);
+      return;
+    }
+
+    setFieldValue('organizationLevel', {
+      displayLabel: organizationLevel.name,
+      value: organizationLevel.id,
+    } satisfies util.FormObjectValue);
+  };
+
+  const errorHandling = (err: Error, organizationName: string) => {
+    toast.dismiss();
+    if (errors.isConflictError(err)) {
+      toast.error(
+        t.t(
+          lang,
+          (s) => s.components.organizationUpdateCreate.errors.conflict,
+          { organizationName }
+        ),
+        TOAST_CONFIG_ERROR
+      );
+    } else {
+      toast.error(
+        t.t(lang, (s) => s.components.organizationUpdateCreate.errors.unknown),
+        TOAST_CONFIG_ERROR
+      );
+    }
+  };
+
+  const deleteErrorHandling = (err: Error) => {
+    toast.dismiss();
+    toast.error(err.message, TOAST_CONFIG_ERROR);
+  };
+
   const handleSubmit = async (values: AddEditOrganizationValues) => {
+    toast.dismiss();
     if (id && load) {
       await environment.model.organizations
-        .updateOrganization(formToUpdate(values, id))
-        .finally(load)
-        .catch((error) => {
-          if (errors.isDuplicateError(error)) {
-            setErrorValue(error.value);
-            setFormError(error.code);
-          } else {
-            setFormError('unknown');
-          }
-        });
+        .updateOrganization(formToUpdate(values, id, organizationTypes))
+        .then(() => {
+          load();
+          toast.success(
+            t.t(
+              lang,
+              (s) => s.components.organizationUpdateCreate.success.update,
+              { organizationName: values.name }
+            ),
+            TOAST_CONFIG
+          );
+        })
+        .catch((error) => errorHandling(error, values.name));
     } else {
       await environment.model.organizations
-        .createOrganization(formToCreate(values))
+        .createOrganization(formToCreate(values, organizationTypes))
         .then((org) => {
-          navigate(paths.organization(org.id));
+          navigate(paths.organization(org.id), {
+            state: {
+              successMessage: t.t(
+                lang,
+                (s) => s.components.organizationUpdateCreate.success.create,
+                { organizationName: values.name }
+              ),
+            },
+          });
         })
-        .catch((error) => {
-          if (errors.isDuplicateError(error)) {
-            setErrorValue(error.value);
-            setFormError(error.code);
-          } else {
-            setFormError('unknown');
-          }
-        });
+        .catch((error) => errorHandling(error, values.name));
     }
   };
   return (
@@ -159,38 +280,18 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
       enableReinitialize
       initialValues={initialValues ?? ADD_EDIT_ORGANIZATION_INITIAL_VALUES}
       onSubmit={handleSubmit}
-      validate={(values) => validateForm(values, FORM_VALIDATION)}
+      validate={(values) =>
+        validateForm(values, FORM_VALIDATION, VALIDATION_ERROR_MESSAGES)
+      }
     >
-      {({ initialValues }) => (
+      {({ initialValues, setFieldValue }) => (
         <Form>
-          <C.ErrorAlert
-            setError={
-              setFormError as React.Dispatch<
-                React.SetStateAction<string | undefined>
-              >
-            }
-            error={parseError(
-              formError,
-              'organizationUpdateCreate',
-              lang,
-              errorValue
-            )}
-          />
           <C.TextFieldWrapper
             label={t.t(
               lang,
               (s) => s.components.organizationUpdateCreate.fields.name
             )}
             name="name"
-            error={(metaError) =>
-              parseFieldError(
-                metaError,
-                t.t(
-                  lang,
-                  (s) => s.components.organizationUpdateCreate.formErrors.name
-                )
-              )
-            }
             required
           />
           <C.TextFieldWrapper
@@ -199,17 +300,6 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.abbreviation
             )}
             name="abbreviation"
-            error={(metaError) =>
-              parseFieldError(
-                metaError,
-                t.t(
-                  lang,
-                  (s) =>
-                    s.components.organizationUpdateCreate.formErrors
-                      .abbreviation
-                )
-              )
-            }
             required
           />
           <C.TextFieldWrapper
@@ -228,8 +318,9 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               (s) => s.components.organizationUpdateCreate.fields.locations
             )}
             name="locations"
-            fnPromise={(query) => fnLocations(query, environment)}
+            fnPromise={(query) => fnLocations(query, environment, true)}
             isMulti
+            allowChildrenRender
           />
           <C.TextFieldWrapper
             label={t.t(
@@ -244,7 +335,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               lang,
               (s) => s.components.organizationUpdateCreate.fields.active
             )}
-            name="active"
+            name="isActive"
           />
 
           <C.Switch
@@ -252,7 +343,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
               lang,
               (s) => s.components.organizationUpdateCreate.fields.verified
             )}
-            name="verified"
+            name="isVerified"
           />
           <C.TextFieldWrapper
             label={t.t(
@@ -265,28 +356,18 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
 
           <C.Divider />
 
-          <C.AsyncAutocompleteSelect
+          <C.AutocompleteSelect
             label={t.t(
               lang,
               (s) =>
                 s.components.organizationUpdateCreate.fields.organizationTypes
             )}
-            name="organizationTypes"
-            fnPromise={() => fnCategories('organizationType', environment)}
-            isAutocompleteAPI={false}
-            isMulti
-            required
-            error={(metaError) =>
-              parseFieldError(
-                metaError,
-                t.t(
-                  lang,
-                  (s) =>
-                    s.components.organizationUpdateCreate.formErrors
-                      .organizationType
-                )
-              )
+            name="organizationSubType"
+            options={fnOrganizationType(organizationTypes)}
+            onChange={(newValue) =>
+              handleChangeOrganizationType({ setFieldValue, newValue })
             }
+            required
           />
           <InfoText>
             {t.t(
@@ -329,7 +410,7 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
             )}
           </InfoText>
           <C.CheckBox
-            name="collectiveInd"
+            name="isCollectiveInd"
             label={t.t(
               lang,
               (s) => s.components.organizationUpdateCreate.fields.collectiveInd
@@ -356,12 +437,25 @@ export const OrganizationForm = ({ initialValues, id, load }: Props) => {
                   lang,
                   (s) => s.components.organizationUpdateCreate.modal
                 )}
-                redirectAfterFetch={paths.organizations()}
+                redirectAfterFetch={{
+                  to: paths.organizations(),
+                  options: {
+                    state: {
+                      successMessage: t.t(
+                        lang,
+                        (s) =>
+                          s.components.organizationUpdateCreate.success.delete,
+                        { organizationName: initialValues.name }
+                      ),
+                    },
+                  },
+                }}
+                handlerErrorToast={deleteErrorHandling}
               />
             )}
             <AlignButton>
               <C.ButtonSubmit
-                color={formError ? 'secondary' : 'primary'}
+                color="primary"
                 text={t.t(
                   lang,
                   (s) => s.components.organizationUpdateCreate[type]

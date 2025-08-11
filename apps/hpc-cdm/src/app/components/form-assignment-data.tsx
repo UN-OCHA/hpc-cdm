@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import { type reportingWindows } from '@unocha/hpc-data';
-import { C, dataLoader } from '@unocha/hpc-ui';
+import { C, useDataLoader } from '@unocha/hpc-ui';
 import { useParams } from 'react-router';
 import { t } from '../../i18n';
 
@@ -12,7 +12,9 @@ import { browserSupportedByEnketo } from './enketo/util';
 interface Props {
   className?: string;
   window: reportingWindows.ReportingWindow;
-  header?: (assignment: reportingWindows.GetAssignmentResult) => JSX.Element;
+  header?: (
+    assignment: reportingWindows.GetAssignmentResult
+  ) => React.ReactElement;
 }
 
 type FormAssignmentRouteParams = {
@@ -27,7 +29,7 @@ const FormAssignmentData = (props: Props) => {
     useParams<FormAssignmentRouteParams>();
   const assignmentId = parseInt(assignmentIdString ?? '', 10);
 
-  const loader = dataLoader(
+  const [loader] = useDataLoader(
     [
       {
         assignmentId,

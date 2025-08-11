@@ -3,6 +3,12 @@ import React from 'react';
 
 import { i18n } from '@unocha/hpc-core';
 
+import ar from './langs/ar';
+import en from './langs/en';
+import es from './langs/es';
+import fr from './langs/fr';
+import zh from './langs/zh';
+
 /**
  * A regular expression that will find and extract the **first** component
  * placeholder in a string.
@@ -87,7 +93,7 @@ export class Translations<
      * placeholder locations. The given key argument should be passed to the
      * child component as the `key` prop.
      */
-    components: Record<string, (key: number) => JSX.Element>,
+    components: Record<string, (key: number) => React.ReactElement>,
     /**
      * An optional parameter including arguments to use to generate the string
      *
@@ -118,3 +124,20 @@ export class Translations<
     );
   };
 }
+
+const LANGUAGES = {
+  ar,
+  en,
+  es,
+  fr,
+  zh,
+};
+
+export type LanguageKey = keyof typeof LANGUAGES;
+
+export const LANGUAGE_CHOICE = new i18n.LanguageChoice<LanguageKey>(
+  LANGUAGES,
+  'en'
+);
+
+export const t = new Translations(LANGUAGES);

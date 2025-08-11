@@ -59,9 +59,7 @@ const MultiTextField = ({
       error: !!(meta && meta.touched && meta.error),
       helperText:
         meta && meta.touched && meta.error
-          ? errorMessage
-            ? meta.error.replace('{validationError}', errorMessage)
-            : meta.error
+          ? (errorMessage ?? meta.error)
           : undefined,
     };
   };
@@ -77,6 +75,11 @@ const MultiTextField = ({
     freeSolo: true,
     options: [],
     renderInput: (params) => <TextField {...configTextField(params)} />,
+    onBlur: (_) => {
+      if (inputValue.trim() !== '') {
+        setFieldValue(field.name, [...field.value, inputValue.trim()]);
+      }
+    },
     onInputChange: (_, newInputValue) => {
       const options = newInputValue.split(',');
 
@@ -96,7 +99,7 @@ const MultiTextField = ({
     inputValue,
   };
   if (meta && meta.touched && meta.error) {
-    console.error(meta.error);
+    console.error(errorMessage);
   }
   return <MultiText {...multiTextProps} />;
 };

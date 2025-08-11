@@ -1,17 +1,26 @@
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
-import { Chip, IconButton, TableRow, Tooltip } from '@mui/material';
-import { util } from '@unocha/hpc-core';
+import { Chip, IconButton, TableHead, TableRow, Tooltip } from '@mui/material';
 import { C } from '@unocha/hpc-ui';
+import React from 'react';
 import tw from 'twin.macro';
 import { type LanguageKey, t } from '../../../i18n';
-import EllipsisText from '../../utils/ellipsis-text';
-import { type LocalStorageSchema } from '../../utils/local-storage-type';
-import { type Filter, type FilterKeys, isKey } from '../../utils/parse-filters';
+import { SPECIAL_SEPARATOR } from '../../utils/constants';
+import {
+  type Filter,
+  type FilterKey,
+  type FilterValue,
+  type Filters,
+  isKey,
+} from '../../utils/parse-filters';
 import type {
   FlowHeaderID,
   KeywordHeaderID,
   OrganizationHeaderID,
 } from '../../utils/table-headers';
+import EllipsisText from '../ellipsis-text';
+import { FLOWS_FILTER_INITIAL_VALUES } from '../filters/filter-flows-table';
+import { ORGANIZATIONS_FILTER_INITIAL_VALUES } from '../filters/filter-organization-table';
+import { PENDING_FLOWS_FILTER_INITIAL_VALUES } from '../filters/filter-pending-flows-table';
 
 export type Query = {
   orderDir: 'ASC' | 'DESC';
@@ -49,6 +58,14 @@ export const TopRowContainer = tw.div`
   flex
   justify-end
 `;
+
+export const StickyTableHead = tw(TableHead)`
+  sticky
+  top-0
+  z-10
+  bg-white
+`;
+
 export const TableHeaderButton = tw(IconButton)`
   h-min
   self-center
@@ -61,10 +78,6 @@ export const TableRowClick = tw(TableRow)`
   hover:bg-opacity-20
   hover:cursor-pointer
 `;
-export const RejectPendingFlowsButton = tw(C.ButtonSubmit)`
-  mt-8
-`;
-
 const ChipFilterValues = tw.div`
   bg-unocha-secondary-light
   inline-flex
@@ -72,6 +85,31 @@ const ChipFilterValues = tw.div`
   px-2
   rounded-full
 `;
+
+/**
+ * Extracts the last group of characters enclosed in brackets from a string.
+ * If no such group exists, returns null.
+ *
+ * ie: `"[example] text [another [example]]"` returns `"another [example]"`
+ */
+const getLastBracketGroup = (input: string): string | null => {
+  const stack: number[] = [];
+  let lastGroup: [number, number] | null = null;
+
+  for (const [i, char] of [...input].entries()) {
+    if (char === '[') {
+      stack.push(i);
+    } else if (char === ']') {
+      const start = stack.pop();
+      if (start !== undefined) {
+        lastGroup = [start, i];
+      }
+    }
+  }
+
+  return lastGroup ? input.slice(lastGroup[0] + 1, lastGroup[1]) : null;
+};
+
 export const RenderChipsRow = ({
   tableFilters,
   lang,
@@ -79,13 +117,58 @@ export const RenderChipsRow = ({
   tableType,
   chipSpacing = { m: 0.5 },
 }: {
-  tableFilters: Filter<FilterKeys>;
+  tableFilters: Filter<FilterKey>;
   lang: LanguageKey;
-  handleChipDelete: <T extends FilterKeys>(fieldName: T) => void;
+  handleChipDelete: <T extends FilterKey>(fieldName: T) => void;
   tableType: 'organizationsFilter' | 'flowsFilter' | 'pendingFlowsFilter';
   chipSpacing?: { m: number };
 }) => {
-  const chipList: JSX.Element[] = [];
+  const isKeyOf = <T extends Filters>(
+    initialValue: T,
+    key: FilterKey
+  ): key is keyof T & FilterKey => {
+    return Object.keys(initialValue).includes(key.toString());
+  };
+
+  const isValueInInitialValue = (
+    val: {
+      value: FilterValue;
+      displayValue: string;
+    },
+    key: FilterKey
+  ) => {
+    switch (tableType) {
+      case 'flowsFilter': {
+        if (isKeyOf(FLOWS_FILTER_INITIAL_VALUES, key)) {
+          return (
+            JSON.stringify(FLOWS_FILTER_INITIAL_VALUES[key]) ===
+            JSON.stringify(val.value)
+          );
+        }
+        break;
+      }
+      case 'organizationsFilter': {
+        if (isKeyOf(ORGANIZATIONS_FILTER_INITIAL_VALUES, key)) {
+          return (
+            JSON.stringify(ORGANIZATIONS_FILTER_INITIAL_VALUES[key]) ===
+            JSON.stringify(val.value)
+          );
+        }
+        break;
+      }
+      case 'pendingFlowsFilter': {
+        if (isKeyOf(PENDING_FLOWS_FILTER_INITIAL_VALUES, key)) {
+          return (
+            JSON.stringify(PENDING_FLOWS_FILTER_INITIAL_VALUES[key]) ===
+            JSON.stringify(val.value)
+          );
+        }
+        break;
+      }
+    }
+  };
+
+  const chipList: React.ReactElement[] = [];
   let key: keyof typeof tableFilters;
   for (key in tableFilters) {
     const savedKey = key;
@@ -99,7 +182,7 @@ export const RenderChipsRow = ({
         key={savedKey}
         title={
           <div style={{ textAlign: 'start', width: 'auto' }}>
-            {displayValue.split('<||>').map((filter) => (
+            {displayValue.split(SPECIAL_SEPARATOR).map((filter) => (
               <li
                 key={filter}
                 style={{
@@ -107,7 +190,9 @@ export const RenderChipsRow = ({
                   marginTop: '0',
                   marginBottom: '0',
                   listStyle:
-                    displayValue.split('<||>').length > 1 ? 'inherit' : 'none',
+                    displayValue.split(SPECIAL_SEPARATOR).length > 1
+                      ? 'inherit'
+                      : 'none',
                 }}
               >
                 {filter}
@@ -137,12 +222,10 @@ export const RenderChipsRow = ({
                   maxWidth: '1000px',
                 }}
               >
-                {displayValue.split('<||>').map((filter, index) => (
+                {displayValue.split(SPECIAL_SEPARATOR).map((filter, index) => (
                   <ChipFilterValues key={index}>
                     <EllipsisText maxWidth={400}>
-                      {/\[(.*)\]/.test(filter) // We do this in order to shorten organization names
-                        ? filter.match(/\[(.*)\]/)?.[1]
-                        : filter}
+                      {getLastBracketGroup(filter) ?? filter}
                     </EllipsisText>
                   </ChipFilterValues>
                 ))}
@@ -151,20 +234,15 @@ export const RenderChipsRow = ({
           }
           size="small"
           color="primary"
-          onDelete={() => handleChipDelete(savedKey)}
+          onDelete={
+            isValueInInitialValue(val, savedKey)
+              ? undefined
+              : () => handleChipDelete(savedKey)
+          }
           deleteIcon={<CancelRoundedIcon sx={tw`-ms-1! me-1!`} />}
         />
       </Tooltip>
     );
   }
   return chipList;
-};
-
-/**
- * Handle function to control the information text in the Draggable List components of tables */
-export const handleTableSettingsInfoClose = (
-  setTableInfoDisplay: React.Dispatch<React.SetStateAction<boolean | undefined>>
-) => {
-  util.setLocalStorageItem<LocalStorageSchema>('tableSettings', false);
-  setTableInfoDisplay(false);
 };

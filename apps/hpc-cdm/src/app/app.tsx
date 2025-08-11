@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 
-import { BaseStyling, C, dataLoader, dialogs, styled } from '@unocha/hpc-ui';
+import { BaseStyling, C, dialogs, styled, useDataLoader } from '@unocha/hpc-ui';
 
 import env, { type Environment } from '../environments/environment';
 import { LANGUAGE_CHOICE, type LanguageKey, t } from '../i18n';
@@ -63,7 +63,7 @@ export const App = () => {
     };
   }, []);
 
-  const loadEnv = dataLoader([], () =>
+  const [loadEnv] = useDataLoader([], () =>
     env()
       .catch((error) => {
         console.error(error);
@@ -102,55 +102,64 @@ export const App = () => {
           const { canModifyGlobalUserAccess } = context.access().permissions;
           return (
             <AppContext.Provider value={{ lang, ...context }}>
-              <PageMeta />
-              <Container>
-                {environmentWarning(env, lang)}
-                <Header
-                  session={env.session}
-                  language={LANGUAGE_CHOICE}
-                  strings={t.get(lang, (s) => s.user)}
-                  userMenu={[
-                    {
-                      label: t.t(lang, (s) => s.user.logout),
-                      onClick: env.session.logOut,
-                    },
-                  ]}
-                />
-                <Main>
-                  {env.session.getUser() ? (
-                    <LoggedInContainer>
-                      <C.MainNavigation
-                        homeLink={paths.home()}
-                        appTitle={appTitle}
-                        tabs={[
-                          {
-                            label: t.t(lang, (s) => s.navigation.operations),
-                            path: paths.operations(),
-                          },
-                          ...(canModifyGlobalUserAccess
-                            ? [
-                                {
-                                  label: t.t(lang, (s) => s.navigation.admin),
-                                  path: paths.admin(),
-                                },
-                              ]
-                            : []),
-                        ]}
-                      />
-                      <Outlet />
-                    </LoggedInContainer>
-                  ) : (
-                    <>
-                      <C.MainNavigation
-                        homeLink={paths.home()}
-                        appTitle={appTitle}
-                      />
-                      <PageNotLoggedIn />
-                    </>
-                  )}
-                </Main>
-              </Container>
-              <dialogs.Dialogs />
+              <PageMeta>
+                <>
+                  <Container>
+                    {environmentWarning(env, lang)}
+                    <Header
+                      session={env.session}
+                      language={LANGUAGE_CHOICE}
+                      strings={t.get(lang, (s) => s.user)}
+                      userMenu={[
+                        {
+                          label: t.t(lang, (s) => s.user.logout),
+                          onClick: env.session.logOut,
+                        },
+                      ]}
+                    />
+                    <Main>
+                      {env.session.getUser() ? (
+                        <LoggedInContainer>
+                          <C.MainNavigation
+                            homeLink={paths.home()}
+                            appTitle={appTitle}
+                            tabs={[
+                              {
+                                label: t.t(
+                                  lang,
+                                  (s) => s.navigation.operations
+                                ),
+                                path: paths.operations(),
+                              },
+                              ...(canModifyGlobalUserAccess
+                                ? [
+                                    {
+                                      label: t.t(
+                                        lang,
+                                        (s) => s.navigation.admin
+                                      ),
+                                      path: paths.admin(),
+                                    },
+                                  ]
+                                : []),
+                            ]}
+                          />
+                          <Outlet />
+                        </LoggedInContainer>
+                      ) : (
+                        <>
+                          <C.MainNavigation
+                            homeLink={paths.home()}
+                            appTitle={appTitle}
+                          />
+                          <PageNotLoggedIn />
+                        </>
+                      )}
+                    </Main>
+                  </Container>
+                  <dialogs.Dialogs />
+                </>
+              </PageMeta>
             </AppContext.Provider>
           );
         }}

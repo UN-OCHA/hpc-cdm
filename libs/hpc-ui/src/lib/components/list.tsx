@@ -5,8 +5,8 @@ import { styled } from '../theme';
 interface Props {
   className?: string;
   title?: string;
-  children?: JSX.Element | JSX.Element[];
-  actions?: JSX.Element | JSX.Element[];
+  children?: React.ReactElement | React.ReactElement[];
+  actions?: React.ReactElement | React.ReactElement[];
 }
 
 const Header = styled.div`

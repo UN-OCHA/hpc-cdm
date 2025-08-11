@@ -1,20 +1,44 @@
-import { Link, TextField } from '@mui/material';
+import { Link, type TextFieldProps } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker as BaseDatePicker } from '@mui/x-date-pickers/DatePicker';
+import {
+  DatePicker as BaseDatePicker,
+  type DatePickerProps as DatePickerPropsMUI,
+} from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useField } from 'formik';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import tw from 'twin.macro';
+import { type LanguageKey, t } from '../../i18n';
 import dayjs from '../../i18n/utils/dayjs';
+import { THEME } from '../../theme';
+import { REQUIRED_BORDER_STYLE } from '../../util';
+
+type Dayjs = dayjs.Dayjs;
+
+export type DatePickerProps = {
+  name: string;
+  label: string;
+  lang?: LanguageKey;
+  enableButton?: boolean;
+  /**
+   *  **Warning:**
+   *  This prop is used only if we are not using
+   *  `Formik`. This is for controlled fields
+   */
+  controlledField?: {
+    value: Dayjs | null;
+    onChange: (value: Dayjs | null) => unknown;
+    error?: string;
+  };
+  disabled?: boolean;
+  required?: boolean;
+};
 
 const StyledDatePicker = tw.div`
+  w-full  
   flex
-  w-full
-  items-baseline
-`;
-
-const StyledLink = tw(Link)`
-  ms-8
+  flex-col
+  items-start
 `;
 
 const DatePicker = ({
@@ -22,70 +46,82 @@ const DatePicker = ({
   label,
   lang = 'en',
   enableButton = true,
-}: {
-  name: string;
-  label: string;
-  lang?: string;
-  enableButton?: boolean;
-}) => {
-  const [field, , helpers] = useField(name);
-  const [isCleared, setIsCleared] = useState(false);
+  controlledField,
+  disabled,
+  required,
+}: DatePickerProps) => {
+  const [field, meta, { setValue, setTouched }] = useField<Dayjs | null>(name);
+  const [isControlledTouched, setIsControlledTouched] = useState(false);
+  const textFieldErrorProps: Partial<TextFieldProps> = {};
+  if (
+    (meta.error && meta.touched) ||
+    (isControlledTouched && !!controlledField?.error)
+  ) {
+    textFieldErrorProps.error = true;
+    textFieldErrorProps.helperText = meta.error ?? controlledField?.error;
+  }
 
-  useEffect(() => {
-    if (isCleared) {
-      const timeout = setTimeout(() => {
-        setIsCleared(false);
-      }, 1000);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [isCleared]);
+  const datePickerProps: DatePickerPropsMUI = {
+    ...field,
+    ...(controlledField ? { value: controlledField.value } : {}),
+    enableAccessibleFieldDOMStructure: false,
+    format: 'DD/MM/YYYY',
+    timezone: 'UTC',
+    disabled,
+    onError: (error) => {
+      console.error(error);
+    },
+    onChange: (date) => {
+      setTouched(true);
+      setIsControlledTouched(true);
+      if (controlledField) {
+        controlledField.onChange(date);
+        return;
+      }
+      setValue(date);
+    },
+    label,
+    slotProps: {
+      textField: {
+        sx: {
+          ...tw`w-full min-w-[10rem]`,
+          ...(required && !field.value && !controlledField?.value
+            ? { ...REQUIRED_BORDER_STYLE }
+            : {}),
+        },
+        disabled,
+        required,
+        InputLabelProps: { shrink: true },
+        size: 'small',
+        ...textFieldErrorProps,
+      },
+      field: {
+        clearable: true,
+      },
+    },
+    sx: tw`w-full`,
+  };
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={lang}>
       <StyledDatePicker>
-        <BaseDatePicker
-          {...field}
-          format="YYYY/MM/DD"
-          value={
-            enableButton
-              ? field.value === null
-                ? null
-                : dayjs(field.value)
-              : dayjs()
-          }
-          onError={(error) => {
-            console.error(error);
-          }}
-          onChange={(date) => {
-            if (date?.isValid()) {
-              helpers.setValue(date);
-            }
-          }}
-          label={label}
-          slots={{
-            textField: (params) => (
-              <TextField
-                {...params}
-                InputLabelProps={{ shrink: true }}
-                size="small"
-              />
-            ),
-          }}
-          slotProps={{
-            field: { clearable: true, onClear: () => setIsCleared(true) },
-          }}
-        />
-        {enableButton && (
-          <StyledLink
+        <BaseDatePicker {...datePickerProps} />
+        {enableButton && !disabled && (
+          <Link
             component="button"
+            type="button"
             variant="body2"
+            color={THEME.colors.textLink}
             onClick={() => {
-              helpers.setValue(dayjs());
+              const today = dayjs.utc().startOf('day');
+              if (controlledField) {
+                controlledField.onChange(today);
+              } else {
+                setValue(today);
+              }
             }}
-            sx={{ height: '100%', lineHeight: '40px' }}
           >
-            Today
-          </StyledLink>
+            {t.t(lang, (s) => s.datePicker.today)}
+          </Link>
         )}
       </StyledDatePicker>
     </LocalizationProvider>

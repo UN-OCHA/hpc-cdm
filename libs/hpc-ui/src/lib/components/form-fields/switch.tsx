@@ -10,7 +10,7 @@ type SwitchColor = 'primary' | 'error' | 'success';
 const Switch = ({
   name,
   label,
-  size,
+  size = 'medium',
   color,
 }: {
   name: string;
@@ -29,7 +29,4 @@ const Switch = ({
   return <FormControlLabel {...configCheckBox} />;
 };
 
-Switch.defaultProps = {
-  size: 'medium',
-};
 export default Switch;

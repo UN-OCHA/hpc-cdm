@@ -1,14 +1,55 @@
 import { Dayjs, isDayjs } from 'dayjs';
 import * as t from 'io-ts';
 
-export type FormObjectValue = { displayLabel: string; value: string | number };
+export type FormObjectValue = {
+  displayLabel: string;
+  value: string | number;
+  parent?: FormObjectValue;
+  hasChildren?: boolean;
+  chipColor?: string;
+  tooltip?: string;
+  isConfidential?: boolean;
+};
+
+export type UnionToIntersection<U> = (
+  U extends unknown ? (k: U) => void : never
+) extends (k: infer I) => void
+  ? I
+  : never;
 
 export const resultWithPermissions = <D, P extends { [id: string]: boolean }>(
   data: t.Type<D>,
   permissions: t.Type<P>
 ) => t.type({ data, permissions });
 
-const INTEGER_REGEX = /^[0-9]+$/;
+export const recursiveIntersection = (codecs: t.Mixed[]): t.Mixed => {
+  if (codecs.length === 0) {
+    throw new Error('Cannot intersect an empty array');
+  }
+
+  if (codecs.length === 1) {
+    return codecs[0];
+  }
+
+  const [first, second, ...rest] = codecs;
+  const intersected = t.intersection([first, second]);
+
+  if (rest.length === 0) {
+    return intersected;
+  }
+
+  return recursiveIntersection([intersected, ...rest]);
+};
+
+/**
+ * Utility function used to shorten nullable fields
+ */
+export const optional = <T extends t.Mixed, K extends t.Mixed[]>(
+  ...type: [T, ...K]
+) => t.union([t.null, ...type]);
+
+const INTEGER_REGEX = /^-?[0-9]+$/;
+const CURRENCY_INTEGER_REGEX = /^[0-9]+(,[0-9]+)*$/;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
@@ -67,6 +108,27 @@ export const validInteger = (integerOptions: readonly number[]) =>
     },
     t.identity
   );
+
+/**
+ * Accepts either an integer, or a string of an integer, serializes to a number.
+ */
+export const CURRENCY_INTEGER_FROM_STRING = new t.Type<number, number>(
+  'CURRENCY_INTEGER_FROM_STRING',
+  t.number.is,
+  (v, c) => {
+    if (typeof v === 'number') {
+      return Number.isInteger(v) ? t.success(v) : t.failure(v, c);
+    } else if (typeof v === 'string') {
+      // `v.replace(/,/g, '')` is used because string currency is written as: "2,231,233"
+      return CURRENCY_INTEGER_REGEX.test(v) &&
+        Number.isInteger(parseInt(v.replaceAll(',', '')))
+        ? t.success(parseInt(v))
+        : t.failure(v, c);
+    }
+    return t.failure(v, c);
+  },
+  t.identity
+);
 
 /**
  * Accepts either a number, or a string of a number, serializes to a number type.
@@ -150,6 +212,21 @@ export const NON_EMPTY_ARRAY = new t.Type<unknown[], unknown[]>(
       return v.length > 0 ? t.success(v) : t.failure(v, c);
     }
     return t.failure(v, c);
+  },
+  t.identity
+);
+
+/**
+ * Accepts any value except null.
+ */
+export const NON_NULL_VALUE = new t.Type<unknown, unknown>(
+  'NON_NULL_VALUE',
+  t.unknown.is,
+  (v, c) => {
+    if (v === null) {
+      return t.failure(v, c);
+    }
+    return t.success(v);
   },
   t.identity
 );
@@ -359,34 +436,36 @@ export const DATE_FROM_STRING = new t.Type(
   t.identity
 );
 
-const isFormObjectValue = (v: unknown): v is FormObjectValue =>
-  typeof v === 'object' &&
-  !Array.isArray(v) &&
-  v !== null &&
-  Object.keys(v).includes('displayLabel') &&
-  Object.keys(v).includes('value');
-
-/**
- * Accepts a FormObjectValue.
- */
-export const FORM_OBJECT_VALUE = new t.Type<FormObjectValue, FormObjectValue>(
-  'FORM_OBJECT_VALUE',
-  isFormObjectValue,
+export const VALID_DAYJS_DATE = new t.Type<Dayjs, Dayjs>(
+  'VALID_DAYJS_DATE',
+  (u): u is Dayjs => u instanceof Dayjs,
   (v, c) => {
-    if (isFormObjectValue(v)) {
-      return t.success(v);
+    if (isDayjs(v)) {
+      if (v.isValid() && v.year() >= 1950 && v.year() <= 2099) {
+        return t.success(v);
+      }
+      return t.failure(v, c);
     }
     return t.failure(v, c);
   },
   t.identity
 );
 
-export const VALID_DAYJS_DATE = new t.Type<Dayjs, Dayjs>(
-  'VALID_DAYJS_DATE',
-  (u): u is Dayjs => u instanceof Dayjs,
+export const ABORT_SIGNAL = new t.Type<AbortSignal, AbortSignal, unknown>(
+  'AbortSignal',
+  (input: unknown): input is AbortSignal => input instanceof AbortSignal,
+  (input, context) =>
+    input instanceof AbortSignal ? t.success(input) : t.failure(input, context),
+  t.identity
+);
+export type AbortSignalType = t.TypeOf<typeof ABORT_SIGNAL>;
+
+export const YEAR_FROM_STRING = new t.Type<string, string>(
+  'YEAR_FROM_STRING',
+  t.string.is,
   (v, c) => {
-    if (isDayjs(v)) {
-      if (isDateValid(v.toISOString().split('T').at(0))) {
+    if (typeof v === 'string') {
+      if (/^\d{4}$/.test(v) && parseInt(v) >= 1950 && parseInt(v) <= 2100) {
         return t.success(v);
       }
       return t.failure(v, c);

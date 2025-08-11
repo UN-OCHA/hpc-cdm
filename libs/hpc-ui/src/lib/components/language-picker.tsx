@@ -56,7 +56,9 @@ class LanguagePicker<LanguageKey extends string> extends React.Component<
     return (
       <>
         <HeaderButton
-          ref={(ref) => (this.menuAnchor = ref)}
+          ref={(ref) => {
+            this.menuAnchor = ref;
+          }}
           onClick={() => this.setState({ isOpen: true })}
         >
           <MdLanguage size={18} />

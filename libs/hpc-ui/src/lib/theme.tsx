@@ -1,12 +1,14 @@
 import { ThemeProvider as MUIThemeProvider } from '@mui/material';
 import { arSA, enUS, esES, frFR, zhCN } from '@mui/material/locale';
 import { createTheme, type ThemeOptions } from '@mui/material/styles';
-import { useMemo } from 'react';
-import styled, {
-  css,
-  type ThemedCssFunction,
-  type ThemedStyledInterface,
-} from 'styled-components';
+import React, { useMemo } from 'react';
+
+/**
+ * Extend `Theme` so typescript can pickup custom Theme
+ */
+declare module 'styled-components' {
+  export interface DefaultTheme extends Theme {}
+}
 
 const COLOR_PALETTE = {
   red: {
@@ -17,6 +19,7 @@ const COLOR_PALETTE = {
     dark2: '#b44d0e',
     dark1: '#d05b10',
     normal: '#e16856', // From style guide
+    variant1: '#e19956',
     light: '#fd9282',
   },
   yellow: {
@@ -28,6 +31,7 @@ const COLOR_PALETTE = {
     light: '#96c3e1',
   },
   green: {
+    normal: '#2e7d32',
     light: '#afdfb0',
   },
   gray: {
@@ -40,6 +44,19 @@ const COLOR_PALETTE = {
     light5: '#f3f5f8', // From style guide
   },
 };
+
+const MAIN_NAVIGATION_HEIGHT_PX = 60;
+const MAIN_NAVIGATION_BORDER_BOTTOM_PX = 3;
+
+const HEADER_MIN_HEIGHT_PX = 35;
+/**
+ * In dev environments, there is an extra header of 40px
+ */
+const TOTAL_HEADER_HEIGHT = `${
+  MAIN_NAVIGATION_HEIGHT_PX +
+  MAIN_NAVIGATION_BORDER_BOTTOM_PX +
+  HEADER_MIN_HEIGHT_PX
+}px`;
 
 export const THEME = {
   colors: {
@@ -65,7 +82,7 @@ export const THEME = {
     lg: 30,
   },
   sizing: {
-    borderRadiusSm: '3px',
+    borderRadiusSm: '4px',
     borderRadiusMd: '6px',
     containerWidthPx: 1240,
     fontSizeSm: '0.8rem',
@@ -76,6 +93,14 @@ export const THEME = {
      * (this excludes the height of any top and bottom borders)
      */
     singleLineBlockItemHeightPx: 49,
+    header: {
+      minHeight: HEADER_MIN_HEIGHT_PX,
+    },
+    mainNavigation: {
+      height: MAIN_NAVIGATION_HEIGHT_PX,
+      borderBottom: MAIN_NAVIGATION_BORDER_BOTTOM_PX,
+    },
+    totalHeaderHeight: TOTAL_HEADER_HEIGHT,
   },
   animations: {
     fast: '0.2s ease-out',
@@ -106,6 +131,9 @@ export const MUI_THEME: ThemeOptions = {
     secondary: {
       main: THEME.colors.secondary.normal,
     },
+    warning: {
+      main: THEME.colors.pallete.yellow.normal,
+    },
   },
   ...THEME,
 };
@@ -114,11 +142,6 @@ const MUI_THEME_RTL: ThemeOptions = {
   direction: 'rtl',
 };
 export type Theme = typeof THEME;
-
-const themedStyled: ThemedStyledInterface<Theme> = styled;
-const themedCSS: ThemedCssFunction<Theme> = css;
-
-export { themedCSS as css, themedStyled as styled };
 
 const localeMapper = {
   ar: arSA,
@@ -129,7 +152,7 @@ const localeMapper = {
 };
 
 export const ThemeProvider = (props: {
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactElement | React.ReactElement[];
   language?: keyof typeof localeMapper;
 }) => {
   const { language, children } = props;
@@ -142,3 +165,5 @@ export const ThemeProvider = (props: {
 
   return <MUIThemeProvider theme={muiTheme}>{children}</MUIThemeProvider>;
 };
+
+export { css, styled } from 'styled-components';

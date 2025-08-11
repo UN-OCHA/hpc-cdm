@@ -1,35 +1,60 @@
 import InputAdornment from '@mui/material/InputAdornment';
-import { useField, useFormikContext } from 'formik';
-import { NumericFormat } from 'react-number-format';
+import { useField } from 'formik';
+import { useState } from 'react';
+import { type NumberFormatValues, NumericFormat } from 'react-number-format';
+import { REQUIRED_BORDER_STYLE } from '../../util';
 import { StyledTextField } from './text-field';
 
-interface NumberFieldProps {
-  type: 'number' | 'currency';
+export interface NumberFieldProps {
   name: string;
   label: string;
+  type?: 'integer' | 'currency' | 'float' | 'unknownCurrency';
+  placeholder?: string;
+  required?: boolean;
   allowNegative?: boolean;
+  disabled?: boolean;
 }
 const NumberField = ({
-  type,
   name,
   label,
-  allowNegative,
+  type = 'integer',
+  placeholder,
+  allowNegative = false,
+  required,
+  disabled,
 }: NumberFieldProps) => {
-  const [field] = useField(name);
-  const { setFieldValue } = useFormikContext<number>();
+  const [field, meta, { setValue }] = useField<string>(name);
+  const { onChange: _onChange, ...fieldWithNoOnChange } = field;
+
+  const [inputValue, setInputValue] = useState(field.value);
+  const textFieldErrors: { error?: boolean; helperText?: string } = {};
+
+  if (meta && meta.touched && meta.error) {
+    textFieldErrors.error = true;
+    textFieldErrors.helperText = meta.error;
+  }
 
   return (
     <NumericFormat
-      {...field}
+      {...fieldWithNoOnChange}
+      {...textFieldErrors}
+      onBlur={(e) => {
+        fieldWithNoOnChange.onBlur(e);
+        setValue(inputValue);
+      }}
+      sx={required && !field.value ? REQUIRED_BORDER_STYLE : undefined}
       name={name}
       label={label}
-      onValueChange={(values) => {
-        setFieldValue(field.name, values.value);
+      onValueChange={(values: NumberFormatValues) => {
+        setInputValue(values.value);
       }}
-      thousandSeparator={type === 'currency'}
+      thousandSeparator={type === 'currency' || type === 'unknownCurrency'}
       valueIsNumericString
+      placeholder={placeholder}
+      disabled={disabled}
+      required={required}
       size="small"
-      decimalScale={type === 'number' ? 0 : undefined} // 0 means no decimals
+      decimalScale={type === 'float' ? 4 : 0} // 0 means no decimals
       allowNegative={allowNegative}
       customInput={StyledTextField}
       InputProps={{
