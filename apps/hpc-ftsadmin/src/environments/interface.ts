@@ -10,7 +10,6 @@ export interface Environment {
    */
   getDevHeaderWarning: (lang: LanguageKey) => string | undefined;
   externalUrls?: {
-    ftsAdminBaseUrl: string | undefined;
     rpmBaseUrl: string | undefined;
     prismBaseUrl: string | undefined;
     ftsWebsiteBaseUrl: string | undefined;
