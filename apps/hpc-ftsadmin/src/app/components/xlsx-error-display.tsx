@@ -9,6 +9,8 @@ import {
   TableRow,
 } from '@mui/material';
 import tw from 'twin.macro';
+import { t } from '../../i18n';
+import { getContext } from '../context';
 
 type Props = {
   errorMessage: string | null;
@@ -38,6 +40,7 @@ const XLSXErrorDisplay = ({ errorMessage }: Props) => {
   if (!errorMessage) {
     return null;
   }
+  const { lang } = getContext();
   const parsedErrors = parseErrorMessage(errorMessage);
 
   return (
@@ -53,13 +56,22 @@ const XLSXErrorDisplay = ({ errorMessage }: Props) => {
               >
                 <Box sx={tw`flex justify-center gap-x-2`}>
                   <ErrorIcon />
-                  <span>Invalid values in excel file</span>
+                  <span>
+                    {t.t(lang, (s) => s.components.xlsxUpload.errorTable.title)}
+                  </span>
                 </Box>
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Column</TableCell>
-              <TableCell>Invalid Values</TableCell>
+              <TableCell>
+                {t.t(lang, (s) => s.components.xlsxUpload.errorTable.column)}
+              </TableCell>
+              <TableCell>
+                {t.t(
+                  lang,
+                  (s) => s.components.xlsxUpload.errorTable.invalidValues
+                )}
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

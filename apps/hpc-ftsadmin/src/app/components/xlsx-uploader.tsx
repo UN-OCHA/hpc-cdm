@@ -82,6 +82,7 @@ const XLSXUploader = () => {
           onSuccess: handleSuccess,
           onError: handleError,
         }}
+        lang={lang}
         hideFileChangeStatusStyle
       />
       <XLSXErrorDisplay errorMessage={errorMessage} />

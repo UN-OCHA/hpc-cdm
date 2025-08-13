@@ -617,6 +617,13 @@
         "unknown": "There has been an unknown error uploading the file"
       },
       "success": "File \"{fileName}\" has been successfully uploaded"
+    },
+    "xlsxUpload": {
+      "errorTable": {
+        "title": "Invalid values in excel file",
+        "column": "Column",
+        "invalidValues": "Invalid Value(s)"
+      }
     }
   },
   "navigation": {
