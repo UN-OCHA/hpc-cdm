@@ -5,7 +5,11 @@
     "logout": "Logout"
   },
   "errors": {
-    "unableToLoadFTSAdmin": "Unable to load FTS Admin"
+    "unableToLoadFTSAdmin": "Unable to load FTS Admin",
+    "unexpectedFlowError": {
+      "text": "Unexpected error while loading flow. Please report this bug with a way to reproduce it.",
+      "button": "Home"
+    }
   },
   "common": {
     "devEnvironmentWarnings": {
