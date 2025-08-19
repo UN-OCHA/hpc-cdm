@@ -5,7 +5,11 @@
     "logout": "تسجيل الخروج"
   },
   "errors": {
-    "unableToLoadFTSAdmin": "غير قادر على تحميل المسؤول عن FTS"
+    "unableToLoadFTSAdmin": "غير قادر على تحميل المسؤول عن FTS",
+    "unexpectedFlowError": {
+      "text": "حدث خطأ غير متوقع أثناء تحميل التدفق. يرجى الإبلاغ عن هذا الخطأ مع طريقة لإعادة إنتاجه.",
+      "button": "الرئيسية"
+    }
   },
   "common": {
     "devEnvironmentWarnings": {
