@@ -79,6 +79,13 @@ export interface FlowsTableProps {
   isPending?: boolean;
 }
 
+const OrganizationBox = tw(Box)`
+  flex
+  flex-col
+  align-middle
+  gap-y-3
+`;
+
 export default function FlowsTable(props: FlowsTableProps) {
   const { initialValues, rowsPerPageOptions, isPending } = props;
   const { env, lang } = getContext();
@@ -338,20 +345,25 @@ export default function FlowsTable(props: FlowsTableProps) {
                             <br />
                           </>
                         )}
-                      {row.organizations
-                        ?.filter((org) => org.direction === 'source')
-                        .map((org, index) => (
-                          <Box key={`source_${row.id}_${index}`} sx={tw`me-2`}>
-                            <Tooltip
-                              title={org.name}
-                              placement="top"
-                              followCursor={true}
+                      <OrganizationBox>
+                        {row.organizations
+                          ?.filter((org) => org.direction === 'source')
+                          .map((org, index) => (
+                            <Box
+                              key={`source_${row.id}_${index}`}
+                              sx={tw`me-1`}
                             >
-                              <span>{org.abbreviation}</span>
-                            </Tooltip>
-                            {renderReportDetail(org, row, lang)}
-                          </Box>
-                        ))}
+                              <Tooltip
+                                title={org.name}
+                                placement="top"
+                                followCursor={true}
+                              >
+                                <span>{org.abbreviation}</span>
+                              </Tooltip>
+                              {renderReportDetail(org, row, lang)}
+                            </Box>
+                          ))}
+                      </OrganizationBox>
                     </TableCell>
                   );
                 case 'organization.destination.name':
@@ -361,22 +373,25 @@ export default function FlowsTable(props: FlowsTableProps) {
                       size="small"
                       data-test="flows-table-destination-organization"
                     >
-                      {row.organizations
-                        ?.filter((org) => org.direction === 'destination')
-                        .map((org, index) => (
-                          <React.Fragment
-                            key={`destination_${row.id}_${index}`}
-                          >
-                            <Tooltip
-                              title={org.name}
-                              placement="top"
-                              followCursor={true}
+                      <OrganizationBox>
+                        {row.organizations
+                          ?.filter((org) => org.direction === 'destination')
+                          .map((org, index) => (
+                            <Box
+                              key={`destination_${row.id}_${index}`}
+                              sx={tw`me-1`}
                             >
-                              <span>{org.abbreviation}</span>
-                            </Tooltip>
-                            {renderReportDetail(org, row, lang)}
-                          </React.Fragment>
-                        ))}
+                              <Tooltip
+                                title={org.name}
+                                placement="top"
+                                followCursor={true}
+                              >
+                                <span>{org.abbreviation}</span>
+                              </Tooltip>
+                              {renderReportDetail(org, row, lang)}
+                            </Box>
+                          ))}
+                      </OrganizationBox>
                     </TableCell>
                   );
                 case 'planVersion.destination.name':
