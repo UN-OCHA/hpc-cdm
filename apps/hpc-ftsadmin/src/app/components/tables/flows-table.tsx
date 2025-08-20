@@ -4,6 +4,8 @@ import {
   Box,
   Chip,
   IconButton,
+  List,
+  ListItem,
   Modal,
   Portal,
   Snackbar,
@@ -167,24 +169,53 @@ export default function FlowsTable(props: FlowsTableProps) {
     row: flows.FlowV4,
     lang: LanguageKey
   ) => {
-    const rd = row.reportDetails?.filter((rd) => rd.organizationID === org.id);
+    const flowReportingDetails = row.reportDetails?.filter(
+      (rd) => rd.organizationID === org.id && rd.versionID === row.versionID
+    );
+
+    const shouldDisplayReportingDetailsInfo = flowReportingDetails?.length;
+
+    if (!shouldDisplayReportingDetailsInfo) {
+      return null;
+    }
+
+    const reportingDetailsText = (
+      flowReportingDetails.filter((rD) => rD.channel && rD.date) as Array<
+        flows.FlowV4['reportDetails'][number] & {
+          channel: NonNullable<
+            flows.FlowV4['reportDetails'][number]['channel']
+          >;
+          date: NonNullable<flows.FlowV4['reportDetails'][number]['date']>;
+        }
+      >
+    ).map((rD) =>
+      t
+        .t(lang, (s) => s.components.flowsTable.reportTooltip)
+        .replace('{organization}', org.name)
+        .replace('{date}', dayjs(rD.date).format())
+        .replace('{channel}', rD.channel)
+    );
+
+    if (!reportingDetailsText.length) {
+      return null;
+    }
+
     return (
-      rd &&
-      rd.length > 0 &&
-      rd[0].channel &&
-      rd[0].date && (
-        <Tooltip
-          title={t
-            .t(lang, (s) => s.components.flowsTable.reportTooltip)
-            .replace('{organization}', org.name)
-            .replace('{date}', dayjs(rd[0].date).format())
-            .replace('{channel}', rd[0].channel)}
-        >
-          <IconButton size="small">
-            <MdInfoOutline />
-          </IconButton>
-        </Tooltip>
-      )
+      <Tooltip
+        title={
+          <List>
+            {reportingDetailsText.map((text, i) => (
+              <ListItem key={`${row.id}_${row.versionID}_rD_${i}`}>
+                - {text}
+              </ListItem>
+            ))}
+          </List>
+        }
+      >
+        <IconButton size="small">
+          <MdInfoOutline />
+        </IconButton>
+      </Tooltip>
     );
   };
   const TableRowsComponent = ({

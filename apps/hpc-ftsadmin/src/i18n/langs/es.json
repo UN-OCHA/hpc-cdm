@@ -292,7 +292,7 @@
         "title": "Flujos no encontrados",
         "info": "No pudimos cargar los flujos"
       },
-      "reportTooltip": "informado por {organization} el {date} a través de {channel}",
+      "reportTooltip": "Informado por {organization} el {date} a través de {channel}",
       "parkedSource": "Origen estacionado",
       "sortBy": "Ordenar por",
       "totalAmount": "Monto Total：",
