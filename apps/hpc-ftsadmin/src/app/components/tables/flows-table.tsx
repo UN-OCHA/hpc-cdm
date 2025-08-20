@@ -324,7 +324,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                         size="small"
                         data-test="flows-table-amount-usd"
                       >
-                        {row.amountUSD
+                        {!Number.isNaN(row.amountUSD)
                           ? `$${integerToCurrency(row.amountUSD)}`
                           : row.origAmount && row.origCurrency
                             ? `${row.origCurrency} ${integerToCurrency(
