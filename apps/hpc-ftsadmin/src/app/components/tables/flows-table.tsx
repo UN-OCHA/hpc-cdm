@@ -224,392 +224,409 @@ export default function FlowsTable(props: FlowsTableProps) {
     };
     return (
       <>
-        {data.searchFlows.flows.map((row) => (
-          <TableRow
-            key={`${row.id}v${row.versionID}`}
-            sx={{
-              ...(selectedRows.map((x) => x.id).includes(row.id)
-                ? tw`bg-unocha-primary bg-opacity-10`
-                : undefined),
-            }}
-          >
-            {isPending && (
-              <TableCell
-                size="small"
-                component="th"
-                scope="row"
-                data-test="flows-table-checkbox"
-              >
-                <C.CheckBox
-                  name="flows"
-                  value={{
-                    id: row.id,
-                    versionID: row.versionID,
-                  }}
-                  onChange={(event) => handleCheckboxChange(event, row)}
-                  isControlled
-                />
-              </TableCell>
-            )}
-            {tableHeaders.map((column) => {
-              if (!column.isActive) {
-                return null;
-              }
-              switch (column.identifierID) {
-                case 'flow.id':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_flow.id`}
-                      size="small"
-                      component="th"
-                      scope="row"
-                      data-test="flows-table-id"
-                    >
-                      <Link
-                        to={paths.flow(row.id, row.versionID)}
-                        target="_blank"
+        {data.searchFlows.flows.map((row) => {
+          const sourceOrganizations = row.organizations?.filter(
+            (org) => org.direction === 'source'
+          );
+          const destinationOrganizations = row.organizations?.filter(
+            (org) => org.direction === 'destination'
+          );
+
+          return (
+            <TableRow
+              key={`${row.id}v${row.versionID}`}
+              sx={{
+                ...(selectedRows.map((x) => x.id).includes(row.id)
+                  ? tw`bg-unocha-primary bg-opacity-10`
+                  : undefined),
+              }}
+            >
+              {isPending && (
+                <TableCell
+                  size="small"
+                  component="th"
+                  scope="row"
+                  data-test="flows-table-checkbox"
+                >
+                  <C.CheckBox
+                    name="flows"
+                    value={{
+                      id: row.id,
+                      versionID: row.versionID,
+                    }}
+                    onChange={(event) => handleCheckboxChange(event, row)}
+                    isControlled
+                  />
+                </TableCell>
+              )}
+              {tableHeaders.map((column) => {
+                if (!column.isActive) {
+                  return null;
+                }
+                switch (column.identifierID) {
+                  case 'flow.id':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_flow.id`}
+                        size="small"
+                        component="th"
+                        scope="row"
+                        data-test="flows-table-id"
                       >
-                        {row.id}v{row.versionID}
-                      </Link>
-                    </TableCell>
-                  );
-                case 'status':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_flow.versionID`}
-                      component="th"
-                      size="small"
-                      scope="row"
-                      data-test="flows-table-status"
-                    >
-                      {t.t(lang, (s) =>
-                        row.versionID > 1
-                          ? s.components.flowsTable.update
-                          : s.components.flowsTable.new
-                      )}
-                    </TableCell>
-                  );
-                case 'flow.updatedAt':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_flow.updatedAt`}
-                      size="small"
-                      data-test="flows-table-updated"
-                    >
-                      {dayjs(row.updatedAt).format()}
-                    </TableCell>
-                  );
-                case 'externalReference.systemID':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_externalReference.systemID`}
-                      size="small"
-                      data-test="flows-table-external-reference"
-                    >
-                      {row.externalReferences?.at(0)?.systemID ?? EMPTY_CELL}
-                    </TableCell>
-                  );
-                case 'flow.amountUSD':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_flow.amountUSD`}
-                      size="small"
-                      data-test="flows-table-amount-usd"
-                    >
-                      {row.amountUSD
-                        ? `$${integerToCurrency(row.amountUSD)}`
-                        : row.origAmount && row.origCurrency
-                          ? `${row.origCurrency} ${integerToCurrency(
-                              row.origAmount
-                            )}`
-                          : EMPTY_CELL}
-                    </TableCell>
-                  );
-                case 'organization.source.name':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_organization.source.name`}
-                      size="small"
-                      data-test="flows-table-source-organization"
-                    >
-                      {row.parkedParentSource &&
-                        row.parkedParentSource.orgName.length > 0 && (
-                          <>
-                            <strong>
-                              {t.t(
-                                lang,
-                                (s) => s.components.flowsTable.parkedSource
-                              )}
-                              : {row.parkedParentSource.orgName}
-                            </strong>
-                            <br />
-                          </>
+                        <Link
+                          to={paths.flow(row.id, row.versionID)}
+                          target="_blank"
+                        >
+                          {row.id}v{row.versionID}
+                        </Link>
+                      </TableCell>
+                    );
+                  case 'status':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_flow.versionID`}
+                        component="th"
+                        size="small"
+                        scope="row"
+                        data-test="flows-table-status"
+                      >
+                        {t.t(lang, (s) =>
+                          row.versionID > 1
+                            ? s.components.flowsTable.update
+                            : s.components.flowsTable.new
                         )}
-                      <OrganizationBox>
-                        {row.organizations
-                          ?.filter((org) => org.direction === 'source')
-                          .map((org, index) => (
-                            <Box
-                              key={`source_${row.id}_${index}`}
-                              sx={tw`me-1`}
-                            >
-                              <Tooltip
-                                title={org.name}
-                                placement="top"
-                                followCursor={true}
-                              >
-                                <span>{org.abbreviation}</span>
-                              </Tooltip>
-                              {renderReportDetail(org, row, lang)}
-                            </Box>
+                      </TableCell>
+                    );
+                  case 'flow.updatedAt':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_flow.updatedAt`}
+                        size="small"
+                        data-test="flows-table-updated"
+                      >
+                        {dayjs(row.updatedAt).format()}
+                      </TableCell>
+                    );
+                  case 'externalReference.systemID':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_externalReference.systemID`}
+                        size="small"
+                        data-test="flows-table-external-reference"
+                      >
+                        {row.externalReferences?.at(0)?.systemID ?? EMPTY_CELL}
+                      </TableCell>
+                    );
+                  case 'flow.amountUSD':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_flow.amountUSD`}
+                        size="small"
+                        data-test="flows-table-amount-usd"
+                      >
+                        {row.amountUSD
+                          ? `$${integerToCurrency(row.amountUSD)}`
+                          : row.origAmount && row.origCurrency
+                            ? `${row.origCurrency} ${integerToCurrency(
+                                row.origAmount
+                              )}`
+                            : EMPTY_CELL}
+                      </TableCell>
+                    );
+                  case 'organization.source.name':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_organization.source.name`}
+                        size="small"
+                        data-test="flows-table-source-organization"
+                      >
+                        {row.parkedParentSource &&
+                          row.parkedParentSource.orgName.length > 0 && (
+                            <>
+                              <strong>
+                                {t.t(
+                                  lang,
+                                  (s) => s.components.flowsTable.parkedSource
+                                )}
+                                : {row.parkedParentSource.orgName}
+                              </strong>
+                              <br />
+                            </>
+                          )}
+                        <OrganizationBox>
+                          {sourceOrganizations.length
+                            ? sourceOrganizations.map((org, index) => (
+                                <Box
+                                  key={`source_${row.id}_${index}`}
+                                  sx={tw`me-1`}
+                                >
+                                  <Tooltip
+                                    title={org.name}
+                                    placement="top"
+                                    followCursor={true}
+                                  >
+                                    <span>{org.abbreviation}</span>
+                                  </Tooltip>
+                                  {renderReportDetail(org, row, lang)}
+                                </Box>
+                              ))
+                            : EMPTY_CELL}
+                        </OrganizationBox>
+                      </TableCell>
+                    );
+                  case 'organization.destination.name':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}organization.destination.name`}
+                        size="small"
+                        data-test="flows-table-destination-organization"
+                      >
+                        <OrganizationBox>
+                          {destinationOrganizations.length
+                            ? destinationOrganizations.map((org, index) => (
+                                <Box
+                                  key={`destination_${row.id}_${index}`}
+                                  sx={tw`me-1`}
+                                >
+                                  <Tooltip
+                                    title={org.name}
+                                    placement="top"
+                                    followCursor={true}
+                                  >
+                                    <span>{org.abbreviation}</span>
+                                  </Tooltip>
+                                  {renderReportDetail(org, row, lang)}
+                                </Box>
+                              ))
+                            : EMPTY_CELL}
+                        </OrganizationBox>
+                      </TableCell>
+                    );
+                  case 'planVersion.destination.name':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}planVersion.destination.name`}
+                        size="small"
+                        data-test="flows-table-plans"
+                      >
+                        {row.plans?.length
+                          ? row.plans
+                              .filter(
+                                (plan) => plan.direction === 'destination'
+                              )
+                              .map((plan) => plan.name)
+                              .join(', ')
+                          : EMPTY_CELL}
+                      </TableCell>
+                    );
+                  case 'location.destination.name':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}location.destination.name`}
+                        size="small"
+                        data-test="flows-table-locations"
+                      >
+                        {row.locations?.length
+                          ? row.locations
+                              .filter(
+                                (location) =>
+                                  location.direction === 'destination'
+                              )
+                              .map((location) => location.name)
+                              .join(', ')
+                          : EMPTY_CELL}
+                      </TableCell>
+                    );
+                  case 'usageYear.destination.year':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_usageYear.destination.year`}
+                        size="small"
+                        data-test="flows-table-years"
+                      >
+                        {row.usageYears
+                          ?.filter((year) => year.direction === 'destination')
+                          .map((year) => year.year)
+                          .join(', ')}
+                      </TableCell>
+                    );
+                  case 'details':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_details`}
+                        size="small"
+                        data-test="flows-table-details"
+                      >
+                        {row.categories
+                          ?.filter((cat) => cat.group === 'flowStatus')
+                          .map((cat, index) => (
+                            <Chip
+                              key={`category_${row.id}_${index}`}
+                              sx={chipSpacing}
+                              label={cat.name.toLowerCase()}
+                              size="small"
+                            />
                           ))}
-                      </OrganizationBox>
-                    </TableCell>
-                  );
-                case 'organization.destination.name':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}organization.destination.name`}
-                      size="small"
-                      data-test="flows-table-destination-organization"
-                    >
-                      <OrganizationBox>
-                        {row.organizations
-                          ?.filter((org) => org.direction === 'destination')
-                          .map((org, index) => (
-                            <Box
-                              key={`destination_${row.id}_${index}`}
-                              sx={tw`me-1`}
-                            >
-                              <Tooltip
-                                title={org.name}
-                                placement="top"
-                                followCursor={true}
-                              >
-                                <span>{org.abbreviation}</span>
-                              </Tooltip>
-                              {renderReportDetail(org, row, lang)}
-                            </Box>
-                          ))}
-                      </OrganizationBox>
-                    </TableCell>
-                  );
-                case 'planVersion.destination.name':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}planVersion.destination.name`}
-                      size="small"
-                      data-test="flows-table-plans"
-                    >
-                      {row.plans?.length
-                        ? row.plans
-                            .filter((plan) => plan.direction === 'destination')
-                            .map((plan) => plan.name)
-                            .join(', ')
-                        : EMPTY_CELL}
-                    </TableCell>
-                  );
-                case 'location.destination.name':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}location.destination.name`}
-                      size="small"
-                      data-test="flows-table-locations"
-                    >
-                      {row.locations?.length
-                        ? row.locations
-                            .filter(
-                              (location) => location.direction === 'destination'
-                            )
-                            .map((location) => location.name)
-                            .join(', ')
-                        : EMPTY_CELL}
-                    </TableCell>
-                  );
-                case 'usageYear.destination.year':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_usageYear.destination.year`}
-                      size="small"
-                      data-test="flows-table-years"
-                    >
-                      {row.usageYears
-                        ?.filter((year) => year.direction === 'destination')
-                        .map((year) => year.year)
-                        .join(', ')}
-                    </TableCell>
-                  );
-                case 'details':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_details`}
-                      size="small"
-                      data-test="flows-table-details"
-                    >
-                      {row.categories
-                        ?.filter((cat) => cat.group === 'flowStatus')
-                        .map((cat, index) => (
+                        {row.restricted && (
                           <Chip
-                            key={`category_${row.id}_${index}`}
+                            label={[
+                              t.t(
+                                lang,
+                                (s) => s.components.flowsTable.restricted
+                              ),
+                            ]}
                             sx={chipSpacing}
-                            label={cat.name.toLowerCase()}
+                            size="small"
+                            color="secondary"
+                          />
+                        )}
+                        {!row.activeStatus && (
+                          <Chip
+                            sx={chipSpacing}
+                            label={[
+                              t.t(
+                                lang,
+                                (s) => s.components.flowsTable.inactive
+                              ),
+                            ]}
+                            color="secondary"
                             size="small"
                           />
-                        ))}
-                      {row.restricted && (
-                        <Chip
-                          label={[
-                            t.t(
-                              lang,
-                              (s) => s.components.flowsTable.restricted
-                            ),
-                          ]}
-                          sx={chipSpacing}
-                          size="small"
-                          color="secondary"
-                        />
-                      )}
-                      {!row.activeStatus && (
-                        <Chip
-                          sx={chipSpacing}
-                          label={[
-                            t.t(lang, (s) => s.components.flowsTable.inactive),
-                          ]}
-                          color="secondary"
-                          size="small"
-                        />
-                      )}
-                      {row.parentIDs && row.parentIDs.length > 0 && (
-                        <Chip
-                          sx={chipSpacing}
-                          label={[
-                            t.t(lang, (s) => s.components.flowsTable.child),
-                          ]}
-                          size="small"
-                          color="primary"
-                        />
-                      )}
-                      {row.childIDs && row.childIDs.length > 0 && (
-                        <Chip
-                          sx={chipSpacing}
-                          label={[
-                            t.t(lang, (s) => s.components.flowsTable.parent),
-                          ]}
-                          size="small"
-                          color="primary"
-                        />
-                      )}
-                      {row.categories?.some(
-                        (cat) => cat.name === CANCELLATION
-                      ) && (
-                        <Chip
-                          sx={chipSpacing}
-                          label={[
-                            t.t(
-                              lang,
-                              (s) => s.components.flowsTable.cancellation
-                            ),
-                          ]}
-                          color="secondary"
-                          size="small"
-                        />
-                      )}
-                    </TableCell>
-                  );
-                case 'flow.newMoney':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_flow.newMoney`}
-                      size="small"
-                      data-test="flows-table-newMoney"
-                    >
-                      {(row.newMoney ?? EMPTY_CELL).toString()}
-                    </TableCell>
-                  );
-                case 'flow.decisionDate':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_flow.decisionDate`}
-                      size="small"
-                      data-test="flows-table-decisionDate"
-                    >
-                      {row.decisionDate
-                        ? dayjs(row.decisionDate).format()
-                        : EMPTY_CELL}
-                    </TableCell>
-                  );
-                case 'flow.exchangeRate':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_flow.exchangeRate`}
-                      size="small"
-                      data-test="flows-table-exchangeRate"
-                    >
-                      {row.exchangeRate ?? EMPTY_CELL}
-                    </TableCell>
-                  );
-                case 'flow.flowDate':
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_flow.flowDate`}
-                      size="small"
-                      data-test="flows-table-flowDate"
-                    >
-                      {row.flowDate ? dayjs(row.flowDate).format() : EMPTY_CELL}
-                    </TableCell>
-                  );
-                case 'reportDetail.sourceID': {
-                  let rd: string = EMPTY_CELL;
-                  if (row.reportDetails) {
-                    const uniqueSourceIDs = new Set(
-                      row.reportDetails
-                        .map((rd) => rd.sourceID)
-                        .filter(util.isDefined)
+                        )}
+                        {row.parentIDs && row.parentIDs.length > 0 && (
+                          <Chip
+                            sx={chipSpacing}
+                            label={[
+                              t.t(lang, (s) => s.components.flowsTable.child),
+                            ]}
+                            size="small"
+                            color="primary"
+                          />
+                        )}
+                        {row.childIDs && row.childIDs.length > 0 && (
+                          <Chip
+                            sx={chipSpacing}
+                            label={[
+                              t.t(lang, (s) => s.components.flowsTable.parent),
+                            ]}
+                            size="small"
+                            color="primary"
+                          />
+                        )}
+                        {row.categories?.some(
+                          (cat) => cat.name === CANCELLATION
+                        ) && (
+                          <Chip
+                            sx={chipSpacing}
+                            label={[
+                              t.t(
+                                lang,
+                                (s) => s.components.flowsTable.cancellation
+                              ),
+                            ]}
+                            color="secondary"
+                            size="small"
+                          />
+                        )}
+                      </TableCell>
                     );
-                    const uniqueSourceIDsArray = [...uniqueSourceIDs];
-                    rd = uniqueSourceIDsArray.join(', ');
-                    rd = rd.length > 0 ? rd : EMPTY_CELL;
-                  }
-
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_reportDetail.sourceSystemId`}
-                      size="small"
-                      data-test="flows-table-sourceSystemId"
-                    >
-                      {rd}
-                    </TableCell>
-                  );
-                }
-                case 'reportDetail.reporterRefCode': {
-                  let rd: string = EMPTY_CELL;
-                  if (row.reportDetails) {
-                    const uniqueSourceIDs = new Set(
-                      row.reportDetails
-                        .map((rd) => rd.refCode)
-                        .filter(util.isDefined)
+                  case 'flow.newMoney':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_flow.newMoney`}
+                        size="small"
+                        data-test="flows-table-newMoney"
+                      >
+                        {(row.newMoney ?? EMPTY_CELL).toString()}
+                      </TableCell>
                     );
-                    const uniqueRefCodesArray = [...uniqueSourceIDs];
-                    rd = uniqueRefCodesArray.join(', ');
-                    rd = rd.length > 0 ? rd : EMPTY_CELL;
-                  }
+                  case 'flow.decisionDate':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_flow.decisionDate`}
+                        size="small"
+                        data-test="flows-table-decisionDate"
+                      >
+                        {row.decisionDate
+                          ? dayjs(row.decisionDate).format()
+                          : EMPTY_CELL}
+                      </TableCell>
+                    );
+                  case 'flow.exchangeRate':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_flow.exchangeRate`}
+                        size="small"
+                        data-test="flows-table-exchangeRate"
+                      >
+                        {row.exchangeRate ?? EMPTY_CELL}
+                      </TableCell>
+                    );
+                  case 'flow.flowDate':
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_flow.flowDate`}
+                        size="small"
+                        data-test="flows-table-flowDate"
+                      >
+                        {row.flowDate
+                          ? dayjs(row.flowDate).format()
+                          : EMPTY_CELL}
+                      </TableCell>
+                    );
+                  case 'reportDetail.sourceID': {
+                    let rd: string = EMPTY_CELL;
+                    if (row.reportDetails) {
+                      const uniqueSourceIDs = new Set(
+                        row.reportDetails
+                          .map((rd) => rd.sourceID)
+                          .filter(util.isDefined)
+                      );
+                      const uniqueSourceIDsArray = [...uniqueSourceIDs];
+                      rd = uniqueSourceIDsArray.join(', ');
+                      rd = rd.length > 0 ? rd : EMPTY_CELL;
+                    }
 
-                  return (
-                    <TableCell
-                      key={`${row.id}v${row.versionID}_reportDetail.reporterRefCode`}
-                      size="small"
-                      data-test="flows-table-reporterRefCode"
-                    >
-                      {rd}
-                    </TableCell>
-                  );
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_reportDetail.sourceSystemId`}
+                        size="small"
+                        data-test="flows-table-sourceSystemId"
+                      >
+                        {rd}
+                      </TableCell>
+                    );
+                  }
+                  case 'reportDetail.reporterRefCode': {
+                    let rd: string = EMPTY_CELL;
+                    if (row.reportDetails) {
+                      const uniqueSourceIDs = new Set(
+                        row.reportDetails
+                          .map((rd) => rd.refCode)
+                          .filter(util.isDefined)
+                      );
+                      const uniqueRefCodesArray = [...uniqueSourceIDs];
+                      rd = uniqueRefCodesArray.join(', ');
+                      rd = rd.length > 0 ? rd : EMPTY_CELL;
+                    }
+
+                    return (
+                      <TableCell
+                        key={`${row.id}v${row.versionID}_reportDetail.reporterRefCode`}
+                        size="small"
+                        data-test="flows-table-reporterRefCode"
+                      >
+                        {rd}
+                      </TableCell>
+                    );
+                  }
+                  default:
+                    return null;
                 }
-                default:
-                  return null;
-              }
-            })}
-          </TableRow>
-        ))}
+              })}
+            </TableRow>
+          );
+        })}
       </>
     );
   };
