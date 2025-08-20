@@ -45,7 +45,7 @@ const XLSXErrorDisplay = ({ errorMessage }: Props) => {
 
   return (
     <Grow in={!!errorMessage}>
-      <Box sx={tw`self-center shadow-lg`}>
+      <Box sx={tw`self-center shadow-lg mb-4`}>
         <Table>
           <TableHead sx={tw`bg-unocha-pallete-gray-light3`}>
             <TableRow sx={tw`bg-unocha-pallete-red-dark`}>
