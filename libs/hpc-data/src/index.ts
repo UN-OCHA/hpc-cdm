@@ -6,6 +6,7 @@ import * as fileAssetEntities from './lib/file-asset-entities';
 import * as flows from './lib/flows';
 import * as globalClusters from './lib/global-clusters';
 import * as governingEntities from './lib/governing-entities';
+import * as jobs from './lib/jobs';
 import * as locations from './lib/locations';
 import * as operations from './lib/operations';
 import * as organizations from './lib/organizations';
@@ -23,6 +24,7 @@ export interface Model {
   plans: plans.Model;
   globalClusters: globalClusters.Model;
   governingEntities: governingEntities.Model;
+  jobs: jobs.Model;
   systems: systems.Model;
   emergencies: emergencies.Model;
   fileAssetEntities: fileAssetEntities.Model;
@@ -43,6 +45,7 @@ export {
   flows,
   globalClusters,
   governingEntities,
+  jobs,
   locations,
   operations,
   organizations,
