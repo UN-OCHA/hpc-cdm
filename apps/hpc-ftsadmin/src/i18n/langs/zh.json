@@ -619,6 +619,13 @@
         "unknown": "上传文件时发生未知错误"
       },
       "success": "文件 \"{fileName}\" 已成功上传"
+    },
+    "xlsxUpload": {
+      "errorTable": {
+        "title": "Excel 文件中存在无效值",
+        "column": "列",
+        "invalidValues": "无效值"
+      }
     }
   },
   "navigation": {

@@ -616,6 +616,13 @@
         "unknown": "Ha habido un error desconocido al cargar el archivo"
       },
       "success": "El archivo \"{fileName}\" se ha cargado con éxito"
+    },
+    "xlsxUpload": {
+      "errorTable": {
+        "title": "Valores no válidos en el archivo de Excel",
+        "column": "Columna",
+        "invalidValues": "Valor(es) no válido(s)"
+      }
     }
   },
   "navigation": {
