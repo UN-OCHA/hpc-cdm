@@ -11,6 +11,33 @@ updates:
       timezone: 'Europe/Zurich'
     open-pull-requests-limit: 10
     versioning-strategy: increase
+    groups:
+      react:
+        # Only those which tend to follow React versions in lockstep
+        patterns:
+          - 'react'
+          - 'react-dom'
+          - 'react-is'
+        update-types: [minor, patch]
+      babel:
+        patterns:
+          - '@babel/*'
+          - 'babel-*'
+      mui:
+        patterns:
+          - '@mui/*'
+      nx:
+        patterns:
+          - '@nx/*'
+          - 'nx'
+        update-types: [minor, patch]
+      jest:
+        # Cannot use wildcard pattern `'*jest'` because it would select `@nx/jest` package
+        patterns:
+          - 'jest'
+          - 'babel-jest'
+          - 'ts-jest'
+          - '@types/jest'
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
