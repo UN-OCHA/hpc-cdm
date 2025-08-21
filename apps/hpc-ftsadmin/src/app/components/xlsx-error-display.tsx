@@ -45,46 +45,51 @@ const XLSXErrorDisplay = ({ errorMessage }: Props) => {
 
   return (
     <Grow in={!!errorMessage}>
-      <Box sx={tw`self-center shadow-lg mb-4`}>
-        <Table>
-          <TableHead sx={tw`bg-unocha-pallete-gray-light3`}>
-            <TableRow sx={tw`bg-unocha-pallete-red-dark`}>
-              <TableCell
-                sx={tw`rounded-t-sm text-white`}
-                colSpan={parsedErrors.length}
-                align="center"
-              >
-                <Box sx={tw`flex justify-center gap-x-2`}>
-                  <ErrorIcon />
-                  <span>
-                    {t.t(lang, (s) => s.components.xlsxUpload.errorTable.title)}
-                  </span>
-                </Box>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                {t.t(lang, (s) => s.components.xlsxUpload.errorTable.column)}
-              </TableCell>
-              <TableCell>
-                {t.t(
-                  lang,
-                  (s) => s.components.xlsxUpload.errorTable.invalidValues
-                )}
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {parsedErrors.map(([key, invalidValues]) => (
-              <TableRow key={`body_${key}`}>
-                <TableCell>{key}</TableCell>
-                <TableCell sx={tw`text-unocha-pallete-red-dark`}>
-                  {[...invalidValues].join(', ')}
+      <Box sx={tw`self-center`}>
+        <Box sx={tw`shadow-lg mb-4`}>
+          <Table>
+            <TableHead sx={tw`bg-unocha-pallete-gray-light3`}>
+              <TableRow sx={tw`bg-unocha-pallete-red-dark`}>
+                <TableCell
+                  sx={tw`rounded-t-sm text-white`}
+                  colSpan={parsedErrors.length}
+                  align="center"
+                >
+                  <Box sx={tw`flex justify-center gap-x-2`}>
+                    <ErrorIcon />
+                    <span>
+                      {t.t(
+                        lang,
+                        (s) => s.components.xlsxUpload.errorTable.title
+                      )}
+                    </span>
+                  </Box>
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+              <TableRow>
+                <TableCell>
+                  {t.t(lang, (s) => s.components.xlsxUpload.errorTable.column)}
+                </TableCell>
+                <TableCell>
+                  {t.t(
+                    lang,
+                    (s) => s.components.xlsxUpload.errorTable.invalidValues
+                  )}
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {parsedErrors.map(([key, invalidValues]) => (
+                <TableRow key={`body_${key}`}>
+                  <TableCell>{key}</TableCell>
+                  <TableCell sx={tw`text-unocha-pallete-red-dark`}>
+                    {[...invalidValues].join(', ')}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Box>
       </Box>
     </Grow>
   );
