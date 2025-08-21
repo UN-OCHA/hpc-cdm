@@ -38,6 +38,12 @@ updates:
           - 'babel-jest'
           - 'ts-jest'
           - '@types/jest'
+    ignore:
+      - dependency-name: 'fp-ts'
+      - dependency-name: 'io-ts'
+      # In v7.0.0, `enketo-core` moved to Yarn-only, not working with NPM
+      - dependency-name: 'enketo-core'
+        update-types: [version-update:semver-major]
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
