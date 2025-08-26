@@ -5,7 +5,11 @@
     "logout": "Déconnexion"
   },
   "errors": {
-    "unableToLoadFTSAdmin": "Impossible de charger le FTS Admin"
+    "unableToLoadFTSAdmin": "Impossible de charger le FTS Admin",
+    "unexpectedFlowError": {
+      "text": "Erreur inattendue lors du chargement du flux. Veuillez signaler ce bug en fournissant un moyen de le reproduire.",
+      "button": "Accueil"
+    }
   },
   "common": {
     "devEnvironmentWarnings": {
@@ -612,6 +616,13 @@
         "unknown": "Il y a eu une erreur inconnue lors du téléchargement du fichier"
       },
       "success": "Le fichier «{fileName}» a été téléchargé avec succès"
+    },
+    "xlsxUpload": {
+      "errorTable": {
+        "title": "Valeurs non valides dans le fichier Excel",
+        "column": "Colonne",
+        "invalidValues": "Valeur(s) non valide(s)"
+      }
     }
   },
   "navigation": {

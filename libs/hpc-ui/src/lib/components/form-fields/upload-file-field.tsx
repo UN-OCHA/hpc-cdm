@@ -156,6 +156,7 @@ const UploadFile = ({
                     color="primary"
                     onClick={handleUpload}
                     text={t.t(lang, (s) => s.uploadFileField.upload)}
+                    shouldDisplayLoading={isLoading}
                   />
                 )}
                 {onDelete && (

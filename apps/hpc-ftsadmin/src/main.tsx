@@ -16,6 +16,9 @@ import paths from './app/paths';
 
 import { RouteParamsValidator } from './app/components/route-params-validator';
 
+import { ErrorBoundary } from './app/error';
+import { FlowErrorBoundary } from './app/pages/flows/flow-error-boundary';
+
 const rootElement = document.querySelector('#root');
 if (!rootElement) {
   throw new Error('Failed to find the root element');
@@ -38,6 +41,7 @@ const router = createBrowserRouter([
             routeParams={['id', 'version']}
           />
         ),
+        errorElement: <FlowErrorBoundary />,
       },
       { path: paths.pendingFlows(), element: <PagePendingFlowsList /> },
       { path: paths.organizations(), element: <PageOrganizationsList /> },
@@ -55,6 +59,13 @@ const router = createBrowserRouter([
       { path: paths.uploadXLSX(), element: <PageUploadXLSX /> },
       { path: paths.splat(), element: <PageNotFound /> },
     ],
+    errorElement: (
+      <ErrorBoundary
+        text="Oops, there has been an unexpected error, please report this bug
+            with a reproduction of it."
+        buttonProps={{ text: 'Home', href: paths.home() }}
+      />
+    ),
   },
 ]);
 root.render(<RouterProvider router={router} />);

@@ -363,7 +363,7 @@ export class LiveModel implements Model {
     this.fetch = config.interfaces?.fetch ?? fetch.bind(globalThis);
     this.sha256Hash = config.interfaces?.sha256Hash ?? util.hashFileInBrowser;
     this.apolloClient = new ApolloClient({
-      uri: `${this.config.baseUrl}/v4/graphql`,
+      uri: new URL('v4/graphql', this.config.baseUrl).toString(),
       cache: new InMemoryCache({}),
     });
   }
