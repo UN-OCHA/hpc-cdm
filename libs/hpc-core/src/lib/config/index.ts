@@ -8,7 +8,6 @@ export const CONFIG = t.intersection([
   }),
   // These are optional so that no changes are required to CDM for now
   t.partial({
-    ftsAdminBaseUrl: t.string,
     rpmBaseUrl: t.string,
     prismBaseUrl: t.string,
     ftsWebsiteBaseUrl: t.string,

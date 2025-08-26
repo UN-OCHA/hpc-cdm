@@ -98,6 +98,8 @@ const ReportingDetail = ({
 
   const { values, setFieldValue } = useFormikContext<FlowFormType>();
 
+  const reportDetail =
+    values.reportingDetails[index] ?? REPORTING_DETAIL_INITIAL_VALUES;
   const {
     dateReported,
     file,
@@ -111,7 +113,7 @@ const ReportingDetail = ({
     reportedByOrganization,
     reporterContactInfo,
     reporterReferenceCode,
-  } = values.reportingDetails[index] ?? REPORTING_DETAIL_INITIAL_VALUES;
+  } = reportDetail;
 
   const recommendedOrganizations = mergeArraysByUniqueProperty(
     'value',
@@ -172,7 +174,7 @@ const ReportingDetail = ({
     value: unknown
   ) => {
     const newReportingDetail = {
-      ...values.reportingDetails[index],
+      ...reportDetail,
       [fieldName]: value,
     };
     const reportingDetails = values.reportingDetails;
@@ -187,7 +189,7 @@ const ReportingDetail = ({
     const verifiedValue = value === 'Primary' ? 'true' : 'false';
 
     const newReportingDetail = {
-      ...values.reportingDetails[index],
+      ...reportDetail,
       reportSource: value,
       verified: verifiedValue,
     };
@@ -276,7 +278,7 @@ const ReportingDetail = ({
             onChange={(value) => handleChange('reportedByOrganization', value)}
             disabled={disabled}
             controlledError={validateReportingDetailsRequiredField(
-              values.reportingDetails[index].reportedByOrganization,
+              reportedByOrganization,
               lang
             )}
           />
@@ -324,7 +326,7 @@ const ReportingDetail = ({
             onChange={(value) => handleChange('reportChannel', value)}
             disabled={disabled}
             controlledError={validateReportingDetailsRequiredField(
-              values.reportingDetails[index].reportChannel,
+              reportChannel,
               lang
             )}
             required
@@ -515,10 +517,7 @@ const ReportingDetail = ({
             controlledField={{
               value: url,
               onChange: (value) => handleChange('url', value),
-              error: validateReportingDetailsURLFormat(
-                values.reportingDetails[index].url,
-                lang
-              ),
+              error: validateReportingDetailsURLFormat(url, lang),
             }}
             disabled={disabled}
           />

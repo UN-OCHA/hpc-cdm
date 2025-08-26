@@ -30,7 +30,6 @@ export const initializeLiveEnvironment = async (config: config.Config) => {
     },
     get externalUrls() {
       return {
-        ftsAdminBaseUrl: config.ftsAdminBaseUrl,
         rpmBaseUrl: config.rpmBaseUrl,
         prismBaseUrl: config.prismBaseUrl,
         ftsWebsiteBaseUrl: config.ftsWebsiteBaseUrl,
