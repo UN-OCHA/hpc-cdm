@@ -2,20 +2,15 @@ import {
   PublicClientApplication,
   type AuthenticationResult,
 } from '@azure/msal-browser';
-import { type config, type Session } from '@unocha/hpc-core';
+import type { Session } from '@unocha/hpc-core';
+import type { AuthProvider, AuthResult, EntraIDConfig } from './interfaces';
 import { LiveModel } from './model';
 
-export class LiveBrowserClient {
-  private readonly config: config.Config;
+export class EntraIDProvider implements AuthProvider {
+  private readonly config: EntraIDConfig;
   private readonly msalInstance: PublicClientApplication;
 
-  public constructor(config: config.Config) {
-    if (!config.entraClientId || !config.entraTenantId) {
-      throw new Error('Missing Entra ID configuration');
-    }
-
-    console.log('initializing live with Entra ID', config);
-
+  public constructor(config: EntraIDConfig) {
     this.config = config;
 
     this.msalInstance = new PublicClientApplication({
@@ -35,7 +30,7 @@ export class LiveBrowserClient {
     ).clearSessionStorage = this.clearSessionStorage;
   }
 
-  private clearSessionStorage = () => {
+  public clearSessionStorage = (): void => {
     localStorage.clear();
     sessionStorage.clear();
     globalThis.location.reload();
@@ -52,7 +47,7 @@ export class LiveBrowserClient {
     });
   };
 
-  public init = async () => {
+  public init = async (): Promise<AuthResult> => {
     let account: AuthenticationResult | null = null;
 
     try {
@@ -104,25 +99,12 @@ export class LiveBrowserClient {
       }
     });
 
-    if (account) {
-      const result = {
-        session,
-        model: new LiveModel({
-          baseUrl: this.config.hpcApiUrl,
-          hidToken: account.accessToken,
-          clearSessionStorage: this.clearSessionStorage,
-        }),
-      };
-      return result;
-    }
-    const result = {
-      session,
-      model: new LiveModel({
-        baseUrl: this.config.hpcApiUrl,
-        hidToken: null,
-        clearSessionStorage: this.clearSessionStorage,
-      }),
-    };
-    return result;
+    const model = new LiveModel({
+      baseUrl: this.config.hpcApiUrl,
+      hidToken: account?.accessToken ?? null,
+      clearSessionStorage: this.clearSessionStorage,
+    });
+
+    return { session, model };
   };
 }
