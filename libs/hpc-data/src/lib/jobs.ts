@@ -2,6 +2,7 @@ import * as t from 'io-ts';
 import { DATE_FROM_STRING } from './util';
 
 export const IMPORT_EXCEL_BRIDGE_METADATA = t.type({
+  fileName: t.string,
   startedBy: t.number,
   total: t.number,
   processed: t.number,
