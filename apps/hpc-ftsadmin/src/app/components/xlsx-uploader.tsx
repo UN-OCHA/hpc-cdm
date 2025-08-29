@@ -46,8 +46,8 @@ const XLSXUploader = ({
 
   const handleSuccess = (fileName: string = '') => {
     setErrorMessage(null);
-    toast.success(
-      t.t(lang, (s) => s.components.upload.success, {
+    toast.info(
+      t.t(lang, (s) => s.components.upload.startUpload, {
         fileName,
       }),
       TOAST_CONFIG

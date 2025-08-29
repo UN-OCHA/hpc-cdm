@@ -2154,6 +2154,7 @@ export const INITIAL_DATA: DummyData = {
       status: 'success',
       type: 'importExcelBridge',
       metadata: {
+        fileName: 'import.xlsx',
         startedBy: 1,
         total: 100,
         processed: 100,

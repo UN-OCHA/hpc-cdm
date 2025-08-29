@@ -616,14 +616,15 @@
         "invalidExtension": "الملف المحدد ليس .xlsx أو .xls. يرجى اختيار ملف بالتنسيق الصحيح",
         "unknown": "حدث خطأ غير معروف أثناء تحميل الملف"
       },
-      "success": "تم تحميل الملف \"{fileName}\" بنجاح"
+      "startUpload": "الملف \"{fileName}\" قيد المعالجة. يرجى الانتظار..."
     },
     "xlsxUpload": {
       "errorTable": {
         "title": "قيم غير صالحة في ملف إكسل",
         "column": "العمود",
         "invalidValues": "القيمة/القيم غير الصالحة"
-      }
+      },
+      "success": "تم تحميل الملف \"{fileName}\" بنجاح"
     }
   },
   "navigation": {

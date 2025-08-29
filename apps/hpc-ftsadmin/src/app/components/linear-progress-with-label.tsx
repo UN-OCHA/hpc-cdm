@@ -3,8 +3,13 @@ import tw from 'twin.macro';
 
 const LinearProgressWithLabel = (
   props:
-    | { progress: number }
-    | { processed: number; total: number; shouldShowProcess?: boolean }
+    | { title: string; progress: number }
+    | {
+        title: string;
+        processed: number;
+        total: number;
+        shouldShowProcess?: boolean;
+      }
 ) => {
   const progress =
     'progress' in props
@@ -22,6 +27,7 @@ const LinearProgressWithLabel = (
 
   return (
     <Box sx={tw`flex items-center gap-x-4 mt-4`}>
+      <span>{props.title}</span>
       <Box sx={tw`flex-grow`}>
         <LinearProgress
           variant="determinate"

@@ -8,10 +8,15 @@ type JobOfType<TJobType extends jobs.JobType> = Extract<
   { type: TJobType }
 >;
 
-export const useJobTracking = <TJobType extends jobs.JobType>(
-  jobType: TJobType,
-  interval?: number
-): {
+export const useJobTracking = <TJobType extends jobs.JobType>({
+  jobType,
+  interval,
+  onBeforeClearJob,
+}: {
+  jobType: TJobType;
+  interval?: number;
+  onBeforeClearJob?: (job: JobOfType<TJobType>) => void;
+}): {
   job: JobOfType<TJobType> | null;
   setPendingJobId: (jobId: number | null) => void;
 } => {
@@ -44,6 +49,9 @@ export const useJobTracking = <TJobType extends jobs.JobType>(
         setJob(job as JobOfType<TJobType>);
 
         if (job.status === 'success' || job.status === 'failed') {
+          if (onBeforeClearJob) {
+            onBeforeClearJob(job as JobOfType<TJobType>);
+          }
           clearInterval(intervalId);
           setPendingJobId(null);
           setJob(null);
@@ -58,7 +66,7 @@ export const useJobTracking = <TJobType extends jobs.JobType>(
 
       return () => clearInterval(intervalId);
     }
-  }, [pendingJobId, getJobById, jobType, interval]);
+  }, [pendingJobId, getJobById, jobType, interval, onBeforeClearJob]);
 
   return {
     job,
