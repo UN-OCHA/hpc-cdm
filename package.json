@@ -41,7 +41,7 @@
   },
   "private": true,
   "devDependencies": {
-    "@apollo/client": "3.13.9",
+    "@apollo/client": "4.0.2",
     "@babel/core": "7.28.0",
     "@babel/preset-env": "7.28.0",
     "@babel/preset-react": "7.27.1",
