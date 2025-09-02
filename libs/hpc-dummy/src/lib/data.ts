@@ -2136,6 +2136,40 @@ export const INITIAL_DATA: DummyData = {
       entityPrototypeId: 3708,
     },
   ],
+  jobs: [
+    {
+      id: 1,
+      startAt: new Date('2025-08-20T00:00:00.000Z'),
+      endAt: new Date('2025-08-20T00:00:00.000Z'),
+      totalTaskCount: 100,
+      status: 'success',
+      type: 'projectExcelGeneration',
+      metadata: {},
+    },
+    {
+      id: 2,
+      startAt: new Date('2025-08-20T00:00:00.000Z'),
+      endAt: new Date('2025-08-20T00:00:00.000Z'),
+      totalTaskCount: 100,
+      status: 'success',
+      type: 'importExcelBridge',
+      metadata: {
+        fileName: 'import.xlsx',
+        startedBy: 1,
+        total: 100,
+        processed: 100,
+      },
+    },
+    {
+      id: 3,
+      startAt: new Date('2025-08-20T00:00:00.000Z'),
+      endAt: new Date('2025-08-20T00:00:00.000Z'),
+      totalTaskCount: 100,
+      status: 'failed',
+      type: 'projectExcelGeneration',
+      metadata: {},
+    },
+  ],
   keywords: [
     {
       id: 1158,

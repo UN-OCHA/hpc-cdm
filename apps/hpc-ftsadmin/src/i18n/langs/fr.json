@@ -615,14 +615,15 @@
         "invalidExtension": "Le fichier sélectionné n'est pas .xlsx ni .xls. Veuillez choisir un fichier au format correct",
         "unknown": "Il y a eu une erreur inconnue lors du téléchargement du fichier"
       },
-      "success": "Le fichier «{fileName}» a été téléchargé avec succès"
+      "startUpload": "Le fichier \"{fileName}\" est en cours de traitement. Veuillez patienter..."
     },
     "xlsxUpload": {
       "errorTable": {
         "title": "Valeurs non valides dans le fichier Excel",
         "column": "Colonne",
         "invalidValues": "Valeur(s) non valide(s)"
-      }
+      },
+      "success": "Le fichier «{fileName}» a été téléchargé avec succès"
     }
   },
   "navigation": {

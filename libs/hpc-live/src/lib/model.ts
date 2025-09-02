@@ -18,6 +18,7 @@ import {
   forms,
   globalClusters,
   governingEntities,
+  jobs,
   locations,
   type Model,
   operations,
@@ -754,7 +755,7 @@ export class LiveModel implements Model {
         return this.call({
           pathname: '/v2/flow/excel',
           method: 'POST',
-          resultType: t.unknown,
+          resultType: fileAssetEntities.UPLOAD_XLSX_RESULT,
           body: {
             type: 'form-data',
             data,
@@ -1259,5 +1260,23 @@ export class LiveModel implements Model {
         resultType: reportingWindows.UPLOAD_ASSIGNMENT_FILE_RESULT,
       });
     }
+  }
+
+  get jobs(): jobs.Model {
+    return {
+      getJobById: (id) =>
+        this.call({
+          pathname: `/v2/job/${id}`,
+          resultType: jobs.JOB,
+        }),
+      getPendingJobs: (type) =>
+        this.call({
+          pathname: `/v2/job/pending`,
+          queryParams: {
+            ...(type ? { type } : {}),
+          },
+          resultType: jobs.GET_PENDING_JOBS_RESULT,
+        }),
+    };
   }
 }

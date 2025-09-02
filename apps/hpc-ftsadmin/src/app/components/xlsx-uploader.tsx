@@ -13,7 +13,15 @@ const VALID_FILE_EXTENSION = new Set<string>([
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 ]);
 
-const XLSXUploader = () => {
+const XLSXUploader = ({
+  onUploadStart,
+  onSuccess,
+  disabled,
+}: {
+  onUploadStart: () => void;
+  onSuccess: (jobId: number) => void;
+  disabled?: boolean;
+}) => {
   const { lang, env: getEnv } = getContext();
   const env = getEnv();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -38,8 +46,8 @@ const XLSXUploader = () => {
 
   const handleSuccess = (fileName: string = '') => {
     setErrorMessage(null);
-    toast.success(
-      t.t(lang, (s) => s.components.upload.success, {
+    toast.info(
+      t.t(lang, (s) => s.components.upload.startUpload, {
         fileName,
       }),
       TOAST_CONFIG
@@ -75,7 +83,9 @@ const XLSXUploader = () => {
           if (!file) {
             return;
           }
-          return await env.model.fileAssetEntities.uploadXLSX(file);
+          onUploadStart();
+          const result = await env.model.fileAssetEntities.uploadXLSX(file);
+          onSuccess(result.jobId);
         }}
         confirmUpload={{
           validation: handleFileValidation,
@@ -84,6 +94,7 @@ const XLSXUploader = () => {
         }}
         lang={lang}
         hideFileChangeStatusStyle
+        disabled={disabled}
       />
       <XLSXErrorDisplay errorMessage={errorMessage} />
     </>
