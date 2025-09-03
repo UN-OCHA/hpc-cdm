@@ -162,7 +162,7 @@ export default () => {
       (status) => status.displayLabel === CANCELLATION
     );
 
-    return !!flow?.categories.some(
+    return flow.categories.some(
       (cat) => cat.id === cancellationPendingStatus?.value
     );
   };

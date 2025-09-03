@@ -285,6 +285,7 @@
       "new": "Nuevo",
       "restricted": "Restringido",
       "inactive": "Inactivo",
+      "cancellation": "cancelación",
       "child": "Hijo",
       "parent": "Padre",
       "notFound": {
