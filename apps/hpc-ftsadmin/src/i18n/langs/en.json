@@ -79,7 +79,8 @@
       "copyOfFlow": "Copy of Flow",
       "addFLow": "Add Flow",
       "activeFlowLinkText": "The current active flow is: ",
-      "hasPendingFlowLinkText": "There is a pending update to this flow. Review pending "
+      "hasPendingFlowLinkText": "There is a pending update to this flow. Review pending ",
+      "cancellationFlow": "This is a Cancellation Request. Choose Approve to complete the request or choose Reject to ignore the request. Not that this may be a cancellation for an existing flow, but that flow wasn't found by our automatic import scripts (which is why it is a new pending update. You might need to search for this flow and manually cancel it yourself)"
     },
     "flowAmountButton": {
       "amountOriginalCurrency": "Calculate the original amount",

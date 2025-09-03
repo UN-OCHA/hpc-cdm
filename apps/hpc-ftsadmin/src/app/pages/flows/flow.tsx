@@ -1,4 +1,5 @@
-import { type categories, type flows } from '@unocha/hpc-data';
+import { Box } from '@mui/material';
+import { type categories, type flows, type util } from '@unocha/hpc-data';
 import { C, useDataLoader } from '@unocha/hpc-ui';
 import { useEffect } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
@@ -7,10 +8,15 @@ import tw from 'twin.macro';
 import { t } from '../../../i18n';
 import dayjs, { FTS_DEFAULT_FORMAT } from '../../../libs/dayjs';
 import { FlowForm } from '../../components/flow-form/flow-form';
+import FlowLinkWarning from '../../components/flow-form/flow-link-warning';
 import { useTitle } from '../../components/page-meta';
 import { getContext } from '../../context';
 import paths from '../../paths';
-import { PENDING_REVIEW, TOAST_CONFIG } from '../../utils/constants';
+import {
+  CANCELLATION,
+  PENDING_REVIEW,
+  TOAST_CONFIG,
+} from '../../utils/constants';
 import {
   fnCategories,
   fnFlowStatusId,
@@ -18,8 +24,8 @@ import {
 } from '../../utils/fn-promises';
 import {
   deserializeFlowForm,
-  type FlowFormTypeSerialized,
   parseToFlowForm,
+  type FlowFormTypeSerialized,
 } from '../../utils/parse-flow-form';
 
 type FlowRouteParams = {
@@ -148,6 +154,19 @@ export default () => {
     !flow.activeStatus ||
     flow.categories.some((c) => c.group === 'inactiveReason');
 
+  const isCancellationFlow = (
+    flow: flows.GetFlowResult,
+    pendingStatus: util.FormObjectValue[]
+  ) => {
+    const cancellationPendingStatus = pendingStatus.find(
+      (status) => status.displayLabel === CANCELLATION
+    );
+
+    return !!flow?.categories.some(
+      (cat) => cat.id === cancellationPendingStatus?.value
+    );
+  };
+
   const id = parseInt(idString ?? '', 10);
   const versionID = parseInt(version ?? '', 10);
 
@@ -169,6 +188,7 @@ export default () => {
         flow,
         inactiveReasons,
         flowType,
+        pendingStatus,
         contributionType,
         method,
         earmarkingType,
@@ -179,6 +199,7 @@ export default () => {
           query: 'inactiveReason',
         }),
         fnFlowTypeId(env),
+        fnCategories('pendingStatus', env),
         fnCategories('contributionType', env),
         fnCategories('method', env),
         fnCategories('earmarkingType', env),
@@ -202,6 +223,7 @@ export default () => {
         flow,
         parents,
         children,
+        pendingStatus,
         inactiveReasons,
         flowType,
         contributionType,
@@ -224,6 +246,10 @@ export default () => {
         {({ flow, parents, children, ...otherFlowFormProps }) => {
           const isPending = isPendingFlow(flow);
           const isInactive = isInactiveFlow(flow);
+          const isCancellation = isCancellationFlow(
+            flow,
+            otherFlowFormProps.pendingStatus
+          );
           return (
             <PaddingContainer>
               <C.PageTitle>
@@ -250,6 +276,13 @@ export default () => {
                 categories={otherFlowFormProps.inactiveReasons}
                 isInactive={isInactive}
               />
+              {isCancellation && (
+                <Box sx={tw`mt-2 mb-6`}>
+                  <FlowLinkWarning
+                    text={t.t(lang, (s) => s.components.flow.cancellationFlow)}
+                  />
+                </Box>
+              )}
 
               {flow.legacy?.legacyID && (
                 <LegacyId>
