@@ -81,10 +81,14 @@ export const App = () => {
   const [loadEnv] = useDataLoader([], () =>
     env()
       .catch((error) => {
+        console.log('The error was indeed here');
         console.error(error);
         throw new Error(t.t(lang, (s) => s.errors.unableToLoadFTSAdmin));
       })
-      .then(contextFromEnv)
+      .then((env) => {
+        console.log('Calling contextFromEnv()');
+        return contextFromEnv(env);
+      })
   );
 
   const appTitle = (
