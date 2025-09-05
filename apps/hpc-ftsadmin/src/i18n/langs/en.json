@@ -616,14 +616,15 @@
         "invalidExtension": "The file selected is not .xlsx or .xls. Please choose a file with the correct format",
         "unknown": "There has been an unknown error uploading the file"
       },
-      "success": "File \"{fileName}\" has been successfully uploaded"
+      "startUpload": "File \"{fileName}\" is processing. Please wait..."
     },
     "xlsxUpload": {
       "errorTable": {
         "title": "Invalid values in excel file",
         "column": "Column",
         "invalidValues": "Invalid Value(s)"
-      }
+      },
+      "success": "File \"{fileName}\" has been successfully uploaded"
     }
   },
   "navigation": {

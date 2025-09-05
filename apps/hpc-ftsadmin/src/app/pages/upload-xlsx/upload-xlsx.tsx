@@ -1,9 +1,14 @@
 import { C, CLASSES, combineClasses, styled } from '@unocha/hpc-ui';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import tw from 'twin.macro';
 import { t } from '../../../i18n';
+import LinearProgressWithLabel from '../../components/linear-progress-with-label';
 import { useTitle } from '../../components/page-meta';
 import XLSXUploader from '../../components/xlsx-uploader';
 import { getContext } from '../../context';
+import { useJobTracking } from '../../hooks/useJobTracking';
+import { TOAST_CONFIG, TOAST_CONFIG_ERROR } from '../../utils/constants';
 
 type Props = {
   className?: string;
@@ -27,6 +32,37 @@ export default (props: Props) => {
 
   useTitle([t.t(lang, (s) => s.routes.uploadXLSX.title)]);
 
+  const [isUploadDisabled, setIsUploadDisabled] = useState(true);
+
+  const { job, setPendingJobId } = useJobTracking({
+    jobType: 'importExcelBridge',
+    onBeforeClearJob: (job) => {
+      if (job.status === 'success') {
+        toast.success(
+          t.t(lang, (s) => s.components.xlsxUpload.success, {
+            fileName: job.metadata.fileName,
+          }),
+          TOAST_CONFIG
+        );
+        setPendingJobId(null);
+      } else if (job.status === 'failed') {
+        toast.error(
+          t.t(lang, (s) => s.components.upload.error.unknown),
+          TOAST_CONFIG_ERROR
+        );
+      }
+      setIsUploadDisabled(false);
+    },
+  });
+
+  useEffect(() => {
+    if (job) {
+      setIsUploadDisabled(true);
+    } else {
+      setIsUploadDisabled(false);
+    }
+  }, [job]);
+
   return (
     <div className={combineClasses(CLASSES.CONTAINER.FLUID, props.className)}>
       <Container>
@@ -34,7 +70,24 @@ export default (props: Props) => {
           <C.PageTitle>
             {t.t(lang, (s) => s.routes.uploadXLSX.title)}
           </C.PageTitle>
-          <XLSXUploader />
+          <XLSXUploader
+            onUploadStart={() => {
+              setIsUploadDisabled(true);
+            }}
+            onSuccess={(jobId) => {
+              setPendingJobId(jobId);
+              setIsUploadDisabled(true);
+            }}
+            disabled={isUploadDisabled}
+          />
+          {job && (
+            <LinearProgressWithLabel
+              title={job.metadata.fileName}
+              processed={job.metadata.processed}
+              total={job.metadata.total}
+              shouldShowProcess
+            />
+          )}
         </LandingContainer>
       </Container>
     </div>

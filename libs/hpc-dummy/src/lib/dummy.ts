@@ -12,6 +12,7 @@ import {
   type flows,
   type globalClusters,
   type governingEntities,
+  type jobs,
   type locations,
   type operations,
   type organizations,
@@ -1459,6 +1460,27 @@ export class Dummy {
             return this.data.usageYears.filter((usageYear) =>
               usageYear.year.includes(params.query)
             );
+          }
+        ),
+      },
+      jobs: {
+        getJobById: dummyEndpoint(
+          'jobs.getJobById',
+          async (id: number): Promise<jobs.Job> => {
+            const job = this.data.jobs.find((job) => job.id === id);
+            if (!job) {
+              throw new errors.NotFoundError();
+            }
+            return job;
+          }
+        ),
+        getPendingJobs: dummyEndpoint(
+          'jobs.getPendingJobs',
+          async (type?: jobs.JobType): Promise<jobs.GetPendingJobsResult> => {
+            if (type) {
+              return this.data.jobs.filter((job) => job.type === type);
+            }
+            return this.data.jobs;
           }
         ),
       },

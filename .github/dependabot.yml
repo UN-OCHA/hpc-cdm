@@ -1,0 +1,52 @@
+# Documentation for all configuration options:
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+      time: '11:00'
+      timezone: 'Europe/Zurich'
+    open-pull-requests-limit: 10
+    versioning-strategy: increase
+    groups:
+      react:
+        # Only those which tend to follow React versions in lockstep
+        patterns:
+          - 'react'
+          - 'react-dom'
+          - 'react-is'
+        update-types: [minor, patch]
+      babel:
+        patterns:
+          - '@babel/*'
+          - 'babel-*'
+      mui:
+        patterns:
+          - '@mui/*'
+      nx:
+        patterns:
+          - '@nx/*'
+          - 'nx'
+        update-types: [minor, patch]
+      jest:
+        # Cannot use wildcard pattern `'*jest'` because it would select `@nx/jest` package
+        patterns:
+          - 'jest'
+          - 'babel-jest'
+          - 'ts-jest'
+          - '@types/jest'
+    ignore:
+      - dependency-name: 'fp-ts'
+      - dependency-name: 'io-ts'
+      # In v7.0.0, `enketo-core` moved to Yarn-only, not working with NPM
+      - dependency-name: 'enketo-core'
+        update-types: [version-update:semver-major]
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+      time: '11:00'
+      timezone: 'Europe/Zurich'

@@ -9,6 +9,7 @@ import {
   forms,
   globalClusters,
   governingEntities,
+  jobs,
   locations,
   organizations,
   plans,
@@ -153,6 +154,7 @@ const ORGANIZATION = organizations.ORGANIZATION;
 const PLAN = plans.PLAN_AUTOCOMPLETE;
 const PROJECT = projects.PROJECT_AUTOCOMPLETE;
 const USAGE_YEAR = usageYears.USAGE_YEAR;
+const JOB = jobs.JOB;
 
 export const DUMMY_DATA = t.type(
   {
@@ -165,6 +167,7 @@ export const DUMMY_DATA = t.type(
     flows: t.array(FLOW),
     globalClusters: t.array(GLOBAL_CLUSTER),
     governingEntities: t.array(GOVERNING_ENTITY),
+    jobs: t.array(JOB),
     keywords: t.array(KEYWORD),
     locations: t.array(LOCATION),
     operations: t.array(OPERATION),

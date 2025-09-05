@@ -2,8 +2,8 @@ import {
   ApolloClient,
   type DocumentNode,
   gql,
+  HttpLink,
   InMemoryCache,
-  type NormalizedCacheObject,
 } from '@apollo/client';
 import { util } from '@unocha/hpc-core';
 import {
@@ -18,6 +18,7 @@ import {
   forms,
   globalClusters,
   governingEntities,
+  jobs,
   locations,
   type Model,
   operations,
@@ -248,7 +249,7 @@ export class LiveModel implements Model {
   private readonly URL: URLInterface;
   private readonly fetch: FetchInterface;
   private readonly sha256Hash: (data: ArrayBuffer) => Promise<string>;
-  private readonly apolloClient: ApolloClient<NormalizedCacheObject>;
+  private readonly apolloClient: ApolloClient;
 
   private readonly searchFlowFields = `flows {
     id
@@ -363,7 +364,9 @@ export class LiveModel implements Model {
     this.fetch = config.interfaces?.fetch ?? fetch.bind(globalThis);
     this.sha256Hash = config.interfaces?.sha256Hash ?? util.hashFileInBrowser;
     this.apolloClient = new ApolloClient({
-      uri: new URL('v4/graphql', this.config.baseUrl).toString(),
+      link: new HttpLink({
+        uri: new URL('v4/graphql', this.config.baseUrl).toString(),
+      }),
       cache: new InMemoryCache({}),
     });
   }
@@ -519,7 +522,7 @@ export class LiveModel implements Model {
       fetchPolicy: 'no-cache',
     });
 
-    if (!res.error && !res.errors) {
+    if (!res.error) {
       const data = res.data;
       const decode = resultType.decode(data);
       if (isRight(decode)) {
@@ -531,7 +534,7 @@ export class LiveModel implements Model {
       throw new ModelError('Received unexpected result from server', data);
     }
 
-    const json = res.error?.networkError as null | {
+    const json = res.error as unknown as {
       timestamp: Date;
       otherUser: string;
       code?: string;
@@ -752,7 +755,7 @@ export class LiveModel implements Model {
         return this.call({
           pathname: '/v2/flow/excel',
           method: 'POST',
-          resultType: t.unknown,
+          resultType: fileAssetEntities.UPLOAD_XLSX_RESULT,
           body: {
             type: 'form-data',
             data,
@@ -1257,5 +1260,23 @@ export class LiveModel implements Model {
         resultType: reportingWindows.UPLOAD_ASSIGNMENT_FILE_RESULT,
       });
     }
+  }
+
+  get jobs(): jobs.Model {
+    return {
+      getJobById: (id) =>
+        this.call({
+          pathname: `/v2/job/${id}`,
+          resultType: jobs.JOB,
+        }),
+      getPendingJobs: (type) =>
+        this.call({
+          pathname: `/v2/job/pending`,
+          queryParams: {
+            ...(type ? { type } : {}),
+          },
+          resultType: jobs.GET_PENDING_JOBS_RESULT,
+        }),
+    };
   }
 }
