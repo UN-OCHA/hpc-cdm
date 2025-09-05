@@ -115,7 +115,7 @@
     "ts-jest": "29.4.1",
     "ts-node": "10.9.2",
     "twin.macro": "3.4.1",
-    "typescript": "5.8.3"
+    "typescript": "5.9.2"
   },
   "babelMacros": {
     "twin": {
