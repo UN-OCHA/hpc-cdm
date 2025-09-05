@@ -106,9 +106,7 @@ export class LiveBrowserClient {
         const redirectTo = user.state ?? document.location.pathname;
         if (history.replaceState) {
           history.replaceState(null, document.title, redirectTo);
-          // TODO: interact directly with React Router history to get it to reload
-          // the route without needing to reload the page
-          globalThis.location.reload();
+          globalThis.dispatchEvent(new Event('popstate'));
         } else {
           globalThis.location = redirectTo;
         }
