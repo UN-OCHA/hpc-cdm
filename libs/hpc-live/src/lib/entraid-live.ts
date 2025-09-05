@@ -59,7 +59,7 @@ export class EntraIDProvider implements AuthProvider {
         const redirectTo = response.state ?? document.location.pathname;
         if (history.replaceState) {
           history.replaceState(null, document.title, redirectTo);
-          globalThis.location.reload();
+          globalThis.dispatchEvent(new Event('popstate'));
         } else {
           globalThis.location.href = redirectTo;
         }
