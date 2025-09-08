@@ -47,9 +47,15 @@ export type FileUploadResult = t.TypeOf<typeof FILE_ASSET_UPLOAD>;
 
 export const DELETE_FILE_RESULT = t.null;
 
+export const UPLOAD_XLSX_RESULT = t.type({
+  jobId: t.number,
+});
+
+export type UploadXlsxResult = t.TypeOf<typeof UPLOAD_XLSX_RESULT>;
+
 export interface Model {
   fileUpload(file: FormData): Promise<FileUploadResult>;
   fileDelete(id: number, collection: FileAssetCollection): Promise<null>;
   fileDownload(id: number, collection: FileAssetCollection): Promise<BlobType>;
-  uploadXLSX(file: File): Promise<unknown>;
+  uploadXLSX(file: File): Promise<UploadXlsxResult>;
 }
