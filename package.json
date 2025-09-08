@@ -61,7 +61,7 @@
     "@nx/web": "21.4.1",
     "@nx/webpack": "21.4.1",
     "@nx/workspace": "21.4.1",
-    "@pmmmwh/react-refresh-webpack-plugin": "0.5.10",
+    "@pmmmwh/react-refresh-webpack-plugin": "0.6.1",
     "@testing-library/react": "16.1.0",
     "@types/jest": "30.0.0",
     "@types/jquery": "3.5.1",
