@@ -81,7 +81,7 @@
     "bowser": "2.12.1",
     "cypress": "9.5.4",
     "dayjs": "1.11.18",
-    "dotenv": "17.2.1",
+    "dotenv": "17.2.2",
     "enketo-core": "5.16.6",
     "eslint": "9.32.0",
     "eslint-plugin-cypress": "5.1.1",
