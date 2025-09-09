@@ -44,6 +44,10 @@ updates:
       # In v7.0.0, `enketo-core` moved to Yarn-only, not working with NPM
       - dependency-name: 'enketo-core'
         update-types: [version-update:semver-major]
+      # We cannot update to tailwindcss 4.0.0 until `twin.macro` supports it
+      # https://github.com/ben-rogerson/twin.macro/discussions/876
+      - dependency-name: 'tailwindcss'
+        versions: ['>=4.0.0']
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
