@@ -64,7 +64,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "0.6.1",
     "@testing-library/react": "16.1.0",
     "@types/jest": "30.0.0",
-    "@types/jquery": "3.5.1",
+    "@types/jquery": "3.5.33",
     "@types/lodash": "4.14.158",
     "@types/node": "22.15.3",
     "@types/react": "19.1.12",
