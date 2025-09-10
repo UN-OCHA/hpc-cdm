@@ -37,8 +37,8 @@ jobs:
       - name: Lint affected apps
         run: npm run lint
 
-      - name: Build affected apps
-        run: npx nx affected:build
+      - name: Build all apps
+        run: npx nx run-many --target=build
 
       - uses: UN-OCHA/hpc-actions@develop
         with:
