@@ -9,9 +9,6 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-        with:
-          # We need to fetch all branches and commits so that Nx affected has a base to compare against.
-          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -40,8 +37,8 @@ jobs:
       - name: Lint affected apps
         run: npm run lint
 
-      - name: Build affected apps
-        run: npx nx affected:build
+      - name: Build all apps
+        run: npx nx run-many --target=build
 
       - uses: UN-OCHA/hpc-actions@develop
         with:
