@@ -79,7 +79,8 @@
       "copyOfFlow": "Copia del flujo",
       "addFLow": "Añadir flujo",
       "activeFlowLinkText": "El flujo activo actual es: ",
-      "hasPendingFlowLinkText": "Hay una actualización pendiente para este flujo. Revisar pendiente "
+      "hasPendingFlowLinkText": "Hay una actualización pendiente para este flujo. Revisar pendiente ",
+      "cancellationFlow": "Esta es una solicitud de cancelación. Elija Aprobar para completar la solicitud o Rechazar para ignorarla. Tenga en cuenta que esto puede ser una cancelación de un flujo existente, pero ese flujo no fue encontrado por nuestros scripts de importación automática (por eso es una nueva actualización pendiente). Es posible que deba buscar este flujo y cancelarlo manualmente."
     },
     "flowAmountButton": {
       "amountOriginalCurrency": "Calcular el monto original",
@@ -284,6 +285,7 @@
       "new": "Nuevo",
       "restricted": "Restringido",
       "inactive": "Inactivo",
+      "cancellation": "cancelación",
       "child": "Hijo",
       "parent": "Padre",
       "notFound": {

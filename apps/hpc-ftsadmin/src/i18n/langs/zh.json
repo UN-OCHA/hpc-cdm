@@ -79,7 +79,8 @@
       "copyOfFlow": "资金流副本",
       "addFLow": "添加资金流",
       "activeFlowLinkText": "当前活动流是：",
-      "hasPendingFlowLinkText": "此流程有待处理的更新。查看待处理"
+      "hasPendingFlowLinkText": "此流程有待处理的更新。查看待处理",
+      "cancellationFlow": "这是一个取消请求。选择批准以完成请求，或选择拒绝以忽略请求。请注意，这可能是对现有流程的取消，但该流程未被我们的自动导入脚本找到（因此它是一个新的待处理更新）。您可能需要搜索此流程并手动取消。"
     },
     "flowAmountButton": {
       "amountOriginalCurrency": "计算原始金额",
@@ -284,6 +285,7 @@
       "new": "新建",
       "restricted": "受限",
       "inactive": "不活动",
+      "cancellation": "取消",
       "child": "子项",
       "parent": "父项",
       "notFound": {

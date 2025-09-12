@@ -1,5 +1,6 @@
 export const PENDING_REVIEW = 'Pending review' as const;
 export const CANCELLED = 'Cancelled' as const;
+export const CANCELLATION = 'Cancellation' as const;
 export const CTP = 'Cash transfer programming (CTP)' as const;
 export const TRADITIONAL_AID = 'Traditional aid' as const;
 
