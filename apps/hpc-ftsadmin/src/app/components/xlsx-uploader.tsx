@@ -1,6 +1,6 @@
 import { isModelError } from '@unocha/hpc-live';
 import { C } from '@unocha/hpc-ui';
-import { useState } from 'react';
+import React from 'react';
 import { MdUploadFile } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { t } from '../../i18n';
@@ -14,17 +14,20 @@ const VALID_FILE_EXTENSION = new Set<string>([
 ]);
 
 const XLSXUploader = ({
+  errorMessage,
+  setErrorMessage,
   onUploadStart,
   onSuccess,
   disabled,
 }: {
+  errorMessage: string | null;
+  setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>;
   onUploadStart: () => void;
   onSuccess: (jobId: number) => void;
   disabled?: boolean;
 }) => {
   const { lang, env: getEnv } = getContext();
   const env = getEnv();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleFileValidation = (file?: File) => {
     if (!file) {

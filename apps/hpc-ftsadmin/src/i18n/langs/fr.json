@@ -79,7 +79,8 @@
       "copyOfFlow": "Copie du flux",
       "addFLow": "Ajouter un flux",
       "activeFlowLinkText": "Le flux actif actuel est : ",
-      "hasPendingFlowLinkText": "Il y a une mise à jour est en attente pour ce flux. Examiner en attente "
+      "hasPendingFlowLinkText": "Il y a une mise à jour est en attente pour ce flux. Examiner en attente ",
+      "cancellationFlow": "Ceci est une demande d'annulation. Choisissez Approuver pour compléter la demande ou Rejeter pour l'ignorer. Notez qu'il peut s'agir d'une annulation pour un flux existant, mais ce flux n'a pas été trouvé par nos scripts d'importation automatique (c'est pourquoi il s'agit d'une nouvelle mise à jour en attente). Vous devrez peut-être rechercher ce flux et l'annuler manuellement."
     },
     "flowAmountButton": {
       "amountOriginalCurrency": "Calculer le montant d'origine",
@@ -284,6 +285,7 @@
       "new": "Nouveau",
       "restricted": "restreint",
       "inactive": "inactif",
+      "cancellation": "annulation",
       "child": "enfant",
       "parent": "parent",
       "notFound": {

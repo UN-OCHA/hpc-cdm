@@ -52,7 +52,7 @@ const XLSXErrorDisplay = ({ errorMessage }: Props) => {
               <TableRow sx={tw`bg-unocha-pallete-red-dark`}>
                 <TableCell
                   sx={tw`rounded-t-sm text-white`}
-                  colSpan={parsedErrors.length}
+                  colSpan={2}
                   align="center"
                 >
                   <Box sx={tw`flex justify-center gap-x-2`}>
