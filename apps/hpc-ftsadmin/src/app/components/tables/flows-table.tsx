@@ -31,6 +31,7 @@ import dayjs from '../../../libs/dayjs';
 import { getContext } from '../../context';
 import paths from '../../paths';
 import {
+  CANCELLATION,
   EMPTY_CELL,
   TOAST_CONFIG,
   TOAST_CONFIG_ERROR,
@@ -481,6 +482,21 @@ export default function FlowsTable(props: FlowsTableProps) {
                           ]}
                           size="small"
                           color="primary"
+                        />
+                      )}
+                      {row.categories?.some(
+                        (cat) => cat.name === CANCELLATION
+                      ) && (
+                        <Chip
+                          sx={chipSpacing}
+                          label={[
+                            t.t(
+                              lang,
+                              (s) => s.components.flowsTable.cancellation
+                            ),
+                          ]}
+                          color="secondary"
+                          size="small"
                         />
                       )}
                     </TableCell>
