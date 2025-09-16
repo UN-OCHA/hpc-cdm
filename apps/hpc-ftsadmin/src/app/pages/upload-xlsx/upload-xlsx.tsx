@@ -33,6 +33,7 @@ export default (props: Props) => {
   useTitle([t.t(lang, (s) => s.routes.uploadXLSX.title)]);
 
   const [isUploadDisabled, setIsUploadDisabled] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { job, setPendingJobId } = useJobTracking({
     jobType: 'importExcelBridge',
@@ -46,6 +47,14 @@ export default (props: Props) => {
         );
         setPendingJobId(null);
       } else if (job.status === 'failed') {
+        const jobErrorMessage = job.metadata.failures.at(0);
+
+        if (jobErrorMessage) {
+          setErrorMessage(jobErrorMessage);
+          setIsUploadDisabled(false);
+          return;
+        }
+
         toast.error(
           t.t(lang, (s) => s.components.upload.error.unknown),
           TOAST_CONFIG_ERROR
@@ -71,6 +80,8 @@ export default (props: Props) => {
             {t.t(lang, (s) => s.routes.uploadXLSX.title)}
           </C.PageTitle>
           <XLSXUploader
+            errorMessage={errorMessage}
+            setErrorMessage={setErrorMessage}
             onUploadStart={() => {
               setIsUploadDisabled(true);
             }}
