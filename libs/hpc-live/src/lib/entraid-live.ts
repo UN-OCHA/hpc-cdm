@@ -17,7 +17,7 @@ export class EntraIDProvider implements AuthProvider {
       auth: {
         clientId: config.entraClientId,
         authority: `https://login.microsoftonline.com/${config.entraTenantId}`,
-        redirectUri: globalThis.location.origin,
+        redirectUri: globalThis.location.href,
       },
       cache: {
         cacheLocation: 'localStorage',
