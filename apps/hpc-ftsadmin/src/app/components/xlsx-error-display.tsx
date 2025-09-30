@@ -8,9 +8,11 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import { toast } from 'react-toastify';
 import tw from 'twin.macro';
 import { t } from '../../i18n';
 import { getContext } from '../context';
+import { TOAST_CONFIG_ERROR } from '../utils/constants';
 
 type Props = {
   errorMessage: string | null;
@@ -37,14 +39,20 @@ const parseErrorMessage = (
 };
 
 const XLSXErrorDisplay = ({ errorMessage }: Props) => {
-  if (!errorMessage) {
+  const hasNoError = !errorMessage;
+  if (hasNoError) {
+    return null;
+  }
+  const isValidationError = !!errorMessage && ERROR_REGEX.test(errorMessage);
+  if (!isValidationError) {
+    toast.error(errorMessage, TOAST_CONFIG_ERROR);
     return null;
   }
   const { lang } = getContext();
   const parsedErrors = parseErrorMessage(errorMessage);
 
   return (
-    <Grow in={!!errorMessage}>
+    <Grow in={isValidationError}>
       <Box sx={tw`self-center`}>
         <Box sx={tw`shadow-lg mb-4`}>
           <Table>
