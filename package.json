@@ -51,7 +51,7 @@
     "@mui/icons-material": "7.3.2",
     "@mui/material": "7.3.2",
     "@mui/styled-engine-sc": "7.3.2",
-    "@mui/x-date-pickers": "8.11.1",
+    "@mui/x-date-pickers": "8.12.0",
     "@nx/cypress": "21.6.2",
     "@nx/eslint": "21.6.2",
     "@nx/eslint-plugin": "21.6.2",
