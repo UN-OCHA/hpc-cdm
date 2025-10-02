@@ -98,7 +98,7 @@
     "intl-messageformat": "10.7.16",
     "io-ts": "2.2.22",
     "jest": "30.2.0",
-    "lint-staged": "16.1.6",
+    "lint-staged": "16.2.3",
     "nx": "21.6.2",
     "oidc-client": "1.11.5",
     "postcss": "8.5.6",
