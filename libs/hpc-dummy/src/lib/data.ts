@@ -2159,6 +2159,9 @@ export const INITIAL_DATA: DummyData = {
         startedBy: 1,
         total: 100,
         processed: 100,
+        totalCreated: 50,
+        totalUpdated: 50,
+        totalSkipped: 0,
       },
     },
     {

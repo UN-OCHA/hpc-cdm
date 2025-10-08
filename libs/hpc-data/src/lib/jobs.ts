@@ -7,6 +7,9 @@ export const IMPORT_EXCEL_BRIDGE_METADATA = t.type({
   total: t.number,
   processed: t.number,
   failures: t.array(t.string),
+  totalCreated: t.number,
+  totalUpdated: t.number,
+  totalSkipped: t.number,
 });
 
 export type ImportExcelBridgeMetadata = t.TypeOf<
