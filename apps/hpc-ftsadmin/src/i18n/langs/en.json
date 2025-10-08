@@ -622,9 +622,7 @@
     },
     "xlsxUpload": {
       "errorTable": {
-        "title": "Invalid values in excel file",
-        "column": "Column",
-        "invalidValues": "Invalid Value(s)"
+        "title": "Invalid values in excel file"
       },
       "success": "File \"{fileName}\" has been successfully uploaded"
     }
