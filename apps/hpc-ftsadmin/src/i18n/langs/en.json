@@ -626,7 +626,13 @@
         "column": "Column",
         "invalidValues": "Invalid Value(s)"
       },
-      "success": "File \"{fileName}\" has been successfully uploaded"
+      "success": "File \"{fileName}\" has been successfully uploaded",
+      "stats": {
+        "action": "Action",
+        "count": "Count",
+        "created": "Created",
+        "skipped": "Unchanged"
+      }
     }
   },
   "navigation": {

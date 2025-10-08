@@ -27,6 +27,96 @@ const LandingContainer = styled.div`
   `}
 `;
 
+const StatsTable = styled.table`
+  ${tw`
+    mt-6
+    w-full
+    max-w-md
+    border-collapse
+    rounded-lg
+    overflow-hidden
+    shadow-sm
+  `}
+
+  th {
+    ${tw`
+      bg-unocha-pallete-blue-dark2
+      text-white
+      font-semibold
+      text-left
+      px-6
+      py-3
+      text-sm
+      uppercase
+      tracking-wider
+    `}
+  }
+
+  td {
+    ${tw`
+      px-6
+      py-4
+      text-sm
+      border-t
+      border-gray-200
+    `}
+  }
+
+  tbody tr {
+    ${tw`
+      bg-white
+      hover:bg-gray-50
+      transition-colors
+    `}
+  }
+
+  td:first-child {
+    ${tw`
+      font-medium
+      text-gray-900
+    `}
+  }
+
+  td:last-child {
+    ${tw`
+      text-right
+      font-semibold
+      text-unocha-pallete-blue
+    `}
+  }
+`;
+
+const Stats = ({
+  totalCreated,
+  totalSkipped,
+}: {
+  totalCreated: number;
+  totalSkipped: number;
+}) => {
+  const { lang } = getContext();
+
+  return (
+    <StatsTable>
+      <thead>
+        <tr>
+          <th>{t.t(lang, (s) => s.components.xlsxUpload.stats.action)}</th>
+          <th>{t.t(lang, (s) => s.components.xlsxUpload.stats.count)}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{t.t(lang, (s) => s.components.xlsxUpload.stats.created)}</td>
+          <td>{totalCreated}</td>
+        </tr>
+        <tr>
+          <td>{t.t(lang, (s) => s.components.xlsxUpload.stats.skipped)}</td>
+          <td>{totalSkipped}</td>
+        </tr>
+      </tbody>
+    </StatsTable>
+  );
+};
+
 export default (props: Props) => {
   const { lang } = getContext();
 
@@ -34,6 +124,10 @@ export default (props: Props) => {
 
   const [isUploadDisabled, setIsUploadDisabled] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [stats, setStats] = useState<{
+    totalCreated: number;
+    totalSkipped: number;
+  } | null>(null);
 
   const { job, setPendingJobId } = useJobTracking({
     jobType: 'importExcelBridge',
@@ -46,6 +140,7 @@ export default (props: Props) => {
           TOAST_CONFIG
         );
         setPendingJobId(null);
+        setStats(job.metadata);
       } else if (job.status === 'failed') {
         const jobErrorMessage = job.metadata.failures.at(0);
 
@@ -99,6 +194,7 @@ export default (props: Props) => {
               shouldShowProcess
             />
           )}
+          {stats && <Stats {...stats} />}
         </LandingContainer>
       </Container>
     </div>

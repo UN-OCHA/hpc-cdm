@@ -626,7 +626,13 @@
         "column": "العمود",
         "invalidValues": "القيمة/القيم غير الصالحة"
       },
-      "success": "تم تحميل الملف \"{fileName}\" بنجاح"
+      "success": "تم تحميل الملف \"{fileName}\" بنجاح",
+      "stats": {
+        "action": "العمل",
+        "count": "العدد",
+        "created": "إنشاء",
+        "skipped": "غير متغير"
+      }
     }
   },
   "navigation": {

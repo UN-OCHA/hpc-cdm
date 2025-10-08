@@ -625,7 +625,13 @@
         "column": "Colonne",
         "invalidValues": "Valeur(s) non valide(s)"
       },
-      "success": "Le fichier «{fileName}» a été téléchargé avec succès"
+      "success": "Le fichier «{fileName}» a été téléchargé avec succès",
+      "stats": {
+        "action": "Action",
+        "count": "Compte",
+        "created": "Créé",
+        "skipped": "Non modifié"
+      }
     }
   },
   "navigation": {
