@@ -123,7 +123,7 @@ export default (props: Props) => {
   useTitle([t.t(lang, (s) => s.routes.uploadXLSX.title)]);
 
   const [isUploadDisabled, setIsUploadDisabled] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessages, setErrorMessages] = useState<string[] | null>(null);
   const [stats, setStats] = useState<{
     totalCreated: number;
     totalSkipped: number;
@@ -142,10 +142,8 @@ export default (props: Props) => {
         setPendingJobId(null);
         setStats(job.metadata);
       } else if (job.status === 'failed') {
-        const jobErrorMessage = job.metadata.failures.at(0);
-
-        if (jobErrorMessage) {
-          setErrorMessage(jobErrorMessage);
+        if (job.metadata.failures && job.metadata.failures.length > 0) {
+          setErrorMessages(job.metadata.failures);
           setIsUploadDisabled(false);
           return;
         }
@@ -175,8 +173,8 @@ export default (props: Props) => {
             {t.t(lang, (s) => s.routes.uploadXLSX.title)}
           </C.PageTitle>
           <XLSXUploader
-            errorMessage={errorMessage}
-            setErrorMessage={setErrorMessage}
+            errorMessages={errorMessages}
+            setErrorMessages={setErrorMessages}
             onUploadStart={() => {
               setIsUploadDisabled(true);
             }}

@@ -621,9 +621,7 @@
     },
     "xlsxUpload": {
       "errorTable": {
-        "title": "Valores no válidos en el archivo de Excel",
-        "column": "Columna",
-        "invalidValues": "Valor(es) no válido(s)"
+        "title": "Valores no válidos en el archivo de Excel"
       },
       "success": "El archivo \"{fileName}\" se ha cargado con éxito",
       "stats": {
