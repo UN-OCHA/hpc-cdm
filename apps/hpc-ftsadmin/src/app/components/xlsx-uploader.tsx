@@ -14,14 +14,14 @@ const VALID_FILE_EXTENSION = new Set<string>([
 ]);
 
 const XLSXUploader = ({
-  errorMessage,
-  setErrorMessage,
+  errorMessages,
+  setErrorMessages,
   onUploadStart,
   onSuccess,
   disabled,
 }: {
-  errorMessage: string | null;
-  setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>;
+  errorMessages: string[] | null;
+  setErrorMessages: React.Dispatch<React.SetStateAction<string[] | null>>;
   onUploadStart: () => void;
   onSuccess: (jobId: number) => void;
   disabled?: boolean;
@@ -43,12 +43,12 @@ const XLSXUploader = ({
       );
     }
 
-    setErrorMessage(null);
+    setErrorMessages(null);
     return isValid;
   };
 
   const handleSuccess = (fileName: string = '') => {
-    setErrorMessage(null);
+    setErrorMessages(null);
     toast.info(
       t.t(lang, (s) => s.components.upload.startUpload, {
         fileName,
@@ -59,7 +59,7 @@ const XLSXUploader = ({
 
   const handleError = (err: unknown) => {
     if (isModelError(err)) {
-      setErrorMessage(err.message);
+      setErrorMessages([err.message]);
       return;
     }
 
@@ -79,7 +79,7 @@ const XLSXUploader = ({
         }}
         name="uploadXLSX"
         onDelete={(setSavedFile) => {
-          setErrorMessage(null);
+          setErrorMessages(null);
           return Promise.resolve(setSavedFile(undefined));
         }}
         onUpload={async (file) => {
@@ -99,7 +99,7 @@ const XLSXUploader = ({
         hideFileChangeStatusStyle
         disabled={disabled}
       />
-      <XLSXErrorDisplay errorMessage={errorMessage} />
+      <XLSXErrorDisplay errorMessages={errorMessages} />
     </>
   );
 };

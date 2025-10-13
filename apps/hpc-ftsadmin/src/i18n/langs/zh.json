@@ -624,11 +624,15 @@
     },
     "xlsxUpload": {
       "errorTable": {
-        "title": "Excel 文件中存在无效值",
-        "column": "列",
-        "invalidValues": "无效值"
+        "title": "Excel 文件中存在无效值"
       },
-      "success": "文件 \"{fileName}\" 已成功上传"
+      "success": "文件 \"{fileName}\" 已成功上传",
+      "stats": {
+        "action": "操作",
+        "count": "数量",
+        "created": "已创建",
+        "skipped": "未更改"
+      }
     }
   },
   "navigation": {
