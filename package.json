@@ -84,7 +84,7 @@
     "dayjs": "1.11.18",
     "dotenv": "17.2.3",
     "enketo-core": "5.18.1",
-    "eslint": "9.35.0",
+    "eslint": "9.39.1",
     "eslint-plugin-cypress": "5.1.1",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsx-a11y": "6.10.2",
