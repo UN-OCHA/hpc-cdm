@@ -10,6 +10,7 @@ function useConfirmExit(confirmExit: () => boolean, when = true) {
     }
     const push = navigator.push;
 
+    // eslint-disable-next-line react-hooks/immutability
     navigator.push = (...args: Parameters<typeof push>) => {
       const hasConfirmedExit = confirmExit();
       if (hasConfirmedExit !== false) {
