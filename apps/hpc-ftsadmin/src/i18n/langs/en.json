@@ -293,7 +293,7 @@
         "info": "We were unable to load flows"
       },
       "totalAmount": "Total Amount: ",
-      "reportTooltip": "reported by {organization} on {date} via {channel}",
+      "reportTooltip": "Reported by {organization} on {date} via {channel}",
       "parkedSource": "Parked source",
       "sortBy": "Sort by",
       "rejectPendingFlows": {
