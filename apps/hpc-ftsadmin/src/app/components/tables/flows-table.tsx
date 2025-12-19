@@ -225,6 +225,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                 ? tw`bg-unocha-primary bg-opacity-10`
                 : undefined),
             }}
+            data-test={`flows-table-row-${row.id}v${row.versionID}`}
           >
             {isPending && (
               <TableCell
@@ -618,7 +619,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                 <TableCell
                   size="small"
                   key={`${header.identifierID}_${header.label}`}
-                  data-test={`header-${header.label}`}
+                  data-test={`flows-table-header-${header.label}`}
                   {...(header.isSortable &&
                     query.orderBy === header.identifierID && {
                       'aria-sort':
@@ -659,7 +660,7 @@ export default function FlowsTable(props: FlowsTableProps) {
             })}
           </TableRow>
         </StickyTableHead>
-        <TableBody>
+        <TableBody data-test="flows-table">
           <TableRowsComponent lang={lang} data={data} />
         </TableBody>
         <TableFooter />
@@ -739,6 +740,7 @@ export default function FlowsTable(props: FlowsTableProps) {
                       )}
                       shouldDisplayLoading={isLoading}
                       onClick={() => submitForm()}
+                      dataTest="pending-flows-bulk-reject-button"
                     />
                   }
                 />

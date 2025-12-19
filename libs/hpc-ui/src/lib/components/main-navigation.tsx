@@ -32,6 +32,7 @@ interface Props {
         label: string;
         selected?: boolean;
         icon?: IconType;
+        dataTest?: string;
       }
     | null
     | undefined
@@ -168,7 +169,11 @@ export default (props: Props) => {
             loc.pathname.startsWith(`${tab.path}/`));
         const Icon = tab.icon;
         return (
-          <li key={i} className={isSelected ? CLS.SELECTED : ''}>
+          <li
+            key={i}
+            className={isSelected ? CLS.SELECTED : ''}
+            data-test={tab.dataTest}
+          >
             <Link to={tab.path}>
               {Icon && <Icon size={16} />}
               <span>{tab.label}</span>

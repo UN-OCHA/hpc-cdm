@@ -22,6 +22,7 @@ export type RadioButtonFieldProps<T extends string> = {
     onChange: (value: T) => void;
   };
   disabled?: boolean;
+  dataTest?: string;
 };
 
 const RadioButtonField = <T extends string>({
@@ -30,6 +31,7 @@ const RadioButtonField = <T extends string>({
   options,
   controlledField,
   disabled,
+  dataTest,
 }: RadioButtonFieldProps<T>) => {
   const [field, , { setValue }] = useField(name);
 
@@ -50,6 +52,7 @@ const RadioButtonField = <T extends string>({
         name={name}
         value={controlledField ? controlledField.value : field.value}
         onChange={handleChange}
+        data-test={dataTest}
         row
       >
         {options.map(({ value, displayLabel }) => (

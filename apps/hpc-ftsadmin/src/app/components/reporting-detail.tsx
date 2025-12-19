@@ -301,6 +301,7 @@ const ReportingDetail = ({
                           handleChange('reportedByOrganization', org)
                         }
                         key={org.value}
+                          data-test={`add-flow-reported-by-organization-${index}-options-${i}`}
                       >
                         {org.displayLabel}
                       </ReportingOrganizationSuggestion>
@@ -329,6 +330,7 @@ const ReportingDetail = ({
               reportChannel,
               lang
             )}
+            dataTest={`add-flow-reported-channel-field-${index}`}
             required
           />
           <C.TextFieldWrapper
@@ -371,6 +373,10 @@ const ReportingDetail = ({
             }}
             disabled={disabled}
             lang={lang}
+            dataTest={{
+              field: `add-flow-date-reported-field-${index}`,
+              today: `add-flow-date-reported-today-${index}`,
+            }}
           />
           <C.TextFieldWrapper
             name="reporterReferenceCode"

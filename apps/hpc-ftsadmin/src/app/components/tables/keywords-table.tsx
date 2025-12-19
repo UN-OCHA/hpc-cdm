@@ -394,7 +394,7 @@ const KeywordTable = (props: KeywordTableProps) => {
                 <TableCell
                   size="small"
                   key={`${header.identifierID}_${header.label}`}
-                  data-test={`header-${header.label}`}
+                  data-test={`keywords-table-header-${header.label}`}
                   {...(header.isSortable &&
                     query.orderBy === header.identifierID && {
                       'aria-sort':

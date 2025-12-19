@@ -78,9 +78,37 @@ docker exec -it hid_api_db_1 mongo
 > exit;
 ```
 
+### Running E2E tests
+
+To run the **CDM** e2e test using the in-browser dummy model, run the following command:
+
+```
+npm run e2e hpc-cdm-e2e
+```
+
+To run the **FTS Admin** e2e test using the in-browser dummy model, run the following command:
+
+```
+npm run e2e hpc-ftsadmin-e2e
+```
+
+In order to open Cypress in **Headed Mode** run any of the following commands:
+
+**CDM**
+
+```
+npm run e2e hpc-cdm-e2e -- --watch
+```
+
+**FTS Admin**
+
+```
+npm run e2e hpc-ftsadmin-e2e -- --watch
+```
+
 ## License
 
-Copyright 2020 United Nations Office for the Coordination of Humanitarian Affairs
+Copyright 2024 United Nations Office for the Coordination of Humanitarian Affairs
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -22,6 +22,7 @@ type Field = keyof Pick<
 type FormGroupReadOnlyProps = {
   fields: readonly Field[];
   values: FlowFormType;
+  dataTest?: Partial<Record<Field, string>>;
 };
 
 const Label = tw.label`
@@ -33,7 +34,7 @@ const Blank = tw.span`
   rounded-sm
 `;
 
-const FormChip = ({ text }: { text: string }) => {
+const FormChip = ({ text, dataTest }: { text: string; dataTest?: string }) => {
   return (
     <Tooltip title={text}>
       <Chip
@@ -41,7 +42,11 @@ const FormChip = ({ text }: { text: string }) => {
           m: 0.5,
           position: 'relative',
         }}
-        label={<EllipsisText maxWidth={400}>{text}</EllipsisText>}
+        label={
+          <EllipsisText maxWidth={400} dataTest={dataTest}>
+            {text}
+          </EllipsisText>
+        }
         size="small"
         color="primary"
       />
@@ -49,7 +54,11 @@ const FormChip = ({ text }: { text: string }) => {
   );
 };
 
-const FormGroupReadOnly = ({ fields, values }: FormGroupReadOnlyProps) => {
+const FormGroupReadOnly = ({
+  fields,
+  values,
+  dataTest,
+}: FormGroupReadOnlyProps) => {
   const { lang } = getContext();
   return (
     <Box sx={tw`flex flex-col gap-y-10 mt-6`}>
@@ -66,7 +75,10 @@ const FormGroupReadOnly = ({ fields, values }: FormGroupReadOnlyProps) => {
               ) : (
                 fieldValue.map(({ value, displayLabel }) => (
                   <div key={value}>
-                    <FormChip text={displayLabel} />
+                    <FormChip
+                      text={displayLabel}
+                      dataTest={dataTest?.[fieldName]}
+                    />
                   </div>
                 ))
               )}

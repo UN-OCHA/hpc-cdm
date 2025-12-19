@@ -132,6 +132,7 @@ export const App = () => {
                               {
                                 label: t.t(lang, (s) => s.navigation.flows),
                                 path: paths.flows(),
+                                dataTest: 'flows-nav-button',
                               },
                               {
                                 label: t.t(
@@ -139,6 +140,7 @@ export const App = () => {
                                   (s) => s.navigation.pendingFlows
                                 ),
                                 path: paths.pendingFlows(),
+                                dataTest: 'pending-flows-nav-button',
                               },
                               {
                                 label: t.t(
@@ -146,10 +148,12 @@ export const App = () => {
                                   (s) => s.navigation.organizations
                                 ),
                                 path: paths.organizations(),
+                                dataTest: 'organizations-nav-button',
                               },
                               {
                                 label: t.t(lang, (s) => s.navigation.keywords),
                                 path: paths.keywords(),
+                                dataTest: 'keywords-nav-button',
                               },
                               {
                                 label: t.t(
@@ -157,12 +161,14 @@ export const App = () => {
                                   (s) => s.navigation.uploadXLSX
                                 ),
                                 path: paths.uploadXLSX(),
+                                dataTest: 'uploadXLSX-nav-button',
                               },
                               {
                                 label: t.t(lang, (s) => s.navigation.addFlow),
                                 path: paths.addFlow(),
                                 icon: MdAdd,
                                 selected: false,
+                                dataTest: 'add-flow-nav-button',
                               },
                             ]}
                             className={CLASSES.CONTAINER.FLUID}

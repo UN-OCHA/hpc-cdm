@@ -80,7 +80,7 @@
     "babel-plugin-styled-components": "2.1.4",
     "babel-plugin-twin": "1.1.0",
     "bowser": "2.12.1",
-    "cypress": "9.5.4",
+    "cypress": "14.4.0",
     "dayjs": "1.11.18",
     "dotenv": "17.2.3",
     "enketo-core": "5.18.1",

@@ -31,6 +31,7 @@ export interface TextFieldWrapperProps {
     error?: string;
   };
   disabled?: boolean;
+  dataTest?: string;
 }
 const TextFieldWrapper = ({
   name,
@@ -41,6 +42,7 @@ const TextFieldWrapper = ({
   required,
   controlledField,
   disabled,
+  dataTest,
 }: TextFieldWrapperProps) => {
   const [field, meta, { setValue }] = useField(name);
   const [isControlledTouched, setIsControlledTouched] = useState(false);
@@ -102,6 +104,7 @@ const TextFieldWrapper = ({
           setValue(fieldValue);
         }
       }}
+      data-test={dataTest}
     />
   );
 };

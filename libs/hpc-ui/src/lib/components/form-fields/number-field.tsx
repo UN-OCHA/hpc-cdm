@@ -13,6 +13,7 @@ export interface NumberFieldProps {
   required?: boolean;
   allowNegative?: boolean;
   disabled?: boolean;
+  dataTest?: string;
 }
 const NumberField = ({
   name,
@@ -22,6 +23,7 @@ const NumberField = ({
   allowNegative = false,
   required,
   disabled,
+  dataTest,
 }: NumberFieldProps) => {
   const [field, meta, { setValue }] = useField<string>(name);
   const { onChange: _onChange, ...fieldWithNoOnChange } = field;
@@ -65,6 +67,7 @@ const NumberField = ({
         size: 'small',
         label,
       }}
+      data-test={dataTest}
     />
   );
 };

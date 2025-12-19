@@ -75,6 +75,7 @@ export type AsyncAutocompleteSelectProps = {
    * values that can be selected in the autocomplete.
    */
   valueLimit?: number;
+  dataTest?: string;
 };
 
 /**
@@ -116,6 +117,7 @@ const AsyncAutocompleteSelect = ({
   controlledError,
   firstViewCondition,
   valueLimit,
+  dataTest,
 }: AsyncAutocompleteSelectProps) => {
   const [controlledValue, setControlledValue] = useState<FieldValue>();
 
@@ -385,6 +387,7 @@ const AsyncAutocompleteSelect = ({
     <StyledAutocomplete
       {...configAutocomplete}
       {...(initialValue !== undefined ? { value: initialValue } : {})}
+      data-test={dataTest}
     />
   );
 };
